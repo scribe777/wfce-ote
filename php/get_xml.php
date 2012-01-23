@@ -25,7 +25,7 @@ $teiNode->setAttribute('xsi:schemaLocation','http://www.tei-c.org/ns/1.0 tei-ntm
 $dom->appendChild($teiNode);
 
 $index = array();
-$markInWord=array('unclear','gap','supplied','abbr');
+$nodeNameToCompress=array('unclear','gap','supplied','abbr','part_abbr','ex');
 
 $index['lb'] = -1;
 
@@ -126,10 +126,10 @@ while ($row = mysql_fetch_array($res)) {
 	}
 
 	// 3 Stücke testen
-	/*
-	 if ($count > 3)
+
+	if ($count > 5)
 	break;
-	$count++;	*/
+	$count++;
 }
 //Ein Element mit Attribute als KinderNote hinzufügen
 function _addAttrNode($xml, $parentNode, $attrName, $attrValue) {
@@ -144,7 +144,7 @@ function _addText($xml, $parentNode, $text) {
 }
 
 function _getChapterNode($str) {
-	global $markInWord;
+	global $nodeNameToCompress;
 
 	$xml = new DOMDocument();
 	$str = str_replace('<span class="verse_number">',
@@ -153,10 +153,9 @@ function _getChapterNode($str) {
 	$xml->loadXML($str);
 	$chapterDivNode = $xml->documentElement;
 	_setNodes($xml, $chapterDivNode);
+	_compressNodes($xml,$chapterDivNode);
 
-	foreach($markInWord AS $m){
-		_compressNodes($xml,$m);
-	}
+	_insertWordIndex($xml,false);
 
 	return $chapterDivNode;
 }
@@ -166,33 +165,16 @@ function _setNodes($xml, $node) {
 
 	//wenn textNode
 	if ($node->nodeType === XML_TEXT_NODE) {
-		//TODO wenn ende kein Leerzeich hat und nextSibling unclear ist, .....
-		_changeText($xml, $node, true);
+		_changeText($xml, $node);
 		return;
 	}
 
 	//wenn normale Node, ändern; keine Zerlegung in <w>...</w>
 	$node = _changeNode($xml, $node);
-	$notName=array('pc','fw','num','note','unclear','supplied','abbr'); 
+	$notName=array('pc','fw','num','note','unclear','supplied','abbr','w');
 	if ($node == null || in_array($node->nodeName,$notName))
-		return;
+	return;
 
-	//wenn <w>, nicht weiter
-	if ($node->nodeName === 'w') {
-		if ($node->hasAttribute('m')) {
-			if($node->parentNode->getAttribute('type')==='orig' && $node->parentNode->firstChild===$node){
-				$index['w']++;
-			}
-			$node->setAttribute('n',$node->getAttribute('m')+$index['w']);
-			//TODO
-			$node->removeAttribute('m');
-			return;
-		} else {
-			$index['w']++;
-			$node->setAttribute('n', $index['w']);
-		}
-		return;
-	}
 
 	//alle childNode bearbeiten
 	$temp_arr = array();
@@ -205,8 +187,7 @@ function _setNodes($xml, $node) {
 }
 
 function _changeNode($xml, $node) {
-	global $index;
-	global $value;
+	global $index,$value;
 	/*
 	 * wenn <span  class="chapter_number">id</span>
 	* attribute von parentNode <div> definieren: type, n, xml:id ...
@@ -226,7 +207,6 @@ function _changeNode($xml, $node) {
 	}
 
 	if ($class === 'verse_number') {
-		$index['w'] = 0;
 		//<ab n="1" xml:id="B5K1V1-05">
 		$ab = $node->parentNode;
 		$value['V'] = 'V' . trim($node->firstChild->nodeValue);
@@ -246,8 +226,7 @@ function _changeNode($xml, $node) {
 }
 
 function _readOtherClass($xml, $node) {
-	global $index;
-	global $value;
+	global $index, $value;
 
 	$arr = _classNameToArray($node);
 	if ($arr == null)
@@ -279,7 +258,7 @@ function _readOtherClass($xml, $node) {
 				}
 				foreach ($temp_arr AS $c) {
 					if($c->nodeType===XML_TEXT_NODE)
-					_changeText($xml,$c, false);
+					_changeText($xml,$c);
 				}
 
 			}
@@ -305,7 +284,7 @@ function _readOtherClass($xml, $node) {
 				}
 				foreach ($temp_arr AS $c) {
 					if($c->nodeType===XML_TEXT_NODE)
-					_changeText($xml,$c, false);
+					_changeText($xml,$c);
 				}
 					
 			}
@@ -429,7 +408,7 @@ function _readOtherClass($xml, $node) {
 				$newNode->nodeValue = substr($node->nodeValue, 1, -1);
 			}
 
-			$newNode=_insertW($xml,$node,$newNode,'gap');
+			$newNode=_insertElementW($xml,$node,$newNode);
 
 			$node->parentNode->replaceChild($newNode, $node);
 			continue;
@@ -444,7 +423,7 @@ function _readOtherClass($xml, $node) {
 		abbr_STRING_Overline	<abbr type="STRING"><hi rend="ol">...<hi></abbr>
 		*/
 		if ($type == '' && $a['__t'] === 'abbr') {
-			
+
 			$abbr = $xml->createElement('abbr');
 			//type
 			if ($a['abbr_type'] != '') {
@@ -462,9 +441,9 @@ function _readOtherClass($xml, $node) {
 			} else {
 				$abbr->nodeValue = $node->nodeValue;
 			}
-			
-			$newNode=_insertW($xml,$node,$abbr,'abbr');
-			
+
+			$newNode=_insertElementW($xml,$node,$abbr);
+
 			$node->parentNode->replaceChild($newNode, $node);
 			continue;
 		}
@@ -474,21 +453,11 @@ function _readOtherClass($xml, $node) {
 		 <part_abbr>					<ex>...</ex>
 		*/
 		if ($type == '' && $a['__t'] === 'part_abbr') {
-			$list = $xml->getElementsByTagName('w');
-			foreach ($list as $domElement) {
-				$nodeToRemove = $domElement;
-				$oldText = $domElement->nodeValue;
-			}
-			//Now remove it.
-			if ($nodeToRemove != null) {
-				$node->parentNode->removeChild($nodeToRemove);
-				$index['w']--;
-			}
-			$newNode = $xml->createElement('w');
-			$newNode->nodeValue = $oldText;
 			$part_abbr = $xml->createElement('ex');
 			$part_abbr->nodeValue = substr($node->nodeValue, 1, -1);
-			$newNode->appendChild($part_abbr);
+				
+			$newNode=_insertElementW($xml, $node,$part_abbr);
+				
 			$node->parentNode->replaceChild($newNode, $node);
 			continue;
 		}
@@ -508,7 +477,7 @@ function _readOtherClass($xml, $node) {
 			}
 			$unclear->nodeValue = $a['original_text'];
 
-			$newNode=_insertW($xml,$node,$unclear,'unclear');
+			$newNode=_insertElementW($xml, $node,$unclear);
 
 			$node->parentNode->replaceChild($newNode, $node);
 			continue;
@@ -673,6 +642,8 @@ function _readOtherClass($xml, $node) {
 			}
 			_copyChild($xml, $newNode, $clone);
 
+			$newNode=_insertElementW($xml,$node,$newNode);
+
 			$node->parentNode->replaceChild($newNode, $node);
 			continue;
 		}
@@ -710,10 +681,16 @@ function _readOtherClass($xml, $node) {
 	return $node;
 }
 
-function _changeText($xml, $node, $b) {
-	global $index, $markInWord;
+function _changeText($xml, $node) {
+	global $index, $nodeNameToCompress;
 
 	$str = $node->nodeValue;
+	if(preg_match('/^\s+/',$str)){
+		$first=true;
+	}
+	if(preg_match('/\s+$/',$str)){
+		$last=true;
+	}
 
 	$parent = $node->parentNode;
 	$arr = explode(' ', ($str));
@@ -725,38 +702,30 @@ function _changeText($xml, $node, $b) {
 
 		$w = $xml->createElement('w');
 
-
-		//node davor bearbeiten
-		foreach($markInWord AS $type){
-			//wenn preNode unmittelbar $type ist
-			if($i==0 && $node->previousSibling!=null && $node->previousSibling->nodeName==$type){
-				$index['w']--;
-				$w->setAttribute($type, 'b');
+		//wenn davor unmittelbar ein node ist
+		if($first==false  && $i==0 && $node->previousSibling!=null){
+			if(!$node->previousSibling->hasAttribute('_s')){
+				$index['s']++;
+				$node->previousSibling->setAttribute('_s',$index['s']);
 			}
+
+			$w->setAttribute('_s', $index['s']);
 		}
 
-
-		if($b){
-			$index['w']++;
-			$w->setAttribute('n', $index['w']);
-		} else {
-			$newIndex++;
-			$w->setAttribute('m', $newIndex);
-		}
-
-		//node dahintern bearbeiten
-		foreach($markInWord AS $type){
-			//wenn nextNode unmittelbar $type ist
-			if($i==count($arr)-1 && _classIsType($node->nextSibling,'/^__t='.$type.'/') ){
-				$w->setAttribute($type, 'a');
-
-				//diese Attribute  ist fuer weitere Bearbeitung nutztbar.
-				$node->nextSibling->setAttribute('w_'.$type,$index['w']);
+		//wenn dahitern unmittelbar ein node ist
+		$next=$node->nextSibling;
+		if($last==false && $i==count($arr)-1 && $next!=null && $next->nodeType!=XML_TEXT_NODE) {
+			if(!$w->hasAttribute('_s')){
+				$index['s']++;
+				$w->setAttribute('_s', $index['s']);
+			}
+				
+			if(_isNodeToCompress($next) ){
+				$next->setAttribute('_s', $index['s']);
 			}
 		}
 
 		_addText($xml, $w, $a);
-
 		$parent->insertBefore($w, $node);
 
 	}
@@ -822,75 +791,112 @@ function _cloneNode($xml, $node) {
 }
 
 
-function _classIsType($node,$pattern){
+function _isNodeToCompress($node){
+	global $nodeNameToCompress;
 	if($node!=null && $node->getAttribute('class')!=null){
-
-		if(preg_match($pattern,$node->getAttribute('class'))){
-			return true;
+		foreach($nodeNameToCompress AS $name){
+			if(preg_match('/^__t='.$name.'/',$node->getAttribute('class'))){
+				return true;
+			}
 		}
 	}
 
 	return false;
 }
 
-function _compressNodes($xml,$type){
+function _compressNodes($xml,$node){
 	//alle w-node, die type-node integrieren
-	$aList=$bList=array();
+	global $nodesToCompress;
+	$nodesToCompress=array();
+	_getNodesToCompress($node);
 
-	//ausname für supplied
-	if($type=='supplied')
-	$attr='gap';
-	else
-	$attr=$type;
+	$s=0;
+	$start=false;
 
-	foreach($xml->getElementsByTagName('w') AS $w){
-		if($w->hasAttribute($attr) && $w->getAttribute($attr)=='a'){
-			array_push($aList,$w);
-		}else if($w->hasAttribute($type) && $w->getAttribute($type)=='b'){
-			array_push($bList,$w);
-		}
-	}
-
-	//alle type-node, die zu verschieben
-	$typeList=array();
-	foreach($xml->getElementsByTagName($type) AS $t){
-		if($t->hasAttribute('w_'.$attr))
-		array_push($typeList,$t);
-	}
-
-	//
-	foreach($typeList AS $t){
-		$i=$t->getAttribute('w_'.$attr);
-		foreach($aList AS $a){
-			if($a->getAttribute('n')==$i){
-				$a->removeAttribute($attr);
-				$a->appendChild($t);
-				foreach($bList AS $b){
-					if($b->getAttribute('n')==$i){
-						_addText($xml,$a,$b->nodeValue);
-						$b->parentNode->removeChild($b);
-					}
-				}
+	foreach($nodesToCompress AS $n){
+		$t=$n->getAttribute('_s');
+		$n->removeAttribute('_s');
+		if($t!=$s){
+			if($n->nodeName=='w'){
+				$startNode=$n;
+			}else{
+				$startNode=null;
+			}
+			$s=$t;
+		}else if($t>0 && $startNode!=null){
+			if($n->nodeName==='w'){
+				_removeChild($n,$startNode);
+				$n->parentNode->removeChild($n);
+			}else  {
+				//$startNode->appendChild($n);
 			}
 		}
-		$t->removeAttribute('w_'.$attr);
+
 	}
 }
 
-//unclear gap, set <w>
-function _insertW($xml,$span, $newNode, $type){
+function _insertWordIndex($node,$isRdg){
 	global $index;
 
-	if($span->hasAttribute('w_'.$type)){
-		$newNode->setAttribute('w_'.$type, $span->getAttribute('w_'.$type));
-		return $newNode;
-	}else{
-		$w = $xml->createElement('w');
-		$w->setAttribute('n', $index['w']);//set $index['w']++ bei _setNodes()
-		$w->appendChild($newNode);
-		return $w;
+	if($node->nodeType===XML_TEXT_NODE)
+	return;
+
+	$name=$node->nodeName;
+
+	if($name==='w'){
+		if(!$isRdg){
+			$index['w']=$index['w']+$index['rdg_w'];
+			$index['rdg_w']=0;
+			$index['w']++;
+			$node->setAttribute('n',$index['w']);
+		}else{
+			$index['rdg_w']++;
+			$node->setAttribute('n',$index['rdg_w']+$index['w']);
+		}
+
+	}else if($name=='ab'){
+		$index['w']=0;
+	}else if($name=='rdg'){
+		$index['rdg_w']=0;
+		$isRdg=true;
+	}
+
+	foreach($node->childNodes AS $n){
+		_insertWordIndex($n,$isRdg);
 	}
 }
+
+function _removeChild($from,$to){
+	foreach($from->childNodes AS $c){
+		$to->appendChild($c);
+	}
+}
+
+//wenn node unclear gap supplied ... ist,  set <w>
+function _insertElementW($xml, $span,$newNode){
+	$w = $xml->createElement('w');
+	$w->appendChild($newNode);
+
+	if($span->hasAttribute('_s')){
+		$w->setAttribute('_s', $span->getAttribute('_s'));
+	}
+
+	return $w;
+}
+
+//
+function _getNodesToCompress($node){
+	global $nodesToCompress;
+	if($node->nodeType!=XML_TEXT_NODE){
+		if($node->hasAttribute('_s'))
+		array_push($nodesToCompress,$node);
+	}
+
+	foreach ($node->childNodes AS $c) {
+		_getNodesToCompress($c);
+	}
+}
+
 
 //Ausgabe als XML-Datei
 function xmlExport($xml) {
