@@ -1,0 +1,70 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>{#wce.spaces_title}</title>
+<script type="text/javascript" src="../../tiny_mce_popup.js"></script>
+<script type="text/javascript" src="../../jquery.js"></script>
+<script type="text/javascript" src="js/wce.js"></script>
+</head>
+
+<body id="table" style="display: none" onload="init();">
+	<form onsubmit="return false;" action="#" name="spacesinfo">
+		<input type="hidden" id="original_spaces_text"
+			name="original_spaces_text" value="" />
+		<fieldset>
+			<legend>{#wce.spaces_data}</legend>
+			<table border="0" cellpadding="4" cellspacing="0" width="100%">
+				<tr>
+					<td><label id="sp_unit_label" for="sp_unit">{#wce.unit}</label>
+					</td>
+					<td><select id="sp_unit" name="sp_unit"
+						onclick="checkstatus_spacesunit()">
+							<option value="char">{#wce.unit_char}</option>
+							<option value="line">{#wce.unit_line}</option>
+							<option value="other">{#wce.other}</option>
+					</select>
+					</td>
+					<td><input id="sp_unit_other" name="sp_unit_other" type="text"
+						value="" size="50" maxlength=""
+						class="required number min1 mceFocus" />
+					</td>
+				</tr>
+				<tr>
+					<td><label id="sp_extent_label" for="sp_extent">{#wce.extent}</label>
+					</td>
+					<td colspan="2"><input id="sp_extent" name="sp_extent"
+						type="text" value="" size="50" maxlength=""
+						class="required number min1 mceFocus" />
+					</td>
+				</tr>
+			</table>
+		</fieldset>
+		<div class="mceActionPanel">
+			<input type="button" id="insert" name="insert" value="{#insert}"
+				onclick="writeWceNodeInfo();" /> <input type="button"
+				id="cancel" name="cancel" value="{#cancel}"
+				onclick="tinyMCEPopup.close();" />
+		</div>
+	</form>
+</body>
+<script type="text/javascript">
+	function init() {
+		wceInfoInit('spaces');
+		readWceNodeInfo();
+		setstatus_spaces();
+	}
+	function checkstatus_spacesunit() {
+		if (document.spacesinfo.sp_unit.options[2].selected == true) {
+			document.spacesinfo.sp_unit_other.disabled = false;
+			document.getElementById('sp_unit_other').style.backgroundColor = "white";
+		} else {
+			document.spacesinfo.sp_unit_other.disabled = true;
+			document.getElementById('sp_unit_other').style.backgroundColor = "#CCCCCC";
+		}
+	}
+
+	function setstatus_spaces() {
+		checkstatus_spacesunit();
+	} 
+</script>
+</html>

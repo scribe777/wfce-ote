@@ -1,0 +1,235 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>{#wce.gap_title}</title>
+<script type="text/javascript" src="../../tiny_mce_popup.js"></script>
+<script type="text/javascript" src="../../jquery.js"></script>
+<script type="text/javascript" src="js/wce.js"></script>
+</head>
+
+<body id="table" style="display: none" onload="init();">
+	<form onsubmit="return false;" action="#" name="gapinfo">
+		<input type="hidden" id="original_gap_text" name="original_gap_text"
+			value="" />
+		<fieldset id="inputContainer">
+			<legend>{#wce.gap_data}</legend>
+			<table border="0" cellpadding="4" cellspacing="0" width="100%">
+					<!--<td valign="center"><label id="gap_type_label" for="gap_type">{#wce.gap_type}</label>
+					</td>
+					<td>
+					<input type="radio" id="gap_type" name="gap_type" value="lacuna">{#wce.lacuna}</br>
+					<input type="radio" id="gap_type" name="gap_type" value="illegible_text">{#wce.illegible_text}</option>
+					</select>
+					</td>-->
+					
+				<tr>
+					<td><label id="gap_reason_label" for="gap_reason">{#wce.reason}</label>
+					</td>
+					<td><select id="gap_reason" name="gap_reason"
+						onchange="checkstatus_gapreason()">
+							<option value=""></option>
+							<option value="damage">{#wce.damage}</option>
+							<option value="hole">{#wce.hole}</option>
+							<option value="poor image">{#wce.poor_image}</option>
+							<option value="faded ink">{#wce.faded_ink}</option>
+							<option value="otherreason">{#wce.other}</option>
+					</select>
+					</td>
+					<td><input id="otherdamage" name="otherdamage" type="text"
+						value="" size="30" maxlength=""
+						class="required number min1 mceFocus" />
+					</td>
+				</tr>
+				<tr>
+					<td><label id="unit_label" for="unit">{#wce.unit}</label>
+					</td>
+					<td><select id="unit" name="unit"
+						onchange="checkstatus_gapunit()">
+							<option value=""></option>
+							<option value="char">{#wce.unit_char}</option>
+							<option value="line">{#wce.unit_line}</option>
+							<option value="page">{#wce.unit_page}</option>
+							<option value="quire">{#wce.unit_quire}</option>
+							<option value="otherunit">{#wce.other}</option>
+					</select>
+					</td>
+					<td><input id="unit_other" name="unit_other" type="text"
+						value="" size="50" maxlength=""
+						class="required number min1 mceFocus" />
+					</td>
+				</tr>
+				<tr>
+					<td><label id="extent_label" for="extent">{#wce.extent}</label>
+					</td>
+					<td colspan="2"><input id="extent" name="extent" type="text"
+						value="" size="50" maxlength=""
+						class="required number min1 mceFocus" />
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2"><input type="checkbox" name="mark_as_supplied" 						id="mark_as_supplied" value="supplied" onclick="checkstatus_mark_as_supplied()">{#wce.mark_as_supplied}</input>
+					</td>
+				</tr>
+				<tr>
+					<td><label id="supplied_source_label" for="supplied_source">{#wce.supplied_source}</label>
+					</td>
+					<td><select id="supplied_source" name="supplied_source"
+						onclick="checkstatus_supplied_source()">
+							<option value="na27">{#wce.na27}</option>
+							<option value="transcriber">{#wce.transcriber}</option>
+							<option value="tr">{#wce.TR}</option>
+							<option value="othersupsource">{#wce.other}</option>
+					</select></td>
+					<td><input id="supplied_source_other"
+						name="supplied_source_other" type="text" value="" size="30"
+						maxlength="" class="required number min1 mceFocus" /></td>
+				</tr>
+			</table>
+		</fieldset>
+		</div>
+		<div class="mceActionPanel">
+			<input type="button" id="insert" name="insert" value="{#insert}"
+				onclick="cont = testOther();
+						if (cont){writeWceNodeInfo();}else{alert('Please enter text for all Other fields');}" /> <input type="button"
+				id="cancel" name="cancel" value="{#cancel}"
+				onclick="tinyMCEPopup.close();" />
+		</div>
+	</form>
+</body>
+<script type="text/javascript">
+	function init() {
+		wceInfoInit('gap');
+		readWceNodeInfo();
+		//checkstatus_gap_type();
+		checkstatus_gapreason();
+		checkstatus_gapunit();
+		//setstatus_gap();
+		checkstatus_supplied_source();
+		checkstatus_mark_as_supplied();
+	}
+	
+	/*function noLacunaeDisable(b) {
+		var elms = $('#inputContainer select, #inputContainer input');
+		var elm;
+		for ( var i = 0; i < elms.length; i++) {
+			elm = elms[i];
+			if (elm.id == 'gap_type')
+				continue;
+			if (elm.id == 'unit') //Option for lacunae
+			{
+				$(elm).attr('disabled', false);
+				$(elm).css('background-color', '#fff');
+			} else {
+				$(elm).attr('disabled', b);
+				if (b)
+					$(elm).css('background-color', '#ccc');
+				else
+					$(elm).css('background-color', '#fff');
+			}
+		}
+		;
+
+		if (!b) {
+			checkstatus_gapreason();
+			//checkstatus_gaphand();
+			checkstatus_gapagent();
+			checkstatus_gapunit();
+		}
+	}
+
+	function checkstatus_gaptype() {
+		if (document.gapinfo.gap_type.options[2].selected == true) {
+			noLacunaeDisable(false);
+		} else {
+			noLacunaeDisable(true);
+		}
+	}
+*/
+	function checkstatus_gaptype() {
+		
+	}
+
+	function checkstatus_gapreason() {
+		if (document.gapinfo.gap_reason.options[5].selected == true) {
+			document.gapinfo.otherdamage.disabled = false;
+			document.getElementById('otherdamage').style.backgroundColor = "white";
+		} else {
+			document.gapinfo.otherdamage.disabled = true;
+			document.getElementById('otherdamage').style.backgroundColor = "#CCCCCC";
+		}
+	}
+/*
+	function checkstatus_gaphand() {
+		if (document.gapinfo.gaphand.options[6].selected == true) {
+			document.gapinfo.gaphand_other.disabled = false;
+			document.getElementById('gaphand_other').style.backgroundColor = "white";
+		} else {
+			document.gapinfo.gaphand_other.disabled = true;
+			document.getElementById('gaphand_other').style.backgroundColor = "#CCCCCC";
+		}
+	}
+
+	function checkstatus_gapagent() {
+		if (document.gapinfo.agent.options[3].selected == true) {
+			document.gapinfo.agent_other.disabled = false;
+			document.getElementById('agent_other').style.backgroundColor = "white";
+		} else {
+			document.gapinfo.agent_other.disabled = true;
+			document.getElementById('agent_other').style.backgroundColor = "#CCCCCC";
+		}
+	}*/
+
+	function checkstatus_gapunit() {
+		if (document.gapinfo.unit.options[5].selected == true) {
+			document.gapinfo.unit_other.disabled = false;
+			document.getElementById('unit_other').style.backgroundColor = "white";
+		} else {
+			document.gapinfo.unit_other.disabled = true;
+			document.getElementById('unit_other').style.backgroundColor = "#CCCCCC";
+		}
+
+		if (document.gapinfo.unit.options[0].selected == true) {
+			document.gapinfo.extent.disabled = true;
+			document.getElementById('extent').style.backgroundColor = "#CCCCCC";
+		} else {
+			document.gapinfo.extent.disabled = false;
+			document.getElementById('extent').style.backgroundColor = "white";
+		}
+
+	}
+
+	function checkstatus_mark_as_supplied() {
+		if (document.gapinfo.mark_as_supplied.checked) {
+			document.gapinfo.supplied_source.disabled = false;
+			checkstatus_supplied_source();
+		} else {
+			document.gapinfo.supplied_source.disabled = true;
+			document.gapinfo.supplied_source_other.disabled = true;
+		}
+	}
+
+	function checkstatus_supplied_source() {
+		if (document.gapinfo.supplied_source.options[3].selected == true) {
+			document.gapinfo.supplied_source_other.disabled = false;
+			document.getElementById('supplied_source_other').style.backgroundColor = "white";
+		} else {
+			document.gapinfo.supplied_source_other.disabled = true;
+			document.getElementById('supplied_source_other').style.backgroundColor = "#CCCCCC";
+		}
+	}
+
+	function setstatus_gap() {
+		checkstatus_gaptype();
+	} 
+
+	function testOther() {
+		if (document.gapinfo.mark_as_supplied.checked && document.gapinfo.supplied_source.options[3].selected == true && document.getElementById('supplied_source_other').value == '' )
+		{ return false; }
+		if (document.gapinfo.unit.options[5].selected == true && document.getElementById('unit_other').value == '' )
+		{ return false; }
+		if (document.gapinfo.gap_reason.options[5].selected == true && document.getElementById('otherdamage').value == '') 
+		{ return false; }
+	return true;
+	}
+</script>
+</html>

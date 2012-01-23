@@ -1,0 +1,320 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>{#wce.paratext_title}</title>
+<script type="text/javascript" src="../../tiny_mce_popup.js"></script>
+<script type="text/javascript" src="../../jquery.js"></script>
+<script type="text/javascript" src="js/wce.js"></script>
+</head>
+
+<body id="table" style="display: none" onload="init();">
+	<form onsubmit="return false;" action="#" name="paratextinfo">
+		<fieldset>
+			<legend>{#wce.paratext_data}</legend>
+			<table border="0" cellpadding="4" cellspacing="0" width="100%">
+				<tr>
+					<td><label id="fw_label" for="fw_type">{#wce.paratext}</label>
+					</td>
+					<td><select id="fw_type" name="fw_type"
+						onchange="checkstatus_typ()">
+							<option value="num_chapternumber">{#wce.fw_chapter_number}</option>
+							<option value="fw_chaptertitle">{#wce.fw_chapter_title}</option>
+							<option value="fw_lecttitle">{#wce.fw_lectionary_title}</option>
+							<!--<option value="fw_incipit">{#wce.fw_lectionary_incipit}</option>
+					<option value="fw_explicit">{#wce.fw_lectionary_explicit}</option>-->
+							<option value="fw_colophon">{#wce.fw_colophon}</option>
+							<option value="num_quiresig">{#wce.fw_quiresignature}</option>
+							<option value="num_ammonian">{#wce.fw_ammonian}</option>
+							<option value="num_eusebian">{#wce.fw_eusebian}</option>
+							<option value="fw_euthaliana">{#wce.fw_euthaliana}</option>
+							<option value="fw_gloss">{#wce.fw_gloss}</option>
+					</select>
+					</td>
+					<td><input id="type_text" name="type_text" type="text"
+						value="" size="30" maxlength=""
+						class="required number min1 mceFocus" /></td>
+				</tr>
+				<tr>
+					<td><label id="num_label" for="number">Numeral as
+							attribute</label></td>
+					<td><input id="number" name="number" type="text" value=""
+						size="30" maxlength="" class="required number min1 mceFocus" /></td>
+				</tr>
+				<tr>
+					<td><label id="paratext_position_label"
+						for="paratext_position">{#wce.position}</label>
+					</td>
+					<td><select id="paratext_position" name="paratext_position"
+						onchange="checkstatus_position()">
+							<option value="pagetop">{#wce.position_top}</option>
+							<option value="pagebottom">{#wce.position_bottom}</option>
+							<option value="pageleft">{#wce.position_left}</option>
+							<option value="pageright">{#wce.position_right}</option>
+							<option value="place_above">{#wce.position_above}</option>
+							<option value="place_below">{#wce.position_below}</option>
+							<option value="place_thispoint">{#wce.position_thispoint}</option>
+							<option value="place_other">{#wce.other}</option>
+					</select>
+					</td>
+					<td><input id="paratext_place_other"
+						name="paratext_place_other" type="text" value="" size="30"
+						maxlength="" class="required number min1 mceFocus" />
+					</td>
+				</tr>
+				<tr>
+					<td><label id="paratext_alignment_label"
+						for="paratext_alignment">{#wce.alignment}</label></td>
+					<td colspan="2"><select id="paratext_alignment"
+						name="paratext_alignment">
+							<option value="left">{#wce.alignment_l}</option>
+							<option value="center">{#wce.alignment_c}</option>
+							<option value="right">{#wce.alignment_r}</option>
+					</select>
+					</td>
+				</tr>
+			</table>
+		</fieldset>
+		<div class="mceActionPanel">
+			<input type="button" id="insert" name="insert" value="{#insert}"
+				onclick=" writeWceNodeInfo(getParaTag());" /> <input
+				type="button" id="cancel" name="cancel" value="{#cancel}"
+				onclick="tinyMCEPopup.close();" />
+		</div>
+	</form>
+</body>
+<script type="text/javascript">
+	function init() {
+		wceInfoInit('paratext');
+		readWceNodeInfo();
+		setstatus_paratext();
+	}
+
+	function getParaTag() {
+		var v = $('#fw_type').val();
+		if (v.match(/fw_/))
+			return 'fw';
+		else
+			return 'num';
+	}
+
+	function checkstatus_typ() {
+		/*
+		if((document.paratextinfo.fw_type.options[0].selected == true) || (document.paratextinfo.fw_type.options[2].selected == true) || (document.paratextinfo.fw_type.options[8].selected == true) || (document.paratextinfo.fw_type.options[9].selected == true) || (document.paratextinfo.fw_type.options[10].selected == true))*/
+		if ($('#fw_type').val() == 'num_chapternumber' || $('#fw_type').val() == 'fw_lecttitle' || $('#fw_type').val() == 'num_eusebian' || $('#fw_type').val() == 'fw_euthaliana' || $('#fw_type').val() == 'fw_gloss') {
+			document.paratextinfo.number.disabled = false;
+			document.getElementById('number').style.backgroundColor = "white";
+			/*
+			$('#type_text').attr('disabled',true); 
+			$('#type_text').css('background','#ccc');  */
+		} else {
+			document.paratextinfo.number.disabled = true;
+			document.getElementById('number').style.backgroundColor = "#CCCCCC";
+			/*
+			$('#type_text').attr('disabled',false);
+			$('#type_text').css('background','#fff'); */
+		}
+		
+		// no place for <num>
+		if ($('#fw_type').val() == 'fw_chaptertitle' || $('#fw_type').val() == 'fw_colophon' || $('#fw_type').val() == 'fw_lecttitle' || $('#fw_type').val() == 'fw_euthaliana' || $('#fw_type').val() == 'fw_gloss') {
+			document.paratextinfo.paratext_position.disabled = false;
+			document.getElementById('paratext_position').style.backgroundColor = "white";
+			checkstatus_position();
+		} else {
+			document.paratextinfo.paratext_position.disabled = true;
+			document.getElementById('paratext_position').style.backgroundColor = "#CCCCCC";
+			document.paratextinfo.paratext_place_other.disabled = true;
+			document.getElementById('paratext_place_other').style.backgroundColor = "#CCCCCC";
+		}
+	}
+
+	function checkstatus_position() {
+		if (document.paratextinfo.paratext_position.options[7].selected == true) {
+			document.paratextinfo.paratext_place_other.disabled = false;
+			document.getElementById('paratext_place_other').style.backgroundColor = "white";
+		} else {
+			document.paratextinfo.paratext_place_other.disabled = true;
+			document.getElementById('paratext_place_other').style.backgroundColor = "#CCCCCC";
+		}
+	}
+
+	function setnumber() {
+		fehler = 0;
+		var dezimalz = 0; /* Dezimalzahl */
+		var Zeichen = ""; /* Aktuelles Zeichen */
+		var Zeichen_Wert = 0; /* Wert fuer Zeichen */
+		var Zeichen_Wert_alt = 1000; /* alter Wert fuer Zeichen */
+
+		var eing = ed.selection.getContent().toUpperCase();
+		Pruefen_roemZahl(eing, eing.length);
+
+		if (fehler == 0) {
+
+			for (i = 0; i < eing.length; i++) {
+				Zeichen = eing.charAt(i);
+				if (Zeichen == "I")
+					Zeichen_Wert = 1;
+				else if (Zeichen == "V")
+					Zeichen_Wert = 5;
+				else if (Zeichen == "X")
+					Zeichen_Wert = 10;
+				else if (Zeichen == "L")
+					Zeichen_Wert = 50;
+				else if (Zeichen == "C")
+					Zeichen_Wert = 100;
+				else if (Zeichen == "D")
+					Zeichen_Wert = 500;
+				else if (Zeichen == "M")
+					Zeichen_Wert = 1000;
+
+				if (Zeichen_Wert_alt < Zeichen_Wert) {
+					dezimalz = dezimalz - Zeichen_Wert_alt + (Zeichen_Wert - Zeichen_Wert_alt);
+				} else
+					dezimalz = dezimalz + Zeichen_Wert;
+
+				Zeichen_Wert_alt = Zeichen_Wert;
+			}
+
+			document.paratextinfo.number.value = dezimalz;
+
+		} else
+			document.paratextinfo.number.value = '';
+	}
+
+	function Pruefen_roemZahl(Wert, laenge) {
+		var Zeichen = "";
+		var Zeichen_alt = "";
+		var Zeichen_zaehl = 1;
+		var Zeichen_Wert = 0;
+		var Zeichen_Wert_alt = 1000;
+		// flags, ob bereits Symbol verwendet
+		var fl_Zeichen_I = 0;
+		var fl_Zeichen_V = 0;
+		var fl_Zeichen_X = 0;
+		var fl_Zeichen_L = 0;
+		var fl_Zeichen_C = 0;
+		var fl_Zeichen_D = 0;
+		var fl_Zeichen_M = 0;
+		var anz_Zeichen_I = 0;
+		var anz_Zeichen_V = 0;
+		var anz_Zeichen_X = 0;
+		var anz_Zeichen_L = 0;
+		var anz_Zeichen_C = 0;
+		var anz_Zeichen_D = 0;
+		var anz_Zeichen_M = 0;
+		var fl_erster = 0;
+
+		fehler = 0;
+		if (Wert.length != laenge)
+			fehler++;
+		for (i = 0; i < Wert.length; i++) {
+			Zeichen = Wert.charAt(i);
+			if (Zeichen != "I" && Zeichen != "V" && Zeichen != "X" && Zeichen != "L" && Zeichen != "C" && Zeichen != "D" && Zeichen != "M")
+				fehler++;
+
+			if (Zeichen == "I") {
+				Zeichen_Wert = 1;
+				anz_Zeichen_I++;
+			} else if (Zeichen == "V") {
+				Zeichen_Wert = 5;
+				anz_Zeichen_V++;
+			} else if (Zeichen == "X") {
+				Zeichen_Wert = 10;
+				anz_Zeichen_X++;
+			} else if (Zeichen == "L") {
+				Zeichen_Wert = 50;
+				anz_Zeichen_L++;
+			} else if (Zeichen == "C") {
+				Zeichen_Wert = 100;
+				anz_Zeichen_C++;
+			} else if (Zeichen == "D") {
+				Zeichen_Wert = 500;
+				anz_Zeichen_D++;
+			} else if (Zeichen == "M") {
+				Zeichen_Wert = 1000;
+				anz_Zeichen_M++;
+			}
+
+			// Pruefung mehr als ein kleineres Zeichen vor groesserem
+			if (Zeichen != Zeichen_alt) {
+				if (Zeichen_Wert_alt < Zeichen_Wert) {
+					if (((i - 2) >= 0) && (Wert.charAt(i - 2) == Zeichen_alt)) {
+						fehler++;
+					}
+				}
+			}
+
+			// Pruefung gleiches Zeichen an mehreren Stellen (es wird aber XXXIX = 39 zugelassen)
+			if (fl_erster > 0) {
+				if (Zeichen != Zeichen_alt) {
+
+					if (Zeichen == "I") {
+						if (fl_Zeichen_I == 0 || fl_Zeichen_I == 1)
+							fl_Zeichen_I++;
+						else
+							fehler++;
+					}
+					if (Zeichen == "V") {
+						if (fl_Zeichen_V == 0 || fl_Zeichen_V == 1)
+							fl_Zeichen_V++;
+						else
+							fehler++;
+					}
+					if (Zeichen == "X") {
+						if (fl_Zeichen_X == 0 || fl_Zeichen_X == 1)
+							fl_Zeichen_X++;
+						else
+							fehler++;
+					}
+					if (Zeichen == "L") {
+						if (fl_Zeichen_L == 0 || fl_Zeichen_L == 1)
+							fl_Zeichen_L++;
+						else
+							fehler++;
+					}
+					if (Zeichen == "C") {
+						if (fl_Zeichen_C == 0 || fl_Zeichen_C == 1)
+							fl_Zeichen_C++;
+						else
+							fehler++;
+					}
+					if (Zeichen == "D") {
+						if (fl_Zeichen_D == 0 || fl_Zeichen_D == 1)
+							fl_Zeichen_D++;
+						else
+							fehler++;
+					}
+					if (Zeichen == "M") {
+						if (fl_Zeichen_M == 0 || fl_Zeichen_M == 1)
+							fl_Zeichen_M++;
+						else
+							fehler++;
+					}
+				}
+			} else
+				fl_erster = 1;
+
+			// Pruefung mehr als 3 gleiche Zeichen hintereinander
+			if (Zeichen == Zeichen_alt) {
+				Zeichen_zaehl++;
+				if (Zeichen_zaehl > 3)
+					fehler++;
+			} else {
+				Zeichen_zaehl = 1;
+			}
+
+			Zeichen_alt = Zeichen;
+			Zeichen_Wert_alt = Zeichen_Wert;
+		}
+
+		// Pruefung, ob Zeichen zu oft vorkamen
+		if (anz_Zeichen_I > 3 || anz_Zeichen_V > 1 || anz_Zeichen_X > 4 || anz_Zeichen_L > 1 || anz_Zeichen_C > 4 || anz_Zeichen_D > 1 || anz_Zeichen_M > 3) {
+			fehler++;
+		}
+	}
+	function setstatus_paratext() {
+		checkstatus_position();
+		checkstatus_typ();
+		//setnumber();
+	}
+</script>
+</html>

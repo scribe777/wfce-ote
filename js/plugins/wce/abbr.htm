@@ -1,0 +1,65 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>{#wce.abbr_title}</title>
+<script type="text/javascript" src="../../tiny_mce_popup.js"></script>
+<script type="text/javascript" src="../../jquery.js"></script>
+<script type="text/javascript" src="js/wce.js"></script>
+</head>
+
+<body id="table" style="display: none" onload="init();">
+	<form onsubmit="return false;" action="#" name="abbrinfo">
+		<input type="hidden" id="original_abbr_text" name="original_abbr_text"
+			value="" />
+		<fieldset>
+			<legend>{#wce.abbr_data}</legend>
+			<table border="0" cellpadding="4" cellspacing="0" width="100%">
+				<tr>
+					<td><label id="abbr_type_label" for="abbr_type">{#wce.abbr_type}</label>
+					</td>
+					<td><select id="abbr_type" name="abbr_type"
+						onchange="checkstatus_abbrtype()">
+							<option value="nomSac">{#wce.abbr_nomenSacrum}</option>
+							<option value="numeral">{#wce.abbr_numeral}</option>
+							<option value="other">{#wce.other}</option>
+					</select>
+					</td>
+					<td><input id="otherabbrtype" name="otherabbrtype" type="text"
+						value="" size="30" maxlength=""
+						class="required number min1 mceFocus" />
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2"><input type="checkbox" name="overline"
+						id="add_overline" value="overline">{#wce.abbr_addOverline}
+					</td>
+				</tr>
+			</table>
+		</fieldset>
+		<div class="mceActionPanel">
+			<input type="button" id="insert" name="insert" value="{#insert}"
+				onclick="writeWceNodeInfo();" /> <input type="button"
+				id="cancel" name="cancel" value="{#cancel}"
+				onclick="tinyMCEPopup.close();" />
+		</div>
+	</form>
+</body>
+<script type="text/javascript">
+	function init() {
+		wceInfoInit('abbr');
+		readWceNodeInfo();
+		checkstatus_abbrtype();
+	}
+	function checkstatus_abbrtype() {
+		if (document.abbrinfo.abbr_type.options[2].selected == true) {
+			document.abbrinfo.otherabbrtype.disabled = false;
+			document.getElementById('otherabbrtype').style.backgroundColor = "white";
+		} else {
+			document.abbrinfo.otherabbrtype.disabled = true;
+			document.getElementById('otherabbrtype').style.backgroundColor = "#CCCCCC";
+		}
+	}
+
+	//$(document).ready(readWceInfo);
+</script>
+</html>

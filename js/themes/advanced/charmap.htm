@@ -1,0 +1,109 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<title>{#advanced_dlg.charmap_title}</title>
+	<script type="text/javascript" src="../../tiny_mce_popup.js"></script>
+	<script type="text/javascript" src="js/charmap.js"></script>
+</head>
+<body id="charmap" style="display:none" onLoad="setstatus_charmap()">
+<form onsubmit="return false;" action="#" name="charmap_selection">
+<table align="center" border="0" cellspacing="0" cellpadding="2">
+    <tr>
+        <td colspan="2" class="title" font>{#advanced_dlg.charmap_title}</td>
+    </tr>
+    <tr>
+        <td id="charmapView" rowspan="3" align="left" valign="top" style="font-family:GentiumPlus">
+			<!-- Chars will be rendered here -->
+        </td>
+        <td width="100" align="center" valign="top">
+            <table border="0" cellpadding="0" cellspacing="0" width="100" style="height:3px">
+                <tr>
+                    <td id="codeV">&nbsp;</td>
+                </tr>
+                <tr>
+                    <td id="codeN" height="100px">&nbsp;</td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+	<tr>
+		<td valign="top">
+           <table border="0" cellpadding="0" cellspacing="0" width="100" class="heading">
+			<tr>
+				<td><input type="radio" id="charmap_g" name="charmap_filter" value="Greek_only" onclick="update_charmap('charmap_g')"/></td>
+				<td><label>{#wce.charmap_greek_only}</label></td>
+			</tr>
+			<tr>
+				<td><input type="radio" id="charmap_l" name="charmap_filter" value="Latin_only" onclick="update_charmap('charmap_l')" /></td>
+				<td><label>{#wce.charmap_latin_only}</label></td>
+			</tr>
+			<tr>
+				<td><input type="radio" id="charmap_all" name="charmap_filter" value="All_glyphs" onclick="update_charmap('charmap_all')" /></td>
+				<td><label>{#wce.charmap_all}</label></td>
+			</tr>
+			<tr>
+			</tr>
+			</table>
+		</td>
+	</tr>
+    <tr>
+		<td valign="top" style="padding-bottom: 3px;">
+            <table width="100" align="center" border="0" cellpadding="2" cellspacing="0" class="heading">
+                <tr>
+                    <td align="center" style="border-left: 1px solid #666699; border-top: 1px solid #666699; border-right: 1px solid #666699;" class="heading">HTML-Code</td>
+                </tr>
+                <tr>
+                    <td style="font-size: 16px; font-weight: bold; border-left: 1px solid #666699; border-bottom: 1px solid #666699; border-right: 1px solid #666699;" id="codeA" align="center">&nbsp;</td>
+                </tr>
+                <tr>
+                    <td style="font-size: 1px;">&nbsp;</td>
+                </tr>
+                <tr>
+                    <td align="center" style="border-left: 1px solid #666699; border-top: 1px solid #666699; border-right: 1px solid #666699;" class="heading">NUM-Code</td>
+                </tr>
+                <tr>
+                    <td style="font-size: 16px; font-weight: bold; border-left: 1px solid #666699; border-bottom: 1px solid #666699; border-right: 1px solid #666699;" id="codeB" align="center">&nbsp;</td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+</form>
+</body>
+<script type="text/javascript">  
+function setstatus_charmap() {
+	var a;
+	var cookiename, cookievalue;
+	if (document.cookie) {
+		a = document.cookie;
+		cookiename = a.substr(0,a.search('='));
+		cookievalue = a.substr(a.search('=')+1,a.search(';'));
+		if(cookievalue == '')
+			{cookievalue = a.substr(a.search('=')+1,a.length);} 
+		if (cookievalue=="charmap_g")
+		{
+			document.charmap_selection.charmap_filter[0].checked=true;
+		}
+		else if (cookievalue=="charmap_l")
+		{
+			document.charmap_selection.charmap_filter[1].checked=true;
+		}
+		else
+		{
+			document.charmap_selection.charmap_filter[2].checked=true;
+		}
+		
+	}
+	else {
+		document.charmap_selection.charmap_filter[2].checked=true;
+	}
+}
+
+function update_charmap(id) {
+	var keks;
+	keks="charmap="+id+";";
+	document.cookie = keks;
+	window.location.reload();
+}
+</script>
+</html>

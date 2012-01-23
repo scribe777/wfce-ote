@@ -1,0 +1,85 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<title>{#wce.metadata_title}</title>
+	<script type="text/javascript" src="../../tiny_mce_popup.js"></script>
+	<script type="text/javascript" src="../../jquery.js"></script>
+	<script type="text/javascript" src="js/wce.js"></script>
+</head>
+
+<body id="table" style="display: none" onload="readWceInfo();setstatus_metadata();">
+	<form onsubmit="return false;" action="#" name="metadatainfo">
+		<fieldset>
+			<legend>{#wce.metadata_data}</legend>
+				<table border="0" cellpadding="4" cellspacing="0" width="100%">
+				<tr>
+				<td>
+					<label id="GA_number_label" for="GA_number">{#wce.GA_number}</label>
+				</td>
+				</tr>
+				<tr>
+				<td>
+					<label id="Name_book_label" for="Name_book">{#wce.Name_book}</label>
+				</td>
+				</tr>
+				<tr>
+				<td>
+					<label id="First_folio_label" for="First_folio">{#wce.First_folio}</label>
+				</td>
+				</tr>
+				<tr>
+				<td>
+					<label id="Base_text_label" for="Base_text">{#wce.Base_text}</label>
+				</td>
+				</tr>
+				<tr>
+				<td>
+					<label id="Trans_by_label" for="Trans_by">{#wce.Trans_by}</label>
+				</td>
+				</tr>
+				<tr>
+				<td>
+					<label id="Trans_begun_label" for="Trans_begun">{#wce.Trans_begun}</label>
+				</td>
+				</tr>
+				<tr>
+				<td>
+					<label id="Trans_finished_label" for="Trans_finished">{#wce.Trans_finished}</label>
+				</td>
+				</tr>
+				<tr>
+				<td>
+					<label id="lect_annotations_label" for="lect_annotations">Lectionary annotations</label></td>
+					<input type="radio" name="lect_annotations" value="yes">Yes
+					<input type="radio" name="lect_annotations" value="no">No
+				</td>
+				</tr>
+				<tr>
+				<td>
+					<label id="initials_label" for="initials">Initials and other enlarged letters</label></td>
+					<input type="radio" name="initials" value="yes">Yes
+					<input type="radio" name="initials" value="no">No
+				</td>
+				</tr>
+				<tr>
+				<td>
+					<label id="diples_label" for="diples">Diples (>) in the margin next to certain text, indicating that text is a quotation from the Old Testament</label></td>
+					<input type="radio" name="diples" value="yes">Yes
+					<input type="radio" name="diples" value="no">No
+				</td>
+				</tr>
+				<tr>
+				<td>
+					<label id="Trans_note_label" for="Trans_note">Remarks</label></td>
+					<textarea id="Trans_note" name="Trans_note" WRAP="PHYSICAL" ROWS="20" COLS="50"></textarea>
+				</td>
+				</tr>
+				</table>
+		</fieldset>
+		<div class="mceActionPanel"> 
+			<input type="button" id="insert" name="insert" value="{#insert}" onclick="addWceInfo('wce_paratext',getParaTag());" />
+			<input type="button" id="cancel" name="cancel" value="{#cancel}" onclick="tinyMCEPopup.close();" />
+		</div>
+  </form>
+</body>
+</html>

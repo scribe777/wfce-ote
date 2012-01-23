@@ -1,0 +1,183 @@
+<!DOCTYPE html
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/tiny_mce_src.js"></script>
+<script type="text/javascript" src="js/wce_user_login.js"></script>
+
+<title>Workspace for Collaborative Editing</title>
+<style type="text/css">
+<!--
+body {
+	margin-left: auto;
+	margin-right: auto;
+	height: 98%;
+	width: 90%;
+	background-color: #666;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 14px;
+}
+-->
+</style>
+<script type="text/javascript">
+	tinyMCE.init({
+		// General options
+		mode : "exact",
+		elements : 'wce_editor',
+		theme : "advanced",
+		// extended_valid_elements:'w',
+		forced_root_block : false,
+		force_br_newlines : true,
+		force_p_newlines : false,
+		entity_encoding : "raw",
+		theme_advanced_path : false, 
+
+		// invalid_elements:'p',
+		/*plugins : "wce,pagebreak,style,layer,advhr,advimage,emotions,iespell,inlinepopups,safari,preview,media,searchreplace,print,contextmenu,paste,directionality,fullscreen,noneditable,visualchars,nonbreaking,xhtmlxtras,template,wordcount,advlist,autosave",
+		 */
+		plugins : "wce,pagebreak,style,layer,safari,print,inlinepopups, contextmenu,paste,fullscreen,wordcount,autosave",
+
+		init_instance_callback : "wceReload",
+
+		// Theme options
+		theme_advanced_buttons1 : "undo,redo,charmap,color_picker|,code,removeformat,|,print,contextmenu,paste,fullscreen,|,breaks,correction,illegible,decoration,abbreviation,paratext,note",
+		theme_advanced_buttons2 : "",
+		theme_advanced_toolbar_location : "top",
+		theme_advanced_toolbar_align : "left",
+		theme_advanced_statusbar_location : "bottom",
+		theme_advanced_resizing : true,
+
+		// wce content CSS
+		content_css : "css/wce.css",
+
+		// Drop lists for link/image/media/template dialogs
+		template_external_list_url : "lists/template_list.js",
+		external_link_list_url : "lists/link_list.js",
+		external_image_list_url : "lists/image_list.js",
+		media_external_list_url : "lists/media_list.js",
+
+		// Style formats
+		style_formats : [ {
+			title : 'Text formatting'
+		}, {
+			title : 'Rubrication',
+			inline : 'span',
+			styles : {
+				color : 'red'
+			}
+		}, {
+			title : 'Gold ink',
+			inline : 'span',
+			styles : {
+				color : '#ffcc00'
+			}
+		}, {
+			title : 'Outsize capitals',
+			inline : 'span',
+			styles : {
+				height : '4'
+			}
+		}, {
+			title : 'Overline',
+			inline : 'span',
+			styles : {
+				'text-decoration' : 'overline'
+			}
+		}, {
+			title : 'Lacunae, spaces, supplied and damaged text'
+		}, {
+			title : 'Lacunae',
+			inline : 'span'
+		} ],
+
+		// Replace values for the template plugin
+		template_replace_values : {
+			username : "Some User",
+			staffid : "991234"
+		}
+	});
+</script>
+</head>
+<body>
+	<form method="post" id="wce_form" action=".">
+		<div id="user_toolbar"></div>
+		<div style="margin: 10px 0px 10px 0px">
+			<textarea id="wce_editor" rows="28" cols="80" style="width: 100%;"></textarea>
+		</div>
+		<input type="button" style="margin-right: 20px" value="Get XML"
+			onclick="getXmlData();" /> <a style="color: white"
+			href="quellcode/wfce-20120120.zip">Get sourcecode (without basetexts)</a>
+		<label style="color:white; margin-left: 700px">Last update: 2012-01-20, 13:37</label>
+	</form>
+	<div id="propertydisplaybox"></div>
+</body>
+
+<script type="text/javascript">
+	var wceUserToolbar = new WceUserToolbar('user_toolbar');
+	var user_id,user_text_name;
+
+	//wenn brower reload, set editor blank
+	function wceReload() {
+		setData('');
+	}
+
+	//get dirty-value of editor
+	function isEditorDirty() {
+		return tinyMCE.activeEditor.isDirty();
+	}
+
+	//set editor dirty-value
+	function setEditorNotDirty(b) {
+		tinyMCE.activeEditor.isNotDirty = b;
+	}
+
+	//set editor content
+	function setData(msg) {
+		tinyMCE.activeEditor.setContent(msg);
+	}
+
+	//get editor content
+	function getData() {
+		return tinyMCE.activeEditor.getContent();
+	}
+
+	//get xml from get_xml.php/mysql-database
+	function getXmlData() {
+		 if (typeof user_id == 'undefined' || typeof  user_text_name == 'undefined') {
+			alert('Error user_text_name / in user_id ');
+			return; 
+		}
+	 
+		window.open('php/get_xml.php?userid=' + user_id + '&textname=' + user_text_name, 'xml');
+	}
+
+	//save editor-content to mysql-database
+	function saveDataToDB(user_text_name, chapter, user_id) {
+		if (!tinyMCE.activeEditor.isDirty())
+			return;
+
+		for ( var i = 0; i < arguments.length; i++) {
+			if (typeof arguments[i] == 'undefined' || arguments[i] == '')
+				return;
+		}
+
+		$.ajax({
+			type : 'POST',
+			url : 'php/save.php',
+			data : {
+				'filename' : user_text_name,
+				'chapter' : chapter,
+				'text' : getData(),
+				'userid' : user_id
+			},
+			success : function(msg) {
+				setEditorNotDirty(1);
+				alert(msg + "Changes are saved ");
+			}
+		});
+	}
+</script>
+</html>

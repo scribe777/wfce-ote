@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>{#wce.note_title}</title>
+<script type="text/javascript" src="../../tiny_mce_popup.js"></script>
+<script type="text/javascript" src="../../jquery.js"></script>
+<script type="text/javascript" src="js/wce.js"></script>
+</head>
+<body id="table" style="display: none" onload="init();">
+	<form onsubmit="return false;" action="#" name="noteinfo">
+		<fieldset>
+			<legend>{#wce.note_data}</legend>
+			<table border="0" cellpadding="4" cellspacing="0" width="100%">
+				<tr>
+					<td><label id="note_type_label" for="note_type">{#wce.note_type}</label>
+					</td>
+					<td><select id="note_type" name="note_type"
+						onclick="checkstatus_notetype()">
+							<option value="editorial">{#wce.editorial}</option>
+							<option value="transcriberquiry">{#wce.transcriber}</option>
+							<option value="canon">{#wce.canon}</option>
+							<option value="note_other">{#wce.other}</option>
+					</select>
+					</td>
+					<td><input id="other_note_type" name="other_note_type"
+						type="text" value="" size="30" maxlength=""
+						class="required number min1 mceFocus" />
+					</td>
+				</tr>
+				<tr>
+					<td><label id="note" for="note">{#wce.note}</label>
+					</td>
+					<td colspan=2><textarea id="note_text" name="note_text"
+							WRAP="PHYSICAL" ROWS="20" COLS="50"></textarea>
+					</td>
+				</tr>
+			</table>
+		</fieldset>
+		<div class="mceActionPanel">
+			<input type="button" id="insert" name="insert" value="{#insert}"
+				onclick="writeWceNodeInfo();" /> <input type="button"
+				id="cancel" name="cancel" value="{#cancel}"
+				onclick="tinyMCEPopup.close();" />
+		</div>
+	</form>
+</body>
+<script type="text/javascript">
+	function init() {
+		wceInfoInit('note');
+		readWceNodeInfo();
+		setstatus_note();
+	}
+	function checkstatus_notetype() {
+		if (document.noteinfo.note_type.options[3].selected == true) {
+			document.noteinfo.other_note_type.disabled = false;
+			document.getElementById('other_note_type').style.backgroundColor = "white";
+
+		} else {
+			document.noteinfo.other_note_type.disabled = true;
+			document.getElementById('other_note_type').style.backgroundColor = "#CCCCCC";
+		}
+	}
+	function setstatus_note() {
+		checkstatus_notetype();
+	} 
+</script>
+</html>

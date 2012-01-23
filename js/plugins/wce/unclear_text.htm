@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>{#wce.unclear_text_title}</title>
+<script type="text/javascript" src="../../tiny_mce_popup.js"></script>
+<script type="text/javascript" src="../../jquery.js"></script>
+<script type="text/javascript" src="js/wce.js"></script>
+</head>
+
+<body id="table" style="display: none" onload="init();">
+	<form onsubmit="return false;" action="#" name="unclear_text_info">
+		<fieldset>
+			<legend>{#wce.unclear_text_data}</legend>
+			<table border="0" cellpadding="4" cellspacing="0" width="100%">
+				<tr>
+					<td><label id="unclear_text_reason_label"
+						for="unclear_text_reason">{#wce.reason}</label></td>
+					<td><select id="unclear_text_reason"
+						name="unclear_text_reason"
+						onclick="checkstatus_unclear_text_reason()">
+							<option value=""></option>
+							<option value="poor image">{#wce.poor_image}</option>
+							<option value="faded ink">{#wce.faded_ink}</option>
+							<option value="damage to page">{#wce.damage_to_page}</option>
+							<option value="otherreason">{#wce.other}</option>
+					</select></td>
+					<td><input id="original_text" name="original_text" value=""
+						type="hidden" /> <input id="unclear_text_otherreason"
+						name="unclear_text_otherreason" type="text" value="" size="30"
+						maxlength="" class="required number min1 mceFocus" />
+					</td>
+				</tr>
+			</table>
+		</fieldset>
+		<div class="mceActionPanel">
+			<input type="button" id="insert" name="insert" value="{#insert}"
+				onclick="writeWceNodeInfo();" /> <input type="button"
+				id="cancel" name="cancel" value="{#cancel}"
+				onclick="tinyMCEPopup.close();" />
+		</div>
+	</form>
+</body>
+<script type="text/javascript">
+	function init() {
+		wceInfoInit('unclear');
+		readWceNodeInfo();
+		setstatus_unclear_text()
+	}
+
+	function checkstatus_unclear_text_reason() {
+		if (document.unclear_text_info.unclear_text_reason.options[4].selected == true) {
+			document.unclear_text_info.unclear_text_otherreason.disabled = false;
+			document.getElementById('unclear_text_otherreason').style.backgroundColor = "white";
+		} else {
+			document.unclear_text_info.unclear_text_otherreason.disabled = true;
+			document.getElementById('unclear_text_otherreason').style.backgroundColor = "#CCCCCC";
+		}
+	}
+
+	function setstatus_unclear_text() {
+		checkstatus_unclear_text_reason();
+		if ($('#original_text').val() == '') {
+			$('#original_text').val(selected_content);
+		}
+	}
+</script>
+</html>
