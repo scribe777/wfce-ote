@@ -93,6 +93,7 @@ tinyMCE.addI18n('en.wce',{
 	reason : "Reason",
 	damage : "Damage",
 	hole : "Hole",
+	stain : "Stain",
 	erasure : "Erasure",
 	otherdamage : "Other damage",
 	number : "Number",
