@@ -306,8 +306,10 @@ function WceUserToolbar(parent_container_id) {
 				success : function(msg) {  
 					if (msg == 'ERROR') {
 						$('#tool_span').html('');
-					} else
+					} else{
 						$('#tool_span').html(msg);
+						curr_chapter=$('#select_chapter').val();
+					}
 				}
 			});
 	
