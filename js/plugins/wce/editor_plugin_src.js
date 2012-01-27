@@ -1408,7 +1408,7 @@
 		},
 
 		_wceAddNoDialog : function(ed, className, character) {
-			var content = ed.selection.getContent();
+			var content = ed.selection.getContent();  
 			var style = 'style="border: 1px  dotted #f00;  margin:0px; padding:0;"';
 			switch (className) {
 			case 'pc':
@@ -1448,7 +1448,7 @@
 				}
 				break;
 			default:
-				ed.selection.setContent('<span class="' + ed.wceTypeParamInClass + '=' + className + '"' + style + '>' + content + '</span> ');
+				ed.selection.setContent('<span class="' + ed.wceTypeParamInClass + '=' + className + '"' + style + '>' + content + '</span>');
 			}
 		},
 

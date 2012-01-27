@@ -495,7 +495,8 @@ function _readOtherClass($xml, $node) {
 
 			$attr = '';
 			if (preg_match('/num_/', $a['fw_type'])) {
-				$paratextNodeName = 'num';
+				$paratextNodeName = 'fw'; //Fehler #85
+				//$paratextNodeName = 'num'; 
 				//$attr = $currInfo['number'];
 				$attr = $a['number'];
 			} else {

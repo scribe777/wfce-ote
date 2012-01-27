@@ -1,5 +1,5 @@
 tinyMCEPopup.requireLangPack();
-
+ 
 // active Editor
 var ed = tinyMCE.activeEditor;
 
@@ -133,12 +133,15 @@ function writeWceNodeInfo(val) {
 				break;
 				
 				case 'cb':
+				new_content='';
 				break;
 				
 				case 'pb':
+				new_content='';
 				break;
 			
 				case 'qb':
+				new_content='';
 				break;
 			}
 			break;
