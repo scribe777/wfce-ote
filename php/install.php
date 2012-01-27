@@ -173,6 +173,8 @@ function fileWriteToDB($path, $filename, $fileid){
 				$text.='<span class="chapter_number"> '.$chapter.'</span><br />';
 			}else if($pattern_type='v'){
 				$verse=$index;
+				$text=str_replace( "\r\n", "",$text);
+				$text=str_replace( "\n", "",$text);
 				$text.='<span class="verse_number"> '.$verse.'</span>';
 			}
 

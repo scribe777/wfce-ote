@@ -53,6 +53,19 @@
 					c.setDisabled(false);
 			});
 		},
+		
+		
+		_inClass: function(n, pattern){		
+			if(typeof n=='undefined' || n==null ||typeof n.nodeName=='undefined' || n.nodeName=='' || n.nodeName.match(/body/i)) return false; 
+		    
+			var className=n.className;
+			
+			if(typeof className!='undefined' && className!=null && className!='' && className.match(pattern)) {
+				return true;
+			}else{
+				return this._inClass(n.parentNode,pattern);
+			} 	 
+		},
 
 		// ausgewaehlter Text automatisch filtern,
 		// ergibt nur ein gueltiger Auswahlbereich
@@ -93,6 +106,34 @@
 			 * s_index); rng.setStart(s_node, s_index); rng.setEnd(s_node,
 			 * e_index); ed.selection.setRng(rng); return; }
 			 */
+			 
+			 
+			 //testen, ob verse_number oder chapter_number ausgewählt
+			 var s_verse=_this._inClass(s_node,/verse_number/i);  
+			 var e_verse=_this._inClass(e_node,/verse_number/i);
+			 if(s_verse && !e_verse){
+				//select e_node
+				s_index = _this._getStartNoBlank(e_text, 0);
+				e_index = _this._getEndNoBlank(e_text, e_index);
+				rng.setStart(e_node, s_index);
+				rng.setEnd(e_node, e_index);
+				ed.selection.setRng(rng);
+				return;
+			 }else if(!s_verse && e_verse){
+				//select s_node
+				s_index = _this._getStartNoBlank(s_text, s_index);
+				e_index = _this._getEndNoBlank(s_text, s_text.length);
+				rng.setStart(s_node, s_index);
+				rng.setEnd(s_node, e_index);
+				ed.selection.setRng(rng);
+				return; 
+			 }else if(s_verse && e_verse) {
+				rng.setStart(s_node, 0);
+				rng.setEnd(s_node, 0);
+				ed.selection.setRng(rng);	
+				return;
+			 }
+			 
 
 			// wenn s_node und e_node selbe Node sind
 			if (s_node == e_node) {
@@ -121,7 +162,9 @@
 					s_index = 0;
 				}
 				if (e_index < 0) {
-					e_index = 0;
+					//e_index = 0;
+					e_index = _this._getEndNoBlank(s_text, s_text.length);
+					e_node=s_node;
 				}
 				rng.setStart(s_node, s_index);
 				rng.setEnd(e_node, e_index);
