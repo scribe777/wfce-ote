@@ -10,7 +10,7 @@ if($_POST['k']!=''){
 }else{
 	$sql.="  ORDER by `k` LIMIT 1"; 
 }
-echo $sql;
+ 
 $res=dbRes($sql);
 if(mysql_num_rows($res)==0)
 	echo 'ERROR';
