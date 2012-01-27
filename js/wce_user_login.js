@@ -297,7 +297,7 @@ function WceUserToolbar(parent_container_id) {
 			return;
 
 		tinyMCE.activeEditor.setContent('<img src="images/loading.gif"  />');
-		
+		 
 		if (start)
 			$.ajax({
 				type : 'POST',
@@ -315,7 +315,7 @@ function WceUserToolbar(parent_container_id) {
 	
 		if (k != '')
 			curr_chapter = k;
-		
+		 
 		curr_usertext_name = usertext_name;
 		
 		//incex.html
@@ -329,7 +329,7 @@ function WceUserToolbar(parent_container_id) {
 				'userid' : curr_user_id,
 				'k' : k
 			},
-			success : function(msg) {
+			success : function(msg) {  
 				if (msg == 'ERROR') {  
 					$('#tool_span').html('');
 					setData('');

@@ -230,6 +230,7 @@
 		},
 
 		_showWceInfo : function(ed, e) {
+			 
 			var info_box = ed.wceInfoBox;
 			var sele_node = e.target;
 			var wce_class_name = sele_node.className;
@@ -241,7 +242,7 @@
 			if (wce_class_name != '') {
 				info_arr = wce_class_name.split('@');
 			}
-			if (info_arr != null && info_arr.length > 0 && wce_class_name.indexOf(ed.wceTypeParamInClass + '=') > -1) {
+			if (info_arr != null && info_arr.length > 0 && wce_class_name.indexOf(ed.wceTypeParamInClass + '=') > -1) { 
 				var ar;
 				var corr_str = '';
 				var note_str = '';

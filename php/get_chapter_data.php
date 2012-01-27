@@ -8,8 +8,9 @@ $sql="SELECT * FROM `$user_tablname` WHERE `filename` LIKE '".$_POST['filename']
 if($_POST['k']!=''){
 	$sql.="AND `k` LIKE '".$_POST['k']."'";
 }else{
-	$sql.="AND `k` !='' ORDER by `k` LIMIT 1"; 
+	$sql.="  ORDER by `k` LIMIT 1"; 
 }
+echo $sql;
 $res=dbRes($sql);
 if(mysql_num_rows($res)==0)
 	echo 'ERROR';
