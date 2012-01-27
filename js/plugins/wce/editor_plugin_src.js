@@ -1731,7 +1731,7 @@
 					var originalText = wceNode.innerText;
 
 					// if tag to remove
-					var node_to_remove = [ 'paratext', 'note', 'gap' ];
+					var node_to_remove = [ 'paratext', 'note', 'gap','brea' ];
 					var to_remove = false;
 					for ( var i = 0; i < node_to_remove.length; i++) {
 						if (wce_class_name.indexOf(ed.wceTypeParamInClass + '=' + node_to_remove[i]) > -1) {
@@ -1740,7 +1740,7 @@
 						}
 					}
 
-					if (to_remove) {
+					if (to_remove) { 
 						$(wceNode).remove();
 					} else if (typeof originalText != 'undefined') {
 						ed.selection.setContent(originalText);

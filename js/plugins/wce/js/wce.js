@@ -94,7 +94,7 @@ function writeWceNodeInfo(val) {
 	}
 
 	var new_class = arrayToString(info_arr);
-	new_class += other_info_str;
+	new_class += other_info_str;  
 
 	if (wce_node != null && new_class == '') {
 		ed.execCommand('wceDelNode', false);
@@ -126,9 +126,9 @@ function writeWceNodeInfo(val) {
 			switch (document.getElementById('break_type').value) {
 				case 'lb':
 					if (val == '1') {
-						new_content = '<span style="' + style + 'class="' + new_class + '">&crarr;<br/></span>';
+						new_content = '<span style="' + style + '" class="' + new_class + '">&crarr;<br/></span>';
 					} else {
-						new_content = '<span style="' + style + 'class="' + new_class + '">&hyphen;&crarr;<br/></span>';
+						new_content = '<span style="' + style + '" class="' + new_class + '">&hyphen;&crarr;<br/></span>';
 					}
 				break;
 				
@@ -195,7 +195,8 @@ function writeWceNodeInfo(val) {
 
 		if (new_content == null)
 			new_content = '<span style="' + style + '" class="' + new_class + '" >' + selected_content + '</span>';
-
+		
+		 
 		ed.selection.setContent(new_content);
 
 	} else {
