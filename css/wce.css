@@ -43,19 +43,19 @@ span[class*='wce_supplied_source']{
 	color: red;
 }
 
-span[class='wce_formatting_rubrication']{
+span[class*='__t=formatting_rubrication']{
 	color: red;
 }
 
-span[class='wce_formatting_gold_ink']{
+span[class*='__t=formatting_gold_ink']{
 	color: #ffcc00;
 }
 
-span[class='wce_formatting_overline']{
+span[class*='__t=formatting_overline']{
 	text-decoration: overline;
 }
 
-span[class='wce_formatting_capitals']{
+span[class*='__t=formatting_capitals']{
 	width: .75em;
 	font-size: 48px;
 	line-height: 24px;
