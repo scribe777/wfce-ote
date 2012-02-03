@@ -205,9 +205,23 @@ function fileWriteToDB($path, $filename, $fileid){
 }
 
 
-function str_filter($str){
+function str_filter($str){ 
+	$overline_class='<span class="__t=abbr&amp;__n=&amp;original_abbr_text=&amp;abbr_type=nomSac&amp;otherabbrtype=&amp;add_overline=overline" style="border: 1px  dotted #f00; margin: 0px 1px 0px 1px; padding: 0; text-decoration: overline;">';
+ 
+	$word_a=explode(' ',$str);
+	$temp='';
+	foreach($word_a AS $w){
+		if(preg_match('/.{2}¬/',$w)){
+			 $w=preg_replace('/¬/','',$w); 
+			 $w=$overline_class.$w.'</span>';
+		}
+		$temp.=$w.' ';
+	}
+	
+	$str=$temp;
+	 
 	$arr=array();
-	$arr['[ns][ol]']='<span class="__t=abbr&amp;__n=&amp;original_abbr_text=&amp;abbr_type=nomSac&amp;otherabbrtype=&amp;add_overline=overline" style="border: 1px  dotted #f00; margin: 0px 1px 0px 1px; padding: 0; text-decoration: overline;">';
+	$arr['[ns][ol]']=$overline_class;
 	$arr['[/ol][/ns]']='</span>';
 
 	foreach($arr AS $k=>$v){
