@@ -311,7 +311,9 @@ function _readOtherClass($xml, $node) {
 			*/
 			$xml_id='PxxxCxxxL'.$a['number'];
 			$newNode = $xml->createElement('lb');  //TODO: Data aus anderen Felder
-			$newNode->setAttribute('n', $a['number']);
+			if(trim($a['number'])!=''){
+				$newNode->setAttribute('n', $a['number']);
+			}
 			$newNode->setAttribute('xml:id', $xml_id);
 
 			$node->parentNode->replaceChild($newNode, $node);
