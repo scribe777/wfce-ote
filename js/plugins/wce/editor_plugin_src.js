@@ -253,16 +253,30 @@
 					var type_name = ar[ed.wceTypeParamInClass];
 
 					switch (type_name) {
+					case 'abbr':
+						switch (ar['abbr_type'])
+						{
+						case 'nomSac':
+							note_str = 'Nomen Sacrum';
+							break;
+						case 'numeral':
+							note_str = 'Numeral';
+							break;
+						case 'other':
+							note_str = ar['otherabbrtype'];
+							break;
+						}
+						break;
 					case 'note':
 						note_str += ar['note_text'];
 						break;
 					case 'corr':
 						corr_str += '<div style="margin-top:5px">' + ar[ed.wceNameParamInClass] + ': ';
 						if (ar['blank_correction'] == 'blank_correction')
-							corr_str+= 'deleted';
+							corr_str += 'deleted';
 						else
 							corr_str+= ar['corrector_text'];
-						corr_str+= '</div>';
+						corr_str += '</div>';
 						break;
 					case 'paratext':
 						paratext_str = '<div>' + 'Paratext type: ';
@@ -1447,6 +1461,9 @@
 					alert("Error at part-worded abbreviation. Parentheses do not match or invalid nesting!");
 				}
 				break;
+			case 'formatting_capitals': //Capitals
+				ed.selection.setContent('<span class="' + ed.wceTypeParamInClass + '=' + className + '&amp;height=' + character + '"' + style + '>' + content + '</span>');
+				break;
 			default:
 				ed.selection.setContent('<span class="' + ed.wceTypeParamInClass + '=' + className + '"' + style + '>' + content + '</span>');
 			}
@@ -1854,7 +1871,12 @@
 			});
 
 			ed.addCommand('mceAdd_formatting', function(c) {
-				_wceAddNoDialog(ed, 'formatting_' + c, '');
+				if (c == 'capitals') { //Capitals => get height
+					Check = prompt("Please spezify the height of the capitals", "4");
+					_wceAddNoDialog(ed, 'formatting_' + c, Check);
+				} else {
+					_wceAddNoDialog(ed, 'formatting_' + c, '');
+				}
 			});
 
 		},
