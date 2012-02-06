@@ -116,7 +116,9 @@ while ($row = mysql_fetch_array($res)) {
 		$value['B'] = 'B' . $row['b'];
 		$bookNode = $dom->createElement('div');
 		$bookNode = _addAttrNode($dom, $bookNode, 'type', 'book');
-		$bookNode = _addAttrNode($dom, $bookNode, 'n', $row['b']);
+		if(trim($row['b'])!=''){
+			$bookNode = _addAttrNode($dom, $bookNode, 'n', $row['b']);
+		}
 		$bookNode = _addAttrNode($dom, $bookNode, 'xml:id',
 		$value['B'] . '-wit');
 		$bodyNode->appendChild($bookNode);
