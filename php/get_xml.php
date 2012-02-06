@@ -307,7 +307,7 @@ function _readOtherClass($xml, $node) {
 			Column (Collate |C 2|): <cb n="2" xml:id="P3vC2-wit" />
 			Line (Collate |L 37|): <lb n="37" xml:id="P3vC2L37-wit" />
 			*/
-			$xml_id='P?C?L'.$a['number'];
+			$xml_id='PxxxCxxxL'.$a['number'];
 			$newNode = $xml->createElement('lb');  //TODO: Data aus anderen Felder
 			$newNode->setAttribute('n', $a['number']);
 			$newNode->setAttribute('xml:id', $xml_id);

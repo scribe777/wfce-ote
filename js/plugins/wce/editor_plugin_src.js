@@ -1435,7 +1435,7 @@
 				if (character == 'lb') { //line break at the end of a word
 					ed.selection.setContent('<span class="' + ed.wceTypeParamInClass + '=' + className + '"' + style + '>' + '&crarr;' + '</span> ');
 				} else if (character == 'lbm') { //line break in the middle of a word
-					ed.selection.setContent('<span class="' + ed.wceTypeParamInClass + '=' + className + '"' + style + '>' + '&hyphen;&crarr;' + '</span> ');
+					ed.selection.setContent('<span class="' + ed.wceTypeParamInClass + '=' + className + '"' + style + '>' + '&#8208;&crarr;' + '</span> ');
 				} else if (character == 'cb') { //column break
 				
 				} else if (character == 'pb') { //page break
