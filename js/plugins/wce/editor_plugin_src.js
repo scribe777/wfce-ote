@@ -663,7 +663,7 @@
 					sub.add({
 						title : 'Gold',
 						onclick : function() {
-							tinyMCE.activeEditor.execCommand('mceAdd_formatting', 'gold_ink');
+							tinyMCE.activeEditor.execCommand('mceAdd_formatting', 'gold');
 						}
 					});
 

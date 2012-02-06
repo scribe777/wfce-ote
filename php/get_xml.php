@@ -320,7 +320,7 @@ function _readOtherClass($xml, $node) {
 		//******************** formatting ********************
 		/*
 		 __t=formatting_rubrication	<hi rend="rubric">...</hi>
-		__t=formatiing_gold_ink		<hi rend="gold_ink">...</hi>
+		__t=formatiing_gold		<hi rend="gold">...</hi>
 		__t=formatting_capitals		<hi rend="cap" height="4">...</hi>
 		__t=formatting_overlines	<hi rend="ol">...</hi>
 		*/
@@ -336,8 +336,8 @@ function _readOtherClass($xml, $node) {
 					$formatting_rend = 'rubric';
 					break;
 
-				case 'formatting_gold_ink':
-					$formatting_rend = 'gold_ink';
+				case 'formatting_gold':
+					$formatting_rend = 'gold';
 					break;
 
 				case 'formatting_capitals':
