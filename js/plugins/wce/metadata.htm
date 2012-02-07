@@ -4,80 +4,514 @@
 	<title>{#wce.metadata_title}</title>
 	<script type="text/javascript" src="../../tiny_mce_popup.js"></script>
 	<script type="text/javascript" src="../../jquery.js"></script>
+	<script type="text/javascript" src="../../utils/mctabs.js"></script>
+	<script type="text/javascript" src="../../utils/form_utils.js"></script>
 	<script type="text/javascript" src="js/wce.js"></script>
 </head>
 
-<body id="table" style="display: none" onload="readWceInfo();setstatus_metadata();">
+<body id="meta_table" style="display: none" onload="readWceInfo();setstatus_metadata();">
 	<form onsubmit="return false;" action="#" name="metadatainfo">
-		<fieldset>
-			<legend>{#wce.metadata_data}</legend>
-				<table border="0" cellpadding="4" cellspacing="0" width="100%">
-				<tr>
-				<td>
-					<label id="GA_number_label" for="GA_number">{#wce.GA_number}</label>
-				</td>
-				</tr>
-				<tr>
-				<td>
-					<label id="Name_book_label" for="Name_book">{#wce.Name_book}</label>
-				</td>
-				</tr>
-				<tr>
-				<td>
-					<label id="First_folio_label" for="First_folio">{#wce.First_folio}</label>
-				</td>
-				</tr>
-				<tr>
-				<td>
-					<label id="Base_text_label" for="Base_text">{#wce.Base_text}</label>
-				</td>
-				</tr>
-				<tr>
-				<td>
-					<label id="Trans_by_label" for="Trans_by">{#wce.Trans_by}</label>
-				</td>
-				</tr>
-				<tr>
-				<td>
-					<label id="Trans_begun_label" for="Trans_begun">{#wce.Trans_begun}</label>
-				</td>
-				</tr>
-				<tr>
-				<td>
-					<label id="Trans_finished_label" for="Trans_finished">{#wce.Trans_finished}</label>
-				</td>
-				</tr>
-				<tr>
-				<td>
-					<label id="lect_annotations_label" for="lect_annotations">Lectionary annotations</label></td>
-					<input type="radio" name="lect_annotations" value="yes">Yes
-					<input type="radio" name="lect_annotations" value="no">No
-				</td>
-				</tr>
-				<tr>
-				<td>
-					<label id="initials_label" for="initials">Initials and other enlarged letters</label></td>
-					<input type="radio" name="initials" value="yes">Yes
-					<input type="radio" name="initials" value="no">No
-				</td>
-				</tr>
-				<tr>
-				<td>
-					<label id="diples_label" for="diples">Diples (>) in the margin next to certain text, indicating that text is a quotation from the Old Testament</label></td>
-					<input type="radio" name="diples" value="yes">Yes
-					<input type="radio" name="diples" value="no">No
-				</td>
-				</tr>
-				<tr>
-				<td>
-					<label id="Trans_note_label" for="Trans_note">Remarks</label></td>
-					<textarea id="Trans_note" name="Trans_note" WRAP="PHYSICAL" ROWS="20" COLS="50"></textarea>
-				</td>
-				</tr>
+		<div class="tabs">
+			<ul>
+				<li id="title_tab" class="current"><span><a href="javascript:mcTabs.displayTab('title_tab','title_panel');" onmousedown="return false;">{#wce.meta_tab_title}</a></span></li>
+				<li id="publication_tab"><span><a href="javascript:mcTabs.displayTab('publication_tab','publication_panel');" onmousedown="return false;">{#wce.meta_tab_publication}</a></span></li>
+				<li id="source_tab"><span><a href="javascript:mcTabs.displayTab('source_tab','source_panel');" onmousedown="return false;">{#wce.meta_tab_source}</a></span></li>
+				<li id="encoding_tab"><span><a href="javascript:mcTabs.displayTab('encoding_tab','encoding_panel');" onmousedown="return false;">{#wce.meta_tab_encoding}</a></span></li>
+				<li id="general_tab"><span><a href="javascript:mcTabs.displayTab('general_tab','general_panel');" onmousedown="return false;">{#wce.meta_tab_general}</a></span></li>
+			</ul>
+		</div>
+
+		<div class="panel_wrapper">
+			<div id="title_panel" class="panel current">
+				<fieldset>
+				<legend>{#wce.meta_title_data}</legend>
+					<table border="0" cellpadding="4" cellspacing="0" width="100%">
+					<!-- <titleStmt>
+					<title>	-->
+					<tr>
+					<td></td>
+					<td></td>
+					<td>
+						<label>Level</label>
+					</td>
+					<td>
+						<label>Language</label>
+					</td>
+					<td>
+						<label>Number</label>
+					</td>
+					</tr>
+					<tr>
+					<td>
+						<label id="meta_title_label" for="meta_title">{#wce.meta_title}</label>
+					</td>
+					<td>
+						<input id="meta_title" name="meta_title" type="text" value="" size="30" maxlength="" class="required number min1 mceFocus" />
+					</td>
+					<!-- level= -->
+					<td>
+						<select id="meta_title_level" name="meta_title_level">
+							<option value=""></option>
+							<option value="a">analytic</option>
+							<option value="m">monographic</option>
+							<option value="j">journal</option>
+							<option value="s">series</option>
+							<option value="u">unpublished</option>
+						</select>
+					</td>
+					<!-- xml:lang= -->
+					<td>
+						<select id="meta_title_language" name="meta_title_language">
+							<option value=""></option>
+							<option value="en">English</option>
+							<option value="el">Greek</option>
+							<option value="la">Latin</option>
+						</select>
+					</td>
+					<!-- n= -->
+					<td>
+						<input id="meta_title_number" name="meta_title_number" type="text" value="" size="5" maxlength="" class="required number min1 mceFocus" />
+					</td>
+					</tr>
+					<!-- </title> ->
+					<!-- <title type="document" -->
+					<tr>
+					<td>
+						<label id="meta_title_document_label" for="meta_title_document">{#wce.meta_title_document}</label>
+					</td>
+					<td>
+						<input id="meta_title_document" name="meta_title_document" type="text" value="" size="30" maxlength="" class="required number min1 mceFocus" />
+					</td>
+					<!-- level= -->
+					<td>
+						<select id="meta_title_document_level" name="meta_title_document_level">
+							<option value=""></option>
+							<option value="a">analytic</option>
+							<option value="m">monographic</option>
+							<option value="j">journal</option>
+							<option value="s">series</option>
+							<option value="u">unpublished</option>
+						</select>
+					</td>
+					<!-- xml:lang= -->
+					<td>
+						<select id="meta_title_document_language" name="meta_title_document_language">
+							<option value=""></option>
+							<option value="en">English</option>
+							<option value="el">Greek</option>
+							<option value="la">Latin</option>
+						</select>
+					</td>
+					<!-- n= -->
+					<td>
+						<input id="meta_title_document_number" name="meta_title_document_number" type="text" value="" size="5" maxlength="" class="required number min1 mceFocus" />
+					</td>
+					</tr>
+					<!-- </title> ->
+					<!-- <title type="collection" -->
+					<tr>
+					<td>
+						<label id="meta_title_collection_label" for="meta_title_collection">{#wce.meta_title_collection}</label>
+					</td>
+					<td>
+						<input id="meta_title_collection" name="meta_title_collection" type="text" value="" size="30" maxlength="" class="required number min1 mceFocus" />
+					</td>
+					<!-- level= -->
+					<td>
+						<select id="meta_title_collection_level" name="meta_title_collection_level">
+							<option value=""></option>
+							<option value="a">analytic</option>
+							<option value="m">monographic</option>
+							<option value="j">journal</option>
+							<option value="s">series</option>
+							<option value="u">unpublished</option>
+						</select>
+					</td>
+					<!-- xml:lang= -->
+					<td>
+						<select id="meta_title_collection_language" name="meta_title_collection_language">
+							<option value=""></option>
+							<option value="en">English</option>
+							<option value="el">Greek</option>
+							<option value="la">Latin</option>
+						</select>
+					</td>
+					<!-- n= -->
+					<td>
+						<input id="meta_title_collection_number" name="meta_title_collection_number" type="text" value="" size="5" maxlength="" class="required number min1 mceFocus" />
+					</td>
+					</tr>
+					<!-- </title> -->
+					<!-- <title type="work" -->
+					<tr>
+					<td>
+						<label id="meta_title_work_label" for="meta_title_work">{#wce.meta_title_work}</label>
+					</td>
+					<td>
+						<input id="meta_title_work" name="meta_title_work" type="text" value="" size="30" maxlength="" class="required number min1 mceFocus" />
+					</td>
+					<!-- level= -->
+					<td>
+						<select id="meta_title_work_level" name="meta_title_work_level">
+							<option value=""></option>
+							<option value="a">analytic</option>
+							<option value="m">monographic</option>
+							<option value="j">journal</option>
+							<option value="s">series</option>
+							<option value="u">unpublished</option>
+						</select>
+					</td>
+					<!-- xml:lang= -->
+					<td>
+						<select id="meta_title_work_language" name="meta_title_work_language">
+							<option value=""></option>
+							<option value="en">English</option>
+							<option value="el">Greek</option>
+							<option value="la">Latin</option>
+						</select>
+					</td>
+					<!-- n= -->
+					<td>
+						<input id="meta_title_work_number" name="meta_title_work_number" type="text" value="" size="5" maxlength="" class="required number min1 mceFocus" />
+					</td>
+					</tr>
+					<!-- </title> -->
+					<!-- <title type="short" -->
+					<tr>
+					<td>
+						<label id="meta_title_short_label" for="meta_title_short">{#wce.meta_title_short}</label>
+					</td>
+					<td>
+						<input id="meta_title_short" name="meta_title_short" type="text" value="" size="30" maxlength="" class="required number min1 mceFocus" />
+					</td>
+					<!-- level= -->
+					<td>
+						<select id="meta_title_short_level" name="meta_title_short_level">
+							<option value=""></option>
+							<option value="a">analytic</option>
+							<option value="m">monographic</option>
+							<option value="j">journal</option>
+							<option value="s">series</option>
+							<option value="u">unpublished</option>
+						</select>
+					</td>
+					<!-- xml:lang= -->
+					<td>
+						<select id="meta_title_short_language" name="meta_title_short_language">
+							<option value=""></option>
+							<option value="en">English</option>
+							<option value="el">Greek</option>
+							<option value="la">Latin</option>
+						</select>
+					</td>
+					<!-- n= -->
+					<td>
+						<input id="meta_title_short_number" name="meta_title_short_number" type="text" value="" size="5" maxlength="" class="required number min1 mceFocus" />
+					</td>
+					</tr>
+					</table>
+				</fieldset>
+				<br/>
+					<!-- </title> -->
+					<!-- <respStmt><resp>Created by</resp> -->
+					<!-- <name> -->
+				<fieldset>
+					<legend>{#wce.meta_title_respStmt}</legend>
+					<table border="0" cellpadding="4" cellspacing="0" width="100%">
+					<tr>
+					<td>
+						<label id="meta_name_label" for="meta_name">{#wce.meta_resp}</label>
+					</td>
+					<td>
+						<input id="meta_name" name="meta_name" type="text" value="" size="30" maxlength="" class="required number min1 mceFocus" />
+					</td>
+					</tr>
+					<!-- </name> -->
+					<!-- </respStmt> -->
+					<!-- <funder> -->
+					<tr>
+					<td>
+						<label id="meta_funder_label" for="meta_fuunder">{#wce.meta_funder}</label>
+					</td>
+					<td>
+						<input id="meta_funder" name="meta_funder" type="text" value="" size="30" maxlength="" class="required number min1 mceFocus" />
+					</td>
+					</tr>
+					<!-- </funder> -->
+					<!-- <sponsor> -->
+					<tr>
+					<td>
+						<label id="meta_sponsor_label" for="meta_sponsor">{#wce.meta_sponsor}</label>
+					</td>
+					<td>
+						<input id="meta_sponsor" name="meta_sponsor" type="text" value="" size="30" maxlength="" class="required number min1 mceFocus" />
+					</td>
+					</tr>
+					</table>
+					<!-- </sponsor> -->
+					<!-- </titleStmt> -->
+				</fieldset>
+			</div>
+			<div id="publication_panel" class="panel">
+				<fieldset>
+					<legend>{#wce.meta_editorialStmt}</legend>
+					<table>
+					<!-- <editionStmt> -->
+					<!-- <edition -->
+					<!-- n= -->
+					<tr>
+					<td>
+						<label id="meta_edition_version_label" for="meta_edition_version">{#wce.meta_edition_version}</label>
+					</td>
+					<td>
+						<input id="meta_edition_version" name="meta_edition_version" type="text" value="" size="10" maxlength="" class="required number min1 mceFocus" />
+					</td>
+					<!-- <date> -->
+					<td>
+						<label id="meta_edition_date_label" for="meta_date_version">{#wce.meta_edition_date}</label>
+					</td>
+					<td>
+						<input id="meta_edition_date" name="meta_edition_date" type="text" value="" size="10" maxlength="10" class="required number min1 mceFocus" />
+					</td>
+					</tr>
+					<!-- </date> -->
+					<!-- </edition> -->
+					<!-- </editionStmt> -->
 				</table>
-		</fieldset>
+			</fieldset>
+			<br/>			
+					<!-- <publicationStmt -->
+					<!-- <publisher> -->
+			<fieldset>
+				<legend>{#wce.meta_publicationStmt}</legend>
+				<table>
+					<tr>
+					<td>
+						<label id="meta_publisher_1_label" for="meta_publisher_1">{#wce.meta_publisher} 1</label>
+					</td>
+					<td>
+						<input id="meta_publisher_1" name="meta_publisher_1" type="text" value="" size="30" maxlength="" class="required number min1 mceFocus" />
+					</td>
+					<td>
+						<select id="meta_publisher_1_type" name="meta_publisher_1_type">
+							<option value=""></option>
+							<option value="org">Organisation</option>
+							<option value="person">Person</option>
+						</select>
+					</td>
+					</tr>
+					<tr>
+					<td>
+						<label id="meta_publisher_2_label" for="meta_publisher_2">{#wce.meta_publisher} 2</label>
+					</td>
+					<td>
+						<input id="meta_publisher_2" name="meta_publisher_2" type="text" value="" size="30" maxlength="" class="required number min1 mceFocus" />
+					</td>
+					<td>
+						<select id="meta_publisher_2_type" name="meta_publisher_2_type">
+							<option value=""></option>
+							<option value="org">Organisation</option>
+							<option value="person">Person</option>
+						</select>
+					</td>
+					</tr>
+					<tr>
+					<td>
+						<label id="meta_publisher_3_label" for="meta_publisher_3">{#wce.meta_publisher} 3</label>
+					</td>
+					<td>
+						<input id="meta_publisher_3" name="meta_publisher_3" type="text" value="" size="30" maxlength="" class="required number min1 mceFocus" />
+					</td>
+					<td>
+						<select id="meta_publisher_3_type" name="meta_publisher_3_type">
+							<option value=""></option>
+							<option value="org">Organisation</option>
+							<option value="person">Person</option>
+						</select>
+					</td>
+					</tr>
+					<tr>
+					<td>
+						<label id="meta_publisher_4_label" for="meta_publisher_4">{#wce.meta_publisher} 4</label>
+					</td>
+					<td>
+						<input id="meta_publisher_4" name="meta_publisher_4" type="text" value="" size="30" maxlength="" class="required number min1 mceFocus" />
+					</td>
+					<td>
+						<select id="meta_publisher_4_type" name="meta_publisher_4_type">
+							<option value=""></option>
+							<option value="org">Organisation</option>
+							<option value="person">Person</option>
+						</select>
+					</td>
+					</tr>
+					<!-- <date> -->
+					<tr>
+					<td>
+						<label id="meta_publication_date_label" for="meta_publication_date">{#wce.meta_publication_date}</label>
+					</td>
+					<td>
+						<input id="meta_publication_date" name="meta_publication_date" type="text" value="" size="10" maxlength="10" class="required number min1 mceFocus" />
+					</td>
+					</tr>
+					<!-- </date> -->
+					<!-- <availabilty> -->
+					<tr>
+					<td valign="top">
+						<label id="meta_publication_availability_label" for="meta_publication_availability">{#wce.meta_publication_availability}</label>
+					</td>
+					<td colspan="2">
+						<textarea id="meta_publication_availability" name="meta_publication_availability" WRAP="PHYSICAL" ROWS="5" COLS="50">Available for noncommercial re-use provided attribution is made to the original creators and the subsequent derivative is licensed as ShareAlike (Creative Commons by-nc-sa)</textarea>
+					</td>
+					</tr>
+					<!-- </availability> -->
+					<!-- </publicationStmt> -->
+					</table>
+				</fieldset>
+			</div>
+			<div id="source_panel" class="panel">
+				<fieldset>
+					<legend>{#wce.meta_sourceDesc}</legend>
+					<table>
+					<!-- <sourceDesc> -->
+					<!-- <msDesc> -->
+					<!-- <msIdentifier> -->
+					<!-- <country> -->
+					<tr>
+					<td>
+						<label id="meta_msDesc_country_label" for="meta_msDesc_country">{#wce.meta_msDesc_country}</label>
+					</td>
+					<td>
+						<input id="meta_msDesc_country" name="meta_msDesc_country" type="text" value="" size="30" maxlength="" class="required number min1 mceFocus" />
+					</td>
+					</tr>
+					<!-- </country> -->
+					<!-- <settlement> -->
+					<tr>
+					<td>
+						<label id="meta_msDesc_settlement_label" for="meta_msDesc_settlement">{#wce.meta_msDesc_settlement}</label>
+					</td>
+					<td>
+						<input id="meta_msDesc_settlement" name="meta_msDesc_settlement" type="text" value="" size="30" maxlength="" class="required number min1 mceFocus" />
+					</td>
+					</tr>
+					<!-- </settlement> -->
+					<!-- <repository> -->
+					<tr>
+					<td>
+						<label id="meta_msDesc_repository_label" for="meta_msDesc_repository">{#wce.meta_msDesc_repository}</label>
+					</td>
+					<td>
+						<input id="meta_msDesc_repository" name="meta_msDesc_repository" type="text" value="" size="30" maxlength="" class="required number min1 mceFocus" />
+					</td>
+					</tr>
+					<!-- </repository> -->
+					<!-- <idno> -->
+					<tr>
+					<td>
+						<label id="meta_msDesc_idno_label" for="meta_msDesc_idno">{#wce.meta_msDesc_idno}</label>
+					</td>
+					<td>
+						<input id="meta_msDesc_idno" name="meta_msDesc_repository" type="text" value="" size="30" maxlength="" class="required number min1 mceFocus" />
+					</td>
+					</tr>
+					<!-- </idno> -->
+					<!-- <msName> -->
+					<tr>
+					<td>
+						<label id="meta_msDesc_msName_label" for="meta_msDesc_msName">{#wce.meta_msDesc_msName}</label>
+					</td>
+					<td>
+						<input id="meta_msDesc_msName" name="meta_msDesc_msName" type="text" value="" size="30" maxlength="" class="required number min1 mceFocus" />
+					</td>
+					</tr>
+					<tr>
+					<td>
+						<label>{#wce.language}</label>
+					</td>
+					<td>
+						<select id="meta_msDesc_msName_language" name="meta_msDesc_msName_language">
+							<option value=""></option>
+							<option value="en">English</option>
+							<option value="el">Greek</option>
+							<option value="la">Latin</option>
+						</select>
+					</td>
+					</tr>
+					<!-- </msname> -->
+					<!-- <altIdentifier> -->
+					<!-- </msIdentifier> -->
+					</table>
+				</fieldset>
+			</div>
+			<div id="encoding_panel" class="panel">
+				<fieldset>
+					<legend>{#wce.meta_encoding_panel}</legend>
+					<table>
+					<!-- <encodingDesc> -->
+					<!-- <projectDesc> -->
+					<tr>
+					<td valign="top">
+						<label id="meta_projectDesc_label" for="meta_projectDesc">{#wce.meta_projectDesc}</label>
+					</td>
+					<td>
+						<textarea id="meta_projectDesc" name="meta_msDesc_repository" WRAP="PHYSICAL" rows="3" cols="50"></textarea>
+					</td>
+					</tr>
+					<!-- </projectDesc> -->
+					<!-- <editorialDecl> -->
+					<tr>
+					<td valign="top">
+						<label id="meta_editorialDecl_label" for="meta_editorialDecl">{#wce.meta_editorialDecl}</label>
+					</td>
+					<td>
+						<textarea id="meta_editorialDecl" name="meta_editorialDecl" WRAP="PHYSICAL" rows="3" cols="50"></textarea>
+					</td>
+					</tr>
+					<!-- </editorialDecl> -->
+					<!-- </encodingDesc> -->
+					<!-- <revisionDesc> -->
+					<tr>
+					<td valign="top">
+						<label id="meta_revisionDesc_label" for="meta_revisionDesc">{#wce.meta_revisionDesc}</label>
+					</td>
+					<td>
+						<textarea id="meta_revisionDesc" name="meta_revisionDesc" WRAP="PHYSICAL" rows="10" cols="50"></textarea>						
+					</td>
+					</tr>
+					<!-- </revisionDesc> -->
+					</table>
+				</fieldset>
+			</div>
+			<div id="general_panel" class="panel">
+				<fieldset>
+				<legend>{#wce.meta_general}</legend>
+				<table border="0" cellpadding="4" cellspacing="0" width="100%">
+					<tr>
+					<td>
+						<label id="meta_xmlID_label" for="meta_xmlID">XML ID</label>
+					</td>
+					<td>
+						<input id="meta_xmlID" name="meta_xmlID" type="text" value="" size="10" maxlength="" class="required number min1 mceFocus" />
+					</td>
+					</tr>
+					<tr>
+					<td valign="top">
+						<label id="meta_TEI_attributes_label" for="meta_TEI_attributes">TEI attributes</label>
+					</td>
+					<td>
+						<textarea id="meta_TEI_attributes" name="meta_TEI_attributes" wrap="off" rows="5" cols="50" placeholder="Enter the attributes you want to set for <TEI>">xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xml="http://www.w3.org/XML/1998/namespace" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 TEI-NTMSS.xsd"</textarea>
+					</td>
+					</tr>
+				</table>
+				</fieldset>
+			</div>
+		</div>
 		<div class="mceActionPanel"> 
-			<input type="button" id="insert" name="insert" value="{#insert}" onclick="addWceInfo('wce_paratext',getParaTag());" />
+			<input type="button" id="insert" name="insert" value="{#insert}" onclick="addWceInfo('wce_metadata','');" />
 			<input type="button" id="cancel" name="cancel" value="{#cancel}" onclick="tinyMCEPopup.close();" />
 		</div>
   </form>
