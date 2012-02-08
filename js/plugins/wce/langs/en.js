@@ -191,4 +191,5 @@ tinyMCE.addI18n('en.wce',{
 	meta_revisionDesc : "Revision description",
 	meta_tab_general : "Misc",
 	meta_general : "Misc settings",
+	empty_other : "Please enter text for all &quot;other&quot; fields",
 });

@@ -76,7 +76,8 @@
 		</fieldset>
 		<div class="mceActionPanel">
 			<input type="button" id="insert" name="insert" value="{#insert}"
-				onclick=" writeWceNodeInfo(getParaTag());" /> <input
+				onclick="cont = testOther();
+						if (cont){writeWceNodeInfo(getParaTag());}else{alert('{#wce.empty_other}');}" /> <input
 				type="button" id="cancel" name="cancel" value="{#cancel}"
 				onclick="tinyMCEPopup.close();" />
 		</div>
@@ -135,6 +136,12 @@
 			document.paratextinfo.paratext_place_other.disabled = true;
 			document.getElementById('paratext_place_other').style.backgroundColor = "#CCCCCC";
 		}
+	}
+	
+	function testOther() {
+		if (document.paratextinfo.paratext_position.options[7].selected == true && document.getElementById('paratext_place_other').value == '') 
+			return false;
+	return true;
 	}
 
 	function setnumber() {

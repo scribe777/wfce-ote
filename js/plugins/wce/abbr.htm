@@ -38,7 +38,8 @@
 		</fieldset>
 		<div class="mceActionPanel">
 			<input type="button" id="insert" name="insert" value="{#insert}"
-				onclick="writeWceNodeInfo();" /> <input type="button"
+				onclick="cont = testOther();
+						if (cont){writeWceNodeInfo();}else{alert('{#wce.empty_other}');}" /> <input type="button"
 				id="cancel" name="cancel" value="{#cancel}"
 				onclick="tinyMCEPopup.close();" />
 		</div>
@@ -58,6 +59,12 @@
 			document.abbrinfo.otherabbrtype.disabled = true;
 			document.getElementById('otherabbrtype').style.backgroundColor = "#CCCCCC";
 		}
+	}
+	
+	function testOther() {
+		if (document.abbrinfo.abbr_type.options[2].selected == true && document.getElementById('otherabbrtype').value == '') 
+			return false;
+	return true;
 	}
 
 	//$(document).ready(readWceInfo);

@@ -285,7 +285,7 @@
 						case 'num_chapternumber':
 							paratext_str += 'Chapter number';
 							break;
-						case 'fw_chapertitle':
+						case 'fw_chaptertitle':
 							paratext_str += 'Chapter title';
 							break;
 						case 'fw_colophon':
