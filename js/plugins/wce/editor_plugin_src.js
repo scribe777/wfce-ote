@@ -245,8 +245,7 @@
 			if (info_arr != null && info_arr.length > 0 && wce_class_name.indexOf(ed.wceTypeParamInClass + '=') > -1) { 
 				var ar;
 				var corr_str = '';
-				var note_str = '';
-				var paratext_str = '';
+				var info_text = '';
 				var k, v, kv, kv_ar;
 				for ( var i = 0; i < info_arr.length; i++) {
 					ar = this._wceParamsToArray(info_arr[i]);
@@ -257,18 +256,18 @@
 						switch (ar['abbr_type'])
 						{
 						case 'nomSac':
-							note_str = 'Nomen Sacrum';
+							info_text = 'Nomen Sacrum';
 							break;
 						case 'numeral':
-							note_str = 'Numeral';
+							info_text = 'Numeral';
 							break;
 						case 'other':
-							note_str = ar['otherabbrtype'];
+							info_text = ar['otherabbrtype'];
 							break;
 						}
 						break;
 					case 'note':
-						note_str += ar['note_text'];
+						info_text = ar['note_text'];
 						break;
 					case 'corr':
 						corr_str += '<div style="margin-top:5px">' + ar[ed.wceNameParamInClass] + ': ';
@@ -279,58 +278,85 @@
 						corr_str += '</div>';
 						break;
 					case 'paratext':
-						paratext_str = '<div>' + 'Paratext type: ';
+						info_text = '<div>' + 'Paratext type: ';
 						switch (ar['fw_type'])
 						{
 						case 'num_chapternumber':
-							paratext_str += 'Chapter number';
+							info_text += 'Chapter number';
 							break;
 						case 'fw_chaptertitle':
-							paratext_str += 'Chapter title';
+							info_text += 'Chapter title';
 							break;
 						case 'fw_colophon':
-							paratext_str += 'Colophon';
+							info_text += 'Colophon';
 							break;
 						case 'num_quiresig':
-							paratext_str += 'Quire signature';
+							info_text += 'Quire signature';
 							break;
 						case 'num_ammonian':
-							paratext_str += 'Ammonian section';
+							info_text += 'Ammonian section';
 							break;
 						case 'num_eusebian':
-							paratext_str += 'Eusebian canon';
+							info_text += 'Eusebian canon';
 							break;
 						case 'fw_euthaliana':
-							paratext_str += 'Euthaliana';
+							info_text += 'Euthaliana';
 							break;
 						case 'fw_gloss':
-							paratext_str += 'Gloss';
+							info_text += 'Gloss';
 							break;
 						case 'fw_lecttitle':
-							paratext_str += 'Lectionary title';
+							info_text += 'Lectionary title';
 							break;
 						}
-						paratext_str += '</div>';
-						paratext_str += '<div style="margin-top:10px">Value: ' + ar['type_text'] + '</div>';
-						paratext_str += '<div style="margin-top:10px">Position: ' + ar['paratext_position'] + '</div>';
-						paratext_str += '<div style="margin-top:10px">Alignment: ' + ar['paratext_alignment'] + '</div>';
+						info_text += '</div>';
+						info_text += '<div style="margin-top:10px">Value: ' + ar['type_text'] + '</div>';
+						info_text += '<div style="margin-top:10px">Position: ' + ar['paratext_position'] + '</div>';
+						info_text += '<div style="margin-top:10px">Alignment: ' + ar['paratext_alignment'] + '</div>';
 						break;
 					case 'gap':
 						if (ar['unit'] == '' && ar['gap_reason'] == '') {
-							gap_str = 'No information about the reason and extension of the gap available';
+							info_text = 'No information about the reason and extension of the gap available';
 							break;
 						}	
-						var gap_str = '<div>' + 'Reason:' + ar['gap_reason'] + '</div>';
+						info_text = '<div>' + 'Reason: ';
+						if (ar['gap_reason'] == 'otherreason')
+						{
+							info_text += ar['otherdamage'] + '</div>';
+						} else {
+							info_text += ar['gap_reason'] + '</div>';
+						}
 						if (ar['extent'] != '')
 						{
-							gap_str += '<div>' + 'Extent: ' + ar['extent'] + ' ' + ar['unit'] + '(s)</div>';
+							info_text += '<div>' + 'Extent: ' + ar['extent'] + ' ';
+							if (ar['unit'] == 'otherunit')
+							{
+								info_text += ar['unit_other'] + '</div>';
+							} else {
+								info_text += ar['unit'] + '(s)</div>';
+							}
 						}
 						if (ar['mark_as_supplied'] == 'supplied')
 						{
-							gap_str += '<div>' + 'Supplied source: ' + ar['supplied_source'] + '</div>';
+							info_text += '<div>' + 'Supplied source: ';
+							if (ar['supplied_source'] == 'othersupsource')
+							{
+								info_text += ar['supplied_source_other'] + '</div>';
+							} else {
+								info_text += ar['supplied_source'] + '</div>';
+							}
 						}
 						break;
-
+					case 'unclear':
+						info_text = '<div>' + 'Reason: ';
+						if (ar['unclear_text_reason'] == 'otherreason')
+						{
+							info_text += ar['unclear_text_otherreason'];
+						} else {
+							info_text += ar['unclear_text_reason'];
+						}
+						info_text += '</div>';
+						break;
 					default:
 						info_text = wce_class_name;
 						break;
@@ -340,14 +366,13 @@
 
 				if (corr_str != '') {
 					corr_str = '*: ' + $(sele_node).html() + corr_str;
+					if (ar['editorial_note'] != '') {
+						corr_str += '<div>Note: ' + ar['editorial_note'] + '</div>';
+					}
 				}
 
-				if (type_name == 'paratext') {
-					info_text = paratext_str;
-				} else if (type_name == 'gap') {
-					info_text = gap_str;
-				} else {
-					info_text = corr_str + note_str;
+				if (type_name == 'corr') {
+					info_text = corr_str;
 				}
 
 				// information display
