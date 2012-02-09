@@ -43,7 +43,7 @@ body {
 		init_instance_callback : "wceReload",
 
 		// Theme options
-		theme_advanced_buttons1 : "undo,redo,charmap,color_picker|,code,removeformat,|,print,contextmenu,paste,fullscreen,|,breaks,correction,illegible,decoration,abbreviation,paratext,note",
+		theme_advanced_buttons1 : "undo,redo,charmap,|,code,removeformat,|,print,contextmenu,paste,fullscreen,|,breaks,correction,illegible,decoration,abbreviation,paratext,note",
 		theme_advanced_buttons2 : "",
 		theme_advanced_toolbar_location : "top",
 		theme_advanced_toolbar_align : "left",
@@ -59,40 +59,6 @@ body {
 		external_image_list_url : "lists/image_list.js",
 		media_external_list_url : "lists/media_list.js",
 
-		// Style formats
-		style_formats : [ {
-			title : 'Text formatting'
-		}, {
-			title : 'Rubrication',
-			inline : 'span',
-			styles : {
-				color : 'red'
-			}
-		}, {
-			title : 'Gold ink',
-			inline : 'span',
-			styles : {
-				color : '#ffcc00'
-			}
-		}, {
-			title : 'Outsize capitals',
-			inline : 'span',
-			styles : {
-				height : '4'
-			}
-		}, {
-			title : 'Overline',
-			inline : 'span',
-			styles : {
-				'text-decoration' : 'overline'
-			}
-		}, {
-			title : 'Lacunae, spaces, supplied and damaged text'
-		}, {
-			title : 'Lacunae',
-			inline : 'span'
-		} ],
-
 		// Replace values for the template plugin
 		template_replace_values : {
 			username : "Some User",
@@ -104,6 +70,12 @@ body {
 <body>
 	<form method="post" id="wce_form" action=".">
 		<div id="user_toolbar" ></div>
+		<!--<div>
+		<input type="button" style="margin-right: 5px" value="+"
+			onclick="increaseLineHeight();" />
+		<input type="button" style="margin-right: 5px" value="-"
+			onclick="decreaseLineHeight();" />
+		</div>-->
 		<div style="margin: 10px 0px 10px 0px">
 			<textarea id="wce_editor" rows="28" cols="80" style="width: 100%;"></textarea>
 		</div>
@@ -179,5 +151,16 @@ body {
 			}
 		});
 	}
+	
+	function increaseLineHeight() {
+		<!--var lineheight = document.getElementById($(this)).style.lineHeight;-->
+		alert(document.getElementsByTagName('textarea')[0].style.lineHeight);
+		<!--document.getElementByTagName('wce_editor').style.lineHeight = "30px";-->
+	}
+	
+	function decreaseLineHeight() {
+	
+	}
+	
 </script>
 </html>

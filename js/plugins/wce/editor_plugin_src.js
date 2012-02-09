@@ -250,8 +250,9 @@
 				for ( var i = 0; i < info_arr.length; i++) {
 					ar = this._wceParamsToArray(info_arr[i]);
 					var type_name = ar[ed.wceTypeParamInClass];
-
-					switch (type_name) {
+					type_name = type_name.split('_');
+					
+					switch (type_name[0]) {
 					case 'abbr':
 						switch (ar['abbr_type'])
 						{
@@ -356,6 +357,8 @@
 							info_text += ar['unclear_text_reason'];
 						}
 						info_text += '</div>';
+						break;
+					case 'formatting':
 						break;
 					default:
 						info_text = wce_class_name;
@@ -706,12 +709,38 @@
 						}
 					});
 
-					sub.add({
-						title : 'Other colour',
+					sub2 = sub.addMenu({
+						title : 'Other colour'
+					});
+					
+					sub2.add({
+						title : 'Blue',
 						onclick : function() {
-							tinyMCE.activeEditor.execCommand('mceInsertContent', false, '');
+							tinyMCE.activeEditor.execCommand('mceAdd_formatting', 'blue');
 						}
 					});
+					
+					sub2.add({
+						title : 'Green',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_formatting', 'green');
+						}
+					});
+					
+					sub2.add({
+						title : 'Yellow',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_formatting', 'yellow');
+						}
+					});
+					
+					sub2.add({
+						title : 'Other',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_formatting', 'other');
+						}
+					});
+					
 
 					sub.add({
 						title : 'Overline',

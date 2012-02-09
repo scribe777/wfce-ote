@@ -47,9 +47,26 @@ span[class*='__t=formatting_rubrication']{
 	color: red;
 }
 
-span[class*='__t=formatting_gold_ink']{
-	color: #ffcc00;
+span[class*='__t=formatting_gold']{
+	color: gold;
 }
+
+span[class*='__t=formatting_blue']{
+	color: blue;
+}
+
+span[class*='__t=formatting_green']{
+	color: green;
+}
+
+span[class*='__t=formatting_yellow']{
+	color: yellow;
+}
+
+span[class*='__t=formatting_other']{
+	color: #black;
+}
+
 
 span[class*='__t=formatting_overline']{
 	text-decoration: overline;

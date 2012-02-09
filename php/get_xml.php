@@ -343,7 +343,23 @@ function _readOtherClass($xml, $node) {
 				case 'formatting_gold':
 					$formatting_rend = 'gold';
 					break;
-
+				
+				case 'formatting_blue':
+					$formatting_rend = 'blue';
+					break;
+				
+				case 'formatting_green':
+					$formatting_rend = 'green';
+					break;
+				
+				case 'formatting_yellow':
+					$formatting_rend = 'yellow';
+					break;
+				
+				case 'formatting_other':
+					$formatting_rend = 'other';
+					break;
+							
 				case 'formatting_capitals':
 					$formatting_rend = 'cap';
 					$formatting_height = $a['height'];
