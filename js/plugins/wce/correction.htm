@@ -18,7 +18,7 @@
 				</ul>
 			</div>
 			<div style="text-align: right">
-				<input type="button" onclick="addCorrector(); selectCorrItem();"
+				<input type="button" onclick="cont = testOther();if (cont){addCorrector(); selectCorrItem();}else{alert('{#wce.empty_other}');}"
 					value="New" />
 			</div>
 		</fieldset>
@@ -127,7 +127,7 @@
 		</fieldset>
 		<div class="mceActionPanel">
 			<input type="button" id="insert" name="insert" value="{#insert}"
-				onclick="saveCurrCorrector(); writeWceNodeInfo();" /> <input
+				onclick="cont = testOther();if (cont){saveCurrCorrector(); writeWceNodeInfo();}else{alert('{#wce.empty_other}');}" /> <input
 				type="button" id="cancel" name="cancel" value="{#cancel}"
 				onclick="tinyMCEPopup.close();" />
 		</div>
@@ -156,7 +156,13 @@
 		checkstatus_hand();
 		checkstatus_correction();
 	}
-
+	
+	function testOther() {
+		if (document.readinginfo.corrector_name.options[5].selected == true && document.getElementById('corrector_other').value == '') 
+			return false;
+	return true;
+	}
+	
 	function checkstatus_hand() {
 		if ($('#corrector_name').val() == 'hand_other') {
 			$('#corrector_other').attr('disabled', false);
