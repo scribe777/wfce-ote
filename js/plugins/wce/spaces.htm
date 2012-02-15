@@ -41,7 +41,8 @@
 		</fieldset>
 		<div class="mceActionPanel">
 			<input type="button" id="insert" name="insert" value="{#insert}"
-				onclick="writeWceNodeInfo();" /> <input type="button"
+				onclick="cont = testOther();
+						if (cont){writeWceNodeInfo();}else{alert('{#wce.empty_other}');}" /> <input type="button"
 				id="cancel" name="cancel" value="{#cancel}"
 				onclick="tinyMCEPopup.close();" />
 		</div>
@@ -66,5 +67,11 @@
 	function setstatus_spaces() {
 		checkstatus_spacesunit();
 	} 
+	
+	function testOther() {
+		if (document.spacesinfo.sp_unit.options[2].selected == true && document.getElementById('sp_unit_other').value == '') 
+			return false;
+	return true;
+	}
 </script>
 </html>

@@ -358,10 +358,17 @@
 						}
 						info_text += '</div>';
 						break;
-					case 'formatting':
+					case 'spaces':
+						info_text = '<div>' + 'Extent: ' + ar['sp_extent'] + ' ';
+						if (ar['sp_unit'] == 'other')
+						{
+							info_text += ar['sp_unit_other'] + '(s)' + '</div>';
+						} else {
+							info_text += ar['sp_unit'] + '(s)</div>';
+						}
 						break;
 					default:
-						info_text = wce_class_name;
+						info_text = '';
 						break;
 					}
 
