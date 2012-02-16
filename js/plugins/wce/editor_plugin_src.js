@@ -268,7 +268,11 @@
 						}
 						break;
 					case 'note':
-						info_text = ar['note_text'];
+						if (ar['note_type']=='note_other')
+							info_text = '<div>' + ar['other_note_type'] + '</div>';
+						else
+							info_text = '<div>' + ar['note_type'] + '</div>';
+						info_text += '<div style="margin-top:10px">' + ar['note_text'] + '</div>';
 						break;
 					case 'corr':
 						corr_str += '<div style="margin-top:5px">' + ar[ed.wceNameParamInClass] + ': ';

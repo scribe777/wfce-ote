@@ -38,7 +38,8 @@
 		</fieldset>
 		<div class="mceActionPanel">
 			<input type="button" id="insert" name="insert" value="{#insert}"
-				onclick="writeWceNodeInfo();" /> <input type="button"
+				onclick="cont = testOther();
+						if (cont){writeWceNodeInfo();}else{alert('{#wce.empty_other}');}"  /> <input type="button"
 				id="cancel" name="cancel" value="{#cancel}"
 				onclick="tinyMCEPopup.close();" />
 		</div>
@@ -60,8 +61,15 @@
 			document.getElementById('other_note_type').style.backgroundColor = "#CCCCCC";
 		}
 	}
+	
 	function setstatus_note() {
 		checkstatus_notetype();
-	} 
+	}
+
+	function testOther() {
+		if (document.noteinfo.note_type.options[3].selected == true && document.getElementById('other_note_type').value == '') 
+			return false;
+	return true;
+	}	
 </script>
 </html>
