@@ -127,11 +127,11 @@ while ($row = mysql_fetch_array($res)) {
 		$bookNode->appendChild($chapterNode);
 	}
 
-	// 3 Stücke testen
+	/* 3 Stücke testen
 
 	if ($count > 5)
 	break;
-	$count++;
+	$count++; */
 }
 //Ein Element mit Attribute als KinderNote hinzufügen
 function _addAttrNode($xml, $parentNode, $attrName, $attrValue) {
