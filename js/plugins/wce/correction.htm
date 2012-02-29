@@ -134,11 +134,11 @@
 	</form>
 </body>
 <script type="text/javascript">
-	function init() {
-		wceInfoInit('corr');
-
+	function init() { 
+		wceInfoInit('corr'); 
+ 
 		$('#firsthand_reading').html(wce_node_text);
-		$('#original_firsthand_reading').html(wce_node_text);
+		$('#original_firsthand_reading').val(wce_node_text); 
 		for ( var p in info_arr) {
 			addCorrector(p);
 		}
