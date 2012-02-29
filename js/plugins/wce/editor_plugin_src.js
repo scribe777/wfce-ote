@@ -1571,7 +1571,7 @@
 				'font-size' : '12px',
 				'width' : 'auto',
 				'position' : 'absolute',
-				'z-index' : '10',
+				'z-index' : '300000',
 				'overflow' : 'auto',
 				'display' : 'none'
 			});
