@@ -391,9 +391,19 @@
 
 				// information display
 				if (info_text != '') {
+					var new_top=e.clientY;
+					var new_left=e.clientX;
+					if (ed.getParam('fullscreen_is_enabled')){
+						new_top=new_top+30;
+						new_left=new_left+30;
+					}else{
+						new_top=new_top+80;
+						new_left=new_left+80;
+					}
+					
 					tinymce.DOM.setStyles(info_box, {
-						'top' : e.clientY + 80,
-						'left' : e.clientX + 80
+						'top' : new_top,
+						'left' : new_left
 					});
 					info_box.innerHTML = '<div style="background-color: #eee; white-space:normal; padding:10px;border: 1px solid #ff0000">' + info_text + '</div>';
 					$(info_box).show();
