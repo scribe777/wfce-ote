@@ -1585,6 +1585,7 @@
 			var _getNextEnd = _this._getNextEnd;
 			var _getEndNoBlank = _this._getEndNoBlank;
 			var _getTextNode = _this._getTextNode;
+			var _getWceMenuValStatus = this._getWceMenuValStatus;
 
 			ed.onKeyPress.addToTop(_this._setWceControls);
 			ed.onMouseUp.addToTop(_this._setWceControls);
@@ -1769,11 +1770,23 @@
 					// Tastate "Entf" deaktivieren
 					// if(ek==46) delBlock=true;
 
-					var delBlockArr = [ 'paratext', 'gap', 'note', 'spaces' ];
+					var delBlockArr = [ 'paratext', 'gap', 'note', 'spaces', 'brea' ];
 					if (_this._contentHasWceClass(ed, delBlockArr)) {
 						delBlock = true;
 					}
 
+					
+					if (ek == 46) {
+						if ((_this._contentHasWceClass(ed, ['brea']) && _getWceMenuValStatus('delete', '/^__t=brea/'))
+							|| (_this._contentHasWceClass(ed, ['paratext']) && _getWceMenuValStatus('delete', '/^__t=paratext/'))
+							|| (_this._contentHasWceClass(ed, ['gap']) && _getWceMenuValStatus('delete', '/^__t=gap/'))
+							|| (_this._contentHasWceClass(ed, ['note']) && _getWceMenuValStatus('delete', '/^__t=note/'))
+							|| (_this._contentHasWceClass(ed, ['spaces']) && _getWceMenuValStatus('delete', '/^__t=spaces/'))) {
+							tinyMCE.activeEditor.execCommand('wceDelNode');
+						}
+					}
+					
+					
 					// Browser außer IE
 					if (!delBlock && !$.browser.msie && ek == 8) {
 						var rng = ed.selection.getRng(true);
@@ -1845,7 +1858,7 @@
 					var originalText = wceNode.innerText;
 
 					// if tag to remove
-					var node_to_remove = [ 'paratext', 'note', 'gap','brea' ];
+					var node_to_remove = [ 'paratext', 'note', 'gap', 'brea' ];
 					var to_remove = false;
 					for ( var i = 0; i < node_to_remove.length; i++) {
 						if (wce_class_name.indexOf(ed.wceTypeParamInClass + '=' + node_to_remove[i]) > -1) {

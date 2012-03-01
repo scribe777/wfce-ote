@@ -123,6 +123,7 @@ function writeWceNodeInfo(val) {
 			break;
 
 		case 'brea':
+			style += 'color:#666';
 			switch (document.getElementById('break_type').value) {
 				case 'lb':
 					if (val == '1') {
