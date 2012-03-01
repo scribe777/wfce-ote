@@ -267,6 +267,25 @@
 							break;
 						}
 						break;
+					case 'brea':
+						switch (ar['break_type'])
+						{
+						case 'lb':
+							info_text = '<div>Number: ' + ar['number'] + '</div>';
+							if (ar['lb_alignment']!='') {
+								info_text += '<div>Alignment: ' + ar['lb_alignment'];
+							}
+							break;
+						case 'pb':
+							info_text = '<div>' + 'Number: ' + ar['number'] + ar['pb_type'] + '</div>';
+							if (ar['running_title']!='') {
+								info_text += '<div>' + 'Running title: ' + ar['running_title'] + '</div>';
+							}
+							break;
+						default:
+							info_text = '<div>Number: ' + ar['number'] + '</div>';
+						}
+						break;
 					case 'note':
 						if (ar['note_type']=='note_other')
 							info_text = '<div>' + ar['other_note_type'] + '</div>';

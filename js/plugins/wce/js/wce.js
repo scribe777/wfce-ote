@@ -133,15 +133,15 @@ function writeWceNodeInfo(val) {
 				break;
 				
 				case 'cb':
-				new_content='';
+					new_content = '<span style="' + style + '" class="' + new_class + '">CB<br/></span>';
 				break;
 				
 				case 'pb':
-				new_content='';
+					new_content = '<span style="' + style + '" class="' + new_class + '">PB<br/></span>';
 				break;
 			
 				case 'qb':
-				new_content='';
+					new_content = '<span style="' + style + '" class="' + new_class + '">GB<br/></span>';
 				break;
 			}
 			break;

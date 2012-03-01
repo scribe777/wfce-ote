@@ -228,7 +228,7 @@ function _changeNode($xml, $node) {
 }
 
 function _readOtherClass($xml, $node) {
-	global $index, $value;
+	global $index, $value, $page, $column;
 
 	$arr = _classNameToArray($node);
 	if ($arr == null)
@@ -302,18 +302,44 @@ function _readOtherClass($xml, $node) {
 		lb_alignment=
 		*/
 		if ($type == '' && preg_match('/brea/', $a['__t'])) {
-			$index['lb']++;//TODO: attribute n, hier nur fuer automatisch
+			//$index['lb']++;//TODO: attribute n, hier nur fuer automatisch
 			/*
 			 Page (Collate |P 121|): <pb n="121" type="page" xml:id="P121-wit" />
 			Folio (Collate |F 3v|): <pb n="3v" type="folio" xml:id="P3v-wit" />
 			Column (Collate |C 2|): <cb n="2" xml:id="P3vC2-wit" />
 			Line (Collate |L 37|): <lb n="37" xml:id="P3vC2L37-wit" />
 			*/
-			$xml_id='PxxxCxxxL'.$a['number'];
-			$newNode = $xml->createElement('lb');  //TODO: Data aus anderen Felder
-			if(trim($a['number'])!=''){
-				$newNode->setAttribute('n', $a['number']);
+			$newNode = $xml->createElement($a['break_type']);
+			switch ($a['break_type']) {
+				case 'lb':
+					$newNode->setAttribute('n', $a['number']);
+					$xml_id='P'.$page.'C'.$column.'L'.$a['number'];
+				break;
+				case 'cb':
+					$column=$a['number'];
+					$newNode->setAttribute('n', $column);
+					$xml_id='P'.$page.'C'.$column;
+				break;
+				case 'pb':
+					//Decide whether folio or page
+					if ($a['pb_type']!='') { //folio
+						$page=$a['number'].$a['pb_type'];
+						$newNode->setAttribute('n', $page);
+						$newNode->setAttribute('type', 'folio');
+					} else { //page
+						$page=$a['number'];
+						$newNode->setAttribute('n', $page);
+						$newNode->setAttribute('type', 'page');
+					}
+					$xml_id='P'.$page;
+				break;
+				case 'qb':
+					$xml_id='QB'.$a['number'];
+				break;
 			}
+			/*if(trim($a['number'])!=''){
+				$newNode->setAttribute('n', $a['number']);
+			}*/
 			$newNode->setAttribute('xml:id', $xml_id);
 
 			$node->parentNode->replaceChild($newNode, $node);
