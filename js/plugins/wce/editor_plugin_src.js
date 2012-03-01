@@ -1529,14 +1529,15 @@
 				ed.selection.setContent('<span class="' + ed.wceTypeParamInClass + '=' + className + '"' + style + '>' + character + '</span> ');
 				break;
 			case 'brea':
+				style += 'color:#666';
 				if (character == 'lb') { //line break at the end of a word
 					ed.selection.setContent('<span class="' + ed.wceTypeParamInClass + '=' + className + '"' + style + '>' + '&crarr;' + '</span> ');
 				} else if (character == 'lbm') { //line break in the middle of a word
-					ed.selection.setContent('<span class="' + ed.wceTypeParamInClass + '=' + className + '"' + style + '>' + '&#8208;&crarr;' + '</span> ');
+					ed.selection.setContent('<span class="' + ed.wceTypeParamInClass + '=' + className + '"' + style + '>' + '&hyphen;&crarr;' + '</span> ');
 				} else if (character == 'cb') { //column break
-				
+					ed.selection.setContent('<span class="' + ed.wceTypeParamInClass + '=' + className + '"' + style + '>' + 'CB' + '</span> ');
 				} else if (character == 'pb') { //page break
-				
+					ed.selection.setContent('<span class="' + ed.wceTypeParamInClass + '=' + className + '"' + style + '>' + 'PB<br/>' + '</span> ');
 				} else { //quire break
 				}
 				break;
@@ -1734,6 +1735,7 @@
 				// versernumber schuetzen
 				// TODO: testen, ob Editor Focus hat
 				tinymce.dom.Event.add(ed.getDoc(), 'keydown', function(e) {
+					if (!e) var e = window.event;
 					var ek = e.keyCode;
 					var delBlock = false;
 					ed.wceKeydownBlock = false;
@@ -1741,8 +1743,11 @@
 					if (ek == 17 || (ek > 32 && ek < 41))
 						return;
 
-					if (ek == 13) // Enter
-					{
+					if (ek == 13 && e.shiftKey && e.ctrlKey) { //Strg+Shift -> page break
+						_wceAddNoDialog(ed, 'brea', 'pb');
+					} else if (ek == 13 && e.shiftKey) {//Shift+Enter -> column break
+						_wceAddNoDialog(ed, 'brea', 'cb');
+					} else if (ek == 13) { // Enter -> line break
 						var rng = ed.selection.getRng(true);
 						var startNode = rng.startContainer;
 						var startText = startNode.data ? startNode.data : startNode.innerText;
@@ -1753,7 +1758,7 @@
 							_wceAddNoDialog(ed, 'brea', 'lbm');
 						}
 					}
-					
+											
 					if (ek == 56 && e.shiftKey ) //(
 					{
 						

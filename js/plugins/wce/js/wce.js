@@ -135,6 +135,7 @@ function writeWceNodeInfo(val) {
 				
 				case 'cb':
 					new_content = '<span style="' + style + '" class="' + new_class + '">CB<br/></span>';
+					new_content += '<span style="' + style + '" class="' + '__t=brea&amp;__n=&amp;break_type=lb&amp;number=1&amp;pb_type=&amp;running_title=&amp;lb_alignment=leftJust&amp;insert=Insert&amp;cancel=Cancel' + '">&crarr;<br/></span>';
 				break;
 				
 				case 'pb':
