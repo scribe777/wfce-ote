@@ -15,8 +15,7 @@
 				<tr>
 					<td><label id="fw_label" for="fw_type">{#wce.paratext}</label>
 					</td>
-					<td><select id="fw_type" name="fw_type"
-						onchange="checkstatus_typ()">
+					<td><select id="fw_type" name="fw_type">
 							<option value="num_chapternumber">{#wce.fw_chapter_number}</option>
 							<option value="fw_chaptertitle">{#wce.fw_chapter_title}</option>
 							<option value="fw_lecttitle">{#wce.fw_lectionary_title}</option>
@@ -28,6 +27,7 @@
 							<option value="num_eusebian">{#wce.fw_eusebian}</option>
 							<option value="fw_euthaliana">{#wce.fw_euthaliana}</option>
 							<option value="fw_gloss">{#wce.fw_gloss}</option>
+							<option value="num_stichoi">{#wce.fw_stichoi}</option>
 					</select>
 					</td>
 					<!--<td><input id="type_text" name="type_text" type="text"
@@ -35,17 +35,15 @@
 						class="required number min1 mceFocus" /></td>-->
 				</tr>
 				<tr>
-					<td><label id="num_label" for="number">Numeral as
-							attribute</label></td>
-					<td><input id="number" name="number" type="text" value=""
-						size="10" maxlength="" class="required number min1 mceFocus" /></td>
+					<td><label id="num_label" for="number">{#wce.text_or_numeral}</label></td>
+					<td colspan="2"><input id="number" name="number" type="text" value=""
+						size=45" maxlength="" class="required number min1 mceFocus" /></td>
 				</tr>
 				<tr>
 					<td><label id="paratext_position_label"
 						for="paratext_position">{#wce.position}</label>
 					</td>
-					<td><select id="paratext_position" name="paratext_position"
-						onchange="checkstatus_position()">
+					<td><select id="paratext_position" name="paratext_position">
 							<option value="pagetop">{#wce.position_top}</option>
 							<option value="pagebottom">{#wce.position_bottom}</option>
 							<option value="pageleft">{#wce.position_left}</option>
@@ -87,7 +85,7 @@
 	function init() {
 		wceInfoInit('paratext');
 		readWceNodeInfo();
-		setstatus_paratext();
+		//setstatus_paratext();
 	}
 
 	function getParaTag() {

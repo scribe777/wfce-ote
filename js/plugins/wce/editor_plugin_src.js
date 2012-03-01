@@ -313,6 +313,9 @@
 						case 'fw_lecttitle':
 							info_text += 'Lectionary title';
 							break;
+						case 'num_stichoi':
+							info_text += 'Stichoi';
+							break;
 						}
 						info_text += '</div>';
 						info_text += '<div style="margin-top:10px">Value: ' + ar['type_text'] + '</div>';
