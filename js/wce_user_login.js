@@ -360,7 +360,7 @@ function WceUserToolbar(parent_container_id) {
 
 	testBeforeChapterNavi = function() {
 		if (isEditorDirty()) {
-			if (confirm('Your changes have not been saved.\n want to you save the changes and navigate away from this Chapter?')) {
+			if (confirm('Your changes have not been saved yet.\nClick "OK" to save them or "Cancel" to discard changes.')) { // has to be localized
 				saveDB();
 			}
 		}

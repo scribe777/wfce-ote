@@ -194,4 +194,5 @@ tinyMCE.addI18n('en.wce',{
 	meta_tab_general : "Misc",
 	meta_general : "Misc settings",
 	empty_other : "Please enter text for all &quot;other&quot; fields",
+	save : 'Your changes have not been saved yet.\nClick "OK" to save them or "Cancel" to discard changes.'
 });
