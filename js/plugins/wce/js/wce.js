@@ -94,10 +94,13 @@ function writeWceNodeInfo(val) {
 	}
 
 	var new_class = arrayToString(info_arr);
-	new_class += other_info_str;  
+	new_class += other_info_str;   
 
 	if (wce_node != null && new_class == '') {
 		ed.execCommand('wceDelNode', false);
+		tinyMCEPopup.close();
+		return;
+	}else if(new_class==''){
 		tinyMCEPopup.close();
 		return;
 	}
@@ -108,6 +111,7 @@ function writeWceNodeInfo(val) {
 
 		// new content
 		var new_content;
+		var original_text=' wce_orig="'+selected_content+'" ';
 
 		switch (wce_type) {
 		case 'gap':
@@ -127,23 +131,23 @@ function writeWceNodeInfo(val) {
 			switch (document.getElementById('break_type').value) {
 				case 'lb':
 					if (val == '1') {
-						new_content = '<span style="' + style + '" class="' + new_class + '">&crarr;<br/></span>';
+						new_content = '<span style="' + style + '" '+original_text+' class="' + new_class + '">&crarr;<br/></span>';
 					} else {
-						new_content = '<span style="' + style + '" class="' + new_class + '">&hyphen;&crarr;<br/></span>';
+						new_content = '<span style="' + style + '" '+original_text+' class="' + new_class + '">&hyphen;&crarr;<br/></span>';
 					}
 				break;
 				
 				case 'cb':
-					new_content = '<span style="' + style + '" class="' + new_class + '">CB<br/></span>';
-					new_content += '<span style="' + style + '" class="' + '__t=brea&amp;__n=&amp;break_type=lb&amp;number=1&amp;pb_type=&amp;running_title=&amp;lb_alignment=leftJust&amp;insert=Insert&amp;cancel=Cancel' + '">&crarr;<br/></span>';
+					new_content = '<span style="' + style + '" '+original_text+' class="' + new_class + '">CB<br/></span>';
+					new_content += '<span style="' + style + '" '+original_text+' class="' + '__t=brea&amp;__n=&amp;break_type=lb&amp;number=1&amp;pb_type=&amp;running_title=&amp;lb_alignment=leftJust&amp;insert=Insert&amp;cancel=Cancel' + '">&crarr;<br/></span>';
 				break;
 				
 				case 'pb':
-					new_content = '<span style="' + style + '" class="' + new_class + '">PB<br/></span>';
+					new_content = '<span style="' + style + '" '+original_text+' class="' + new_class + '">PB<br/></span>';
 				break;
 			
 				case 'qb':
-					new_content = '<span style="' + style + '" class="' + new_class + '">GB<br/></span>';
+					new_content = '<span style="' + style + '" '+original_text+' class="' + new_class + '">GB<br/></span>';
 				break;
 			}
 			break;
@@ -169,7 +173,7 @@ function writeWceNodeInfo(val) {
 			break;
 
 		case 'note':
-			new_content = selected_content + '<span style="vertical-align:super; color:blue; font-size:12px; margin-right:2px" class="' + new_class + '" >Note</span>';
+			new_content = selected_content + '<span style="vertical-align:super; color:blue; font-size:12px; margin-right:2px" '+original_text +' class="' + new_class + '" >Note</span>';
 			break;
 
 		case 'abbr':
@@ -196,7 +200,7 @@ function writeWceNodeInfo(val) {
 		}
 
 		if (new_content == null)
-			new_content = '<span style="' + style + '" class="' + new_class + '" >' + selected_content + '</span>';
+			new_content = '<span style="' + style + '" '+original_text+' class="' + new_class + '" >' + selected_content + '</span>';
 		
 		 
 		ed.selection.setContent(new_content);
@@ -276,7 +280,7 @@ function formSerialize(f, wce_name) {
 function arrayToString(arr) {
 	var s = '';
 	for ( var p in arr) {
-		if (p == null || arr[p] == null)
+		if (p == null || arr[p] == null || p=='c-1')
 			continue;
 
 		if (s != '') {

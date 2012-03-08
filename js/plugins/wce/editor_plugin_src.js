@@ -1860,8 +1860,9 @@
 				if (wceNode != null) {
 					ed.selection.select(wceNode);
 					var wce_class_name = wceNode.className;
-					var originalText = wceNode.innerText;
+					var originalText = wceNode.getAttribute('wce_orig'); 
 
+					/*
 					// if tag to remove
 					var node_to_remove = [ 'paratext', 'note', 'gap', 'brea' ];
 					var to_remove = false;
@@ -1875,8 +1876,14 @@
 					if (to_remove) { 
 						$(wceNode).remove();
 					} else if (typeof originalText != 'undefined') {
-						ed.selection.setContent(originalText);
+						ed.selection.setContent(originalText);alert(originalText);
 					}
+					*/
+					wceNode.parentNode.removeChild(wceNode);
+					
+					if(originalText)
+						ed.selection.setContent(originalText);
+						
 					ed.isNotDirty = 0;
 				}
 			});
