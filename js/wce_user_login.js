@@ -19,7 +19,7 @@ function WceUserToolbar(parent_container_id) {
 	
 
 	// html init
-	var t_html = '<input type="button" onclick="saveDB();" id="save_button"  value="Save" /><input id="login_button" type="button" value="Login" /><input id="open_file_button" type="button" disabled value="Open" /><div id="open_file_box" style="border: 1px solid #000; display: none; padding: 1px; width: 450px; height: 400px; position: absolute; z-index: 2; background-color: #efefef;"><div style="width: 100%; height: 100%; position: relativ; padding-left: 10px"><div id="import_file_box" style="display: none; position: absolute; height: 80%; top: -10px; width: 80%; z-index: 3; right: 0px; background-color: #ddd; border: 1px solid #000"><div style="text-align: right"><input type="button" value="Close" id="import_cancel" /> <input type="button" value="ok" id="import_ok" /></div><div id="base_file_list_wrap" style="padding: 10px; overflow: auto; height: 80%"></div></div>Usertext:<div id="user_file_list_wrap" style="padding: 10px; overflow: auto; height: 340px;"></div><div style="position: absolute; bottom: 10px"><input type="button" value="Ok" id="open_file_ok" /> <input type="button" value="Close" id="open_file_cancel" />&nbsp;&nbsp;&nbsp;&nbsp; <input type="button" value="Rename" id="open_file_rename" /> <input type="button" value="Delete" id="open_file_delete" /> <input type="button" value="Import base text" id="open_file_import" /></div></div></div> <span id="tool_span"></span>';
+	var t_html = '<input type="button" onclick="saveDB();" id="save_button"  value="Save" /><input id="login_button" type="button" value="Login" /><input id="open_file_button" type="button" disabled value="Open" /><div id="open_file_box" style="border: 1px solid #000; display: none; padding: 1px; width: 450px; height: 400px; position: absolute; z-index: 2; background-color: #efefef;"><div style="width: 100%; height: 100%; position: relativ; padding-left: 10px"><div id="import_file_box" style="display: none; position: absolute; height: 80%; top: -10px; width: 80%; z-index: 3; right: 0px; background-color: #ddd; border: 1px solid #000"><div style="text-align: right"><input type="button" value="Close" id="import_cancel" /> <input type="button" value="ok" id="import_ok" /></div><div id="base_file_list_wrap" style="padding: 10px; overflow: auto; height: 80%"></div></div>Usertext:<div id="user_file_list_wrap" style="padding: 10px; overflow: auto; height: 340px;"></div><div style="position: absolute; bottom: 10px"><input type="button" value="Ok" id="open_file_ok" /> <input type="button" value="Close" id="open_file_cancel" />&nbsp;&nbsp;&nbsp;&nbsp; <input type="button" value="Rename" id="open_file_rename" /> <input type="button" value="Delete" id="open_file_delete" /> <input type="button" value="Import base text" id="open_file_import" /></div></div></div><input type="button" id="userSetup" onclick="wceUserSetup(this);" value="Setup" style="display:none" /> <span id="tool_span"></span>';
 	$(parent_container).html(t_html);
 
 	// read user info
@@ -45,6 +45,13 @@ function WceUserToolbar(parent_container_id) {
 						$('#login_button').val('User:' + curr_user_name);
 						$('#open_file_button').attr('disabled', false);
 					});
+					
+					if(curr_user_name=='gan' || curr_user_name=='martin'){
+						$('#userSetup').show();
+					}else{
+						$('#userSetup').hide();
+					}
+					
 				} else {
 					$(document).ready(function() {
 						$('#login_button').val('Login');
