@@ -968,7 +968,7 @@
 				});
 
 				c.onRenderMenu.add(function(c, m) {
-					var sub, sub2, sub3, sub4, sub5, sub6, sub7, sub8;
+					var sub, sub2, sub3, sub4, sub5, sub6, sub7, sub8, sub9, sub10, sub11, sub12, sub13;
 
 					sub = m.addMenu({
 						title : 'Mark highlighted text as abbreviation',
@@ -1023,6 +1023,28 @@
 					sub = m.addMenu({
 						title : 'Add preformed abbreviations'
 					});
+					
+					/*
+					α	\u03B1
+					β	\u03B2
+					γ	\u03B3
+					δ	\u03B4
+					ε	\u03B5
+					ζ	\u03B6
+					η	\u03B7
+					θ	\u03B8
+					ι	\u03B9
+					κ	\u03BA
+					λ	\u03BB
+					μ	\u03BC
+					ν	\u03BD
+					ξ	\u03BE
+					ο	\u03BF
+					π	\u03C0
+					ρ	\u03C1
+					ς	\u03C2
+					ω	\u03C9
+					*/
 
 					sub.add({
 						title : '\u03D7 Kai compendium',
@@ -1031,6 +1053,87 @@
 						}
 					});
 
+					sub8 = sub.addMenu({
+						title : '\u03B1\u03BD'
+					});
+
+					sub8.add({
+						title : '\u03B1\u03BD\u03BF\u03C2',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', '\u03B1\u03BD\u03BF\u03C2');
+						}
+					});
+
+					sub8.add({
+						title : '\u03B1\u03BD\u03BF\u03C5',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', '\u03B1\u03BD\u03BF\u03C5');
+						}
+					});
+
+					sub8.add({
+						title : '\u03B1\u03BD\u03C9',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', '\u03B1\u03BD\u03C9');
+						}
+					});
+					
+					sub8.add({
+						title : '\u03B1\u03BD\u03BF\u03BD',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', '\u03B1\u03BD\u03BF\u03BD');
+						}
+					});
+					
+					sub8.add({
+						title : '\u03B1\u03BD\u03B5',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', '\u03B1\u03BD\u03C5');
+						}
+					});
+										
+					sub8.add({
+						title : '\u03B1\u03BD\u03BF\u03B9',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', '\u03B1\u03BD\u03BF\u03B9');
+						}
+					});
+
+					sub8.add({
+						title : '\u03B1\u03BD\u03C9\u03BD',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', '\u03B1\u03BD\u03C9\u03BD');
+						}
+					});
+
+					sub8.add({
+						title : '\u03B1\u03BD\u03BF\u03C5',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', '\u03B1\u03BD\u03BF\u03C5');
+						}
+					});
+
+					sub8.add({
+						title : '\u03B1\u03BD\u03BF\u03B9\u03C2',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', '\u03B1\u03BD\u03BF\u03B9\u03C2');
+						}
+					});
+
+					sub8.add({
+						title : '\u03B1\u03BD\u03BF\u03C5\u03C2',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', '\u03B1\u03BD\u03BF\u03C5\u03C2');
+						}
+					});
+										
+					sub.add({
+						title : '\u03B4\u03B1\u03B4',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', '\u03B4\u03B1\u03B4');
+						}
+					});
+					
 					sub2 = sub.addMenu({
 						title : '\u03B8'
 					});
@@ -1039,13 +1142,6 @@
 						title : '\u03B8\u03C2',
 						onclick : function() {
 							tinyMCE.activeEditor.execCommand('mceAdd_abbr', '\u03B8\u03C2');
-						}
-					});
-
-					sub2.add({
-						title : '\u03B8\u03BD',
-						onclick : function() {
-							tinyMCE.activeEditor.execCommand('mceAdd_abbr', '\u03B8\u03BD');
 						}
 					});
 
@@ -1062,6 +1158,145 @@
 						}
 					});
 
+					sub2.add({
+						title : '\u03B8\u03BD',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', '\u03B8\u03BD');
+						}
+					});
+
+					sub2.add({
+						title : '\u03B8\u03B5',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', '\u03B8\u03B5');
+						}
+					});
+					//------------------------------------------------------------------------
+					/*
+					ιηλμ
+					ιλημ
+					-----
+					ις
+					ιυ
+					ιν
+					-----
+					ιηλ
+					ισλ
+					ισηλ
+					*/
+
+					sub5 = sub.addMenu({
+						title : 'ι'
+					});
+
+					sub5.add({
+						title : 'ιηλμ',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'ιηλμ');
+						}
+					});
+
+					sub5.add({
+						title : 'ιλημ',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'ιλημ');
+						}
+					});
+
+					sub5.add({
+						title : 'ις',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'ις');
+						}
+					});
+					
+					sub5.add({
+						title : 'ιυ',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'ιυ');
+						}
+					});
+					
+					sub5.add({
+						title : 'ιν',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'ιν');
+						}
+					});
+					
+					sub5.add({
+						title : 'ιηλ',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'ιηλ');
+						}
+					});
+					
+					sub5.add({
+						title : 'ισλ',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'ισλ');
+						}
+					});
+					
+					sub5.add({
+						title : 'ισηλ',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'ισηλ');
+						}
+					});
+					//-----------------------------------------------------------------------
+					/*
+					ιω
+					ιωης
+					ιωου
+					ιωω
+					ιωην
+					*/
+					sub11 = sub.addMenu({
+						title : '\u03B9\u03C9'
+					});
+					
+					sub11.add({
+						title : '\u03B9\u03C9',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', '\u03B9\u03C9');
+						}
+					});
+					
+					sub11.add({
+						title : 'ιωης',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'ιωης');
+						}
+					});
+					
+					sub11.add({
+						title : 'ιωου',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'ιωου');
+						}
+					});
+					
+					sub11.add({
+						title : 'ιωω',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'ιωω');
+						}
+					});
+					
+					sub11.add({
+						title : 'ιωην',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'ιωην');
+						}
+					});
+					//------------------------------------------------------------------------
+					/*κς
+					κυ
+					κω
+					κν
+					κε
+					*/
 					sub3 = sub.addMenu({
 						title : '\u03BA'
 					});
@@ -1074,6 +1309,20 @@
 					});
 
 					sub3.add({
+						title : '\u03BA\u03C5',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', '\u03BA\u03C5');
+						}
+					});
+					
+					sub3.add({
+						title : '\u03BA\u03C9',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', '\u03BA\u03C9');
+						}
+					});
+										
+					sub3.add({
 						title : '\u03BA\u03BD',
 						onclick : function() {
 							tinyMCE.activeEditor.execCommand('mceAdd_abbr', '\u03BA\u03BD');
@@ -1081,69 +1330,224 @@
 					});
 
 					sub3.add({
-						title : '\u03BA\u03C5',
+						title : '\u03BA\u03B5',
 						onclick : function() {
-							tinyMCE.activeEditor.execCommand('mceAdd_abbr', '\u03BA\u03C5');
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', '\u03BA\u03B5');
+						}
+					});
+					//--------------------------------------------------------------------------
+					//μ	\u03BC
+					/*
+					μηρ
+					μος
+					μρς
+					μρι
+					μρα
+					μερ
+					*/
+					sub12 = sub.addMenu({
+						title : '\u03BC'
+					});
+					
+					sub12.add({
+						title : '\u03BC\u03B7\u03C1',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', '\u03BA\u03B7\u03C1');
+						}
+					});
+					
+					sub12.add({
+						title : '\u03BC\u03BF\u03C2',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', '\u03BA\u03BF\u03C2');
+						}
+					});
+					
+					sub12.add({
+						title : '\u03BC\u03C1\u03C2',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', '\u03BA\u03B7\u03C1');
+						}
+					});
+					
+					sub12.add({
+						title : '\u03BC\u03C1\u03B9',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', '\u03BA\u03B7\u03C1');
+						}
+					});
+					
+					sub12.add({
+						title : '\u03BC\u03C1\u03B1',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', '\u03BA\u03B7\u03C1');
+						}
+					});
+					
+					sub12.add({
+						title : '\u03BC\u03B5\u03C1',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', '\u03BA\u03B7\u03C1');
+						}
+					});
+					//------------------------------------------------------------------------------------
+					sub9 = sub.addMenu({
+						title : '\u03BF\u03C5\u03BD'
+					});
+
+					sub9.add({
+						title : '\u03BF\u03C5\u03BD\u03BF\u03C2',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', '\u03BF\u03C5\u03BD\u03BF\u03C2');
 						}
 					});
 
-					sub4 = sub.addMenu({
-						title : '\u03C7'
-					});
-
-					sub4.add({
-						title : '\u03C7\u03C2',
+					
+					sub9.add({
+						title : '\u03BF\u03C5\u03BD\u03BF\u03C5',
 						onclick : function() {
-							tinyMCE.activeEditor.execCommand('mceAdd_abbr', '\u03C7\u03C2');
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', '\u03BF\u03C5\u03BD\u03BF\u03C5');
 						}
 					});
 
-					sub4.add({
-						title : '\u03C7\u03BD',
+					sub9.add({
+						title : '\u03BF\u03C5\u03BD\u03C9',
 						onclick : function() {
-							tinyMCE.activeEditor.execCommand('mceAdd_abbr', '\u03C7\u03BD');
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', '\u03BF\u03C5\u03BD\u03C9');
 						}
 					});
 
-					sub4.add({
-						title : '\u03C7\u03C5',
+					sub9.add({
+						title : '\u03BF\u03C5\u03BD\u03BF\u03BD',
 						onclick : function() {
-							tinyMCE.activeEditor.execCommand('mceAdd_abbr', '\u03C7\u03C5');
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', '\u03BF\u03C5\u03BD\u03BF\u03BD');
+						}
+					});
+					
+					sub9.add({
+						title : '\u03BF\u03C5\u03BD\u03BF\u03B9',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', '\u03BF\u03C5\u03BD\u03BF\u03B9');
 						}
 					});
 
-					sub4.add({
-						title : '\u03C7\u03C9',
+					sub9.add({
+						title : '\u03BF\u03C5\u03BD\u03C9\u03BD',
 						onclick : function() {
-							tinyMCE.activeEditor.execCommand('mceAdd_abbr', '\u03C7\u03C9');
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', '\u03BF\u03C5\u03BD\u03C9\u03BD');
 						}
 					});
 
-					sub5 = sub.addMenu({
-						title : '\u03B9'
+					sub9.add({
+						title : '\u03BF\u03C5\u03BD\u03BF\u03B9\u03C2',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', '\u03BF\u03C5\u03BD\u03BF\u03B9\u03C2');
+						}
+					});
+					
+					sub9.add({
+						title : '\u03BF\u03C5\u03BD\u03BF\u03C5\u03C2',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', '\u03BF\u03C5\u03BD\u03BF\u03C5\u03C2');
+						}
+					});
+					//-----------------------------------------------------------------------------------------------
+					/*
+					πηρ
+					πρς
+					πρι
+					πρα
+					περ
+					πρες
+					πρων
+					πρασιν
+					πρας
+					*/
+					sub13 = sub.addMenu({
+						title : 'π'
 					});
 
-					sub5.add({
-						title : '\u03B9\u03C2',
+					sub13.add({
+						title : 'πηρ',
 						onclick : function() {
-							tinyMCE.activeEditor.execCommand('mceAdd_abbr', '\u03B9\u03C2');
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'πηρ');
 						}
 					});
 
-					sub5.add({
-						title : '\u03B9\u03BD',
+					sub13.add({
+						title : 'πρς',
 						onclick : function() {
-							tinyMCE.activeEditor.execCommand('mceAdd_abbr', '\u03B9\u03BD');
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'πρς');
 						}
 					});
-
-					sub5.add({
-						title : '\u03B9\u03C5',
+					
+					sub13.add({
+						title : 'πρι',
 						onclick : function() {
-							tinyMCE.activeEditor.execCommand('mceAdd_abbr', '\u03B9\u03C5');
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'πρι');
 						}
 					});
-
+					
+					sub13.add({
+						title : 'πρα',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'πρα');
+						}
+					});
+					
+					sub13.add({
+						title : 'περ',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'περ');
+						}
+					});
+					
+					sub13.add({
+						title : 'πρες',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'πρες');
+						}
+					});
+					
+					sub13.add({
+						title : 'πρων',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'πρων');
+						}
+					});
+					
+					sub13.add({
+						title : 'πρασιν',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'πρασιν');
+						}
+					});
+					
+					sub13.add({
+						title : 'πρας',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'πρας');
+						}
+					});
+					//--------------------------------------------------------------------------
+					/*
+					πνα
+					πνς
+					πνι
+					πνατα
+					πνατων
+					πνων
+					πνασι
+					-----
+					πμικος
+					πνικη
+					πνικον
+					πνικα
+					πνικων
+					πνικοις
+					πνικως
+					*/
+					
 					sub6 = sub.addMenu({
 						title : '\u03C0\u03BD'
 					});
@@ -1169,173 +1573,277 @@
 						}
 					});
 
-					sub7 = sub.addMenu({
-						title : '\u03C0\u03C1'
+					sub6.add({
+						title : 'πνατα',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'πνατα');
+						}
+					});
+					
+					sub6.add({
+						title : 'πνατων',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'πνατων');
+						}
+					});
+					
+					sub6.add({
+						title : 'πνων',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'πνων');
+						}
+					});
+					
+					sub6.add({
+						title : 'πνασι',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'πνασι');
+						}
+					});
+					
+					sub6.add({
+						title : 'πμικος',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'πμικος');
+						}
+					});
+					
+					sub6.add({
+						title : 'πνικη',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'πνικη');
+						}
+					});
+					
+					sub6.add({
+						title : 'πνικον',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'πνικον');
+						}
+					});
+					
+					sub6.add({
+						title : 'πνικα',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'πνικα');
+						}
+					});
+					
+					sub6.add({
+						title : 'πνικων',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'πνικων');
+						}
+					});
+					
+					sub6.add({
+						title : 'πνικοις',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'πνικοις');
+						}
+					});
+					
+					sub6.add({
+						title : 'πνικως',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'πνικως');
+						}
+					});
+					//------------------------------------------------------------------------
+					/*
+					σρς
+					σρου
+					σρω
+					-----
+					στρθη
+					εσρωθη
+					στρωσουσιν
+					-----
+					σωρ
+					σηρ
+					σρι
+					σρα
+					*/
+					sub5 = sub.addMenu({
+						title : 'σ'
+					});
+					
+					sub5.add({
+						title : 'σρς',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'σρς');
+						}
+					});
+					
+					sub5.add({
+						title : 'σρου',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'σρου');
+						}
+					});
+					
+					sub5.add({
+						title : 'σρω',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'σρω');
+						}
+					});
+					
+					sub5.add({
+						title : 'στρθη',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'στρθη');
+						}
+					});
+					
+					sub5.add({
+						title : 'εσρωθη',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'εσρωθη');
+						}
+					});
+					
+					sub5.add({
+						title : 'στρωσουσιν',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'στρωσουσιν');
+						}
+					});
+					
+					sub5.add({
+						title : 'σωρ',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'σωρ');
+						}
+					});
+					
+					sub5.add({
+						title : 'σηρ',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'σηρ');
+						}
+					});
+					
+					sub5.add({
+						title : 'σρα',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'σρα');
+						}
+					});
+					
+					sub5.add({
+						title : 'σρς',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'σρς');
+						}
+					});
+					
+					
+					//--------------------------------------------------------------------------
+					/*
+					υς
+					υυ
+					υω
+					υν
+					υε
+					*/
+					sub10 = sub.addMenu({
+						title : 'υ'
+					});
+					
+					sub10.add({
+						title : 'υς',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'υς');
+						}
+					});
+					
+					sub10.add({
+						title : 'υυ',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'υυ');
+						}
+					});
+					
+					sub10.add({
+						title : 'υω',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'υω');
+						}
+					});
+					
+					sub10.add({
+						title : 'υν',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'υν');
+						}
+					});
+					
+					sub10.add({
+						title : 'υε',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'υε');
+						}
+					});
+					//--------------------------------------------------------------------------
+					/*
+					χς
+					χυ
+					χρυ
+					χω
+					χν
+					χε
+					*/
+					
+					sub4 = sub.addMenu({
+						title : 'χ'
 					});
 
-					sub7.add({
-						title : '\u03C0\u03C1',
+					sub4.add({
+						title : 'χς',
 						onclick : function() {
-							tinyMCE.activeEditor.execCommand('mceAdd_abbr', '\u03C0\u03C1');
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'χς');
 						}
 					});
 
-					sub7.add({
-						title : '\u03C0\u03C1\u03B1',
+					sub4.add({
+						title : 'χυ',
 						onclick : function() {
-							tinyMCE.activeEditor.execCommand('mceAdd_abbr', '\u03C0\u03C1\u03B1');
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'χυ');
 						}
 					});
 
-					sub7.add({
-						title : '\u03C0\u03C1\u03C2',
+					sub4.add({
+						title : 'χρυ',
 						onclick : function() {
-							tinyMCE.activeEditor.execCommand('mceAdd_abbr', '\u03C0\u03C1D\u03C2');
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'χρυ');
 						}
 					});
 
-					sub7.add({
-						title : '\u03C0\u03C1\u03B9',
+					sub4.add({
+						title : 'χω',
 						onclick : function() {
-							tinyMCE.activeEditor.execCommand('mceAdd_abbr', '\u03C0\u03C1\u03B9');
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'χω');
 						}
 					});
-
-					sub.add({
-						title : '\u03B9\u03B7\u03BB',
+										
+					sub4.add({
+						title : 'χν',
 						onclick : function() {
-							tinyMCE.activeEditor.execCommand('mceAdd_abbr', '\u03B9\u03B7\u03BB');
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'χν');
 						}
 					});
-
-					sub8 = sub.addMenu({
-						title : '\u03B1\u03BD'
-					});
-
-					sub8.add({
-						title : '\u03B1\u03BD\u03BF\u03C2',
+					
+					sub4.add({
+						title : 'χε',
 						onclick : function() {
-							tinyMCE.activeEditor.execCommand('mceAdd_abbr', '\u03B1\u03BD\u03BF\u03C2');
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'χε');
 						}
 					});
-
-					sub8.add({
-						title : '\u03B1\u03BD\u03BF\u03BD',
-						onclick : function() {
-							tinyMCE.activeEditor.execCommand('mceAdd_abbr', '\u03B1\u03BD\u03BF\u03BD');
-						}
-					});
-
-					sub8.add({
-						title : '\u03B1\u03BD\u03BF\u03C5',
-						onclick : function() {
-							tinyMCE.activeEditor.execCommand('mceAdd_abbr', '\u03B1\u03BD\u03BF\u03C5');
-						}
-					});
-
-					sub8.add({
-						title : '\u03B1\u03BD\u03C9',
-						onclick : function() {
-							tinyMCE.activeEditor.execCommand('mceAdd_abbr', '\u03B1\u03BD\u03C9');
-						}
-					});
-
-					sub8.add({
-						title : '\u03B1\u03BD\u03BF\u03B9',
-						onclick : function() {
-							tinyMCE.activeEditor.execCommand('mceAdd_abbr', '\u03B1\u03BD\u03BF\u03B9');
-						}
-					});
-
-					sub8.add({
-						title : '\u03B1\u03BD\u03BF\u03C5\u03C2',
-						onclick : function() {
-							tinyMCE.activeEditor.execCommand('mceAdd_abbr', '\u03B1\u03BD\u03BF\u03C5\u03C2');
-						}
-					});
-
-					sub8.add({
-						title : '\u03B1\u03BD\u03C9\u03BD',
-						onclick : function() {
-							tinyMCE.activeEditor.execCommand('mceAdd_abbr', '\u03B1\u03BD\u03C9\u03BD');
-						}
-					});
-
-					sub8.add({
-						title : '\u03B1\u03BD\u03BF\u03C5',
-						onclick : function() {
-							tinyMCE.activeEditor.execCommand('mceAdd_abbr', '\u03B1\u03BD\u03BF\u03C5');
-						}
-					});
-
-					sub8.add({
-						title : '\u03B1\u03BD\u03BF\u03B9\u03C2',
-						onclick : function() {
-							tinyMCE.activeEditor.execCommand('mceAdd_abbr', '\u03B1\u03BD\u03BF\u03B9\u03C2');
-						}
-					});
-
-					sub9 = sub.addMenu({
-						title : '\u03BF\u03C5\u03BD'
-					});
-
-					sub9.add({
-						title : '\u03BF\u03C5\u03BD\u03BF\u03C2',
-						onclick : function() {
-							tinyMCE.activeEditor.execCommand('mceAdd_abbr', '\u03BF\u03C5\u03BD\u03BF\u03C2');
-						}
-					});
-
-					sub9.add({
-						title : '\u03BF\u03C5\u03BD\u03BF\u03BD',
-						onclick : function() {
-							tinyMCE.activeEditor.execCommand('mceAdd_abbr', '\u03BF\u03C5\u03BD\u03BF\u03BD');
-						}
-					});
-
-					sub9.add({
-						title : '\u03BF\u03C5\u03BD\u03BF\u03C5',
-						onclick : function() {
-							tinyMCE.activeEditor.execCommand('mceAdd_abbr', '\u03BF\u03C5\u03BD\u03BF\u03C5');
-						}
-					});
-
-					sub9.add({
-						title : '\u03BF\u03C5\u03BD\u03C9',
-						onclick : function() {
-							tinyMCE.activeEditor.execCommand('mceAdd_abbr', '\u03BF\u03C5\u03BD\u03C9');
-						}
-					});
-
-					sub9.add({
-						title : '\u03BF\u03C5\u03BD\u03BF\u03B9',
-						onclick : function() {
-							tinyMCE.activeEditor.execCommand('mceAdd_abbr', '\u03BF\u03C5\u03BD\u03BF\u03B9');
-						}
-					});
-
-					sub9.add({
-						title : '\u03BF\u03C5\u03BD\u03BF\u03C5\u03C2',
-						onclick : function() {
-							tinyMCE.activeEditor.execCommand('mceAdd_abbr', '\u03BF\u03C5\u03BD\u03BF\u03C5\u03C2');
-						}
-					});
-
-					sub9.add({
-						title : '\u03BF\u03C5\u03BD\u03C9\u03BD',
-						onclick : function() {
-							tinyMCE.activeEditor.execCommand('mceAdd_abbr', '\u03BF\u03C5\u03BD\u03C9\u03BD');
-						}
-					});
-
-					sub9.add({
-						title : '\u03BF\u03C5\u03BD\u03BF\u03B9\u03C2',
-						onclick : function() {
-							tinyMCE.activeEditor.execCommand('mceAdd_abbr', '\u03BF\u03C5\u03BD\u03BF\u03B9\u03C2');
-						}
-					});
+					
+					//---------------------------------------------------------------------------
 				});
-
+				
 				return c;
 
 			case 'paratext':
@@ -1526,10 +2034,15 @@
 				ed.selection.setContent('<span class="' + ed.wceTypeParamInClass + '=' + className + '"' + style + '>' + character + '</span> ');
 				break;
 			case 'abbr':
-				ed.selection.setContent('<span class="' + ed.wceTypeParamInClass + '=' + className + '"' + style + '>' + character + '</span> ');
+				if (character == 'ϗ')
+					ed.selection.setContent('<span class="' + ed.wceTypeParamInClass + '=' + className + '"' + style + '>' + character + '</span> ');
+				else {
+					style = 'style="border: 1px  dotted #f00;  margin:0px; padding:0;text-decoration:overline;"';
+					ed.selection.setContent('<span class="' + '__t=abbr&amp;__n=&amp;original_abbr_text=&amp;abbr_type=nomSac&amp;otherabbrtype=&amp;add_overline=overline&amp;insert=Insert&amp;cancel=Cancel" wce_orig="' + character + '"' + style + '>' + character + '</span> ');
+				}
 				break;
 			case 'brea':
-				style += 'color:#666';
+				style = 'style="border: 1px  dotted #f00;  margin:0px; padding:0;text-decoration:overline;color:#666;"';
 				if (character == 'lb') { //line break at the end of a word
 					//ed.selection.setContent('<span class="' + ed.wceTypeParamInClass + '=' + className + '"' + style + '>' + '&crarr;' + '</span> ');
 					ed.selection.setContent('<span class="' + '__t=brea&amp;__n=&amp;break_type=lb&amp;number=1&amp;pb_type=&amp;running_title=&amp;lb_alignment=leftJust&amp;insert=Insert&amp;cancel=Cancel' + '"' + style + '>' + '&crarr;' + '</span> ');  
