@@ -277,11 +277,15 @@ function _readOtherClass($xml, $node) {
 					$note->nodeValue = $a['editorial_note'];
 					$rdg->appendChild($note);
 				}
+				
 				_copyChild($xml, $rdg, $clone);
 				$newNode->appendChild($rdg);
 
 				$temp_arr = array();
 				foreach ($rdg->childNodes AS $c) {
+					//set corrector_text as node value
+					if ($c->nodeType===XML_TEXT_NODE)
+						$c->nodeValue=$a['corrector_text'];
 					array_push($temp_arr, $c);
 				}
 				foreach ($temp_arr AS $c) {
