@@ -1173,20 +1173,72 @@
 					});
 					//------------------------------------------------------------------------
 					/*
-					ιηλμ
-					ιλημ
-					-----
 					ις
 					ιυ
 					ιν
-					-----
+					*/
+					sub7 = sub.addMenu({
+						title : 'ις'
+					});
+					
+					sub7.add({
+						title : 'ις',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'ις');
+						}
+					});
+					
+					sub7.add({
+						title : 'ιυ',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'ιυ');
+						}
+					});
+					
+					sub7.add({
+						title : 'ιν',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'ιν');
+						}
+					});
+					//--------------------------------------------------------------------------
+					/*
 					ιηλ
 					ισλ
 					ισηλ
 					*/
+					
+					sub14 = sub.addMenu({
+						title : 'ιηλ'
+					});
+					sub14.add({
+						title : 'ιηλ',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'ιηλ');
+						}
+					});
+					
+					sub14.add({
+						title : 'ισλ',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'ισλ');
+						}
+					});
+					
+					sub14.add({
+						title : 'ισηλ',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'ισηλ');
+						}
+					});
+					//-----------------------------------------------------------------------
+					/*
+					ιηλμ
+					ιλημ
+					*/
 
 					sub5 = sub.addMenu({
-						title : 'ι'
+						title : 'ιηλμ'
 					});
 
 					sub5.add({
@@ -1202,49 +1254,7 @@
 							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'ιλημ');
 						}
 					});
-
-					sub5.add({
-						title : 'ις',
-						onclick : function() {
-							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'ις');
-						}
-					});
-					
-					sub5.add({
-						title : 'ιυ',
-						onclick : function() {
-							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'ιυ');
-						}
-					});
-					
-					sub5.add({
-						title : 'ιν',
-						onclick : function() {
-							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'ιν');
-						}
-					});
-					
-					sub5.add({
-						title : 'ιηλ',
-						onclick : function() {
-							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'ιηλ');
-						}
-					});
-					
-					sub5.add({
-						title : 'ισλ',
-						onclick : function() {
-							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'ισλ');
-						}
-					});
-					
-					sub5.add({
-						title : 'ισηλ',
-						onclick : function() {
-							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'ισηλ');
-						}
-					});
-					//-----------------------------------------------------------------------
+					//---------------------------------------------------------------------------
 					/*
 					ιω
 					ιωης
@@ -1538,18 +1548,10 @@
 					πνατων
 					πνων
 					πνασι
-					-----
-					πμικος
-					πνικη
-					πνικον
-					πνικα
-					πνικων
-					πνικοις
-					πνικως
 					*/
 					
 					sub6 = sub.addMenu({
-						title : '\u03C0\u03BD'
+						title : 'πν'
 					});
 
 					sub6.add({
@@ -1593,57 +1595,68 @@
 							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'πνων');
 						}
 					});
-					
 					sub6.add({
 						title : 'πνασι',
 						onclick : function() {
 							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'πνασι');
 						}
 					});
-					
-					sub6.add({
-						title : 'πμικος',
+					//------------------------------------------------------------------------
+					/*
+					πnικος
+					πνικη
+					πνικον
+					πνικα
+					πνικων
+					πνικοις
+					πνικως
+					*/
+					sub15 = sub.addMenu({
+						title : 'πnικ'
+					});
+					sub15.add({
+						title : 'πnικος',
 						onclick : function() {
-							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'πμικος');
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'πnικος');
 						}
 					});
 					
-					sub6.add({
+					sub15.add({
 						title : 'πνικη',
 						onclick : function() {
 							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'πνικη');
 						}
 					});
 					
-					sub6.add({
+					sub15.add({
 						title : 'πνικον',
 						onclick : function() {
 							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'πνικον');
 						}
 					});
 					
-					sub6.add({
+					sub15.add({
 						title : 'πνικα',
 						onclick : function() {
 							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'πνικα');
 						}
 					});
 					
-					sub6.add({
+					sub15.add({
 						title : 'πνικων',
 						onclick : function() {
 							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'πνικων');
 						}
 					});
 					
-					sub6.add({
+					sub15.add({
 						title : 'πνικοις',
 						onclick : function() {
 							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'πνικοις');
 						}
 					});
 					
-					sub6.add({
+					sub15.add({
 						title : 'πνικως',
 						onclick : function() {
 							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'πνικως');
@@ -1654,18 +1667,9 @@
 					σρς
 					σρου
 					σρω
-					-----
-					στρθη
-					εσρωθη
-					στρωσουσιν
-					-----
-					σωρ
-					σηρ
-					σρι
-					σρα
 					*/
 					sub5 = sub.addMenu({
-						title : 'σ'
+						title : 'σρς'
 					});
 					
 					sub5.add({
@@ -1688,57 +1692,74 @@
 							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'σρω');
 						}
 					});
+					//----------------------------------------------------------------
+					/*
+					στρθη
+					εστρωθη 
+					στρωσουσιν
+					*/
+					sub16 = sub.addMenu({
+						title : 'στρ'
+					});
 					
-					sub5.add({
+					sub16.add({
 						title : 'στρθη',
 						onclick : function() {
 							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'στρθη');
 						}
 					});
 					
-					sub5.add({
-						title : 'εσρωθη',
+					sub16.add({
+						title : 'εστρωθη ',
 						onclick : function() {
-							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'εσρωθη');
+							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'εστρωθη ');
 						}
 					});
 					
-					sub5.add({
+					sub16.add({
 						title : 'στρωσουσιν',
 						onclick : function() {
 							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'στρωσουσιν');
 						}
 					});
+					//--------------------------------------------------------------------------
+					/*
+					σωρ
+					σηρ
+					σρι
+					σρα
+					*/
+					sub17 = sub.addMenu({
+						title : 'σωρ'
+					});
 					
-					sub5.add({
+					sub17.add({
 						title : 'σωρ',
 						onclick : function() {
 							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'σωρ');
 						}
 					});
 					
-					sub5.add({
+					sub17.add({
 						title : 'σηρ',
 						onclick : function() {
 							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'σηρ');
 						}
 					});
 					
-					sub5.add({
+					sub17.add({
 						title : 'σρα',
 						onclick : function() {
 							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'σρα');
 						}
 					});
 					
-					sub5.add({
+					sub17.add({
 						title : 'σρς',
 						onclick : function() {
 							tinyMCE.activeEditor.execCommand('mceAdd_abbr', 'σρς');
 						}
 					});
-					
-					
 					//--------------------------------------------------------------------------
 					/*
 					υς

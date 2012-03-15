@@ -72,6 +72,7 @@ tinyMCE.addI18n('en.wce',{
 	corrector_place : "Place of correction",
 	unidentified_corrector : "Unidentified corrector",
 	editorial_note: "Editorial Note",
+	corr_not_applicable : "Not applicable", 
 	corr_overwritten : "Overwritten text",
 	corr_above : "Above line",
 	corr_below : "Below line",
