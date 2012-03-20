@@ -38,68 +38,16 @@ while ($row = mysql_fetch_array($res)) {
 	$chapterContent = str_replace('&om;', '', $chapterContent);
 	//$chapterContent = str_replace('&om;', '̄', $chapterContent);
 
-	if ($row['head'] != '') {
-		//teiHeader Node; evtl. mit _addAttrNode
-		$teiHeaderNode = $dom->createElement('teiHeader');
-
-		$fileDesc = $dom->createElement('fileDesc');
-
-		$titleStmt = $dom->createElement('titleStmt');
-		$title = $dom->createElement('title');
-		$titleStmt->appendChild($title);
-		$fileDesc->appendChild($titleStmt);
-
-		$editionStmt = $dom->createElement('editionStmt');
-		$edition = $dom->createElement('edition');
-		$editionStmt->appendChild($edition);
-		$fileDesc->appendChild($editionStmt);
-
-		$publicationStmt = $dom->createElement('publicationStmt');
-		$publisher = $dom->createElement('publisher');
-		$name = $dom->createElement('name');
-
-		$date = $dom->createElement('date');
-		$availability = $dom->createElement('availability');
-		$p = $dom->createElement('p');
-
-		$publisher->appendChild($name);
-		$publicationStmt->appendChild($publisher);
-		$publicationStmt->appendChild($date);
-		$availability->appendChild($p);
-		$publicationStmt->appendChild($availability);
-		$fileDesc->appendChild($publicationStmt);
-
-		$sourceDesc = $dom->createElement('sourceDesc');
-		$msDesc = $dom->createElement('msDesc');
-		$msIdentifier = $dom->createElement('msIdentifier');
-
-		$msDesc->appendChild($msIdentifier);
-		$sourceDesc->appendChild($msDesc);
-		$fileDesc->appendChild($sourceDesc);
-
-		$teiHeaderNode->appendChild($fileDesc);
-
-		$encodingDesc = $dom->createElement('encodingDesc');
-		$projectDesc = $dom->createElement('projectDesc');
-		$p = $dom->createElement('p');
-		$projectDesc->appendChild($p);
-		$encodingDesc->appendChild($projectDesc);
-
-		$editorialDecl = $dom->createElement('editorialDecl');
-		$p = $dom->createElement('p');
-		$editorialDecl->appendChild($p);
-
-		$encodingDesc->appendChild($editorialDecl);
-		$teiHeaderNode->appendChild($encodingDesc);
-
-		$revisionDesc = $dom->createElement('revisionDesc');
-		$change= $dom->createElement('change');
-		$revisionDesc->appendChild($change);
-		$teiHeaderNode->appendChild($revisionDesc);
-
-		//$teiHeaderNode->appendChild($dom->createTextNode($row['head']));
-		$teiNode->appendChild($teiHeaderNode);
-
+	if ($row['head'] != '') { 
+		$headXml = new DOMDocument();
+	 	$headXml->loadXML($row['head']); 
+		$headDoc= $headXml->documentElement;
+		$teiHeader=$headXml->getElementsByTagName('teiHeader');
+		if($teiHeader->length>0){  
+			$header= $teiHeader->item(0);   
+			$teiHeaderNode=$dom->importNode($header,true); 
+			$teiNode->appendChild($teiHeaderNode); 
+		}
 		//text Node
 		$textNode = $dom->createElement('text');
 		$teiNode->appendChild($textNode);
@@ -962,7 +910,7 @@ function xmlExport($xml) {
 
 
 /* Ausgabe im Browser anzeigen */
-// echo $dom->saveXML();
+//  echo $dom->saveXML();
 
 /* Ausgabe als XML-Datei */
 xmlExport($dom);

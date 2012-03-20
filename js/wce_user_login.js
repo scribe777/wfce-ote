@@ -314,7 +314,13 @@ function WceUserToolbar(parent_container_id) {
 					if (msg == 'ERROR') {
 						$('#tool_span').html('');
 					} else{
-						$('#tool_span').html(msg);
+						var attr=msg.split('@@@');
+						if(attr[0]){
+							setMetaData(attr[0]);
+						}
+						if(attr[1]){
+							$('#tool_span').html(attr[1]);
+						}
 						curr_chapter=$('#select_chapter').val();
 					}
 				}

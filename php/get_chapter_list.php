@@ -30,5 +30,12 @@ if($options!='')
 	$out='<span style="margin-left:20px; color:#fff"> Chapter: </span><select id="select_chapter" onchange="gotoChapter(\''.$filename.'\',this);">'.$options.'</select>'.
 	' <input type="button" onclick="chapterBrowse(\''.$filename.'\',-1);" value="<" /> <input type="button" onclick="chapterBrowse(\''.$filename.'\',1);" value=">" /><span style="margin-left:20px; color:#fff"> File: '.$filename.'</span>';
 	
-echo $out;
+//get metadata
+$sql="SELECT * FROM `$user_tablname` WHERE `userid` LIKE '".$userid."' AND `filename` LIKE '".$filename."' AND `head`!='' GROUP BY `k` ORDER BY `k` ASC";	
+$res=dbRes($sql); 
+if($row=mysql_fetch_array($res)){ 
+	$header=  $row['head'];
+}
+	
+echo $header.'@@@'.$out;
 ?>

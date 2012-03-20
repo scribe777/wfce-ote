@@ -368,19 +368,31 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 TEI-NTMSS.xsd"</textarea>
 <!--<textarea id="tempDiv" rows="15" style="width:100%;height:100%"></textarea>-->
 <script type="text/javascript"> 
 function init() {
-	wce_type = 'wce_metatata';
+	wce_type = 'wce_metatata'; 
 	headerXmlTree = createheaderXmlTree();
 	readMetaData();
 }
 
 function readMetaData() {
-	var xmlString=ed.wce_metatata;
-	if(!xmlString){ 
-		xmlString = xmlInit();
-	 	//$('#tempDiv').val(xmlString);
+	var xmlString = ed.wceMetaData;
+	var $xml;
+ 	
+	if (xmlString) {
+		try { 
+			$xml = $($.parseXML(xmlString));
+		} catch (err) {
+
+		} 
 	}
 
-	var $xml = $($.parseXML(xmlString)); 
+	if (!$xml) {
+		xmlString = xmlInit();
+		$xml = $($.parseXML(xmlString));
+	} 
+
+
+
+	// $('#tempDiv').val(xmlString);
 	readXmlToForm($xml);
 }
 
@@ -424,11 +436,11 @@ function elememtToForm($parentElem, xt) {
 		if (currName.match(/^_/))
 			continue;
 
-		$elems = $parentElem[0].selectNodes(currName);
-		currNode = xt[currName];
+		$elems = $parentElem.find(currName);
+		currNode = xt[currName]; 
 
 		boxId = currNode['_box'];
-		if ($elems && boxId) {
+		if ($elems && boxId) { 
 			// templeate Node for copy
 			var templateNode = $('#' + boxId);
 			var tn = templateNode[0].tagName;
@@ -438,14 +450,17 @@ function elememtToForm($parentElem, xt) {
 
 			for ( var i = 0, len = $elems.length; i < len; i++) {
 				$elem = $elems[i]; // xml element titleStmt->title,
+				 
+				if($elem.parentNode!=$parentElem[0]) continue;
+				
 				// respStmt, ...
 				if (i > 0) {
 					templateNode = $(templateOuthtml);
 					$('#' + boxId).after(templateNode);
 				}
-
-				$(templateNode).find('[xmlValue]').each(function() {
-					var tagAttri = $(this).attr('xmlValue');
+ 
+				$(templateNode).find('[xmlValue]').each(function() {  
+					var tagAttri = $(this).attr('xmlValue'); 
 
 					// Ausname bei mata_title
 					if (tagAttri == '?' && boxId == 'meta_title_box') {
@@ -455,14 +470,18 @@ function elememtToForm($parentElem, xt) {
 					}
 					var textValue;
 					if (tagAttri == '_text_') {
-						textValue = $elem.text;
+						if($.browser.msie)
+							textValue = $elem.text;
+						else
+							textValue = $elem.textContent;
 					} else {
 						textValue = $elem.getAttribute(tagAttri);
 					}
+			  		 
 					if (textValue) {
 						if ($(this).tagName == 'label') {
 							$(this).html(textValue);
-						} else {
+						} else { 
 							$(this).val(textValue);
 						}
 					}
@@ -559,7 +578,7 @@ function writeWceMetaData() {
 
 				// TODO
 				if (nodeName == 'TEI') {
-					tmp += ' xmlns="http://www.tei-c.org/ns/1.0" ';
+					//tmp += ' xmlns="http://www.tei-c.org/ns/1.0" ';
 					// tmp +=' xmlns:xml="http://www.w3.org/XML/1998/namespace"
 					// ';
 					// tmp +='
@@ -577,7 +596,8 @@ function writeWceMetaData() {
 
 		return out;
 	}
-	ed.wce_metatata = xmlTreeToStr(headerXmlTree);
+	ed.wceMetaData = xmlTreeToStr(headerXmlTree);
+	ed.isNotDirty = 0;
 	tinyMCEPopup.close();
 }
 
@@ -607,7 +627,7 @@ function xmlInit() {
 			
 			 //TODO
 			if(nodeName=='TEI'){
-					tmp +=' xmlns="http://www.tei-c.org/ns/1.0" ';
+					//tmp +=' xmlns="http://www.tei-c.org/ns/1.0" ';
 					//tmp +=' xmlns:xml="http://www.w3.org/XML/1998/namespace" ';
 					//tmp +=' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ;
 					//tmp +=' xsi:schemaLocation="http://www.tei-c.org/ns/1.0 TEI-NTMSS.xsd" ';  
