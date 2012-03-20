@@ -545,11 +545,19 @@
 			var _getWceMenuValStatus = this._getWceMenuValStatus;
 			var _setWceMenuStatus = this._setWceMenuStatus;
 			switch (n) {
-
+			case 'metadata':
+				var c = cm.createButton('menu-metadata', {
+					title : 'Metadata',
+					image : tinyMCE.baseURL+'/plugins/wce/img/button_meta.gif',
+					onclick : function() {
+						tinyMCE.activeEditor.execCommand('mceAddMetadata');
+					}
+				}); 
+				return c;	 
 			case 'breaks':
 				var c = cm.createMenuButton('menu-break', {
 					title : 'Breaks',
-					image : './js/plugins/wce/img/button_B.gif',
+					image : tinyMCE.baseURL+'/plugins/wce/img/button_B.gif',
 					onclick : function() {
 						_setWceMenuStatus(tinyMCE.activeEditor, 'menu-break', /^__t=brea/, _getWceMenuValStatus);
 					}
@@ -591,7 +599,7 @@
 			case 'correction':
 				var c = cm.createButton('menu-correction', {
 					title : 'Corrections',
-					image : './js/plugins/wce/img/button_C.gif',
+					image : tinyMCE.baseURL+'/plugins/wce/img/button_C.gif',
 					onclick : function() {
 						tinyMCE.activeEditor.execCommand('mceAddCorrection');
 					}
@@ -602,7 +610,7 @@
 			case 'illegible':
 				var c = cm.createMenuButton('menu-illegable', {
 					title : 'Deficiency',
-					image : './js/plugins/wce/img/button_D.gif',
+					image : tinyMCE.baseURL+'/plugins/wce/img/button_D.gif',
 					onclick : function() {
 						_setWceMenuStatus(tinyMCE.activeEditor, 'menu-illegable', /^__t=unclear/, _getWceMenuValStatus, 'uncleartext');
 						//_setWceMenuStatus(tinyMCE.activeEditor, //'menu-illegable', /^__t=supplied/, //_getWceMenuValStatus, 'supplied');
@@ -723,7 +731,7 @@
 			case 'decoration':
 				var c = cm.createMenuButton('menu-decoration', {
 					title : 'Ornamentation',
-					image : './js/plugins/wce/img/button_O.gif',
+					image : tinyMCE.baseURL+'/plugins/wce/img/button_O.gif',
 					onclick : function() {
 						_setWceMenuStatus(tinyMCE.activeEditor, 'menu-decoration');
 						_setWceMenuStatus(tinyMCE.activeEditor, 'menu-decoration', /^__t=spaces/, _getWceMenuValStatus, 'blankspaces');
@@ -735,7 +743,7 @@
 
 					sub = m.addMenu({
 						title : 'Highlight Text',
-						image : './js/plugins/wce/img/button_O.gif'
+						image : tinyMCE.baseURL+'/plugins/wce/img/button_O.gif'
 					});
 
 					sub.add({
@@ -956,7 +964,7 @@
 			case 'abbreviation':
 				var c = cm.createMenuButton('menu-abbreviation', {
 					title : 'Abbreviated text',
-					image : './js/plugins/wce/img/button_A.gif',
+					image : tinyMCE.baseURL+'/plugins/wce/img/button_A.gif',
 					onclick : function() {
 						_setWceMenuStatus(tinyMCE.activeEditor, 'menu-abbreviation', /^__t=abbr/, _getWceMenuValStatus, 'highlighted');
 						// _setWceMenuStatus(tinyMCE.activeEditor,
@@ -1870,7 +1878,7 @@
 			case 'paratext':
 				var c = cm.createMenuButton('menu-paratext', {
 					title : 'Paratext',
-					image : './js/plugins/wce/img/button_P.gif',
+					image : tinyMCE.baseURL+'/plugins/wce/img/button_P.gif',
 					onclick : function() {
 						_setWceMenuStatus(tinyMCE.activeEditor, 'menu-paratext', /^__t=paratext/, _getWceMenuValStatus);
 					}
@@ -1912,7 +1920,7 @@
 			case 'note':
 				var c = cm.createMenuButton('menu-note', {
 					title : 'Note',
-					image : './js/plugins/wce/img/button_N.gif',
+					image : tinyMCE.baseURL+'/plugins/wce/img/button_N.gif',
 					onclick : function() {
 						_setWceMenuStatus(tinyMCE.activeEditor, 'menu-note', /^__t=note/, _getWceMenuValStatus);
 					}
@@ -2523,7 +2531,10 @@
 			ed.addCommand('mceEditParatext', function() {
 				_wceAdd(ed, url, '/paratext.htm', 480, 320, 1, false);
 			});
-
+			// Edit Metadata
+			ed.addCommand('mceAddMetadata', function() {
+				_wceAdd(ed, url, '/metadata.htm', 600, 450, 1, false);
+			});
 			ed.addCommand('mceAdd_abbr', function(c) {
 				_wceAddNoDialog(ed, 'abbr', c);
 			});
