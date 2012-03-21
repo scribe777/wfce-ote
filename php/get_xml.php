@@ -36,6 +36,7 @@ while ($row = mysql_fetch_array($res)) {
 
 	$chapterContent = str_replace('&nbsp;', ' ', $row['text']);
 	$chapterContent = str_replace('&om;', '', $chapterContent);
+	$chapterContent = str_replace(chr(194).chr(160), ' ', $chapterContent);
 	//$chapterContent = str_replace('&om;', '̄', $chapterContent);
 
 	if ($row['head'] != '') { 
