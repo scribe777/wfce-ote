@@ -91,19 +91,19 @@
 				<fieldset>
 					<legend>{#wce.meta_title_respStmt}</legend>
 					<table border="0" cellpadding="4" cellspacing="0" width="100%" >
-					<tr  id="meta_name_box"  name="canCopy">
+					<tr  id="meta_name_box" xmlCopyId="meta_name_box">
 					<td>
 						<label id="meta_name_label" for="meta_name">{#wce.meta_resp}</label>
 					</td>
 					<td>
-						<input  xmlValue="_text_" type="text" value="" size="30" maxlength="" class="required number min1 mceFocus" /> <input type="button" value="+" onclick="boxCopy(this);" /> <input type="button" value="x" style="color: red; display:none" onclick="boxRemove(this);" />
+						<input  xmlValue="_text_" type="text" value="" size="30" maxlength="" class="required number min1 mceFocus" /> <input type="button" value="+" onclick="boxCopy(this,'meta_name_box');" /> <input type="button" value="x" style="color: red; display:none" onclick="boxRemove(this);" />
 					</td+
 					<td>
 					</tr>
 					<!-- </name> -->
 					<!-- </respStmt> -->
 					<!-- <funder> -->
-					<tr id="meta_funder_box">
+					<tr id="meta_funder_box" >
 					<td>
 						<label id="meta_funder_label" for="meta_fuunder">{#wce.meta_funder}</label>
 					</td>
@@ -159,7 +159,7 @@
 			<fieldset>
 				<legend>{#wce.meta_publicationStmt}</legend>
 				<table>
-					<tr id="meta_publisher_box" name="canCopy">
+					<tr id="meta_publisher_box" xmlCopyId="meta_publisher_box">
 					<td>
 						<label id="meta_publisher_1_label" for="meta_publisher_1">{#wce.meta_publisher}</label>
 					</td>
@@ -171,7 +171,7 @@
 							<option value=""></option>
 							<option value="org">Organisation</option>
 							<option value="person">Person</option>
-						</select> <input type="button" value="+" onclick="boxCopy(this);" /> <input type="button" value="x" style="color: red; display:none" onclick="boxRemove(this);" />
+						</select> <input type="button" value="+" onclick="boxCopy(this,'meta_publisher_box');" /> <input type="button" value="x" style="color: red; display:none" onclick="boxRemove(this);" />
 					</td> 
 					</tr>
 					 
@@ -252,7 +252,7 @@
 						<label id="meta_msDesc_msName_label" for="meta_msDesc_msName">{#wce.meta_msDesc_msName}</label>
 					</td>
 					<td>
-						<input xmlValue="_text" id="meta_msDesc_msName" name="meta_msDesc_msName" type="text" value="" size="30" maxlength="" class="required number min1 mceFocus" />
+						<input xmlValue="_text_" id="meta_msDesc_msName" name="meta_msDesc_msName" type="text" value="" size="30" maxlength="" class="required number min1 mceFocus" />
 					</td>
 					 
 					<td>
@@ -269,12 +269,12 @@
 					</tr>
 					<!-- </msname> -->
 					<!-- <altIdentifier> -->
-					<tr id="meta_msDesc_altIdentifier_box">
+					<tr id="meta_msDesc_altIdentifier_box" xmlCopyId="meta_msDesc_altIdentifier_box">
 					<td>
 						<label id="meta_msDesc_altIdentifier_label" for="meta_msDesc_altIdentifier">{#wce.meta_msDesc_altIdentifier}</label>
 					</td>
 					<td>
-						<input xmlValue="_text" id="meta_msDesc_altIdentifier" name="meta_msDesc_altIdentifier" type="text" value="" size="30" maxlength="" class="required number min1 mceFocus" />
+						<input xmlValue="_text_" id="meta_msDesc_altIdentifier" name="meta_msDesc_altIdentifier" type="text" value="" size="30" maxlength="" class="required number min1 mceFocus" />
 					</td>
 					<td>
 						<label>{#wce.type}</label>
@@ -287,7 +287,7 @@
 							<option value="ti">Tischendorf</option>
 							<option value="tm">TM</option>
 							<option value="ld">LDAB</option>
-						</select>
+						</select> <input type="button" value="+" onclick="boxCopy(this,'meta_msDesc_altIdentifier_box');" /> <input type="button" value="x" style="color: red; display:none" onclick="boxRemove(this);" />
 					</td>
 					</tr>
 					<!-- </msIdentifier> -->
@@ -390,9 +390,7 @@ function readMetaData() {
 		$xml = $($.parseXML(xmlString));
 	} 
 
-
-
-	// $('#tempDiv').val(xmlString);
+//	 $('#tempDiv').val(xmlString);
 	readXmlToForm($xml);
 }
 
@@ -444,7 +442,7 @@ function elememtToForm($parentElem, xt) {
 			// templeate Node for copy
 			var templateNode = $('#' + boxId);
 			var tn = templateNode[0].tagName;
-			var templateOuthtml = '<' + tn + ' name="canCopy">'
+			var templateOuthtml = '<' + tn + ' xmlCopyId="'+boxId+'">'
 					+ $(templateNode).html() + '</' + tn + '>';
 			templateOuthtml = templateOuthtml.replace(/none/, 'display');
 
@@ -530,11 +528,11 @@ function _getTitleStmtTitle(i) {
 
 function writeWceMetaData() {
 	var xmlTreeToStr = function(xmlNode) {
-		var out = '', currNode, attri, count, tmp, boxId, textValue, box, i = 0;
+		var out = '', currNode, count, tmp, boxId, textValue, box, i = 0;
 		for ( var nodeName in xmlNode) {
 			textValue = '';
 
-			if (nodeName.match(/^_/))
+			if (!nodeName || nodeName.match(/^_/))
 				continue;
 				
 			box = null;
@@ -554,24 +552,23 @@ function writeWceMetaData() {
 					$(box).find('[xmlValue]').each(
 							function() {
 								var val = $(this).val();
-								var tagAttri = $(this).attr('xmlValue');
+								var attriValue = $(this).attr('xmlValue');
 								// Ausname bei mata_title
-								if (tagAttri == '?'
+								if (attriValue == '?'
 										&& boxId == 'meta_title_box') {
-									tagAttri = _getTitleStmtTitleType(i);
-									tmp += tagAttri;
-								} else if (tagAttri == '_text_') {
+									attriValue = _getTitleStmtTitleType(i);
+									tmp += attriValue;
+								} else if (attriValue == '_text_') {
 									textValue = $(this).val();
 								} else if (val != '') {
-									tmp += " " + tagAttri + '="'
-											+ $(this).val() + '" ';
+									tmp += " " + attriValue + '="'
+											+ val + '" ';
 								}
 							});
 
-					box = $(box).next('[name="canCopy"]');
+					box = $(box).next('[xmlCopyId="'+boxId+'"]');
 					if (box.length == 0)
 						b = false;
-
 				} else {
 					b = false;
 				}
@@ -597,7 +594,7 @@ function writeWceMetaData() {
 		return out;
 	}
 	ed.wceMetaData = xmlTreeToStr(headerXmlTree);
-	ed.isNotDirty = 0;
+	ed.isNotDirty = 0;  
 	tinyMCEPopup.close();
 }
 
@@ -665,13 +662,13 @@ function xmlInit() {
 }
 
 
-function boxCopy(elem){ 
+function boxCopy(elem, boxId){ 
 	var parentElem=elem.parentNode,na,_id; 
 	while(parentElem){  
-		na=parentElem.name;    
-		if(na && na.match(/canCopy/i)){ 
+		na=$(parentElem).attr('xmlCopyId');    
+		if(na){  
 			 var tn =$(parentElem)[0].tagName;
-			 var outhtml = '<' + tn + ' name="canCopy">' + $(parentElem).html()
+			 var outhtml = '<' + tn + ' xmlCopyId="'+boxId+'">' + $(parentElem).html()
 								+ '</' + tn + '> ';
 				outhtml=outhtml.replace(/none/,'display'); 
 				$(parentElem).after(outhtml); 
@@ -685,8 +682,8 @@ function boxCopy(elem){
 function boxRemove(elem){
 	var parentElem=elem.parentNode,na;  
 	while(parentElem){  
-		na=parentElem.name;  
-		if(na && na.match(/canCopy/i)){ 
+		na=$(parentElem).attr('xmlCopyId');  
+		if(na){ 
 			$(parentElem).remove();
 			return;
 		} 
@@ -739,16 +736,7 @@ function boxRemove(elem){
 						<msName xml:lang=""></msName>
 						<altIdentifier type="" xml:lang="">
 							<idno></idno>
-						</altIdentifier>
-						<altIdentifier type="" xml:lang="">
-							<idno></idno>
-						</altIdentifier>
-						<altIdentifier type="" xml:lang="">
-							<idno></idno>
-						</altIdentifier>
-						<altIdentifier type="" xml:lang="">
-							<idno></idno>
-						</altIdentifier>
+						</altIdentifier> 
 					</msIdentifier>
 					<msContents>
 						<msItem>
@@ -898,7 +886,7 @@ function createheaderXmlTree() {
 									_do : true,
 									_box : 'meta_msDesc_altIdentifier_box',
 									_attribute : [ 'type', 'xml:lang' ],
-									_count : 4,
+									_count : 1,
 									idno : {}
 								}
 							},
