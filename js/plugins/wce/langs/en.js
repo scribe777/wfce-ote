@@ -188,6 +188,8 @@ tinyMCE.addI18n('en.wce',{
 	meta_msDesc_repository : "Repository",
 	meta_msDesc_idno : "ID",
 	meta_msDesc_msName : "Manuscript name",
+	meta_msDesc_altIdentifier : "Alternative Identifier",
+	type : "Typ",
 	meta_editorialDecl : "Editorial practise declaration",
 	meta_encoding_panel : "Encoding information",
 	meta_projectDesc : "Project description",
