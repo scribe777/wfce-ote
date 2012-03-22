@@ -43,7 +43,7 @@
 					<td><label id="paratext_position_label"
 						for="paratext_position">{#wce.position}</label>
 					</td>
-					<td><select id="paratext_position" name="paratext_position">
+					<td><select id="paratext_position" name="paratext_position" onchange="checkstatus_position()">
 							<option value="pagetop">{#wce.position_top}</option>
 							<option value="pagebottom">{#wce.position_bottom}</option>
 							<option value="pageleft">{#wce.position_left}</option>
@@ -85,7 +85,7 @@
 	function init() {
 		wceInfoInit('paratext');
 		readWceNodeInfo();
-		//setstatus_paratext();
+		setstatus_paratext();
 	}
 
 	function getParaTag() {
@@ -318,7 +318,7 @@
 	}
 	function setstatus_paratext() {
 		checkstatus_position();
-		checkstatus_typ();
+		//checkstatus_typ();
 		//setnumber();
 	}
 </script>
