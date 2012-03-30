@@ -15,6 +15,7 @@ tinyMCE.addI18n('en.wce',{
 	editorial : "Editorial",
 	transcriber : "Transcriber",
 	canon : "Canon reference",
+	changeOfScribe : "Change of Scribe",
 	other : "Other",
 	note : "Note",
 	note_data : "Information about the note",

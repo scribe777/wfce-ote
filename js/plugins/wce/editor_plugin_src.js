@@ -545,7 +545,7 @@
 			var _getWceMenuValStatus = this._getWceMenuValStatus;
 			var _setWceMenuStatus = this._setWceMenuStatus;
 			switch (n) {
-			case 'metadata':
+			/*case 'metadata':
 				var c = cm.createButton('menu-metadata', {
 					title : 'Metadata',
 					image : tinyMCE.baseURL+'/plugins/wce/img/button_meta.gif',
@@ -553,7 +553,7 @@
 						tinyMCE.activeEditor.execCommand('mceAddMetadata');
 					}
 				}); 
-				return c;	 
+				return c;*/
 			case 'breaks':
 				var c = cm.createMenuButton('menu-break', {
 					title : 'Breaks',

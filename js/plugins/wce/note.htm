@@ -19,6 +19,7 @@
 							<option value="editorial">{#wce.editorial}</option>
 							<option value="transcriberquiry">{#wce.transcriber}</option>
 							<option value="canon">{#wce.canon}</option>
+							<option value="changeOfScribe">{#wce.changeOfScribe}</option>
 							<option value="note_other">{#wce.other}</option>
 					</select>
 					</td>
@@ -52,7 +53,7 @@
 		setstatus_note();
 	}
 	function checkstatus_notetype() {
-		if (document.noteinfo.note_type.options[3].selected == true) {
+		if (document.noteinfo.note_type.options[4].selected == true) {
 			document.noteinfo.other_note_type.disabled = false;
 			document.getElementById('other_note_type').style.backgroundColor = "white";
 
@@ -67,7 +68,7 @@
 	}
 
 	function testOther() {
-		if (document.noteinfo.note_type.options[3].selected == true && document.getElementById('other_note_type').value == '') 
+		if (document.noteinfo.note_type.options[4].selected == true && document.getElementById('other_note_type').value == '') 
 			return false;
 	return true;
 	}	
