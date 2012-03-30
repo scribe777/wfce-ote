@@ -27,21 +27,29 @@
 					<td><label id="number_label" for="number">{#wce.number}</label>
 					</td>
 					<td><input id="number" name="number" type="text" value=""
-						size="50" maxlength="" class="required number min1 mceFocus" />
+						size="10" maxlength="" class="required number min1 mceFocus" />
+					</td>
+					<td><label id="pb_type_label" for="pb_type">{#wce.pb_position}</label>
 					</td>
 					<td><select id="pb_type" name="pb_type">
 							<option value=""></option>
 							<option value="r">{#wce.recto}</option>
 							<option value="v">{#wce.verso}</option>
-							<option value="x">{#wce.papyrus_recto}</option>
-							<option value="y">{#wce.papyrus_verso}</option>
 					</select>
 					</td>
+					<td width=10></td>
+					<td><label id="fibre_type_label" for="fibre_type">{#wce.fibre_type}</label>
+					</td>
+					<td><select id="fibre_type" name="fibre_type">
+							<option value=""></option>
+							<option value="x">{#wce.papyrus_fibre_h}</option>
+							<option value="y">{#wce.papyrus_fibre_v}</option>
+					
 				</tr>
 				<tr>
 					<td><label id="running_title_label" for="running_title">{#wce.running_title}</label>
 					</td>
-					<td><input id="running_title" name="running_title" type="text" value=""
+					<td colspan="6"><input id="running_title" name="running_title" type="text" value=""
 						size="50" maxlength="" class="required number min1 mceFocus" />
 					</td>
 				</tr>
@@ -84,11 +92,15 @@
 		if (document.breakinfo.break_type.options[2].selected == true) {
 			document.breakinfo.pb_type.disabled = false;
 			document.getElementById('pb_type').style.backgroundColor = "white";
+			document.breakinfo.fibre_type.disabled = false;
+			document.getElementById('fibre_type').style.backgroundColor = "white";
 			document.breakinfo.running_title.disabled = false;
 			document.getElementById('running_title').style.backgroundColor = "white";
 		} else {
 			document.breakinfo.pb_type.disabled = true;
 			document.getElementById('pb_type').style.backgroundColor = "#CCCCCC";
+			document.breakinfo.fibre_type.disabled = true;
+			document.getElementById('fibre_type').style.backgroundColor = "#CCCCCC";
 			document.breakinfo.running_title.disabled = true;
 			document.getElementById('running_title').style.backgroundColor = "#CCCCCC";
 		}

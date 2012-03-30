@@ -275,8 +275,8 @@ function _readOtherClass($xml, $node) {
 				break;
 				case 'pb':
 					//Decide whether folio or page
-					if ($a['pb_type']!='') { //folio
-						$page=$a['number'].$a['pb_type'];
+					if ($a['pb_type']!='' || $a['fibre_type']!='') { //folio
+						$page=$a['number'].$a['pb_type'].$a['fibre_type'];
 						$newNode->setAttribute('n', $page);
 						$newNode->setAttribute('type', 'folio');
 					} else { //page
