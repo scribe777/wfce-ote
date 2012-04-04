@@ -30,8 +30,8 @@ $nodeNameToCompress=array('unclear','gap','supplied','abbr','part_abbr','ex');
 $index['lb'] = -1;
 
 while ($row = mysql_fetch_array($res)) {
+	$bookIndex = $row['b'];
 	$chapterIndex = $row['k'];
-
 	//Informationen von Korrekturen, Note ... usw
 
 	$chapterContent = str_replace('&nbsp;', ' ', $row['text']);
@@ -40,6 +40,68 @@ while ($row = mysql_fetch_array($res)) {
 	//$chapterContent = str_replace('&om;', '̄', $chapterContent);
 
 	if ($row['head'] != '') { 
+		$teiHeaderNode = $dom->createElement('teiHeader');
+
+		$fileDesc = $dom->createElement('fileDesc');
+
+		$titleStmt = $dom->createElement('titleStmt');
+		$title = $dom->createElement('title');
+		$titleStmt->appendChild($title);
+		$fileDesc->appendChild($titleStmt);
+
+		$editionStmt = $dom->createElement('editionStmt');
+		$edition = $dom->createElement('edition');
+		$editionStmt->appendChild($edition);
+		$fileDesc->appendChild($editionStmt);
+
+		$publicationStmt = $dom->createElement('publicationStmt');
+		$publisher = $dom->createElement('publisher');
+		$name = $dom->createElement('name');
+
+		$date = $dom->createElement('date');
+		$availability = $dom->createElement('availability');
+		$p = $dom->createElement('p');
+
+		$publisher->appendChild($name);
+		$publicationStmt->appendChild($publisher);
+		$publicationStmt->appendChild($date);
+		$availability->appendChild($p);
+		$publicationStmt->appendChild($availability);
+		$fileDesc->appendChild($publicationStmt);
+
+		$sourceDesc = $dom->createElement('sourceDesc');
+		$msDesc = $dom->createElement('msDesc');
+		$msIdentifier = $dom->createElement('msIdentifier');
+
+		$msDesc->appendChild($msIdentifier);
+		$sourceDesc->appendChild($msDesc);
+		$fileDesc->appendChild($sourceDesc);
+
+		$teiHeaderNode->appendChild($fileDesc);
+
+		$encodingDesc = $dom->createElement('encodingDesc');
+		$projectDesc = $dom->createElement('projectDesc');
+		$p = $dom->createElement('p');
+		$projectDesc->appendChild($p);
+		$encodingDesc->appendChild($projectDesc);
+
+		$editorialDecl = $dom->createElement('editorialDecl');
+		$p = $dom->createElement('p');
+		$editorialDecl->appendChild($p);
+
+		$encodingDesc->appendChild($editorialDecl);
+		$teiHeaderNode->appendChild($encodingDesc);
+
+		$revisionDesc = $dom->createElement('revisionDesc');
+		$change= $dom->createElement('change');
+		$revisionDesc->appendChild($change);
+		$teiHeaderNode->appendChild($revisionDesc);
+
+		//$teiHeaderNode->appendChild($dom->createTextNode($row['head']));
+		$teiNode->appendChild($teiHeaderNode);
+
+		//the meta data export was removed
+		/*
 		$headXml = new DOMDocument();
 	 	$headXml->loadXML($row['head']); 
 		$headDoc= $headXml->documentElement;
@@ -49,6 +111,7 @@ while ($row = mysql_fetch_array($res)) {
 			$teiHeaderNode=$dom->importNode($header,true); 
 			$teiNode->appendChild($teiHeaderNode); 
 		}
+		*/
 		//text Node
 		$textNode = $dom->createElement('text');
 		$teiNode->appendChild($textNode);
@@ -62,14 +125,13 @@ while ($row = mysql_fetch_array($res)) {
 		$bodyNode->appendChild($pbNode);
 
 		//book Node
-		$value['B'] = 'B' . $row['b'];
+		$value['B'] = 'B' . $bookIndex;
 		$bookNode = $dom->createElement('div');
 		$bookNode = _addAttrNode($dom, $bookNode, 'type', 'book');
-		if(trim($row['b'])!=''){
+		/*if(trim($row['b'])!=''){
 			$bookNode = _addAttrNode($dom, $bookNode, 'n', $row['b']);
-		}
-		$bookNode = _addAttrNode($dom, $bookNode, 'xml:id',
-		$value['B'] . '-wit');
+		}*/
+		$bookNode = _addAttrNode($dom, $bookNode, 'n', $value['B']);
 		$bodyNode->appendChild($bookNode);
 	} else {
 		$chapterNode = $dom->importNode(_getChapterNode($chapterContent), true);
@@ -146,23 +208,23 @@ function _changeNode($xml, $node) {
 	*/
 	$class = $node->getAttribute('class');
 	if ($class === 'chapter_number') {
-		//<div type="chapter"  n="1" xml:id="B4K1-05">
+		//<div type="chapter"  n="B4K1">
 		$ab = $node->parentNode;
 		$div = $ab->parentNode;
 		$div->setAttribute('type', 'chapter');
 		$value['K'] = 'K' . trim($node->nodeValue);
-		$div->setAttribute('n', trim($node->nodeValue));
-		$div->setAttribute('xml:id', $value['B'] . $value['K']);
+		//$div->setAttribute('n', trim($node->nodeValue));
+		$div->setAttribute('n', $value['B'] . $value['K']);
 		$div->removeChild($ab);
 		return null;
 	}
 
 	if ($class === 'verse_number') {
-		//<ab n="1" xml:id="B5K1V1-05">
+		//<ab n="B5K1V1">
 		$ab = $node->parentNode;
 		$value['V'] = 'V' . trim($node->firstChild->nodeValue);
-		$ab->setAttribute('n', trim($node->firstChild->nodeValue));
-		$ab->setAttribute('xml:id', $value['B'] . $value['K'] . $value['V']); //TODO
+		//$ab->setAttribute('n', trim($node->firstChild->nodeValue));
+		$ab->setAttribute('n', $value['B'] . $value['K'] . $value['V']); //TODO
 		$ab->removeChild($node);
 		return null;
 	}
@@ -381,14 +443,17 @@ function _readOtherClass($xml, $node) {
 			}
 			//reason
 			if ($a['gap_reason'] != '') {
-				$newNode->setAttribute('reason', $a['gap_reason']);
+				if ($a['gap_reason'] == 'otherreason')
+					$newNode->setAttribute('reason', $a['gap_otherreason']);
+				else
+					$newNode->setAttribute('reason', $a['gap_reason']);
 			}
 			//hand
 			if ($a['gaphand'] != '') {
 				if ($a['gaphand'] == 'othergaphand')
-				$newNode->setAttribute('hand', $a['gaphand_other']);
+					$newNode->setAttribute('hand', $a['gaphand_other']);
 				else
-				$newNode->setAttribute('hand', $a['gaphand']);
+					$newNode->setAttribute('hand', $a['gaphand']);
 			}
 			//unit
 			if ($a['unit'] != '') {
@@ -848,10 +913,14 @@ function _insertWordIndex($node,$isRdg){
 			$index['w']=$index['w']+$index['rdg_w'];
 			$index['rdg_w']=0;
 			$index['w']++;
+			/* Word counting temporarly disabled
 			$node->setAttribute('n',$index['w']);
+			*/
 		}else{
 			$index['rdg_w']++;
+			/* Word counting temporarly disabled
 			$node->setAttribute('n',$index['rdg_w']+$index['w']);
+			*/
 		}
 
 	}else if($name=='ab'){
@@ -862,7 +931,9 @@ function _insertWordIndex($node,$isRdg){
 	}
 
 	foreach($node->childNodes AS $n){
-		_insertWordIndex($n,$isRdg);
+		/* Word counting temporarly disabled
+		_insertWordIndex($n,$isRdg); 
+		*/
 	}
 }
 

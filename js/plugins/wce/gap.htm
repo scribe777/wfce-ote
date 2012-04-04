@@ -35,7 +35,7 @@
 							<option value="otherreason">{#wce.other}</option>
 					</select>
 					</td>
-					<td><input id="otherdamage" name="otherdamage" type="text"
+					<td><input id="gap_otherreason" name="gap_otherreason" type="text"
 						value="" size="30" maxlength=""
 						class="required number min1 mceFocus" />
 					</td>
@@ -151,11 +151,11 @@
 
 	function checkstatus_gapreason() {
 		if (document.gapinfo.gap_reason.options[5].selected == true) {
-			document.gapinfo.otherdamage.disabled = false;
-			document.getElementById('otherdamage').style.backgroundColor = "white";
+			document.gapinfo.gap_otherreason.disabled = false;
+			document.getElementById('gap_otherreason').style.backgroundColor = "white";
 		} else {
-			document.gapinfo.otherdamage.disabled = true;
-			document.getElementById('otherdamage').style.backgroundColor = "#CCCCCC";
+			document.gapinfo.gap_otherreason.disabled = true;
+			document.getElementById('gap_otherreason').style.backgroundColor = "#CCCCCC";
 		}
 	}
 /*
@@ -227,7 +227,7 @@
 		{ return false; }
 		if (document.gapinfo.unit.options[5].selected == true && document.getElementById('unit_other').value == '' )
 		{ return false; }
-		if (document.gapinfo.gap_reason.options[5].selected == true && document.getElementById('otherdamage').value == '') 
+		if (document.gapinfo.gap_reason.options[5].selected == true && document.getElementById('gap_otherreason').value == '') 
 		{ return false; }
 	return true;
 	}
