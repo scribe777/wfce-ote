@@ -1,7 +1,8 @@
 <?php
 error_reporting(E_ALL);
 require_once('db.php');
-
+//require_once('FirePHPCore/FirePHP.class.php');
+//ob_start();
 //$_GET['textname'] = '04-TRns-Unicode_test';
 //$_GET['userid']=1;
 
@@ -32,6 +33,8 @@ $index['lb'] = -1;
 while ($row = mysql_fetch_array($res)) {
 	$bookIndex = $row['b'];
 	$chapterIndex = $row['k'];
+	$hadBreak = false;
+	
 	//Informationen von Korrekturen, Note ... usw
 
 	$chapterContent = str_replace('&nbsp;', ' ', $row['text']);
@@ -239,7 +242,7 @@ function _changeNode($xml, $node) {
 }
 
 function _readOtherClass($xml, $node) {
-	global $index, $value, $page, $column;
+	global $index, $value, $page, $column, $hadBreak;
 
 	$arr = _classNameToArray($node);
 	if ($arr == null)
@@ -324,39 +327,45 @@ function _readOtherClass($xml, $node) {
 			Column (Collate |C 2|): <cb n="2" xml:id="P3vC2-wit" />
 			Line (Collate |L 37|): <lb n="37" xml:id="P3vC2L37-wit" />
 			*/
-			$newNode = $xml->createElement($a['break_type']);
-			switch ($a['break_type']) {
-				case 'lb':
-					$newNode->setAttribute('n', $a['number']);
-					$xml_id='P'.$page.'C'.$column.'L'.$a['number'];
-				break;
-				case 'cb':
-					$column=$a['number'];
-					$newNode->setAttribute('n', $column);
-					$xml_id='P'.$page.'C'.$column;
-				break;
-				case 'pb':
-					//Decide whether folio or page
-					if ($a['pb_type']!='' || $a['fibre_type']!='') { //folio
-						$page=$a['number'].$a['pb_type'].$a['fibre_type'];
-						$newNode->setAttribute('n', $page);
-						$newNode->setAttribute('type', 'folio');
-					} else { //page
-						$page=$a['number'];
-						$newNode->setAttribute('n', $page);
-						$newNode->setAttribute('type', 'page');
-					}
-					$xml_id='P'.$page;
-				break;
-				case 'qb':
-					$xml_id='QB'.$a['number'];
-				break;
-			}
-			/*if(trim($a['number'])!=''){
+			if (substr($node->nodeValue, 0, strlen('&hyphen;')) == "&hyphen;")
+				$hadBreak=true;
+			else
+				$hadBreak=false;
+			
+			if ($a['break_type'] == 'gb') { //special role of quire breaks
+				$newNode = $xml->createElement('gb');
 				$newNode->setAttribute('n', $a['number']);
-			}*/
-			$newNode->setAttribute('xml:id', $xml_id);
-
+			}
+			else { // pb, cb, lb
+				$newNode = $xml->createElement($a['break_type']);
+				switch ($a['break_type']) {
+					case 'lb':
+						$newNode->setAttribute('n', $a['number']);
+						$xml_id='P'.$page.'C'.$column.'L'.$a['number'];
+					break;
+					case 'cb':
+						$column=$a['number'];
+						$newNode->setAttribute('n', $column);
+						$xml_id='P'.$page.'C'.$column;
+					break;
+					case 'pb':
+						//Decide whether folio or page
+						if ($a['pb_type']!='' || $a['fibre_type']!='') { //folio
+							$page=$a['number'].$a['pb_type'].$a['fibre_type'];
+							$newNode->setAttribute('n', $page);
+							$newNode->setAttribute('type', 'folio');
+						} else { //page
+							$page=$a['number'];
+							$newNode->setAttribute('n', $page);
+							$newNode->setAttribute('type', 'page');
+						}
+						$xml_id='P'.$page;
+					break;
+				}
+				$newNode->setAttribute('xml:id', $xml_id);
+				if (hadBreak)
+					$newNode->setAttribute('break', 'no');
+			}
 			$node->parentNode->replaceChild($newNode, $node);
 			continue;
 		}

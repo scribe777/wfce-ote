@@ -130,24 +130,24 @@ function writeWceNodeInfo(val) {
 			style += 'color:#666';
 			switch (document.getElementById('break_type').value) {
 				case 'lb':
-					if (val == '1') {
-						new_content = '<span style="' + style + '" '+original_text+' class="' + new_class + '">&crarr;<br/></span>';
-					} else {
-						new_content = '<span style="' + style + '" '+original_text+' class="' + new_class + '">&hyphen;&crarr;<br/></span>';
+					if (val == 'lb') {
+						new_content = '<br/><span style="' + style + '" '+original_text+' class="' + new_class + '">&crarr;</span> ';
+					} else { //lbm
+						new_content = '<span style="' + style + '" '+original_text+' class="' + new_class + '">&hyphen;<br/>&crarr;</span> ';
 					}
 				break;
 				
 				case 'cb':
-					new_content = '<span style="' + style + '" '+original_text+' class="' + new_class + '">CB<br/></span>';
-					new_content += '<span style="' + style + '" '+original_text+' class="' + '__t=brea&amp;__n=&amp;break_type=lb&amp;number=1&amp;pb_type=&amp;running_title=&amp;lb_alignment=leftJust&amp;insert=Insert&amp;cancel=Cancel' + '">&crarr;<br/></span>';
+					new_content = '<br/><span style="' + style + '" '+original_text+' class="' + new_class + '">CB</span><br/>';
+					new_content += '<span style="' + style + '" '+original_text+' class="' + '__t=brea&amp;__n=&amp;break_type=lb&amp;number=1&amp;pb_type=&amp;fibre_type=&amp;running_title=&amp;lb_alignment=&amp;insert=Insert&amp;cancel=Cancel' + '">&crarr;</span> ';
 				break;
 				
 				case 'pb':
-					new_content = '<span style="' + style + '" '+original_text+' class="' + new_class + '">PB<br/></span>';
+					new_content = '<br/><span style="' + style + '" '+original_text+' class="' + new_class + '">PB</span><br/>';
 				break;
 			
 				case 'qb':
-					new_content = '<span style="' + style + '" '+original_text+' class="' + new_class + '">GB<br/></span>';
+					new_content = '<br/><span style="' + style + '" '+original_text+' class="' + new_class + '">QB</span><br/>';
 				break;
 			}
 			break;

@@ -20,7 +20,7 @@
 							<option value="lb">{#wce.linebreak}</option>
 							<option value="cb">{#wce.columnbreak}</option>
 							<option value="pb">{#wce.pagebreak}</option>
-							<option value="qb">{#wce.quire}</option>
+							<option value="gb">{#wce.quire}</option>
 					</select></td>
 				</tr>
 				<tr>
@@ -70,7 +70,7 @@
 		<div class="mceActionPanel">
 			<input type="button" id="insert" name="insert" value="{#insert}"
 				onclick="cont = testNumber();
-						if (cont){writeWceNodeInfo('1');}else{alert('{#wce.empty_number}');}" /> <input type="button"
+						if (cont){writeWceNodeInfo(lbposition());}else{alert('{#wce.empty_number}');}" /> <input type="button"
 				id="cancel" name="cancel" value="{#cancel}"
 				onclick="tinyMCEPopup.close();" />
 		</div>
@@ -114,6 +114,27 @@
 		if (document.getElementById('number').value == '') 
 			return false;
 	return true;
+	}
+	
+	function _getNextEnd(endText, startOffset) {
+		if (typeof endText == 'undefined')
+			return startOffset;
+
+		endText = endText.replace(/\xa0/gi, ' ');
+		startOffset = endText.indexOf(' ', startOffset);
+		if (startOffset < 0) {
+			startOffset = endText.length;
+		}
+		return startOffset;
+	}
+	
+	function lbposition() {
+		var rng = ed.selection.getRng(true);
+		var startNode = rng.startContainer;
+		var startText = startNode.data ? startNode.data : startNode.innerText;
+		if (rng.startOffset == _getNextEnd(startText,rng.startOffset))
+			return 'lb';
+		return 'lbm';
 	}
 </script>
 </html>
