@@ -35,8 +35,8 @@
 						class="required number min1 mceFocus" /></td>-->
 				</tr>
 				<tr>
-					<td><label id="num_label" for="number">{#wce.text_or_numeral}</label></td>
-					<td colspan="2"><input id="number" name="number" type="text" value=""
+					<td><label id="text_or_number_label" for="text_or_number">{#wce.text_or_numeral}</label></td>
+					<td colspan="2"><input id="text_or_number" name="text_or_number" type="text" value=""
 						size=45" maxlength="" class="required number min1 mceFocus" /></td>
 				</tr>
 				<tr>
@@ -51,11 +51,11 @@
 							<option value="above">{#wce.position_above}</option>
 							<option value="below">{#wce.position_below}</option>
 							<option value="self">{#wce.position_thispoint}</option>
-							<option value="place_other">{#wce.other}</option>
+							<option value="other">{#wce.other}</option>
 					</select>
 					</td>
-					<td><input id="paratext_place_other"
-						name="paratext_place_other" type="text" value="" size="20"
+					<td><input id="paratext_position_other"
+						name="paratext_position_other" type="text" value="" size="20"
 						maxlength="" class="required number min1 mceFocus" />
 					</td>
 				</tr>
@@ -97,22 +97,13 @@
 	}
 
 	function checkstatus_typ() {
-		/*
-		if((document.paratextinfo.fw_type.options[0].selected == true) || (document.paratextinfo.fw_type.options[2].selected == true) || (document.paratextinfo.fw_type.options[8].selected == true) || (document.paratextinfo.fw_type.options[9].selected == true) || (document.paratextinfo.fw_type.options[10].selected == true))*/
 		if ($('#fw_type').val() == 'num_chapternumber' || $('#fw_type').val() == 'fw_lecttitle' || $('#fw_type').val() == 'num_eusebian' || $('#fw_type').val() == 'fw_euthaliana' || $('#fw_type').val() == 'fw_gloss') {
 			document.paratextinfo.number.disabled = false;
-			document.getElementById('number').style.backgroundColor = "white";
-			/*
-			$('#type_text').attr('disabled',true); 
-			$('#type_text').css('background','#ccc');  */
+			document.getElementById('text_or_number').style.backgroundColor = "white";
 		} else {
 			document.paratextinfo.number.disabled = true;
-			document.getElementById('number').style.backgroundColor = "#CCCCCC";
-			/*
-			$('#type_text').attr('disabled',false);
-			$('#type_text').css('background','#fff'); */
+			document.getElementById('text_or_number').style.backgroundColor = "#CCCCCC";
 		}
-		
 		// no place for <num>
 		if ($('#fw_type').val() == 'fw_chaptertitle' || $('#fw_type').val() == 'fw_colophon' || $('#fw_type').val() == 'fw_lecttitle' || $('#fw_type').val() == 'fw_euthaliana' || $('#fw_type').val() == 'fw_gloss') {
 			document.paratextinfo.paratext_position.disabled = false;
@@ -121,23 +112,23 @@
 		} else {
 			document.paratextinfo.paratext_position.disabled = true;
 			document.getElementById('paratext_position').style.backgroundColor = "#CCCCCC";
-			document.paratextinfo.paratext_place_other.disabled = true;
-			document.getElementById('paratext_place_other').style.backgroundColor = "#CCCCCC";
+			document.paratextinfo.paratext_position_other.disabled = true;
+			document.getElementById('paratext_position_other').style.backgroundColor = "#CCCCCC";
 		}
 	}
 
 	function checkstatus_position() {
 		if (document.paratextinfo.paratext_position.options[7].selected == true) {
-			document.paratextinfo.paratext_place_other.disabled = false;
-			document.getElementById('paratext_place_other').style.backgroundColor = "white";
+			document.paratextinfo.paratext_position_other.disabled = false;
+			document.getElementById('paratext_position_other').style.backgroundColor = "white";
 		} else {
-			document.paratextinfo.paratext_place_other.disabled = true;
-			document.getElementById('paratext_place_other').style.backgroundColor = "#CCCCCC";
+			document.paratextinfo.paratext_position_other.disabled = true;
+			document.getElementById('paratext_position_other').style.backgroundColor = "#CCCCCC";
 		}
 	}
 	
 	function testOther() {
-		if (document.paratextinfo.paratext_position.options[7].selected == true && document.getElementById('paratext_place_other').value == '') 
+		if (document.paratextinfo.paratext_position.options[7].selected == true && document.getElementById('paratext_position_other').value == '') 
 			return false;
 	return true;
 	}

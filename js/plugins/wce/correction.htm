@@ -45,8 +45,6 @@
 						<td><input type="checkbox" name="blank_firsthand"
 							id="blank_firsthand" value="blank_firsthand"
 							onclick="checkstatus_firsthand()">{#wce.blank_firsthand}
-
-						
 						</td>
 					</tr>
 					<tr>
@@ -59,9 +57,9 @@
 								<option value="corrector2">{#wce.corrector}2</option>
 								<option value="corrector3">{#wce.corrector}3</option>
 								<option value="unidentified_corrector">{#wce.unidentified_corrector}</option>
-								<option value="hand_other">{#wce.other}</option>
+								<option value="other">{#wce.other}</option>
 						</select></td>
-						<td><input id="corrector_other" name="corrector_other"
+						<td><input id="corrector_name_other" name="corrector_name_other"
 							onkeyup="saveCurrCorrector(true);" type="text" value="" size="30" />
 						</td>
 					</tr>
@@ -105,7 +103,7 @@
 								<option value="underdot">{#wce.del_underdot}</option>
 								<option value="strikethrough">{#wce.del_striketrough}</option>
 								<option value="vertical line">{#wce.del_vertical_line}</option>
-								<option value="Other">{#wce.other}</option>
+								<option value="other">{#wce.other}</option>
 						</select></td>
 					</tr>
 					<tr>
@@ -158,18 +156,18 @@
 	}
 	
 	function testOther() {
-		if (document.readinginfo.corrector_name.options[5].selected == true && document.getElementById('corrector_other').value == '') 
+		if (document.readinginfo.corrector_name.options[5].selected == true && document.getElementById('corrector_name_other').value == '') 
 			return false;
 	return true;
 	}
 	
 	function checkstatus_hand() {
-		if ($('#corrector_name').val() == 'hand_other') {
-			$('#corrector_other').attr('disabled', false);
-			$('#corrector_other').css('background', '#fff');
+		if ($('#corrector_name').val() == 'other') {
+			$('#corrector_name_other').attr('disabled', false);
+			$('#corrector_name_other').css('background', '#fff');
 		} else {
-			$('#corrector_other').attr('disabled', true);
-			$('#corrector_other').css('background', '#ccc');
+			$('#corrector_name_other').attr('disabled', true);
+			$('#corrector_name_other').css('background', '#ccc');
 		}
 	}
 
@@ -254,8 +252,8 @@
 		var corrector_name;
 		if (b) {
 			corrector_name = $('#corrector_name').val();
-			if (corrector_name == 'hand_other') {
-				corrector_name = $('#corrector_other').val();
+			if (corrector_name == 'other') {
+				corrector_name = $('#corrector_name_other').val();
 				if (corrector_name == '') {
 					corrector_name = 'Other';
 				}

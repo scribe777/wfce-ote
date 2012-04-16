@@ -20,10 +20,10 @@
 							<option value="transcriberquiry">{#wce.transcriber}</option>
 							<option value="canon">{#wce.canon}</option>
 							<option value="changeOfScribe">{#wce.changeOfScribe}</option>
-							<option value="note_other">{#wce.other}</option>
+							<option value="other">{#wce.other}</option>
 					</select>
 					</td>
-					<td><input id="other_note_type" name="other_note_type"
+					<td><input id="note_type_other" name="note_type_other"
 						type="text" value="" size="30" maxlength=""
 						class="required number min1 mceFocus" />
 					</td>
@@ -54,12 +54,12 @@
 	}
 	function checkstatus_notetype() {
 		if (document.noteinfo.note_type.options[4].selected == true) {
-			document.noteinfo.other_note_type.disabled = false;
-			document.getElementById('other_note_type').style.backgroundColor = "white";
+			document.noteinfo.note_type_other.disabled = false;
+			document.getElementById('note_type_other').style.backgroundColor = "white";
 
 		} else {
-			document.noteinfo.other_note_type.disabled = true;
-			document.getElementById('other_note_type').style.backgroundColor = "#CCCCCC";
+			document.noteinfo.note_type_other.disabled = true;
+			document.getElementById('note_type_other').style.backgroundColor = "#CCCCCC";
 		}
 	}
 	
@@ -68,7 +68,7 @@
 	}
 
 	function testOther() {
-		if (document.noteinfo.note_type.options[4].selected == true && document.getElementById('other_note_type').value == '') 
+		if (document.noteinfo.note_type.options[4].selected == true && document.getElementById('note_type_other').value == '') 
 			return false;
 	return true;
 	}	

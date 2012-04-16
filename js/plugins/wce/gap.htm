@@ -32,10 +32,10 @@
 							<option value="faded ink">{#wce.faded_ink}</option>
 							<option value="stain">{#wce.stain}</option>
 							<option value="poor image">{#wce.poor_image}</option>
-							<option value="otherreason">{#wce.other}</option>
+							<option value="other">{#wce.other}</option>
 					</select>
 					</td>
-					<td><input id="gap_otherreason" name="gap_otherreason" type="text"
+					<td><input id="gap_reason_other" name="gap_reason_other" type="text"
 						value="" size="30" maxlength=""
 						class="required number min1 mceFocus" />
 					</td>
@@ -50,7 +50,7 @@
 							<option value="line">{#wce.unit_line}</option>
 							<option value="page">{#wce.unit_page}</option>
 							<option value="quire">{#wce.unit_quire}</option>
-							<option value="otherunit">{#wce.other}</option>
+							<option value="other">{#wce.other}</option>
 					</select>
 					</td>
 					<td><input id="unit_other" name="unit_other" type="text"
@@ -67,7 +67,8 @@
 					</td>
 				</tr>
 				<tr>
-					<td colspan="2"><input type="checkbox" name="mark_as_supplied" 						id="mark_as_supplied" value="supplied" onclick="checkstatus_mark_as_supplied()">{#wce.mark_as_supplied}</input>
+					<td colspan="2"><input type="checkbox" name="mark_as_supplied"
+						id="mark_as_supplied" value="supplied" onclick="checkstatus_mark_as_supplied()">{#wce.mark_as_supplied}</input>
 					</td>
 				</tr>
 				<tr>
@@ -78,7 +79,7 @@
 							<option value="na27">{#wce.na27}</option>
 							<option value="transcriber">{#wce.transcriber}</option>
 							<option value="tr">{#wce.TR}</option>
-							<option value="othersupsource">{#wce.other}</option>
+							<option value="other">{#wce.other}</option>
 					</select></td>
 					<td><input id="supplied_source_other"
 						name="supplied_source_other" type="text" value="" size="30"
@@ -151,11 +152,11 @@
 
 	function checkstatus_gapreason() {
 		if (document.gapinfo.gap_reason.options[5].selected == true) {
-			document.gapinfo.gap_otherreason.disabled = false;
-			document.getElementById('gap_otherreason').style.backgroundColor = "white";
+			document.gapinfo.gap_reason_other.disabled = false;
+			document.getElementById('gap_reason_other').style.backgroundColor = "white";
 		} else {
-			document.gapinfo.gap_otherreason.disabled = true;
-			document.getElementById('gap_otherreason').style.backgroundColor = "#CCCCCC";
+			document.gapinfo.gap_reason_other.disabled = true;
+			document.getElementById('gap_reason_other').style.backgroundColor = "#CCCCCC";
 		}
 	}
 /*
@@ -227,7 +228,7 @@
 		{ return false; }
 		if (document.gapinfo.unit.options[5].selected == true && document.getElementById('unit_other').value == '' )
 		{ return false; }
-		if (document.gapinfo.gap_reason.options[5].selected == true && document.getElementById('gap_otherreason').value == '') 
+		if (document.gapinfo.gap_reason.options[5].selected == true && document.getElementById('gap_reason_other').value == '') 
 		{ return false; }
 	return true;
 	}

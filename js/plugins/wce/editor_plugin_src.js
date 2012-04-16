@@ -263,7 +263,7 @@
 							info_text = 'Numeral';
 							break;
 						case 'other':
-							info_text = ar['otherabbrtype'];
+							info_text = ar['abbr_type_other'];
 							break;
 						}
 						break;
@@ -287,8 +287,8 @@
 						}
 						break;
 					case 'note':
-						if (ar['note_type']=='note_other')
-							info_text = '<div>' + ar['other_note_type'] + '</div>';
+						if (ar['note_type']=='other')
+							info_text = '<div>' + ar['note_type_other'] + '</div>';
 						else
 							info_text = '<div>' + ar['note_type'] + '</div>';
 						info_text += '<div style="margin-top:10px">' + ar['note_text'] + '</div>';
@@ -337,8 +337,13 @@
 							break;
 						}
 						info_text += '</div>';
-						info_text += '<div style="margin-top:10px">Value: ' + ar['type_text'] + '</div>';
-						info_text += '<div style="margin-top:10px">Position: ' + ar['paratext_position'] + '</div>';
+						info_text += '<div style="margin-top:10px">Value: ' + ar['text_or_number'] + '</div>';
+						if (ar['paratext_position'] == 'other')
+						{
+							info_text += '<div style="margin-top:10px">Position: ' + ar['paratext_position_other'] + '</div>';
+						} else {
+							info_text += '<div style="margin-top:10px">Position: ' + ar['paratext_position'] + '</div>';
+						}
 						info_text += '<div style="margin-top:10px">Alignment: ' + ar['paratext_alignment'] + '</div>';
 						break;
 					case 'gap':
@@ -347,16 +352,16 @@
 							break;
 						}	
 						info_text = '<div>' + 'Reason: ';
-						if (ar['gap_reason'] == 'otherreason')
+						if (ar['gap_reason'] == 'other')
 						{
-							info_text += ar['gap_otherreason'] + '</div>';
+							info_text += ar['gap_reason_other'] + '</div>';
 						} else {
 							info_text += ar['gap_reason'] + '</div>';
 						}
 						if (ar['extent'] != '')
 						{
 							info_text += '<div>' + 'Extent: ' + ar['extent'] + ' ';
-							if (ar['unit'] == 'otherunit')
+							if (ar['unit'] == 'other')
 							{
 								info_text += ar['unit_other'] + '</div>';
 							} else {
@@ -366,7 +371,7 @@
 						if (ar['mark_as_supplied'] == 'supplied')
 						{
 							info_text += '<div>' + 'Supplied source: ';
-							if (ar['supplied_source'] == 'othersupsource')
+							if (ar['supplied_source'] == 'other')
 							{
 								info_text += ar['supplied_source_other'] + '</div>';
 							} else {
@@ -376,9 +381,9 @@
 						break;
 					case 'unclear':
 						info_text = '<div>' + 'Reason: ';
-						if (ar['unclear_text_reason'] == 'otherreason')
+						if (ar['unclear_text_reason'] == 'other')
 						{
-							info_text += ar['unclear_text_otherreason'];
+							info_text += ar['unclear_text_reason_other'];
 						} else {
 							info_text += ar['unclear_text_reason'];
 						}
@@ -1204,12 +1209,8 @@
 				ed.selection.setContent('<span class="' + ed.wceTypeParamInClass + '=' + className + '"' + style + '>' + character + '</span> ');
 				break;
 			case 'abbr':
-				if (character == 'ϗ') //not needed any longer
-					ed.selection.setContent('<span class="' + ed.wceTypeParamInClass + '=' + className + '"' + style + '>' + character + '</span> ');
-				else {
-					style = 'style="border: 1px  dotted #f00;  margin:0px; padding:0;text-decoration:overline;"';
-					ed.selection.setContent('<span class="' + '__t=abbr&amp;__n=&amp;original_abbr_text=&amp;abbr_type=nomSac&amp;otherabbrtype=&amp;add_overline=overline&amp;insert=Insert&amp;cancel=Cancel" wce_orig="' + character + '"' + style + '>' + character + '</span> ');
-				}
+				style = 'style="border: 1px  dotted #f00;  margin:0px; padding:0;text-decoration:overline;"';
+				ed.selection.setContent('<span class="' + '__t=abbr&amp;__n=&amp;original_abbr_text=&amp;abbr_type=nomSac&amp;abbr_type_other=&amp;add_overline=overline&amp;insert=Insert&amp;cancel=Cancel" wce_orig="' + character + '"' + style + '>' + character + '</span> ');
 				break;
 			case 'brea':
 				style = 'style="border: 1px  dotted #f00;  margin:0px; padding:0;color:#666"';
@@ -1629,15 +1630,6 @@
 			// Edit unclear text
 			ed.addCommand('mceEditUnclearText', function() {
 				_wceAdd(ed, url, '/unclear_text.htm', 480, 320, 1, false);
-			});
-
-			// Add supplied text/*********/
-			ed.addCommand('mceAddSuppliedText', function() {
-				_wceAdd(ed, url, '/supplied_text.htm', 480, 320, 1, true);
-			});
-			// Edit supplied text
-			ed.addCommand('mceEditSuppliedText', function() {
-				_wceAdd(ed, url, '/supplied_text.htm', 480, 320, 1, false);
 			});
 
 			// Add note/*********/

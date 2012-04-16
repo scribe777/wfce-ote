@@ -24,7 +24,7 @@
 							<option value="other">{#wce.other}</option>
 					</select>
 					</td>
-					<td><input id="otherabbrtype" name="otherabbrtype" type="text"
+					<td><input id="abbr_type_other" name="abbr_type_other" type="text"
 						value="" size="30" maxlength=""
 						class="required number min1 mceFocus" />
 					</td>
@@ -53,16 +53,16 @@
 	}
 	function checkstatus_abbrtype() {
 		if (document.abbrinfo.abbr_type.options[2].selected == true) {
-			document.abbrinfo.otherabbrtype.disabled = false;
-			document.getElementById('otherabbrtype').style.backgroundColor = "white";
+			document.abbrinfo.abbr_type_other.disabled = false;
+			document.getElementById('abbr_type_other').style.backgroundColor = "white";
 		} else {
-			document.abbrinfo.otherabbrtype.disabled = true;
-			document.getElementById('otherabbrtype').style.backgroundColor = "#CCCCCC";
+			document.abbrinfo.abbr_type_other.disabled = true;
+			document.getElementById('abbr_type_other').style.backgroundColor = "#CCCCCC";
 		}
 	}
 	
 	function testOther() {
-		if (document.abbrinfo.abbr_type.options[2].selected == true && document.getElementById('otherabbrtype').value == '') 
+		if (document.abbrinfo.abbr_type.options[2].selected == true && document.getElementById('abbr_type_other').value == '') 
 			return false;
 	return true;
 	}

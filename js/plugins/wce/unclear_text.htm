@@ -22,11 +22,11 @@
 							<option value="poor image">{#wce.poor_image}</option>
 							<option value="faded ink">{#wce.faded_ink}</option>
 							<option value="damage to page">{#wce.damage_to_page}</option>
-							<option value="otherreason">{#wce.other}</option>
+							<option value="other">{#wce.other}</option>
 					</select></td>
 					<td><input id="original_text" name="original_text" value=""
-						type="hidden" /> <input id="unclear_text_otherreason"
-						name="unclear_text_otherreason" type="text" value="" size="30"
+						type="hidden" /> <input id="unclear_text_reason_other"
+						name="unclear_text_reason_other" type="text" value="" size="30"
 						maxlength="" class="required number min1 mceFocus" />
 					</td>
 				</tr>
@@ -50,11 +50,11 @@
 
 	function checkstatus_unclear_text_reason() {
 		if (document.unclear_text_info.unclear_text_reason.options[4].selected == true) {
-			document.unclear_text_info.unclear_text_otherreason.disabled = false;
-			document.getElementById('unclear_text_otherreason').style.backgroundColor = "white";
+			document.unclear_text_info.unclear_text_reason_other.disabled = false;
+			document.getElementById('unclear_text_reason_other').style.backgroundColor = "white";
 		} else {
-			document.unclear_text_info.unclear_text_otherreason.disabled = true;
-			document.getElementById('unclear_text_otherreason').style.backgroundColor = "#CCCCCC";
+			document.unclear_text_info.unclear_text_reason_other.disabled = true;
+			document.getElementById('unclear_text_reason_other').style.backgroundColor = "#CCCCCC";
 		}
 	}
 
@@ -66,7 +66,7 @@
 	}
 	
 	function testOther() {
-		if (document.unclear_text_info.unclear_text_reason.options[4].selected == true && document.getElementById('unclear_text_otherreason').value == '') 
+		if (document.unclear_text_info.unclear_text_reason.options[4].selected == true && document.getElementById('unclear_text_reason_other').value == '') 
 			return false;
 	return true;
 	}
