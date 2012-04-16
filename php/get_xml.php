@@ -442,7 +442,7 @@ function _readOtherClass($xml, $node) {
 				//<supplied>
 				$newNode = $xml->createElement('supplied');
 				if ($a['supplied_source'] != '') {
-					if ($a['supplied_source'] == 'othersupsource')
+					if ($a['supplied_source'] == 'other')
 					$newNode->setAttribute('source', $a['supplied_source_other']);
 					else
 					$newNode->setAttribute('source', $a['supplied_source']);
@@ -452,21 +452,14 @@ function _readOtherClass($xml, $node) {
 			}
 			//reason
 			if ($a['gap_reason'] != '') {
-				if ($a['gap_reason'] == 'otherreason')
-					$newNode->setAttribute('reason', $a['gap_otherreason']);
+				if ($a['gap_reason'] == 'other')
+					$newNode->setAttribute('reason', $a['gap_reason_other']);
 				else
 					$newNode->setAttribute('reason', $a['gap_reason']);
 			}
-			//hand
-			if ($a['gaphand'] != '') {
-				if ($a['gaphand'] == 'othergaphand')
-					$newNode->setAttribute('hand', $a['gaphand_other']);
-				else
-					$newNode->setAttribute('hand', $a['gaphand']);
-			}
 			//unit
 			if ($a['unit'] != '') {
-				if ($a['unit'] == 'otherunit')
+				if ($a['unit'] == 'other')
 				$newNode->setAttribute('unit', $a['unit_other']);
 				else
 				$newNode->setAttribute('unit', $a['unit']);
@@ -501,9 +494,9 @@ function _readOtherClass($xml, $node) {
 			//type
 			if ($a['abbr_type'] != '') {
 				if ($a['abbr_type'] == 'other')
-				$abbr->setAttribute('type', $a['otherabbrtype']);
+					$abbr->setAttribute('type', $a['abbr_type_other']);
 				else
-				$abbr->setAttribute('type', $a['abbr_type']);
+					$abbr->setAttribute('type', $a['abbr_type']);
 			}
 
 			if ($a['add_overline'] == 'overline') {
@@ -542,8 +535,8 @@ function _readOtherClass($xml, $node) {
 		if ($type == '' && $a['__t'] === 'unclear') {
 			$unclear = $xml->createElement('unclear');
 			$unclear_reason = $a['unclear_text_reason'];
-			if ($unclear_reason == 'otherreason') {
-				$unclear_reason = $a['unclear_text_otherreason'];
+			if ($unclear_reason == 'other') {
+				$unclear_reason = $a['unclear_text_reason_other'];
 			}
 			if ($unclear_reason != '') {
 				$unclear->setAttribute('reason', $unclear_reason);
@@ -571,7 +564,7 @@ function _readOtherClass($xml, $node) {
 				$paratextNodeName = 'fw'; //Fehler #85
 				//$paratextNodeName = 'num'; 
 				//$attr = $currInfo['number'];
-				$attr = $a['number'];
+				$attr = $a['text_or_number'];
 			} else {
 				$paratextNodeName = 'fw';
 			}
@@ -614,8 +607,8 @@ function _readOtherClass($xml, $node) {
 
 			if ($newNode->nodeName === 'fw') {
 				$attr = $a['paratext_position'];
-				$attr_other = $a['paratext_place_other'];
-				if ($attr == 'place_other' && $attr_other != '') {
+				$attr_other = $a['paratext_position_other'];
+				if ($attr == 'other' && $attr_other != '') {
 					$attr = $attr_other;
 				}
 				if ($attr != '') {
@@ -679,14 +672,13 @@ function _readOtherClass($xml, $node) {
 		//******************** supplied ********************
 		/*
 		 <supplied source="STRING"  reason="STRING"  agent="STRING>...</supplied>
-		*/
 		// ohne w
 		if ($type == '' && $a['__t'] === 'supplied') {
 			continue; //TODO wie unclear in <w>
 			$newNode = $xml->createElement('supplied');
 			$attr = $a['supplied_source'];
 			$attr_other = $a['supplied_source_other'];
-			if ($attr == 'othersupsource') {
+			if ($attr == 'other') {
 				$attr = $attr_other;
 			}
 
@@ -695,9 +687,9 @@ function _readOtherClass($xml, $node) {
 			}
 
 			//
-			$attr = substr($a['supplied_reason'], 4); //to get just damage, hole etc.
-			$attr_other = $a['sup_otherdamage'];
-			if ($attr == 'otherreason') {
+			$attr = substr($a['gap_reason'], 4); //to get just damage, hole etc.
+			$attr_other = $a['gap_reason_other'];
+			if ($attr == 'other') {
 				//no sup_ because of substring
 				$attr = $attr_other;
 			}
@@ -705,15 +697,6 @@ function _readOtherClass($xml, $node) {
 				$newNode->setAttribute('reason', $attr);
 			}
 
-			//
-			$attr = substr($a['supplied_agent'], 4); //see above
-			$attr_other = $a['sup_agent_other'];
-			if ($attr == 'otheragent') {
-				$attr = $attr_other;
-			}
-			if ($attr != '') {
-				$newNode->setAttribute('agent', $attr);
-			}
 			_copyChild($xml, $newNode, $clone);
 
 			$newNode=_insertElementW($xml,$node,$newNode);
@@ -721,7 +704,8 @@ function _readOtherClass($xml, $node) {
 			$node->parentNode->replaceChild($newNode, $node);
 			continue;
 		}
-
+		*/
+		
 		// note
 		/*
 
@@ -729,8 +713,8 @@ function _readOtherClass($xml, $node) {
 		if ($type == '' && $a['__t'] === 'note') {
 			$newNode = $xml->createElement('note');
 			$attr = $a['note_type'];
-			$attr_other = $a['other_note_type'];
-			if ($attr == 'note_other' && $attr_other != '') {
+			$attr_other = $a['note_type_other'];
+			if ($attr == 'other' && $attr_other != '') {
 				$attr = $attr_other;
 			}
 			if ($attr != '') {
