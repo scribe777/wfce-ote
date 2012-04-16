@@ -85,7 +85,7 @@ function hasUser($loginname){
 
 function sendEmail($username, $passwort, $to){  
 	$subject = 'New account for WCE-Online  ';
-	$href='http://urts173.uni-trier.de/~gany2d01/test/wce_1/';
+	$href='http://urts55.uni-trier.de/workspace/onlineeditor/';
 	$msg ='A new accout for WCE-Online <a href="'.$href.'">'.$href.'</a> was created.
 	<br /><br />
 	
