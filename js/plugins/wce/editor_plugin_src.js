@@ -1209,8 +1209,8 @@
 				ed.selection.setContent('<span class="' + ed.wceTypeParamInClass + '=' + className + '"' + style + '>' + character + '</span> ');
 				break;
 			case 'abbr':
-				style = 'style="border: 1px  dotted #f00;  margin:0px; padding:0;text-decoration:overline;"';
-				ed.selection.setContent('<span class="' + '__t=abbr&amp;__n=&amp;original_abbr_text=&amp;abbr_type=nomSac&amp;abbr_type_other=&amp;add_overline=overline&amp;insert=Insert&amp;cancel=Cancel" wce_orig="' + character + '"' + style + '>' + character + '</span> ');
+				style = 'style="border: 1px  dotted #f00;  margin:0px; padding:0;"';
+				ed.selection.setContent('<span class="' + '__t=abbr&amp;__n=&amp;original_abbr_text=&amp;abbr_type=nomSac&amp;abbr_type_other=&amp;add_overline=&amp;insert=Insert&amp;cancel=Cancel" wce_orig="' + character + '"' + style + '>' + character + '</span> ');
 				break;
 			case 'brea':
 				style = 'style="border: 1px  dotted #f00;  margin:0px; padding:0;color:#666"';
@@ -1452,7 +1452,39 @@
 							_wceAddNoDialog(ed, 'brea', 'lbm');
 						}
 					}
-											
+					
+					// Add <pc> for some special characters
+					if (ek == 59 && !e.shiftKey) { //; en
+						tinyMCE.activeEditor.execCommand('mceAdd_abbr', ';');
+						e.preventDefault();
+						e.stopPropagation();
+					}
+					else if (ek == 188 && e.shiftKey) { //; dt < en
+						tinyMCE.activeEditor.execCommand('mceAdd_abbr', ';');
+						e.preventDefault();
+						e.stopPropagation();
+					}
+					else if (ek == 188 && !e.shiftKey) { //,
+						tinyMCE.activeEditor.execCommand('mceAdd_abbr', ',');
+						e.preventDefault();
+						e.stopPropagation();
+					}
+					else if (ek == 190 && !e.shiftKey) { //.
+						tinyMCE.activeEditor.execCommand('mceAdd_abbr', '.');
+						e.preventDefault();
+						e.stopPropagation();
+					}
+					else if (ek == 191 && e.shiftKey) { //? en
+						tinyMCE.activeEditor.execCommand('mceAdd_abbr', '?');
+						e.preventDefault();
+						e.stopPropagation();
+					}
+					else if (ek == 219 && e.shiftKey) { //? dt
+						tinyMCE.activeEditor.execCommand('mceAdd_abbr', '?');
+						e.preventDefault();
+						e.stopPropagation();
+					}
+					
 					if (ek == 56 && e.shiftKey ) //(
 					{
 						

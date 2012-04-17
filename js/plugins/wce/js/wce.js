@@ -128,6 +128,7 @@ function writeWceNodeInfo(val) {
 
 		case 'brea':
 			style += 'color:#666';
+			/*
 			switch (document.getElementById('break_type').value) {
 				case 'lb':
 					if (val == 'lb') {
@@ -150,6 +151,8 @@ function writeWceNodeInfo(val) {
 					new_content = '<br/><span style="' + style + '" '+original_text+' class="' + new_class + '">QB</span><br/>';
 				break;
 			}
+			*/
+			selected_content = val;
 			break;
 
 		case 'corr':
@@ -180,7 +183,6 @@ function writeWceNodeInfo(val) {
 			if (document.getElementById('add_overline').checked == true) {
 				style += "text-decoration:overline";
 			}
-
 			break;
 
 		case 'spaces':
@@ -201,7 +203,6 @@ function writeWceNodeInfo(val) {
 
 		if (new_content == null)
 			new_content = '<span style="' + style + '" '+original_text+' class="' + new_class + '" >' + selected_content + '</span>';
-		
 		 
 		ed.selection.setContent(new_content);
 
@@ -210,6 +211,10 @@ function writeWceNodeInfo(val) {
 		if (wce_node != null) {
 			if (wce_type == 'paratext') {
 				// num or fw
+				wce_node.innerHTML = val;
+			} 
+			else if (wce_type == 'brea') {
+				//break type
 				wce_node.innerHTML = val;
 			}
 			wce_node.className = new_class;

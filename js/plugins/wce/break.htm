@@ -70,7 +70,7 @@
 		<div class="mceActionPanel">
 			<input type="button" id="insert" name="insert" value="{#insert}"
 				onclick="cont = testNumber();
-						if (cont){writeWceNodeInfo(lbposition());}else{alert('{#wce.empty_number}');}" /> <input type="button"
+				if (cont){writeWceNodeInfo(getBreakTag());}else{alert('{#wce.empty_number}');}" /> <input type="button"
 				id="cancel" name="cancel" value="{#cancel}"
 				onclick="tinyMCEPopup.close();" />
 		</div>
@@ -83,6 +83,22 @@
 		setstatus_break();
 	}
 
+	function getBreakTag() {
+		var v = $('#break_type').val();
+		if (v == 'lb') {
+			if (lbposition() == 'lb')
+				return '<br/>&crarr;';
+			else
+				return '&hyphen;<br/>&crarr;';
+		}
+		else if (v == 'cb')
+			return '<br/>CB<br/>';
+		else if (v == 'pb')
+			return '<br/>PB<br/>';
+		else
+			return '<br/>QB<br/>';
+	}
+	
 	function checkstatus_break() {
 		if (document.breakinfo.break_type.options[0].selected == true) {
 			document.breakinfo.lb_alignment.disabled = false;
