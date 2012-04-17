@@ -561,16 +561,19 @@ function _readOtherClass($xml, $node) {
 
 			$attr = '';
 			if (preg_match('/num_/', $a['fw_type'])) {
-				$paratextNodeName = 'fw'; //Fehler #85
-				//$paratextNodeName = 'num'; 
+				//$paratextNodeName = 'fw'; //Fehler #85
+				$paratextNodeName = 'num'; 
 				//$attr = $currInfo['number'];
-				$attr = $a['text_or_number'];
 			} else {
 				$paratextNodeName = 'fw';
 			}
+			
 			$newNode = $xml->createElement($paratextNodeName);
 
 			switch ($a['fw_type']) {
+				case 'fw_pagenumber':
+					$type = 'pageNum';
+					break;
 				case 'num_chapternumber':
 					$type = 'chapNum';
 					break;
@@ -583,7 +586,7 @@ function _readOtherClass($xml, $node) {
 				case 'fw_colophon':
 					$type = 'colophon';
 					break;
-				case 'num_quiresig':
+				case 'fw_quiresig':
 					$type = 'quireSig';
 					break;
 				case 'num_ammonian':
@@ -600,8 +603,11 @@ function _readOtherClass($xml, $node) {
 					break;
 			}
 			$newNode->setAttribute('type', $type);
-
-			if ($attr != '') {
+			
+			$attr = $a['number'];
+			
+			// write attribute n only for certain values
+			if ($attr != '' && ($type == 'pageNum' || $type == 'chapNum' || $type == 'quireSig' || $type == 'AmmSec' || $type == 'EusCan')) {
 				$newNode->setAttribute('n', $attr);
 			}
 
@@ -621,7 +627,7 @@ function _readOtherClass($xml, $node) {
 				$newNode->setAttribute('rend', $attr);
 			}
 
-			$attr = $a['type_text'];
+			$attr = $a['text'];
 			if ($attr != '') {
 				//_addText($xml, $newNode, $attr);
 				$newNode->nodeValue = $attr;

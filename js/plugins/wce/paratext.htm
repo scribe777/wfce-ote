@@ -8,21 +8,19 @@
 </head>
 
 <body id="table" style="display: none" onload="init();">
-	<form onsubmit="return false;" action="#" name="paratextinfo">
+	<form onsubmit="return false;" action="#" name="paratextinfo" onload="setstatus_paratext()">
 		<fieldset>
 			<legend>{#wce.paratext_data}</legend>
 			<table border="0" cellpadding="4" cellspacing="0" width="100%">
 				<tr>
 					<td><label id="fw_label" for="fw_type">{#wce.paratext}</label>
 					</td>
-					<td><select id="fw_type" name="fw_type">
+					<td><select id="fw_type" name="fw_type" onchange="checkstatus_typ()">
 							<option value="num_chapternumber">{#wce.fw_chapter_number}</option>
 							<option value="fw_chaptertitle">{#wce.fw_chapter_title}</option>
 							<option value="fw_lecttitle">{#wce.fw_lectionary_title}</option>
-							<!--<option value="fw_incipit">{#wce.fw_lectionary_incipit}</option>
-					<option value="fw_explicit">{#wce.fw_lectionary_explicit}</option>-->
 							<option value="fw_colophon">{#wce.fw_colophon}</option>
-							<option value="num_quiresig">{#wce.fw_quiresignature}</option>
+							<option value="fw_quiresig">{#wce.fw_quiresignature}</option>
 							<option value="num_ammonian">{#wce.fw_ammonian}</option>
 							<option value="num_eusebian">{#wce.fw_eusebian}</option>
 							<option value="fw_euthaliana">{#wce.fw_euthaliana}</option>
@@ -30,14 +28,16 @@
 							<option value="num_stichoi">{#wce.fw_stichoi}</option>
 					</select>
 					</td>
-					<!--<td><input id="type_text" name="type_text" type="text"
-						value="" size="30" maxlength=""
-						class="required number min1 mceFocus" /></td>-->
 				</tr>
 				<tr>
-					<td><label id="text_or_number_label" for="text_or_number">{#wce.text_or_numeral}</label></td>
-					<td colspan="2"><input id="text_or_number" name="text_or_number" type="text" value=""
-						size=45" maxlength="" class="required number min1 mceFocus" /></td>
+					<td><label id="text_label" for="text">{#wce.text}</label></td>
+					<td colspan="2"><input id="text" name="text" type="text" value=""
+						size=45" maxlength="" class="required number min1 mceFocus" onchange="setnumber()" /></td>
+				</tr>
+				<tr>
+					<td><label id="number_label" for="number">{#wce.numeral}</label></td>
+					<td colspan="2"><input id="number" name="number" type="text" value=""
+						size=10" maxlength="" class="required number min1 mceFocus" /></td>
 				</tr>
 				<tr>
 					<td><label id="paratext_position_label"
@@ -97,15 +97,15 @@
 	}
 
 	function checkstatus_typ() {
-		if ($('#fw_type').val() == 'num_chapternumber' || $('#fw_type').val() == 'fw_lecttitle' || $('#fw_type').val() == 'num_eusebian' || $('#fw_type').val() == 'fw_euthaliana' || $('#fw_type').val() == 'fw_gloss') {
-			document.paratextinfo.number.disabled = false;
-			document.getElementById('text_or_number').style.backgroundColor = "white";
-		} else {
+		if ($('#fw_type').val() == 'fw_chaptertitle' || $('#fw_type').val() == 'fw_lecttitle' || $('#fw_type').val() == 'fw_colophon' || $('#fw_type').val() == 'fw_euthaliana' || $('#fw_type').val() == 'fw_gloss') { //don't get a number, only text
 			document.paratextinfo.number.disabled = true;
-			document.getElementById('text_or_number').style.backgroundColor = "#CCCCCC";
+			document.getElementById('number').style.backgroundColor = "#CCCCCC";
+		} else {
+			document.paratextinfo.number.disabled = false;
+			document.getElementById('number').style.backgroundColor = "white";
 		}
 		// no place for <num>
-		if ($('#fw_type').val() == 'fw_chaptertitle' || $('#fw_type').val() == 'fw_colophon' || $('#fw_type').val() == 'fw_lecttitle' || $('#fw_type').val() == 'fw_euthaliana' || $('#fw_type').val() == 'fw_gloss') {
+		/*if ($('#fw_type').val() == 'fw_chaptertitle' || $('#fw_type').val() == 'fw_colophon' || $('#fw_type').val() == 'fw_lecttitle' || $('#fw_type').val() == 'fw_euthaliana' || $('#fw_type').val() == 'fw_gloss') {
 			document.paratextinfo.paratext_position.disabled = false;
 			document.getElementById('paratext_position').style.backgroundColor = "white";
 			checkstatus_position();
@@ -114,7 +114,7 @@
 			document.getElementById('paratext_position').style.backgroundColor = "#CCCCCC";
 			document.paratextinfo.paratext_position_other.disabled = true;
 			document.getElementById('paratext_position_other').style.backgroundColor = "#CCCCCC";
-		}
+		}*/
 	}
 
 	function checkstatus_position() {
@@ -140,7 +140,7 @@
 		var Zeichen_Wert = 0; /* Wert fuer Zeichen */
 		var Zeichen_Wert_alt = 1000; /* alter Wert fuer Zeichen */
 
-		var eing = ed.selection.getContent().toUpperCase();
+		var eing = document.paratextinfo.text.value.toUpperCase();
 		Pruefen_roemZahl(eing, eing.length);
 
 		if (fehler == 0) {
@@ -309,8 +309,7 @@
 	}
 	function setstatus_paratext() {
 		checkstatus_position();
-		//checkstatus_typ();
-		//setnumber();
+		checkstatus_typ();
 	}
 </script>
 </html>
