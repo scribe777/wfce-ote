@@ -91,11 +91,17 @@
 			else
 				return '&hyphen;<br/>&crarr;';
 		}
-		else if (v == 'cb')
-			return '<br/>CB<br/>';
-		else if (v == 'pb')
-			return '<br/>PB<br/>';
-		else
+		else if (v == 'cb') {
+			if (lbposition() == 'lb')
+				return '<br/>CB';
+			else
+				return '&hyphen;<br/>CB';
+		} else if (v == 'pb') {
+			if (lbposition() == 'lb')
+				return '<br/>PB';
+			else
+				return '&hyphen;<br/>PB';
+		} else
 			return '<br/>QB<br/>';
 	}
 	

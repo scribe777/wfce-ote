@@ -100,7 +100,7 @@ function writeWceNodeInfo(val) {
 		ed.execCommand('wceDelNode', false);
 		tinyMCEPopup.close();
 		return;
-	}else if(new_class==''){
+	} else if (new_class=='') {
 		tinyMCEPopup.close();
 		return;
 	}
@@ -111,7 +111,7 @@ function writeWceNodeInfo(val) {
 
 		// new content
 		var new_content;
-		var original_text=' wce_orig="'+selected_content+'" ';
+		var original_text = ' wce_orig="' + selected_content + '" ';
 
 		switch (wce_type) {
 		case 'gap':
@@ -147,7 +147,7 @@ function writeWceNodeInfo(val) {
 					new_content = '<br/><span style="' + style + '" '+original_text+' class="' + new_class + '">PB</span><br/>';
 				break;
 			
-				case 'qb':
+				case 'gb':
 					new_content = '<br/><span style="' + style + '" '+original_text+' class="' + new_class + '">QB</span><br/>';
 				break;
 			}
@@ -202,10 +202,11 @@ function writeWceNodeInfo(val) {
 		}
 
 		if (new_content == null)
-			new_content = '<span style="' + style + '" '+original_text+' class="' + new_class + '" >' + selected_content + '</span>';
+			new_content = '<span style="' + style + '" ' + original_text + ' class="' + new_class + '" >' + selected_content + '</span>';
 		 
 		ed.selection.setContent(new_content);
-
+		if (wce_type == 'brea' && (document.getElementById('break_type').value == 'cb' || document.getElementById('break_type').value == 'pb'))
+				ed.execCommand('mceAdd_brea', 'lb');
 	} else {
 		// update class
 		if (wce_node != null) {

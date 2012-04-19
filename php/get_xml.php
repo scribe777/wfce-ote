@@ -31,7 +31,7 @@ $nodeNameToCompress=array('unclear','gap','supplied','abbr','part_abbr','ex');
 $index['lb'] = -1;
 
 while ($row = mysql_fetch_array($res)) {
-	$bookIndex = $row['b'];
+	$bookIndex = trim($row['b']);
 	$chapterIndex = $row['k'];
 	$hadBreak = false;
 	

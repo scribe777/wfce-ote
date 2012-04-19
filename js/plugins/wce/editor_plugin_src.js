@@ -337,7 +337,7 @@
 							break;
 						}
 						info_text += '</div>';
-						info_text += '<div style="margin-top:10px">Value: ' + ar['text_or_number'] + '</div>';
+						info_text += '<div style="margin-top:10px">Value: ' + ar['text'] + '</div>';
 						if (ar['paratext_position'] == 'other')
 						{
 							info_text += '<div style="margin-top:10px">Position: ' + ar['paratext_position_other'] + '</div>';
@@ -880,14 +880,14 @@
 						}
 					});
 
-					sub.add({
+					sub.add({ //alternatively \u00B7
 						title : '\u0387 (Greek Ano Teleia)',
 						onclick : function() {
 							tinyMCE.activeEditor.execCommand('mceAdd_pc', '\u0387');
 						}
 					});
 					
-					sub.add({
+					sub.add({ //alternatively \u003B
 						title : '\u037E (Greek question mark)',
 						onclick : function() {
 							tinyMCE.activeEditor.execCommand('mceAdd_pc', '\u037E');
@@ -1213,21 +1213,29 @@
 				ed.selection.setContent('<span class="' + '__t=abbr&amp;__n=&amp;original_abbr_text=&amp;abbr_type=nomSac&amp;abbr_type_other=&amp;add_overline=&amp;insert=Insert&amp;cancel=Cancel" wce_orig="' + character + '"' + style + '>' + character + '</span> ');
 				break;
 			case 'brea':
-				style = 'style="border: 1px  dotted #f00;  margin:0px; padding:0;color:#666"';
+				style = 'style="border: 1px  dotted #f00;  margin:0px; padding:0; color:#666"';
 				if (character == 'lb') { //line break at the end of a word
+					//new_content = '<span style="' + style + '" ' + ' wce_orig="' + content + '" ' + ' class="' + new_class + '" >' + '<br/>&crarr;' + '</span>';
+		 			//ed.selection.setContent(new_content);
 					//ed.selection.setContent('<span class="' + ed.wceTypeParamInClass + '=' + className + '"' + style + '>' + '&crarr;' + '</span> ');
-					ed.selection.setContent('<br/><span class="' + '__t=brea&amp;__n=&amp;break_type=lb&amp;number=1&amp;pb_type=&amp;fibre_type=&amp;running_title=&amp;lb_alignment=&amp;insert=Insert&amp;cancel=Cancel' + '"' + style + '>' + '&crarr;' + '</span> ');  
+					var num = prompt("Number of line break", "");
+					ed.selection.setContent('<br/><span class="' + 
+						'__t=brea&amp;__n=&amp;break_type=lb&amp;number=' + num + '&amp;pb_type=&amp;fibre_type=&amp;running_title=&amp;lb_alignment=&amp;insert=Insert&amp;cancel=Cancel'
+						+ '"' + style + '>' + '&crarr;' + '</span> ');  
 				} else if (character == 'lbm') { //line break in the middle of a word
-					//ed.selection.setContent('<span class="' + ed.wceTypeParamInClass + '=' + className + '"' + style + '>' + '&hyphen;&crarr;' + '</span> ');
-					ed.selection.setContent('<span class="' + '__t=brea&amp;__n=&amp;break_type=lb&amp;number=1&amp;pb_type=&amp;fibre_type=&amp;running_title=&amp;lb_alignment=&amp;insert=Insert&amp;cancel=Cancel' + '"' + style + '>' + '&hyphen;<br/>&crarr;' + '</span> ');  
-				} else if (character == 'cb') { //column break
+					var num = prompt("Number of line break", "");
+					ed.selection.setContent('<span class="' + '__t=brea&amp;__n=&amp;break_type=lb&amp;number=' + num
+						+ '&amp;pb_type=&amp;fibre_type=&amp;running_title=&amp;lb_alignment=&amp;insert=Insert&amp;cancel=Cancel'
+						+ '"' + style + '>' + '&hyphen;<br/>&crarr;' + '</span> ');  
+				}
+				/* else if (character == 'cb') { //column break
 					ed.selection.setContent('<br/><span class="' + ed.wceTypeParamInClass + '=' + className + '"' + style + '>' + 'CB' + '</span><br/>'
 					+ '<br/><span class="' + '__t=brea&amp;__n=&amp;break_type=lb&amp;number=1&amp;pb_type=&amp;running_title=&amp;lb_alignment=leftJust&amp;insert=Insert&amp;cancel=Cancel' + '"' + style + '>' + '&crarr;' + '</span> ');
 				} else if (character == 'pb') { //page break
 					ed.selection.setContent('<br/><span class="' + ed.wceTypeParamInClass + '=' + className + '"' + style + '>' + 'PB' + '</span><br/>');
 				} else { //quire break
 					ed.selection.setContent('<br/><span class="' + ed.wceTypeParamInClass + '=' + className + '"' + style + '>' + 'QB' + '</span><br/>');
-				}
+				}*/
 				break;
 			case 'part_abbr': //part-worded abbreviations
 				var rng = ed.selection.getRng(true);
@@ -1420,67 +1428,73 @@
 					}
 				});
 
+				tinymce.dom.Event.add(ed.getDoc(), 'keypress', function(e) {
+					if (!e) var e = window.event;
+					var ek = e.keyCode || e.charCode || 0;
+				
+					if (ek == 13 || ek == 10) { //Enter
+						//e.stopPropagation works only in Firefox.
+						if (e.stopPropagation) {
+							e.stopPropagation();
+							e.preventDefault();
+						}
+						if (e.shiftKey) {//Shift+Enter -> break dialogue
+							if (!_getWceMenuValStatus('add', '/^__t=brea/'))
+								tinyMCE.activeEditor.execCommand('mceAddBreak');
+						} else { // Enter -> line break
+							var rng = ed.selection.getRng(true);
+							var startNode = rng.startContainer;
+							var startText = startNode.data ? startNode.data : startNode.innerText;
+						
+							if (rng.startOffset == _getNextEnd(startText,rng.startOffset)) { //at the end of a word
+								_wceAddNoDialog(ed, 'brea', 'lb');
+							} else { //in the middle of a word
+								_wceAddNoDialog(ed, 'brea', 'lbm');
+							}
+						}
+					}
+					return;
+				});
+				
 				// versernumber schuetzen
 				// TODO: testen, ob Editor Focus hat
 				tinymce.dom.Event.add(ed.getDoc(), 'keydown', function(e) {
 					if (!e) var e = window.event;
-					var ek = e.keyCode;
+					var ek = e.keyCode || e.charCode || 0;
 					var delBlock = false;
 					ed.wceKeydownBlock = false;
 
 					if (ek == 17 || (ek > 32 && ek < 41))
 						return;
 
-					/*if (ek == 13 && e.shiftKey && e.ctrlKey) { //Strg+Shift -> page break
-						_wceAddNoDialog(ed, 'brea', 'pb');
-					} else if (ek == 13 && e.shiftKey) {//Shift+Enter -> column break
-						_wceAddNoDialog(ed, 'brea', 'cb');
-					*/
-					if (ek == 13 && e.shiftKey) {//Shift+Enter -> break dialogue
-						if (!_getWceMenuValStatus('add', '/^__t=brea/'))
-							tinyMCE.activeEditor.execCommand('mceAddBreak');
-						e.preventDefault();
-						e.stopPropagation();
-					} else if (ek == 13) { // Enter -> line break
-						var rng = ed.selection.getRng(true);
-						var startNode = rng.startContainer;
-						var startText = startNode.data ? startNode.data : startNode.innerText;
-						
-						if (rng.startOffset == _getNextEnd(startText,rng.startOffset)) { //at the end of a word
-							_wceAddNoDialog(ed, 'brea', 'lb');
-						} else { //in the middle of a word
-							_wceAddNoDialog(ed, 'brea', 'lbm');
-						}
-					}
-					
 					// Add <pc> for some special characters
 					if (ek == 59 && !e.shiftKey) { //; en
-						tinyMCE.activeEditor.execCommand('mceAdd_abbr', ';');
+						tinyMCE.activeEditor.execCommand('mceAdd_pc', ';');
 						e.preventDefault();
 						e.stopPropagation();
 					}
 					else if (ek == 188 && e.shiftKey) { //; dt < en
-						tinyMCE.activeEditor.execCommand('mceAdd_abbr', ';');
+						tinyMCE.activeEditor.execCommand('mceAdd_pc', ';');
 						e.preventDefault();
 						e.stopPropagation();
 					}
 					else if (ek == 188 && !e.shiftKey) { //,
-						tinyMCE.activeEditor.execCommand('mceAdd_abbr', ',');
+						tinyMCE.activeEditor.execCommand('mceAdd_pc', ',');
 						e.preventDefault();
 						e.stopPropagation();
 					}
 					else if (ek == 190 && !e.shiftKey) { //.
-						tinyMCE.activeEditor.execCommand('mceAdd_abbr', '.');
+						tinyMCE.activeEditor.execCommand('mceAdd_pc', '.');
 						e.preventDefault();
 						e.stopPropagation();
 					}
 					else if (ek == 191 && e.shiftKey) { //? en
-						tinyMCE.activeEditor.execCommand('mceAdd_abbr', '?');
+						tinyMCE.activeEditor.execCommand('mceAdd_pc', '?');
 						e.preventDefault();
 						e.stopPropagation();
 					}
 					else if (ek == 219 && e.shiftKey) { //? dt
-						tinyMCE.activeEditor.execCommand('mceAdd_abbr', '?');
+						tinyMCE.activeEditor.execCommand('mceAdd_pc', '?');
 						e.preventDefault();
 						e.stopPropagation();
 					}
@@ -1623,6 +1637,13 @@
 				_wceAdd(ed, url, '/break.htm', 480, 320, 1, false);
 			});
 
+			ed.addCommand('mceAddBreak_Shortcut', function() {
+				if (!_getWceMenuValStatus('add', '/^__t=brea/'))
+					ed.execCommand('mceAddBreak');
+				else if (_getWceMenuValStatus('edit', '/^__t=brea/'))
+					ed.execCommand('mceEditBreak');
+			});
+			
 			// Add corrections
 			ed.addCommand('mceAddCorrection', function() {
 				var _add_new_wce_node = true;
@@ -1646,6 +1667,10 @@
 				_wceAdd(ed, url, '/correction.htm', 480, 320, 1, false);
 			});
 
+			ed.addCommand('mceAddCorrection_Shortcut', function() {
+				ed.execCommand('mceAddCorrection');
+			});
+			
 			// Add gaps/*********/
 			ed.addCommand('mceAddGap', function() {
 				_wceAdd(ed, url, '/gap.htm', 480, 320, 1, true);
@@ -1655,6 +1680,13 @@
 				_wceAdd(ed, url, '/gap.htm', 480, 320, 1, false);
 			});
 
+			ed.addCommand('mceAddGap_Shortcut', function() {
+				if (!_getWceMenuValStatus('add', '/^__t=gap/'))
+					ed.execCommand('mceAddGap');
+				else if (_getWceMenuValStatus('edit', '/^__t=gap/'))
+					ed.execCommand('mceEditGap');
+			});
+			
 			// Add unclear text/*********/
 			ed.addCommand('mceAddUnclearText', function() {
 				_wceAdd(ed, url, '/unclear_text.htm', 480, 320, 1, true);
@@ -1662,6 +1694,13 @@
 			// Edit unclear text
 			ed.addCommand('mceEditUnclearText', function() {
 				_wceAdd(ed, url, '/unclear_text.htm', 480, 320, 1, false);
+			});
+			
+			ed.addCommand('mceAddUnclearText_Shortcut', function() {
+				if (!_getWceMenuValStatus('add', '/^__t=unclear/'))
+					ed.execCommand('mceAddUnclearText');
+				else if (_getWceMenuValStatus('edit', '/^__t=unclear/'))
+					ed.execCommand('mceEditUnclearText');
 			});
 
 			// Add note/*********/
@@ -1673,6 +1712,13 @@
 				_wceAdd(ed, url, '/note.htm', 480, 380, 1, false);
 			});
 
+			ed.addCommand('mceAddNote_Shortcut', function() {
+				if (!_getWceMenuValStatus('add', '/^__t=note/'))
+					ed.execCommand('mceAddNote');
+				else if (_getWceMenuValStatus('edit', '/^__t=note/'))
+					ed.execCommand('mceEditNote');
+			});
+			
 			// Add abbreviation/*********/
 			ed.addCommand('mceAddAbbr', function() {
 				_wceAdd(ed, url, '/abbr.htm', 480, 320, 1, true);
@@ -1680,6 +1726,13 @@
 			// Edit abbreviation
 			ed.addCommand('mceEditAbbr', function() {
 				_wceAdd(ed, url, '/abbr.htm', 480, 320, 1, false);
+			});
+			
+			ed.addCommand('mceAddAbbr_Shortcut', function() {
+				if (!_getWceMenuValStatus('add', '/^__t=abbr/'))
+					ed.execCommand('mceAddAbbr');
+				else if (_getWceMenuValStatus('edit', '/^__t=abbr/'))
+					ed.execCommand('mceEditAbbr');
 			});
 
 			// Add Spaces/*********/
@@ -1700,12 +1753,26 @@
 			ed.addCommand('mceEditParatext', function() {
 				_wceAdd(ed, url, '/paratext.htm', 480, 320, 1, false);
 			});
+			
+			ed.addCommand('mceAddParatext_Shortcut', function() {
+				if (!_getWceMenuValStatus('add', '/^__t=paratext/'))
+					ed.execCommand('mceAddParatext');
+				else if (_getWceMenuValStatus('edit', '/^__t=paratext/'))
+					ed.execCommand('mceEditParatext');
+			});
+			
 			// Edit Metadata
-			ed.addCommand('mceAddMetadata', function() {
+			/*ed.addCommand('mceAddMetadata', function() {
 				_wceAdd(ed, url, '/metadata.htm', 600, 450, 1, false);
 			});
+			*/
+			
 			ed.addCommand('mceAdd_abbr', function(c) {
 				_wceAddNoDialog(ed, 'abbr', c);
+			});
+
+			ed.addCommand('mceAdd_brea', function(c) {
+				_wceAddNoDialog(ed, 'brea', c);
 			});
 
 			ed.addCommand('mceAdd_pc', function(c) {

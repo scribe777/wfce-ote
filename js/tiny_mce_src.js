@@ -10723,18 +10723,27 @@ tinymce.create('tinymce.ui.Toolbar:tinymce.ui.Container', {
 				}
 
 				// Add default shortcuts for gecko
-				t.addShortcut('ctrl+b', t.getLang('bold_desc'), 'Bold');
-				t.addShortcut('ctrl+i', t.getLang('italic_desc'), 'Italic');
-				t.addShortcut('ctrl+u', t.getLang('underline_desc'), 'Underline');
-
+				//t.addShortcut('ctrl+b', t.getLang('bold_desc'), 'Bold');
+				//t.addShortcut('ctrl+i', t.getLang('italic_desc'), 'Italic');
+				//t.addShortcut('ctrl+u', t.getLang('underline_desc'), 'Underline');
+				t.addShortcut('ctrl+b', 'Add break', 'mceAddBreak_Shortcut');
+				t.addShortcut('ctrl+c', 'Add correction', 'mceAddCorrection_Shortcut');
+				t.addShortcut('ctrl+u', 'Add unclear text', 'mceAddUnclearText_Shortcut');
+				t.addShortcut('ctrl+g', 'Add gap', 'mceAddGap_Shortcut');
+				t.addShortcut('ctrl+a', 'Add abbreviation', 'mceAddAbbr_Shortcut');
+				t.addShortcut('ctrl+p', 'Add correction', 'mceAddParatext_Shortcut');
+				t.addShortcut('ctrl+n', 'Add correction', 'mceAddNote_Shortcut');
+				
 				// BlockFormat shortcuts keys
+				/*
 				for (i=1; i<=6; i++)
 					t.addShortcut('ctrl+' + i, '', ['FormatBlock', false, 'h' + i]);
 
 				t.addShortcut('ctrl+7', '', ['FormatBlock', false, '<p>']);
 				t.addShortcut('ctrl+8', '', ['FormatBlock', false, '<div>']);
 				t.addShortcut('ctrl+9', '', ['FormatBlock', false, '<address>']);
-
+				*/
+				
 				function find(e) {
 					var v = null;
 
