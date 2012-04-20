@@ -96,7 +96,18 @@
 					<tr>
 						<td><label id="deletion_label" for="deletion">{#wce.deletion}</label>
 						</td>
-						<td colspan="2"><select id="deletion" name="deletion">
+						<td colspan="2">
+						<select id="deletion" size="10" multiple="multiple">
+								<option value="" selected="selected"></option>
+								<option value="erased">{#wce.del_erased}</option>
+								<option value="underline">{#wce.del_underline}</option>
+								<option value="underdot">{#wce.del_underdot}</option>
+								<option value="strikethrough">{#wce.del_striketrough}</option>
+								<option value="vertical line">{#wce.del_vertical_line}</option>
+								<option value="other">{#wce.other}</option>
+						</select>
+						</td>
+						<!--<td colspan="2"><select id="deletion" name="deletion">
 								<option value=""></option>
 								<option value="erased">{#wce.del_erased}</option>
 								<option value="underline">{#wce.del_underline}</option>
@@ -104,7 +115,7 @@
 								<option value="strikethrough">{#wce.del_striketrough}</option>
 								<option value="vertical line">{#wce.del_vertical_line}</option>
 								<option value="other">{#wce.other}</option>
-						</select></td>
+						</select></td>-->
 					</tr>
 					<tr>
 						<td><label id="editorial_note_label" for="editorial_note">{#wce.editorial_note}</label>

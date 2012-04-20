@@ -282,7 +282,7 @@ function _readOtherClass($xml, $node) {
 				$rdg = $xml->createElement('rdg');
 				$rdg->setAttribute('type', $a['reading']);
 				$rdg->setAttribute('hand', $a['corrector_name']);
-				/*if ($a['deletion'] != '')
+				/*if ($a['deletion'] != '') //no decision yet on the correct way of exporting; multiple values should be respected
 					$rdg->setAttribute('deletion', $a['deletion']);
 				*/
 				if ($a['editorial_note'] != '') {
