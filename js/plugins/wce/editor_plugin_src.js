@@ -10,7 +10,7 @@
 (function() {
 	// Load plugin specific language pack
 	tinymce.PluginManager.requireLangPack('wce');
-
+	
 	tinymce.create('tinymce.plugins.wcePlugin', {
 
 		// Ueberpruefen, ob ausgewaehlter Text in Note ist
@@ -352,11 +352,11 @@
 							break;
 						}	
 						info_text = '<div>' + 'Reason: ';
-						if (ar['gap_reason'] == 'other')
+						if (ar['gap_reason'] == 'lacuna')
 						{
-							info_text += ar['gap_reason_other'] + '</div>';
+							info_text += 'Lacuna' + '</div>';
 						} else {
-							info_text += ar['gap_reason'] + '</div>';
+							info_text += 'Illegible text' + '</div>';
 						}
 						if (ar['extent'] != '')
 						{
@@ -380,13 +380,14 @@
 						}
 						break;
 					case 'unclear':
-						info_text = '<div>' + 'Reason: ';
+						info_text = '<div>' + 'Uncertain letters';
+						/*info_text = '<div>' + 'Reason: ';
 						if (ar['unclear_text_reason'] == 'other')
 						{
 							info_text += ar['unclear_text_reason_other'];
 						} else {
 							info_text += ar['unclear_text_reason'];
-						}
+						}*/
 						info_text += '</div>';
 						break;
 					case 'spaces':
@@ -620,8 +621,7 @@
 					image : tinyMCE.baseURL+'/plugins/wce/img/button_D.gif',
 					icons : false,
 					onclick : function() {
-						_setWceMenuStatus(tinyMCE.activeEditor, 'menu-illegable', /^__t=unclear/, _getWceMenuValStatus, 'uncleartext');
-						//_setWceMenuStatus(tinyMCE.activeEditor, //'menu-illegable', /^__t=supplied/, //_getWceMenuValStatus, 'supplied');
+						//_setWceMenuStatus(tinyMCE.activeEditor, 'menu-illegable', /^__t=unclear/, _getWceMenuValStatus, 'uncleartext');
 						_setWceMenuStatus(tinyMCE.activeEditor, 'menu-illegable', /^__t=gap/, _getWceMenuValStatus, 'lacuna');
 					}
 				});
@@ -630,7 +630,15 @@
 					var sub, pattern, b;
 
 					// Uncertain Letters
-					sub = m.addMenu({
+					m.add({
+						title : 'Uncertain letters',
+						id : 'menu-illegable-uncleartext',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAddUnclearText');
+						}
+					});
+
+					/*sub = m.addMenu({
 						title : 'Uncertain Letters',
 						id : 'menu-illegable-uncleartext'
 					});
@@ -662,42 +670,9 @@
 							tinyMCE.activeEditor.execCommand('wceDelNode');
 						}
 					}).setDisabled(b);
-
-					// supplied
-					/*pattern = /^__t=supplied/;
-					sub = m.addMenu({
-						title : 'Mark text as supplied',
-						id : 'menu-illegable-supplied'
-					});
-
-					b = _getWceMenuValStatus('add', pattern);
-					sub.add({
-						title : 'add',
-						id : 'menu-illegable-supplied-add',
-						onclick : function() {
-							tinyMCE.activeEditor.execCommand('mceAddSuppliedText');
-						}
-					}).setDisabled(b);
-
-					b = _getWceMenuValStatus('edit', pattern);
-					sub.add({
-						title : 'edit',
-						id : 'menu-illegable-supplied-edit',
-						onclick : function() {
-							tinyMCE.activeEditor.execCommand('mceEditSuppliedText');
-						}
-					}).setDisabled(b);
-
-					b = _getWceMenuValStatus('delete', pattern);
-					sub.add({
-						title : 'delete',
-						id : 'menu-illegable-supplied-delete',
-						onclick : function() {
-							tinyMCE.activeEditor.execCommand('wceDelNode');
-						}
-					}).setDisabled(b);*/
-
-					// lacuna
+					*/
+					
+					// gap/supplied
 					pattern = /^__t=gap/;
 					sub = m.addMenu({
 						title : 'Gap',
@@ -1258,6 +1233,15 @@
 			case 'formatting_capitals': //Capitals
 				ed.selection.setContent('<span class="' + ed.wceTypeParamInClass + '=' + className + '&amp;height=' + character + '"' + style + '>' + content + '</span>');
 				break;
+			case 'unclear': //uncertain letters
+				selection = ed.selection.getContent();
+				var unclear_text = "";
+				for ( var i = 0; i < selection.length; i++) {
+					unclear_text += selection.charAt(i) + '&#x0323;';
+				}
+				
+				ed.selection.setContent('<span class="__t=unclear&amp;__n=&amp;original_text='+selection+'&amp;insert=Insert&amp;cancel=Cancel"' + 'style="border: 1px  dotted #f00; margin: 0px 1px 0px 1px; padding: 0;">' + unclear_text + '</span>');
+				break;
 			default:
 				ed.selection.setContent('<span class="' + ed.wceTypeParamInClass + '=' + className + '"' + style + '>' + content + '</span>');
 			}
@@ -1689,18 +1673,19 @@
 			
 			// Add unclear text/*********/
 			ed.addCommand('mceAddUnclearText', function() {
-				_wceAdd(ed, url, '/unclear_text.htm', 480, 320, 1, true);
+				_wceAddNoDialog(ed, 'unclear');
+				//_wceAdd(ed, url, '/unclear_text.htm', 480, 320, 1, true);
 			});
 			// Edit unclear text
-			ed.addCommand('mceEditUnclearText', function() {
+			/*ed.addCommand('mceEditUnclearText', function() {
 				_wceAdd(ed, url, '/unclear_text.htm', 480, 320, 1, false);
-			});
+			});*/
 			
 			ed.addCommand('mceAddUnclearText_Shortcut', function() {
-				if (!_getWceMenuValStatus('add', '/^__t=unclear/'))
+				//if (!_getWceMenuValStatus('add', '/^__t=unclear/'))
 					ed.execCommand('mceAddUnclearText');
-				else if (_getWceMenuValStatus('edit', '/^__t=unclear/'))
-					ed.execCommand('mceEditUnclearText');
+				//else if (_getWceMenuValStatus('edit', '/^__t=unclear/'))
+					//ed.execCommand('mceEditUnclearText');
 			});
 
 			// Add note/*********/
@@ -1781,7 +1766,7 @@
 
 			ed.addCommand('mceAdd_formatting', function(c) {
 				if (c == 'capitals') { //Capitals => get height
-					Check = prompt("Please spezify the height of the capitals", "4");
+					Check = prompt("Please specify the height of the capitals", "4");
 					_wceAddNoDialog(ed, 'formatting_' + c, Check);
 				} else {
 					_wceAddNoDialog(ed, 'formatting_' + c, '');

@@ -4,6 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=8" />
 <script type="text/javascript" src="js/jquery.js"></script>
 <script type="text/javascript" src="js/tiny_mce_src.js"></script>
 <script type="text/javascript" src="js/wce_user_login.js"></script>
@@ -83,7 +84,7 @@ body {
 		<input type="button" style="margin-right: 20px" value="Get XML"
 			onclick="getXmlData();" /> <a style="color: white"
 			href="quellcode/wfce-20120420.zip">Get sourcecode (without basetexts)</a>
-		<label style="color:white; margin-left: 700px">Last update of the web site: 2012-04-20, 15:30</label>
+		<label style="color:white; margin-left: 700px">Last update of the web site: 2012-05-08, 16:50</label>
 	</form>
 	<div id="propertydisplaybox"></div>
 </body>
@@ -173,6 +174,18 @@ body {
 	function decreaseLineHeight() {
 	
 	}
-	
+</script>
+<script type="text/javascript">
+if ((typeof Range !== "undefined") && !Range.prototype.createContextualFragment)
+{
+    Range.prototype.createContextualFragment = function(html)
+    {
+        var frag = document.createDocumentFragment(),
+        div = document.createElement("div");
+        frag.appendChild(div);
+        div.outerHTML = html;
+        return frag;
+    };
+}
 </script>
 </html>

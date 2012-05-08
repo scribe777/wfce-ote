@@ -205,7 +205,8 @@ function writeWceNodeInfo(val) {
 			new_content = '<span style="' + style + '" ' + original_text + ' class="' + new_class + '" >' + selected_content + '</span>';
 		 
 		ed.selection.setContent(new_content);
-		if (wce_type == 'brea' && (document.getElementById('break_type').value == 'cb' || document.getElementById('break_type').value == 'pb'))
+		if (wce_type == 'brea' && (document.getElementById('break_type').value == 'cb' || document.getElementById('break_type').value == 'pb'
+			|| document.getElementById('break_type').value == 'gb'))
 				ed.execCommand('mceAdd_brea', 'lb');
 	} else {
 		// update class

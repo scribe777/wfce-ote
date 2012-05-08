@@ -451,12 +451,14 @@ function _readOtherClass($xml, $node) {
 				$newNode = $xml->createElement('gap');
 			}
 			//reason
-			if ($a['gap_reason'] != '') {
+			/*if ($a['gap_reason'] != '') {
 				if ($a['gap_reason'] == 'other')
 					$newNode->setAttribute('reason', $a['gap_reason_other']);
 				else
 					$newNode->setAttribute('reason', $a['gap_reason']);
-			}
+			}*/
+			$newNode->setAttribute('reason', $a['gap_reason']);
+			
 			//unit
 			if ($a['unit'] != '') {
 				if ($a['unit'] == 'other')

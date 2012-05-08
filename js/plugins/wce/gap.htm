@@ -14,32 +14,23 @@
 		<fieldset id="inputContainer">
 			<legend>{#wce.gap_data}</legend>
 			<table border="0" cellpadding="4" cellspacing="0" width="100%">
-					<!--<td valign="center"><label id="gap_type_label" for="gap_type">{#wce.gap_type}</label>
-					</td>
-					<td>
-					<input type="radio" id="gap_type" name="gap_type" value="lacuna">{#wce.lacuna}</br>
-					<input type="radio" id="gap_type" name="gap_type" value="illegible_text">{#wce.illegible_text}</option>
-					</select>
-					</td>-->
-					
 				<tr>
+					<td valign="center"><label id="gap_type_label" for="gap_type">{#wce.reason}</label></td>
+					<td><input type="radio" id="gap_reason" name="gap_reason" value="lacuna" checked="checked">{#wce.lacuna}</td>
+					<td><input type="radio" id="gap_reason" name="gap_reason" value="illegible">{#wce.illegible_text}</td>
+				</tr>
+			</table>
+			<table border="0" cellpadding="4" cellspacing="0" width="100%">				
+				<!--<tr>
 					<td><label id="gap_reason_label" for="gap_reason">{#wce.reason}</label>
 					</td>
 					<td><select id="gap_reason" name="gap_reason"
 						onchange="checkstatus_gapreason()">
 							<option value=""></option>
 							<option value="hole">{#wce.hole}</option>
-							<option value="faded ink">{#wce.faded_ink}</option>
-							<option value="stain">{#wce.stain}</option>
-							<option value="poor image">{#wce.poor_image}</option>
-							<option value="other">{#wce.other}</option>
-					</select>
+						</select>
 					</td>
-					<td><input id="gap_reason_other" name="gap_reason_other" type="text"
-						value="" size="30" maxlength=""
-						class="required number min1 mceFocus" />
-					</td>
-				</tr>
+					</tr>-->
 				<tr>
 					<td><label id="unit_label" for="unit">{#wce.unit}</label>
 					</td>
@@ -102,7 +93,7 @@
 		wceInfoInit('gap');
 		readWceNodeInfo();
 		//checkstatus_gap_type();
-		checkstatus_gapreason();
+		//checkstatus_gapreason();
 		checkstatus_gapunit();
 		//setstatus_gap();
 		checkstatus_supplied_source();
@@ -146,11 +137,11 @@
 		}
 	}
 */
-	function checkstatus_gaptype() {
+	/*function checkstatus_gaptype() {
 		
-	}
+	}*/
 
-	function checkstatus_gapreason() {
+	/*function checkstatus_gapreason() {
 		if (document.gapinfo.gap_reason.options[5].selected == true) {
 			document.gapinfo.gap_reason_other.disabled = false;
 			document.getElementById('gap_reason_other').style.backgroundColor = "white";
@@ -158,7 +149,7 @@
 			document.gapinfo.gap_reason_other.disabled = true;
 			document.getElementById('gap_reason_other').style.backgroundColor = "#CCCCCC";
 		}
-	}
+	}*/
 /*
 	function checkstatus_gaphand() {
 		if (document.gapinfo.gaphand.options[6].selected == true) {
@@ -219,17 +210,17 @@
 		}
 	}
 
-	function setstatus_gap() {
-		checkstatus_gaptype();
-	} 
+	/*function setstatus_gap() {
+		checkstatus_gapunit();
+	}*/ 
 
 	function testOther() {
 		if (document.gapinfo.mark_as_supplied.checked && document.gapinfo.supplied_source.options[3].selected == true && document.getElementById('supplied_source_other').value == '' )
 		{ return false; }
 		if (document.gapinfo.unit.options[5].selected == true && document.getElementById('unit_other').value == '' )
 		{ return false; }
-		if (document.gapinfo.gap_reason.options[5].selected == true && document.getElementById('gap_reason_other').value == '') 
-		{ return false; }
+		//if (document.gapinfo.gap_reason.options[5].selected == true && document.getElementById('gap_reason_other').value == '') 
+		//{ return false; }
 	return true;
 	}
 </script>
