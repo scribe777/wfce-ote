@@ -1630,6 +1630,9 @@
 			
 			// Add corrections
 			ed.addCommand('mceAddCorrection', function() {
+				if (ed.execCommand('wceContentHasVerse'))
+					return true;
+				
 				var _add_new_wce_node = true;
 				var sele_node = ed.selection.getNode();
 				var wceNode = ed.execCommand('getWceNode');
