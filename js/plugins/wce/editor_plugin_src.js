@@ -1263,11 +1263,23 @@
 			case 'unclear': //uncertain letters
 				selection = ed.selection.getContent();
 				var unclear_text = "";
-				for ( var i = 0; i < selection.length; i++) {
-					unclear_text += selection.charAt(i) + '&#x0323;';
+				var newContent = "";
+				var word = "";
+				var unclear_text = "";
+				for ( var i = 0; i < selection.length; i++) { //Divide input into words
+					if (selection.charAt(i) == ' ') { // Space -> new word
+						newContent += '<span class="__t=unclear&amp;__n=&amp;original_text=' + word + '&amp;insert=Insert&amp;cancel=Cancel"' + 'style="border: 1px  dotted #f00; margin: 0px 1px 0px 1px; padding: 0;">' + unclear_text + '</span> ';
+						word = "";
+						unclear_text = "";
+					}
+					else {
+						word += selection.charAt(i);
+						unclear_text += selection.charAt(i) + '&#x0323;';
+					}
 				}
-				
-				ed.selection.setContent('<span class="__t=unclear&amp;__n=&amp;original_text='+selection+'&amp;insert=Insert&amp;cancel=Cancel"' + 'style="border: 1px  dotted #f00; margin: 0px 1px 0px 1px; padding: 0;">' + unclear_text + '</span>');
+				// add last part of selection
+				newContent += '<span class="__t=unclear&amp;__n=&amp;original_text=' + word + '&amp;insert=Insert&amp;cancel=Cancel"' + 'style="border: 1px  dotted #f00; margin: 0px 1px 0px 1px; padding: 0;">' + unclear_text + '</span>';
+				ed.selection.setContent(newContent);
 				break;
 			case 'ghostpage': // Ghost page
 				style = 'style="border: 1px  dotted #f00;  margin:0px; padding:0; color:#666"';
