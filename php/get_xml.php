@@ -13,10 +13,12 @@ $sql = "SELECT * FROM `$user_tablname` WHERE `filename` LIKE '"
 . $_GET['textname'] . "' AND `userid` LIKE '" . $_GET['userid']
 . "' ORDER BY id ASC";
 $res = dbRes($sql);
+//$res = mysql_query($sql);
 
 //create XML
 $dom = new DOMDocument('1.0', 'UTF-8');
 $dom->formatOutput = true;
+$dom->preserveWhiteSpace = false;
 
 //add root Node
 $teiNode = $dom->createElement("TEI");
@@ -31,7 +33,7 @@ $nodeNameToCompress=array('unclear','gap','supplied','abbr','part_abbr','ex');
 $index['lb'] = -1;
 
 while ($row = mysql_fetch_array($res)) {
-	$bookIndex = trim($row['b']);
+	$bookIndex = sprintf("%02d", $row['b']); // to get two digit numbers
 	$chapterIndex = $row['k'];
 	$hadBreak = false;
 	
@@ -250,6 +252,7 @@ function _readOtherClass($xml, $node) {
 
 	$type = '';
 	$newNode = '';
+	$secNewNode = '';
 	$clone = _cloneNode($xml, $node);
 	foreach ($arr AS $a) {
 
@@ -359,14 +362,31 @@ function _readOtherClass($xml, $node) {
 							$newNode->setAttribute('n', $page);
 							$newNode->setAttribute('type', 'page');
 						}
+						if ($a['facs']!='') { //use URL for facs attribute
+							$newNode->setAttribute('facs', $a['facs']);
+						}
 						$xml_id='P'.$page;
 					break;
 				}
 				$newNode->setAttribute('xml:id', $xml_id);
-				if (hadBreak)
+				if ($hadBreak)
 					$newNode->setAttribute('break', 'no');
 			}
 			$node->parentNode->replaceChild($newNode, $node);
+			if ($a['break_type'] == 'pb') { //for pb add fw elements
+				if ($a['running_title'] != '') {
+					$secNewNode = $xml->createElement('fw');
+					$secNewNode->setAttribute('type','runTitle');
+					$secNewNode->nodeValue = $a['running_title'];
+					$newNode->parentNode->insertBefore($secNewNode, $newNode->nextSibling); 
+				}
+				if ($a['page_number'] != '') {
+					$secNewNode = $xml->createElement('fw');
+					$secNewNode->setAttribute('type','PageNum');
+					$secNewNode->nodeValue = $a['page_number'];
+					$newNode->parentNode->insertBefore($secNewNode, $newNode->nextSibling); //TODO better use function appendSibling
+				}
+			}
 			continue;
 		}
 
@@ -474,9 +494,8 @@ function _readOtherClass($xml, $node) {
 			if ($newNode->nodeName === 'supplied') {
 				//add text
 				$newNode->nodeValue = substr($node->nodeValue, 1, -1);
-			}
-
-			$newNode=_insertElementW($xml,$node,$newNode);
+				$newNode=_insertElementW($xml,$node,$newNode); //add <w>
+			}			
 
 			$node->parentNode->replaceChild($newNode, $node);
 			continue;
@@ -736,6 +755,12 @@ function _readOtherClass($xml, $node) {
 				$newNode->nodeValue = $attr;
 			}
 			$node->parentNode->replaceChild($newNode, $node);
+			
+			if ($a['note_type'] == "changeOfHand") { //add <handshift/>
+				$secNewNode = $xml->createElement('handshift');
+				$secNewNode->setAttribute('n',$a['newHand']);
+				$newNode->parentNode->insertBefore($secNewNode, $newNode->nextSibling); //TODO better use function appendSibling
+			}
 			continue;
 		}
 
@@ -980,7 +1005,13 @@ function xmlExport($xml) {
 	ob_end_flush();
 }
 
-
+function appendSibling(DOMNode $newnode, DOMNode $ref) {
+	if ($ref->nextSibling) { // $ref has an immediate brother : insert newnode before this one
+		return $ref->parentNode->insertBefore($newnode, $ref->nextSibling);
+	} else { // $ref has no brother next to him : insert newnode as last child of his parent
+		return $ref->parentNode->appendChild($newnode);
+	}
+} 
 
 /* Ausgabe im Browser anzeigen */
 //  echo $dom->saveXML();

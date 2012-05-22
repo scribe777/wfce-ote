@@ -277,7 +277,10 @@
 							}
 							break;
 						case 'pb':
-							info_text = '<div>' + 'Number: ' + ar['number'] + ar['pb_type'] + ar['fibre_type'] + '</div>';
+							info_text = '<div>' + 'Page number (in sequence): ' + ar['number'] + ar['pb_type'] + ar['fibre_type'] + '</div>';
+							if (ar['page_number']!='') {
+								info_text += '<div>' + 'Page number (as written): ' + ar['page_number'] + '</div>';
+							}
 							if (ar['running_title']!='') {
 								info_text += '<div>' + 'Running title: ' + ar['running_title'] + '</div>';
 							}
@@ -287,10 +290,25 @@
 						}
 						break;
 					case 'note':
-						if (ar['note_type']=='other')
-							info_text = '<div>' + ar['note_type_other'] + '</div>';
-						else
-							info_text = '<div>' + ar['note_type'] + '</div>';
+						info_text = '<div>';
+						switch (ar['note_type'])
+						{
+						case 'editorial':
+							info_text += 'Editorial Note</div>';
+							break;
+						case 'transcriberquery':
+							info_text += 'Transcriber query</div>';
+							break;
+						case 'canonRef':
+							info_text += 'Canon reference</div>';
+							break;
+						case 'changeOfHand':
+							info_text += 'Change of Hand</div>';
+							info_text += '<div>New hand: ' + ar['newHand'] + '</div>';
+							break;
+						default: //other
+							info_text += ar['note_type_other'] + '</div>';
+						}
 						info_text += '<div style="margin-top:10px">' + ar['note_text'] + '</div>';
 						break;
 					case 'corr':
@@ -355,8 +373,10 @@
 						if (ar['gap_reason'] == 'lacuna')
 						{
 							info_text += 'Lacuna' + '</div>';
-						} else {
+						} else if (ar['gap_reason'] == 'illegible') {
 							info_text += 'Illegible text' + '</div>';
+						} else {
+							info_text += 'Absent text' + '</div>';
 						}
 						if (ar['extent'] != '')
 						{
@@ -706,6 +726,13 @@
 						}
 					}).setDisabled(b);
 
+					m.add({ // Ghost page
+						title : 'Ghost page',
+						id : 'menu-illegable-ghostpage',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAddGhostPage');
+						}
+					});
 				});
 
 				// Return the new menu button instance
@@ -1194,9 +1221,9 @@
 		 			//ed.selection.setContent(new_content);
 					//ed.selection.setContent('<span class="' + ed.wceTypeParamInClass + '=' + className + '"' + style + '>' + '&crarr;' + '</span> ');
 					var num = prompt("Number of line break", "");
-					ed.selection.setContent('<br/><span class="' + 
+					ed.selection.setContent('<span class="' + 
 						'__t=brea&amp;__n=&amp;break_type=lb&amp;number=' + num + '&amp;pb_type=&amp;fibre_type=&amp;running_title=&amp;lb_alignment=&amp;insert=Insert&amp;cancel=Cancel'
-						+ '"' + style + '>' + '&crarr;' + '</span> ');  
+						+ '"' + style + '>' + '<br/>' + '&crarr;' + '</span> ');  
 				} else if (character == 'lbm') { //line break in the middle of a word
 					var num = prompt("Number of line break", "");
 					ed.selection.setContent('<span class="' + '__t=brea&amp;__n=&amp;break_type=lb&amp;number=' + num
@@ -1241,6 +1268,10 @@
 				}
 				
 				ed.selection.setContent('<span class="__t=unclear&amp;__n=&amp;original_text='+selection+'&amp;insert=Insert&amp;cancel=Cancel"' + 'style="border: 1px  dotted #f00; margin: 0px 1px 0px 1px; padding: 0;">' + unclear_text + '</span>');
+				break;
+			case 'ghostpage': // Ghost page
+				style = 'style="border: 1px  dotted #f00;  margin:0px; padding:0; color:#666"';
+				ed.selection.setContent('<span class="__t=gap&amp;__n=&amp;original_gap_text=&amp;gap_reason=absent&amp;unit=page&amp;unit_other=&amp;extent=1&amp;supplied_source=na27&amp;supplied_source_other=&amp;insert=Insert&amp;cancel=Cancel"' + style + '>Ghost page</span>');
 				break;
 			default:
 				ed.selection.setContent('<span class="' + ed.wceTypeParamInClass + '=' + className + '"' + style + '>' + content + '</span>');
@@ -1691,6 +1722,10 @@
 					//ed.execCommand('mceEditUnclearText');
 			});
 
+			ed.addCommand('mceAddGhostPage', function() {
+				_wceAddNoDialog(ed, 'ghostpage');
+			});
+						
 			// Add note/*********/
 			ed.addCommand('mceAddNote', function() {
 				_wceAdd(ed, url, '/note.htm', 480, 380, 1, true);

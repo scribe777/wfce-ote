@@ -47,24 +47,41 @@
 					
 				</tr>
 				<tr>
-					<td><label id="running_title_label" for="running_title">{#wce.running_title}</label>
-					</td>
-					<td colspan="6"><input id="running_title" name="running_title" type="text" value=""
-						size="50" maxlength="" class="required number min1 mceFocus" />
-					</td>
-				</tr>
-				<tr>
 					<td><label id="lb_alignment_label" for="lb_alignment">{#wce.alignment}</label>
 					</td>
 					<td colspan="2"><select id="lb_alignment" name="lb_alignment">
 							<option value=""></option>
 							<option value="leftJust">{#wce.alignment_lj}</option>
-							<option value="centreJust">{#wce.alignment_cj}</option>
+							<option value="centerJust">{#wce.alignment_cj}</option>
 							<option value="rightJust">{#wce.alignment_rj}</option>
 							<option value="indent">{#wce.alignment_indent}</option>
 							<option value="hang">{#wce.alignment_hanging}</option>
 					</select></td>
 				</tr>
+				
+				<tr>
+					<td><label id="facs_label" for="facs">{#wce.facs}</label>
+					</td>
+					<td colspan="6"><input id="facs" name="facs" type="text" value=""
+						size="50" maxlength="" class="required number min1 mceFocus" />
+					</td>
+				</tr>
+								
+				<tr>
+					<td><label id="page_number_label" for="page_number">{#wce.fw_pagenumber}</label>
+					</td>
+					<td colspan="6"><input id="page_number" name="page_number" type="text" value=""
+						size="10" maxlength="" class="required number min1 mceFocus" />
+					</td>
+				</tr>
+				<tr>
+					<td><label id="running_title_label" for="running_title">{#wce.fw_runningtitle}</label>
+					</td>
+					<td colspan="6"><input id="running_title" name="running_title" type="text" value=""
+						size="50" maxlength="" class="required number min1 mceFocus" />
+					</td>
+				</tr>
+				
 			</table>
 		</fieldset>
 		<div class="mceActionPanel">
@@ -118,6 +135,10 @@
 			document.getElementById('fibre_type').style.backgroundColor = "white";
 			document.breakinfo.running_title.disabled = false;
 			document.getElementById('running_title').style.backgroundColor = "white";
+			document.breakinfo.page_number.disabled = false;
+			document.getElementById('page_number').style.backgroundColor = "white";
+			document.breakinfo.facs.disabled = false;
+			document.getElementById('facs').style.backgroundColor = "white";
 		} else {
 			document.breakinfo.pb_type.disabled = true;
 			document.getElementById('pb_type').style.backgroundColor = "#CCCCCC";
@@ -125,6 +146,10 @@
 			document.getElementById('fibre_type').style.backgroundColor = "#CCCCCC";
 			document.breakinfo.running_title.disabled = true;
 			document.getElementById('running_title').style.backgroundColor = "#CCCCCC";
+			document.breakinfo.page_number.disabled = true;
+			document.getElementById('page_number').style.backgroundColor = "#CCCCCC";
+			document.breakinfo.facs.disabled = true;
+			document.getElementById('facs').style.backgroundColor = "#CCCCCC";
 		}
 	}
 

@@ -17,9 +17,9 @@
 					<td><select id="note_type" name="note_type"
 						onclick="checkstatus_notetype()">
 							<option value="editorial">{#wce.editorial}</option>
-							<option value="transcriberquiry">{#wce.transcriber}</option>
-							<option value="canon">{#wce.canon}</option>
-							<option value="changeOfScribe">{#wce.changeOfScribe}</option>
+							<option value="transcriberquery">{#wce.transcriber}</option>
+							<option value="canonRef">{#wce.canon}</option>
+							<option value="changeOfHand">{#wce.changeOfHand}</option>
 							<option value="other">{#wce.other}</option>
 					</select>
 					</td>
@@ -32,7 +32,14 @@
 					<td><label id="note" for="note">{#wce.note}</label>
 					</td>
 					<td colspan=2><textarea id="note_text" name="note_text"
-							WRAP="PHYSICAL" ROWS="20" COLS="50"></textarea>
+							WRAP="PHYSICAL" ROWS="12" COLS="50"></textarea>
+					</td>
+				</tr>
+				<tr>
+					<td><label id="newHand_label" for="newHand">{#wce.newHand}</label>
+					</td><td><input id="newHand" name="newHand"
+						type="text" value="" size="30" maxlength=""
+						class="required number min1 mceFocus" />
 					</td>
 				</tr>
 			</table>
@@ -56,10 +63,16 @@
 		if (document.noteinfo.note_type.options[4].selected == true) {
 			document.noteinfo.note_type_other.disabled = false;
 			document.getElementById('note_type_other').style.backgroundColor = "white";
-
 		} else {
 			document.noteinfo.note_type_other.disabled = true;
 			document.getElementById('note_type_other').style.backgroundColor = "#CCCCCC";
+		}
+		if (document.noteinfo.note_type.options[3].selected == true) {
+			document.noteinfo.newHand.disabled = false;
+			document.getElementById('newHand').style.backgroundColor = "white";
+		} else {
+			document.noteinfo.newHand.disabled = true;
+			document.getElementById('newHand').style.backgroundColor = "#CCCCCC";
 		}
 	}
 	
@@ -68,6 +81,8 @@
 	}
 
 	function testOther() {
+		if (document.noteinfo.note_type.options[3].selected == true && document.getElementById('newHand').value == '')
+			return false;
 		if (document.noteinfo.note_type.options[4].selected == true && document.getElementById('note_type_other').value == '') 
 			return false;
 	return true;
