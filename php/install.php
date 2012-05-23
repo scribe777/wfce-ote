@@ -35,7 +35,7 @@ if(isset($_POST) && count($_POST)>0){
 	//table for basetext
 	if(isset($_POST['basetext'])){
 		dbRes ( 'DROP TABLE IF EXISTS  `'.$tablname.'` ') ;
-		dbRes('CREATE TABLE IF NOT EXISTS `'.$tablname.'` (
+		dbRes ( 'CREATE TABLE IF NOT EXISTS `'.$tablname.'` (
 						`id` INT(9) AUTO_INCREMENT,
 						`filename` VARCHAR(200),
 						`fileid` INT(10),
@@ -46,7 +46,7 @@ if(isset($_POST) && count($_POST)>0){
 						`date` VARCHAR(20),
 						PRIMARY KEY  (`id`)
 						) ENGINE=MyISAM DEFAULT CHARSET=utf8');     
-		echo ':: Tabelle fȹr <span style="color:blue">basetext</span> wurden erstellt<br />';
+		echo ':: Table for <span style="color:blue">basetext</span> was created<br />';
 		importFiles();
 			
 	}
@@ -54,7 +54,7 @@ if(isset($_POST) && count($_POST)>0){
 	//table for usertext
 	if(isset($_POST['usertext'])){
 		dbRes ( 'DROP TABLE IF EXISTS  `'.$user_tablname.'` ') ;
-		dbRes('CREATE TABLE IF NOT EXISTS `'.$user_tablname.'` (
+		dbRes ( 'CREATE TABLE IF NOT EXISTS `'.$user_tablname.'` (
 				`id` INT(9) AUTO_INCREMENT,
 				`userid` VARCHAR(200),
 				`filename` TEXT,
@@ -66,13 +66,13 @@ if(isset($_POST) && count($_POST)>0){
 				`date` VARCHAR(20),
 				PRIMARY KEY  (`id`)
 				) ENGINE=MyISAM DEFAULT CHARSET=utf8');  
-		echo '<br />:: Tabelle fȹr <span style="color:blue">usertext</span> wurden erstellt';
+		echo '<br />:: Table for <span style="color:blue">usertext</span> was created';
 	}
 
 	//table for user
 	if(isset($_POST['user'])){
 		dbRes ( 'DROP TABLE IF EXISTS  `wce_user` ') ;
-		dbRes('CREATE TABLE IF NOT EXISTS `wce_user` (
+		dbRes ( 'CREATE TABLE IF NOT EXISTS `wce_user` (
 				`id` INT(9) AUTO_INCREMENT,
 				`givenname` VARCHAR(500),
 				`surname`  VARCHAR(500),
@@ -86,8 +86,8 @@ if(isset($_POST) && count($_POST)>0){
 				PRIMARY KEY  (`id`)
 				) ENGINE=MyISAM DEFAULT CHARSET=utf8'); 
 
-		dbRes("INSERT INTO `wce_user`(id,loginname,password) VALUE(null,'test','".md5('test')."')");
-		echo '<br />:: Tabelle fȹr <span style="color:blue">user</span> wurden erstellt';
+		dbRes ( "INSERT INTO `wce_user`(id,loginname,password) VALUE(null,'test','".md5('test')."')");
+		echo '<br />:: Table for <span style="color:blue">user</span> was created';
 	}
 
 }
@@ -129,12 +129,12 @@ function fileWriteToDB($path, $filename, $fileid){
 
 
 		//wenn <
-		if($c=='<'){
+		if ($c=='<') {
 			$pattern_started=true;
 
-			if($head_writed==false  &&  $text!=''){
+			if ($head_writed==false  &&  $text!='') {
 				//save head
-				dbRes(" INSERT INTO `".$tablname."`(`id`,`filename`,`fileid`,`head`,`b`,`k`,`text`,`date`) ".
+				dbRes ( " INSERT INTO `".$tablname."`(`id`,`filename`,`fileid`,`head`,`b`,`k`,`text`,`date`) ".
 			 		  "VALUE(null,'".$filename."','".$fileid."','".trim($text)."','$book','','','')"); 
 					
 				$head_writed=true;
@@ -145,26 +145,26 @@ function fileWriteToDB($path, $filename, $fileid){
 			continue;
 		}
 
-		if($pattern_started==true){
-			if($pattern=='<B' || $pattern=='<b'){
+		if ($pattern_started==true){
+			if ($pattern=='<B' || $pattern=='<b') {
 				$pattern_type='b';
-			}else if($pattern=='<K' || $pattern=='<k' ){
+			}else if ($pattern=='<K' || $pattern=='<k' ) {
 				$pattern_type='k';
-				if($book!='' && $chapter!='' && $verse!=''){
+				if ($book!='' && $chapter!='' && $verse!='') {
 					//save verse echo 'b'.$book.'k'.$chapter.'v'.$verse.'@@@-'.$text.'-<br />';
 					$text=str_filter($text);
-					dbRes(" INSERT INTO `".$tablname."`(`id`,`filename`,`fileid`,`head`,`b`,`k`,`text`,`date`) ".
+					dbRes (" INSERT INTO `".$tablname."`(`id`,`filename`,`fileid`,`head`,`b`,`k`,`text`,`date`) ".
 			 		  "VALUE(null,'".$filename."','".$fileid."','','$book','$chapter','$text','')");
 					$text='';
 
 				}
-			}else if($pattern=='<V' || $pattern=='<v'){
+			}else if ($pattern=='<V' || $pattern=='<v') {
 				$pattern_type='v';
 			}
 		}
 
 		//wenn >
-		if($c=='>' &&  $pattern_started==true && $pattern_type!='' && $pattern!=''){
+		if ($c=='>' &&  $pattern_started==true && $pattern_type!='' && $pattern!=''){
 			$index=preg_replace('/\D*/i','',$pattern);
 			if($pattern_type=='b'){
 				$book=$index;
@@ -185,16 +185,16 @@ function fileWriteToDB($path, $filename, $fileid){
 			continue;
 		}
 
-		if($pattern_started==true){
+		if ($pattern_started==true) {
 			$pattern.=$c;
-		}else{
+		} else {
 			$text.=$c;
 		}
 
-		if(feof($file) ){
+		if (feof($file) ){
 			//end
 			$text=str_filter($text);
-			dbRes(" INSERT INTO `".$tablname."`(`id`,`filename`,`fileid`,`head`,`b`,`k`,`text`,`date`) ".
+			dbRes (" INSERT INTO `".$tablname."`(`id`,`filename`,`fileid`,`head`,`b`,`k`,`text`,`date`) ".
 			 		  "VALUE(null,'".$filename."','".$fileid."','','$book','$chapter','$text','')");
 		}
 	}

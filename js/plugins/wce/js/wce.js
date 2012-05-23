@@ -121,6 +121,15 @@ function writeWceNodeInfo(val) {
 				style += 'color:red';
 			} else {
 				gap_text = '[...]';
+				if (document.getElementById('unit').value == "line") {
+					for (var i = 1; i < document.getElementById('extent').value; i++) {
+						gap_text += '<br/>&crarr;[...]';
+					}
+				} else if (document.getElementById('unit').value == "page") {
+					for (var i = 1; i < document.getElementById('extent').value; i++) {
+						gap_text += '<br/>PB<br/>[...]';
+					}
+				}
 				style += 'color:red';
 			}
 			selected_content = gap_text;

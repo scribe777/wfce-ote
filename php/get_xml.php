@@ -130,13 +130,13 @@ while ($row = mysql_fetch_array($res)) {
 		$bodyNode->appendChild($pbNode);
 
 		//book Node
-		$value['B'] = 'B' . $bookIndex;
+		//$value['B'] = 'B' . $bookIndex;
 		$bookNode = $dom->createElement('div');
 		$bookNode = _addAttrNode($dom, $bookNode, 'type', 'book');
 		/*if(trim($row['b'])!=''){
 			$bookNode = _addAttrNode($dom, $bookNode, 'n', $row['b']);
 		}*/
-		$bookNode = _addAttrNode($dom, $bookNode, 'n', $value['B']);
+		$bookNode = _addAttrNode($dom, $bookNode, 'n', 'B' . $bookIndex);
 		$bodyNode->appendChild($bookNode);
 	} else {
 		$chapterNode = $dom->importNode(_getChapterNode($chapterContent), true);
@@ -205,7 +205,7 @@ function _setNodes($xml, $node) {
 }
 
 function _changeNode($xml, $node) {
-	global $index,$value;
+	global $index, $value, $bookIndex;
 	/*
 	 * wenn <span  class="chapter_number">id</span>
 	* attribute von parentNode <div> definieren: type, n, xml:id ...
@@ -218,6 +218,7 @@ function _changeNode($xml, $node) {
 		$div = $ab->parentNode;
 		$div->setAttribute('type', 'chapter');
 		$value['K'] = 'K' . trim($node->nodeValue);
+		$value['B'] = 'B' . $bookIndex;
 		//$div->setAttribute('n', trim($node->nodeValue));
 		$div->setAttribute('n', $value['B'] . $value['K']);
 		$div->removeChild($ab);
@@ -244,7 +245,7 @@ function _changeNode($xml, $node) {
 }
 
 function _readOtherClass($xml, $node) {
-	global $index, $value, $page, $column, $hadBreak;
+	global $index, $value, $page, $column, $hadBreak, $bookIndex;
 
 	$arr = _classNameToArray($node);
 	if ($arr == null)
@@ -471,12 +472,6 @@ function _readOtherClass($xml, $node) {
 				$newNode = $xml->createElement('gap');
 			}
 			//reason
-			/*if ($a['gap_reason'] != '') {
-				if ($a['gap_reason'] == 'other')
-					$newNode->setAttribute('reason', $a['gap_reason_other']);
-				else
-					$newNode->setAttribute('reason', $a['gap_reason']);
-			}*/
 			$newNode->setAttribute('reason', $a['gap_reason']);
 			
 			//unit
@@ -494,10 +489,23 @@ function _readOtherClass($xml, $node) {
 			if ($newNode->nodeName === 'supplied') {
 				//add text
 				$newNode->nodeValue = substr($node->nodeValue, 1, -1);
+				
+				$supp_words = explode(' ', $newNode->nodeValue);
+				$array_size = count($supp_words);
+				//foreach($supp_word AS $w) {
+				//for($i = 0; $i < $array_size; $i++) { //Split node value into words
+					//$newNode->nodeValue = $w;
+					//$newNode=_insertElementW($xml,$node,$newNode); //add <w>
+					//$node->parentNode->replaceChild($newNode, $node);
+				//}
 				$newNode=_insertElementW($xml,$node,$newNode); //add <w>
-			}			
-
-			$node->parentNode->replaceChild($newNode, $node);
+				$node->parentNode->replaceChild($newNode, $node);
+			} else {	
+				$node->parentNode->replaceChild($newNode, $node);
+			}
+			//		$newNode=_insertElementW($xml,$node,$newNode); //add <w>
+			//}
+				//$node->parentNode->replaceChild($newNode, $node);
 			continue;
 		}
 
