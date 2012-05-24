@@ -1220,12 +1220,18 @@
 					//new_content = '<span style="' + style + '" ' + ' wce_orig="' + content + '" ' + ' class="' + new_class + '" >' + '<br/>&crarr;' + '</span>';
 		 			//ed.selection.setContent(new_content);
 					//ed.selection.setContent('<span class="' + ed.wceTypeParamInClass + '=' + className + '"' + style + '>' + '&crarr;' + '</span> ');
-					var num = prompt("Number of line break", "");
+					var num = "";
+					while (num == "") {
+						num = prompt("Number of line break", "");
+					}
 					ed.selection.setContent('<span class="' + 
 						'__t=brea&amp;__n=&amp;break_type=lb&amp;number=' + num + '&amp;pb_type=&amp;fibre_type=&amp;running_title=&amp;lb_alignment=&amp;insert=Insert&amp;cancel=Cancel'
 						+ '"' + style + '>' + '<br/>' + '&crarr;' + '</span> ');  
 				} else if (character == 'lbm') { //line break in the middle of a word
-					var num = prompt("Number of line break", "");
+					var num = "";
+					while (num == "") {
+						num = prompt("Number of line break", "");
+					}
 					ed.selection.setContent('<span class="' + '__t=brea&amp;__n=&amp;break_type=lb&amp;number=' + num
 						+ '&amp;pb_type=&amp;fibre_type=&amp;running_title=&amp;lb_alignment=&amp;insert=Insert&amp;cancel=Cancel'
 						+ '"' + style + '>' + '&hyphen;<br/>&crarr;' + '</span> ');  

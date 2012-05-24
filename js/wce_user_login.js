@@ -399,7 +399,7 @@ function WceUserToolbar(parent_container_id) {
 				newDiv = document.createElement('div');
 				newDiv.id = 'filerenamediv';
 				newDiv.innerHTML = 'new name:<br />'
-						+ '<input type="text" id="new_name_of_file" style="margin-bottom:8px" value="" /><br /><input type="button" size="100" onclick="userFileModify(\'rename\');" value ="ok" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <input type="button" value="cancel" onclick="$(this).parent().hide();" />';
+						+ '<input type="text" id="new_name_of_file" style="margin-bottom:8px" value="" /><br /><input type="button" size="100" onclick="userFileModify(\'rename\');" value ="OK" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <input type="button" value="Cancel" onclick="$(this).parent().hide();" />';
 				$(document.body).append(newDiv);
 				$(newDiv).css({
 					'padding' : '10px',

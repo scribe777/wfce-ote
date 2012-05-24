@@ -31,6 +31,8 @@ $index = array();
 $nodeNameToCompress=array('unclear','gap','supplied','abbr','part_abbr','ex');
 
 $index['lb'] = -1;
+$page = 0;
+$column = 0;
 
 while ($row = mysql_fetch_array($res)) {
 	$bookIndex = sprintf("%02d", $row['b']); // to get two digit numbers
@@ -125,18 +127,17 @@ while ($row = mysql_fetch_array($res)) {
 		$bodyNode = $dom->createElement('body');
 		$textNode->appendChild($bodyNode);
 
-		//first pb Node
-		$pbNode = $dom->createElement('pb');
-		$bodyNode->appendChild($pbNode);
+		//first pb Node //MS Removed as it is not part of the XML guidelines 1.3; must probably be substituted by an initial <pb/><cb/><lb/>
+		//$pbNode = $dom->createElement('pb');
+		//$bodyNode->appendChild($pbNode);
 
 		//book Node
-		//$value['B'] = 'B' . $bookIndex;
 		$bookNode = $dom->createElement('div');
-		$bookNode = _addAttrNode($dom, $bookNode, 'type', 'book');
-		/*if(trim($row['b'])!=''){
-			$bookNode = _addAttrNode($dom, $bookNode, 'n', $row['b']);
-		}*/
-		$bookNode = _addAttrNode($dom, $bookNode, 'n', 'B' . $bookIndex);
+		//$bookNode = _addAttrNode($dom, $bookNode, 'type', 'book');
+		$bookNode->setAttribute('type', 'book');
+		//$value['B'] = 'B' . $bookIndex;
+		//$bookNode = _addAttrNode($dom, $bookNode, 'n', $value['B']);
+		$bookNode->setAttribute('n', 'B' . $bookIndex); //MS: This does not work; don't know why. Becomes B00
 		$bodyNode->appendChild($bookNode);
 	} else {
 		$chapterNode = $dom->importNode(_getChapterNode($chapterContent), true);
@@ -331,6 +332,7 @@ function _readOtherClass($xml, $node) {
 			Column (Collate |C 2|): <cb n="2" xml:id="P3vC2-wit" />
 			Line (Collate |L 37|): <lb n="37" xml:id="P3vC2L37-wit" />
 			*/
+			$wit = substr(strrchr($_GET['textname'],'-'),1); //get witness from the file name
 			if (substr($node->nodeValue, 0, strlen('&hyphen;')) == "&hyphen;")
 				$hadBreak=true;
 			else
@@ -345,12 +347,15 @@ function _readOtherClass($xml, $node) {
 				switch ($a['break_type']) {
 					case 'lb':
 						$newNode->setAttribute('n', $a['number']);
-						$xml_id='P'.$page.'C'.$column.'L'.$a['number'];
+						if ($a['lb_alignment'] != '') {
+							$newNode->setAttribute('rend', $a['lb_alignment']);
+						}
+						$xml_id='P'.$page.'C'.$column.'L'.$a['number'].'-'.$wit;
 					break;
 					case 'cb':
 						$column=$a['number'];
 						$newNode->setAttribute('n', $column);
-						$xml_id='P'.$page.'C'.$column;
+						$xml_id='P'.$page.'C'.$column.'-'.$wit;
 					break;
 					case 'pb':
 						//Decide whether folio or page
@@ -366,7 +371,7 @@ function _readOtherClass($xml, $node) {
 						if ($a['facs']!='') { //use URL for facs attribute
 							$newNode->setAttribute('facs', $a['facs']);
 						}
-						$xml_id='P'.$page;
+						$xml_id='P'.$page.'-'.$wit;
 					break;
 				}
 				$newNode->setAttribute('xml:id', $xml_id);
@@ -374,7 +379,10 @@ function _readOtherClass($xml, $node) {
 					$newNode->setAttribute('break', 'no');
 			}
 			$node->parentNode->replaceChild($newNode, $node);
-			if ($a['break_type'] == 'pb') { //for pb add fw elements
+			
+			if ($a['break_type'] == 'lb') { //for lb add newline
+				$newNode->parentNode->insertBefore($xml->createTextNode("\n"), $newNode);
+			} else if ($a['break_type'] == 'pb') { //for pb add fw elements
 				if ($a['running_title'] != '') {
 					$secNewNode = $xml->createElement('fw');
 					$secNewNode->setAttribute('type','runTitle');
