@@ -587,7 +587,7 @@
 			case 'breaks':
 				var c = cm.createMenuButton('menu-break', {
 					title : 'Breaks',
-					image : tinyMCE.baseURL+'/plugins/wce/img/button_B.gif',
+					image : tinyMCE.baseURL+'/plugins/wce/img/button_B-new.png',
 					icons : false,
 					onclick : function() {
 						_setWceMenuStatus(tinyMCE.activeEditor, 'menu-break', /^__t=brea/, _getWceMenuValStatus);
@@ -630,7 +630,7 @@
 			case 'correction':
 				var c = cm.createButton('menu-correction', {
 					title : 'Corrections',
-					image : tinyMCE.baseURL+'/plugins/wce/img/button_C.gif',
+					image : tinyMCE.baseURL+'/plugins/wce/img/button_C-new.png',
 					icons : false,
 					onclick : function() {
 						tinyMCE.activeEditor.execCommand('mceAddCorrection');
@@ -642,7 +642,7 @@
 			case 'illegible':
 				var c = cm.createMenuButton('menu-illegable', {
 					title : 'Deficiency',
-					image : tinyMCE.baseURL+'/plugins/wce/img/button_D.gif',
+					image : tinyMCE.baseURL+'/plugins/wce/img/button_D-new.png',
 					icons : false,
 					onclick : function() {
 						_setWceMenuStatus(tinyMCE.activeEditor, 'menu-illegable', /^__t=unclear/, _getWceMenuValStatus, 'uncleartext');
@@ -744,7 +744,7 @@
 			case 'decoration':
 				var c = cm.createMenuButton('menu-decoration', {
 					title : 'Ornamentation',
-					image : tinyMCE.baseURL+'/plugins/wce/img/button_O.gif',
+					image : tinyMCE.baseURL+'/plugins/wce/img/button_O-new.png',
 					icons : false,
 					onclick : function() {
 						_setWceMenuStatus(tinyMCE.activeEditor, 'menu-decoration');
@@ -758,7 +758,7 @@
 					sub = m.addMenu({
 						title : 'Highlight Text',
 						id : 'menu-decoration-highlight',
-						image : tinyMCE.baseURL+'/plugins/wce/img/button_O.gif',
+						image : tinyMCE.baseURL+'/plugins/wce/img/button_O-new.png',
 						onclick : function() {
 							_setWceMenuStatus(tinyMCE.activeEditor, 'menu-decoration-highlight');
 							_setWceMenuStatus(tinyMCE.activeEditor, 'menu-decoration-highlight', /^__t=formatting_capitals/, _getWceMenuValStatus, 'capitals');
@@ -1014,7 +1014,7 @@
 			case 'abbreviation':
 				var c = cm.createMenuButton('menu-abbreviation', {
 					title : 'Abbreviated text',
-					image : tinyMCE.baseURL+'/plugins/wce/img/button_A.gif',
+					image : tinyMCE.baseURL+'/plugins/wce/img/button_A-new.png',
 					icons : false,
 					onclick : function() {
 						_setWceMenuStatus(tinyMCE.activeEditor, 'menu-abbreviation', /^__t=abbr/, _getWceMenuValStatus);
@@ -1062,7 +1062,7 @@
 			case 'paratext':
 				var c = cm.createMenuButton('menu-paratext', {
 					title : 'Paratext',
-					image : tinyMCE.baseURL+'/plugins/wce/img/button_P.gif',
+					image : tinyMCE.baseURL+'/plugins/wce/img/button_P-new.png',
 					icons : false,
 					onclick : function() {
 						_setWceMenuStatus(tinyMCE.activeEditor, 'menu-paratext', /^__t=paratext/, _getWceMenuValStatus);
@@ -1105,7 +1105,7 @@
 			case 'note':
 				var c = cm.createMenuButton('menu-note', {
 					title : 'Note',
-					image : tinyMCE.baseURL+'/plugins/wce/img/button_N.gif',
+					image : tinyMCE.baseURL+'/plugins/wce/img/button_N-new.png',
 					icons : false,
 					onclick : function() {
 						_setWceMenuStatus(tinyMCE.activeEditor, 'menu-note', /^__t=note/, _getWceMenuValStatus);
