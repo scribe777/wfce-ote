@@ -1,0 +1,38 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>{#wce.gap_title}</title>
+<script type="text/javascript" src="../../tiny_mce_popup.js"></script>
+<script type="text/javascript" src="../../jquery.js"></script>
+<script type="text/javascript" src="js/wce.js"></script>
+</head>
+
+<body id="table" style="display: none" onload="init();">
+	<form onsubmit="return false;" action="#" name="capitalsinfo">
+		<fieldset id="inputContainer">
+			<legend>{#wce.capitals_data}</legend>
+			<table border="0" cellpadding="4" cellspacing="0" width="100%">
+				<tr>
+					<td><label id="capitals_height_label" for="capitals_height">{#wce.capitals_height}</label></td>
+					<td><input id="capitals_height" name="capitals_height"
+						type="text" value="" size="10" maxlength=""
+						class="required number min1 mceFocus" /></td>
+				</tr>
+			</table>
+		</fieldset>
+		</div>
+		<div class="mceActionPanel">
+			<input type="button" id="insert" name="insert" value="{#insert}"
+				onclick="writeWceNodeInfo();" /> <input type="button"
+				id="cancel" name="cancel" value="{#cancel}"
+				onclick="tinyMCEPopup.close();" />
+		</div>
+	</form>
+</body>
+<script type="text/javascript">
+	function init() {
+		wceInfoInit('formatting_capitals');
+		readWceNodeInfo();
+	}
+</script>
+</html>

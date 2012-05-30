@@ -287,9 +287,8 @@ function _readOtherClass($xml, $node) {
 				$rdg = $xml->createElement('rdg');
 				$rdg->setAttribute('type', $a['reading']);
 				$rdg->setAttribute('hand', $a['corrector_name']);
-				/*if ($a['deletion'] != '') //no decision yet on the correct way of exporting; multiple values should be respected
-					$rdg->setAttribute('deletion', $a['deletion']);
-				*/
+				if ($a['deletion'] != '')
+					$rdg->setAttribute('deletion', str_replace(',','+',$a['deletion']));
 				if ($a['editorial_note'] != '') {
 					$note = $xml->createElement('note');
 					$note->setAttribute('type', 'transcriber');
@@ -438,20 +437,21 @@ function _readOtherClass($xml, $node) {
 				case 'formatting_other':
 					$formatting_rend = 'other';
 					break;
-							
+			
 				case 'formatting_capitals':
 					$formatting_rend = 'cap';
-					$formatting_height = $a['height'];
+					$formatting_height = $a['capitals_height'];
 					break;
+									
 				case 'formatting_overline':
 					$formatting_rend = 'ol';
 			}
 
 			if ($formatting_rend != '')
-			$hi->setAttribute('rend', $formatting_rend);
+				$hi->setAttribute('rend', $formatting_rend);
 
 			if ($formatting_height != '')
-			$hi->setAttribute('height', $formatting_height);
+				$hi->setAttribute('height', $formatting_height);
 
 			$node->parentNode->replaceChild($newNode, $node);
 			continue;
@@ -711,7 +711,7 @@ function _readOtherClass($xml, $node) {
 			$node->parentNode->replaceChild($newNode, $node);
 			continue;
 		}
-
+		
 		//******************** supplied ********************
 		/*
 		 <supplied source="STRING"  reason="STRING"  agent="STRING>...</supplied>

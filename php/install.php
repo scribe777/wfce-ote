@@ -96,17 +96,18 @@ function importFiles(){
 	global  $tablname;
 	$path=	'../basetext';
 	$dir = opendir ($path);
-	//$fileid=0;
+	$countFileId=0;
+	$fileid=0;
 	while ( $filename = readdir ( $dir ) ) {
 		if ($filename == '.' || $filename == '..')
 		continue;
 		//$fileid++;
 		if (strpos($filename,'-') === false) {
-			$fileid=0;
+			$countFileId++;
+			$fileid=$countFileId;
 		} else {
 			$fileid = substr($filename,0,strpos($filename,'-'));
 		}
-		//$sfilename = substr($filename,strpos($filename,'-')+1);
 		fileWriteToDB($path, $filename, $fileid);
 
 	}
@@ -132,7 +133,7 @@ function fileWriteToDB($path, $filename, $fileid){
 	} else {
 		$sfilename=substr($filename,strpos($filename,'-')+1);
 	}
-	$data['filename']=$sfilename; //Extract sort part
+	$data['filename']=$filename; //Extract sort part
 
 
 	while (!feof($file)) {
@@ -146,7 +147,7 @@ function fileWriteToDB($path, $filename, $fileid){
 			if ($head_writed==false  &&  $text!='') {
 				//save head
 				dbRes ( " INSERT INTO `".$tablname."`(`id`,`filename`,`fileid`,`head`,`b`,`k`,`text`,`date`) ".
-			 		  "VALUE(null,'".$sfilename."','".$fileid."','".trim($text)."','$book','','','')"); 
+			 		  "VALUE(null,'".$filename."','".$fileid."','".trim($text)."','$book','','','')"); 
 					
 				$head_writed=true;
 				$text='';
@@ -165,7 +166,7 @@ function fileWriteToDB($path, $filename, $fileid){
 					//save verse echo 'b'.$book.'k'.$chapter.'v'.$verse.'@@@-'.$text.'-<br />';
 					$text=str_filter($text);
 					dbRes (" INSERT INTO `".$tablname."`(`id`,`filename`,`fileid`,`head`,`b`,`k`,`text`,`date`) ".
-			 		  "VALUE(null,'".$sfilename."','".$fileid."','','$book','$chapter','$text','')");
+			 		  "VALUE(null,'".$filename."','".$fileid."','','$book','$chapter','$text','')");
 					$text='';
 
 				}
@@ -206,7 +207,7 @@ function fileWriteToDB($path, $filename, $fileid){
 			//end
 			$text=str_filter($text);
 			dbRes (" INSERT INTO `".$tablname."`(`id`,`filename`,`fileid`,`head`,`b`,`k`,`text`,`date`) ".
-			 		  "VALUE(null,'".$sfilename."','".$fileid."','','$book','$chapter','$text','')");
+			 		  "VALUE(null,'".$filename."','".$fileid."','','$book','$chapter','$text','')");
 		}
 	}
 

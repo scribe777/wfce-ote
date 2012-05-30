@@ -137,31 +137,7 @@ function writeWceNodeInfo(val) {
 
 		case 'brea':
 			style += 'color:#666';
-			/*
-			switch (document.getElementById('break_type').value) {
-				case 'lb':
-					if (val == 'lb') {
-						new_content = '<br/><span style="' + style + '" '+original_text+' class="' + new_class + '">&crarr;</span> ';
-					} else { //lbm
-						new_content = '<span style="' + style + '" '+original_text+' class="' + new_class + '">&hyphen;<br/>&crarr;</span> ';
-					}
-				break;
-				
-				case 'cb':
-					new_content = '<br/><span style="' + style + '" '+original_text+' class="' + new_class + '">CB</span><br/>';
-					new_content += '<span style="' + style + '" '+original_text+' class="' + '__t=brea&amp;__n=&amp;break_type=lb&amp;number=1&amp;pb_type=&amp;fibre_type=&amp;running_title=&amp;lb_alignment=&amp;insert=Insert&amp;cancel=Cancel' + '">&crarr;</span> ';
-				break;
-				
-				case 'pb':
-					new_content = '<br/><span style="' + style + '" '+original_text+' class="' + new_class + '">PB</span><br/>';
-				break;
-			
-				case 'gb':
-					new_content = '<br/><span style="' + style + '" '+original_text+' class="' + new_class + '">QB</span><br/>';
-				break;
-			}
-			*/
-			selected_content = val;
+			selected_content = '<br/>' + val;
 			break;
 
 		case 'corr':
@@ -179,7 +155,11 @@ function writeWceNodeInfo(val) {
 		case 'unclear':
 			var unclear_text = "";
 			for ( var i = 0; i < selected_content.length; i++) {
-				unclear_text += selected_content.charAt(i) + '&#x0323;';
+				if (selected_content.charAt(i) == ' ') {
+					unclear_text += selected_content.charAt(i);
+				} else {
+					unclear_text += selected_content.charAt(i) + '&#x0323;';
+				}
 			}
 			selected_content = unclear_text;
 			break;
@@ -214,9 +194,25 @@ function writeWceNodeInfo(val) {
 			new_content = '<span style="' + style + '" ' + original_text + ' class="' + new_class + '" >' + selected_content + '</span>';
 		 
 		ed.selection.setContent(new_content);
-		if (wce_type == 'brea' && (document.getElementById('break_type').value == 'cb' || document.getElementById('break_type').value == 'pb'
+		if (wce_type == 'brea') {
+			switch (document.getElementById('break_type').value) {
+				case 'gb':
+					ed.execCommand('mceAdd_brea', 'pb');
+					ed.execCommand('mceAdd_brea', 'cb');
+					ed.execCommand('mceAdd_brea', 'lb');
+					break;
+				case 'pb':
+					ed.execCommand('mceAdd_brea', 'cb');
+					ed.execCommand('mceAdd_brea', 'lb');
+					break;
+				case 'cb':
+					ed.execCommand('mceAdd_brea', 'lb');
+					break;
+			}
+		}
+/*		&& (document.getElementById('break_type').value == 'cb' || document.getElementById('break_type').value == 'pb'
 			|| document.getElementById('break_type').value == 'gb'))
-				ed.execCommand('mceAdd_brea', 'lb');
+				ed.execCommand('mceAdd_brea', 'lb');*/
 	} else {
 		// update class
 		if (wce_node != null) {

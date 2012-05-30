@@ -314,10 +314,11 @@
 					case 'corr':
 						corr_str += '<div style="margin-top:5px">' + ar[ed.wceNameParamInClass] + ': ';
 						if (ar['blank_correction'] == 'blank_correction')
-							corr_str += 'deleted';
+							corr_str += 'deleted' + '</div>';
 						else
-							corr_str+= ar['corrector_text'];
-						corr_str += '</div>';
+							corr_str += ar['corrector_text'] + '</div>';
+						if (ar['deletion'] != '') //information on deletion
+							corr_str+= '<div>' + 'Method of deletion: ' + ar['deletion'] + '</div>';
 						break;
 					case 'paratext':
 						info_text = '<div>' + 'Paratext type: ';
@@ -400,14 +401,14 @@
 						}
 						break;
 					case 'unclear':
-						info_text = '<div>' + 'Uncertain letters';
-						/*info_text = '<div>' + 'Reason: ';
+						info_text = '<div>' + 'Uncertain letters' + '</div>';
+						info_text += '<div>' + 'Reason: ';
 						if (ar['unclear_text_reason'] == 'other')
 						{
 							info_text += ar['unclear_text_reason_other'];
 						} else {
 							info_text += ar['unclear_text_reason'];
-						}*/
+						}
 						info_text += '</div>';
 						break;
 					case 'spaces':
@@ -418,6 +419,9 @@
 						} else {
 							info_text += ar['sp_unit'] + '(s)</div>';
 						}
+						break;
+					case 'formatting': //it is "formatting_capitals", but is truncated
+						info_text = '<div>' + 'Height: ' + ar['capitals_height'] + '</div>';
 						break;
 					default:
 						info_text = '';
@@ -641,7 +645,7 @@
 					image : tinyMCE.baseURL+'/plugins/wce/img/button_D.gif',
 					icons : false,
 					onclick : function() {
-						//_setWceMenuStatus(tinyMCE.activeEditor, 'menu-illegable', /^__t=unclear/, _getWceMenuValStatus, 'uncleartext');
+						_setWceMenuStatus(tinyMCE.activeEditor, 'menu-illegable', /^__t=unclear/, _getWceMenuValStatus, 'uncleartext');
 						_setWceMenuStatus(tinyMCE.activeEditor, 'menu-illegable', /^__t=gap/, _getWceMenuValStatus, 'lacuna');
 					}
 				});
@@ -658,7 +662,7 @@
 						}
 					});
 
-					/*sub = m.addMenu({
+					sub = m.addMenu({
 						title : 'Uncertain Letters',
 						id : 'menu-illegable-uncleartext'
 					});
@@ -690,7 +694,6 @@
 							tinyMCE.activeEditor.execCommand('wceDelNode');
 						}
 					}).setDisabled(b);
-					*/
 					
 					// gap/supplied
 					pattern = /^__t=gap/;
@@ -754,7 +757,12 @@
 
 					sub = m.addMenu({
 						title : 'Highlight Text',
-						image : tinyMCE.baseURL+'/plugins/wce/img/button_O.gif'
+						id : 'menu-decoration-highlight',
+						image : tinyMCE.baseURL+'/plugins/wce/img/button_O.gif',
+						onclick : function() {
+							_setWceMenuStatus(tinyMCE.activeEditor, 'menu-decoration-highlight');
+							_setWceMenuStatus(tinyMCE.activeEditor, 'menu-decoration-highlight', /^__t=formatting_capitals/, _getWceMenuValStatus, 'capitals');
+						}
 					});
 
 					sub.add({
@@ -811,13 +819,43 @@
 						}
 					});
 
-					sub.add({
+					sub2 = sub.addMenu({
 						title : 'Capitals',
+						id : 'menu-decoration-highlight-capitals',
 						onclick : function() {
-							tinyMCE.activeEditor.execCommand('mceAdd_formatting', 'capitals');
+							
 						}
 					});
+					
+					var pattern = /^__t=formatting_capitals/;
+					var b = _getWceMenuValStatus('add', pattern);
+					sub2.add({
+						title : 'add',
+						id : 'menu-decoration-highlight-capitals-add',
+						icons : false,
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAddCapitals');
+						}
+					}).setDisabled(b);
 
+					b = _getWceMenuValStatus('edit', pattern);
+					sub2.add({
+						title : 'edit',
+						id : 'menu-decoration-highlight-capitals-edit',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceEditCapitals');
+						}
+					}).setDisabled(b);
+
+					b = _getWceMenuValStatus('delete', pattern);
+					sub2.add({
+						title : 'delete',
+						id : 'menu-decoration-highlight-capitals-delete',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('wceDelNode');
+						}
+					}).setDisabled(b);
+					
 					sub = m.addMenu({
 						title : 'Insert special characters'
 					});
@@ -932,7 +970,7 @@
 					});
 
 					sub = m.addMenu({
-						title : 'Add blank spaces',
+						title : 'Blank spaces',
 						id : 'menu-decoration-blankspaces',
 						onclick : function() {
 
@@ -1217,33 +1255,35 @@
 			case 'brea':
 				style = 'style="border: 1px  dotted #f00;  margin:0px; padding:0; color:#666"';
 				if (character == 'lb') { //line break at the end of a word
-					//new_content = '<span style="' + style + '" ' + ' wce_orig="' + content + '" ' + ' class="' + new_class + '" >' + '<br/>&crarr;' + '</span>';
-		 			//ed.selection.setContent(new_content);
-					//ed.selection.setContent('<span class="' + ed.wceTypeParamInClass + '=' + className + '"' + style + '>' + '&crarr;' + '</span> ');
 					var num = "";
-					while (num == "") {
+					/*while (num == "") {
 						num = prompt("Number of line break", "");
-					}
+					}*/
 					ed.selection.setContent('<span class="' + 
 						'__t=brea&amp;__n=&amp;break_type=lb&amp;number=' + num + '&amp;pb_type=&amp;fibre_type=&amp;running_title=&amp;lb_alignment=&amp;insert=Insert&amp;cancel=Cancel'
 						+ '"' + style + '>' + '<br/>' + '&crarr;' + '</span> ');  
 				} else if (character == 'lbm') { //line break in the middle of a word
 					var num = "";
-					while (num == "") {
+					/*while (num == "") {
 						num = prompt("Number of line break", "");
-					}
+					}*/
 					ed.selection.setContent('<span class="' + '__t=brea&amp;__n=&amp;break_type=lb&amp;number=' + num
 						+ '&amp;pb_type=&amp;fibre_type=&amp;running_title=&amp;lb_alignment=&amp;insert=Insert&amp;cancel=Cancel'
 						+ '"' + style + '>' + '&hyphen;<br/>&crarr;' + '</span> ');  
 				}
-				/* else if (character == 'cb') { //column break
-					ed.selection.setContent('<br/><span class="' + ed.wceTypeParamInClass + '=' + className + '"' + style + '>' + 'CB' + '</span><br/>'
-					+ '<br/><span class="' + '__t=brea&amp;__n=&amp;break_type=lb&amp;number=1&amp;pb_type=&amp;running_title=&amp;lb_alignment=leftJust&amp;insert=Insert&amp;cancel=Cancel' + '"' + style + '>' + '&crarr;' + '</span> ');
+				 else if (character == 'cb') { //column break
+					ed.selection.setContent('<br/><span class="' + 
+						'__t=brea&amp;__n=&amp;break_type=cb&amp;number=' + num + '&amp;pb_type=&amp;fibre_type=&amp;running_title=&amp;lb_alignment=&amp;insert=Insert&amp;cancel=Cancel'
+						+ '"' + style + '>' + 'CB' + '</span> ');  
 				} else if (character == 'pb') { //page break
-					ed.selection.setContent('<br/><span class="' + ed.wceTypeParamInClass + '=' + className + '"' + style + '>' + 'PB' + '</span><br/>');
+					ed.selection.setContent('<br/><span class="' + 
+						'__t=brea&amp;__n=&amp;break_type=pb&amp;number=' + num + '&amp;pb_type=&amp;fibre_type=&amp;running_title=&amp;lb_alignment=&amp;insert=Insert&amp;cancel=Cancel'
+						+ '"' + style + '>' + 'PB' + '</span> ');  
 				} else { //quire break
-					ed.selection.setContent('<br/><span class="' + ed.wceTypeParamInClass + '=' + className + '"' + style + '>' + 'QB' + '</span><br/>');
-				}*/
+					ed.selection.setContent('<br/><span class="' + 
+						'__t=brea&amp;__n=&amp;break_type=gb&amp;number=' + num + '&amp;pb_type=&amp;fibre_type=&amp;running_title=&amp;lb_alignment=&amp;insert=Insert&amp;cancel=Cancel'
+						+ '"' + style + '>' + 'QB' + '</span> ');  
+				}
 				break;
 			case 'part_abbr': //part-worded abbreviations
 				var rng = ed.selection.getRng(true);
@@ -1263,9 +1303,9 @@
 					alert("Error at part-worded abbreviation. Parentheses do not match or invalid nesting!");
 				}
 				break;
-			case 'formatting_capitals': //Capitals
+			/*case 'formatting_capitals': //Capitals
 				ed.selection.setContent('<span class="' + ed.wceTypeParamInClass + '=' + className + '&amp;height=' + character + '"' + style + '>' + content + '</span>');
-				break;
+				break;*/
 			case 'unclear': //uncertain letters
 				selection = ed.selection.getContent();
 				var unclear_text = "";
@@ -1725,19 +1765,19 @@
 			
 			// Add unclear text/*********/
 			ed.addCommand('mceAddUnclearText', function() {
-				_wceAddNoDialog(ed, 'unclear');
-				//_wceAdd(ed, url, '/unclear_text.htm', 480, 320, 1, true);
+				//_wceAddNoDialog(ed, 'unclear'); //option without dialogue for reason
+				_wceAdd(ed, url, '/unclear_text.htm', 480, 320, 1, true);
 			});
 			// Edit unclear text
-			/*ed.addCommand('mceEditUnclearText', function() {
+			ed.addCommand('mceEditUnclearText', function() {
 				_wceAdd(ed, url, '/unclear_text.htm', 480, 320, 1, false);
-			});*/
+			});
 			
 			ed.addCommand('mceAddUnclearText_Shortcut', function() {
-				//if (!_getWceMenuValStatus('add', '/^__t=unclear/'))
+				if (!_getWceMenuValStatus('add', '/^__t=unclear/'))
 					ed.execCommand('mceAddUnclearText');
-				//else if (_getWceMenuValStatus('edit', '/^__t=unclear/'))
-					//ed.execCommand('mceEditUnclearText');
+				else if (_getWceMenuValStatus('edit', '/^__t=unclear/'))
+					ed.execCommand('mceEditUnclearText');
 			});
 
 			ed.addCommand('mceAddGhostPage', function() {
@@ -1820,13 +1860,16 @@
 				_wceAddNoDialog(ed, 'pc', c);
 			});
 
+			ed.addCommand('mceAddCapitals', function() {
+				_wceAdd(ed, url, '/capitals.htm', 480, 320, 1, true);
+			});
+
+			ed.addCommand('mceEditCapitals', function() {
+				_wceAdd(ed, url, '/capitals.htm', 480, 320, 1, false);
+			});
+
 			ed.addCommand('mceAdd_formatting', function(c) {
-				if (c == 'capitals') { //Capitals => get height
-					Check = prompt("Please specify the height of the capitals", "4");
-					_wceAddNoDialog(ed, 'formatting_' + c, Check);
-				} else {
-					_wceAddNoDialog(ed, 'formatting_' + c, '');
-				}
+				_wceAddNoDialog(ed, 'formatting_' + c, '');
 			});
 
 		},

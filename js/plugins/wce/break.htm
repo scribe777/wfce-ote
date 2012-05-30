@@ -104,22 +104,26 @@
 		var v = $('#break_type').val();
 		if (v == 'lb') {
 			if (lbposition() == 'lb')
-				return '<br/>&crarr;';
+				return '&crarr;';
 			else
 				return '&hyphen;<br/>&crarr;';
 		}
 		else if (v == 'cb') {
 			if (lbposition() == 'lb')
-				return '<br/>CB';
+				return 'CB';
 			else
 				return '&hyphen;<br/>CB';
 		} else if (v == 'pb') {
 			if (lbposition() == 'lb')
-				return '<br/>PB';
+				return 'PB';
 			else
 				return '&hyphen;<br/>PB';
-		} else
-			return '<br/>QB';
+		} else {
+			if (lbposition() == 'lb')
+				return 'QB';
+			else
+				return '&hyphen;<br/>QB';
+		}
 	}
 	
 	function checkstatus_break() {

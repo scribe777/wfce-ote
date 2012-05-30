@@ -10,9 +10,9 @@
 <body id="table" style="display: none" onload="init();">
 	<form onsubmit="insertTable();return false;" action="#"
 		name="readinginfo" style="margin: 0; padding: 0">
-		<fieldset style="width: 200px; float: left; height: 350px">
+		<fieldset style="width: 200px; float: left; height: 550px">
 			<legend>{#wce.reading_list}</legend>
-			<div style="height: 320px; overflow: auto">
+			<div style="height: 520px; overflow: auto">
 				<ul id="correction_ul"
 					style="list-style-position: inside; list-style-type: none; margin: 0px; padding: 10px">
 				</ul>
@@ -24,9 +24,9 @@
 		</fieldset>
 		<input type="hidden" id="original_firsthand_reading" name="original_firsthand_reading" value="" />
 		<fieldset id="content_fieldset"
-			style="margin-left: 220px; height: 350px; width: 450px">
+			style="margin-left: 220px; height: 550px; width: 450px">
 			<legend>{#wce.reading_data}</legend>
-			<div style="height: 320px; overflow: auto">
+			<div style="height: 520px; overflow: auto">
 				<table border="0" cellpadding="4" cellspacing="0" width="100%">
 					<tr>
 						<td><label id="reading_label" for="reading">{#wce.reading_type}</label>
@@ -97,8 +97,14 @@
 						<td><label id="deletion_label" for="deletion">{#wce.deletion}</label>
 						</td>
 						<td colspan="2">
-						<select id="deletion" size="10" multiple="multiple">
-								<option value="" selected="selected"></option>
+						<input type="hidden" id="deletion_erased" name="deletion_erased" value="" />
+						<input type="hidden" id="deletion_underline" name="deletion_underline" value="" />
+						<input type="hidden" id="deletion_underdot" name="deletion_underdot" value="" />
+						<input type="hidden" id="deletion_strikethrough" name="deletion_strikethrough" value="" />
+						<input type="hidden" id="deletion_vertical_line" name="deletion_vertical_line" value="" />
+						<input type="hidden" id="deletion_other" name="deletion_other" value="" />
+						
+						<select id="deletion" size="6" multiple="multiple" onchange="checkstatus_deletion()">
 								<option value="erased">{#wce.del_erased}</option>
 								<option value="underline">{#wce.del_underline}</option>
 								<option value="underdot">{#wce.del_underdot}</option>
@@ -145,7 +151,7 @@
 <script type="text/javascript">
 	function init() { 
 		wceInfoInit('corr'); 
- 
+
 		$('#firsthand_reading').html(wce_node_text);
 		$('#original_firsthand_reading').val(wce_node_text); 
 		for ( var p in info_arr) {
@@ -162,6 +168,7 @@
 			saveCurrCorrector();
 		});
 
+ 		setstatus_deletion();
 		checkstatus_hand();
 		checkstatus_correction();
 	}
@@ -199,7 +206,72 @@
 			$('#place_corr').attr('disabled', false);
 		}
 	}
-
+	
+	function checkstatus_deletion() {
+		if (document.readinginfo.deletion.options[0].selected == true) {
+			document.getElementById('deletion_erased').value = 1;
+		} else {
+			document.getElementById('deletion_erased').value = 0;
+		}
+		if (document.readinginfo.deletion.options[1].selected == true) {
+			document.getElementById('deletion_underline').value = 1
+		} else {
+			document.getElementById('deletion_underline').value = 0;
+		}
+		if (document.readinginfo.deletion.options[2].selected == true) {
+			document.getElementById('deletion_underdot').value = 1
+		} else {
+			document.getElementById('deletion_underdot').value = 0;
+		}
+		if (document.readinginfo.deletion.options[3].selected == true) {
+			document.getElementById('deletion_strikethrough').value = 1
+		} else {
+			document.getElementById('deletion_strikethrough').value = 0;
+		}
+		if (document.readinginfo.deletion.options[4].selected == true) {
+			document.getElementById('deletion_vertical_line').value = 1
+		} else {
+			document.getElementById('deletion_vertical_line').value = 0;
+		}
+		if (document.readinginfo.deletion.options[5].selected == true) {
+			document.getElementById('deletion_other').value = 1
+		} else {
+			document.getElementById('deletion_other').value = 0;
+		}
+	}
+	
+	function setstatus_deletion() {
+		if (document.getElementById('deletion_erased').value == 1) {
+			document.readinginfo.deletion.options[0].selected = true;
+		} else {
+			document.readinginfo.deletion.options[0].selected = false;
+		}
+		if (document.getElementById('deletion_underline').value == 1) {
+			document.readinginfo.deletion.options[1].selected = true;
+		} else {
+			document.readinginfo.deletion.options[1].selected = false;
+		}
+		if (document.getElementById('deletion_underdot').value == 1) {
+			document.readinginfo.deletion.options[2].selected = true;
+		} else {
+			document.readinginfo.deletion.options[2].selected = false;
+		}
+		if (document.getElementById('deletion_strikethrough').value == 1) {
+			document.readinginfo.deletion.options[3].selected = true;
+		} else {
+			document.readinginfo.deletion.options[3].selected = false;
+		}
+		if (document.getElementById('deletion_vertical_line').value == 1) {
+			document.readinginfo.deletion.options[4].selected = true;
+		} else {
+			document.readinginfo.deletion.options[4].selected = false;
+		}
+		if (document.getElementById('deletion_other').value == 1) {
+			document.readinginfo.deletion.options[5].selected = true;
+		} else {
+			document.readinginfo.deletion.options[5].selected = false;
+		}
+	}
 	/*
 	 * //add new <li> to <ul> /@param class_item: one item from class_name_arr
 	 */

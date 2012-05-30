@@ -70,8 +70,8 @@ tinyMCE.addI18n('en.wce',{
 	alternative : "Alternative reading",
 	corrector_name : "Corrector name (hand)",
     firsthand : "First hand",
-	blank_firsthand : "Blank first hand ",
-	blank_correction : "Blank correction",
+	blank_firsthand : "Blank first hand",
+	blank_correction : "Total deletion",
 	corrector : "Corrector",
 	corrector_text : "Corrector text",
 	corrector_place : "Place of correction",
@@ -202,6 +202,8 @@ tinyMCE.addI18n('en.wce',{
 	meta_tab_general : "Misc",
 	meta_general : "Misc settings",
 	empty_other : "Please enter text for all &quot;other&quot; fields",
-	empty_number : "Please enter a number (used as attribute n)",
-	save : 'Your changes have not been saved yet.\nClick "OK" to save them or "Cancel" to discard changes.'
+	empty_number : "Please enter a number (used as attribute &quot;n&quot;)",
+	save : 'Your changes have not been saved yet.\nClick "OK" to save them or "Cancel" to discard changes.',
+	capitals_data: 'Information about capitals',
+	capitals_height : 'Height of the capitals'
 });
