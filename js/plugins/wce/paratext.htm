@@ -32,10 +32,10 @@
 				<tr>
 					<td><label id="text_label" for="text">{#wce.text}</label></td>
 					<td colspan="2"><input id="text" name="text" type="text" value=""
-						size=45" maxlength="" class="required number min1 mceFocus" onchange="setnumber()" /></td>
+						size=45" maxlength="" class="required number min1 mceFocus" onchange="checkstatus_typ()" /></td>
 				</tr>
 				<tr>
-					<td><label id="number_label" for="number">{#wce.numeral}</label></td>
+					<td><label id="number_label" for="number">{#wce.number_attribute}</label></td>
 					<td colspan="2"><input id="number" name="number" type="text" value=""
 						size=10" maxlength="" class="required number min1 mceFocus" /></td>
 				</tr>
@@ -98,11 +98,13 @@
 
 	function checkstatus_typ() {
 		if ($('#fw_type').val() == 'fw_chaptertitle' || $('#fw_type').val() == 'fw_lecttitle' || $('#fw_type').val() == 'fw_colophon' || $('#fw_type').val() == 'fw_euthaliana' || $('#fw_type').val() == 'fw_gloss') { //don't get a number, only text
+			document.paratextinfo.number.value = '';
 			document.paratextinfo.number.disabled = true;
 			document.getElementById('number').style.backgroundColor = "#CCCCCC";
 		} else {
-			document.paratextinfo.number.disabled = false;
-			document.getElementById('number').style.backgroundColor = "white";
+			//document.paratextinfo.number.disabled = false;
+			//document.getElementById('number').style.backgroundColor = "white";
+			setnumber();
 		}
 		// no place for <num>
 		/*if ($('#fw_type').val() == 'fw_chaptertitle' || $('#fw_type').val() == 'fw_colophon' || $('#fw_type').val() == 'fw_lecttitle' || $('#fw_type').val() == 'fw_euthaliana' || $('#fw_type').val() == 'fw_gloss') {
@@ -171,9 +173,14 @@
 			}
 
 			document.paratextinfo.number.value = dezimalz;
+			document.paratextinfo.number.disabled = true;
+			document.getElementById('number').style.backgroundColor = "#CCCCCC";
 
-		} else
+		} else {
 			document.paratextinfo.number.value = '';
+			document.paratextinfo.number.disabled = false;
+			document.getElementById('number').style.backgroundColor = "white";
+		}
 	}
 
 	function Pruefen_roemZahl(Wert, laenge) {
@@ -310,6 +317,9 @@
 	function setstatus_paratext() {
 		checkstatus_position();
 		checkstatus_typ();
+		var oldnumber = document.paratextinfo.number.value; // save number
+		setnumber();
+		document.paratextinfo.number.value = oldnumber; // set former number for editing
 	}
 </script>
 </html>

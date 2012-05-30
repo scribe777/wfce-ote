@@ -111,7 +111,7 @@
 			 //testen, ob verse_number oder chapter_number ausgewählt
 			 var s_verse=_this._inClass(s_node,/verse_number/i);  
 			 var e_verse=_this._inClass(e_node,/verse_number/i);
-			 if(s_verse && !e_verse){
+			 if(s_verse && !e_verse) {
 				//select e_node
 				s_index = _this._getStartNoBlank(e_text, 0);
 				e_index = _this._getEndNoBlank(e_text, e_index);
@@ -119,7 +119,7 @@
 				rng.setEnd(e_node, e_index);
 				ed.selection.setRng(rng);
 				return;
-			 }else if(!s_verse && e_verse){
+			 } else if(!s_verse && e_verse) {
 				//select s_node
 				s_index = _this._getStartNoBlank(s_text, s_index);
 				e_index = _this._getEndNoBlank(s_text, s_text.length);
@@ -127,7 +127,7 @@
 				rng.setEnd(s_node, e_index);
 				ed.selection.setRng(rng);
 				return; 
-			 }else if(s_verse && e_verse) {
+			 } else if(s_verse && e_verse) {
 				rng.setStart(s_node, 0);
 				rng.setEnd(s_node, 0);
 				ed.selection.setRng(rng);	
@@ -312,13 +312,26 @@
 						info_text += '<div style="margin-top:10px">' + ar['note_text'] + '</div>';
 						break;
 					case 'corr':
+						corr_str += '<div style="margin-top:5px">';
+						switch (ar['reading']) {
+							case 'corr':
+								corr_str += 'Correction';
+								break;
+							case 'comm':
+								corr_str += 'Commentary reading';
+								break;
+							case 'alt':
+								corr_str += 'Alternative reading';
+								break;
+						}
+						corr_str += '</div>';
 						corr_str += '<div style="margin-top:5px">' + ar[ed.wceNameParamInClass] + ': ';
 						if (ar['blank_correction'] == 'blank_correction')
 							corr_str += 'deleted' + '</div>';
 						else
 							corr_str += ar['corrector_text'] + '</div>';
 						if (ar['deletion'] != '') //information on deletion
-							corr_str+= '<div>' + 'Method of deletion: ' + ar['deletion'] + '</div>';
+							corr_str+= '<div style="margin-top:5px">' + 'Method of deletion: ' + ar['deletion'] + '</div>';
 						break;
 					case 'paratext':
 						info_text = '<div>' + 'Paratext type: ';
@@ -433,7 +446,7 @@
 				if (corr_str != '') {
 					corr_str = '*: ' + $(sele_node).html() + corr_str;
 					if (ar['editorial_note'] != '') {
-						corr_str += '<div>Note: ' + ar['editorial_note'] + '</div>';
+						corr_str += '<div style="margin-top:5px">Note: ' + ar['editorial_note'] + '</div>';
 					}
 				}
 
@@ -1241,7 +1254,7 @@
 			return _node;
 		},
 
-		_wceAddNoDialog : function(ed, className, character) {
+		_wceAddNoDialog : function(ed, className, character, number) {
 			var content = ed.selection.getContent();  
 			var style = 'style="border: 1px  dotted #f00;  margin:0px; padding:0;"';
 			switch (className) {
@@ -1255,33 +1268,33 @@
 			case 'brea':
 				style = 'style="border: 1px  dotted #f00;  margin:0px; padding:0; color:#666"';
 				if (character == 'lb') { //line break at the end of a word
-					var num = "";
+					//var num = "";
 					/*while (num == "") {
 						num = prompt("Number of line break", "");
 					}*/
 					ed.selection.setContent('<span class="' + 
-						'__t=brea&amp;__n=&amp;break_type=lb&amp;number=' + num + '&amp;pb_type=&amp;fibre_type=&amp;running_title=&amp;lb_alignment=&amp;insert=Insert&amp;cancel=Cancel'
+						'__t=brea&amp;__n=&amp;break_type=lb&amp;number=' + number + '&amp;pb_type=&amp;fibre_type=&amp;running_title=&amp;lb_alignment=&amp;insert=Insert&amp;cancel=Cancel'
 						+ '"' + style + '>' + '<br/>' + '&crarr;' + '</span> ');  
 				} else if (character == 'lbm') { //line break in the middle of a word
-					var num = "";
+					//var num = "";
 					/*while (num == "") {
 						num = prompt("Number of line break", "");
 					}*/
-					ed.selection.setContent('<span class="' + '__t=brea&amp;__n=&amp;break_type=lb&amp;number=' + num
+					ed.selection.setContent('<span class="' + '__t=brea&amp;__n=&amp;break_type=lb&amp;number=' + number
 						+ '&amp;pb_type=&amp;fibre_type=&amp;running_title=&amp;lb_alignment=&amp;insert=Insert&amp;cancel=Cancel'
 						+ '"' + style + '>' + '&hyphen;<br/>&crarr;' + '</span> ');  
 				}
 				 else if (character == 'cb') { //column break
 					ed.selection.setContent('<br/><span class="' + 
-						'__t=brea&amp;__n=&amp;break_type=cb&amp;number=' + num + '&amp;pb_type=&amp;fibre_type=&amp;running_title=&amp;lb_alignment=&amp;insert=Insert&amp;cancel=Cancel'
+						'__t=brea&amp;__n=&amp;break_type=cb&amp;number=' + number + '&amp;pb_type=&amp;fibre_type=&amp;running_title=&amp;lb_alignment=&amp;insert=Insert&amp;cancel=Cancel'
 						+ '"' + style + '>' + 'CB' + '</span> ');  
 				} else if (character == 'pb') { //page break
 					ed.selection.setContent('<br/><span class="' + 
-						'__t=brea&amp;__n=&amp;break_type=pb&amp;number=' + num + '&amp;pb_type=&amp;fibre_type=&amp;running_title=&amp;lb_alignment=&amp;insert=Insert&amp;cancel=Cancel'
+						'__t=brea&amp;__n=&amp;break_type=pb&amp;number=' + number + '&amp;pb_type=&amp;fibre_type=&amp;running_title=&amp;lb_alignment=&amp;insert=Insert&amp;cancel=Cancel'
 						+ '"' + style + '>' + 'PB' + '</span> ');  
 				} else { //quire break
 					ed.selection.setContent('<br/><span class="' + 
-						'__t=brea&amp;__n=&amp;break_type=gb&amp;number=' + num + '&amp;pb_type=&amp;fibre_type=&amp;running_title=&amp;lb_alignment=&amp;insert=Insert&amp;cancel=Cancel'
+						'__t=brea&amp;__n=&amp;break_type=gb&amp;number=' + number + '&amp;pb_type=&amp;fibre_type=&amp;running_title=&amp;lb_alignment=&amp;insert=Insert&amp;cancel=Cancel'
 						+ '"' + style + '>' + 'QB' + '</span> ');  
 				}
 				break;
@@ -1520,9 +1533,9 @@
 							var startText = startNode.data ? startNode.data : startNode.innerText;
 						
 							if (rng.startOffset == _getNextEnd(startText,rng.startOffset)) { //at the end of a word
-								_wceAddNoDialog(ed, 'brea', 'lb');
+								_wceAddNoDialog(ed, 'brea', 'lb', ++line_count);
 							} else { //in the middle of a word
-								_wceAddNoDialog(ed, 'brea', 'lbm');
+								_wceAddNoDialog(ed, 'brea', 'lbm', ++line_count);
 							}
 						}
 					}
@@ -1852,8 +1865,8 @@
 				_wceAddNoDialog(ed, 'abbr', c);
 			});
 
-			ed.addCommand('mceAdd_brea', function(c) {
-				_wceAddNoDialog(ed, 'brea', c);
+			ed.addCommand('mceAdd_brea', function(c, number) {
+				_wceAddNoDialog(ed, 'brea', c, number);
 			});
 
 			ed.addCommand('mceAdd_pc', function(c) {

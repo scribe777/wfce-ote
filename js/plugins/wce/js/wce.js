@@ -27,6 +27,10 @@ var item_counter = -1;
 // current item ids
 var curr_item_id;
 
+// global counter for columns and lines
+//var column_count = 0;
+//var line_count;
+
 // name of item, saved in class.
 // <span
 // class="__t=corr&amp;__n=othername&amp;reading=corr&amp;blank_firsthand=blank
@@ -120,13 +124,13 @@ function writeWceNodeInfo(val) {
 				gap_text = '[' + selected_content + ']';
 				style += 'color:red';
 			} else {
-				gap_text = '[...]';
+				//gap_text = '[...]';
 				if (document.getElementById('unit').value == "line") {
-					for (var i = 1; i < document.getElementById('extent').value; i++) {
+					for (var i = 0; i < document.getElementById('extent').value; i++) {
 						gap_text += '<br/>&crarr;[...]';
 					}
 				} else if (document.getElementById('unit').value == "page") {
-					for (var i = 1; i < document.getElementById('extent').value; i++) {
+					for (var i = 0; i < document.getElementById('extent').value; i++) {
 						gap_text += '<br/>PB<br/>[...]';
 					}
 				}
@@ -198,18 +202,27 @@ function writeWceNodeInfo(val) {
 			switch (document.getElementById('break_type').value) {
 				case 'gb':
 					ed.execCommand('mceAdd_brea', 'pb');
-					ed.execCommand('mceAdd_brea', 'cb');
-					ed.execCommand('mceAdd_brea', 'lb');
+					ed.execCommand('mceAdd_brea', 'cb', '1');
+					ed.execCommand('mceAdd_brea', 'lb', '1');
+					column_count = 1;
+					line_count = 1;
 					break;
 				case 'pb':
-					ed.execCommand('mceAdd_brea', 'cb');
-					ed.execCommand('mceAdd_brea', 'lb');
+					ed.execCommand('mceAdd_brea', 'cb', '1');
+					ed.execCommand('mceAdd_brea', 'lb', '1');
+					column_count = 1;
+					line_count = 1;
 					break;
 				case 'cb':
-					ed.execCommand('mceAdd_brea', 'lb');
+					ed.execCommand('mceAdd_brea', 'lb', '1');
+					line_count = 1;
 					break;
 			}
 		}
+		if (wce_type == 'gap' && (document.getElementById('unit').value == "line" || document.getElementById('unit').value == "page")) {
+			ed.execCommand('mceAdd_brea', 'lb');
+		}
+		
 /*		&& (document.getElementById('break_type').value == 'cb' || document.getElementById('break_type').value == 'pb'
 			|| document.getElementById('break_type').value == 'gb'))
 				ed.execCommand('mceAdd_brea', 'lb');*/
