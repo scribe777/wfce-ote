@@ -299,8 +299,8 @@
 			// Pruefung mehr als 3 gleiche Zeichen hintereinander
 			if (Zeichen == Zeichen_alt) {
 				Zeichen_zaehl++;
-				if (Zeichen_zaehl > 3)
-					fehler++;
+				//if (Zeichen_zaehl > 3) //Deactivated test, because many manuscripts use IIII etc.
+					//fehler++;
 			} else {
 				Zeichen_zaehl = 1;
 			}
@@ -310,7 +310,8 @@
 		}
 
 		// Pruefung, ob Zeichen zu oft vorkamen
-		if (anz_Zeichen_I > 3 || anz_Zeichen_V > 1 || anz_Zeichen_X > 4 || anz_Zeichen_L > 1 || anz_Zeichen_C > 4 || anz_Zeichen_D > 1 || anz_Zeichen_M > 3) {
+		//if (anz_Zeichen_I > 3 || anz_Zeichen_V > 1 || anz_Zeichen_X > 4 || anz_Zeichen_L > 1 || anz_Zeichen_C > 4 || anz_Zeichen_D > 1 || anz_Zeichen_M > 3) {
+		if (anz_Zeichen_V > 1 || anz_Zeichen_X > 4 || anz_Zeichen_L > 1 || anz_Zeichen_C > 4 || anz_Zeichen_D > 1 || anz_Zeichen_M > 3) {
 			fehler++;
 		}
 	}
