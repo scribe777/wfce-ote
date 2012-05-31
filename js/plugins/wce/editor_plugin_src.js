@@ -7,6 +7,11 @@
  * http://tinymce.moxiecode.com/contributing
  */
 
+var qcnt = 1; //quire count
+var pcnt = 1; // page count
+var ccnt = 1; // column count
+var lcnt = 1; // line count
+ 
 (function() {
 	// Load plugin specific language pack
 	tinymce.PluginManager.requireLangPack('wce');
@@ -1257,6 +1262,7 @@
 		_wceAddNoDialog : function(ed, className, character, number) {
 			var content = ed.selection.getContent();  
 			var style = 'style="border: 1px  dotted #f00;  margin:0px; padding:0;"';
+			
 			switch (className) {
 			case 'pc':
 				ed.selection.setContent('<span class="' + ed.wceTypeParamInClass + '=' + className + '"' + style + '>' + character + '</span> ');
@@ -1268,14 +1274,21 @@
 			case 'brea':
 				style = 'style="border: 1px  dotted #f00;  margin:0px; padding:0; color:#666"';
 				if (character == 'lb') { //line break at the end of a word
+					if (number === 0) { // for a line break without an explicit number
+						number = ++lcnt;
+					}
 					//var num = "";
 					/*while (num == "") {
 						num = prompt("Number of line break", "");
 					}*/
 					ed.selection.setContent('<span class="' + 
 						'__t=brea&amp;__n=&amp;break_type=lb&amp;number=' + number + '&amp;pb_type=&amp;fibre_type=&amp;running_title=&amp;lb_alignment=&amp;insert=Insert&amp;cancel=Cancel'
-						+ '"' + style + '>' + '<br/>' + '&crarr;' + '</span> ');  
+						+ '"' + style + '>' + '<br/>' + '&crarr;' + '</span> ');
+					lcnt = number;
 				} else if (character == 'lbm') { //line break in the middle of a word
+					if (number === 0) { // for a line break without an explicit number
+						number = ++lcnt;
+					}
 					//var num = "";
 					/*while (num == "") {
 						num = prompt("Number of line break", "");
@@ -1283,19 +1296,32 @@
 					ed.selection.setContent('<span class="' + '__t=brea&amp;__n=&amp;break_type=lb&amp;number=' + number
 						+ '&amp;pb_type=&amp;fibre_type=&amp;running_title=&amp;lb_alignment=&amp;insert=Insert&amp;cancel=Cancel'
 						+ '"' + style + '>' + '&hyphen;<br/>&crarr;' + '</span> ');  
+					lcnt = number;
 				}
 				 else if (character == 'cb') { //column break
+					if (number === 0) { // for a line break without an explicit number
+						number = ++ccnt;
+					}
 					ed.selection.setContent('<br/><span class="' + 
 						'__t=brea&amp;__n=&amp;break_type=cb&amp;number=' + number + '&amp;pb_type=&amp;fibre_type=&amp;running_title=&amp;lb_alignment=&amp;insert=Insert&amp;cancel=Cancel'
-						+ '"' + style + '>' + 'CB' + '</span> ');  
+						+ '"' + style + '>' + 'CB' + '</span> ');
+					ccnt = number;
 				} else if (character == 'pb') { //page break
+					if (number === 0) { // for a line break without an explicit number
+						number = ++pcnt;
+					}
 					ed.selection.setContent('<br/><span class="' + 
 						'__t=brea&amp;__n=&amp;break_type=pb&amp;number=' + number + '&amp;pb_type=&amp;fibre_type=&amp;running_title=&amp;lb_alignment=&amp;insert=Insert&amp;cancel=Cancel'
-						+ '"' + style + '>' + 'PB' + '</span> ');  
+						+ '"' + style + '>' + 'PB' + '</span> ');
+					pcnt = number;
 				} else { //quire break
+					if (number === 0) { // for a line break without an explicit number
+						number = ++qcnt;
+					}
 					ed.selection.setContent('<br/><span class="' + 
 						'__t=brea&amp;__n=&amp;break_type=gb&amp;number=' + number + '&amp;pb_type=&amp;fibre_type=&amp;running_title=&amp;lb_alignment=&amp;insert=Insert&amp;cancel=Cancel'
-						+ '"' + style + '>' + 'QB' + '</span> ');  
+						+ '"' + style + '>' + 'QB' + '</span> ');
+					qcnt = number;
 				}
 				break;
 			case 'part_abbr': //part-worded abbreviations
@@ -1533,9 +1559,9 @@
 							var startText = startNode.data ? startNode.data : startNode.innerText;
 						
 							if (rng.startOffset == _getNextEnd(startText,rng.startOffset)) { //at the end of a word
-								_wceAddNoDialog(ed, 'brea', 'lb', ++line_count);
+								_wceAddNoDialog(ed, 'brea', 'lb', ++lcnt);
 							} else { //in the middle of a word
-								_wceAddNoDialog(ed, 'brea', 'lbm', ++line_count);
+								_wceAddNoDialog(ed, 'brea', 'lbm', ++lcnt);
 							}
 						}
 					}
@@ -1716,11 +1742,11 @@
 
 			// Add breaks
 			ed.addCommand('mceAddBreak', function() {
-				_wceAdd(ed, url, '/break.htm', 480, 320, 1, true);
+				_wceAdd(ed, url, '/break.htm?mode=new&quire=' + ++qcnt + '&page=' + ++pcnt + '&column=' + ++ccnt + '&line=' + ++lcnt, 480, 320, 1, true);
 			});
 			// Edit breaks
 			ed.addCommand('mceEditBreak', function() {
-				_wceAdd(ed, url, '/break.htm', 480, 320, 1, false);
+				_wceAdd(ed, url, '/break.htm?mode=edit&quire=' + ++qcnt + '&page=' + ++pcnt + '&column=' + ++ccnt + '&line=' + ++lcnt, 480, 320, 1, false);
 			});
 
 			ed.addCommand('mceAddBreak_Shortcut', function() {
@@ -1884,7 +1910,53 @@
 			ed.addCommand('mceAdd_formatting', function(c) {
 				_wceAddNoDialog(ed, 'formatting_' + c, '');
 			});
-
+			
+			ed.addCommand('setCounter', function(bt, n) {
+				// First reset counters
+				qcnt--;
+				pcnt--;
+				ccnt--;
+				lcnt--;
+				// set only the one correct counter
+				switch (bt) {
+					case 'gb':
+						qcnt = n;
+						break;
+					case 'pb':
+						pcnt = n;
+						break;
+					case 'cb':
+						ccnt = n;
+						break;
+					case 'lb':
+						lcnt = n;
+						break;
+				}
+			});
+			
+			ed.addCommand('resetCounter', function() { // reset counter values when pressing "Cancel" at the break dialog
+				qcnt--;
+				pcnt--;
+				ccnt--;
+				lcnt--;
+			});
+			
+			ed.addCommand('addToCounter', function(bt, n) {
+				switch (bt) {
+					case 'gb':
+						qcnt = parseInt(qcnt) + parseInt(n); 
+						break;
+					case 'pb':
+						pcnt = parseInt(pcnt) + parseInt(n);
+						break;
+					case 'cb':
+						ccnt = parseInt(ccnt) + parseInt(n);
+						break;
+					case 'lb':
+						lcnt = parseInt(lcnt) + parseInt(n);
+						break;
+				}
+			});
 		},
 
 		/**
