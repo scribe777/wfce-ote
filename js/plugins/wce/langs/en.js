@@ -126,7 +126,7 @@ tinyMCE.addI18n('en.wce',{
 	mark_as_supplied : "Mark as supplied",
 	unclear : "Unclear (doubtful) reading",
 	unclear_text_title : "Please specify the unclear text",
-	tt_corrname : "Name of the corrector",
+	tt_corr_deletion : "Hold down SHIFT to select ranges of options; CTRL (apple key) for multiple options",
 	tt_corrtext : "Text of the correction",
 	charmap_greek_only : "Greek only",
 	charmap_latin_only : "Latin only",

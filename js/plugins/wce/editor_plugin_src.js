@@ -317,7 +317,7 @@ var lcnt = 1; // line count
 						info_text += '<div style="margin-top:10px">' + ar['note_text'] + '</div>';
 						break;
 					case 'corr':
-						corr_str += '<div style="margin-top:5px">';
+						corr_str += '<div style="margin-top:15px">';
 						switch (ar['reading']) {
 							case 'corr':
 								corr_str += 'Correction';
@@ -335,7 +335,7 @@ var lcnt = 1; // line count
 							corr_str += 'deleted' + '</div>';
 						else
 							corr_str += ar['corrector_text'] + '</div>';
-						if (ar['deletion'] != '') //information on deletion
+						if (ar['deletion'] != 'null') //information on deletion
 							corr_str+= '<div style="margin-top:5px">' + 'Method of deletion: ' + ar['deletion'] + '</div>';
 						break;
 					case 'paratext':
@@ -351,7 +351,7 @@ var lcnt = 1; // line count
 						case 'fw_colophon':
 							info_text += 'Colophon';
 							break;
-						case 'num_quiresig':
+						case 'fw_quiresig':
 							info_text += 'Quire signature';
 							break;
 						case 'num_ammonian':

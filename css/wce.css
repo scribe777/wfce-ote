@@ -93,3 +93,9 @@ span[class*='wce_abbr_numeral_Overline']{
 color : red;
 text-decoration : overline;
 } 
+
+.xbtooltip {
+    display: none;
+    position: absolute;
+	background-color: #fff;
+}

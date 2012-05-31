@@ -104,7 +104,7 @@
 						<input type="hidden" id="deletion_vertical_line" name="deletion_vertical_line" value="" />
 						<input type="hidden" id="deletion_other" name="deletion_other" value="" />
 						
-						<select id="deletion" size="6" multiple="multiple" onchange="checkstatus_deletion()">
+						<select id="deletion" size="6" multiple="multiple" onchange="checkstatus_deletion()" onmouseover="XBT(this, {id:'corr_deletion'})">
 								<option value="erased">{#wce.del_erased}</option>
 								<option value="underline">{#wce.del_underline}</option>
 								<option value="underdot">{#wce.del_underdot}</option>
@@ -123,6 +123,9 @@
 								<option value="other">{#wce.other}</option>
 						</select></td>-->
 					</tr>
+					<div id="corr_deletion" class="xbtooltip">
+						{#wce.tt_corr_deletion}
+					</div>
 					<tr>
 						<td><label id="editorial_note_label" for="editorial_note">{#wce.editorial_note}</label>
 						</td>

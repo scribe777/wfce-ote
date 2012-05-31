@@ -287,13 +287,16 @@ function _readOtherClass($xml, $node) {
 				$rdg = $xml->createElement('rdg');
 				$rdg->setAttribute('type', $a['reading']);
 				$rdg->setAttribute('hand', $a['corrector_name']);
-				if ($a['deletion'] != '')
+				if ($a['deletion'] != 'null')
 					$rdg->setAttribute('deletion', str_replace(',','+',$a['deletion']));
 				if ($a['editorial_note'] != '') {
 					$note = $xml->createElement('note');
 					$note->setAttribute('type', 'transcriber');
+					$wit = substr(strrchr($_GET['textname'],'-'),1); //get witness from the file name
+					$note->setAttribute('xml:id', 'P' . $page . 'C' . $column . 'L' . $line . '-' . $wit . '-1'); //TODO: numbering
 					$note->nodeValue = $a['editorial_note'];
-					$rdg->appendChild($note);
+					$newNode->parentNode->insertBefore($note, $newNode->nextSibling);
+					//$rdg->appendChild($note);
 				}
 				
 				_copyChild($xml, $rdg, $clone);
@@ -638,6 +641,9 @@ function _readOtherClass($xml, $node) {
 				case 'fw_gloss':
 					$type = 'gloss';
 					break;
+				case 'num_stichoi':
+					$type ='stichoi';
+					break;
 			}
 			$newNode->setAttribute('type', $type);
 			
@@ -648,7 +654,7 @@ function _readOtherClass($xml, $node) {
 				$newNode->setAttribute('n', $attr);
 			}
 
-			if ($newNode->nodeName === 'fw') {
+			//if ($newNode->nodeName === 'fw') {
 				$attr = $a['paratext_position'];
 				$attr_other = $a['paratext_position_other'];
 				if ($attr == 'other' && $attr_other != '') {
@@ -657,7 +663,7 @@ function _readOtherClass($xml, $node) {
 				if ($attr != '') {
 					$newNode->setAttribute('place', $attr);
 				}
-			}
+			//}
 
 			$attr = $a['paratext_alignment'];
 			if ($attr != '') {
@@ -763,8 +769,9 @@ function _readOtherClass($xml, $node) {
 			if ($attr != '') {
 				$newNode->setAttribute('type', $attr);
 			}
-
-			$newNode->setAttribute('xml:id', $value['B'] . $value['K'] . $value['V'] . '-wit-1'); //TODO
+			
+			$wit = substr(strrchr($_GET['textname'],'-'),1); //get witness from the file name
+			$newNode->setAttribute('xml:id', $value['B'] . $value['K'] . $value['V'] . '-' . $wit . '-1'); //TODO: numbering
 
 			$attr = $a['note_text'];
 			if ($attr != '') {

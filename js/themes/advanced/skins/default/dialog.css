@@ -131,3 +131,11 @@ h3 {font-size:14px;}
 #colorpicker #colornamecontainer {margin-top:5px;}
 #colorpicker #picker_panel fieldset {margin:auto;width:325px;}
 
+.xbtooltip {
+    display: none;
+	width: 150px;
+    background-color: yellow;
+    color: #000;
+    border: 1px solid red;
+    padding: 3px;
+}
