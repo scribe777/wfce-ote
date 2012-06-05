@@ -1,0 +1,24 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" style="height:100%">
+<head>
+<title>XML Output</title>
+<script type="text/javascript" src="../../tiny_mce_popup.js"></script>  
+<script type="text/javascript" src="../../jquery.js"></script>
+</head>
+<body style="height:97%" onload="init();" style="display:none; overflow:hidden;">
+<div style="height:95%">
+		<textarea name="xmlOuputSource" id="xmlOuputSource"  style="width: 100%; overflow-y:auto; height: 98%; font-family: 'Courier New',Courier,monospace; font-size: 12px;" dir="ltr" wrap="on" class="mceFocus"></textarea> 
+ 
+<div class="mceActionPanel">
+			<input type="button"  value="{#close}" onclick="tinyMCEPopup.close();" /> 
+		</div> </div>
+</body>
+<script type="text/javascript" src="js/wce_xml_output.js"></script>
+<script type="text/javascript">
+	function init() { 
+		var str=tinyMCE.activeEditor.getContent();
+		str='<TEMP>'+str+'</TEMP>';
+		xmlparerTest(str);
+	} 
+</script>
+</html>
