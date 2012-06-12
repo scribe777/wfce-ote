@@ -650,7 +650,7 @@ function _readOtherClass($xml, $node) {
 			$attr = $a['number'];
 			
 			// write attribute n only for certain values
-			if ($attr != '' && ($type == 'pageNum' || $type == 'chapNum' || $type == 'quireSig' || $type == 'AmmSec' || $type == 'EusCan')) {
+			if ($attr != '' && ($type == 'pageNum' || $type == 'chapNum' || $type == 'quireSig' || $type == 'AmmSec' || $type == 'EusCan' || $type == 'stichoi')) {
 				$newNode->setAttribute('n', $attr);
 			}
 

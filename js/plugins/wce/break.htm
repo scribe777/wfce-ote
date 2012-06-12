@@ -31,7 +31,7 @@
 					</td>
 					<td><label id="pb_type_label" for="pb_type">{#wce.pb_position}</label>
 					</td>
-					<td><select id="pb_type" name="pb_type">
+					<td><select id="pb_type" name="pb_type" onchange="checkstatus_pb_type()">
 							<option value=""></option>
 							<option value="r">{#wce.recto}</option>
 							<option value="v">{#wce.verso}</option>
@@ -86,7 +86,7 @@
 		</fieldset>
 		<div class="mceActionPanel">
 			<input type="button" id="insert" name="insert" value="{#insert}"
-				onclick="cont = testNumber();
+				onclick="var cont = testNumber();
 				if (cont){writeWceNodeInfo(getBreakTag());}else{alert('{#wce.empty_number}');}" /> <input type="button"
 				id="cancel" name="cancel" value="{#cancel}"
 				onclick="ed.execCommand('resetCounter');tinyMCEPopup.close();" />
@@ -100,6 +100,7 @@
 		qsParm['page'] = 0;
 		qsParm['column'] = 0;
 		qsParm['line'] = 0;
+		qsParm['rectoverso'] = '';
 		
 	function init() {
 		wceInfoInit('brea');
@@ -124,6 +125,7 @@
 			}
 		}
 		checkstatus_break();
+		//checkstatus_pb_type();
 	}
 	
 	
@@ -187,7 +189,14 @@
 			document.getElementById('page_number').style.backgroundColor = "white";
 			document.breakinfo.facs.disabled = false;
 			document.getElementById('facs').style.backgroundColor = "white";
-			document.breakinfo.number.value = qsParm['page'];
+			if (qsParm['mode'] == 'new' && qsParm['rectoverso'] == 'true') { //only for new entries; old ones keep their counting
+				document.breakinfo.number.value = Math.ceil(qsParm['page'] / 2);
+				if (qsParm['page'] % 2 == 0) // verso page
+					document.breakinfo.pb_type.options[2].selected = true;
+				else // recto page
+					document.breakinfo.pb_type.options[1].selected = true;
+			} else 
+				document.breakinfo.number.value = qsParm['page'];
 		} else {
 			document.breakinfo.pb_type.disabled = true;
 			document.getElementById('pb_type').style.backgroundColor = "#CCCCCC";
@@ -205,6 +214,14 @@
 		}
 	}
 
+	function checkstatus_pb_type () {
+		if (document.breakinfo.pb_type.options[0].selected == true) { //empty
+			document.breakinfo.number.value = qsParm['page'];
+		} else { //recto/verso
+			document.breakinfo.number.value = Math.ceil(qsParm['page'] / 2);
+		}
+	}
+	
 	function setstatus_break() {
 		checkstatus_break();
 	}

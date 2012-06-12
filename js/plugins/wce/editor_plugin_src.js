@@ -11,6 +11,7 @@ var qcnt = 1; //quire count
 var pcnt = 1; // page count
 var ccnt = 1; // column count
 var lcnt = 1; // line count
+var rectoverso = 'true'; // counting as r/v
  
 (function() {
 	// Load plugin specific language pack
@@ -1307,13 +1308,28 @@ var lcnt = 1; // line count
 						+ '"' + style + '>' + 'CB' + '</span> ');
 					ccnt = number;
 				} else if (character == 'pb') { //page break
-					if (number === 0) { // for a line break without an explicit number
+					var new_number = 0;
+					var new_pb_type = "";
+					if (number === 0) { // for a page break without an explicit number
 						number = ++pcnt;
 					}
-					ed.selection.setContent('<br/><span class="' + 
-						'__t=brea&amp;__n=&amp;break_type=pb&amp;number=' + number + '&amp;pb_type=&amp;fibre_type=&amp;running_title=&amp;lb_alignment=&amp;insert=Insert&amp;cancel=Cancel'
-						+ '"' + style + '>' + 'PB' + '</span> ');
 					pcnt = number;
+					new_number = number;
+									
+					if (rectoverso === 'true') {
+						new_number = Math.ceil(number / 2);
+						if (number % 2 == 0) // verso page
+							new_pb_type = "v";
+						else // recto page
+							new_pb_type = "r";
+					}
+					
+					ed.selection.setContent('<br/><span class="' + 
+						'__t=brea&amp;__n=&amp;break_type=pb&amp;number=' + new_number + '&amp;pb_type=' + new_pb_type +'&amp;fibre_type=&amp;running_title=&amp;lb_alignment=&amp;insert=Insert&amp;cancel=Cancel'
+						+ '"' + style + '>' + 'PB' + '</span> ');
+					
+					ed.execCommand('mceAdd_brea', 'cb', '1');
+					ed.execCommand('mceAdd_brea', 'lb', '1');
 				} else { //quire break
 					if (number === 0) { // for a line break without an explicit number
 						number = ++qcnt;
@@ -1742,11 +1758,11 @@ var lcnt = 1; // line count
 
 			// Add breaks
 			ed.addCommand('mceAddBreak', function() {
-				_wceAdd(ed, url, '/break.htm?mode=new&quire=' + ++qcnt + '&page=' + ++pcnt + '&column=' + ++ccnt + '&line=' + ++lcnt, 480, 320, 1, true);
+				_wceAdd(ed, url, '/break.htm?mode=new&quire=' + ++qcnt + '&page=' + ++pcnt + '&column=' + ++ccnt + '&line=' + ++lcnt + '&rectoverso=' + rectoverso, 480, 320, 1, true);
 			});
 			// Edit breaks
 			ed.addCommand('mceEditBreak', function() {
-				_wceAdd(ed, url, '/break.htm?mode=edit&quire=' + ++qcnt + '&page=' + ++pcnt + '&column=' + ++ccnt + '&line=' + ++lcnt, 480, 320, 1, false);
+				_wceAdd(ed, url, '/break.htm?mode=edit&quire=' + ++qcnt + '&page=' + ++pcnt + '&column=' + ++ccnt + '&line=' + ++lcnt + '&rectoverso=' + rectoverso, 480, 320, 1, false);
 			});
 
 			ed.addCommand('mceAddBreak_Shortcut', function() {

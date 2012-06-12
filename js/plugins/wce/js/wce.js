@@ -124,7 +124,6 @@ function writeWceNodeInfo(val) {
 				gap_text = '[' + selected_content + ']';
 				style += 'color:red';
 			} else {
-				//gap_text = '[...]';
 				if (document.getElementById('unit').value == "line") {
 					for (var i = 0; i < document.getElementById('extent').value; i++) {
 						gap_text += '<br/>&crarr;[...]';
@@ -140,6 +139,8 @@ function writeWceNodeInfo(val) {
 						gap_text += '<br/>QB<br/>[...]';
 					}
 					ed.execCommand('addToCounter', 'gb', document.getElementById('extent').value);
+				} else {
+					gap_text = '[...]';
 				}
 				style += 'color:red';
 			}
@@ -206,6 +207,7 @@ function writeWceNodeInfo(val) {
 		 
 		ed.selection.setContent(new_content);
 		if (wce_type == 'brea') {
+			var new_pbcnt = 0;
 			switch (document.getElementById('break_type').value) {
 				case 'gb':
 					ed.execCommand('setCounter', 'gb', document.getElementById('number').value);
@@ -214,7 +216,13 @@ function writeWceNodeInfo(val) {
 					ed.execCommand('mceAdd_brea', 'lb', '1');
 					break;
 				case 'pb':
-					ed.execCommand('setCounter', 'pb', document.getElementById('number').value);
+					if (document.getElementById('pb_type').value == "r")
+						new_pbcnt = 2 * parseInt(document.getElementById('number').value) - 1;
+					else if (document.getElementById('pb_type').value == "v")
+						new_pbcnt = 2 * parseInt(document.getElementById('number').value);
+					else
+						new_pbcnt = document.getElementById('number').value;
+					ed.execCommand('setCounter', 'pb', new_pbcnt);
 					ed.execCommand('mceAdd_brea', 'cb', '1');
 					ed.execCommand('mceAdd_brea', 'lb', '1');
 					break;
@@ -226,13 +234,12 @@ function writeWceNodeInfo(val) {
 					ed.execCommand('setCounter', 'lb', document.getElementById('number').value);
 			}
 		}
-		if (wce_type == 'gap' && (document.getElementById('unit').value == "line" || document.getElementById('unit').value == "page")) {
-			ed.execCommand('mceAdd_brea', 'lb', 0);
+		if (wce_type == 'gap') {
+			if (document.getElementById('unit').value == "line")
+				ed.execCommand('mceAdd_brea', 'lb', 0);
+			else if (document.getElementById('unit').value == "page")
+				ed.execCommand('mceAdd_brea', 'pb', 0);
 		}
-		
-/*		&& (document.getElementById('break_type').value == 'cb' || document.getElementById('break_type').value == 'pb'
-			|| document.getElementById('break_type').value == 'gb'))
-				ed.execCommand('mceAdd_brea', 'lb');*/
 	} else {
 		// update class
 		if (wce_node != null) {
