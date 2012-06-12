@@ -1532,7 +1532,20 @@ var rectoverso = 'true'; // counting as r/v
 
 				return 0;
 			});
+			
+			//TEI xmloutput
+			ed.addCommand('mceXmloutput', function() {
+                _wceAdd(ed, url, '/xmloutput.htm', 580, 620, 1, true);
+	
+            });
 
+            //add TEI xmloutput button
+            ed.addButton('xmloutput', {
+                                title : 'XML Output',
+                                cmd : 'mceXmloutput',
+                                image : url + '/img/xml.jpg'
+             });
+						
 			/*
 			 * onInit
 			 * 
