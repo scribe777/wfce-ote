@@ -17,8 +17,7 @@
 <script type="text/javascript">
 	function init() { 
 		var str=tinyMCE.activeEditor.getContent();
-		str='<TEMP>'+str+'</TEMP>';
-		xmlparerTest(str);
+		$('#xmlOuputSource').val(tinyMCE.getWceXml(str));
 	} 
 </script>
 </html>

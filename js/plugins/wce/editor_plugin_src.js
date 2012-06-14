@@ -16,6 +16,7 @@ var rectoverso = 'true'; // counting as r/v
 (function() {
 	// Load plugin specific language pack
 	tinymce.PluginManager.requireLangPack('wce');
+	tinymce.ScriptLoader.add(tinymce.baseURL+'/plugins/wce/js/wce_xml_output.js');
 	
 	tinymce.create('tinymce.plugins.wcePlugin', {
 
