@@ -2,8 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" style="height:100%">
 <head>
 <title>XML Output</title>
-<script type="text/javascript" src="../../tiny_mce_popup.js"></script>  
-<script type="text/javascript" src="../../jquery.js"></script>
+<script type="text/javascript" src="../../tiny_mce_popup.js"></script>   
 </head>
 <body style="height:97%" onload="init();" style="display:none; overflow:hidden;">
 <div style="height:95%">
@@ -12,12 +11,11 @@
 <div class="mceActionPanel">
 			<input type="button"  value="{#close}" onclick="tinyMCEPopup.close();" /> 
 		</div> </div>
-</body>
-<script type="text/javascript" src="js/wce_xml_output.js"></script>
+</body> 
 <script type="text/javascript">
 	function init() { 
-		var str=tinyMCE.activeEditor.getContent();
-		$('#xmlOuputSource').val(tinyMCE.getWceXml(str));
+		var str=tinyMCE.activeEditor.getContent(); 
+		document.getElementById('xmlOuputSource').value=tinyMCE.execCommand('getTEIxml',str);
 	} 
 </script>
 </html>
