@@ -50,7 +50,7 @@
 
 		// Private methods
 
-		_save : function() { 
+		_save : function() {
 			var ed = this.editor, formObj, os, i, elementId;
 
 			formObj = tinymce.DOM.get(ed.id).form || tinymce.DOM.getParent(ed.id, 'form');

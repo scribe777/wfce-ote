@@ -27,9 +27,11 @@
 		 * @param {string} url Absolute URL to where the plugin is located.
 		 */
 		init : function(ed) {
-			var t = this, lastRng;
+			var t = this, showMenu, contextmenuNeverUseNative, realCtrlKey;
 
 			t.editor = ed;
+
+			contextmenuNeverUseNative = ed.settings.contextmenu_never_use_native;
 
 			/**
 			 * This event gets fired when the context menu is shown.
@@ -40,22 +42,23 @@
 			 */
 			t.onContextMenu = new tinymce.util.Dispatcher(this);
 
-			ed.onContextMenu.add(function(ed, e) {
+			showMenu = ed.onContextMenu.add(function(ed, e) {
+				// Block TinyMCE menu on ctrlKey and work around Safari issue
+				if ((realCtrlKey !== 0 ? realCtrlKey : e.ctrlKey) && !contextmenuNeverUseNative)
+					return;
 
-				 
-				if (!e.ctrlKey ||(tinyMCE.isMac && e.ctrlKey) ) {
-					 
-					// Restore the last selection since it was removed
-					if (lastRng)
-						ed.selection.setRng(lastRng);
+				Event.cancel(e);
 
-					t._getMenu(ed).showMenu(e.clientX, e.clientY);
-					Event.add(ed.getDoc(), 'click', function(e) {
-						hide(ed, e);
-					});
-					Event.cancel(e);
-				}
-				 
+				// Select the image if it's clicked. WebKit would other wise expand the selection
+				if (e.target.nodeName == 'IMG')
+					ed.selection.select(e.target);
+
+				t._getMenu(ed).showMenu(e.clientX || e.pageX, e.clientY || e.pageY);
+				Event.add(ed.getDoc(), 'click', function(e) {
+					hide(ed, e);
+				});
+
+				ed.nodeChanged();
 			});
 
 			ed.onRemove.add(function() {
@@ -64,12 +67,12 @@
 			});
 
 			function hide(ed, e) {
-				lastRng = null;
+				realCtrlKey = 0;
 
 				// Since the contextmenu event moves
 				// the selection we need to store it away
 				if (e && e.button == 2) {
-					lastRng = ed.selection.getRng();
+					realCtrlKey = e.ctrlKey;
 					return;
 				}
 
@@ -77,11 +80,18 @@
 					t._menu.removeAll();
 					t._menu.destroy();
 					Event.remove(ed.getDoc(), 'click', hide);
+					t._menu = null;
 				}
 			};
 
 			ed.onMouseDown.add(hide);
 			ed.onKeyDown.add(hide);
+			ed.onKeyDown.add(function(ed, e) {
+				if (e.shiftKey && !e.ctrlKey && !e.altKey && e.keyCode === 121) {
+					Event.cancel(e);
+					showMenu(ed, e);
+				}
+			});
 		},
 
 		/**
@@ -94,90 +104,37 @@
 		getInfo : function() {
 			return {
 				longname : 'Contextmenu',
-				author : 'Workspace Project',
-				authorurl : '',
-				infourl : '',
-				version : "0.1"
+				author : 'Moxiecode Systems AB',
+				authorurl : 'http://tinymce.moxiecode.com',
+				infourl : 'http://wiki.moxiecode.com/index.php/TinyMCE:Plugins/contextmenu',
+				version : tinymce.majorVersion + "." + tinymce.minorVersion
 			};
 		},
 
 		_getMenu : function(ed) {
-			//ed.execCommand('wceSelectFilter',false);
-			var t = this, m = t._menu, se = ed.selection, col = se.isCollapsed(), el = se.getNode() || ed.getBody(), am, p1, p2;
-			
-			$('#info_box').hide(); 
-			var dis_paste=false;   
-			var hasVerse=false;
-			
-			/* rightMouse von WCE deaktivieren 
-			var noEditBreak=true, noEditNote=true, noEditCorrection=true, noEditGap=true, noEditNumber=true;
-			*/
-			
-			////rightMouse von WCE deaktivieren 
-			//if($(el).attr('class').match(/wce_brea.*/)){  
-			//	noEditBreak=false;  
-			//	col=true;
-			//	hasVerse=true;
-			//}else if($(el).attr('class').match(/wce_note.*/)){
-			//	noEditNote=false;
-			//}else 	if($(el).attr('class').match(/wce_corr.*/)){
-			//	noEditCorrection=false;
-			//}else if($(el).attr('class').match(/wce_gap.*/)){
-			//	noEditGap=false;
-			//}else if($(el).attr('class').match(/wce_numb.*/)){
-			//	noEditNumber=false;
-			//}
-			 
-			/* rightMouse von WCE deaktivieren */
-			//kein Auswahl
-			if(col && $(el).attr('class')=='verse_number'){
-				hasVerse=true;  
-				dis_paste=true;
-			}
-			else if(!col){ 
-				 if(ed.execCommand('wceContentHasVerse',false)>0){
-					hasVerse=true;
-					col=true;
-					dis_paste=true;
-				}
-			}
-			
+			var t = this, m = t._menu, se = ed.selection, col = se.isCollapsed(), el = se.getNode() || ed.getBody(), am, p;
 
 			if (m) {
 				m.removeAll();
 				m.destroy();
 			}
 
-			p1 = DOM.getPos(ed.getContentAreaContainer());
-			p2 = DOM.getPos(ed.getContainer());
+			p = DOM.getPos(ed.getContentAreaContainer());
 
 			m = ed.controlManager.createDropMenu('contextmenu', {
-				offset_x : p1.x + ed.getParam('contextmenu_offset_x', 0),
-				offset_y : p1.y + ed.getParam('contextmenu_offset_y', 0),
-				constrain : 1
+				offset_x : p.x + ed.getParam('contextmenu_offset_x', 0),
+				offset_y : p.y + ed.getParam('contextmenu_offset_y', 0),
+				constrain : 1,
+				keyboard_focus: true
 			});
 
 			t._menu = m;
-			
-			/* rightMouse von WCE deaktivieren 
-			m.add({title : 'wce.break_desc', icon : '', cmd : 'mceAddBreak'}).setDisabled(hasVerse || !noEditBreak);
-			m.add({title : 'wce.note_desc', icon : '', cmd : 'mceAddNote'}).setDisabled(col);
-			m.add({title : 'wce.correction_desc', icon : '', cmd : 'mceAddCorrection'}).setDisabled(col);
-			m.add({title : 'wce.gap_desc', icon : '', cmd : 'mceAddGap'}).setDisabled(hasVerse || !noEditGap);
-			m.add({title : 'wce.number_desc', icon : '', cmd : 'mceAddNumber'}).setDisabled(hasVerse);
-			m.addSeparator();
-			m.add({title : 'wce.break_edit_desc', icon : '', cmd : 'mceEditBreak'}).setDisabled(noEditBreak);
-			m.add({title : 'wce.note_edit_desc', icon : '', cmd : 'mceEditNote'}).setDisabled(noEditNote);
-			m.add({title : 'wce.correction_edit_desc', icon : '', cmd : 'mceEditCorrection'}).setDisabled(noEditCorrection);
-			m.add({title : 'wce.gap_edit_desc', icon : '', cmd : 'mceEditGap'}).setDisabled(noEditGap);
-			m.add({title : 'wce.number_edit_desc', icon : '', cmd : 'mceEditNumber'}).setDisabled(noEditNumber);
-			m.addSeparator();*/
-			m.add({title : 'advanced.cut_desc', icon : 'cut', cmd : 'Cut'}).setDisabled(col || hasVerse);
+
+			m.add({title : 'advanced.cut_desc', icon : 'cut', cmd : 'Cut'}).setDisabled(col);
 			m.add({title : 'advanced.copy_desc', icon : 'copy', cmd : 'Copy'}).setDisabled(col);
-			m.add({title : 'advanced.paste_desc', icon : 'paste', cmd : 'Paste'}).setDisabled(dis_paste);
-			
-		
-			/*if ((el.nodeName == 'A' && !ed.dom.getAttrib(el, 'name')) || !col) {
+			m.add({title : 'advanced.paste_desc', icon : 'paste', cmd : 'Paste'});
+
+			if ((el.nodeName == 'A' && !ed.dom.getAttrib(el, 'name')) || !col) {
 				m.addSeparator();
 				m.add({title : 'advanced.link_desc', icon : 'link', cmd : ed.plugins.advlink ? 'mceAdvLink' : 'mceLink', ui : true});
 				m.add({title : 'advanced.unlink_desc', icon : 'unlink', cmd : 'UnLink'});
@@ -185,13 +142,13 @@
 
 			m.addSeparator();
 			m.add({title : 'advanced.image_desc', icon : 'image', cmd : ed.plugins.advimage ? 'mceAdvImage' : 'mceImage', ui : true});
-	
+
 			m.addSeparator();
 			am = m.addMenu({title : 'contextmenu.align'});
 			am.add({title : 'contextmenu.left', icon : 'justifyleft', cmd : 'JustifyLeft'});
 			am.add({title : 'contextmenu.center', icon : 'justifycenter', cmd : 'JustifyCenter'});
 			am.add({title : 'contextmenu.right', icon : 'justifyright', cmd : 'JustifyRight'});
-			am.add({title : 'contextmenu.full', icon : 'justifyfull', cmd : 'JustifyFull'});*/
+			am.add({title : 'contextmenu.full', icon : 'justifyfull', cmd : 'JustifyFull'});
 
 			t.onContextMenu.dispatch(t, m, el, col);
 

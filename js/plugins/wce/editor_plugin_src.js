@@ -3423,8 +3423,7 @@
 								// appendSibling
 							}
 							continue;
-						}
-
+						} 
 					}
 					// *** End for*/
 
