@@ -1,6 +1,15 @@
+@font-face{
+  font-family: GentiumPlus;
+   src: url(fonts/GentiumForIE.eot?#iefix) format('embedded-opentype'), 
+  	   local('GentiumPlus Regular'), local('Gentium Plus'),
+	   url(fonts/GentiumPlus-R.woff) format('woff'), /* für alle anderen (bis auf Safari) */
+       url(fonts/GentiumPlus-R.ttf) format('opentype'), /* für Safari */
+	   url(fonts/GentiumForSafari.svg#GentiumPlusRegular) format('svg');
+}
+
 /* Generic */
 body {
-font-family:Verdana, Arial, Helvetica, sans-serif; font-size:11px;
+font-family: GentiumPlus, Verdana, Arial, Helvetica, sans-serif; font-size:12px;
 scrollbar-3dlight-color:#F0F0EE;
 scrollbar-arrow-color:#676662;
 scrollbar-base-color:#F0F0EE;
@@ -22,8 +31,9 @@ a:hover {color:#2B6FB6;}
 .nowrap {white-space: nowrap}
 
 /* Forms */
-fieldset {margin:0; padding:4px; border:1px solid #919B9C; font-family:Verdana, Arial; font-size:10px;}
+fieldset {margin:0; padding:4px; border:1px solid #919B9C; font-family:Verdana, Arial; font-size:12px;}
 legend {color:#2B6FB6; font-weight:bold;}
+label {font-family: Verdana, Arial; width: 200px;}
 label.msg {display:none;}
 label.invalid {color:#EE0000; display:inline;}
 input.invalid {border:1px solid #EE0000;}
@@ -62,11 +72,15 @@ a.pickcolor:hover span.disabled {}
 
 /* Charmap */
 table.charmap {border:1px solid #AAA; text-align:center}
-td.charmap, #charmap a {width:18px; height:18px; color:#000; border:1px solid #AAA; text-align:center; font-size:12px; vertical-align:middle; line-height: 18px;}
+td.charmap, #charmap a {width:28px; height:24px; color:#000; border:1px solid #AAA; text-align:center; font-size:18px; vertical-align:middle; line-height: 24px;}
 #charmap a {display:block; color:#000; text-decoration:none; border:0}
 #charmap a:hover {background:#CCC;color:#2B6FB6}
-#charmap #codeN {font-size:10px; font-family:Arial,Helvetica,sans-serif; text-align:center}
-#charmap #codeV {font-size:40px; height:80px; border:1px solid #AAA; text-align:center}
+#charmap #codeN {font-size:10px; font-family: Verdana,Arial,Helvetica,sans-serif; text-align:center}
+#charmap #codeV {font-size:40px; font-family: GentiumPlus,Verdana; height:80px; border:1px solid #AAA; text-align:center}
+#charmap #codeA {font-family: Verdana,Arial,Helvetica,sans-serif;}
+#charmap #codeB {font-family: Verdana,Arial,Helvetica,sans-serif;}
+.title {font-family: Verdana,Arial,Helvetica,sans-serif;}
+.heading {font-family: Verdana,Arial,Helvetica,sans-serif;}
 
 /* Source */
 .wordWrapCode {vertical-align:middle; border:1px none #000000; background:transparent;}
@@ -116,3 +130,12 @@ h3 {font-size:14px;}
 #colorpicker #namedcolors a {display:block; float:left; width:10px; height:10px; margin:1px 1px 0 0; overflow:hidden;}
 #colorpicker #colornamecontainer {margin-top:5px;}
 #colorpicker #picker_panel fieldset {margin:auto;width:325px;}
+
+.xbtooltip {
+    display: none;
+	width: 150px;
+    background-color: yellow;
+    color: #000;
+    border: 1px solid red;
+    padding: 3px;
+}
