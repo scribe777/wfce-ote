@@ -10,7 +10,10 @@ var wce_node = ed.execCommand('getWceNode', false);
 var add_new_wce_node = tinyMCEPopup.getWindowArg('add_new_wce_node');
 
 // selected Content
-var selected_content = ed.selection.getContent();
+var selected_content ='';
+tinyMCEPopup.onInit.add(function (_ed){  
+	selected_content=_ed.selection.getContent(); 
+ });
 
 // selected wce-node text / original text
 var wce_node_text = '';
