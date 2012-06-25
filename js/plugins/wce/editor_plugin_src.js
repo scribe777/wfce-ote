@@ -1630,7 +1630,7 @@
 		 * @param {string}
 		 *            url Absolute URL to where the plugin is located.
 		 */
-		init : function(ed, url) {
+		init : function(ed, url) {  
 			var _this = this;
 			_this.editor = ed;
 
@@ -1814,6 +1814,15 @@
 			 */
 			ed.onInit
 					.add(function() {
+						 // Add  shortcuts  for wce
+						ed.addShortcut('ctrl+b', 'Add break', 'mceAddBreak_Shortcut');
+						ed.addShortcut('ctrl+c', 'Add correction', 'mceAddCorrection_Shortcut');
+						ed.addShortcut('ctrl+u', 'Add unclear text', 'mceAddUnclearText_Shortcut');
+						ed.addShortcut('ctrl+g', 'Add gap', 'mceAddGap_Shortcut');
+						ed.addShortcut('ctrl+a', 'Add abbreviation', 'mceAddAbbr_Shortcut');
+						ed.addShortcut('ctrl+p', 'Add correction', 'mceAddParatext_Shortcut');
+						ed.addShortcut('ctrl+n', 'Add correction', 'mceAddNote_Shortcut');
+					
 						tinymce.dom.Event.add(ed.getDoc(), 'dblclick',
 								function(e) {
 								});

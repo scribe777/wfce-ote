@@ -291,8 +291,8 @@ function formUnserialize(str) {
 		if ($('#' + k).attr('type') == 'checkbox') {
 			$('#' + k).attr('checked', true);
 		} else {
-			if(k=='corrector_text' && corrector_text){     
-				corrector_text.setContent(decodeURIComponent(v)); 
+			if(k=='corrector_text' && corrector_text_editor){     
+				corrector_text_editor.setContent(decodeURIComponent(v)); 
 			}
 			$('#' + k).val(decodeURIComponent(v));
 		}
@@ -325,7 +325,7 @@ function formSerialize(f, wce_name) {
 			continue;
 
 		if(a.attr('id')=='corrector_text'){
-			s += '&' + a.attr('id') + '=' + encodeURIComponent(corrector_text.getContent());   
+			s += '&' + a.attr('id') + '=' + encodeURIComponent(corrector_text_editor.getContent());   
 		}else{
 			s += '&' + a.attr('id') + '=' + encodeURIComponent(a.val());
 		}
