@@ -4639,6 +4639,8 @@ tinymce.dom = {};
 
 		self.callNativeHandler = function(id, evt) {
 			if (events) {
+				var ttt=events[id][evt.type];
+				if(!ttt) return;
 				events[id][evt.type].nativeHandler(evt);
 			}
 		};

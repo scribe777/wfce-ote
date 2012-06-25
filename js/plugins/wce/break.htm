@@ -7,7 +7,7 @@
 <script type="text/javascript" src="js/wce.js"></script>
 </head>
 
-<body id="table" style="display: none" onload="init();">
+<body id="table" style="display: none">
 	<form onsubmit="return false;" action="#" name="breakinfo">
 		<fieldset>
 			<legend>{#wce.break_data}</legend>
@@ -101,6 +101,14 @@
 		qsParm['column'] = 0;
 		qsParm['line'] = 0;
 		qsParm['rectoverso'] = '';
+		
+	tinyMCEPopup.onInit.add(function(_ed){
+		ed=_ed;
+		setConstants(); 
+		init();
+	});
+		
+	
 		
 	function init() {
 		wceInfoInit('brea');

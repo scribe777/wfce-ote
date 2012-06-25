@@ -3,11 +3,12 @@
 <head>
 <title>{#wce.reading_title}</title>
 <script type="text/javascript" src="../../tiny_mce_popup.js"></script>
+<script type="text/javascript" src="../../tiny_mce_src.js"></script>
 <script type="text/javascript" src="../../jquery.js"></script>
 <script type="text/javascript" src="js/wce.js"></script>
 </head>
 
-<body id="table" style="display: none" onload="init();">
+<body id="table" style="display: none">
 	<form onsubmit="insertTable();return false;" action="#"
 		name="readinginfo" style="margin: 0; padding: 0">
 		<fieldset style="width: 200px; float: left; height: 550px">
@@ -24,7 +25,7 @@
 		</fieldset>
 		<input type="hidden" id="original_firsthand_reading" name="original_firsthand_reading" value="" />
 		<fieldset id="content_fieldset"
-			style="margin-left: 220px; height: 550px; width: 450px">
+			style="margin-left: 220px; height: 550px; width: auto">
 			<legend>{#wce.reading_data}</legend>
 			<div style="height: 520px; overflow: auto">
 				<table border="0" cellpadding="4" cellspacing="0" width="100%">
@@ -63,13 +64,7 @@
 							onkeyup="saveCurrCorrector(true);" type="text" value="" size="30" />
 						</td>
 					</tr>
-					<tr>
-						<td><label id="corrector_text_label" for="corrector_text">{#wce.corrector_text}</label>
-						</td>
-						<td colspan="2" rowspan="2"><textarea WRAP="PHYSICAL"
-								ROWS="3" COLS="50" id="corrector_text" name="corrector_text"></textarea>
-						</td>
-					</tr>
+					
 					<tr>
 						<td><input type="checkbox" name="blank_correction"
 							id="blank_correction" value="blank_correction"
@@ -132,6 +127,14 @@
 						<td colspan="2"><textarea WRAP="PHYSICAL" ROWS="3" COLS="50"
 								id="editorial_note" name="editorial_note"></textarea>
 						</td>
+					</tr> 
+					<tr>
+						<td><label id="corrector_text_label" for="corrector_text">{#wce.corrector_text}</label>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="3"><textarea WRAP="PHYSICAL" ROWS="4" style="width:100%" id="corrector_text" name="corrector_text" id="corrector_text"></textarea>
+						</td>
 					</tr>
 				</table>
 			</div>
@@ -143,34 +146,72 @@
 			</div>
 
 		</fieldset>
-		<div class="mceActionPanel">
+		<div class="mceActionPanel" id="mceActionPanel">
 			<input type="button" id="insert" name="insert" value="{#insert}"
 				onclick="cont = testOther();if (cont){saveCurrCorrector(); writeWceNodeInfo();}else{alert('{#wce.empty_other}');}" /> <input
 				type="button" id="cancel" name="cancel" value="{#cancel}"
 				onclick="tinyMCEPopup.close();" />
-		</div>
+		</div> 
 	</form>
 </body>
 <script type="text/javascript">
+	//corrector_text as a tinymce-editor
+	var corrector_text;
+	tinyMCEPopup.onInit.add(function(_ed){
+		ed=_ed;
+		setConstants(); 
+		corrector_text=new tinymce.Editor('corrector_text',{
+			mode : "textareas", 
+			theme : "advanced",
+			skin: "wce",
+			extended_valid_elements:'span[class|wce_orig|style]',
+			forced_root_block : false,
+			force_br_newlines : true,
+			force_p_newlines : false,
+			entity_encoding : "raw",
+			theme_advanced_path : false,  
+ 			plugins : "wce,pagebreak,style,layer,safari,print,inlinepopups, paste", 
+
+			// Theme options
+			theme_advanced_buttons1 : "undo,redo,charmap,|,code,removeformat,|,print,contextmenu,paste,fullscreen,|,metadata,breaks,correction,illegible,decoration,abbreviation,paratext,note",
+			theme_advanced_buttons2 : "",
+			theme_advanced_toolbar_location : "top",
+			theme_advanced_toolbar_align : "left",
+			theme_advanced_statusbar_location : "bottom",
+			theme_advanced_resizing : false ,
+			setup : function(ed) {
+				ed.onChange.add(saveCurrCorrector);
+			}
+
+		});  
+	 	corrector_text.render(); 
+		corrector_text.onInit.add(init); 
+	});
+	
+	
 	function init() { 
 		wceInfoInit('corr'); 
+		if($.browser.safari){
+			$('#content_fieldset').css('width',$('#mceActionPanel').width()-250);
+		}
 
 		$('#firsthand_reading').html(wce_node_text);
 		$('#original_firsthand_reading').val(wce_node_text); 
+		 
 		for ( var p in info_arr) {
 			addCorrector(p);
 		}
-
+		 
 		selectCorrItem();
 
 		if ($('#correction_ul > li').length < 1) {
-			$('#content_fieldset').attr('disabled', true);
-		}
+			$('#content_fieldset').attr('disabled', true);   
+		} 
 
 		$(':input').change(function() {
 			saveCurrCorrector();
 		});
-
+	   
  		setstatus_deletion();
 		checkstatus_hand();
 		checkstatus_correction();
@@ -201,13 +242,20 @@
 	}
 
 	function checkstatus_correction() {
-		if (document.readinginfo.blank_correction.checked == true) {
+		if (document.readinginfo.blank_correction.checked == true) { 
 			$('#corrector_text').attr('disabled', true);
+			corrector_text.hide();
 			$('#place_corr').attr('disabled', true);
-		} else {
-			$('#corrector_text').attr('disabled', false);
+		} else { 
+			if(!$('#content_fieldset').attr('disabled')){
+				$('#corrector_text').attr('disabled', false);
+				corrector_text.show();
+			}else{
+				$('#corrector_text').attr('disabled', true);
+				corrector_text.hide();
+			}
 			$('#place_corr').attr('disabled', false);
-		}
+		} 
 	}
 	
 	function checkstatus_deletion() {
@@ -278,7 +326,7 @@
 	/*
 	 * //add new <li> to <ul> /@param class_item: one item from class_name_arr
 	 */
-	function addCorrector(_id, corrector_name) {
+	function addCorrector(_id, corrector_name) { 
 		// default name of new corrector
 		if (corrector_name == null) {
 			corrector_name = 'new corrector';
@@ -291,6 +339,7 @@
 			item_counter++;
 			_id = 'c' + item_counter;
 			$('#corrector_text').val(wce_node_text);
+			corrector_text.setContent(wce_node_text);
 			info_arr[_id] = formSerialize(null, corrector_name);
 		} else {
 			if (typeof info_arr[_id] != 'undefined' && info_arr[_id] != '') {
@@ -307,7 +356,7 @@
 						+ '" onclick="selectCorrItem(\'' + _id + '\');">' + corrector_name + '</a></li>');
 
 		$('#content_fieldset').attr('disabled', false);
-
+ 
 		checkstatus_firsthand();
 		checkstatus_correction();
 	}
@@ -318,7 +367,7 @@
 		var li_length = $('#correction_ul > li').length;
 
 		if (li_length < 1) {
-			$('#content_fieldset').attr('disabled', true);
+			$('#content_fieldset').attr('disabled', true); 
 			curr_item_id = null;
 		} else {
 			var last_id = $('#correction_ul > li:eq(' + (li_length - 1) + ')').attr('id');
@@ -331,7 +380,7 @@
 		info_arr[_id] = null;
 	}
 
-	function saveCurrCorrector(b) {
+	function saveCurrCorrector(b) { 
 		if (curr_item_id == null)
 			return;
 
