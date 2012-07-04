@@ -9,7 +9,7 @@
 	<script type="text/javascript" src="js/wce.js"></script>
 </head>
 
-<body id="meta_table" style="display: none" onload="init();">
+<body id="meta_table" style="display: none">
 	<form onsubmit="return false;" action="#" name="metadatainfo">
 		<div class="tabs">
 			<ul>
@@ -367,6 +367,13 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 TEI-NTMSS.xsd"</textarea>
 
 <!--<textarea id="tempDiv" rows="15" style="width:100%;height:100%"></textarea>-->
 <script type="text/javascript"> 
+	tinyMCEPopup.onInit.add(function(_ed){
+		ed=_ed;
+		setConstants(); 
+		init();
+	});
+		
+	
 function init() {
 	wce_type = 'wce_metatata'; 
 	headerXmlTree = createheaderXmlTree();

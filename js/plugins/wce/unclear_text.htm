@@ -7,7 +7,7 @@
 <script type="text/javascript" src="js/wce.js"></script>
 </head>
 
-<body id="table" style="display: none" onload="init();">
+<body id="table" style="display: none">
 	<form onsubmit="return false;" action="#" name="unclear_text_info">
 		<fieldset>
 			<legend>{#wce.unclear_text_data}</legend>
@@ -42,6 +42,12 @@
 	</form>
 </body>
 <script type="text/javascript">
+	tinyMCEPopup.onInit.add(function(_ed){
+		ed=_ed;
+		setConstants(); 
+		init();
+	});
+		 
 	function init() {
 		wceInfoInit('unclear');
 		readWceNodeInfo();

@@ -6,7 +6,7 @@
 <script type="text/javascript" src="../../jquery.js"></script>
 <script type="text/javascript" src="js/wce.js"></script>
 </head>
-<body id="table" style="display: none" onload="init();">
+<body id="table" style="display: none">
 	<form onsubmit="return false;" action="#" name="noteinfo">
 		<fieldset>
 			<legend>{#wce.note_data}</legend>
@@ -54,6 +54,13 @@
 	</form>
 </body>
 <script type="text/javascript">
+	tinyMCEPopup.onInit.add(function(_ed){
+		ed=_ed;
+		setConstants(); 
+		init();
+	});
+		
+	
 	function init() {
 		wceInfoInit('note');
 		readWceNodeInfo();

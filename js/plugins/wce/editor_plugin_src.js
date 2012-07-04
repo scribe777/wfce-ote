@@ -1631,7 +1631,7 @@
 		 * @param {string}
 		 *            url Absolute URL to where the plugin is located.
 		 */
-		init : function(ed, url) {
+		init : function(ed, url) {  
 			var _this = this;
 			_this.editor = ed;
 
@@ -1815,6 +1815,15 @@
 			 */
 			ed.onInit
 					.add(function() {
+						 // Add  shortcuts  for wce
+						ed.addShortcut('ctrl+b', 'Add break', 'mceAddBreak_Shortcut');
+						ed.addShortcut('ctrl+c', 'Add correction', 'mceAddCorrection_Shortcut');
+						ed.addShortcut('ctrl+u', 'Add unclear text', 'mceAddUnclearText_Shortcut');
+						ed.addShortcut('ctrl+g', 'Add gap', 'mceAddGap_Shortcut');
+						ed.addShortcut('ctrl+a', 'Add abbreviation', 'mceAddAbbr_Shortcut');
+						ed.addShortcut('ctrl+p', 'Add correction', 'mceAddParatext_Shortcut');
+						ed.addShortcut('ctrl+n', 'Add correction', 'mceAddNote_Shortcut');
+					
 						tinymce.dom.Event.add(ed.getDoc(), 'dblclick',
 								function(e) {
 								});
@@ -2890,11 +2899,11 @@
 						if (arr['__t'] === 'corr') {
 							if (type == '') {
 								type = 'corr';
-								// 新建<app>
+								// new Element <app>
 								$newNode = $xml.createElement('app');
 								$node.parentNode.replaceChild($newNode, $node);
 
-								// 新建<rdg>
+								// new Element <rdg>
 								// <rdg type="orig"
 								// hand="firsthand"><w
 								// n="17">ατενιζεται</w>
@@ -2903,13 +2912,13 @@
 								$orig.setAttribute('type', 'orig');
 								$orig.setAttribute('hand', 'firsthand');
 
-								// all children拷贝到<rdg>
-								// 排列<app><rdg>
+								// all children to <rdg>
+								// order <app><rdg>
 								cloneChildren($clone, $orig);
 								$newNode.appendChild($orig);
 							}
 							if ($newNode && type === 'corr') {
-								// 新建<rdg>,添加到上面的<app>($newNode)里面
+								// new Element<rdg>,child of <app>($newNode)
 								var $rdg = $xml.createElement('rdg');
 								$rdg.setAttribute('type', arr['reading']);
 								$rdg
@@ -2938,6 +2947,18 @@
 								}
 
 								cloneChildren($clone, $rdg);
+								var corrector_text=arr['corrector_text'];  
+								if(corrector_text){  
+									//alert(decodeURIComponent(corrector_text));
+									/*var nodeList = getChildNodeList($rdg);
+									var curr;
+									for(var j=0, k=nodeList.length; j<k; j++){
+										curr=nodeList[j];
+										if(curr.nodeType==3){
+											curr.nodeValue=corrector_text;
+										}
+									}	*/	
+								}
 								$newNode.appendChild($rdg);
 							}
 							continue;

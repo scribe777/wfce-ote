@@ -7,7 +7,7 @@
 <script type="text/javascript" src="js/wce.js"></script>
 </head>
 
-<body id="table" style="display: none" onload="init();">
+<body id="table" style="display: none">
 	<form onsubmit="return false;" action="#" name="spacesinfo">
 		<input type="hidden" id="original_spaces_text"
 			name="original_spaces_text" value="" />
@@ -49,6 +49,12 @@
 	</form>
 </body>
 <script type="text/javascript">
+	tinyMCEPopup.onInit.add(function(_ed){
+		ed=_ed;
+		setConstants(); 
+		init();
+	});
+		
 	function init() {
 		wceInfoInit('spaces');
 		readWceNodeInfo();

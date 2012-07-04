@@ -1,17 +1,17 @@
 tinyMCEPopup.requireLangPack();
  
 // active Editor
-var ed = tinyMCE.activeEditor;
+var ed;
 
 // selected wce node
-var wce_node = ed.execCommand('getWceNode', false);
+var wce_node;
 
 // add new or only edit a wce node
-var add_new_wce_node = tinyMCEPopup.getWindowArg('add_new_wce_node');
+var add_new_wce_node;
 
 // selected Content
-var selected_content = ed.selection.getContent();
-
+var selected_content;
+ 
 // selected wce-node text / original text
 var wce_node_text = '';
 
@@ -35,15 +35,23 @@ var curr_item_id;
 // <span
 // class="__t=corr&amp;__n=othername&amp;reading=corr&amp;blank_firsthand=blank
 // ......"> ....</span>
-var type_in_uri = ed.wceTypeParamInClass;
-var name_in_uri = ed.wceNameParamInClass;
+var type_in_uri;
+var name_in_uri; 
+var wce_type; 
 
-var wce_type;
+function setConstants(){ 
+	selected_content=ed.selection.getContent(); 
+	wce_node = ed.execCommand('getWceNode', false);
+	add_new_wce_node = tinyMCEPopup.getWindowArg('add_new_wce_node');
+	type_in_uri = ed.wceTypeParamInClass;
+	name_in_uri = ed.wceNameParamInClass;
+}
 
 /**
  * 
  */
 function wceInfoInit(wp) {
+
 	wce_type = wp;
 
 	if (wce_node != null) {
@@ -279,9 +287,13 @@ function formUnserialize(str) {
 		k = kv[0];
 		v = kv[1] == null ? '' : kv[1];
 		v = v.replace(/\+/g, ' ');
+		
 		if ($('#' + k).attr('type') == 'checkbox') {
 			$('#' + k).attr('checked', true);
 		} else {
+			if(k=='corrector_text' && corrector_text_editor){     
+				corrector_text_editor.setContent(decodeURIComponent(v)); 
+			}
 			$('#' + k).val(decodeURIComponent(v));
 		}
 	}
@@ -294,7 +306,7 @@ function formUnserialize(str) {
  * @param {String}
  *            name of str, example: new corrector, firsthand, ....
  */
-function formSerialize(f, wce_name) {
+function formSerialize(f, wce_name) {  
 	if (f == null) {
 		f = document.forms[0];
 	}
@@ -306,12 +318,17 @@ function formSerialize(f, wce_name) {
 	var arr = $(f).find(':input[@id!=""][@type!="button"][@type!="reset"]');
 	var s = type_in_uri + '=' + wce_type + '&' + name_in_uri + '=' + wce_name;
 	var a;
-	for ( var i = 0; i < arr.length; i++) {
-		a = $(arr[i]);
+	for ( var i = 0, l= arr.length; i<l ; i++) {
+		a = $(arr[i]); 
+		
 		if (a.attr('type') == 'checkbox' && !a.attr('checked'))
 			continue;
 
-		s += '&' + a.attr('id') + '=' + encodeURIComponent(a.val());
+		if(a.attr('id')=='corrector_text'){
+			s += '&' + a.attr('id') + '=' + encodeURIComponent(corrector_text_editor.getContent());   
+		}else{
+			s += '&' + a.attr('id') + '=' + encodeURIComponent(a.val());
+		}
 	}
 	return s;
 }
