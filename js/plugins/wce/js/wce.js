@@ -149,7 +149,7 @@ function writeWceNodeInfo(val) {
 
 		case 'brea':
 			style += 'color:#666';
-			selected_content = '<br/>' + val;
+			selected_content = val;
 			break;
 
 		case 'corr':

@@ -467,11 +467,11 @@
 								info_text += ar['sp_unit'] + '(s)</div>';
 							}
 							break;
-						case 'formatting' : // it is
-							// "formatting_capitals",
-							// but is truncated
-							info_text = '<div>' + 'Height: '
+						case 'formatting' : 
+							if (ar['capitals_height'] != null) { //output only if capitals
+								info_text = '<div>' + 'Height: '
 									+ ar['capitals_height'] + '</div>';
+							}
 							break;
 						default :
 							info_text = '';
@@ -1458,9 +1458,9 @@
 										+ '__t=brea&amp;__n=&amp;break_type=lb&amp;number='
 										+ number
 										+ '&amp;pb_type=&amp;fibre_type=&amp;running_title=&amp;lb_alignment=&amp;insert=Insert&amp;cancel=Cancel'
-										+ '"' + style + '>' + '<br/>'
-										+ '&crarr;' + '</span> ');
+										+ '"' + style + '>' + '<br/>&crarr;' + '</span> ');
 						lcnt = number;
+						ed.execCommand('printData');
 					} else if (character == 'lbm') { // line
 						// break
 						// in
@@ -1531,8 +1531,9 @@
 										+ '&amp;fibre_type=&amp;running_title=&amp;lb_alignment=&amp;insert=Insert&amp;cancel=Cancel'
 										+ '"' + style + '>' + 'PB' + '</span> ');
 
-						ed.execCommand('mceAdd_brea', 'cb', '1');
-						ed.execCommand('mceAdd_brea', 'lb', '1');
+						//duplication cf. wce.js, line 215
+						//ed.execCommand('mceAdd_brea', 'cb', '1');
+						//ed.execCommand('mceAdd_brea', 'lb', '1');
 					} else {
 						// quire break
 						if (number === 0) { // for a line break
@@ -2377,6 +2378,72 @@
 						break;
 				}
 			});
+			
+			ed.addCommand('printData', function () {
+				var ed = tinyMCE.activeEditor;
+				var oldcontent = "";
+				var newcontent = "";
+				var oldnumber = 0;
+				var endNumber = 0;
+				var level = "lb";
+				var higherlevel = "";
+				var searchString = "";
+				
+				searchString = "break_type=" + level + "&amp;number=";
+				
+				if (level === 'lb')
+					higherlevel = 'cb';
+				else if (level === 'cb')
+					higherlevel = 'pb';
+				else if (level === 'pb')
+					higherlevel = 'gb';
+				
+								
+				ed.execCommand('mceInsertContent', false,'<span class="marker">\ufeff</span>'); //set a marker for the start
+								
+				ed.selection.select(ed.getBody(), true); //select complete text
+				
+				// save oldcontent as it is ...
+				oldcontent = ed.selection.getContent();
+				// ... and put the unchanged part into the output variable
+				newcontent = oldcontent.substring(0, oldcontent.search('<span class="marker">')); //get start of overall content to be used unchanged.
+								
+				tinymce.activeEditor.selection.collapse(false); //collapse to end of selection
+				ed.execCommand('mceInsertContent', false,'<span class="marker">\ufeff</span>'); //set a marker for the end
+				
+				var rng = ed.selection.getRng(1);
+				var rng2 = rng.cloneRange();
+
+				// set start of range to begin at the marker
+				rng2.setStartAfter($(ed.getBody()).find('span.marker').get(0)); //start selection at marker
+				rng2.setEndBefore($(ed.getBody()).find('span.marker').get(1)); //end selection at the end of the text, TODO: limit to region affected, i.e. till the next higher-level break
+				ed.selection.setRng(rng2);
+
+				oldcontent = ed.selection.getContent(); //get content to be modified
+				
+				$(ed.getBody()).find('span.marker').remove(); //delete marker
+				
+				ed.selection.setRng(rng);
+
+
+				var pos = oldcontent.search(searchString);
+				
+				while ( pos > -1 )
+				{
+					pos += searchString.length //add length of searchString to found pos
+					newcontent += oldcontent.substring(0, pos);
+					endNumber = oldcontent.indexOf("&", pos+1);	//look for next "&" after searchString
+					oldnumber = oldcontent.substring(pos, endNumber);
+					newcontent += parseInt(oldnumber) + 1;
+					oldcontent = oldcontent.substring(endNumber); //work on String starting right after number with "&"
+					pos = oldcontent.search(searchString);
+				}
+				newcontent += oldcontent //add the rest
+				//TODO: adjust corresponding counter, if no higher-level break follows
+				
+				ed.setContent(newcontent);
+			});
+			
 			/*
 			 * *****************************************************************************
 			 * *****************************************************************************

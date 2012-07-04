@@ -139,13 +139,15 @@ span[class*='wce_abbr_numeral_Overline']{
 
 .rubrication {
 color : red;
-text-decoration : overline;
 } 
 
 .xbtooltip {
     display: none;
-    position: absolute;
-	background-color: #fff;
+	width: 150px;
+    background-color: yellow;
+    color: #000;
+    border: 1px solid red;
+    padding: 3px;
 }
 
 .mceHideBrInPre pre br {display: none}

@@ -146,23 +146,23 @@
 		var v = $('#break_type').val();
 		if (v == 'lb') {
 			if (lbposition() == 'lb')
-				return '&crarr;';
+				return '<br/>&crarr;';
 			else
 				return '&hyphen;<br/>&crarr;';
 		}
 		else if (v == 'cb') {
 			if (lbposition() == 'lb')
-				return 'CB';
+				return '<br/>CB';
 			else
 				return '&hyphen;<br/>CB';
 		} else if (v == 'pb') {
 			if (lbposition() == 'lb')
-				return 'PB';
+				return '<br/>PB';
 			else
 				return '&hyphen;<br/>PB';
 		} else { // QB
 			if (lbposition() == 'lb')
-				return 'QB';
+				return '<br/>QB';
 			else
 				return '&hyphen;<br/>QB';
 		}

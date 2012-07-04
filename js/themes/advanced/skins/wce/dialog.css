@@ -1,10 +1,11 @@
 @font-face{
   font-family: GentiumPlus;
-   src: url(fonts/GentiumForIE.eot?#iefix) format('embedded-opentype'), 
-  	   local('GentiumPlus Regular'), local('Gentium Plus'),
-	   url(fonts/GentiumPlus-R.woff) format('woff'), /* für alle anderen (bis auf Safari) */
-       url(fonts/GentiumPlus-R.ttf) format('opentype'), /* für Safari */
-	   url(fonts/GentiumForSafari.svg#GentiumPlusRegular) format('svg');
+    src: url(../fonts/GentiumForIE.eot);
+  	src: url(../fonts/GentiumForIE.eot?#iefix) format('embedded-opentype'),
+	   local('GentiumPlus Regular'), local('Gentium Plus'),
+	   url(../fonts/GentiumPlus-R.woff) format('woff'), /* für alle anderen (bis auf Safari) */
+       url(../fonts/GentiumPlus-R.ttf) format('opentype'), /* für Safari */
+	   url(../fonts/GentiumForSafari.svg#GentiumPlusRegular) format('svg'); 
 }
 
 /* Generic */
@@ -139,3 +140,56 @@ h3 {font-size:14px;}
     border: 1px solid red;
     padding: 3px;
 }
+
+span[class*='wce_supplied_source']{
+	color: red;
+}
+
+span[class*='__t=formatting_rubrication']{
+	color: red;
+}
+
+span[class*='__t=formatting_gold']{
+	color: gold;
+}
+
+span[class*='__t=formatting_blue']{
+	color: blue;
+}
+
+span[class*='__t=formatting_green']{
+	color: green;
+}
+
+span[class*='__t=formatting_yellow']{
+	color: yellow;
+}
+
+span[class*='__t=formatting_other']{
+	color: black;
+}
+
+
+span[class*='__t=formatting_overline']{
+	text-decoration: overline;
+}
+
+span[class*='__t=formatting_capitals']{
+	width: .75em;
+	font-size: 48px;
+	line-height: 24px;
+}
+
+
+span[class*='wce_abbr_nomenSacrum_Overline']{
+	text-decoration: overline;
+}
+
+span[class*='wce_abbr_numeral_Overline']{
+	text-decoration: overline;
+}
+
+
+.rubrication {
+color : red;
+} 
