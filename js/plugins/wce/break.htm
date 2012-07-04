@@ -9,6 +9,7 @@
 
 <body id="table" style="display: none">
 	<form onsubmit="return false;" action="#" name="breakinfo">
+		<input type="hidden" id="hasBreak" name="hasBreak" value="" />
 		<fieldset>
 			<legend>{#wce.break_data}</legend>
 			<table border="0" cellpadding="4" cellspacing="0" width="100%">
@@ -31,7 +32,7 @@
 					</td>
 					<td><label id="pb_type_label" for="pb_type">{#wce.pb_position}</label>
 					</td>
-					<td><select id="pb_type" name="pb_type" onchange="checkstatus_pb_type()">
+					<td><select id="pb_type" name="pb_type">
 							<option value=""></option>
 							<option value="r">{#wce.recto}</option>
 							<option value="v">{#wce.verso}</option>
@@ -133,7 +134,7 @@
 			}
 		}
 		checkstatus_break();
-		//checkstatus_pb_type();
+		//setstatus_pb_type();
 	}
 	
 	
@@ -153,26 +154,38 @@
 	function getBreakTag() {
 		var v = $('#break_type').val();
 		if (v == 'lb') {
-			if (lbposition() == 'lb')
+			if (lbposition() == 'lb') {
+				document.breakinfo.hasBreak.value = 'no';
 				return '<br/>&crarr;';
-			else
+			} else {
+				document.breakinfo.hasBreak.value = 'yes';
 				return '&hyphen;<br/>&crarr;';
+			}
 		}
 		else if (v == 'cb') {
-			if (lbposition() == 'lb')
+			if (lbposition() == 'lb') {
+				document.breakinfo.hasBreak.value = 'no';
 				return '<br/>CB';
-			else
+			} else {
+				document.breakinfo.hasBreak.value = 'yes';
 				return '&hyphen;<br/>CB';
+			}
 		} else if (v == 'pb') {
-			if (lbposition() == 'lb')
+			if (lbposition() == 'lb') {
+			    document.breakinfo.hasBreak.value = 'no';
 				return '<br/>PB';
-			else
+			} else {
+				document.breakinfo.hasBreak.value = 'yes';
 				return '&hyphen;<br/>PB';
+			}
 		} else { // QB
-			if (lbposition() == 'lb')
+			if (lbposition() == 'lb') {
+				document.breakinfo.hasBreak.value = 'no';
 				return '<br/>QB';
-			else
+			} else {
+				document.breakinfo.hasBreak.value = 'yes';
 				return '&hyphen;<br/>QB';
+			}
 		}
 	}
 	
@@ -222,7 +235,7 @@
 		}
 	}
 
-	function checkstatus_pb_type () {
+	function setstatus_pb_type () {
 		if (document.breakinfo.pb_type.options[0].selected == true) { //empty
 			document.breakinfo.number.value = qsParm['page'];
 		} else { //recto/verso

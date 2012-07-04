@@ -335,10 +335,6 @@ function _readOtherClass($xml, $node) {
 			Line (Collate |L 37|): <lb n="37" xml:id="P3vC2L37-wit" />
 			*/
 			$wit = substr(strrchr($_GET['textname'],'-'),1); //get witness from the file name
-			if (substr($node->nodeValue, 0, strlen('&hyphen;')) == "&hyphen;")
-				$hadBreak=true;
-			else
-				$hadBreak=false;
 			
 			if ($a['break_type'] == 'gb') { //special role of quire breaks
 				$newNode = $xml->createElement('gb');
@@ -377,7 +373,7 @@ function _readOtherClass($xml, $node) {
 					break;
 				}
 				$newNode->setAttribute('xml:id', $xml_id);
-				if ($hadBreak)
+				if ($a['hasBreak'] == 'yes')
 					$newNode->setAttribute('break', 'no');
 			}
 			$node->parentNode->replaceChild($newNode, $node);

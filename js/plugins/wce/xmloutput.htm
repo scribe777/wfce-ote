@@ -6,7 +6,7 @@
 </head>
 <body style="height:97%" style="display:none; overflow:hidden;">
 <div style="height:95%; margin-bottom:10px" id="div0"> 
-<textarea name="xmlOuputSource" id="xmlOuputSource" style="width: 100%; overflow-y:visible; height: 98%; font-family: 'Courier New',Courier,monospace; font-size: 12px;" dir="ltr" wrap="on" class="mceFocus"></textarea> 
+<textarea name="xmlOutputSource" id="xmlOutputSource" style="width: 100%; overflow-y:visible; height: 98%; font-family: 'Courier New',Courier,monospace; font-size: 12px;" dir="ltr" wrap="on" class="mceFocus"></textarea> 
 </div> <div class="mceActionPanel">
 			<input type="button"  value="{#close}" onclick="tinyMCEPopup.close();" /> 
 		</div> 
@@ -14,7 +14,7 @@
 </body> 
 <script type="text/javascript">
 	tinyMCEPopup.onInit.add(function(_ed){
-		var x=document.getElementById('xmlOuputSource');
+		var x=document.getElementById('xmlOutputSource');
 		x.style.height=document.getElementById('div0').offsetHeight+ "px";
 		var str=_ed.getContent();  
 		x.value=tinyMCE.execCommand('getTEIxml',str);

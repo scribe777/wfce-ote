@@ -1754,14 +1754,14 @@
 
 			// Ueberpruefen: ob ParentNode Verse oder
 			// Chapter
-			ed.addCommand('testParentIsVereOrChapter', function(_node) {
+			ed.addCommand('testParentIsVerseOrChapter', function(_node) {
 				var _parent = _node.parentNode;
 				var t = this;
 				if (typeof (_parentNode) != 'undefined'
 						&& !_parentNode.nodeName.match(/body/i)) {
 					return t(_parentNode);
 					// return
-					// ed.execCommand('testParentIsVereOrChapter',_parentNode);
+					// ed.execCommand('testParentIsVerseOrChapter',_parentNode);
 				}
 				return ed.execCommand('testNodeIsVerseOrChapter', _node);
 			});
@@ -1789,7 +1789,7 @@
 								if (typeof (_selNode) != 'undefined'
 										&& _selNode != null) {
 									return ed.execCommand(
-											'testParentIsVereOrChapter',
+											'testParentIsVerseOrChapter',
 											_selNode);
 								}
 
