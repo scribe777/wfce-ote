@@ -16,7 +16,15 @@ if(mysql_num_rows($res)==0)
 	echo 'ERROR';
 
 while($row=mysql_fetch_array($res)){
-	echo $row['text'];
+	$search = '<span class="chapter_number"> 0</span>';
+	$replace = '<span class="chapter_number"> inscriptio</span>';
+	
+	$output = str_replace($search, $replace, $row['text']);
+	$last = $_POST['totalchapters'];
+	$search = '<span class="chapter_number"> '.$last.'</span>';
+	$replace = '<span class="chapter_number"> subscriptio</span>';
+	
+	echo str_replace($search, $replace, $output);
 }
 
 ?>

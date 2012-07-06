@@ -331,7 +331,7 @@ function WceUserToolbar(parent_container_id) {
 		 
 		curr_usertext_name = usertext_name;
 		
-		//incex.html
+		//index.html
 		user_text_name=usertext_name;
 
 		$.ajax({
@@ -340,7 +340,8 @@ function WceUserToolbar(parent_container_id) {
 			data : {
 				'filename' : usertext_name,
 				'userid' : curr_user_id,
-				'k' : k
+				'k' : k,
+				 'totalchapters' : $('#select_chapter option').length-1
 			},
 			success : function(msg) {  
 				if (msg == 'ERROR') {  

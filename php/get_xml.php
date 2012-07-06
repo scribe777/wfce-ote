@@ -15,6 +15,13 @@ $sql = "SELECT * FROM `$user_tablname` WHERE `filename` LIKE '"
 $res = dbRes($sql);
 //$res = mysql_query($sql);
 
+$sql = "SELECT * FROM `$user_tablname` WHERE `filename` LIKE '"
+. $_GET['textname'] . "' AND `userid` LIKE '" . $_GET['userid']
+. "' ORDER BY k DESC";
+$result = mysql_query($sql);
+$row = mysql_fetch_array($result);
+$lastchapter = $row['k'];
+
 //create XML
 $dom = new DOMDocument('1.0', 'UTF-8');
 $dom->formatOutput = true;
@@ -137,7 +144,7 @@ while ($row = mysql_fetch_array($res)) {
 		$bookNode->setAttribute('type', 'book');
 		//$value['B'] = 'B' . $bookIndex;
 		//$bookNode = _addAttrNode($dom, $bookNode, 'n', $value['B']);
-		$bookNode->setAttribute('n', 'B' . $bookIndex); //MS: This does not work; don't know why. Becomes B00
+		$bookNode->setAttribute('n', 'B' . $chapterIndex); //MS: This does not work; don't know why. Becomes B00
 		$bodyNode->appendChild($bookNode);
 	} else {
 		$chapterNode = $dom->importNode(_getChapterNode($chapterContent), true);
@@ -206,7 +213,7 @@ function _setNodes($xml, $node) {
 }
 
 function _changeNode($xml, $node) {
-	global $index, $value, $bookIndex;
+	global $index, $value, $bookIndex, $lastchapter;
 	/*
 	 * wenn <span  class="chapter_number">id</span>
 	* attribute von parentNode <div> definieren: type, n, xml:id ...
@@ -217,11 +224,16 @@ function _changeNode($xml, $node) {
 		//<div type="chapter"  n="B4K1">
 		$ab = $node->parentNode;
 		$div = $ab->parentNode;
-		$div->setAttribute('type', 'chapter');
 		$value['K'] = 'K' . trim($node->nodeValue);
 		$value['B'] = 'B' . $bookIndex;
-		//$div->setAttribute('n', trim($node->nodeValue));
-		$div->setAttribute('n', $value['B'] . $value['K']);
+		if (trim($node->nodeValue) == 0) // Incipit
+			$div->setAttribute('type', 'incipit');
+		else if (trim($node->nodeValue) == $lastchapter) //explicit
+			$div->setAttribute('type', 'explicit');
+		else {
+			$div->setAttribute('type', 'chapter');
+			$div->setAttribute('n', $value['B'] . $value['K']);
+		}
 		$div->removeChild($ab);
 		return null;
 	}

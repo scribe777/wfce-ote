@@ -180,10 +180,10 @@ function fileWriteToDB($path, $filename, $fileid){
 			$index=preg_replace('/\D*/i','',$pattern);
 			if($pattern_type=='b'){
 				$book=$index;
-			}else if($pattern_type=='k'){
+			}else if($pattern_type == 'k'){
 				$chapter=$index;
 				$text.='<span class="chapter_number"> '.$chapter.'</span><br />';
-			}else if($pattern_type='v'){
+			}else if($pattern_type=='v'){
 				$verse=$index;
 				$text=str_replace( "\r\n", "",$text);
 				$text=str_replace( "\n", "",$text);
