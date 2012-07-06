@@ -140,11 +140,8 @@ while ($row = mysql_fetch_array($res)) {
 
 		//book Node
 		$bookNode = $dom->createElement('div');
-		//$bookNode = _addAttrNode($dom, $bookNode, 'type', 'book');
 		$bookNode->setAttribute('type', 'book');
-		//$value['B'] = 'B' . $bookIndex;
-		//$bookNode = _addAttrNode($dom, $bookNode, 'n', $value['B']);
-		$bookNode->setAttribute('n', 'B' . $chapterIndex); //MS: This does not work; don't know why. Becomes B00
+		$bookNode->setAttribute('n', 'B' . $bookIndex); //MS: This does not work; don't know why. Becomes B00
 		$bodyNode->appendChild($bookNode);
 	} else {
 		$chapterNode = $dom->importNode(_getChapterNode($chapterContent), true);
@@ -284,9 +281,11 @@ function _readOtherClass($xml, $node) {
 				_copyChild($xml, $orig, $clone);
 				$newNode->nodeValue = '';
 				$newNode->appendChild($orig);
-					
+				
 				$temp_arr = array();
 				foreach ($orig->childNodes AS $c) {
+					if ($c->nodeType===XML_TEXT_NODE && $c->nodeValue == 'T')
+						$c->nodeValue='omission';
 					array_push($temp_arr, $c);
 				}
 				foreach ($temp_arr AS $c) {

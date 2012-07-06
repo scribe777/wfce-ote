@@ -23,7 +23,6 @@
 					value="New" />
 			</div>
 		</fieldset>
-		<input type="hidden" id="original_firsthand_reading" name="original_firsthand_reading" value="" />
 		<fieldset id="content_fieldset"
 			style="margin-left: 220px; height: 550px; width: auto">
 			<legend>{#wce.reading_data}</legend>
@@ -44,8 +43,8 @@
 						<td colspan="1"><label id="firsthand_reading"
 							style="color: green" /></td>
 						<td><input type="checkbox" name="blank_firsthand"
-							id="blank_firsthand" value="blank_firsthand"
-							onclick="checkstatus_firsthand()">{#wce.blank_firsthand}
+							id="blank_firsthand" onclick="checkstatus_firsthand()">{#wce.blank_firsthand}
+						<input type="hidden" id="original_firsthand_reading" name="original_firsthand_reading" value=""/>
 						</td>
 					</tr>
 					<tr>
@@ -195,13 +194,10 @@
 			$('#content_fieldset').css('width',$('#mceActionPanel').width()-250);
 		}
 
-		$('#firsthand_reading').html(wce_node_text);
-		$('#original_firsthand_reading').val(wce_node_text); 
-		 
 		for ( var p in info_arr) {
 			addCorrector(p);
 		}
-		 
+				 
 		selectCorrItem();
 
 		if ($('#correction_ul > li').length < 1) {
@@ -214,7 +210,9 @@
 	   
  		setstatus_deletion();
 		checkstatus_hand();
+		checkstatus_firsthand();
 		checkstatus_correction();
+		$('#firsthand_reading').html($('#original_firsthand_reading').val());
 	}
 	
 	function testOther() {
@@ -333,13 +331,14 @@
 		}
 
 		$('#corr_reset').click();
-
+		checkstatus_deletion();
+		
 		// new corrector
 		if (_id == null) {
 			item_counter++;
 			_id = 'c' + item_counter;
-			$('#corrector_text').val(wce_node_text);
-			corrector_text_editor.setContent(wce_node_text);
+			$('#corrector_text').val($('#original_firsthand_reading').val());
+			corrector_text_editor.setContent($('#original_firsthand_reading').val());
 			info_arr[_id] = formSerialize(null, corrector_name);
 		} else {
 			if (typeof info_arr[_id] != 'undefined' && info_arr[_id] != '') {
@@ -425,6 +424,7 @@
 		}
 		checkstatus_hand();
 		checkstatus_correction();
+		setstatus_deletion();
 	}
 </script>
 

@@ -481,7 +481,10 @@
 				}
 
 				if (corr_str != '') {
-					corr_str = '*: ' + $(sele_node).html() + corr_str;
+					if ($(sele_node).html() == 'T')  //Blank first hand reading
+						corr_str = '*: ' + 'Omission' + corr_str;
+					else
+						corr_str = '*: ' + $(sele_node).html() + corr_str;
 					if (ar['editorial_note'] != '') {
 						corr_str += '<div style="margin-top:5px">Note: '
 								+ ar['editorial_note'] + '</div>';
@@ -2191,7 +2194,6 @@
 					}
 					_add_new_wce_node = false;
 				} else if (wceNode != null && wceNode.className.match(/corr/)) {
-					alert('2');
 					_add_new_wce_node = false;
 				}
 				_wceAdd(ed, url, '/correction.htm', 800, 600, 1,
