@@ -523,8 +523,8 @@
 				ed.isNotDirty = 0;
 			else
 				ed.isNotDirty = 1;
-		},
-
+		}, 
+		
 		_getWceMenuValStatus : function(_type, p) {
 			var ed = tinyMCE.activeEditor;
 			var _dirty = ed.isDirty();
@@ -1487,7 +1487,7 @@
 										+ number
 										+ '&amp;pb_type=&amp;fibre_type=&amp;running_title=&amp;lb_alignment=&amp;insert=Insert&amp;cancel=Cancel'
 										+ '"' + style + '>'
-										+ '&hyphen;<br/>&crarr;' + '</span> ');
+										+ '&#45;<br/>&crarr;' + '</span> ');
 						lcnt = number;
 					} else if (character == 'cb') { // column
 						// break
@@ -1645,12 +1645,49 @@
 			var _getNextEnd = _this._getNextEnd;
 			var _getEndNoBlank = _this._getEndNoBlank;
 			var _getTextNode = _this._getTextNode;
-			var _getWceMenuValStatus = this._getWceMenuValStatus;
+			var _getWceMenuValStatus = _this._getWceMenuValStatus; 
 
-			ed.onKeyPress.addToTop(_this._setWceControls);
+			//ed.onKeyPress.addToTop(_this._setWceControls);
 			ed.onMouseUp.addToTop(_this._setWceControls);
 			ed.onKeyPress.addToTop(_this._setWceControls);
 			ed.onKeyUp.addToTop(_this._setWceControls);
+			ed.onKeyDown.addToTop(function(ed,e){
+				if (!e) {
+					var e = window.event;
+				} 
+				var ek = e.keyCode || e.charCode || 0;
+
+				if (ek == 13 || ek == 10) {
+					// Enter e.stopPropagation works only in Firefox.
+					if (e.stopPropagation) {
+						e.stopPropagation();
+						e.preventDefault();
+					}
+					if (e.shiftKey) {
+						// Shift+Enter -> break dialogue
+						if (!_getWceMenuValStatus('add', '/^__t=brea/'))
+							ed.execCommand('mceAddBreak');
+					} else {
+						// Enter -> line break
+						var rng = ed.selection.getRng(true);
+						var startNode = rng.startContainer;
+						var startText = startNode.data ? startNode.data
+								: startNode.innerText;
+						if (!startText) {
+							startText = startNode.innerHTML;
+						}  
+						if (rng.startOffset == _getNextEnd(startText, rng.startOffset)) {
+							// at the end of a word
+							_wceAddNoDialog(ed, 'brea', 'lb', ++lcnt);
+						} else {
+							// in the middle of a word
+							_wceAddNoDialog(ed, 'brea', 'lbm', ++lcnt);
+						}
+					}
+				}
+				return;
+			
+			});
 
 			// class="__t=wce_type&__n=wce_name...."
 			ed.wceTypeParamInClass = '__t';
@@ -1849,67 +1886,7 @@
 									}
 								});
 
-						tinymce.dom.Event
-								.add(
-										ed.getDoc(),
-										'keypress',
-										function(e) {
-											if (!e)
-												var e = window.event;
-											var ek = e.keyCode || e.charCode
-													|| 0;
-
-											if (ek == 13 || ek == 10) { // Enter
-												// e.stopPropagation
-												// works only in
-												// Firefox.
-												if (e.stopPropagation) {
-													e.stopPropagation();
-													e.preventDefault();
-												}
-												if (e.shiftKey) {// Shift+Enter
-													// ->
-													// break
-													// dialogue
-													if (!_getWceMenuValStatus(
-															'add',
-															'/^__t=brea/'))
-														tinyMCE.activeEditor
-																.execCommand('mceAddBreak');
-												} else { // Enter
-													// ->
-													// line
-													// break
-													var rng = ed.selection
-															.getRng(true);
-													var startNode = rng.startContainer;
-													var startText = startNode.data
-															? startNode.data
-															: startNode.innerText;
-
-													if (rng.startOffset == _getNextEnd(
-															startText,
-															rng.startOffset)) { // at
-														// the
-														// end
-														// of a
-														// word
-														_wceAddNoDialog(ed,
-																'brea', 'lb',
-																++lcnt);
-													} else { // in
-														// the
-														// middle
-														// of a
-														// word
-														_wceAddNoDialog(ed,
-																'brea', 'lbm',
-																++lcnt);
-													}
-												}
-											}
-											return;
-										});
+					 
 
 						// versernumber schuetzen
 						// TODO: testen, ob Editor Focus hat
@@ -2988,7 +2965,7 @@
 							var breakNodeText = $node.text;
 							if (breakNodeText
 									&& breakNodeText.substr(0,
-											"&hyphen;".length) == "&hyphen;") {
+											"&#45;".length) == "&#45;") {
 								hadBreak = true;
 							}
 

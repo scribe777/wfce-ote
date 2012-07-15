@@ -303,7 +303,7 @@ function WceUserToolbar(parent_container_id) {
 		if (usertext_name == '' || typeof (usertext_name) == 'undefined')
 			return;
 
-		tinyMCE.activeEditor.setContent('<img src="images/loading.gif"  />');
+		//tinyMCE.activeEditor.setContent('<img src="images/loading.gif"  />');
 		 
 		if (start)
 			$.ajax({
