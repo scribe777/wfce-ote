@@ -1,4 +1,13 @@
-body, td, pre {color:#000; font-size:24px; margin:8px; line-height:48px}
+@font-face{
+  font-family: GentiumPlus;
+    src: url(fonts/GentiumForIE.eot);
+  	src: url(fonts/GentiumForIE.eot?#iefix) format('embedded-opentype'),
+	   local('GentiumPlus Regular'), local('Gentium Plus'),
+	   url(fonts/GentiumPlus-R.woff) format('woff'), /* f¨¹r alle anderen (bis auf Safari) */
+       url(fonts/GentiumPlus-R.ttf) format('opentype'), /* f¨¹r Safari */
+	   url(fonts/GentiumForSafari.svg#GentiumPlusRegular) format('svg'); 
+}
+body, td, pre {color:#000; font-size:24px; margin:8px; line-height:48px;font-family: GentiumPlus;}
 body {background-color:#FFE6BB;}
 body.mceForceColors {background:#FFF; color:#000;}
 body.mceBrowserDefaults {background:transparent; color:inherit; font-size:inherit; font-family:inherit;}
@@ -48,21 +57,11 @@ font[face=mceinline] {font-family:inherit !important}
 .mceItemEmbeddedAudio {background-image:url(../../img/video.gif)}
 .mceItemIframe {background-image:url(../../img/iframe.gif)}
 .mcePageBreak {display:block;border:0;width:100%;height:12px;border-top:1px dotted #ccc;margin-top:15px;background:#fff url(../../img/pagebreak.gif) no-repeat center top;}
- 
-@font-face{
-  font-family: GentiumPlus;
-    src: url(/fonts/GentiumForIE.eot);
-  	src: url(/fonts/GentiumForIE.eot?#iefix) format('embedded-opentype'),
-	   local('GentiumPlus Regular'), local('Gentium Plus'),
-	   url(/fonts/GentiumPlus-R.woff) format('woff'), /* f¨¹r alle anderen (bis auf Safari) */
-       url(/fonts/GentiumPlus-R.ttf) format('opentype'), /* f¨¹r Safari */
-	   url(/fonts/GentiumForSafari.svg#GentiumPlusRegular) format('svg'); 
-}
 
 span.verse_number, span.chapter_number{
 	color:gray;	
 	-moz-user-select: none;
-	hutia:expression(this.onselectstart=function(){return(false););
+	hutia:expression(this.onselectstart=function(){return(false);});
 } 
 
 span[class*='wce_break_page']{
