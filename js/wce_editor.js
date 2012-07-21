@@ -81,7 +81,7 @@ function saveDataToDB(user_text_name, chapter, user_id) {
 		if (typeof arguments[i] == 'undefined' || arguments[i] == '')
 			return;
 	}
-
+	 
 	$.ajax({
 		type : 'POST',
 		url : 'php/save.php',

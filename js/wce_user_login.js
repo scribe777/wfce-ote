@@ -343,12 +343,12 @@ function WceUserToolbar(parent_container_id) {
 				'k' : k,
 				 'totalchapters' : $('#select_chapter option').length-1
 			},
-			success : function(msg) {  
+			success : function(msg) {
 				if (msg == 'ERROR') {  
 					$('#tool_span').html('');
 					setData('');
 					return;
-				}
+				} 
 				setData(msg);
 				setEditorNotDirty(1);
 			}

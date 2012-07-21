@@ -182,12 +182,12 @@ function fileWriteToDB($path, $filename, $fileid){
 				$book=$index;
 			}else if($pattern_type == 'k'){
 				$chapter=$index;
-				$text.='<span class="chapter_number"> '.$chapter.'</span><br />';
+				$text.='<span wce="chapter_number" class="chapter_number"> '.$chapter.'</span><br />';
 			}else if($pattern_type=='v'){
 				$verse=$index;
 				$text=str_replace( "\r\n", "",$text);
 				$text=str_replace( "\n", "",$text);
-				$text.='<span class="verse_number"> '.$verse.'</span>';
+				$text.='<span wce="verse_number" class="verse_number"> '.$verse.'</span>';
 			}
 
 
@@ -218,7 +218,7 @@ function fileWriteToDB($path, $filename, $fileid){
 
 
 function str_filter($str){ 
-	$overline_class='<span class="__t=abbr&amp;__n=&amp;original_abbr_text=&amp;abbr_type=nomSac&amp;otherabbrtype=&amp;add_overline=overline" style="border: 1px  dotted #f00; margin: 0px 1px 0px 1px; padding: 0; text-decoration: overline;">';
+	$overline_class='<span wce="__t=abbr&amp;__n=&amp;original_abbr_text=&amp;abbr_type=nomSac&amp;otherabbrtype=&amp;add_overline=overline" class="abbr_add_overline">';
  
 	$word_a=explode(' ',$str);
 	$temp='';

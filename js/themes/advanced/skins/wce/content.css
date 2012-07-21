@@ -59,9 +59,9 @@ font[face=mceinline] {font-family:inherit !important}
 .mcePageBreak {display:block;border:0;width:100%;height:12px;border-top:1px dotted #ccc;margin-top:15px;background:#fff url(../../img/pagebreak.gif) no-repeat center top;}
 
 span.verse_number, span.chapter_number{
-	color:gray;	
+	color:gray;	 
 	-moz-user-select: none;
-	hutia:expression(this.onselectstart=function(){return(false);}); 
+	hutia:expression(this.onselectstart=function(){return(false)});
 } 
 
 span.pc, span.abbr, span.abbr_add_overline, span.part_abbr, span.supplied, span.spaces{
