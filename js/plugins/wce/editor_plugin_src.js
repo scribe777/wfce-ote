@@ -2624,7 +2624,7 @@
 				var isNodeToCompress = function($node) {
 					if (!$node)
 						return false;
-					var _classText = $node.getAttribute('class');
+					var _classText = $node.getAttribute('wce');
 					if (_classText) {
 						var _name;
 						for ( var i = 0, l = nodeNamesToCompress.length; i < l; i++) {
@@ -2780,13 +2780,13 @@
 					if ($node.nodeType == 3)
 						return $node;
 
-					var classValue = $node.getAttribute('class');
-					if (classValue == null || classValue == '') {
+					var wceAttrValue = $node.getAttribute('wce');
+					if (wceAttrValue == null || wceAttrValue == '') {
 						return $node;
 					}
 
 					/* type: chapter_number, verse_number */
-					switch (classValue) {
+					switch (wceAttrValue) {
 						case 'chapter_number' :
 							// <div type="chapter" n="B4K1">
 							var $div = getParentByName($node, 'div');
@@ -2822,7 +2822,7 @@
 					}
 
 					/* other type */
-					var infoArr = strToArray(classValue);
+					var infoArr = strToArray(wceAttrValue);
 					if (infoArr == null) {
 						return $node;
 					}
