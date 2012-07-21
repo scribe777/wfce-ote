@@ -15,7 +15,7 @@ var selected_content;
 // selected wce-node text / original text
 var wce_node_text = '';
 
-// wce-class-name-array <span class="wce_corr@%CE%BBdadffefadvfead" ....
+// wce-wce-name-array <span wce="wce_corr@%CE%BBdadffefadvfead" ....
 var info_arr = [];
 
 // infomation of other wce_type
@@ -31,9 +31,9 @@ var curr_item_id;
 //var column_count = 0;
 //var line_count;
 
-// name of item, saved in class.
+// name of item, saved in Attribute wce.
 // <span
-// class="__t=corr&amp;__n=othername&amp;reading=corr&amp;blank_firsthand=blank
+// wce="__t=corr&amp;__n=othername&amp;reading=corr&amp;blank_firsthand=blank
 // ......"> ....</span>
 var type_in_uri;
 var name_in_uri; 
@@ -54,12 +54,12 @@ function wceInfoInit(wp) {
 
 	wce_type = wp;
 
-	if (wce_node != null) {
+	if (wce_node) {
 		wce_node_text = $(wce_node).text();
-		var className = wce_node.className;
-
-		if (typeof className != 'undefined' && className != null) {
-			var arr = className.split('@');
+		var wceAttr = wce_node.getAttribute('wce');
+		
+		if (wceAttr) {
+			var arr = wceAttr.split('@');
 			var al = arr.length;
 			var astr;
 			for ( var i = 0; i < al; i++) {
@@ -78,13 +78,13 @@ function wceInfoInit(wp) {
 }
 
 /**
- * read Information from className and fill the form
+ * read Information from attribute 'wce' and fill the form
  */
 function readWceNodeInfo() {
-	if (typeof (wce_node) == 'undefined' || wce_node == null)
+	if (!wce_node)
 		return;
 
-	// Information of class write to Form
+	// Information of attribute wce write to Form
 	if (info_arr['c' + item_counter] != null) {
 		formUnserialize(info_arr['c' + item_counter]);
 	}
@@ -105,21 +105,22 @@ function writeWceNodeInfo(val) {
 		info_arr[0] = formSerialize();
 	}
 
-	var new_class = arrayToString(info_arr);
-	new_class += other_info_str;   
+	var newWceAttr = arrayToString(info_arr);
+	newWceAttr += other_info_str;   
 
-	if (wce_node != null && new_class == '') {
+	if (wce_node != null && newWceAttr == '') {
 		ed.execCommand('wceDelNode', false);
 		tinyMCEPopup.close();
 		return;
-	} else if (new_class=='') {
+	} else if (newWceAttr=='') {
 		tinyMCEPopup.close();
 		return;
 	}
 
 	if (add_new_wce_node) {
 		// default style
-		var style = "border: 1px  dotted #f00; margin:0px 1px 0px 1px ; padding:0;";
+		//var style = "border: 1px  dotted #f00; margin:0px 1px 0px 1px ; padding:0;";
+		var wceClass;
 
 		// new content
 		var new_content;
@@ -128,9 +129,9 @@ function writeWceNodeInfo(val) {
 		switch (wce_type) {
 		case 'gap':
 			var gap_text = "";
+			wceClass=' class="gap"';
 			if (document.getElementById('mark_as_supplied').checked == true) {
-				gap_text = '[' + selected_content + ']';
-				style += 'color:red';
+				gap_text = '[' + selected_content + ']'; 
 			} else {
 				if (document.getElementById('unit').value == "line") {
 					for (var i = 0; i < document.getElementById('extent').value; i++) {
@@ -149,30 +150,32 @@ function writeWceNodeInfo(val) {
 					ed.execCommand('addToCounter', 'gb', document.getElementById('extent').value);
 				} else {
 					gap_text = '[...]';
-				}
-				style += 'color:red';
+				} 
 			}
 			selected_content = gap_text;
 			break;
 
 		case 'brea':
-			style += 'color:#666';
+			//style += 'color:#666';
+			wceClass=' class="brea"';
 			selected_content = val;
 			break;
 
 		case 'corr':
+			wceClass=' class="corr"';
 			//TODO: This just alters the selection to "T" which is not what we want. Instead the original first hand reading has to be saved.
 			if (document.getElementById('blank_firsthand').checked) {
 				selected_content = 'T';
-				style += 'vertical-align:super;font-size:10px;';
-			}
-			style += 'color:blue';
+				wceClass=' class="corr_blank_firsthand"';
+			} 
 			break;
 
 		case 'supplied':
+			wceClass=' class="supplied"';
 			break;
 
 		case 'unclear':
+			wceClass=' class="unclear"';
 			var unclear_text = "";
 			for ( var i = 0; i < selected_content.length; i++) {
 				if (selected_content.charAt(i) == ' ') {
@@ -185,23 +188,26 @@ function writeWceNodeInfo(val) {
 			break;
 
 		case 'note':
-			new_content = selected_content + '<span style="vertical-align:super; color:blue; font-size:12px; margin-right:2px" '+original_text +' class="' + new_class + '" >Note</span>';
+			wceClass=' class="note"';
+			new_content = selected_content + '<span wce="' + newWceAttr +original_text + '"'+wceClass+'>Note</span>';
 			break;
 
 		case 'abbr':
+			wceClass=' class="abbr"';
 			if (document.getElementById('add_overline').checked == true) {
-				style += "text-decoration:overline";
+				wceClass=' class="abbr_add_overline"'; 
 			}
 			break;
 
 		case 'spaces':
 			// default
+			wceClass=' class="spaces"';
 			selected_content = '&nbsp;';
 			break;
 
 		case 'paratext':
 			// default
-			style += 'color:#666';
+			wceClass=' class="paratext"'; 
 			selected_content = val;
 			break;
 
@@ -211,8 +217,9 @@ function writeWceNodeInfo(val) {
 		}
 
 		if (new_content == null)
-			new_content = '<span style="' + style + '" ' + original_text + ' class="' + new_class + '" >' + selected_content + '</span>';
+			new_content = '<span wce="' + newWceAttr + '"'+ wceClass + original_text +'>' + selected_content + '</span>';
 		 
+		
 		ed.selection.setContent(new_content);
 		if (wce_type == 'brea') {
 			var new_pbcnt = 0;
@@ -249,7 +256,7 @@ function writeWceNodeInfo(val) {
 				ed.execCommand('mceAdd_brea', 'pb', 0);
 		}
 	} else {
-		// update class
+		// update wce
 		if (wce_node != null) {
 			if (wce_type == 'paratext') {
 				// num or fw
@@ -259,7 +266,7 @@ function writeWceNodeInfo(val) {
 				//break type
 				wce_node.innerHTML = val;
 			}
-			wce_node.className = new_class;
+			wce_node.setAttribute('wce',newWceAttr);
 		}
 	}
 
@@ -271,7 +278,7 @@ function writeWceNodeInfo(val) {
  * form unserialize
  * 
  * @param {String}
- *            class name of wce-node /*
+ *            attribute wce value of wce-node /*
  */
 function formUnserialize(str) {
 	$('input:checkbox').attr('checked', false);

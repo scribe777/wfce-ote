@@ -61,8 +61,113 @@ font[face=mceinline] {font-family:inherit !important}
 span.verse_number, span.chapter_number{
 	color:gray;	
 	-moz-user-select: none;
-	hutia:expression(this.onselectstart=function(){return(false);});
+	hutia:expression(this.onselectstart=function(){return(false);}); 
 } 
+
+span.pc, span.abbr, span.abbr_add_overline, span.part_abbr, span.supplied, span.spaces{
+	border: 1px  dotted #f00;  
+	margin:0px; 
+	padding:0 
+}
+
+span.abbr_add_overline{ 
+	text-decoration:overline
+}
+
+span.brea{
+	border: 1px  dotted #f00;  
+	margin:0px; 
+	padding:0; 
+	color:#666 
+}
+
+span.unclear{
+	border: 1px  dotted #f00; 
+	margin: 0px 1px 0px 1px; 
+	padding: 0 
+}
+
+span.ghostpage{
+	border: 1px  dotted #f00;  
+	margin:0px; 
+	padding:0; 
+	color:#666
+}
+
+span.gap{
+	border: 1px  dotted #f00; 
+	margin:0px 1px 0px 1px ; 
+	padding:0;
+	color:red
+}
+
+span.corr, span.corr_blank_firsthand{
+	border: 1px  dotted #f00; 
+	margin:0px 1px 0px 1px ; 
+	padding:0;
+	color: blue;
+}
+
+span.corr_blank_firsthand{ 
+	vertical-align:super;
+	font-size:10px;
+}
+
+span.note{
+	border: 1px  dotted #f00; 
+	margin:0px 1px 0px 1px ; 
+	padding:0;
+	vertical-align:super; 
+	color:blue; 
+	font-size:12px; 
+	margin-right:2px
+}
+span.paratext{
+	border: 1px  dotted #f00; 
+	margin: 0px 1px 0px 1px; 
+	padding: 0;
+	color:#666
+}
+
+/*start: formatting group*/
+span.formatting_rubrication,span.formatting_gold,span.formatting_blue,span.formatting_green,span.formatting_yellow,span.formatting_other, span.formatting_overline, span.formatting_capitals{
+	border: 1px  dotted #f00;  
+	margin:0px; 
+	padding:0
+}
+span.formatting_rubrication{
+	color: red;
+}
+
+span.formatting_gold{
+	color: gold;
+}
+
+span.formatting_blue{
+	color: blue;
+}
+
+span.formatting_green{
+	color: green;
+}
+
+span.formatting_yellow{
+	color: yellow;
+}
+
+span.formatting_other{
+	color: black;
+}
+span.formatting_overline{
+	text-decoration: overline;
+}
+span.formatting_capitals{
+	width: .75em;
+	font-size: 48px;
+	line-height: 24px;
+}
+/*end: formatting group*/ 
+/*+++++++*/
 
 span[class*='wce_break_page']{
 	display: block;
@@ -89,43 +194,7 @@ span[class*='wce_paratext_num_ammsec']{
 
 span[class*='wce_supplied_source']{
 	color: red;
-}
-
-span[class*='__t=formatting_rubrication']{
-	color: red;
-}
-
-span[class*='__t=formatting_gold']{
-	color: gold;
-}
-
-span[class*='__t=formatting_blue']{
-	color: blue;
-}
-
-span[class*='__t=formatting_green']{
-	color: green;
-}
-
-span[class*='__t=formatting_yellow']{
-	color: yellow;
-}
-
-span[class*='__t=formatting_other']{
-	color: black;
-}
-
-
-span[class*='__t=formatting_overline']{
-	text-decoration: overline;
-}
-
-span[class*='__t=formatting_capitals']{
-	width: .75em;
-	font-size: 48px;
-	line-height: 24px;
-}
-
+} 
 
 span[class*='wce_abbr_nomenSacrum_Overline']{
 	text-decoration: overline;

@@ -20,7 +20,7 @@
 	// wcePlugin
 	var _wpl = {
 		// Ueberpruefen, ob ausgewaehlter Text in Note ist
-		_contentHasWceClass : function(ed, arr) {
+		_contentHasWceAttribut : function(ed, arr) {
 			var se = ed.selection;
 			var p, v;
 
@@ -34,10 +34,11 @@
 
 				// Auswahl in note
 				var node = se.getNode();
-				if (typeof node != ' undefined'
-						&& typeof (node.className) != 'undefined'
-						&& node.className.match(p)) {
-					return 1;
+				if (node ){
+					var wceAttr=node.getAttribute('wce');
+					if(wceAttr && wceAttr.match(p)) {
+						return 1;
+					}
 				}
 			}
 			return 0;
@@ -67,11 +68,14 @@
 					|| typeof n.nodeName == 'undefined' || n.nodeName == ''
 					|| n.nodeName.match(/body/i))
 				return false;
+				
+			if(n.nodeType==3){
+				return false;
+			}
 
-			var className = n.className;
+			var wceAttr = n.getAttribute('wce');
 
-			if (typeof className != 'undefined' && className != null
-					&& className != '' && className.match(pattern)) {
+			if (wceAttr && wceAttr.match(pattern)) {
 				return true;
 			} else {
 				return this._inClass(n.parentNode, pattern);
@@ -183,9 +187,7 @@
 				return;
 			}
 
-			// wenn s_node und e_node kein selbe parentNode
-			// haben, dann neue
-			// Start /Ende Node suchen
+			// wenn s_node und e_node kein selbe parentNode haben, dann neue Start /Ende Node suchen
 			var n1 = s_node;
 			var n2 = e_node;
 			var p1, p2; // parent Node
@@ -247,18 +249,18 @@
 
 			var info_box = ed.wceInfoBox;
 			var sele_node = e.target;
-			var wce_class_name = sele_node.className;
+			var wceAttr = sele_node.getAttribute('wce');
 			var _dirty = ed.isDirty();
 
 			var type_to_show = ['note', 'corr']; // TODO
 
 			var info_arr;
-			if (wce_class_name != '') {
-				info_arr = wce_class_name.split('@');
+			if (wceAttr && wceAttr!='') {
+				info_arr = wceAttr.split('@');
 			}
 			if (info_arr != null
 					&& info_arr.length > 0
-					&& wce_class_name.indexOf(ed.wceTypeParamInClass + '=') > -1) {
+					&& wceAttr.indexOf(ed.wceTypeParamInClass + '=') > -1) {
 				var ar;
 				var corr_str = '';
 				var info_text = '';
@@ -542,30 +544,30 @@
 
 			var el = se.getNode() || ed.getBody();
 
-			var className = $(el).attr('class');
+			var wceAttr = el.getAttribute('wce');
 
-			if (typeof className != 'undefined') {
+			if (wceAttr) {
 				switch (_type) {
 					case 'add' :
 						if (p == '/^_t=paratext/' && !col) {
 							return true;
 						}
 
-						if (className.match(/_t=/))
+						if (wceAttr.match(/_t=/))
 							return true;
 						else
 							return false;
 						break;
 
 					case 'edit' :
-						if (className.match(p))
+						if (wceAttr.match(p))
 							return false;
 						else
 							return true;
 						break;
 
 					case 'delete' :
-						if (className.match(p))
+						if (wceAttr.match(p))
 							return false;
 						else
 							return true;
@@ -726,8 +728,7 @@
 								var sub, pattern, b;
 
 								// Uncertain Letters
-								m
-										.add({
+								m.add({
 											title : 'Uncertain letters',
 											id : 'menu-illegable-uncleartext',
 											onclick : function() {
@@ -743,40 +744,31 @@
 
 								pattern = /^__t=unclear/;
 								b = _getWceMenuValStatus('add', pattern);
-								sub
-										.add(
-												{
-													title : 'add',
-													id : 'menu-illegable-uncleartext-add',
-													onclick : function() {
-														tinyMCE.activeEditor
-																.execCommand('mceAddUnclearText');
-													}
-												}).setDisabled(b);
+								sub.add({
+										title : 'add',
+										id : 'menu-illegable-uncleartext-add',
+										onclick : function() {
+											tinyMCE.activeEditor.execCommand('mceAddUnclearText');
+										}
+									}).setDisabled(b);
 
 								b = _getWceMenuValStatus('edit', pattern);
-								sub
-										.add(
-												{
-													title : 'edit',
-													id : 'menu-illegable-uncleartext-edit',
-													onclick : function() {
-														tinyMCE.activeEditor
-																.execCommand('mceEditUnclearText');
-													}
-												}).setDisabled(b);
+								sub.add({
+										title : 'edit',
+										id : 'menu-illegable-uncleartext-edit',
+										onclick : function() {
+											tinyMCE.activeEditor.execCommand('mceEditUnclearText');
+										}
+									}).setDisabled(b);
 
 								b = _getWceMenuValStatus('delete', pattern);
-								sub
-										.add(
-												{
-													title : 'delete',
-													id : 'menu-illegable-uncleartext-delete',
-													onclick : function() {
-														tinyMCE.activeEditor
-																.execCommand('wceDelNode');
-													}
-												}).setDisabled(b);
+								sub.add({
+										title : 'delete',
+										id : 'menu-illegable-uncleartext-delete',
+										onclick : function() {
+											tinyMCE.activeEditor.execCommand('wceDelNode');
+										}
+									}).setDisabled(b);
 
 								// gap/supplied
 								pattern = /^__t=gap/;
@@ -786,50 +778,39 @@
 								});
 
 								b = _getWceMenuValStatus('add', pattern);
-								sub
-										.add(
-												{
-													title : 'add',
-													id : 'menu-illegable-lacuna-add',
-													onclick : function() {
-														tinyMCE.activeEditor
-																.execCommand('mceAddGap');
-													}
-												}).setDisabled(b);
+								sub.add({
+										title : 'add',
+										id : 'menu-illegable-lacuna-add',
+										onclick : function() {
+											tinyMCE.activeEditor.execCommand('mceAddGap');
+										}
+									}).setDisabled(b);
 
 								b = _getWceMenuValStatus('edit', pattern);
-								sub
-										.add(
-												{
-													title : 'edit',
-													id : 'menu-illegable-lacuna-edit',
-													onclick : function() {
-														tinyMCE.activeEditor
-																.execCommand('mceEditGap');
-													}
-												}).setDisabled(b);
+								sub.add({
+										title : 'edit',
+										id : 'menu-illegable-lacuna-edit',
+										onclick : function() {
+											tinyMCE.activeEditor.execCommand('mceEditGap');
+										}
+									}).setDisabled(b);
 
 								b = _getWceMenuValStatus('delete', pattern);
-								sub
-										.add(
-												{
-													title : 'delete',
-													id : 'menu-illegable-lacuna-delete',
-													onclick : function() {
-														tinyMCE.activeEditor
-																.execCommand('wceDelNode');
-													}
-												}).setDisabled(b);
+								sub.add({
+										title : 'delete',
+										id : 'menu-illegable-lacuna-delete',
+										onclick : function() {
+											tinyMCE.activeEditor.execCommand('wceDelNode');
+										}
+									}).setDisabled(b);
 
-								m
-										.add({ // Ghost page
-											title : 'Ghost page',
-											id : 'menu-illegable-ghostpage',
-											onclick : function() {
-												tinyMCE.activeEditor
-														.execCommand('mceAddGhostPage');
-											}
-										});
+								m.add({ // Ghost page
+										title : 'Ghost page',
+										id : 'menu-illegable-ghostpage',
+										onclick : function() {
+											tinyMCE.activeEditor.execCommand('mceAddGhostPage');
+										}
+									});
 							});
 
 					// Return the new menu button instance
@@ -1423,32 +1404,36 @@
 			return _node;
 		},
 
-		_wceAddNoDialog : function(ed, className, character, number) {
+		_wceAddNoDialog : function(ed, wceType, character, number) {
 			var content = ed.selection.getContent();
-			var style = 'style="border: 1px  dotted #f00;  margin:0px; padding:0;"';
+			//var style = 'style="border: 1px  dotted #f00;  margin:0px; padding:0;"';
+			var wceClass, wceAttr, wceOrig;
 
-			switch (className) {
+			switch (wceType) {
 				case 'pc' :
-					ed.selection.setContent('<span class="'
-							+ ed.wceTypeParamInClass + '=' + className + '"'
-							+ style + '>' + character + '</span> ');
+					wceClass=' class="pc"';
+					wceAttr='wce="' + ed.wceTypeParamInClass + '=' + wceType + '"';
+					ed.selection.setContent('<span' + wceAttr + wceClass + '>' + character + '</span> ');
 					break;
 				case 'abbr' :
-					style = 'style="border: 1px  dotted #f00;  margin:0px; padding:0;"';
+					//style = 'style="border: 1px  dotted #f00;  margin:0px; padding:0;"';
+					wceClass=' class="abbr"';
+					wceOrig =' wce_orig="' + character + '"';
+					wceAttr='"wce=__t=abbr&amp;__n=&amp;original_abbr_text=&amp;abbr_type=nomSac&amp;abbr_type_other=&amp;add_overline=&amp;insert=Insert&amp;cancel=Cancel"';
 					ed.selection
-							.setContent('<span class="'
-									+ '__t=abbr&amp;__n=&amp;original_abbr_text=&amp;abbr_type=nomSac&amp;abbr_type_other=&amp;add_overline=&amp;insert=Insert&amp;cancel=Cancel" wce_orig="'
-									+ character + '"' + style + '>' + character
+							.setContent('<span '+wceAttr+ wceOrig+ wceClass + '>' + character
 									+ '</span> ');
 					break;
 				case 'brea' :
-					style = 'style="border: 1px  dotted #f00;  margin:0px; padding:0; color:#666"';
-					if (character == 'lb') { // line break at
-						// the end of a
-						// word
-						if (number === 0) { // for a line break
-							// without an
-							// explicit number
+					//style = 'style="border: 1px  dotted #f00;  margin:0px; padding:0; color:#666"';
+					wceClass=' class="brea"';
+					wceAttr ='wce="__t=brea&amp;__n=&amp;break_type=lb&amp;number='
+							+ number
+							+ '&amp;pb_type=&amp;fibre_type=&amp;running_title=&amp;lb_alignment=&amp;insert=Insert&amp;cancel=Cancel" ';
+					if (character == 'lb') { 
+						// line break at the end of a word
+						if (number === 0) { 
+							// for a line break without an explicit number
 							number = ++lcnt;
 						}
 						// var num = "";
@@ -1457,23 +1442,13 @@
 						 * break", ""); }
 						 */
 						ed.selection
-								.setContent('<span class="'
-										+ '__t=brea&amp;__n=&amp;break_type=lb&amp;number='
-										+ number
-										+ '&amp;pb_type=&amp;fibre_type=&amp;running_title=&amp;lb_alignment=&amp;insert=Insert&amp;cancel=Cancel'
-										+ '"' + style + '>' + '<br/>&crarr;' + '</span> ');
+								.setContent('<span '+ wceAttr + wceClass + '>' + '<br/>&crarr;' + '</span> ');
 						lcnt = number;
 						ed.execCommand('printData');
-					} else if (character == 'lbm') { // line
-						// break
-						// in
-						// the
-						// middle
-						// of a
-						// word
-						if (number === 0) { // for a line break
-							// without an
-							// explicit number
+					} else if (character == 'lbm') { 
+						// line break in the middle of a word
+						if (number === 0) { 
+							// for a line break without an explicit number
 							number = ++lcnt;
 						}
 						// var num = "";
@@ -1481,35 +1456,33 @@
 						 * while (num == "") { num = prompt("Number of line
 						 * break", ""); }
 						 */
+						 
+						wceAttr='wce="__t=brea&amp;__n=&amp;break_type=lb&amp;number='
+								+ number
+								+ '&amp;pb_type=&amp;fibre_type=&amp;running_title=&amp;lb_alignment=&amp;insert=Insert&amp;cancel=Cancel" '; 
 						ed.selection
-								.setContent('<span class="'
-										+ '__t=brea&amp;__n=&amp;break_type=lb&amp;number='
-										+ number
-										+ '&amp;pb_type=&amp;fibre_type=&amp;running_title=&amp;lb_alignment=&amp;insert=Insert&amp;cancel=Cancel'
-										+ '"' + style + '>'
+								.setContent('<span '+wceAttr + wceClass + '>'
 										+ '&#45;<br/>&crarr;' + '</span> ');
 						lcnt = number;
-					} else if (character == 'cb') { // column
-						// break
-						if (number === 0) { // for a line break
-							// without an
-							// explicit number
+					} else if (character == 'cb') { 
+						// column break
+						if (number === 0) { 
+							// for a line break without an explicit number
 							number = ++ccnt;
 						}
+						
+						wceAttr='wce="__t=brea&amp;__n=&amp;break_type=cb&amp;number='
+								+ number
+								+ '&amp;pb_type=&amp;fibre_type=&amp;running_title=&amp;lb_alignment=&amp;insert=Insert&amp;cancel=Cancel" ';
 						ed.selection
-								.setContent('<br/><span class="'
-										+ '__t=brea&amp;__n=&amp;break_type=cb&amp;number='
-										+ number
-										+ '&amp;pb_type=&amp;fibre_type=&amp;running_title=&amp;lb_alignment=&amp;insert=Insert&amp;cancel=Cancel'
-										+ '"' + style + '>' + 'CB' + '</span> ');
+								.setContent('<br/><span '+ wceAttr + wceClass + '>' + 'CB' + '</span> ');
 						ccnt = number;
-					} else if (character == 'pb') { // page
-						// break
+					} else if (character == 'pb') { 
+						// page break
 						var new_number = 0;
 						var new_pb_type = "";
-						if (number === 0) { // for a page break
-							// without an
-							// explicit number
+						if (number === 0) { 
+							// for a page break without an explicit number
 							number = ++pcnt;
 						}
 						pcnt = number;
@@ -1517,44 +1490,45 @@
 
 						if (rectoverso === 'true') {
 							new_number = Math.ceil(number / 2);
-							if (number % 2 == 0) // verso
-								// page
+							if (number % 2 == 0) {
+								// verso page
 								new_pb_type = "v";
-							else
+							}else{
 								// recto page
 								new_pb_type = "r";
+							}
 						}
-
+						wceAttr='wce="__t=brea&amp;__n=&amp;break_type=pb&amp;number='
+								+ new_number
+								+ '&amp;pb_type='
+								+ new_pb_type
+								+ '&amp;fibre_type=&amp;running_title=&amp;lb_alignment=&amp;insert=Insert&amp;cancel=Cancel'
+								+ '"';
 						ed.selection
-								.setContent('<br/><span class="'
-										+ '__t=brea&amp;__n=&amp;break_type=pb&amp;number='
-										+ new_number
-										+ '&amp;pb_type='
-										+ new_pb_type
-										+ '&amp;fibre_type=&amp;running_title=&amp;lb_alignment=&amp;insert=Insert&amp;cancel=Cancel'
-										+ '"' + style + '>' + 'PB' + '</span> ');
+								.setContent('<br/><span '+wceAttr + wceClass + '>' + 'PB' + '</span> ');
 
 						//duplication cf. wce.js, line 215
 						//ed.execCommand('mceAdd_brea', 'cb', '1');
 						//ed.execCommand('mceAdd_brea', 'lb', '1');
 					} else {
 						// quire break
-						if (number === 0) { // for a line break
-							// without an
-							// explicit number
+						if (number === 0) { 
+							// for a line break without an explicit number
 							number = ++qcnt;
 						}
+						wceAttr='wce="__t=brea&amp;__n=&amp;break_type=gb&amp;number='
+								+ number
+								+ '&amp;pb_type=&amp;fibre_type=&amp;running_title=&amp;lb_alignment=&amp;insert=Insert&amp;cancel=Cancel'
+								+ '" ';
 						ed.selection
-								.setContent('<br/><span class="'
-										+ '__t=brea&amp;__n=&amp;break_type=gb&amp;number='
-										+ number
-										+ '&amp;pb_type=&amp;fibre_type=&amp;running_title=&amp;lb_alignment=&amp;insert=Insert&amp;cancel=Cancel'
-										+ '"' + style + '>' + 'QB' + '</span> ');
+								.setContent('<br/><span '+ wceAttr + wceClass + '>' + 'QB' + '</span> ');
 						qcnt = number;
 					}
 					break;
-				case 'part_abbr' : // part-worded abbreviations
+				case 'part_abbr' : 
+					// part-worded abbreviations
 					var rng = ed.selection.getRng(true);
+					wceClass=' class="part_abbr"';
 					var startNode = rng.startContainer;
 					var startText = startNode.data
 							? startNode.data
@@ -1564,9 +1538,9 @@
 					if (li > -1) {
 						var part_abbr = text.substr(li) + ')';
 						startNode.data = startText.substr(rng.endOffset);
-						ed.selection.setContent('<span class="'
-								+ ed.wceTypeParamInClass + '=' + className
-								+ '"' + style + '>' + part_abbr + '</span>');
+						
+						wceAttr='wce="'	+ ed.wceTypeParamInClass + '=' + wceType + '" ';								
+						ed.selection.setContent('<span '+ wceAttr + wceClass + '>' + part_abbr + '</span>');
 						startNode.data += startText.substr(0, text
 								.lastIndexOf('('));
 					} else {
@@ -1575,8 +1549,8 @@
 					break;
 				/*
 				 * case 'formatting_capitals': //Capitals
-				 * ed.selection.setContent('<span class="' +
-				 * ed.wceTypeParamInClass + '=' + className + '&amp;height=' +
+				 * ed.selection.setContent('<span wce="' +
+				 * ed.wceTypeParamInClass + '=' + wceType + '&amp;height=' +
 				 * character + '"' + style + '>' + content + '</span>'); break;
 				 */
 				case 'unclear' : // uncertain letters
@@ -1585,19 +1559,13 @@
 					var newContent = "";
 					var word = "";
 					var unclear_text = "";
-					for ( var i = 0; i < selection.length; i++) { // Divide
-						// input
-						// into
-						// words
-						if (selection.charAt(i) == ' ') { // Space
-							// ->
-							// new
-							// word
-							newContent += '<span class="__t=unclear&amp;__n=&amp;original_text='
-									+ word
-									+ '&amp;insert=Insert&amp;cancel=Cancel"'
-									+ 'style="border: 1px  dotted #f00; margin: 0px 1px 0px 1px; padding: 0;">'
-									+ unclear_text + '</span> ';
+					wceClass=' class="unclear"';
+					for ( var i = 0; i < selection.length; i++) { 
+						// Divide input into words
+						if (selection.charAt(i) == ' ') { 
+							// Space -> new word
+							wceAttr='wce="__t=unclear&amp;__n=&amp;original_text=' + word + '&amp;insert=Insert&amp;cancel=Cancel"';
+							newContent += '<span '+ wceAttr + wceClass+ '>' + unclear_text + '</span> ';
 							word = "";
 							unclear_text = "";
 						} else {
@@ -1606,23 +1574,24 @@
 						}
 					}
 					// add last part of selection
-					newContent += '<span class="__t=unclear&amp;__n=&amp;original_text='
+					newContent += '<span wce="__t=unclear&amp;__n=&amp;original_text='
 							+ word
-							+ '&amp;insert=Insert&amp;cancel=Cancel"'
-							+ 'style="border: 1px  dotted #f00; margin: 0px 1px 0px 1px; padding: 0;">'
+							+ '&amp;insert=Insert&amp;cancel=Cancel" '
+							+ wceClass+'>'
 							+ unclear_text + '</span>';
 					ed.selection.setContent(newContent);
 					break;
-				case 'ghostpage' : // Ghost page
-					style = 'style="border: 1px  dotted #f00;  margin:0px; padding:0; color:#666"';
-					ed.selection
-							.setContent('<span class="__t=gap&amp;__n=&amp;original_gap_text=&amp;gap_reason=absent&amp;unit=page&amp;unit_other=&amp;extent=1&amp;supplied_source=na27&amp;supplied_source_other=&amp;insert=Insert&amp;cancel=Cancel"'
-									+ style + '>Ghost page</span>');
+				case 'ghostpage' : 
+					// Ghost page
+					//style = 'style="border: 1px  dotted #f00;  margin:0px; padding:0; color:#666"';
+					wceClass=' class="ghostpage"';
+					wceAttr='wce="__t=gap&amp;__n=&amp;original_gap_text=&amp;gap_reason=absent&amp;unit=page&amp;unit_other=&amp;extent=1&amp;supplied_source=na27&amp;supplied_source_other=&amp;insert=Insert&amp;cancel=Cancel" ';
+					ed.selection.setContent('<span '+ wceAttr + wceClass + '>Ghost page</span>');
 					break;
 				default :
-					ed.selection.setContent('<span class="'
-							+ ed.wceTypeParamInClass + '=' + className + '"'
-							+ style + '>' + content + '</span>');
+					wceClass=' class="'+wceType+'"';
+					wceAttr='wce="'	+ ed.wceTypeParamInClass + '=' + wceType + '" ';
+					ed.selection.setContent('<span '+ wceAttr + wceClass + '>' + content + '</span>');
 			}
 		},
 
@@ -1785,8 +1754,8 @@
 
 			// Ueberpruefen: ob Node Verse oder Chapter
 			ed.addCommand('testNodeIsVerseOrChapter', function(n) {
-				var nc = n.className;
-				if (nc == 'verse_number' || nc == 'chapter_number') {
+				var wceAttr = n.getAttribute('wce');
+				if (wceAttr && (wceAttr == 'verse_number' || wceAttr == 'chapter_number')) {
 					return 1;
 				}
 				return 0;
@@ -1808,19 +1777,18 @@
 
 			// Ueberpruefen, ob ausgewaehlter
 			// Text verse nummer hat
-			ed
-					.addCommand(
+			ed.addCommand(
 							"wceContentHasVerse",
 							function() {
 								var _sel = ed.selection;
 
 								// Auswahl hat verse
 								if (_sel.getContent().match(
-										/<span\s*class=\"verse_number"\s*>/)
+										/<span\s*wce=\"verse_number"\s*>/)
 										|| _sel
 												.getContent()
 												.match(
-														/<span\s*class=\"chapter_number"\s*>/)) {
+														/<span\s*wce=\"chapter_number"\s*>/)) {
 									return 1;
 								}
 
@@ -1979,35 +1947,35 @@
 											var delBlockArr = ['paratext',
 													'gap', 'note', 'spaces',
 													'brea'];
-											if (_this._contentHasWceClass(ed,
+											if (_this._contentHasWceAttribut(ed,
 													delBlockArr)) {
 												delBlock = true;
 											}
 
 											if (ek == 46) {
-												if ((_this._contentHasWceClass(
+												if ((_this._contentHasWceAttribut(
 														ed, ['brea']) && _getWceMenuValStatus(
 														'delete', '/^__t=brea/'))
 														|| (_this
-																._contentHasWceClass(
+																._contentHasWceAttribut(
 																		ed,
 																		['paratext']) && _getWceMenuValStatus(
 																'delete',
 																'/^__t=paratext/'))
 														|| (_this
-																._contentHasWceClass(
+																._contentHasWceAttribut(
 																		ed,
 																		['gap']) && _getWceMenuValStatus(
 																'delete',
 																'/^__t=gap/'))
 														|| (_this
-																._contentHasWceClass(
+																._contentHasWceAttribut(
 																		ed,
 																		['note']) && _getWceMenuValStatus(
 																'delete',
 																'/^__t=note/'))
 														|| (_this
-																._contentHasWceClass(
+																._contentHasWceAttribut(
 																		ed,
 																		['spaces']) && _getWceMenuValStatus(
 																'delete',
@@ -2095,11 +2063,11 @@
 			// Get selected span node
 			ed.addCommand('getWceNode', function() {
 				var sele_node = ed.selection.getNode();
-				if (typeof sele_node == 'undefined' || sele_node == null)
+				if (!sele_node || sele_node.nodeType==3){
 					return null;
-				var className = sele_node.className;
-				if (typeof className != 'undefined' && className != ''
-						&& className.indexOf(ed.wceTypeParamInClass) == 0) {
+				}
+				var wceAttr = sele_node.getAttribute('wce');
+				if (wceAttr	&& wceAttr.indexOf(ed.wceTypeParamInClass) == 0) {
 					return sele_node;
 				}
 				return null;
@@ -2108,16 +2076,16 @@
 			// delete nodeName
 			ed.addCommand('wceDelNode', function() {
 				var wceNode = ed.execCommand('getWceNode');
-				if (wceNode != null) {
+				if (wceNode) {
 					ed.selection.select(wceNode);
-					var wce_class_name = wceNode.className;
+					var wceAttr = wceNode.getAttribute('wce');
 					var originalText = wceNode.getAttribute('wce_orig');
 
 					/*
 					 * // if tag to remove var node_to_remove = [ 'paratext',
 					 * 'note', 'gap', 'brea' ]; var to_remove = false; for ( var
 					 * i = 0; i < node_to_remove.length; i++) { if
-					 * (wce_class_name.indexOf(ed.wceTypeParamInClass + '=' +
+					 * (wceAttr.indexOf(ed.wceTypeParamInClass + '=' +
 					 * node_to_remove[i]) > -1) { to_remove = true; break; } }
 					 * 
 					 * if (to_remove) { $(wceNode).remove(); } else if (typeof
@@ -2163,14 +2131,21 @@
 				var _add_new_wce_node = true;
 				var sele_node = ed.selection.getNode();
 				var wceNode = ed.execCommand('getWceNode');
+				var wceAttr;
+				if(wceNode){
+					wceAttr=wceNode.getAttribute('wce');
+				}
 
 				// wenn cursor in wce_corr
 				if (ed.selection.isCollapsed()) {
-					if (wceNode == null || !wceNode.className.match(/corr/)) {
+					if(!wceNode){
+						return;
+					}					
+					if (!wceAttr || !wceAttr.match(/corr/)) {
 						return;
 					}
 					_add_new_wce_node = false;
-				} else if (wceNode != null && wceNode.className.match(/corr/)) {
+				} else if (wceNode && wceAttr && wceAttr.match(/corr/)) {
 					_add_new_wce_node = false;
 				}
 				_wceAdd(ed, url, '/correction.htm', 800, 600, 1,
@@ -2334,16 +2309,8 @@
 				}
 			});
 
-			ed.addCommand('resetCounter', function() { // reset
-				// counter
-				// values
-				// when
-				// pressing
-				// "Cancel"
-				// at
-				// the
-				// break
-				// dialog
+			ed.addCommand('resetCounter', function() {
+				// reset counter values when pressing "Cancel" at the break dialog
 				qcnt--;
 				pcnt--;
 				ccnt--;

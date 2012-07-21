@@ -8,7 +8,7 @@ function setWceEditor(_id){
 			elements : _id,
 			theme : "advanced",
 			skin : "wce",
-			extended_valid_elements : 'span[class|wce_orig|style]',
+			extended_valid_elements : 'span[class|wce_orig|style|wce]',
 			forced_root_block : false,
 			force_br_newlines : true,
 			force_p_newlines : false,

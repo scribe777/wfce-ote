@@ -17280,7 +17280,8 @@ tinymce.ForceBlocks = function(editor) {
 			// Check if node matches format
 			if (!matchName(node, format))
 				return FALSE;
-
+node.removeAttribute('wce');
+//TODO FOR WCE: node.removeAttribute('wce_orig');
 			// Should we compare with format attribs and styles
 			if (format.remove != 'all') {
 				// Remove styles
