@@ -170,8 +170,8 @@ function _getChapterNode($str) {
 	global $nodeNameToCompress;
 
 	$xml = new DOMDocument();
-	$str = str_replace('<span class="verse_number">',
-			'</ab><ab><span class="verse_number">', $str);
+	$str = str_replace('<span wce="verse_number" class="verse_number">',
+			'</ab><ab><span wce="verse_number" class="verse_number">', $str);
 	$str = '<div><ab>' . $str . '</ab></div>';
 	$xml->loadXML($str);
 	$chapterDivNode = $xml->documentElement;
@@ -216,7 +216,7 @@ function _changeNode($xml, $node) {
 	* attribute von parentNode <div> definieren: type, n, xml:id ...
 	* dann <span> entfernen
 	*/
-	$class = $node->getAttribute('class');
+	$class = $node->getAttribute('wce');
 	if ($class === 'chapter_number') {
 		//<div type="chapter"  n="B4K1">
 		$ab = $node->parentNode;
@@ -874,7 +874,7 @@ function _classNameToArray($node) {
 	if ($node->nodeType === XML_TEXT_NODE)
 	return null;
 
-	$class = $node->getAttribute('class');
+	$class = $node->getAttribute('wce');
 	if ($class == '' || $class == 'chapter_number' || $class == 'verse_number')
 	return null;
 
@@ -914,9 +914,9 @@ function _cloneNode($xml, $node) {
 
 function _isNodeToCompress($node){
 	global $nodeNameToCompress;
-	if($node!=null && $node->getAttribute('class')!=null){
+	if($node!=null && $node->getAttribute('wce')!=null){
 		foreach($nodeNameToCompress AS $name){
-			if(preg_match('/^__t='.$name.'/',$node->getAttribute('class'))){
+			if(preg_match('/^__t='.$name.'/',$node->getAttribute('wce'))){
 				return true;
 			}
 		}
