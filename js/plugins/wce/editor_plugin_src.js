@@ -370,6 +370,9 @@
 						case 'paratext' :
 							info_text = '<div>' + 'Paratext type: ';
 							switch (ar['fw_type']) {
+								case 'commentary_text' :
+									info_text += 'Commentary text';
+									break;
 								case 'num_chapternumber' :
 									info_text += 'Chapter number';
 									break;
@@ -2242,11 +2245,11 @@
 
 			// Add paratext/*********/
 			ed.addCommand('mceAddParatext', function() {
-				_wceAdd(ed, url, '/paratext.htm', 480, 320, 1, true);
+				_wceAdd(ed, url, '/paratext.htm', 640, 480, 1, true);
 			});
 			// Edit paratext
 			ed.addCommand('mceEditParatext', function() {
-				_wceAdd(ed, url, '/paratext.htm', 480, 320, 1, false);
+				_wceAdd(ed, url, '/paratext.htm', 640, 480, 1, false);
 			});
 
 			ed.addCommand('mceAddParatext_Shortcut', function() {
@@ -3273,13 +3276,18 @@
 								// //Fehler #85
 								paratextNodeName = 'num';
 								// attr = $currInfo['number'];
-							} else {
+							} else if (arr['fw_type'].match(/fw_/)) {
 								paratextNodeName = 'fw';
+							} else {
+								paratextNodeName = 'comm';
 							}
 
 							$newNode = $xml.createElement(paratextNodeName);
 
 							switch (arr['fw_type']) {
+								case 'commentary_text':
+									type = 'commentary';
+									break;
 								case 'fw_pagenumber' :
 									type = 'pageNum';
 									break;

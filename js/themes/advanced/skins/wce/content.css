@@ -129,6 +129,10 @@ span.paratext{
 	color:#666
 }
 
+span.commentary{
+	font-style: italic;
+}
+
 /*start: formatting group*/
 span.formatting_rubrication,span.formatting_gold,span.formatting_blue,span.formatting_green,span.formatting_yellow,span.formatting_other, span.formatting_overline, span.formatting_capitals{
 	border: 1px  dotted #f00;  
