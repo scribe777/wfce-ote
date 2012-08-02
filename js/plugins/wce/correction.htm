@@ -23,6 +23,7 @@
 					value="New" />
 			</div>
 		</fieldset>
+		<input type="hidden" id="original_firsthand_reading" name="original_firsthand_reading" value=""/>
 		<fieldset id="content_fieldset"
 			style="margin-left: 220px; height: 550px; width: auto">
 			<legend>{#wce.reading_data}</legend>
@@ -44,7 +45,6 @@
 							style="color: green" /></td>
 						<td><input type="checkbox" name="blank_firsthand"
 							id="blank_firsthand" onclick="checkstatus_firsthand()">{#wce.blank_firsthand}
-						<input type="hidden" id="original_firsthand_reading" name="original_firsthand_reading" value=""/>
 						</td>
 					</tr>
 					<tr>
@@ -52,8 +52,8 @@
 						</td>
 						<td><select id="corrector_name" name="corrector_name"
 							onclick="saveCurrCorrector(true);" onchange="checkstatus_hand()">
+								<option value="corrector">{#wce.corrector}</option>
 								<option value="firsthand">{#wce.firsthand}</option>
-								<option value="unidentified_corrector">{#wce.unidentified_corrector}</option>
 								<option value="corrector1">{#wce.corrector}1</option>
 								<option value="corrector2">{#wce.corrector}2</option>
 								<option value="corrector3">{#wce.corrector}3</option>
@@ -107,15 +107,6 @@
 								<option value="other">{#wce.other}</option>
 						</select>
 						</td>
-						<!--<td colspan="2"><select id="deletion" name="deletion">
-								<option value=""></option>
-								<option value="erased">{#wce.del_erased}</option>
-								<option value="underline">{#wce.del_underline}</option>
-								<option value="underdot">{#wce.del_underdot}</option>
-								<option value="strikethrough">{#wce.del_striketrough}</option>
-								<option value="vertical line">{#wce.del_vertical_line}</option>
-								<option value="other">{#wce.other}</option>
-						</select></td>-->
 					</tr>
 					<div id="corr_deletion" class="xbtooltip">
 						{#wce.tt_corr_deletion}
@@ -172,7 +163,7 @@
  			plugins : "wce,pagebreak,style,layer,safari,print,inlinepopups, paste", 
 
 			// Theme options
-			theme_advanced_buttons1 : "undo,redo,charmap,|,code,removeformat,|,print,contextmenu,paste,fullscreen,|,metadata,breaks,correction,illegible,decoration,abbreviation,paratext,note",
+			theme_advanced_buttons1 : "undo,redo,charmap,|,code,removeformat,|,print,contextmenu,paste,fullscreen,|,metadata,breaks,illegible,decoration,abbreviation,paratext",
 			theme_advanced_buttons2 : "",
 			theme_advanced_toolbar_location : "top",
 			theme_advanced_toolbar_align : "left",
@@ -194,6 +185,9 @@
 			$('#content_fieldset').css('width',$('#mceActionPanel').width()-250);
 		}
 
+		$('#firsthand_reading').html(wce_node_text);
+		$('#original_firsthand_reading').val(wce_node_text); 
+		
 		for ( var p in info_arr) {
 			addCorrector(p);
 		}
@@ -340,6 +334,7 @@
 			$('#corrector_text').val($('#original_firsthand_reading').val());
 			corrector_text_editor.setContent($('#original_firsthand_reading').val());
 			info_arr[_id] = formSerialize(null, corrector_name);
+			corrector_name = corrector_name = $('#corrector_name').val();
 		} else {
 			if (typeof info_arr[_id] != 'undefined' && info_arr[_id] != '') {
 				var param_arr = info_arr[_id].split('&');
