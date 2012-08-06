@@ -8,6 +8,17 @@
 
 (function() {
 
+	// wce Controls names
+	var wceControls = {
+		'B' : "break",
+		'C' : "correction",
+		'D' : "decoration",
+		'O' : 'illegible',
+		'A' : "abbreviation",
+		'P' : "paratext",
+		'N' : "note"
+	};
+
 	var qcnt = 1; // quire count
 	var pcnt = 1; // page count
 	var ccnt = 1; // column count
@@ -16,9 +27,8 @@
 
 	// Load plugin specific language pack
 	tinymce.PluginManager.requireLangPack('wce');
-	// wcePlugin
-	var _wpl = {
-		// Ueberpruefen, ob ausgewaehlter Text in Note ist
+	// WCEObj
+	var WCEObj = {
 		_contentHasWceAttribut : function(ed, arr) {
 			var se = ed.selection;
 			var p, v;
@@ -43,30 +53,76 @@
 			return 0;
 		},
 
-		_setWceControls : function() {
-			var ed = this;
-			var _dirty = ed.isDirty();
-			var hasVerse = ed.execCommand('wceContentHasVerse');
-			if (_dirty) {
-				ed.isNotDirty = 0;
-			} else {
-				ed.isNotDirty = 1;
-			}
+		// set wce Button active or not
+		_setButtonStatus : function(ed, cm, node) {
 			var isc = ed.selection.isCollapsed();
+			var nName = node.nodeName;
+			var cName = node.className;
 
-			tinymce.each(ed.controlManager.controls, function(c) {
-				if (c.id == ed.id + '_removeformat' && (hasVerse == 1 || isc))
-					c.setDisabled(true);
-				else
-					c.setDisabled(false);
-			});
+			var b = c = d = o = a = p = n = r = false;
+			var eid = ed.id;
+			var cn = eid + "_menu-";
+			var cs = cm.controls;
+
+			var wce_attr;
+
+			if (!isc) {
+				b = true;
+				n = true;
+			}
+
+			/*
+			 * TOOD: if (nName) { nName = nName.toLowerCase(); if (nName == 'span') { wce_attr = node.getAttribute('wce'); } }
+			 */
+
+			// set wce buttons
+			var control_B = cs[cn + wceControls['B']];
+			var control_C = cs[cn + wceControls['C']];
+			var control_D = cs[cn + wceControls['D']];
+			var control_O = cs[cn + wceControls['O']];
+			var control_A = cs[cn + wceControls['A']];
+			var control_P = cs[cn + wceControls['P']];
+			var control_N = cs[cn + wceControls['N']];
+			var control_RF = cs[eid + '_removeformat'];
+
+			if (control_B) {
+				control_B.setDisabled(b);
+			}
+			if (control_C) {
+				control_C.setDisabled(c);
+			}
+			if (control_D) {
+				control_D.setDisabled(d);
+			}
+			if (control_O) {
+				control_O.setDisabled(o);
+			}
+			if (control_A) {
+				control_A.setDisabled(a);
+			}
+			if (control_P) {
+				control_P.setDisabled(p);
+			}
+			if (control_N) {
+				control_N.setDisabled(n);
+			}
+
+			// set "remove-format" button
+			if (cName && (cName == 'chapter_number' || cName == 'verse_number')) {
+				r = true;
+			}
+			if (control_RF) {
+				control_RF.setDisabled(r);
+			}
 		},
 
 		_inClass : function(n, pattern) {
-			if (typeof n == 'undefined' || n == null || typeof n.nodeName == 'undefined' || n.nodeName == '' || n.nodeName.match(/body/i))
+			if (!n) {
 				return false;
+			}
 
-			if (n.nodeType == 3) {
+			var nName = n.nodeName;
+			if (!nName || n.nodeType == 3 || nName == '' || nName.match(/body/i)) {
 				return false;
 			}
 
@@ -75,17 +131,19 @@
 			if (wceAttr && wceAttr.match(pattern)) {
 				return true;
 			} else {
-				return this._inClass(n.parentNode, pattern);
+				return WCEObj._inClass(n.parentNode, pattern);
 			}
 		},
 
-		// ausgewaehlter Text automatisch filtern, ergibt nur ein gueltiger Auswahlbereich
-		_adaptiveSelection : function() {
-			var _this = this;
-			var ed = _this.editor;
+		// only for mouseup
+		_adaptiveSelection : function(ed) {
+			var _getStartNoBlank = WCEObj._getStartNoBlank;
+			var _getEndNoBlank = WCEObj._getEndNoBlank;
+			var _inClass = WCEObj._inClass;
 
-			var _adaptive = tinymce.DOM.get(ed.id + '_adaptive_selection');
-			if (typeof _adaptive != 'undefined' && !_adaptive.checked) {
+			// _adaptive CheckBox
+			var ad_cb = tinymce.DOM.get(ed.id + '_adaptive_selection');
+			if (ad_cb && !ad_cb.checked) {
 				return;
 			}
 
@@ -105,33 +163,26 @@
 			var e_text = e_node.data ? e_node.data : e_node.innerText;
 			var e_index = rng.endOffset;
 
-			// nach setRng wird editor unter firefox nicht
-			// aktualisiert. Bug
-			// von Firefox?
+			// nach setRng wird editor unter firefox nicht aktualisiert. Bug von Firefox?
 			if (!$.browser.msie) {
 				ed.selection.select(s_node);
 			}
 
-			/*
-			 * if( arguments[1]){ //isDoubleClick s_index = _getStartNoBlank(s_text, s_index); e_index = _getNextEnd(s_text, s_index); rng.setStart(s_node, s_index); rng.setEnd(s_node, e_index); ed.selection.setRng(rng); return; }
-			 */
-
-			// testen, ob verse_number oder chapter_number
-			// ausgewählt
-			var s_verse = _this._inClass(s_node, /verse_number/i);
-			var e_verse = _this._inClass(e_node, /verse_number/i);
+			// testen, ob verse_number oder chapter_number ausgewählt
+			var s_verse = _inClass(s_node, /verse_number/i);
+			var e_verse = _inClass(e_node, /verse_number/i);
 			if (s_verse && !e_verse) {
 				// select e_node
-				s_index = _this._getStartNoBlank(e_text, 0);
-				e_index = _this._getEndNoBlank(e_text, e_index);
+				s_index = _getStartNoBlank(e_text, 0);
+				e_index = _getEndNoBlank(e_text, e_index);
 				rng.setStart(e_node, s_index);
 				rng.setEnd(e_node, e_index);
 				ed.selection.setRng(rng);
 				return;
 			} else if (!s_verse && e_verse) {
 				// select s_node
-				s_index = _this._getStartNoBlank(s_text, s_index);
-				e_index = _this._getEndNoBlank(s_text, s_text.length);
+				s_index = _getStartNoBlank(s_text, s_index);
+				e_index = _getEndNoBlank(s_text, s_text.length);
 				rng.setStart(s_node, s_index);
 				rng.setEnd(s_node, e_index);
 				ed.selection.setRng(rng);
@@ -145,8 +196,8 @@
 
 			// wenn s_node und e_node selbe Node sind
 			if (s_node == e_node) {
-				s_index = _this._getStartNoBlank(s_text, s_index);
-				e_index = _this._getEndNoBlank(e_text, e_index);
+				s_index = _getStartNoBlank(s_text, s_index);
+				e_index = _getEndNoBlank(e_text, e_index);
 
 				if (s_index < 0 || e_index < 0) {
 					s_index = 0;
@@ -163,15 +214,15 @@
 
 			// wenn s_node und e_node selbe Parent haben
 			if (s_node.parentNode == e_node.parentNode) {
-				s_index = _this._getStartNoBlank(s_text, s_index);
-				e_index = _this._getEndNoBlank(e_text, e_index);
+				s_index = _getStartNoBlank(s_text, s_index);
+				e_index = _getEndNoBlank(e_text, e_index);
 
 				if (s_index < 0) {
 					s_index = 0;
 				}
 				if (e_index < 0) {
 					// e_index = 0;
-					e_index = _this._getEndNoBlank(s_text, s_text.length);
+					e_index = _getEndNoBlank(s_text, s_text.length);
 					e_node = s_node;
 				}
 				rng.setStart(s_node, s_index);
@@ -236,6 +287,80 @@
 			return a;
 		},
 
+		// Nur wenn Tastate "Entf" aktiviert, Ueberpruefen, ob Cursor direkt vor oder nach Verse ist
+		_contentIsBlocked : function(ek) {
+			var ed = WCEObj.editor;
+
+			if (ek != 46)
+				return false;
+
+			var rng = ed.selection.getRng(true);
+			var startNode = rng.startContainer;
+			var startText = startNode.data ? startNode.data : startNode.innerText;
+			var nodeSibling;
+
+			if (ek == 8 && rng.startOffset == 0 && typeof (startText) != 'undefined') {
+				nodeSibling = startNode.previousSibling;
+			} else if (ek == 46 && ((typeof (startText) != 'undefined' && rng.startOffset >= startText.length) || (typeof (startText) == 'undefined' && typeof (startNode) != 'undefined'))) {
+				nodeSibling = startNode.nextSibling;
+			} else
+				return false;
+
+			if (nodeSibling) {
+				return WCEObj._isNodeVerseOrChapter(nodeSibling);
+			} else {
+				return WCEObj._nextSiblingIsBlocked(startNode);
+			}
+			return false;
+		},
+
+		// Node is Verse or Chapter?
+		_isNodeVerseOrChapter : function(n) {
+			if (n.nodeType == 3)
+				return false;
+
+			var wceAttr = n.getAttribute('wce');
+			if (!wceAttr) {
+				wceAttr = n.className;
+			}
+			if (wceAttr && (wceAttr == 'verse_number' || wceAttr == 'chapter_number')) {
+				return true;
+			}
+			return false;
+		},
+
+		// Ueberpruefen, ob ausgewaehlter Text verse nummer hat
+		_contentHasVerse : function() {
+			var ed = WCEObj.editor;
+			var sel = ed.selection;
+			var selContent = sel.getContent();
+			// Auswahl hat verse
+			if (selContent.match(/="verse_number"/) || selContent.match(/"chapter_number"/)) {
+				return true;
+			}
+
+			// Auswahl in verse
+			var selNode = sel.getNode();
+			if (selNode) {
+				return WCEObj._isNodeVerseOrChapter(selNode);
+			}
+			return false;
+		},
+
+		// TEST: //Nur wenn Tastate "Entf" aktiviert
+		_nextSiblingIsBlocked : function(_node) {
+			var _parentNode = _node.parentNode, _nextSibling;
+			if (_parentNode && !_parentNode.nodeName.match(/body/i)) {
+				_nextSibling = _parentNode.nextSibling;
+				if (_nextSibling) {
+					return WCEObj._isNodeVerseOrChapter(_nextSibling);
+				} else {
+					return WCEObj._nextSiblingIsBlocked(_parentNode);
+				}
+			}
+			return false;
+		},
+
 		_showWceInfo : function(ed, e) {
 
 			var info_box = ed.wceInfoBox;
@@ -255,7 +380,7 @@
 				var info_text = '';
 				var k, v, kv, kv_ar;
 				for ( var i = 0; i < info_arr.length; i++) {
-					ar = this._wceParamsToArray(info_arr[i]);
+					ar = WCEObj._wceParamsToArray(info_arr[i]);
 					var type_name = ar[ed.wceTypeParamInClass];
 					type_name = type_name.split('_');
 
@@ -491,7 +616,7 @@
 		_getWceMenuValStatus : function(_type, p) {
 			var ed = tinyMCE.activeEditor;
 			var _dirty = ed.isDirty();
-			if (ed.execCommand('wceContentHasVerse'))
+			if (WCEObj._contentHasVerse())
 				return true;
 
 			if (_dirty) {
@@ -546,7 +671,7 @@
 			var control = ed.controlManager.controls[ed.id + '_' + menuId];
 			var item;
 
-			if (ed.execCommand('wceContentHasVerse') == 1) {
+			if (WCEObj._contentHasVerse() == 1) {
 				control.setDisabled(true);
 				return;
 			}
@@ -652,13 +777,13 @@
 				return c;
 
 			case 'illegible':
-				var c = cm.createMenuButton('menu-illegable', {
+				var c = cm.createMenuButton('menu-illegible', {
 					title : 'Deficiency',
 					image : tinyMCE.baseURL + '/plugins/wce/img/button_D-new.png',
 					icons : false,
 					onclick : function() {
-						_setWceMenuStatus(tinyMCE.activeEditor, 'menu-illegable', /^__t=unclear/, _getWceMenuValStatus, 'uncleartext');
-						_setWceMenuStatus(tinyMCE.activeEditor, 'menu-illegable', /^__t=gap/, _getWceMenuValStatus, 'lacuna');
+						_setWceMenuStatus(tinyMCE.activeEditor, 'menu-illegible', /^__t=unclear/, _getWceMenuValStatus, 'uncleartext');
+						_setWceMenuStatus(tinyMCE.activeEditor, 'menu-illegible', /^__t=gap/, _getWceMenuValStatus, 'lacuna');
 					}
 				});
 
@@ -668,7 +793,7 @@
 					// Uncertain Letters
 					m.add({
 						title : 'Uncertain letters',
-						id : 'menu-illegable-uncleartext',
+						id : 'menu-illegible-uncleartext',
 						onclick : function() {
 							tinyMCE.activeEditor.execCommand('mceAddUnclearText');
 						}
@@ -676,14 +801,14 @@
 
 					sub = m.addMenu({
 						title : 'Uncertain Letters',
-						id : 'menu-illegable-uncleartext'
+						id : 'menu-illegible-uncleartext'
 					});
 
 					pattern = /^__t=unclear/;
 					b = _getWceMenuValStatus('add', pattern);
 					sub.add({
 						title : 'add',
-						id : 'menu-illegable-uncleartext-add',
+						id : 'menu-illegible-uncleartext-add',
 						onclick : function() {
 							tinyMCE.activeEditor.execCommand('mceAddUnclearText');
 						}
@@ -692,7 +817,7 @@
 					b = _getWceMenuValStatus('edit', pattern);
 					sub.add({
 						title : 'edit',
-						id : 'menu-illegable-uncleartext-edit',
+						id : 'menu-illegible-uncleartext-edit',
 						onclick : function() {
 							tinyMCE.activeEditor.execCommand('mceEditUnclearText');
 						}
@@ -701,7 +826,7 @@
 					b = _getWceMenuValStatus('delete', pattern);
 					sub.add({
 						title : 'delete',
-						id : 'menu-illegable-uncleartext-delete',
+						id : 'menu-illegible-uncleartext-delete',
 						onclick : function() {
 							tinyMCE.activeEditor.execCommand('wceDelNode');
 						}
@@ -711,13 +836,13 @@
 					pattern = /^__t=gap/;
 					sub = m.addMenu({
 						title : 'Gap',
-						id : 'menu-illegable-lacuna'
+						id : 'menu-illegible-lacuna'
 					});
 
 					b = _getWceMenuValStatus('add', pattern);
 					sub.add({
 						title : 'add',
-						id : 'menu-illegable-lacuna-add',
+						id : 'menu-illegible-lacuna-add',
 						onclick : function() {
 							tinyMCE.activeEditor.execCommand('mceAddGap');
 						}
@@ -726,7 +851,7 @@
 					b = _getWceMenuValStatus('edit', pattern);
 					sub.add({
 						title : 'edit',
-						id : 'menu-illegable-lacuna-edit',
+						id : 'menu-illegible-lacuna-edit',
 						onclick : function() {
 							tinyMCE.activeEditor.execCommand('mceEditGap');
 						}
@@ -735,7 +860,7 @@
 					b = _getWceMenuValStatus('delete', pattern);
 					sub.add({
 						title : 'delete',
-						id : 'menu-illegable-lacuna-delete',
+						id : 'menu-illegible-lacuna-delete',
 						onclick : function() {
 							tinyMCE.activeEditor.execCommand('wceDelNode');
 						}
@@ -743,7 +868,7 @@
 
 					m.add({ // Ghost page
 						title : 'Ghost page',
-						id : 'menu-illegable-ghostpage',
+						id : 'menu-illegible-ghostpage',
 						onclick : function() {
 							tinyMCE.activeEditor.execCommand('mceAddGhostPage');
 						}
@@ -1420,22 +1545,25 @@
 		 *            url Absolute URL to where the plugin is located.
 		 */
 		init : function(ed, url) {
-			var _this = this;
-			_this.editor = ed;
+			WCEObj.editor = ed;
 
-			var _wceAdd = _this._wceAdd;
-			var _wceAddNoDialog = _this._wceAddNoDialog;
+			var ttt = wceControls;
 
-			var _getStartNoBlank = _this._getStartNoBlank;
-			var _getNextEnd = _this._getNextEnd;
-			var _getEndNoBlank = _this._getEndNoBlank;
-			var _getTextNode = _this._getTextNode;
-			var _getWceMenuValStatus = _this._getWceMenuValStatus;
+			var _wceAdd = this._wceAdd;
+			var _wceAddNoDialog = this._wceAddNoDialog;
+			var _getStartNoBlank = this._getStartNoBlank;
+			var _getNextEnd = this._getNextEnd;
+			var _getEndNoBlank = this._getEndNoBlank;
+			var _getTextNode = this._getTextNode;
+			var _getWceMenuValStatus = this._getWceMenuValStatus;
+			var _setButtonStatus = this._setButtonStatus;
+			var _contentHasWceAttribut = this._contentHasWceAttribut;
 
-			// ed.onKeyPress.addToTop(_this._setWceControls);
-			ed.onMouseUp.addToTop(_this._setWceControls);
-			ed.onKeyPress.addToTop(_this._setWceControls);
-			ed.onKeyUp.addToTop(_this._setWceControls);
+			// setWceControls
+			ed.onNodeChange.add(function(ed, cm, n) {
+				_setButtonStatus(ed, cm, n);
+			});
+
 			ed.onKeyDown.addToTop(function(ed, e) {
 				if (!e) {
 					var e = window.event;
@@ -1469,6 +1597,114 @@
 						}
 					}
 				}
+
+				var delBlocked = false;
+				ed.wceKeydownBlock = false;
+
+				if (ek == 17 || (ek > 32 && ek < 41))
+					return;
+
+				// Add <pc> for some
+				// special
+				// characters
+				if (ek == 59 && !e.shiftKey) { // ; en
+					tinyMCE.activeEditor.execCommand('mceAdd_pc', ';');
+					e.preventDefault();
+					e.stopPropagation();
+				} else if (ek == 188 && e.shiftKey) { // ; dt
+					// < en
+					tinyMCE.activeEditor.execCommand('mceAdd_pc', ';');
+					e.preventDefault();
+					e.stopPropagation();
+				} else if (ek == 188 && !e.shiftKey) { // ,
+					tinyMCE.activeEditor.execCommand('mceAdd_pc', ',');
+					e.preventDefault();
+					e.stopPropagation();
+				} else if (ek == 190 && !e.shiftKey) { // .
+					tinyMCE.activeEditor.execCommand('mceAdd_pc', '.');
+					e.preventDefault();
+					e.stopPropagation();
+				} else if (ek == 191 && e.shiftKey) { // ? en
+					tinyMCE.activeEditor.execCommand('mceAdd_pc', '?');
+					e.preventDefault();
+					e.stopPropagation();
+				} else if (ek == 219 && e.shiftKey) { // ? dt
+					tinyMCE.activeEditor.execCommand('mceAdd_pc', '?');
+					e.preventDefault();
+					e.stopPropagation();
+				}
+
+				if (ek == 56 && e.shiftKey) // (
+				{
+
+				}
+
+				if (ek == 57 && e.shiftKey) // )
+				{
+					// Find corresponding ( and create substring
+					e.preventDefault();
+					e.stopPropagation();
+					// e.stopImmediatePropagation();
+					_wceAddNoDialog(ed, 'part_abbr', '');
+				}
+
+				// Tastate "Entf" deaktivieren if(ek==46) delBlocked=true;
+				if (_contentHasWceAttribut(ed, [ 'paratext', 'gap', 'note', 'spaces', 'brea' ])) {
+					delBlocked = true;
+				}
+
+				if (!delBlocked && WCEObj._contentHasVerse()) {
+					delBlocked = true;
+				}
+
+				// TEST: Nur wenn Tastate "Entf" aktiviert
+				if (!delBlocked && WCEObj._contentIsBlocked(ek)) {
+					delBlocked = true;
+				}
+
+				if (!delBlocked && ek == 46) {
+					if ((_contentHasWceAttribut(ed, [ 'brea' ]) && _getWceMenuValStatus('delete', '/^__t=brea/')) || (_contentHasWceAttribut(ed, [ 'paratext' ]) && _getWceMenuValStatus('delete', '/^__t=paratext/'))
+							|| (_contentHasWceAttribut(ed, [ 'gap' ]) && _getWceMenuValStatus('delete', '/^__t=gap/')) || (_contentHasWceAttribut(ed, [ 'note' ]) && _getWceMenuValStatus('delete', '/^__t=note/'))
+							|| (_contentHasWceAttribut(ed, [ 'spaces' ]) && _getWceMenuValStatus('delete', '/^__t=spaces/'))) {
+						tinyMCE.activeEditor.execCommand('wceDelNode');
+					}
+				}
+
+				// Browser ausser IE
+				if (!delBlocked && !$.browser.msie && ek == 8) {
+					var rng = ed.selection.getRng(true);
+					var startNode = rng.startContainer;
+					var startText = startNode.data ? startNode.data : startNode.innerText;
+
+					if (rng.startOffset == 0 && typeof (startText) != 'undefined') {
+						var nodeSibling = startNode.previousSibling;
+						if (nodeSibling) {
+							if (WCEObj._isNodeVerseOrChapter(nodeSibling)) {
+								delBlocked = true;
+							}
+						} else if (WCEObj._nextSiblingIsBlocked(startNode)) {
+							delBlocked = true;
+						}
+					}
+				}
+
+				if (delBlocked) {
+					ed.wceKeydownBlock = true;
+					// if(!ed.selection.isCollapsed())
+					if ($.browser.msie) {
+						// Entfernen-Key deaktivieren
+						if (ek == 46) {
+							e.keyCode = 32;
+						}
+						e.returnValue = false;
+					} else {
+						e.preventDefault();
+					}
+				} else if (window.event) {
+					e.returnValue = true;
+				}
+				return;
+
 				return;
 
 			});
@@ -1499,91 +1735,6 @@
 						'style' : ''
 					}, '<input type="checkbox" checked="checked"  id="' + id + '"> Adaptive selection</input>');
 				}
-			});
-
-			// TEST: //Nur wenn Tastate "Entf" aktiviert
-			// Ueberpruefen, ob Cursor
-			// direkt vor oder nach Verse ist
-			ed.addCommand("testVerseOrChapterBeforeDel", function(ek) {
-				if (ek != 46)
-					return 0;
-
-				/*
-				 * Löschen mit 'Entf' wird rng.startOffset in IE nicht richtig akutallisiert vorl?ufige L?sung mit Bookmark, nicht 100% funktioniert, /* if($.browser.msie){ var bm=ed.selection.getBookmark(); ed.selection.moveToBookmark(bm); }
-				 */
-				var rng = ed.selection.getRng(true);
-				var startNode = rng.startContainer;
-				var startText = startNode.data ? startNode.data : startNode.innerText;
-				var nodeSibling;
-
-				if (ek == 8 && rng.startOffset == 0 && typeof (startText) != 'undefined') {
-					nodeSibling = startNode.previousSibling;
-				} else if (ek == 46 && ((typeof (startText) != 'undefined' && rng.startOffset >= startText.length) || (typeof (startText) == 'undefined' && typeof (startNode) != 'undefined'))) {
-					nodeSibling = startNode.nextSibling;
-				} else
-					return 0;
-
-				if (typeof (nodeSibling) != 'undefined' && nodeSibling != null) {
-					return ed.execCommand('testNodeIsVerseOrChapter', nodeSibling);
-				} else {
-					return ed.execCommand('testNodeParentIsVerseOrChapter', startNode);
-				}
-				return 0;
-			});
-
-			// TEST: //Nur wenn Tastate "Entf" aktiviert
-			ed.addCommand('testNodeParentIsVerseOrChapter', function(_node) {
-				var _parentNode = _node.parentNode, _nextSibling;
-				if (typeof (_parentNode) != 'undefined' && !_parentNode.nodeName.match(/body/i)) {
-					_nextSibling = _parentNode.nextSibling;
-					if (typeof (_nextSibling) != 'undefined' && _nextSibling != null) {
-						return ed.execCommand('testNodeIsVerseOrChapter', _nextSibling);
-					} else {
-						return ed.execCommand('testNodeParentIsVerseOrChapter', _parentNode);
-					}
-				}
-				return 0;
-			});
-
-			// Ueberpruefen: ob Node Verse oder Chapter
-			ed.addCommand('testNodeIsVerseOrChapter', function(n) {
-				var wceAttr = n.getAttribute('wce');
-				if (wceAttr && (wceAttr == 'verse_number' || wceAttr == 'chapter_number')) {
-					return 1;
-				}
-				return 0;
-			});
-
-			// Ueberpruefen: ob ParentNode Verse oder
-			// Chapter
-			ed.addCommand('testParentIsVerseOrChapter', function(_node) {
-				var _parent = _node.parentNode;
-				var t = this;
-				if (typeof (_parentNode) != 'undefined' && !_parentNode.nodeName.match(/body/i)) {
-					return t(_parentNode);
-					// return
-					// ed.execCommand('testParentIsVerseOrChapter',_parentNode);
-				}
-				return ed.execCommand('testNodeIsVerseOrChapter', _node);
-			});
-
-			// Ueberpruefen, ob ausgewaehlter
-			// Text verse nummer hat
-			ed.addCommand("wceContentHasVerse", function() {
-				var _sel = ed.selection;
-
-				// Auswahl hat verse
-				if (_sel.getContent().match(/<span\s*wce=\"verse_number"\s*>/) || _sel.getContent().match(/<span\s*wce=\"chapter_number"\s*>/)) {
-					return 1;
-				}
-
-				// Auswahl in verse
-				var _selNode = _sel.getNode();
-				if (typeof (_selNode) != 'undefined' && _selNode != null) {
-					return ed.execCommand('testParentIsVerseOrChapter', _selNode);
-				}
-
-				return 0;
 			});
 
 			// TEI xmloutput
@@ -1617,147 +1768,18 @@
 				});
 
 				tinymce.dom.Event.add(ed.getDoc(), 'mousemove', function(e) {
-					_this._showWceInfo(ed, e);
+					WCEObj._showWceInfo(ed, e);
 				});
 
 				tinymce.dom.Event.add(ed.getDoc(), 'mouseup', function(e) {
 					if (!ed.selection.isCollapsed()) {
-						_this._adaptiveSelection();
+						WCEObj._adaptiveSelection(ed);
 					}
 				});
 				tinymce.dom.Event.add(ed.getDoc(), 'keyup', function(e) {
 					if (!ed.wceKeydownBlock) {
 						ed.isNotDirty = 0;
 					}
-				});
-
-				// versernumber schuetzen
-				// TODO: testen, ob Editor Focus hat
-				tinymce.dom.Event.add(ed.getDoc(), 'keydown', function(e) {
-					if (!e)
-						var e = window.event;
-					var ek = e.keyCode || e.charCode || 0;
-					var delBlock = false;
-					ed.wceKeydownBlock = false;
-
-					if (ek == 17 || (ek > 32 && ek < 41))
-						return;
-
-					// Add <pc> for some
-					// special
-					// characters
-					if (ek == 59 && !e.shiftKey) { // ; en
-						tinyMCE.activeEditor.execCommand('mceAdd_pc', ';');
-						e.preventDefault();
-						e.stopPropagation();
-					} else if (ek == 188 && e.shiftKey) { // ; dt
-						// < en
-						tinyMCE.activeEditor.execCommand('mceAdd_pc', ';');
-						e.preventDefault();
-						e.stopPropagation();
-					} else if (ek == 188 && !e.shiftKey) { // ,
-						tinyMCE.activeEditor.execCommand('mceAdd_pc', ',');
-						e.preventDefault();
-						e.stopPropagation();
-					} else if (ek == 190 && !e.shiftKey) { // .
-						tinyMCE.activeEditor.execCommand('mceAdd_pc', '.');
-						e.preventDefault();
-						e.stopPropagation();
-					} else if (ek == 191 && e.shiftKey) { // ? en
-						tinyMCE.activeEditor.execCommand('mceAdd_pc', '?');
-						e.preventDefault();
-						e.stopPropagation();
-					} else if (ek == 219 && e.shiftKey) { // ? dt
-						tinyMCE.activeEditor.execCommand('mceAdd_pc', '?');
-						e.preventDefault();
-						e.stopPropagation();
-					}
-
-					if (ek == 56 && e.shiftKey) // (
-					{
-
-					}
-
-					if (ek == 57 && e.shiftKey) // )
-					{
-						// Find
-						// corresponding
-						// ( and create
-						// substring
-						e.preventDefault();
-						e.stopPropagation();
-						// e.stopImmediatePropagation();
-						_wceAddNoDialog(ed, 'part_abbr', '');
-					}
-					// Tastate "Entf"
-					// deaktivieren
-					// if(ek==46)
-					// delBlock=true;
-
-					var delBlockArr = [ 'paratext', 'gap', 'note', 'spaces', 'brea' ];
-					if (_this._contentHasWceAttribut(ed, delBlockArr)) {
-						delBlock = true;
-					}
-
-					if (ek == 46) {
-						if ((_this._contentHasWceAttribut(ed, [ 'brea' ]) && _getWceMenuValStatus('delete', '/^__t=brea/')) || (_this._contentHasWceAttribut(ed, [ 'paratext' ]) && _getWceMenuValStatus('delete', '/^__t=paratext/'))
-								|| (_this._contentHasWceAttribut(ed, [ 'gap' ]) && _getWceMenuValStatus('delete', '/^__t=gap/')) || (_this._contentHasWceAttribut(ed, [ 'note' ]) && _getWceMenuValStatus('delete', '/^__t=note/'))
-								|| (_this._contentHasWceAttribut(ed, [ 'spaces' ]) && _getWceMenuValStatus('delete', '/^__t=spaces/'))) {
-							tinyMCE.activeEditor.execCommand('wceDelNode');
-						}
-					}
-
-					// Browser außer IE
-					if (!delBlock && !$.browser.msie && ek == 8) {
-						var rng = ed.selection.getRng(true);
-						var startNode = rng.startContainer;
-						var startText = startNode.data ? startNode.data : startNode.innerText;
-
-						if (rng.startOffset == 0 && typeof (startText) != 'undefined') {
-							var nodeSibling = startNode.previousSibling;
-							if (typeof (nodeSibling) != 'undefined' && nodeSibling != null) {
-								if (ed.execCommand('testNodeIsVerseOrChapter', nodeSibling)) {
-									delBlock = true;
-								}
-							} else if (ed.execCommand('testNodeParentIsVerseOrChapter', startNode)) {
-								delBlock = true;
-							}
-						}
-					}
-
-					// TEST: Nur wenn
-					// Tastate "Entf"
-					// aktiviert
-					if (!delBlock && ed.execCommand('testVerseOrChapterBeforeDel', ek) == 1) {
-						delBlock = true;
-					}
-
-					// TEST: Tastate
-					// "Entf" aktiviert
-					if (ed.execCommand('testVerseOrChapterBeforeDel', ek) == 1)
-						delBlock = true;
-
-					if (!delBlock && ed.execCommand('wceContentHasVerse') == 1) {
-						delBlock = true;
-					}
-
-					if (delBlock) {
-						ed.wceKeydownBlock = true;
-						// if(!ed.selection.isCollapsed())
-						if ($.browser.msie) {
-							// Entfernen-Key
-							// deaktivieren
-							if (ek == 46) {
-								e.keyCode = 32;
-							}
-							e.returnValue = false;
-						} else {
-							e.preventDefault();
-						}
-					} else if (window.event) {
-						e.returnValue = true;
-					}
-					return;
 				});
 			});
 
@@ -1814,7 +1836,7 @@
 
 			// Add corrections
 			ed.addCommand('mceAddCorrection', function() {
-				if (ed.execCommand('wceContentHasVerse'))
+				if (WCEObj._contentHasVerse())
 					return true;
 
 				var _add_new_wce_node = true;
@@ -2083,8 +2105,6 @@
 				ed.setContent(newcontent);
 			});
 		},
-		
-		
 
 		/**
 		 * Returns information about the plugin as a name/value array. The current keys are longname, author, authorurl, infourl and version.
@@ -2101,7 +2121,7 @@
 			};
 		}
 	};
-	tinymce.create('tinymce.plugins.wcePlugin', _wpl);
+	tinymce.create('tinymce.plugins.WCEObj', WCEObj);
 	// Register plugin
-	tinymce.PluginManager.add('wce', tinymce.plugins.wcePlugin);
+	tinymce.PluginManager.add('wce', tinymce.plugins.WCEObj);
 })();
