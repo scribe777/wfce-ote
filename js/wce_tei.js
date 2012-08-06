@@ -1,3 +1,8 @@
+// setTEIXml
+function setWceTei(inputString) {
+	// TODO
+}
+
 // getTEIXml
 function getWceTei(inputString, gBookIndex) {
 	if (!inputString || $.trim(inputString) == '')
