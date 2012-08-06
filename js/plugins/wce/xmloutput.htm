@@ -16,8 +16,13 @@
 	tinyMCEPopup.onInit.add(function(_ed){
 		var x=document.getElementById('xmlOutputSource');
 		x.style.height=document.getElementById('div0').offsetHeight+ "px";
-		var str=_ed.getContent();  
-		x.value=tinyMCE.execCommand('getTEIxml',str);
+		var str=_ed.getContent();
+		_ed.execCommand('getWceTei',[str,'_bookIndex_']);
+		var teiContent=_ed.TEI;
+		if(teiContent){
+			x.value=teiContent;
+		}
+		
 	});  
 </script>
 </html>

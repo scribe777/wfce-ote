@@ -3,8 +3,7 @@
  * 
  * Copyright 2009, Moxiecode Systems AB Released under LGPL License.
  * 
- * License: http://tinymce.moxiecode.com/license Contributing:
- * http://tinymce.moxiecode.com/contributing
+ * License: http://tinymce.moxiecode.com/license Contributing: http://tinymce.moxiecode.com/contributing
  */
 
 (function() {
@@ -34,9 +33,9 @@
 
 				// Auswahl in note
 				var node = se.getNode();
-				if (node ){
-					var wceAttr=node.getAttribute('wce');
-					if(wceAttr && wceAttr.match(p)) {
+				if (node) {
+					var wceAttr = node.getAttribute('wce');
+					if (wceAttr && wceAttr.match(p)) {
 						return 1;
 					}
 				}
@@ -64,12 +63,10 @@
 		},
 
 		_inClass : function(n, pattern) {
-			if (typeof n == 'undefined' || n == null
-					|| typeof n.nodeName == 'undefined' || n.nodeName == ''
-					|| n.nodeName.match(/body/i))
+			if (typeof n == 'undefined' || n == null || typeof n.nodeName == 'undefined' || n.nodeName == '' || n.nodeName.match(/body/i))
 				return false;
-				
-			if(n.nodeType==3){
+
+			if (n.nodeType == 3) {
 				return false;
 			}
 
@@ -117,10 +114,7 @@
 			}
 
 			/*
-			 * if( arguments[1]){ //isDoubleClick s_index =
-			 * _getStartNoBlank(s_text, s_index); e_index = _getNextEnd(s_text,
-			 * s_index); rng.setStart(s_node, s_index); rng.setEnd(s_node,
-			 * e_index); ed.selection.setRng(rng); return; }
+			 * if( arguments[1]){ //isDoubleClick s_index = _getStartNoBlank(s_text, s_index); e_index = _getNextEnd(s_text, s_index); rng.setStart(s_node, s_index); rng.setEnd(s_node, e_index); ed.selection.setRng(rng); return; }
 			 */
 
 			// testen, ob verse_number oder chapter_number
@@ -191,12 +185,10 @@
 			var n1 = s_node;
 			var n2 = e_node;
 			var p1, p2; // parent Node
-			for (p1 = s_node.parentNode; typeof p1 != 'undefined'
-					&& !n1.nodeName.match(/body/i) && p1 != null; p1 = p1.parentNode) {
+			for (p1 = s_node.parentNode; typeof p1 != 'undefined' && !n1.nodeName.match(/body/i) && p1 != null; p1 = p1.parentNode) {
 				if (p1 === p2)
 					break;
-				for (p2 = e_node.parentNode; typeof p2 != 'undefined'
-						&& !n2.nodeName.match(/body/i) && p2 != null; p2 = p2.parentNode) {
+				for (p2 = e_node.parentNode; typeof p2 != 'undefined' && !n2.nodeName.match(/body/i) && p2 != null; p2 = p2.parentNode) {
 					if (p1 === p2 || p2.nodeName.match(/body/i))
 						break;
 					n2 = p2;
@@ -252,15 +244,13 @@
 			var wceAttr = sele_node.getAttribute('wce');
 			var _dirty = ed.isDirty();
 
-			var type_to_show = ['note', 'corr']; // TODO
+			var type_to_show = [ 'note', 'corr' ]; // TODO
 
 			var info_arr;
-			if (wceAttr && wceAttr!='') {
+			if (wceAttr && wceAttr != '') {
 				info_arr = wceAttr.split('@');
 			}
-			if (info_arr != null
-					&& info_arr.length > 0
-					&& wceAttr.indexOf(ed.wceTypeParamInClass + '=') > -1) {
+			if (info_arr != null && info_arr.length > 0 && wceAttr.indexOf(ed.wceTypeParamInClass + '=') > -1) {
 				var ar;
 				var corr_str = '';
 				var info_text = '';
@@ -271,228 +261,198 @@
 					type_name = type_name.split('_');
 
 					switch (type_name[0]) {
-						case 'abbr' :
-							switch (ar['abbr_type']) {
-								case 'nomSac' :
-									info_text = 'Nomen Sacrum';
-									break;
-								case 'numeral' :
-									info_text = 'Numeral';
-									break;
-								case 'other' :
-									info_text = ar['abbr_type_other'];
-									break;
+					case 'abbr':
+						switch (ar['abbr_type']) {
+						case 'nomSac':
+							info_text = 'Nomen Sacrum';
+							break;
+						case 'numeral':
+							info_text = 'Numeral';
+							break;
+						case 'other':
+							info_text = ar['abbr_type_other'];
+							break;
+						}
+						break;
+					case 'brea':
+						switch (ar['break_type']) {
+						case 'lb':
+							info_text = '<div>Number: ' + ar['number'] + '</div>';
+							if (ar['lb_alignment'] != '') {
+								info_text += '<div>Alignment: ' + ar['lb_alignment'];
 							}
 							break;
-						case 'brea' :
-							switch (ar['break_type']) {
-								case 'lb' :
-									info_text = '<div>Number: ' + ar['number']
-											+ '</div>';
-									if (ar['lb_alignment'] != '') {
-										info_text += '<div>Alignment: '
-												+ ar['lb_alignment'];
-									}
-									break;
-								case 'pb' :
-									info_text = '<div>'
-											+ 'Page number (in sequence): '
-											+ ar['number'] + ar['pb_type']
-											+ ar['fibre_type'] + '</div>';
-									if (ar['page_number'] != '') {
-										info_text += '<div>'
-												+ 'Page number (as written): '
-												+ ar['page_number'] + '</div>';
-									}
-									if (ar['running_title'] != '') {
-										info_text += '<div>'
-												+ 'Running title: '
-												+ ar['running_title']
-												+ '</div>';
-									}
-									break;
-								default :
-									info_text = '<div>Number: ' + ar['number']
-											+ '</div>';
+						case 'pb':
+							info_text = '<div>' + 'Page number (in sequence): ' + ar['number'] + ar['pb_type'] + ar['fibre_type'] + '</div>';
+							if (ar['page_number'] != '') {
+								info_text += '<div>' + 'Page number (as written): ' + ar['page_number'] + '</div>';
+							}
+							if (ar['running_title'] != '') {
+								info_text += '<div>' + 'Running title: ' + ar['running_title'] + '</div>';
 							}
 							break;
-						case 'note' :
-							info_text = '<div>';
-							switch (ar['note_type']) {
-								case 'editorial' :
-									info_text += 'Editorial Note</div>';
-									break;
-								case 'transcriberquery' :
-									info_text += 'Transcriber query</div>';
-									break;
-								case 'canonRef' :
-									info_text += 'Canon reference</div>';
-									break;
-								case 'changeOfHand' :
-									info_text += 'Change of Hand</div>';
-									info_text += '<div>New hand: '
-											+ ar['newHand'] + '</div>';
-									break;
-								default : // other
-									info_text += ar['note_type_other']
-											+ '</div>';
-							}
-							info_text += '<div style="margin-top:10px">'
-									+ ar['note_text'] + '</div>';
+						default:
+							info_text = '<div>Number: ' + ar['number'] + '</div>';
+						}
+						break;
+					case 'note':
+						info_text = '<div>';
+						switch (ar['note_type']) {
+						case 'editorial':
+							info_text += 'Editorial Note</div>';
 							break;
-						case 'corr' :
-							corr_str += '<div style="margin-top:15px">';
-							switch (ar['reading']) {
-								case 'corr' :
-									corr_str += 'Correction';
-									break;
-								case 'comm' :
-									corr_str += 'Commentary reading';
-									break;
-								case 'alt' :
-									corr_str += 'Alternative reading';
-									break;
-							}
-							corr_str += '</div>';
-							corr_str += '<div style="margin-top:5px">'
-									+ ar[ed.wceNameParamInClass] + ': ';
-							if (ar['blank_correction'] == 'blank_correction')
-								corr_str += 'deleted' + '</div>';
-							else
-								corr_str += ar['corrector_text'] + '</div>';
-							if (ar['deletion'] != 'null') // information
-								// on
-								// deletion
-								corr_str += '<div style="margin-top:5px">'
-										+ 'Method of deletion: '
-										+ ar['deletion'] + '</div>';
+						case 'transcriberquery':
+							info_text += 'Transcriber query</div>';
 							break;
-						case 'paratext' :
-							info_text = '<div>' + 'Paratext type: ';
-							switch (ar['fw_type']) {
-								case 'commentary_text' :
-									info_text += 'Commentary text';
-									break;
-								case 'num_chapternumber' :
-									info_text += 'Chapter number';
-									break;
-								case 'fw_chaptertitle' :
-									info_text += 'Chapter title';
-									break;
-								case 'fw_colophon' :
-									info_text += 'Colophon';
-									break;
-								case 'fw_quiresig' :
-									info_text += 'Quire signature';
-									break;
-								case 'num_ammonian' :
-									info_text += 'Ammonian section';
-									break;
-								case 'num_eusebian' :
-									info_text += 'Eusebian canon';
-									break;
-								case 'fw_euthaliana' :
-									info_text += 'Euthaliana';
-									break;
-								case 'fw_gloss' :
-									info_text += 'Gloss';
-									break;
-								case 'fw_lecttitle' :
-									info_text += 'Lectionary title';
-									break;
-								case 'num_stichoi' :
-									info_text += 'Stichoi';
-									break;
-							}
-							info_text += '</div>';
-							info_text += '<div style="margin-top:10px">Value: '
-									+ ar['text'] + '</div>';
-							if (ar['paratext_position'] == 'other') {
-								info_text += '<div style="margin-top:10px">Position: '
-										+ ar['paratext_position_other']
-										+ '</div>';
+						case 'canonRef':
+							info_text += 'Canon reference</div>';
+							break;
+						case 'changeOfHand':
+							info_text += 'Change of Hand</div>';
+							info_text += '<div>New hand: ' + ar['newHand'] + '</div>';
+							break;
+						default: // other
+							info_text += ar['note_type_other'] + '</div>';
+						}
+						info_text += '<div style="margin-top:10px">' + ar['note_text'] + '</div>';
+						break;
+					case 'corr':
+						corr_str += '<div style="margin-top:15px">';
+						switch (ar['reading']) {
+						case 'corr':
+							corr_str += 'Correction';
+							break;
+						case 'comm':
+							corr_str += 'Commentary reading';
+							break;
+						case 'alt':
+							corr_str += 'Alternative reading';
+							break;
+						}
+						corr_str += '</div>';
+						corr_str += '<div style="margin-top:5px">' + ar[ed.wceNameParamInClass] + ': ';
+						if (ar['blank_correction'] == 'blank_correction')
+							corr_str += 'deleted' + '</div>';
+						else
+							corr_str += ar['corrector_text'] + '</div>';
+						if (ar['deletion'] != 'null') // information
+							// on
+							// deletion
+							corr_str += '<div style="margin-top:5px">' + 'Method of deletion: ' + ar['deletion'] + '</div>';
+						break;
+					case 'paratext':
+						info_text = '<div>' + 'Paratext type: ';
+						switch (ar['fw_type']) {
+						case 'commentary_text':
+							info_text += 'Commentary text';
+							break;
+						case 'num_chapternumber':
+							info_text += 'Chapter number';
+							break;
+						case 'fw_chaptertitle':
+							info_text += 'Chapter title';
+							break;
+						case 'fw_colophon':
+							info_text += 'Colophon';
+							break;
+						case 'fw_quiresig':
+							info_text += 'Quire signature';
+							break;
+						case 'num_ammonian':
+							info_text += 'Ammonian section';
+							break;
+						case 'num_eusebian':
+							info_text += 'Eusebian canon';
+							break;
+						case 'fw_euthaliana':
+							info_text += 'Euthaliana';
+							break;
+						case 'fw_gloss':
+							info_text += 'Gloss';
+							break;
+						case 'fw_lecttitle':
+							info_text += 'Lectionary title';
+							break;
+						case 'num_stichoi':
+							info_text += 'Stichoi';
+							break;
+						}
+						info_text += '</div>';
+						info_text += '<div style="margin-top:10px">Value: ' + ar['text'] + '</div>';
+						if (ar['paratext_position'] == 'other') {
+							info_text += '<div style="margin-top:10px">Position: ' + ar['paratext_position_other'] + '</div>';
+						} else {
+							info_text += '<div style="margin-top:10px">Position: ' + ar['paratext_position'] + '</div>';
+						}
+						info_text += '<div style="margin-top:10px">Alignment: ' + ar['paratext_alignment'] + '</div>';
+						break;
+					case 'gap':
+						if (ar['unit'] == '' && ar['gap_reason'] == '') {
+							info_text = 'No information about the reason and extension of the gap available';
+							break;
+						}
+						info_text = '<div>' + 'Reason: ';
+						if (ar['gap_reason'] == 'lacuna') {
+							info_text += 'Lacuna' + '</div>';
+						} else if (ar['gap_reason'] == 'illegible') {
+							info_text += 'Illegible text' + '</div>';
+						} else {
+							info_text += 'Absent text' + '</div>';
+						}
+						if (ar['extent'] != '') {
+							info_text += '<div>' + 'Extent: ' + ar['extent'] + ' ';
+							if (ar['unit'] == 'other') {
+								info_text += ar['unit_other'] + '</div>';
 							} else {
-								info_text += '<div style="margin-top:10px">Position: '
-										+ ar['paratext_position'] + '</div>';
+								info_text += ar['unit'] + '(s)</div>';
 							}
-							info_text += '<div style="margin-top:10px">Alignment: '
-									+ ar['paratext_alignment'] + '</div>';
-							break;
-						case 'gap' :
-							if (ar['unit'] == '' && ar['gap_reason'] == '') {
-								info_text = 'No information about the reason and extension of the gap available';
-								break;
-							}
-							info_text = '<div>' + 'Reason: ';
-							if (ar['gap_reason'] == 'lacuna') {
-								info_text += 'Lacuna' + '</div>';
-							} else if (ar['gap_reason'] == 'illegible') {
-								info_text += 'Illegible text' + '</div>';
+						}
+						if (ar['mark_as_supplied'] == 'supplied') {
+							info_text += '<div>' + 'Supplied source: ';
+							if (ar['supplied_source'] == 'other') {
+								info_text += ar['supplied_source_other'] + '</div>';
 							} else {
-								info_text += 'Absent text' + '</div>';
+								info_text += ar['supplied_source'] + '</div>';
 							}
-							if (ar['extent'] != '') {
-								info_text += '<div>' + 'Extent: '
-										+ ar['extent'] + ' ';
-								if (ar['unit'] == 'other') {
-									info_text += ar['unit_other'] + '</div>';
-								} else {
-									info_text += ar['unit'] + '(s)</div>';
-								}
-							}
-							if (ar['mark_as_supplied'] == 'supplied') {
-								info_text += '<div>' + 'Supplied source: ';
-								if (ar['supplied_source'] == 'other') {
-									info_text += ar['supplied_source_other']
-											+ '</div>';
-								} else {
-									info_text += ar['supplied_source']
-											+ '</div>';
-								}
-							}
-							break;
-						case 'unclear' :
-							info_text = '<div>' + 'Uncertain letters'
-									+ '</div>';
-							info_text += '<div>' + 'Reason: ';
-							if (ar['unclear_text_reason'] == 'other') {
-								info_text += ar['unclear_text_reason_other'];
-							} else {
-								info_text += ar['unclear_text_reason'];
-							}
-							info_text += '</div>';
-							break;
-						case 'spaces' :
-							info_text = '<div>' + 'Extent: ' + ar['sp_extent']
-									+ ' ';
-							if (ar['sp_unit'] == 'other') {
-								info_text += ar['sp_unit_other'] + '(s)'
-										+ '</div>';
-							} else {
-								info_text += ar['sp_unit'] + '(s)</div>';
-							}
-							break;
-						case 'formatting' : 
-							if (ar['capitals_height'] != null) { //output only if capitals
-								info_text = '<div>' + 'Height: '
-									+ ar['capitals_height'] + '</div>';
-							}
-							break;
-						default :
-							info_text = '';
-							break;
+						}
+						break;
+					case 'unclear':
+						info_text = '<div>' + 'Uncertain letters' + '</div>';
+						info_text += '<div>' + 'Reason: ';
+						if (ar['unclear_text_reason'] == 'other') {
+							info_text += ar['unclear_text_reason_other'];
+						} else {
+							info_text += ar['unclear_text_reason'];
+						}
+						info_text += '</div>';
+						break;
+					case 'spaces':
+						info_text = '<div>' + 'Extent: ' + ar['sp_extent'] + ' ';
+						if (ar['sp_unit'] == 'other') {
+							info_text += ar['sp_unit_other'] + '(s)' + '</div>';
+						} else {
+							info_text += ar['sp_unit'] + '(s)</div>';
+						}
+						break;
+					case 'formatting':
+						if (ar['capitals_height'] != null) { // output only if capitals
+							info_text = '<div>' + 'Height: ' + ar['capitals_height'] + '</div>';
+						}
+						break;
+					default:
+						info_text = '';
+						break;
 					}
 
 				}
 
 				if (corr_str != '') {
-					if ($(sele_node).html() == 'T')  //Blank first hand reading
+					if ($(sele_node).html() == 'T') // Blank first hand reading
 						corr_str = '*: ' + 'Omission' + corr_str;
 					else
 						corr_str = '*: ' + $(sele_node).html() + corr_str;
 					if (ar['editorial_note'] != '') {
-						corr_str += '<div style="margin-top:5px">Note: '
-								+ ar['editorial_note'] + '</div>';
+						corr_str += '<div style="margin-top:5px">Note: ' + ar['editorial_note'] + '</div>';
 					}
 				}
 
@@ -516,8 +476,7 @@
 						'top' : new_top,
 						'left' : new_left
 					});
-					info_box.innerHTML = '<div style="background-color: #eee; white-space:normal; padding:10px;border: 1px solid #ff0000">'
-							+ info_text + '</div>';
+					info_box.innerHTML = '<div style="background-color: #eee; white-space:normal; padding:10px;border: 1px solid #ff0000">' + info_text + '</div>';
 					$(info_box).show();
 				}
 			} else {
@@ -528,8 +487,8 @@
 				ed.isNotDirty = 0;
 			else
 				ed.isNotDirty = 1;
-		}, 
-		
+		},
+
 		_getWceMenuValStatus : function(_type, p) {
 			var ed = tinyMCE.activeEditor;
 			var _dirty = ed.isDirty();
@@ -551,30 +510,30 @@
 
 			if (wceAttr) {
 				switch (_type) {
-					case 'add' :
-						if (p == '/^_t=paratext/' && !col) {
-							return true;
-						}
+				case 'add':
+					if (p == '/^_t=paratext/' && !col) {
+						return true;
+					}
 
-						if (wceAttr.match(/_t=/))
-							return true;
-						else
-							return false;
-						break;
+					if (wceAttr.match(/_t=/))
+						return true;
+					else
+						return false;
+					break;
 
-					case 'edit' :
-						if (wceAttr.match(p))
-							return false;
-						else
-							return true;
-						break;
+				case 'edit':
+					if (wceAttr.match(p))
+						return false;
+					else
+						return true;
+					break;
 
-					case 'delete' :
-						if (wceAttr.match(p))
-							return false;
-						else
-							return true;
-						break;
+				case 'delete':
+					if (wceAttr.match(p))
+						return false;
+					else
+						return true;
+					break;
 				}
 
 			} else if (_type == 'edit' || _type == 'delete') {
@@ -601,8 +560,7 @@
 				if (typeof unterMenuId == 'undefined' || unterMenuId == null) {
 					item = control.menu.items[menuId + '-add'];
 				} else {
-					item = control.menu.items[menuId + '-' + unterMenuId].items[menuId
-							+ '-' + unterMenuId + '-add'];
+					item = control.menu.items[menuId + '-' + unterMenuId].items[menuId + '-' + unterMenuId + '-add'];
 				}
 
 				if (f('add', pattern)) {
@@ -613,8 +571,7 @@
 				if (typeof unterMenuId == 'undefined' || unterMenuId == null) {
 					item = control.menu.items[menuId + '-edit'];
 				} else {
-					item = control.menu.items[menuId + '-' + unterMenuId].items[menuId
-							+ '-' + unterMenuId + '-edit'];
+					item = control.menu.items[menuId + '-' + unterMenuId].items[menuId + '-' + unterMenuId + '-edit'];
 				}
 				if (f('edit', pattern)) {
 					item.setDisabled(true);
@@ -624,8 +581,7 @@
 				if (typeof unterMenuId == 'undefined' || unterMenuId == null) {
 					item = control.menu.items[menuId + '-delete'];
 				} else {
-					item = control.menu.items[menuId + '-' + unterMenuId].items[menuId
-							+ '-' + unterMenuId + '-delete'];
+					item = control.menu.items[menuId + '-' + unterMenuId].items[menuId + '-' + unterMenuId + '-delete'];
 				}
 				if (f('delete', pattern)) {
 					item.setDisabled(true);
@@ -638,674 +594,570 @@
 			var _getWceMenuValStatus = this._getWceMenuValStatus;
 			var _setWceMenuStatus = this._setWceMenuStatus;
 			switch (n) {
-				/*
-				 * case 'metadata': var c = cm.createButton('menu-metadata', {
-				 * title : 'Metadata', image :
-				 * tinyMCE.baseURL+'/plugins/wce/img/button_meta.gif', onclick :
-				 * function() {
-				 * tinyMCE.activeEditor.execCommand('mceAddMetadata'); } });
-				 * return c;
-				 */
-				case 'breaks' :
-					var c = cm.createMenuButton('menu-break', {
-						title : 'Breaks',
-						image : tinyMCE.baseURL
-								+ '/plugins/wce/img/button_B-new.png',
-						icons : false,
+			/*
+			 * case 'metadata': var c = cm.createButton('menu-metadata', { title : 'Metadata', image : tinyMCE.baseURL+'/plugins/wce/img/button_meta.gif', onclick : function() { tinyMCE.activeEditor.execCommand('mceAddMetadata'); } }); return c;
+			 */
+			case 'breaks':
+				var c = cm.createMenuButton('menu-break', {
+					title : 'Breaks',
+					image : tinyMCE.baseURL + '/plugins/wce/img/button_B-new.png',
+					icons : false,
+					onclick : function() {
+						_setWceMenuStatus(tinyMCE.activeEditor, 'menu-break', /^__t=brea/, _getWceMenuValStatus);
+					}
+				});
+
+				c.onRenderMenu.add(function(c, m) {
+					var pattern = /^__t=brea/;
+					var b = _getWceMenuValStatus('add', pattern);
+
+					m.add({
+						title : 'add',
+						id : 'menu-break-add',
 						onclick : function() {
-							_setWceMenuStatus(tinyMCE.activeEditor,
-									'menu-break', /^__t=brea/,
-									_getWceMenuValStatus);
+							tinyMCE.activeEditor.execCommand('mceAddBreak');
+						}
+					}).setDisabled(b);
+
+					b = _getWceMenuValStatus('edit', pattern);
+					m.add({
+						title : 'edit',
+						id : 'menu-break-edit',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceEditBreak');
+						}
+					}).setDisabled(b);
+
+					b = _getWceMenuValStatus('delete', pattern);
+					m.add({
+						title : 'delete',
+						id : 'menu-break-delete',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('wceDelNode');
+						}
+					}).setDisabled(b);
+				});
+
+				return c;
+
+			case 'correction':
+				var c = cm.createButton('menu-correction', {
+					title : 'Corrections',
+					image : tinyMCE.baseURL + '/plugins/wce/img/button_C-new.png',
+					icons : false,
+					onclick : function() {
+						tinyMCE.activeEditor.execCommand('mceAddCorrection');
+					}
+				});
+
+				return c;
+
+			case 'illegible':
+				var c = cm.createMenuButton('menu-illegable', {
+					title : 'Deficiency',
+					image : tinyMCE.baseURL + '/plugins/wce/img/button_D-new.png',
+					icons : false,
+					onclick : function() {
+						_setWceMenuStatus(tinyMCE.activeEditor, 'menu-illegable', /^__t=unclear/, _getWceMenuValStatus, 'uncleartext');
+						_setWceMenuStatus(tinyMCE.activeEditor, 'menu-illegable', /^__t=gap/, _getWceMenuValStatus, 'lacuna');
+					}
+				});
+
+				c.onRenderMenu.add(function(c, m) {
+					var sub, pattern, b;
+
+					// Uncertain Letters
+					m.add({
+						title : 'Uncertain letters',
+						id : 'menu-illegable-uncleartext',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAddUnclearText');
 						}
 					});
 
-					c.onRenderMenu.add(function(c, m) {
-						var pattern = /^__t=brea/;
-						var b = _getWceMenuValStatus('add', pattern);
-
-						m.add(
-								{
-									title : 'add',
-									id : 'menu-break-add',
-									onclick : function() {
-										tinyMCE.activeEditor
-												.execCommand('mceAddBreak');
-									}
-								}).setDisabled(b);
-
-						b = _getWceMenuValStatus('edit', pattern);
-						m.add(
-								{
-									title : 'edit',
-									id : 'menu-break-edit',
-									onclick : function() {
-										tinyMCE.activeEditor
-												.execCommand('mceEditBreak');
-									}
-								}).setDisabled(b);
-
-						b = _getWceMenuValStatus('delete', pattern);
-						m.add({
-							title : 'delete',
-							id : 'menu-break-delete',
-							onclick : function() {
-								tinyMCE.activeEditor.execCommand('wceDelNode');
-							}
-						}).setDisabled(b);
+					sub = m.addMenu({
+						title : 'Uncertain Letters',
+						id : 'menu-illegable-uncleartext'
 					});
 
-					return c;
-
-				case 'correction' :
-					var c = cm.createButton('menu-correction', {
-						title : 'Corrections',
-						image : tinyMCE.baseURL
-								+ '/plugins/wce/img/button_C-new.png',
-						icons : false,
+					pattern = /^__t=unclear/;
+					b = _getWceMenuValStatus('add', pattern);
+					sub.add({
+						title : 'add',
+						id : 'menu-illegable-uncleartext-add',
 						onclick : function() {
-							tinyMCE.activeEditor
-									.execCommand('mceAddCorrection');
+							tinyMCE.activeEditor.execCommand('mceAddUnclearText');
+						}
+					}).setDisabled(b);
+
+					b = _getWceMenuValStatus('edit', pattern);
+					sub.add({
+						title : 'edit',
+						id : 'menu-illegable-uncleartext-edit',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceEditUnclearText');
+						}
+					}).setDisabled(b);
+
+					b = _getWceMenuValStatus('delete', pattern);
+					sub.add({
+						title : 'delete',
+						id : 'menu-illegable-uncleartext-delete',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('wceDelNode');
+						}
+					}).setDisabled(b);
+
+					// gap/supplied
+					pattern = /^__t=gap/;
+					sub = m.addMenu({
+						title : 'Gap',
+						id : 'menu-illegable-lacuna'
+					});
+
+					b = _getWceMenuValStatus('add', pattern);
+					sub.add({
+						title : 'add',
+						id : 'menu-illegable-lacuna-add',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAddGap');
+						}
+					}).setDisabled(b);
+
+					b = _getWceMenuValStatus('edit', pattern);
+					sub.add({
+						title : 'edit',
+						id : 'menu-illegable-lacuna-edit',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceEditGap');
+						}
+					}).setDisabled(b);
+
+					b = _getWceMenuValStatus('delete', pattern);
+					sub.add({
+						title : 'delete',
+						id : 'menu-illegable-lacuna-delete',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('wceDelNode');
+						}
+					}).setDisabled(b);
+
+					m.add({ // Ghost page
+						title : 'Ghost page',
+						id : 'menu-illegable-ghostpage',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAddGhostPage');
+						}
+					});
+				});
+
+				// Return the new menu button instance
+				return c;
+
+			case 'decoration':
+				var c = cm.createMenuButton('menu-decoration', {
+					title : 'Ornamentation',
+					image : tinyMCE.baseURL + '/plugins/wce/img/button_O-new.png',
+					icons : false,
+					onclick : function() {
+						_setWceMenuStatus(tinyMCE.activeEditor, 'menu-decoration');
+						_setWceMenuStatus(tinyMCE.activeEditor, 'menu-decoration', /^__t=spaces/, _getWceMenuValStatus, 'blankspaces');
+					}
+				});
+
+				c.onRenderMenu.add(function(c, m) {
+					var sub;
+
+					sub = m.addMenu({
+						title : 'Highlight Text',
+						id : 'menu-decoration-highlight',
+						image : tinyMCE.baseURL + '/plugins/wce/img/button_O-new.png',
+						onclick : function() {
+							_setWceMenuStatus(tinyMCE.activeEditor, 'menu-decoration-highlight');
+							_setWceMenuStatus(tinyMCE.activeEditor, 'menu-decoration-highlight', /^__t=formatting_capitals/, _getWceMenuValStatus, 'capitals');
 						}
 					});
 
-					return c;
-
-				case 'illegible' :
-					var c = cm.createMenuButton('menu-illegable', {
-						title : 'Deficiency',
-						image : tinyMCE.baseURL
-								+ '/plugins/wce/img/button_D-new.png',
-						icons : false,
+					sub.add({
+						title : 'Rubrication',
 						onclick : function() {
-							_setWceMenuStatus(tinyMCE.activeEditor,
-									'menu-illegable', /^__t=unclear/,
-									_getWceMenuValStatus, 'uncleartext');
-							_setWceMenuStatus(tinyMCE.activeEditor,
-									'menu-illegable', /^__t=gap/,
-									_getWceMenuValStatus, 'lacuna');
+							tinyMCE.activeEditor.execCommand('mceAdd_formatting', 'rubrication');
 						}
 					});
 
-					c.onRenderMenu
-							.add(function(c, m) {
-								var sub, pattern, b;
-
-								// Uncertain Letters
-								m.add({
-											title : 'Uncertain letters',
-											id : 'menu-illegable-uncleartext',
-											onclick : function() {
-												tinyMCE.activeEditor
-														.execCommand('mceAddUnclearText');
-											}
-										});
-
-								sub = m.addMenu({
-									title : 'Uncertain Letters',
-									id : 'menu-illegable-uncleartext'
-								});
-
-								pattern = /^__t=unclear/;
-								b = _getWceMenuValStatus('add', pattern);
-								sub.add({
-										title : 'add',
-										id : 'menu-illegable-uncleartext-add',
-										onclick : function() {
-											tinyMCE.activeEditor.execCommand('mceAddUnclearText');
-										}
-									}).setDisabled(b);
-
-								b = _getWceMenuValStatus('edit', pattern);
-								sub.add({
-										title : 'edit',
-										id : 'menu-illegable-uncleartext-edit',
-										onclick : function() {
-											tinyMCE.activeEditor.execCommand('mceEditUnclearText');
-										}
-									}).setDisabled(b);
-
-								b = _getWceMenuValStatus('delete', pattern);
-								sub.add({
-										title : 'delete',
-										id : 'menu-illegable-uncleartext-delete',
-										onclick : function() {
-											tinyMCE.activeEditor.execCommand('wceDelNode');
-										}
-									}).setDisabled(b);
-
-								// gap/supplied
-								pattern = /^__t=gap/;
-								sub = m.addMenu({
-									title : 'Gap',
-									id : 'menu-illegable-lacuna'
-								});
-
-								b = _getWceMenuValStatus('add', pattern);
-								sub.add({
-										title : 'add',
-										id : 'menu-illegable-lacuna-add',
-										onclick : function() {
-											tinyMCE.activeEditor.execCommand('mceAddGap');
-										}
-									}).setDisabled(b);
-
-								b = _getWceMenuValStatus('edit', pattern);
-								sub.add({
-										title : 'edit',
-										id : 'menu-illegable-lacuna-edit',
-										onclick : function() {
-											tinyMCE.activeEditor.execCommand('mceEditGap');
-										}
-									}).setDisabled(b);
-
-								b = _getWceMenuValStatus('delete', pattern);
-								sub.add({
-										title : 'delete',
-										id : 'menu-illegable-lacuna-delete',
-										onclick : function() {
-											tinyMCE.activeEditor.execCommand('wceDelNode');
-										}
-									}).setDisabled(b);
-
-								m.add({ // Ghost page
-										title : 'Ghost page',
-										id : 'menu-illegable-ghostpage',
-										onclick : function() {
-											tinyMCE.activeEditor.execCommand('mceAddGhostPage');
-										}
-									});
-							});
-
-					// Return the new menu button instance
-					return c;
-
-				case 'decoration' :
-					var c = cm.createMenuButton('menu-decoration', {
-						title : 'Ornamentation',
-						image : tinyMCE.baseURL
-								+ '/plugins/wce/img/button_O-new.png',
-						icons : false,
+					sub.add({
+						title : 'Gold',
 						onclick : function() {
-							_setWceMenuStatus(tinyMCE.activeEditor,
-									'menu-decoration');
-							_setWceMenuStatus(tinyMCE.activeEditor,
-									'menu-decoration', /^__t=spaces/,
-									_getWceMenuValStatus, 'blankspaces');
+							tinyMCE.activeEditor.execCommand('mceAdd_formatting', 'gold');
 						}
 					});
 
-					c.onRenderMenu
-							.add(function(c, m) {
-								var sub;
+					sub2 = sub.addMenu({
+						title : 'Other colour'
+					});
 
-								sub = m
-										.addMenu({
-											title : 'Highlight Text',
-											id : 'menu-decoration-highlight',
-											image : tinyMCE.baseURL
-													+ '/plugins/wce/img/button_O-new.png',
-											onclick : function() {
-												_setWceMenuStatus(
-														tinyMCE.activeEditor,
-														'menu-decoration-highlight');
-												_setWceMenuStatus(
-														tinyMCE.activeEditor,
-														'menu-decoration-highlight',
-														/^__t=formatting_capitals/,
-														_getWceMenuValStatus,
-														'capitals');
-											}
-										});
-
-								sub.add({
-									title : 'Rubrication',
-									onclick : function() {
-										tinyMCE.activeEditor.execCommand(
-												'mceAdd_formatting',
-												'rubrication');
-									}
-								});
-
-								sub.add({
-									title : 'Gold',
-									onclick : function() {
-										tinyMCE.activeEditor.execCommand(
-												'mceAdd_formatting', 'gold');
-									}
-								});
-
-								sub2 = sub.addMenu({
-									title : 'Other colour'
-								});
-
-								sub2.add({
-									title : 'Blue',
-									onclick : function() {
-										tinyMCE.activeEditor.execCommand(
-												'mceAdd_formatting', 'blue');
-									}
-								});
-
-								sub2.add({
-									title : 'Green',
-									onclick : function() {
-										tinyMCE.activeEditor.execCommand(
-												'mceAdd_formatting', 'green');
-									}
-								});
-
-								sub2.add({
-									title : 'Yellow',
-									onclick : function() {
-										tinyMCE.activeEditor.execCommand(
-												'mceAdd_formatting', 'yellow');
-									}
-								});
-
-								sub2.add({
-									title : 'Other',
-									onclick : function() {
-										tinyMCE.activeEditor.execCommand(
-												'mceAdd_formatting', 'other');
-									}
-								});
-
-								sub.add({
-									title : 'Overline',
-									onclick : function() {
-										tinyMCE.activeEditor
-												.execCommand(
-														'mceAdd_formatting',
-														'overline');
-									}
-								});
-
-								sub2 = sub.addMenu({
-									title : 'Capitals',
-									id : 'menu-decoration-highlight-capitals',
-									onclick : function() {
-
-									}
-								});
-
-								var pattern = /^__t=formatting_capitals/;
-								var b = _getWceMenuValStatus('add', pattern);
-								sub2
-										.add(
-												{
-													title : 'add',
-													id : 'menu-decoration-highlight-capitals-add',
-													icons : false,
-													onclick : function() {
-														tinyMCE.activeEditor
-																.execCommand('mceAddCapitals');
-													}
-												}).setDisabled(b);
-
-								b = _getWceMenuValStatus('edit', pattern);
-								sub2
-										.add(
-												{
-													title : 'edit',
-													id : 'menu-decoration-highlight-capitals-edit',
-													onclick : function() {
-														tinyMCE.activeEditor
-																.execCommand('mceEditCapitals');
-													}
-												}).setDisabled(b);
-
-								b = _getWceMenuValStatus('delete', pattern);
-								sub2
-										.add(
-												{
-													title : 'delete',
-													id : 'menu-decoration-highlight-capitals-delete',
-													onclick : function() {
-														tinyMCE.activeEditor
-																.execCommand('wceDelNode');
-													}
-												}).setDisabled(b);
-
-								sub = m.addMenu({
-									title : 'Insert special characters'
-								});
-
-								sub.add({
-									title : '\u203B	(cross with dots)',
-									onclick : function() {
-										tinyMCE.activeEditor.execCommand(
-												'mceAdd_pc', '\u203B');
-									}
-								});
-
-								sub.add({
-									title : '&gt;	(diple)',
-									onclick : function() {
-										tinyMCE.activeEditor.execCommand(
-												'mceAdd_pc', '&gt;');
-									}
-								});
-
-								sub.add({
-									title : '\u2020	(obelus)',
-									onclick : function() {
-										tinyMCE.activeEditor.execCommand(
-												'mceAdd_pc', '\u2020');
-									}
-								});
-
-								sub.add({
-									title : '\u00B6	(paragraphus)',
-									onclick : function() {
-										tinyMCE.activeEditor.execCommand(
-												'mceAdd_pc', '\u00B6');
-									}
-								});
-
-								sub.add({
-									title : '\u03A1\u0336	(staurogram)',
-									onclick : function() {
-										tinyMCE.activeEditor.execCommand(
-												'mceAdd_pc', '\u03A1\u0336');
-									}
-								});
-
-								sub = m.addMenu({
-									title : 'Add punctuation'
-								});
-
-								sub.add({
-									title : ': (colon)',
-									onclick : function() {
-										tinyMCE.activeEditor.execCommand(
-												'mceAdd_pc', ':');
-									}
-								});
-
-								sub.add({
-									title : ', (comma)',
-									onclick : function() {
-										tinyMCE.activeEditor.execCommand(
-												'mceAdd_pc', ',');
-									}
-								});
-
-								sub.add({
-									title : '. (full stop)',
-									onclick : function() {
-										tinyMCE.activeEditor.execCommand(
-												'mceAdd_pc', '.');
-									}
-								});
-
-								sub.add({ // alternatively
-									// \u00B7
-									title : '\u0387 (Greek Ano Teleia)',
-									onclick : function() {
-										tinyMCE.activeEditor.execCommand(
-												'mceAdd_pc', '\u0387');
-									}
-								});
-
-								sub.add({ // alternatively
-									// \u003B
-									title : '\u037E (Greek question mark)',
-									onclick : function() {
-										tinyMCE.activeEditor.execCommand(
-												'mceAdd_pc', '\u037E');
-									}
-								});
-
-								sub.add({
-									title : '\u02D9 (high dot)',
-									onclick : function() {
-										tinyMCE.activeEditor.execCommand(
-												'mceAdd_pc', '\u02D9');
-									}
-								});
-
-								sub.add({
-									title : '\u0387 (middle dot)',
-									onclick : function() {
-										tinyMCE.activeEditor.execCommand(
-												'mceAdd_pc', '\u0387');
-									}
-								});
-
-								sub
-										.add({
-											title : '\u02BC (modifier letter apostophe)',
-											onclick : function() {
-												tinyMCE.activeEditor
-														.execCommand(
-																'mceAdd_pc',
-																'\u02BC');
-											}
-										});
-
-								sub.add({
-									title : '? (question mark)',
-									onclick : function() {
-										tinyMCE.activeEditor.execCommand(
-												'mceAdd_pc', '?');
-									}
-								});
-
-								sub.add({
-									title : '; (semicolon)',
-									onclick : function() {
-										tinyMCE.activeEditor.execCommand(
-												'mceAdd_pc', '&semicolon;');
-									}
-								});
-
-								sub = m.addMenu({
-									title : 'Blank spaces',
-									id : 'menu-decoration-blankspaces',
-									onclick : function() {
-
-									}
-								});
-
-								var pattern = /^__t=spaces/;
-								var b = _getWceMenuValStatus('add', pattern);
-								sub
-										.add(
-												{
-													title : 'add',
-													id : 'menu-decoration-blankspaces-add',
-													icons : false,
-													onclick : function() {
-														tinyMCE.activeEditor
-																.execCommand('mceAddSpaces');
-													}
-												}).setDisabled(b);
-
-								b = _getWceMenuValStatus('edit', pattern);
-								sub
-										.add(
-												{
-													title : 'edit',
-													id : 'menu-decoration-blankspaces-edit',
-													onclick : function() {
-														tinyMCE.activeEditor
-																.execCommand('mceEditSpaces');
-													}
-												}).setDisabled(b);
-
-								b = _getWceMenuValStatus('delete', pattern);
-								sub
-										.add(
-												{
-													title : 'delete',
-													id : 'menu-decoration-blankspaces-delete',
-													onclick : function() {
-														tinyMCE.activeEditor
-																.execCommand('wceDelNode');
-													}
-												}).setDisabled(b);
-
-							});
-
-					// Return the new menu button instance
-					return c;
-
-				case 'abbreviation' :
-					var c = cm.createMenuButton('menu-abbreviation', {
-						title : 'Abbreviated text',
-						image : tinyMCE.baseURL
-								+ '/plugins/wce/img/button_A-new.png',
-						icons : false,
+					sub2.add({
+						title : 'Blue',
 						onclick : function() {
-							_setWceMenuStatus(tinyMCE.activeEditor,
-									'menu-abbreviation', /^__t=abbr/,
-									_getWceMenuValStatus);
-							// _setWceMenuStatus(tinyMCE.activeEditor,
-							// 'menu-abbreviation',
-							// /^__t=spaces/,
-							// _getWceMenuValStatus,
-							// 'blankspaces');
+							tinyMCE.activeEditor.execCommand('mceAdd_formatting', 'blue');
 						}
 					});
 
-					c.onRenderMenu.add(function(c, m) {
-						var pattern = /^__t=abbr/;
-						var b = _getWceMenuValStatus('add', pattern);
-
-						m.add({
-							title : 'add',
-							id : 'menu-abbreviation-add',
-							onclick : function() {
-								tinyMCE.activeEditor.execCommand('mceAddAbbr');
-							}
-						}).setDisabled(b);
-
-						b = _getWceMenuValStatus('edit', pattern);
-						m.add(
-								{
-									title : 'edit',
-									id : 'menu-abbreviation-edit',
-									onclick : function() {
-										tinyMCE.activeEditor
-												.execCommand('mceEditAbbr');
-									}
-								}).setDisabled(b);
-
-						b = _getWceMenuValStatus('delete', pattern);
-						m.add({
-							title : 'delete',
-							id : 'menu-abbreviation-delete',
-							onclick : function() {
-								tinyMCE.activeEditor.execCommand('wceDelNode');
-							}
-						}).setDisabled(b);
-					});
-
-					return c;
-
-				case 'paratext' :
-					var c = cm.createMenuButton('menu-paratext', {
-						title : 'Paratext',
-						image : tinyMCE.baseURL
-								+ '/plugins/wce/img/button_P-new.png',
-						icons : false,
+					sub2.add({
+						title : 'Green',
 						onclick : function() {
-							_setWceMenuStatus(tinyMCE.activeEditor,
-									'menu-paratext', /^__t=paratext/,
-									_getWceMenuValStatus);
+							tinyMCE.activeEditor.execCommand('mceAdd_formatting', 'green');
 						}
 					});
 
-					c.onRenderMenu
-							.add(function(c, m) {
-								var pattern = /^__t=paratext/;
-								var b = _getWceMenuValStatus('add', pattern);
-
-								m
-										.add(
-												{
-													title : 'add',
-													id : 'menu-paratext-add',
-													onclick : function() {
-														tinyMCE.activeEditor
-																.execCommand('mceAddParatext');
-													}
-												}).setDisabled(b);
-
-								b = _getWceMenuValStatus('edit', pattern);
-								m
-										.add(
-												{
-													title : 'edit',
-													id : 'menu-paratext-edit',
-													onclick : function() {
-														tinyMCE.activeEditor
-																.execCommand('mceEditParatext');
-													}
-												}).setDisabled(b);
-
-								b = _getWceMenuValStatus('delete', pattern);
-								m
-										.add(
-												{
-													title : 'delete',
-													id : 'menu-paratext-delete',
-													onclick : function() {
-														tinyMCE.activeEditor
-																.execCommand('wceDelNode');
-													}
-												}).setDisabled(b);
-							});
-
-					return c;
-
-				case 'note' :
-					var c = cm.createMenuButton('menu-note', {
-						title : 'Note',
-						image : tinyMCE.baseURL
-								+ '/plugins/wce/img/button_N-new.png',
-						icons : false,
+					sub2.add({
+						title : 'Yellow',
 						onclick : function() {
-							_setWceMenuStatus(tinyMCE.activeEditor,
-									'menu-note', /^__t=note/,
-									_getWceMenuValStatus);
+							tinyMCE.activeEditor.execCommand('mceAdd_formatting', 'yellow');
 						}
 					});
 
-					c.onRenderMenu.add(function(c, m) {
-						var pattern = /^__t=note/;
-						var b = _getWceMenuValStatus('add', pattern);
-
-						m.add({
-							title : 'add',
-							id : 'menu-note-add',
-							onclick : function() {
-								tinyMCE.activeEditor.execCommand('mceAddNote');
-							}
-						}).setDisabled(b);
-
-						b = _getWceMenuValStatus('edit', pattern);
-						m.add(
-								{
-									title : 'edit',
-									id : 'menu-note-edit',
-									onclick : function() {
-										tinyMCE.activeEditor
-												.execCommand('mceEditNote');
-									}
-								}).setDisabled(b);
-
-						b = _getWceMenuValStatus('delete', pattern);
-						m.add({
-							title : 'delete',
-							id : 'menu-note-delete',
-							onclick : function() {
-								tinyMCE.activeEditor.execCommand('wceDelNode');
-							}
-						}).setDisabled(b);
+					sub2.add({
+						title : 'Other',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_formatting', 'other');
+						}
 					});
 
-					return c;
+					sub.add({
+						title : 'Overline',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_formatting', 'overline');
+						}
+					});
+
+					sub2 = sub.addMenu({
+						title : 'Capitals',
+						id : 'menu-decoration-highlight-capitals',
+						onclick : function() {
+
+						}
+					});
+
+					var pattern = /^__t=formatting_capitals/;
+					var b = _getWceMenuValStatus('add', pattern);
+					sub2.add({
+						title : 'add',
+						id : 'menu-decoration-highlight-capitals-add',
+						icons : false,
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAddCapitals');
+						}
+					}).setDisabled(b);
+
+					b = _getWceMenuValStatus('edit', pattern);
+					sub2.add({
+						title : 'edit',
+						id : 'menu-decoration-highlight-capitals-edit',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceEditCapitals');
+						}
+					}).setDisabled(b);
+
+					b = _getWceMenuValStatus('delete', pattern);
+					sub2.add({
+						title : 'delete',
+						id : 'menu-decoration-highlight-capitals-delete',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('wceDelNode');
+						}
+					}).setDisabled(b);
+
+					sub = m.addMenu({
+						title : 'Insert special characters'
+					});
+
+					sub.add({
+						title : '\u203B	(cross with dots)',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_pc', '\u203B');
+						}
+					});
+
+					sub.add({
+						title : '&gt;	(diple)',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_pc', '&gt;');
+						}
+					});
+
+					sub.add({
+						title : '\u2020	(obelus)',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_pc', '\u2020');
+						}
+					});
+
+					sub.add({
+						title : '\u00B6	(paragraphus)',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_pc', '\u00B6');
+						}
+					});
+
+					sub.add({
+						title : '\u03A1\u0336	(staurogram)',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_pc', '\u03A1\u0336');
+						}
+					});
+
+					sub = m.addMenu({
+						title : 'Add punctuation'
+					});
+
+					sub.add({
+						title : ': (colon)',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_pc', ':');
+						}
+					});
+
+					sub.add({
+						title : ', (comma)',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_pc', ',');
+						}
+					});
+
+					sub.add({
+						title : '. (full stop)',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_pc', '.');
+						}
+					});
+
+					sub.add({ // alternatively
+						// \u00B7
+						title : '\u0387 (Greek Ano Teleia)',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_pc', '\u0387');
+						}
+					});
+
+					sub.add({ // alternatively
+						// \u003B
+						title : '\u037E (Greek question mark)',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_pc', '\u037E');
+						}
+					});
+
+					sub.add({
+						title : '\u02D9 (high dot)',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_pc', '\u02D9');
+						}
+					});
+
+					sub.add({
+						title : '\u0387 (middle dot)',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_pc', '\u0387');
+						}
+					});
+
+					sub.add({
+						title : '\u02BC (modifier letter apostophe)',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_pc', '\u02BC');
+						}
+					});
+
+					sub.add({
+						title : '? (question mark)',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_pc', '?');
+						}
+					});
+
+					sub.add({
+						title : '; (semicolon)',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAdd_pc', '&semicolon;');
+						}
+					});
+
+					sub = m.addMenu({
+						title : 'Blank spaces',
+						id : 'menu-decoration-blankspaces',
+						onclick : function() {
+
+						}
+					});
+
+					var pattern = /^__t=spaces/;
+					var b = _getWceMenuValStatus('add', pattern);
+					sub.add({
+						title : 'add',
+						id : 'menu-decoration-blankspaces-add',
+						icons : false,
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAddSpaces');
+						}
+					}).setDisabled(b);
+
+					b = _getWceMenuValStatus('edit', pattern);
+					sub.add({
+						title : 'edit',
+						id : 'menu-decoration-blankspaces-edit',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceEditSpaces');
+						}
+					}).setDisabled(b);
+
+					b = _getWceMenuValStatus('delete', pattern);
+					sub.add({
+						title : 'delete',
+						id : 'menu-decoration-blankspaces-delete',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('wceDelNode');
+						}
+					}).setDisabled(b);
+
+				});
+
+				// Return the new menu button instance
+				return c;
+
+			case 'abbreviation':
+				var c = cm.createMenuButton('menu-abbreviation', {
+					title : 'Abbreviated text',
+					image : tinyMCE.baseURL + '/plugins/wce/img/button_A-new.png',
+					icons : false,
+					onclick : function() {
+						_setWceMenuStatus(tinyMCE.activeEditor, 'menu-abbreviation', /^__t=abbr/, _getWceMenuValStatus);
+						// _setWceMenuStatus(tinyMCE.activeEditor,
+						// 'menu-abbreviation',
+						// /^__t=spaces/,
+						// _getWceMenuValStatus,
+						// 'blankspaces');
+					}
+				});
+
+				c.onRenderMenu.add(function(c, m) {
+					var pattern = /^__t=abbr/;
+					var b = _getWceMenuValStatus('add', pattern);
+
+					m.add({
+						title : 'add',
+						id : 'menu-abbreviation-add',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAddAbbr');
+						}
+					}).setDisabled(b);
+
+					b = _getWceMenuValStatus('edit', pattern);
+					m.add({
+						title : 'edit',
+						id : 'menu-abbreviation-edit',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceEditAbbr');
+						}
+					}).setDisabled(b);
+
+					b = _getWceMenuValStatus('delete', pattern);
+					m.add({
+						title : 'delete',
+						id : 'menu-abbreviation-delete',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('wceDelNode');
+						}
+					}).setDisabled(b);
+				});
+
+				return c;
+
+			case 'paratext':
+				var c = cm.createMenuButton('menu-paratext', {
+					title : 'Paratext',
+					image : tinyMCE.baseURL + '/plugins/wce/img/button_P-new.png',
+					icons : false,
+					onclick : function() {
+						_setWceMenuStatus(tinyMCE.activeEditor, 'menu-paratext', /^__t=paratext/, _getWceMenuValStatus);
+					}
+				});
+
+				c.onRenderMenu.add(function(c, m) {
+					var pattern = /^__t=paratext/;
+					var b = _getWceMenuValStatus('add', pattern);
+
+					m.add({
+						title : 'add',
+						id : 'menu-paratext-add',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAddParatext');
+						}
+					}).setDisabled(b);
+
+					b = _getWceMenuValStatus('edit', pattern);
+					m.add({
+						title : 'edit',
+						id : 'menu-paratext-edit',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceEditParatext');
+						}
+					}).setDisabled(b);
+
+					b = _getWceMenuValStatus('delete', pattern);
+					m.add({
+						title : 'delete',
+						id : 'menu-paratext-delete',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('wceDelNode');
+						}
+					}).setDisabled(b);
+				});
+
+				return c;
+
+			case 'note':
+				var c = cm.createMenuButton('menu-note', {
+					title : 'Note',
+					image : tinyMCE.baseURL + '/plugins/wce/img/button_N-new.png',
+					icons : false,
+					onclick : function() {
+						_setWceMenuStatus(tinyMCE.activeEditor, 'menu-note', /^__t=note/, _getWceMenuValStatus);
+					}
+				});
+
+				c.onRenderMenu.add(function(c, m) {
+					var pattern = /^__t=note/;
+					var b = _getWceMenuValStatus('add', pattern);
+
+					m.add({
+						title : 'add',
+						id : 'menu-note-add',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceAddNote');
+						}
+					}).setDisabled(b);
+
+					b = _getWceMenuValStatus('edit', pattern);
+					m.add({
+						title : 'edit',
+						id : 'menu-note-edit',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('mceEditNote');
+						}
+					}).setDisabled(b);
+
+					b = _getWceMenuValStatus('delete', pattern);
+					m.add({
+						title : 'delete',
+						id : 'menu-note-delete',
+						onclick : function() {
+							tinyMCE.activeEditor.execCommand('wceDelNode');
+						}
+					}).setDisabled(b);
+				});
+
+				return c;
 			}
 
 			return null;
@@ -1373,17 +1225,13 @@
 			// Endespunkt der Auswahl
 			for ( var i = endOffset; i > -1; i--) {
 				// ende des Textes
-				if (i == endText.length && i > 0
-						&& endText.charAt(i - 1) != ' '
-						&& endText.charAt(i - 1) != nbsp)
+				if (i == endText.length && i > 0 && endText.charAt(i - 1) != ' ' && endText.charAt(i - 1) != nbsp)
 					break;
 
 				ch = endText.charAt(i);
 
 				if (ch == ' ' || ch == nbsp) {
-					if (i > 0
-							&& (endText.charAt(i - 1) != ' ' && endText
-									.charAt(i - 1) != nbsp))
+					if (i > 0 && (endText.charAt(i - 1) != ' ' && endText.charAt(i - 1) != nbsp))
 						break;
 				}
 				endOffset--;
@@ -1409,192 +1257,158 @@
 
 		_wceAddNoDialog : function(ed, wceType, character, number) {
 			var content = ed.selection.getContent();
-			//var style = 'style="border: 1px  dotted #f00;  margin:0px; padding:0;"';
+			// var style = 'style="border: 1px dotted #f00; margin:0px; padding:0;"';
 			var wceClass, wceAttr, wceOrig;
 
 			switch (wceType) {
-				case 'pc' :
-					wceClass=' class="pc"';
-					wceAttr='wce="' + ed.wceTypeParamInClass + '=' + wceType + '"';
-					ed.selection.setContent('<span' + wceAttr + wceClass + '>' + character + '</span> ');
-					break;
-				case 'abbr' :
-					//style = 'style="border: 1px  dotted #f00;  margin:0px; padding:0;"';
-					wceClass=' class="abbr"';
-					wceOrig =' wce_orig="' + character + '"';
-					wceAttr='"wce=__t=abbr&amp;__n=&amp;original_abbr_text=&amp;abbr_type=nomSac&amp;abbr_type_other=&amp;add_overline=&amp;insert=Insert&amp;cancel=Cancel"';
-					ed.selection
-							.setContent('<span '+wceAttr+ wceOrig+ wceClass + '>' + character
-									+ '</span> ');
-					break;
-				case 'brea' :
-					//style = 'style="border: 1px  dotted #f00;  margin:0px; padding:0; color:#666"';
-					wceClass=' class="brea"';
-					wceAttr ='wce="__t=brea&amp;__n=&amp;break_type=lb&amp;number='
-							+ number
-							+ '&amp;pb_type=&amp;fibre_type=&amp;running_title=&amp;lb_alignment=&amp;insert=Insert&amp;cancel=Cancel" ';
-					if (character == 'lb') { 
-						// line break at the end of a word
-						if (number === 0) { 
-							// for a line break without an explicit number
-							number = ++lcnt;
-						}
-						// var num = "";
-						/*
-						 * while (num == "") { num = prompt("Number of line
-						 * break", ""); }
-						 */
-						ed.selection
-								.setContent('<span '+ wceAttr + wceClass + '>' + '<br/>&crarr;' + '</span> ');
-						lcnt = number;
-						ed.execCommand('printData');
-					} else if (character == 'lbm') { 
-						// line break in the middle of a word
-						if (number === 0) { 
-							// for a line break without an explicit number
-							number = ++lcnt;
-						}
-						// var num = "";
-						/*
-						 * while (num == "") { num = prompt("Number of line
-						 * break", ""); }
-						 */
-						 
-						wceAttr='wce="__t=brea&amp;__n=&amp;break_type=lb&amp;number='
-								+ number
-								+ '&amp;pb_type=&amp;fibre_type=&amp;running_title=&amp;lb_alignment=&amp;insert=Insert&amp;cancel=Cancel" '; 
-						ed.selection
-								.setContent('<span '+wceAttr + wceClass + '>'
-										+ '&#45;<br/>&crarr;' + '</span> ');
-						lcnt = number;
-					} else if (character == 'cb') { 
-						// column break
-						if (number === 0) { 
-							// for a line break without an explicit number
-							number = ++ccnt;
-						}
-						
-						wceAttr='wce="__t=brea&amp;__n=&amp;break_type=cb&amp;number='
-								+ number
-								+ '&amp;pb_type=&amp;fibre_type=&amp;running_title=&amp;lb_alignment=&amp;insert=Insert&amp;cancel=Cancel" ';
-						ed.selection
-								.setContent('<br/><span '+ wceAttr + wceClass + '>' + 'CB' + '</span> ');
-						ccnt = number;
-					} else if (character == 'pb') { 
-						// page break
-						var new_number = 0;
-						var new_pb_type = "";
-						if (number === 0) { 
-							// for a page break without an explicit number
-							number = ++pcnt;
-						}
-						pcnt = number;
-						new_number = number;
-
-						if (rectoverso === 'true') {
-							new_number = Math.ceil(number / 2);
-							if (number % 2 == 0) {
-								// verso page
-								new_pb_type = "v";
-							}else{
-								// recto page
-								new_pb_type = "r";
-							}
-						}
-						wceAttr='wce="__t=brea&amp;__n=&amp;break_type=pb&amp;number='
-								+ new_number
-								+ '&amp;pb_type='
-								+ new_pb_type
-								+ '&amp;fibre_type=&amp;running_title=&amp;lb_alignment=&amp;insert=Insert&amp;cancel=Cancel'
-								+ '"';
-						ed.selection
-								.setContent('<br/><span '+wceAttr + wceClass + '>' + 'PB' + '</span> ');
-
-						//duplication cf. wce.js, line 215
-						//ed.execCommand('mceAdd_brea', 'cb', '1');
-						//ed.execCommand('mceAdd_brea', 'lb', '1');
-					} else {
-						// quire break
-						if (number === 0) { 
-							// for a line break without an explicit number
-							number = ++qcnt;
-						}
-						wceAttr='wce="__t=brea&amp;__n=&amp;break_type=gb&amp;number='
-								+ number
-								+ '&amp;pb_type=&amp;fibre_type=&amp;running_title=&amp;lb_alignment=&amp;insert=Insert&amp;cancel=Cancel'
-								+ '" ';
-						ed.selection
-								.setContent('<br/><span '+ wceAttr + wceClass + '>' + 'QB' + '</span> ');
-						qcnt = number;
+			case 'pc':
+				wceClass = ' class="pc"';
+				wceAttr = 'wce="' + ed.wceTypeParamInClass + '=' + wceType + '"';
+				ed.selection.setContent('<span' + wceAttr + wceClass + '>' + character + '</span> ');
+				break;
+			case 'abbr':
+				// style = 'style="border: 1px dotted #f00; margin:0px; padding:0;"';
+				wceClass = ' class="abbr"';
+				wceOrig = ' wce_orig="' + character + '"';
+				wceAttr = '"wce=__t=abbr&amp;__n=&amp;original_abbr_text=&amp;abbr_type=nomSac&amp;abbr_type_other=&amp;add_overline=&amp;insert=Insert&amp;cancel=Cancel"';
+				ed.selection.setContent('<span ' + wceAttr + wceOrig + wceClass + '>' + character + '</span> ');
+				break;
+			case 'brea':
+				// style = 'style="border: 1px dotted #f00; margin:0px; padding:0; color:#666"';
+				wceClass = ' class="brea"';
+				wceAttr = 'wce="__t=brea&amp;__n=&amp;break_type=lb&amp;number=' + number + '&amp;pb_type=&amp;fibre_type=&amp;running_title=&amp;lb_alignment=&amp;insert=Insert&amp;cancel=Cancel" ';
+				if (character == 'lb') {
+					// line break at the end of a word
+					if (number === 0) {
+						// for a line break without an explicit number
+						number = ++lcnt;
 					}
-					break;
-				case 'part_abbr' : 
-					// part-worded abbreviations
-					var rng = ed.selection.getRng(true);
-					wceClass=' class="part_abbr"';
-					var startNode = rng.startContainer;
-					var startText = startNode.data
-							? startNode.data
-							: startNode.innerText;
-					var text = startText.substr(0, rng.startOffset);
-					var li = text.lastIndexOf('(');
-					if (li > -1) {
-						var part_abbr = text.substr(li) + ')';
-						startNode.data = startText.substr(rng.endOffset);
-						
-						wceAttr='wce="'	+ ed.wceTypeParamInClass + '=' + wceType + '" ';								
-						ed.selection.setContent('<span '+ wceAttr + wceClass + '>' + part_abbr + '</span>');
-						startNode.data += startText.substr(0, text
-								.lastIndexOf('('));
-					} else {
-						alert("Error at part-worded abbreviation. Parentheses do not match or invalid nesting!");
+					// var num = "";
+					/*
+					 * while (num == "") { num = prompt("Number of line break", ""); }
+					 */
+					ed.selection.setContent('<span ' + wceAttr + wceClass + '>' + '<br/>&crarr;' + '</span> ');
+					lcnt = number;
+					ed.execCommand('printData');
+				} else if (character == 'lbm') {
+					// line break in the middle of a word
+					if (number === 0) {
+						// for a line break without an explicit number
+						number = ++lcnt;
 					}
-					break;
-				/*
-				 * case 'formatting_capitals': //Capitals
-				 * ed.selection.setContent('<span wce="' +
-				 * ed.wceTypeParamInClass + '=' + wceType + '&amp;height=' +
-				 * character + '"' + style + '>' + content + '</span>'); break;
-				 */
-				case 'unclear' : // uncertain letters
-					selection = ed.selection.getContent();
-					var unclear_text = "";
-					var newContent = "";
-					var word = "";
-					var unclear_text = "";
-					wceClass=' class="unclear"';
-					for ( var i = 0; i < selection.length; i++) { 
-						// Divide input into words
-						if (selection.charAt(i) == ' ') { 
-							// Space -> new word
-							wceAttr='wce="__t=unclear&amp;__n=&amp;original_text=' + word + '&amp;insert=Insert&amp;cancel=Cancel"';
-							newContent += '<span '+ wceAttr + wceClass+ '>' + unclear_text + '</span> ';
-							word = "";
-							unclear_text = "";
+					// var num = "";
+					/*
+					 * while (num == "") { num = prompt("Number of line break", ""); }
+					 */
+
+					wceAttr = 'wce="__t=brea&amp;__n=&amp;break_type=lb&amp;number=' + number + '&amp;pb_type=&amp;fibre_type=&amp;running_title=&amp;lb_alignment=&amp;insert=Insert&amp;cancel=Cancel" ';
+					ed.selection.setContent('<span ' + wceAttr + wceClass + '>' + '&#45;<br/>&crarr;' + '</span> ');
+					lcnt = number;
+				} else if (character == 'cb') {
+					// column break
+					if (number === 0) {
+						// for a line break without an explicit number
+						number = ++ccnt;
+					}
+
+					wceAttr = 'wce="__t=brea&amp;__n=&amp;break_type=cb&amp;number=' + number + '&amp;pb_type=&amp;fibre_type=&amp;running_title=&amp;lb_alignment=&amp;insert=Insert&amp;cancel=Cancel" ';
+					ed.selection.setContent('<br/><span ' + wceAttr + wceClass + '>' + 'CB' + '</span> ');
+					ccnt = number;
+				} else if (character == 'pb') {
+					// page break
+					var new_number = 0;
+					var new_pb_type = "";
+					if (number === 0) {
+						// for a page break without an explicit number
+						number = ++pcnt;
+					}
+					pcnt = number;
+					new_number = number;
+
+					if (rectoverso === 'true') {
+						new_number = Math.ceil(number / 2);
+						if (number % 2 == 0) {
+							// verso page
+							new_pb_type = "v";
 						} else {
-							word += selection.charAt(i);
-							unclear_text += selection.charAt(i) + '&#x0323;';
+							// recto page
+							new_pb_type = "r";
 						}
 					}
-					// add last part of selection
-					newContent += '<span wce="__t=unclear&amp;__n=&amp;original_text='
-							+ word
-							+ '&amp;insert=Insert&amp;cancel=Cancel" '
-							+ wceClass+'>'
-							+ unclear_text + '</span>';
-					ed.selection.setContent(newContent);
-					break;
-				case 'ghostpage' : 
-					// Ghost page
-					//style = 'style="border: 1px  dotted #f00;  margin:0px; padding:0; color:#666"';
-					wceClass=' class="ghostpage"';
-					wceAttr='wce="__t=gap&amp;__n=&amp;original_gap_text=&amp;gap_reason=absent&amp;unit=page&amp;unit_other=&amp;extent=1&amp;supplied_source=na27&amp;supplied_source_other=&amp;insert=Insert&amp;cancel=Cancel" ';
-					ed.selection.setContent('<span '+ wceAttr + wceClass + '>Ghost page</span>');
-					break;
-				default :
-					wceClass=' class="'+wceType+'"';
-					wceAttr='wce="'	+ ed.wceTypeParamInClass + '=' + wceType + '" ';
-					ed.selection.setContent('<span '+ wceAttr + wceClass + '>' + content + '</span>');
+					wceAttr = 'wce="__t=brea&amp;__n=&amp;break_type=pb&amp;number=' + new_number + '&amp;pb_type=' + new_pb_type + '&amp;fibre_type=&amp;running_title=&amp;lb_alignment=&amp;insert=Insert&amp;cancel=Cancel' + '"';
+					ed.selection.setContent('<br/><span ' + wceAttr + wceClass + '>' + 'PB' + '</span> ');
+
+					// duplication cf. wce.js, line 215
+					// ed.execCommand('mceAdd_brea', 'cb', '1');
+					// ed.execCommand('mceAdd_brea', 'lb', '1');
+				} else {
+					// quire break
+					if (number === 0) {
+						// for a line break without an explicit number
+						number = ++qcnt;
+					}
+					wceAttr = 'wce="__t=brea&amp;__n=&amp;break_type=gb&amp;number=' + number + '&amp;pb_type=&amp;fibre_type=&amp;running_title=&amp;lb_alignment=&amp;insert=Insert&amp;cancel=Cancel' + '" ';
+					ed.selection.setContent('<br/><span ' + wceAttr + wceClass + '>' + 'QB' + '</span> ');
+					qcnt = number;
+				}
+				break;
+			case 'part_abbr':
+				// part-worded abbreviations
+				var rng = ed.selection.getRng(true);
+				wceClass = ' class="part_abbr"';
+				var startNode = rng.startContainer;
+				var startText = startNode.data ? startNode.data : startNode.innerText;
+				var text = startText.substr(0, rng.startOffset);
+				var li = text.lastIndexOf('(');
+				if (li > -1) {
+					var part_abbr = text.substr(li) + ')';
+					startNode.data = startText.substr(rng.endOffset);
+
+					wceAttr = 'wce="' + ed.wceTypeParamInClass + '=' + wceType + '" ';
+					ed.selection.setContent('<span ' + wceAttr + wceClass + '>' + part_abbr + '</span>');
+					startNode.data += startText.substr(0, text.lastIndexOf('('));
+				} else {
+					alert("Error at part-worded abbreviation. Parentheses do not match or invalid nesting!");
+				}
+				break;
+			/*
+			 * case 'formatting_capitals': //Capitals ed.selection.setContent('<span wce="' + ed.wceTypeParamInClass + '=' + wceType + '&amp;height=' + character + '"' + style + '>' + content + '</span>'); break;
+			 */
+			case 'unclear': // uncertain letters
+				selection = ed.selection.getContent();
+				var unclear_text = "";
+				var newContent = "";
+				var word = "";
+				var unclear_text = "";
+				wceClass = ' class="unclear"';
+				for ( var i = 0; i < selection.length; i++) {
+					// Divide input into words
+					if (selection.charAt(i) == ' ') {
+						// Space -> new word
+						wceAttr = 'wce="__t=unclear&amp;__n=&amp;original_text=' + word + '&amp;insert=Insert&amp;cancel=Cancel"';
+						newContent += '<span ' + wceAttr + wceClass + '>' + unclear_text + '</span> ';
+						word = "";
+						unclear_text = "";
+					} else {
+						word += selection.charAt(i);
+						unclear_text += selection.charAt(i) + '&#x0323;';
+					}
+				}
+				// add last part of selection
+				newContent += '<span wce="__t=unclear&amp;__n=&amp;original_text=' + word + '&amp;insert=Insert&amp;cancel=Cancel" ' + wceClass + '>' + unclear_text + '</span>';
+				ed.selection.setContent(newContent);
+				break;
+			case 'ghostpage':
+				// Ghost page
+				// style = 'style="border: 1px dotted #f00; margin:0px; padding:0; color:#666"';
+				wceClass = ' class="ghostpage"';
+				wceAttr = 'wce="__t=gap&amp;__n=&amp;original_gap_text=&amp;gap_reason=absent&amp;unit=page&amp;unit_other=&amp;extent=1&amp;supplied_source=na27&amp;supplied_source_other=&amp;insert=Insert&amp;cancel=Cancel" ';
+				ed.selection.setContent('<span ' + wceAttr + wceClass + '>Ghost page</span>');
+				break;
+			default:
+				wceClass = ' class="' + wceType + '"';
+				wceAttr = 'wce="' + ed.wceTypeParamInClass + '=' + wceType + '" ';
+				ed.selection.setContent('<span ' + wceAttr + wceClass + '>' + content + '</span>');
 			}
 		},
 
@@ -1606,7 +1420,7 @@
 		 * @param {string}
 		 *            url Absolute URL to where the plugin is located.
 		 */
-		init : function(ed, url) {  
+		init : function(ed, url) {
 			var _this = this;
 			_this.editor = ed;
 
@@ -1617,16 +1431,16 @@
 			var _getNextEnd = _this._getNextEnd;
 			var _getEndNoBlank = _this._getEndNoBlank;
 			var _getTextNode = _this._getTextNode;
-			var _getWceMenuValStatus = _this._getWceMenuValStatus; 
+			var _getWceMenuValStatus = _this._getWceMenuValStatus;
 
-			//ed.onKeyPress.addToTop(_this._setWceControls);
+			// ed.onKeyPress.addToTop(_this._setWceControls);
 			ed.onMouseUp.addToTop(_this._setWceControls);
 			ed.onKeyPress.addToTop(_this._setWceControls);
 			ed.onKeyUp.addToTop(_this._setWceControls);
-			ed.onKeyDown.addToTop(function(ed,e){
+			ed.onKeyDown.addToTop(function(ed, e) {
 				if (!e) {
 					var e = window.event;
-				} 
+				}
 				var ek = e.keyCode || e.charCode || 0;
 
 				if (ek == 13 || ek == 10) {
@@ -1643,11 +1457,10 @@
 						// Enter -> line break
 						var rng = ed.selection.getRng(true);
 						var startNode = rng.startContainer;
-						var startText = startNode.data ? startNode.data
-								: startNode.innerText;
+						var startText = startNode.data ? startNode.data : startNode.innerText;
 						if (!startText) {
 							startText = startNode.innerHTML;
-						}  
+						}
 						if (rng.startOffset == _getNextEnd(startText, rng.startOffset)) {
 							// at the end of a word
 							_wceAddNoDialog(ed, 'brea', 'lb', ++lcnt);
@@ -1658,7 +1471,7 @@
 					}
 				}
 				return;
-			
+
 			});
 
 			// class="__t=wce_type&__n=wce_name...."
@@ -1685,71 +1498,49 @@
 				if (row) {
 					tinymce.DOM.add(row.parentNode, 'div', {
 						'style' : ''
-					}, '<input type="checkbox" checked="checked"  id="' + id
-							+ '"> Adaptive selection</input>');
+					}, '<input type="checkbox" checked="checked"  id="' + id + '"> Adaptive selection</input>');
 				}
 			});
 
 			// TEST: //Nur wenn Tastate "Entf" aktiviert
 			// Ueberpruefen, ob Cursor
 			// direkt vor oder nach Verse ist
-			ed
-					.addCommand(
-							"testVerseOrChapterBeforeDel",
-							function(ek) {
-								if (ek != 46)
-									return 0;
+			ed.addCommand("testVerseOrChapterBeforeDel", function(ek) {
+				if (ek != 46)
+					return 0;
 
-								/*
-								 * Löschen mit 'Entf' wird rng.startOffset in IE
-								 * nicht richtig akutallisiert vorl?ufige L?sung
-								 * mit Bookmark, nicht 100% funktioniert, /*
-								 * if($.browser.msie){ var
-								 * bm=ed.selection.getBookmark();
-								 * ed.selection.moveToBookmark(bm); }
-								 */
-								var rng = ed.selection.getRng(true);
-								var startNode = rng.startContainer;
-								var startText = startNode.data
-										? startNode.data
-										: startNode.innerText;
-								var nodeSibling;
+				/*
+				 * Löschen mit 'Entf' wird rng.startOffset in IE nicht richtig akutallisiert vorl?ufige L?sung mit Bookmark, nicht 100% funktioniert, /* if($.browser.msie){ var bm=ed.selection.getBookmark(); ed.selection.moveToBookmark(bm); }
+				 */
+				var rng = ed.selection.getRng(true);
+				var startNode = rng.startContainer;
+				var startText = startNode.data ? startNode.data : startNode.innerText;
+				var nodeSibling;
 
-								if (ek == 8 && rng.startOffset == 0
-										&& typeof (startText) != 'undefined') {
-									nodeSibling = startNode.previousSibling;
-								} else if (ek == 46
-										&& ((typeof (startText) != 'undefined' && rng.startOffset >= startText.length) || (typeof (startText) == 'undefined' && typeof (startNode) != 'undefined'))) {
-									nodeSibling = startNode.nextSibling;
-								} else
-									return 0;
+				if (ek == 8 && rng.startOffset == 0 && typeof (startText) != 'undefined') {
+					nodeSibling = startNode.previousSibling;
+				} else if (ek == 46 && ((typeof (startText) != 'undefined' && rng.startOffset >= startText.length) || (typeof (startText) == 'undefined' && typeof (startNode) != 'undefined'))) {
+					nodeSibling = startNode.nextSibling;
+				} else
+					return 0;
 
-								if (typeof (nodeSibling) != 'undefined'
-										&& nodeSibling != null) {
-									return ed.execCommand(
-											'testNodeIsVerseOrChapter',
-											nodeSibling);
-								} else {
-									return ed.execCommand(
-											'testNodeParentIsVerseOrChapter',
-											startNode);
-								}
-								return 0;
-							});
+				if (typeof (nodeSibling) != 'undefined' && nodeSibling != null) {
+					return ed.execCommand('testNodeIsVerseOrChapter', nodeSibling);
+				} else {
+					return ed.execCommand('testNodeParentIsVerseOrChapter', startNode);
+				}
+				return 0;
+			});
 
 			// TEST: //Nur wenn Tastate "Entf" aktiviert
 			ed.addCommand('testNodeParentIsVerseOrChapter', function(_node) {
 				var _parentNode = _node.parentNode, _nextSibling;
-				if (typeof (_parentNode) != 'undefined'
-						&& !_parentNode.nodeName.match(/body/i)) {
+				if (typeof (_parentNode) != 'undefined' && !_parentNode.nodeName.match(/body/i)) {
 					_nextSibling = _parentNode.nextSibling;
-					if (typeof (_nextSibling) != 'undefined'
-							&& _nextSibling != null) {
-						return ed.execCommand('testNodeIsVerseOrChapter',
-								_nextSibling);
+					if (typeof (_nextSibling) != 'undefined' && _nextSibling != null) {
+						return ed.execCommand('testNodeIsVerseOrChapter', _nextSibling);
 					} else {
-						return ed.execCommand('testNodeParentIsVerseOrChapter',
-								_parentNode);
+						return ed.execCommand('testNodeParentIsVerseOrChapter', _parentNode);
 					}
 				}
 				return 0;
@@ -1769,8 +1560,7 @@
 			ed.addCommand('testParentIsVerseOrChapter', function(_node) {
 				var _parent = _node.parentNode;
 				var t = this;
-				if (typeof (_parentNode) != 'undefined'
-						&& !_parentNode.nodeName.match(/body/i)) {
+				if (typeof (_parentNode) != 'undefined' && !_parentNode.nodeName.match(/body/i)) {
 					return t(_parentNode);
 					// return
 					// ed.execCommand('testParentIsVerseOrChapter',_parentNode);
@@ -1780,32 +1570,22 @@
 
 			// Ueberpruefen, ob ausgewaehlter
 			// Text verse nummer hat
-			ed.addCommand(
-							"wceContentHasVerse",
-							function() {
-								var _sel = ed.selection;
+			ed.addCommand("wceContentHasVerse", function() {
+				var _sel = ed.selection;
 
-								// Auswahl hat verse
-								if (_sel.getContent().match(
-										/<span\s*wce=\"verse_number"\s*>/)
-										|| _sel
-												.getContent()
-												.match(
-														/<span\s*wce=\"chapter_number"\s*>/)) {
-									return 1;
-								}
+				// Auswahl hat verse
+				if (_sel.getContent().match(/<span\s*wce=\"verse_number"\s*>/) || _sel.getContent().match(/<span\s*wce=\"chapter_number"\s*>/)) {
+					return 1;
+				}
 
-								// Auswahl in verse
-								var _selNode = _sel.getNode();
-								if (typeof (_selNode) != 'undefined'
-										&& _selNode != null) {
-									return ed.execCommand(
-											'testParentIsVerseOrChapter',
-											_selNode);
-								}
+				// Auswahl in verse
+				var _selNode = _sel.getNode();
+				if (typeof (_selNode) != 'undefined' && _selNode != null) {
+					return ed.execCommand('testParentIsVerseOrChapter', _selNode);
+				}
 
-								return 0;
-							});
+				return 0;
+			});
 
 			// TEI xmloutput
 			ed.addCommand('mceXmloutput', function() {
@@ -1824,253 +1604,172 @@
 			 * onInit
 			 * 
 			 */
-			ed.onInit
-					.add(function() {
-						 // Add  shortcuts  for wce
-						ed.addShortcut('ctrl+b', 'Add break', 'mceAddBreak_Shortcut');
-						ed.addShortcut('ctrl+c', 'Add correction', 'mceAddCorrection_Shortcut');
-						ed.addShortcut('ctrl+u', 'Add unclear text', 'mceAddUnclearText_Shortcut');
-						ed.addShortcut('ctrl+g', 'Add gap', 'mceAddGap_Shortcut');
-						ed.addShortcut('ctrl+a', 'Add abbreviation', 'mceAddAbbr_Shortcut');
-						ed.addShortcut('ctrl+p', 'Add correction', 'mceAddParatext_Shortcut');
-						ed.addShortcut('ctrl+n', 'Add correction', 'mceAddNote_Shortcut');
-					
-						tinymce.dom.Event.add(ed.getDoc(), 'dblclick',
-								function(e) {
-								});
+			ed.onInit.add(function() {
+				// Add shortcuts for wce
+				ed.addShortcut('ctrl+b', 'Add break', 'mceAddBreak_Shortcut');
+				ed.addShortcut('ctrl+c', 'Add correction', 'mceAddCorrection_Shortcut');
+				ed.addShortcut('ctrl+u', 'Add unclear text', 'mceAddUnclearText_Shortcut');
+				ed.addShortcut('ctrl+g', 'Add gap', 'mceAddGap_Shortcut');
+				ed.addShortcut('ctrl+a', 'Add abbreviation', 'mceAddAbbr_Shortcut');
+				ed.addShortcut('ctrl+p', 'Add correction', 'mceAddParatext_Shortcut');
+				ed.addShortcut('ctrl+n', 'Add correction', 'mceAddNote_Shortcut');
 
-						tinymce.dom.Event.add(ed.getDoc(), 'mousemove',
-								function(e) {
-									_this._showWceInfo(ed, e);
-								});
+				tinymce.dom.Event.add(ed.getDoc(), 'dblclick', function(e) {
+				});
 
-						tinymce.dom.Event.add(ed.getDoc(), 'mouseup', function(
-								e) {
-							if (!ed.selection.isCollapsed()) {
-								_this._adaptiveSelection();
+				tinymce.dom.Event.add(ed.getDoc(), 'mousemove', function(e) {
+					_this._showWceInfo(ed, e);
+				});
+
+				tinymce.dom.Event.add(ed.getDoc(), 'mouseup', function(e) {
+					if (!ed.selection.isCollapsed()) {
+						_this._adaptiveSelection();
+					}
+				});
+				tinymce.dom.Event.add(ed.getDoc(), 'keyup', function(e) {
+					if (!ed.wceKeydownBlock) {
+						ed.isNotDirty = 0;
+					}
+				});
+
+				// versernumber schuetzen
+				// TODO: testen, ob Editor Focus hat
+				tinymce.dom.Event.add(ed.getDoc(), 'keydown', function(e) {
+					if (!e)
+						var e = window.event;
+					var ek = e.keyCode || e.charCode || 0;
+					var delBlock = false;
+					ed.wceKeydownBlock = false;
+
+					if (ek == 17 || (ek > 32 && ek < 41))
+						return;
+
+					// Add <pc> for some
+					// special
+					// characters
+					if (ek == 59 && !e.shiftKey) { // ; en
+						tinyMCE.activeEditor.execCommand('mceAdd_pc', ';');
+						e.preventDefault();
+						e.stopPropagation();
+					} else if (ek == 188 && e.shiftKey) { // ; dt
+						// < en
+						tinyMCE.activeEditor.execCommand('mceAdd_pc', ';');
+						e.preventDefault();
+						e.stopPropagation();
+					} else if (ek == 188 && !e.shiftKey) { // ,
+						tinyMCE.activeEditor.execCommand('mceAdd_pc', ',');
+						e.preventDefault();
+						e.stopPropagation();
+					} else if (ek == 190 && !e.shiftKey) { // .
+						tinyMCE.activeEditor.execCommand('mceAdd_pc', '.');
+						e.preventDefault();
+						e.stopPropagation();
+					} else if (ek == 191 && e.shiftKey) { // ? en
+						tinyMCE.activeEditor.execCommand('mceAdd_pc', '?');
+						e.preventDefault();
+						e.stopPropagation();
+					} else if (ek == 219 && e.shiftKey) { // ? dt
+						tinyMCE.activeEditor.execCommand('mceAdd_pc', '?');
+						e.preventDefault();
+						e.stopPropagation();
+					}
+
+					if (ek == 56 && e.shiftKey) // (
+					{
+
+					}
+
+					if (ek == 57 && e.shiftKey) // )
+					{
+						// Find
+						// corresponding
+						// ( and create
+						// substring
+						e.preventDefault();
+						e.stopPropagation();
+						// e.stopImmediatePropagation();
+						_wceAddNoDialog(ed, 'part_abbr', '');
+					}
+					// Tastate "Entf"
+					// deaktivieren
+					// if(ek==46)
+					// delBlock=true;
+
+					var delBlockArr = [ 'paratext', 'gap', 'note', 'spaces', 'brea' ];
+					if (_this._contentHasWceAttribut(ed, delBlockArr)) {
+						delBlock = true;
+					}
+
+					if (ek == 46) {
+						if ((_this._contentHasWceAttribut(ed, [ 'brea' ]) && _getWceMenuValStatus('delete', '/^__t=brea/')) || (_this._contentHasWceAttribut(ed, [ 'paratext' ]) && _getWceMenuValStatus('delete', '/^__t=paratext/'))
+								|| (_this._contentHasWceAttribut(ed, [ 'gap' ]) && _getWceMenuValStatus('delete', '/^__t=gap/')) || (_this._contentHasWceAttribut(ed, [ 'note' ]) && _getWceMenuValStatus('delete', '/^__t=note/'))
+								|| (_this._contentHasWceAttribut(ed, [ 'spaces' ]) && _getWceMenuValStatus('delete', '/^__t=spaces/'))) {
+							tinyMCE.activeEditor.execCommand('wceDelNode');
+						}
+					}
+
+					// Browser außer IE
+					if (!delBlock && !$.browser.msie && ek == 8) {
+						var rng = ed.selection.getRng(true);
+						var startNode = rng.startContainer;
+						var startText = startNode.data ? startNode.data : startNode.innerText;
+
+						if (rng.startOffset == 0 && typeof (startText) != 'undefined') {
+							var nodeSibling = startNode.previousSibling;
+							if (typeof (nodeSibling) != 'undefined' && nodeSibling != null) {
+								if (ed.execCommand('testNodeIsVerseOrChapter', nodeSibling)) {
+									delBlock = true;
+								}
+							} else if (ed.execCommand('testNodeParentIsVerseOrChapter', startNode)) {
+								delBlock = true;
 							}
-						});
-						tinymce.dom.Event.add(ed.getDoc(), 'keyup',
-								function(e) {
-									if (!ed.wceKeydownBlock) {
-										ed.isNotDirty = 0;
-									}
-								});
+						}
+					}
 
-					 
+					// TEST: Nur wenn
+					// Tastate "Entf"
+					// aktiviert
+					if (!delBlock && ed.execCommand('testVerseOrChapterBeforeDel', ek) == 1) {
+						delBlock = true;
+					}
 
-						// versernumber schuetzen
-						// TODO: testen, ob Editor Focus hat
-						tinymce.dom.Event
-								.add(
-										ed.getDoc(),
-										'keydown',
-										function(e) {
-											if (!e)
-												var e = window.event;
-											var ek = e.keyCode || e.charCode
-													|| 0;
-											var delBlock = false;
-											ed.wceKeydownBlock = false;
+					// TEST: Tastate
+					// "Entf" aktiviert
+					if (ed.execCommand('testVerseOrChapterBeforeDel', ek) == 1)
+						delBlock = true;
 
-											if (ek == 17
-													|| (ek > 32 && ek < 41))
-												return;
+					if (!delBlock && ed.execCommand('wceContentHasVerse') == 1) {
+						delBlock = true;
+					}
 
-											// Add <pc> for some
-											// special
-											// characters
-											if (ek == 59 && !e.shiftKey) { // ; en
-												tinyMCE.activeEditor
-														.execCommand(
-																'mceAdd_pc',
-																';');
-												e.preventDefault();
-												e.stopPropagation();
-											} else if (ek == 188 && e.shiftKey) { // ; dt
-												// < en
-												tinyMCE.activeEditor
-														.execCommand(
-																'mceAdd_pc',
-																';');
-												e.preventDefault();
-												e.stopPropagation();
-											} else if (ek == 188 && !e.shiftKey) { // ,
-												tinyMCE.activeEditor
-														.execCommand(
-																'mceAdd_pc',
-																',');
-												e.preventDefault();
-												e.stopPropagation();
-											} else if (ek == 190 && !e.shiftKey) { // .
-												tinyMCE.activeEditor
-														.execCommand(
-																'mceAdd_pc',
-																'.');
-												e.preventDefault();
-												e.stopPropagation();
-											} else if (ek == 191 && e.shiftKey) { // ? en
-												tinyMCE.activeEditor
-														.execCommand(
-																'mceAdd_pc',
-																'?');
-												e.preventDefault();
-												e.stopPropagation();
-											} else if (ek == 219 && e.shiftKey) { // ? dt
-												tinyMCE.activeEditor
-														.execCommand(
-																'mceAdd_pc',
-																'?');
-												e.preventDefault();
-												e.stopPropagation();
-											}
-
-											if (ek == 56 && e.shiftKey) // (
-											{
-
-											}
-
-											if (ek == 57 && e.shiftKey) // )
-											{
-												// Find
-												// corresponding
-												// ( and create
-												// substring
-												e.preventDefault();
-												e.stopPropagation();
-												// e.stopImmediatePropagation();
-												_wceAddNoDialog(ed,
-														'part_abbr', '');
-											}
-											// Tastate "Entf"
-											// deaktivieren
-											// if(ek==46)
-											// delBlock=true;
-
-											var delBlockArr = ['paratext',
-													'gap', 'note', 'spaces',
-													'brea'];
-											if (_this._contentHasWceAttribut(ed,
-													delBlockArr)) {
-												delBlock = true;
-											}
-
-											if (ek == 46) {
-												if ((_this._contentHasWceAttribut(
-														ed, ['brea']) && _getWceMenuValStatus(
-														'delete', '/^__t=brea/'))
-														|| (_this
-																._contentHasWceAttribut(
-																		ed,
-																		['paratext']) && _getWceMenuValStatus(
-																'delete',
-																'/^__t=paratext/'))
-														|| (_this
-																._contentHasWceAttribut(
-																		ed,
-																		['gap']) && _getWceMenuValStatus(
-																'delete',
-																'/^__t=gap/'))
-														|| (_this
-																._contentHasWceAttribut(
-																		ed,
-																		['note']) && _getWceMenuValStatus(
-																'delete',
-																'/^__t=note/'))
-														|| (_this
-																._contentHasWceAttribut(
-																		ed,
-																		['spaces']) && _getWceMenuValStatus(
-																'delete',
-																'/^__t=spaces/'))) {
-													tinyMCE.activeEditor
-															.execCommand('wceDelNode');
-												}
-											}
-
-											// Browser außer IE
-											if (!delBlock && !$.browser.msie
-													&& ek == 8) {
-												var rng = ed.selection
-														.getRng(true);
-												var startNode = rng.startContainer;
-												var startText = startNode.data
-														? startNode.data
-														: startNode.innerText;
-
-												if (rng.startOffset == 0
-														&& typeof (startText) != 'undefined') {
-													var nodeSibling = startNode.previousSibling;
-													if (typeof (nodeSibling) != 'undefined'
-															&& nodeSibling != null) {
-														if (ed
-																.execCommand(
-																		'testNodeIsVerseOrChapter',
-																		nodeSibling)) {
-															delBlock = true;
-														}
-													} else if (ed
-															.execCommand(
-																	'testNodeParentIsVerseOrChapter',
-																	startNode)) {
-														delBlock = true;
-													}
-												}
-											}
-
-											// TEST: Nur wenn
-											// Tastate "Entf"
-											// aktiviert
-											if (!delBlock
-													&& ed
-															.execCommand(
-																	'testVerseOrChapterBeforeDel',
-																	ek) == 1) {
-												delBlock = true;
-											}
-
-											// TEST: Tastate
-											// "Entf" aktiviert
-											if (ed
-													.execCommand(
-															'testVerseOrChapterBeforeDel',
-															ek) == 1)
-												delBlock = true;
-
-											if (!delBlock
-													&& ed
-															.execCommand('wceContentHasVerse') == 1) {
-												delBlock = true;
-											}
-
-											if (delBlock) {
-												ed.wceKeydownBlock = true;
-												// if(!ed.selection.isCollapsed())
-												if ($.browser.msie) {
-													// Entfernen-Key
-													// deaktivieren
-													if (ek == 46) {
-														e.keyCode = 32;
-													}
-													e.returnValue = false;
-												} else {
-													e.preventDefault();
-												}
-											} else if (window.event) {
-												e.returnValue = true;
-											}
-											return;
-										});
-					});
+					if (delBlock) {
+						ed.wceKeydownBlock = true;
+						// if(!ed.selection.isCollapsed())
+						if ($.browser.msie) {
+							// Entfernen-Key
+							// deaktivieren
+							if (ek == 46) {
+								e.keyCode = 32;
+							}
+							e.returnValue = false;
+						} else {
+							e.preventDefault();
+						}
+					} else if (window.event) {
+						e.returnValue = true;
+					}
+					return;
+				});
+			});
 
 			// Get selected span node
 			ed.addCommand('getWceNode', function() {
 				var sele_node = ed.selection.getNode();
-				if (!sele_node || sele_node.nodeType==3){
+				if (!sele_node || sele_node.nodeType == 3) {
 					return null;
 				}
 				var wceAttr = sele_node.getAttribute('wce');
-				if (wceAttr	&& wceAttr.indexOf(ed.wceTypeParamInClass) == 0) {
+				if (wceAttr && wceAttr.indexOf(ed.wceTypeParamInClass) == 0) {
 					return sele_node;
 				}
 				return null;
@@ -2085,15 +1784,9 @@
 					var originalText = wceNode.getAttribute('wce_orig');
 
 					/*
-					 * // if tag to remove var node_to_remove = [ 'paratext',
-					 * 'note', 'gap', 'brea' ]; var to_remove = false; for ( var
-					 * i = 0; i < node_to_remove.length; i++) { if
-					 * (wceAttr.indexOf(ed.wceTypeParamInClass + '=' +
-					 * node_to_remove[i]) > -1) { to_remove = true; break; } }
+					 * // if tag to remove var node_to_remove = [ 'paratext', 'note', 'gap', 'brea' ]; var to_remove = false; for ( var i = 0; i < node_to_remove.length; i++) { if (wceAttr.indexOf(ed.wceTypeParamInClass + '=' + node_to_remove[i]) > -1) { to_remove = true; break; } }
 					 * 
-					 * if (to_remove) { $(wceNode).remove(); } else if (typeof
-					 * originalText != 'undefined') {
-					 * ed.selection.setContent(originalText);alert(originalText); }
+					 * if (to_remove) { $(wceNode).remove(); } else if (typeof originalText != 'undefined') { ed.selection.setContent(originalText);alert(originalText); }
 					 */
 					wceNode.parentNode.removeChild(wceNode);
 
@@ -2106,17 +1799,11 @@
 
 			// Add breaks
 			ed.addCommand('mceAddBreak', function() {
-				_wceAdd(ed, url, '/break.htm?mode=new&quire=' + ++qcnt
-						+ '&page=' + ++pcnt + '&column=' + ++ccnt + '&line='
-						+ ++lcnt + '&rectoverso=' + rectoverso, 480, 320, 1,
-						true);
+				_wceAdd(ed, url, '/break.htm?mode=new&quire=' + ++qcnt + '&page=' + ++pcnt + '&column=' + ++ccnt + '&line=' + ++lcnt + '&rectoverso=' + rectoverso, 480, 320, 1, true);
 			});
 			// Edit breaks
 			ed.addCommand('mceEditBreak', function() {
-				_wceAdd(ed, url, '/break.htm?mode=edit&quire=' + ++qcnt
-						+ '&page=' + ++pcnt + '&column=' + ++ccnt + '&line='
-						+ ++lcnt + '&rectoverso=' + rectoverso, 480, 320, 1,
-						false);
+				_wceAdd(ed, url, '/break.htm?mode=edit&quire=' + ++qcnt + '&page=' + ++pcnt + '&column=' + ++ccnt + '&line=' + ++lcnt + '&rectoverso=' + rectoverso, 480, 320, 1, false);
 			});
 
 			ed.addCommand('mceAddBreak_Shortcut', function() {
@@ -2135,15 +1822,15 @@
 				var sele_node = ed.selection.getNode();
 				var wceNode = ed.execCommand('getWceNode');
 				var wceAttr;
-				if(wceNode){
-					wceAttr=wceNode.getAttribute('wce');
+				if (wceNode) {
+					wceAttr = wceNode.getAttribute('wce');
 				}
 
 				// wenn cursor in wce_corr
 				if (ed.selection.isCollapsed()) {
-					if(!wceNode){
+					if (!wceNode) {
 						return;
-					}					
+					}
 					if (!wceAttr || !wceAttr.match(/corr/)) {
 						return;
 					}
@@ -2151,8 +1838,7 @@
 				} else if (wceNode && wceAttr && wceAttr.match(/corr/)) {
 					_add_new_wce_node = false;
 				}
-				_wceAdd(ed, url, '/correction.htm', 800, 600, 1,
-						_add_new_wce_node);
+				_wceAdd(ed, url, '/correction.htm', 800, 600, 1, _add_new_wce_node);
 			});
 			// Edit corrections
 			ed.addCommand('mceEditCorrection', function() {
@@ -2261,8 +1947,7 @@
 
 			// Edit Metadata
 			/*
-			 * ed.addCommand('mceAddMetadata', function() { _wceAdd(ed, url,
-			 * '/metadata.htm', 600, 450, 1, false); });
+			 * ed.addCommand('mceAddMetadata', function() { _wceAdd(ed, url, '/metadata.htm', 600, 450, 1, false); });
 			 */
 
 			ed.addCommand('mceAdd_abbr', function(c) {
@@ -2297,18 +1982,18 @@
 				lcnt--;
 				// set only the one correct counter
 				switch (bt) {
-					case 'gb' :
-						qcnt = n;
-						break;
-					case 'pb' :
-						pcnt = n;
-						break;
-					case 'cb' :
-						ccnt = n;
-						break;
-					case 'lb' :
-						lcnt = n;
-						break;
+				case 'gb':
+					qcnt = n;
+					break;
+				case 'pb':
+					pcnt = n;
+					break;
+				case 'cb':
+					ccnt = n;
+					break;
+				case 'lb':
+					lcnt = n;
+					break;
 				}
 			});
 
@@ -2322,22 +2007,22 @@
 
 			ed.addCommand('addToCounter', function(bt, n) {
 				switch (bt) {
-					case 'gb' :
-						qcnt = parseInt(qcnt) + parseInt(n);
-						break;
-					case 'pb' :
-						pcnt = parseInt(pcnt) + parseInt(n);
-						break;
-					case 'cb' :
-						ccnt = parseInt(ccnt) + parseInt(n);
-						break;
-					case 'lb' :
-						lcnt = parseInt(lcnt) + parseInt(n);
-						break;
+				case 'gb':
+					qcnt = parseInt(qcnt) + parseInt(n);
+					break;
+				case 'pb':
+					pcnt = parseInt(pcnt) + parseInt(n);
+					break;
+				case 'cb':
+					ccnt = parseInt(ccnt) + parseInt(n);
+					break;
+				case 'lb':
+					lcnt = parseInt(lcnt) + parseInt(n);
+					break;
 				}
 			});
-			
-			ed.addCommand('printData', function () {
+
+			ed.addCommand('printData', function() {
 				var ed = tinyMCE.activeEditor;
 				var oldcontent = "";
 				var newcontent = "";
@@ -2346,70 +2031,62 @@
 				var level = "lb";
 				var higherlevel = "";
 				var searchString = "";
-				
+
 				searchString = "break_type=" + level + "&amp;number=";
-				
+
 				if (level === 'lb')
 					higherlevel = 'cb';
 				else if (level === 'cb')
 					higherlevel = 'pb';
 				else if (level === 'pb')
 					higherlevel = 'gb';
-				
-								
-				ed.execCommand('mceInsertContent', false,'<span class="marker">\ufeff</span>'); //set a marker for the start
-								
-				ed.selection.select(ed.getBody(), true); //select complete text
-				
+
+				ed.execCommand('mceInsertContent', false, '<span class="marker">\ufeff</span>'); // set a marker for the start
+
+				ed.selection.select(ed.getBody(), true); // select complete text
+
 				// save oldcontent as it is ...
 				oldcontent = ed.selection.getContent();
 				// ... and put the unchanged part into the output variable
-				newcontent = oldcontent.substring(0, oldcontent.search('<span class="marker">')); //get start of overall content to be used unchanged.
-								
-				tinymce.activeEditor.selection.collapse(false); //collapse to end of selection
-				ed.execCommand('mceInsertContent', false,'<span class="marker">\ufeff</span>'); //set a marker for the end
-				
+				newcontent = oldcontent.substring(0, oldcontent.search('<span class="marker">')); // get start of overall content to be used unchanged.
+
+				tinymce.activeEditor.selection.collapse(false); // collapse to end of selection
+				ed.execCommand('mceInsertContent', false, '<span class="marker">\ufeff</span>'); // set a marker for the end
+
 				var rng = ed.selection.getRng(1);
 				var rng2 = rng.cloneRange();
 
 				// set start of range to begin at the marker
-				rng2.setStartAfter($(ed.getBody()).find('span.marker').get(0)); //start selection at marker
-				rng2.setEndBefore($(ed.getBody()).find('span.marker').get(1)); //end selection at the end of the text, TODO: limit to region affected, i.e. till the next higher-level break
+				rng2.setStartAfter($(ed.getBody()).find('span.marker').get(0)); // start selection at marker
+				rng2.setEndBefore($(ed.getBody()).find('span.marker').get(1)); // end selection at the end of the text, TODO: limit to region affected, i.e. till the next higher-level break
 				ed.selection.setRng(rng2);
 
-				oldcontent = ed.selection.getContent(); //get content to be modified
-				
-				$(ed.getBody()).find('span.marker').remove(); //delete marker
-				
+				oldcontent = ed.selection.getContent(); // get content to be modified
+
+				$(ed.getBody()).find('span.marker').remove(); // delete marker
+
 				ed.selection.setRng(rng);
 
-
 				var pos = oldcontent.search(searchString);
-				
-				while ( pos > -1 )
-				{
-					pos += searchString.length //add length of searchString to found pos
+
+				while (pos > -1) {
+					pos += searchString.length // add length of searchString to found pos
 					newcontent += oldcontent.substring(0, pos);
-					endNumber = oldcontent.indexOf("&", pos+1);	//look for next "&" after searchString
+					endNumber = oldcontent.indexOf("&", pos + 1); // look for next "&" after searchString
 					oldnumber = oldcontent.substring(pos, endNumber);
 					newcontent += parseInt(oldnumber) + 1;
-					oldcontent = oldcontent.substring(endNumber); //work on String starting right after number with "&"
+					oldcontent = oldcontent.substring(endNumber); // work on String starting right after number with "&"
 					pos = oldcontent.search(searchString);
 				}
-				newcontent += oldcontent //add the rest
-				//TODO: adjust corresponding counter, if no higher-level break follows
-				
+				newcontent += oldcontent // add the rest
+				// TODO: adjust corresponding counter, if no higher-level break follows
+
 				ed.setContent(newcontent);
 			});
-			
+
 			/*
-			 * *****************************************************************************
-			 * *****************************************************************************
-			 * ******************************************************************************
-			 * ***************************** XML OUTPUT
-			 * ************************************
-			 * ******************************************************************************
-			 * ******************************************************************************
+			 * ***************************************************************************** ***************************************************************************** ****************************************************************************** *****************************
+			 * XML OUTPUT ************************************ ****************************************************************************** ******************************************************************************
 			 * ******************************************************************************
 			 */
 			// getTEIXml
@@ -2417,11 +2094,9 @@
 				if (!inputString || $.trim(inputString) == '')
 					return '';
 
-				var nodeNamesToSkip = ['pc', 'fw', 'num', 'note', 'unclear',
-						'supllied', 'abbr', 'w'];
+				var nodeNamesToSkip = [ 'pc', 'fw', 'num', 'note', 'unclear', 'supllied', 'abbr', 'w' ];
 
-				var nodeNamesToCompress = ['unclear', 'gap', 'supplied',
-						'abbr', 'part_abbr', 'ex'];
+				var nodeNamesToCompress = [ 'unclear', 'gap', 'supplied', 'abbr', 'part_abbr', 'ex' ];
 
 				var nodesToCompress = [];
 
@@ -2437,8 +2112,7 @@
 				 * return String of TEI-Format XML
 				 */
 				var getXML = function() {
-					inputString = '<TEMP><div><ab>' + inputString
-							+ '</ab></div></TEMP>';
+					inputString = '<TEMP><div><ab>' + inputString + '</ab></div></TEMP>';
 
 					var $xml = loadXMLString(inputString);
 					var $root = $xml.documentElement;
@@ -2590,12 +2264,10 @@
 						var $w = $xml.createElement('w');
 
 						// wenn davor unmittelbar ein node ist
-						if (first == false && i == 0
-								&& $node.previousSibling != null) {
+						if (first == false && i == 0 && $node.previousSibling != null) {
 							if (!$node.previousSibling.getAttribute('_s')) {
 								gIndex_s++;
-								$node.previousSibling.setAttribute('_s',
-										gIndex_s);
+								$node.previousSibling.setAttribute('_s', gIndex_s);
 							}
 
 							$w.setAttribute('_s', gIndex_s);
@@ -2604,8 +2276,7 @@
 						// wenn dahitern unmittelbar ein node
 						// ist
 						var $next = $node.nextSibling;
-						if (last == false && i == l - 1 && $next
-								&& $next.nodeType != 3) {
+						if (last == false && i == l - 1 && $next && $next.nodeType != 3) {
 							if (!$w.getAttribute('_s')) {
 								gIndex_s++;
 								$w.setAttribute('_s', gIndex_s + " a");
@@ -2666,8 +2337,7 @@
 
 				var nodeAddText = function($node, str) {
 					if (str) {
-						$node.appendChild($node.ownerDocument
-								.createTextNode(str));
+						$node.appendChild($node.ownerDocument.createTextNode(str));
 					}
 				};
 
@@ -2790,30 +2460,29 @@
 
 					/* type: chapter_number, verse_number */
 					switch (wceAttrValue) {
-						case 'chapter_number' :
-							// <div type="chapter" n="B4K1">
-							var $div = getParentByName($node, 'div');
-							if ($div != null) {
-								$div.setAttribute('type', 'chapter');
-								var chapter_number = $node.childNodes[0].nodeValue;
-								$div.setAttribute('n', 'B' + gBookIndex + 'K'
-										+ chapter_number);
-							}
+					case 'chapter_number':
+						// <div type="chapter" n="B4K1">
+						var $div = getParentByName($node, 'div');
+						if ($div != null) {
+							$div.setAttribute('type', 'chapter');
+							var chapter_number = $node.childNodes[0].nodeValue;
+							$div.setAttribute('n', 'B' + gBookIndex + 'K' + chapter_number);
+						}
 
-							var $ab = getParentByName($node, 'ab');
-							if ($ab != null) {
-								$ab.removeChild($node);
-							}
-							return null;
+						var $ab = getParentByName($node, 'ab');
+						if ($ab != null) {
+							$ab.removeChild($node);
+						}
+						return null;
 
-						case 'verse_number' :
-							var $ab = getParentByName($node, 'ab');
-							if ($ab != null) {
-								var verse_number = $node.childNodes[0].nodeValue;
-								$ab.setAttribute('n', '???' + verse_number);
-								$ab.removeChild($node);
-							}
-							return null;
+					case 'verse_number':
+						var $ab = getParentByName($node, 'ab');
+						if ($ab != null) {
+							var verse_number = $node.childNodes[0].nodeValue;
+							$ab.setAttribute('n', '???' + verse_number);
+							$ab.removeChild($node);
+						}
+						return null;
 
 					}
 
@@ -2870,15 +2539,12 @@
 								// new Element<rdg>,child of <app>($newNode)
 								var $rdg = $xml.createElement('rdg');
 								$rdg.setAttribute('type', arr['reading']);
-								$rdg
-										.setAttribute('hand',
-												arr['corrector_name']);
+								$rdg.setAttribute('hand', arr['corrector_name']);
 
 								// deletion
 								var deletion = arr['deletion'];
 								if (deletion != 'null' && deletion != '') {
-									$rdg.setAttribute('deletion', deletion
-											.replace(',', '+'));
+									$rdg.setAttribute('deletion', deletion.replace(',', '+'));
 								}
 								// editorial_note
 								var editorial_note = arr['editorial_note'];
@@ -2886,27 +2552,20 @@
 									var $note = $xml.createElement('note');
 									$note.setAttribute('type', 'transcriber');
 									var _line = '';// TODO
-									xml_id = 'P' + gPage + 'C' + gColumn + 'L'
-											+ _line + '-' + gWit + '-1';
+									xml_id = 'P' + gPage + 'C' + gColumn + 'L' + _line + '-' + gWit + '-1';
 									$note.setAttribute('xml:id', xml_id);// TODO:
 									nodeAddText($note, editorial_note);
 
-									$newNode.parentNode.insertBefore($note,
-											$newNode.nextSibling);
+									$newNode.parentNode.insertBefore($note, $newNode.nextSibling);
 								}
 
 								cloneChildren($clone, $rdg);
-								var corrector_text=arr['corrector_text'];  
-								if(corrector_text){  
-									//alert(decodeURIComponent(corrector_text));
-									/*var nodeList = getChildNodeList($rdg);
-									var curr;
-									for(var j=0, k=nodeList.length; j<k; j++){
-										curr=nodeList[j];
-										if(curr.nodeType==3){
-											curr.nodeValue=corrector_text;
-										}
-									}	*/	
+								var corrector_text = arr['corrector_text'];
+								if (corrector_text) {
+									// alert(decodeURIComponent(corrector_text));
+									/*
+									 * var nodeList = getChildNodeList($rdg); var curr; for(var j=0, k=nodeList.length; j<k; j++){ curr=nodeList[j]; if(curr.nodeType==3){ curr.nodeValue=corrector_text; } }
+									 */
 								}
 								$newNode.appendChild($rdg);
 							}
@@ -2916,26 +2575,18 @@
 						// ******************** break
 						// ********************
 						/*
-						 * break_type= lb / cb /qb / pb number= pb_type=
-						 * running_title= lb_alignment=
+						 * break_type= lb / cb /qb / pb number= pb_type= running_title= lb_alignment=
 						 */
 						if (type == '' && arr['__t'].match(/brea/)) {
 							// $index['lb']++;//TODO: attribute
 							// n, hier nur
 							// fuer automatisch
 							/*
-							 * Page (Collate |P 121|): <pb n="121" type="page"
-							 * xml:id="P121-wit" /> Folio (Collate |F 3v|): <pb
-							 * n="3v" type="folio" xml:id="P3v-wit" /> Column
-							 * (Collate |C 2|): <cb n="2" xml:id="P3vC2-wit" />
-							 * Line (Collate |L 37|): <lb n="37"
-							 * xml:id="P3vC2L37-wit" />
+							 * Page (Collate |P 121|): <pb n="121" type="page" xml:id="P121-wit" /> Folio (Collate |F 3v|): <pb n="3v" type="folio" xml:id="P3v-wit" /> Column (Collate |C 2|): <cb n="2" xml:id="P3vC2-wit" /> Line (Collate |L 37|): <lb n="37" xml:id="P3vC2L37-wit" />
 							 */
 							var hadBreak = false;
 							var breakNodeText = $node.text;
-							if (breakNodeText
-									&& breakNodeText.substr(0,
-											"&#45;".length) == "&#45;") {
+							if (breakNodeText && breakNodeText.substr(0, "&#45;".length) == "&#45;") {
 								hadBreak = true;
 							}
 
@@ -2948,52 +2599,39 @@
 								// pb, cb, lb
 								$newNode = $xml.createElement(break_type);
 								switch (break_type) {
-									case 'lb' :
-										$newNode.setAttribute('n',
-												arr['number']);
-										if (arr['lb_alignment'] != '') {
-											$newNode.setAttribute('rend',
-													arr['lb_alignment']);
-										}
-										xml_id = 'P' + gPage + 'C' + gColumn
-												+ 'L' + arr['number'] + '-'
-												+ gWit;
-										break;
-									case 'cb' :
-										var brea_column = arr['number'];
-										$newNode.setAttribute('n', brea_column);
-										xml_id = 'P' + gPage + 'C'
-												+ brea_column + '-' + gWit;
-										break;
-									case 'pb' :
-										// Decide whether folio
-										// or page
-										if (arr['pb_type'] != ''
-												|| arr['fibre_type'] != '') {
-											// folio
-											brea_page = arr['number']
-													+ arr['pb_type']
-													+ arr['fibre_type'];
-											$newNode.setAttribute('n',
-													brea_page);
-											$newNode.setAttribute('type',
-													'folio');
-										} else {
-											// page
-											brea_page = arr['number'];
-											$newNode.setAttribute('n',
-													brea_page);
-											$newNode.setAttribute('type',
-													'page');
-										}
-										if (arr['facs'] != '') {
-											// use URL for facs
-											// attribute
-											$newNode.setAttribute('facs',
-													arr['facs']);
-										}
-										xml_id = 'P' + brea_page + '-' + gWit;
-										break;
+								case 'lb':
+									$newNode.setAttribute('n', arr['number']);
+									if (arr['lb_alignment'] != '') {
+										$newNode.setAttribute('rend', arr['lb_alignment']);
+									}
+									xml_id = 'P' + gPage + 'C' + gColumn + 'L' + arr['number'] + '-' + gWit;
+									break;
+								case 'cb':
+									var brea_column = arr['number'];
+									$newNode.setAttribute('n', brea_column);
+									xml_id = 'P' + gPage + 'C' + brea_column + '-' + gWit;
+									break;
+								case 'pb':
+									// Decide whether folio
+									// or page
+									if (arr['pb_type'] != '' || arr['fibre_type'] != '') {
+										// folio
+										brea_page = arr['number'] + arr['pb_type'] + arr['fibre_type'];
+										$newNode.setAttribute('n', brea_page);
+										$newNode.setAttribute('type', 'folio');
+									} else {
+										// page
+										brea_page = arr['number'];
+										$newNode.setAttribute('n', brea_page);
+										$newNode.setAttribute('type', 'page');
+									}
+									if (arr['facs'] != '') {
+										// use URL for facs
+										// attribute
+										$newNode.setAttribute('facs', arr['facs']);
+									}
+									xml_id = 'P' + brea_page + '-' + gWit;
+									break;
 								}
 								$newNode.setAttribute('xml:id', xml_id);
 								if (hadBreak)
@@ -3003,25 +2641,20 @@
 
 							if (break_type == 'lb') {
 								// for lb add newline
-								$newNode.parentNode.insertBefore($xml
-										.createTextNode("\n"), $newNode);
+								$newNode.parentNode.insertBefore($xml.createTextNode("\n"), $newNode);
 							} else if (break_type == 'pb') {
 								// for pb add fw elements
 								if (arr['running_title'] != '') {
 									$secNewNode = $xml.createElement('fw');
-									$secNewNode
-											.setAttribute('type', 'runTitle');
-									nodeAddText($secNewNode,
-											arr['running_title']);
-									$newNode.parentNode.insertBefore(
-											$secNewNode, $newNode.nextSibling);
+									$secNewNode.setAttribute('type', 'runTitle');
+									nodeAddText($secNewNode, arr['running_title']);
+									$newNode.parentNode.insertBefore($secNewNode, $newNode.nextSibling);
 								}
 								if (arr['page_number'] != '') {
 									$secNewNode = $xml.createElement('fw');
 									$secNewNode.setAttribute('type', 'PageNum');
 									nodeAddText($secNewNode, arr['page_number']);
-									$newNode.parentNode.insertBefore(
-											$secNewNode, $newNode.nextSibling); // TODO
+									$newNode.parentNode.insertBefore($secNewNode, $newNode.nextSibling); // TODO
 									// better
 									// use
 									// function
@@ -3034,10 +2667,7 @@
 						// ******************** formatting
 						// ********************
 						/*
-						 * __t=formatting_rubrication <hi rend="rubric">...</hi>
-						 * __t=formatiing_gold <hi rend="gold">...</hi>
-						 * __t=formatting_capitals <hi rend="cap" height="4">...</hi>
-						 * __t=formatting_overlines <hi rend="ol">...</hi>
+						 * __t=formatting_rubrication <hi rend="rubric">...</hi> __t=formatiing_gold <hi rend="gold">...</hi> __t=formatting_capitals <hi rend="cap" height="4">...</hi> __t=formatting_overlines <hi rend="ol">...</hi>
 						 */
 						if (type == '' && arr['__t'].match(/formatting/)) {
 							$newNode = $xml.createElement('w');
@@ -3048,36 +2678,36 @@
 
 							var formatting_rend = '', formatting_height = '';
 							switch (arr['__t']) {
-								case 'formatting_rubrication' :
-									formatting_rend = 'rubric';
-									break;
+							case 'formatting_rubrication':
+								formatting_rend = 'rubric';
+								break;
 
-								case 'formatting_gold' :
-									formatting_rend = 'gold';
-									break;
+							case 'formatting_gold':
+								formatting_rend = 'gold';
+								break;
 
-								case 'formatting_blue' :
-									formatting_rend = 'blue';
-									break;
+							case 'formatting_blue':
+								formatting_rend = 'blue';
+								break;
 
-								case 'formatting_green' :
-									formatting_rend = 'green';
-									break;
+							case 'formatting_green':
+								formatting_rend = 'green';
+								break;
 
-								case 'formatting_yellow' :
-									formatting_rend = 'yellow';
-									break;
+							case 'formatting_yellow':
+								formatting_rend = 'yellow';
+								break;
 
-								case 'formatting_other' :
-									formatting_rend = 'other';
-									break;
+							case 'formatting_other':
+								formatting_rend = 'other';
+								break;
 
-								case 'formatting_capitals' :
-									formatting_rend = 'cap';
-									formatting_height = arr['capitals_height'];
-									break;
-								case 'formatting_overline' :
-									formatting_rend = 'ol';
+							case 'formatting_capitals':
+								formatting_rend = 'cap';
+								formatting_height = arr['capitals_height'];
+								break;
+							case 'formatting_overline':
+								formatting_rend = 'ol';
 							}
 
 							if (formatting_rend != '')
@@ -3093,11 +2723,7 @@
 						// ******************** gap
 						// *******************
 						/*
-						 * wce_gap <gap OR <supplied source="STRING"
-						 * _type_STRING type="STRING" _reason_STRING
-						 * reason="STRING" _hand_STRING hand="STRING"
-						 * _unit_STRING_extent_STRING unit="STRING"
-						 * extent="STRING" />
+						 * wce_gap <gap OR <supplied source="STRING" _type_STRING type="STRING" _reason_STRING reason="STRING" _hand_STRING hand="STRING" _unit_STRING_extent_STRING unit="STRING" extent="STRING" />
 						 */
 						if (type == '' && arr['__t'] == 'gap') {
 							if (arr['mark_as_supplied'] == 'supplied') {
@@ -3105,13 +2731,10 @@
 								$newNode = $xml.createElement('supplied');
 								var _supplied_source = arr['supplied_source'];
 								if (_supplied_source && _supplied_source != '') {
-									if (_supplied_source == 'other'
-											&& arr['supplied_source_other'])
-										$newNode.setAttribute('source',
-												arr['supplied_source_other']);
+									if (_supplied_source == 'other' && arr['supplied_source_other'])
+										$newNode.setAttribute('source', arr['supplied_source_other']);
 									else
-										$newNode.setAttribute('source',
-												_supplied_source);
+										$newNode.setAttribute('source', _supplied_source);
 								}
 							} else {
 								// <gap>
@@ -3119,16 +2742,14 @@
 							}
 							// reason
 							if (arr['gap_reason']) {
-								$newNode.setAttribute('reason',
-										arr['gap_reason']);
+								$newNode.setAttribute('reason', arr['gap_reason']);
 							}
 
 							// unit
 							var _unit = arr['unit'];
 							if (_unit != '') {
 								if (_unit == 'other' && arr['unit_other']) {
-									$newNode.setAttribute('unit',
-											arr['unit_other']);
+									$newNode.setAttribute('unit', arr['unit_other']);
 								} else {
 									$newNode.setAttribute('unit', _unit);
 								}
@@ -3143,8 +2764,7 @@
 								// add text
 								var _nodeText = $node.text;
 								if (_nodeText) {
-									_nodeText = _nodeText.substr(1,
-											_nodeText.length - 2);
+									_nodeText = _nodeText.substr(1, _nodeText.length - 2);
 
 									nodeAddText($newNode, _nodeText);
 
@@ -3177,14 +2797,8 @@
 						// ******************** abbr
 						// ********************
 						/*
-						 * abbr_nomenSacrum <abbr type="nomSac">...</abbr>
-						 * abbr_nomenSacrum_Overline <abbr type="nomSac"><hi
-						 * rend="ol">...</hi></abbr> abbr_numeral <abbr
-						 * type="numeral">...</abbr> abbr_numeral_Overline
-						 * <abbr type="numeral"><hi rend="ol">...</hi></abbr>
-						 * abbr_STRING <abbr type="STRING">...</abbr>
-						 * abbr_STRING_Overline <abbr type="STRING"><hi
-						 * rend="ol">...<hi></abbr>
+						 * abbr_nomenSacrum <abbr type="nomSac">...</abbr> abbr_nomenSacrum_Overline <abbr type="nomSac"><hi rend="ol">...</hi></abbr> abbr_numeral <abbr type="numeral">...</abbr> abbr_numeral_Overline <abbr type="numeral"><hi rend="ol">...</hi></abbr>
+						 * abbr_STRING <abbr type="STRING">...</abbr> abbr_STRING_Overline <abbr type="STRING"><hi rend="ol">...<hi></abbr>
 						 */
 						if (type == '' && arr['__t'] === 'abbr') {
 
@@ -3193,8 +2807,7 @@
 							var _abbr_type = arr['abbr_type'];
 							if (_abbr_type && _abbr_type != '') {
 								if (_abbr_type == 'other')
-									$abbr.setAttribute('type',
-											arr['abbr_type_other']);
+									$abbr.setAttribute('type', arr['abbr_type_other']);
 								else
 									$abbr.setAttribute('type', _abbr_type);
 							}
@@ -3223,8 +2836,7 @@
 							var $part_abbr = $xml.createElement('ex');
 							var _nodeText = $node.text;
 							if (_nodeText) {
-								_nodeText = _nodeText.substr(1,
-										_nodeText.length - 2);
+								_nodeText = _nodeText.substr(1, _nodeText.length - 2);
 
 								nodeAddText($part_abbr, _nodeText);
 							}
@@ -3246,8 +2858,7 @@
 								_unclear_reason = arr['unclear_text_reason_other'];
 							}
 							if (_unclear_reason != '') {
-								$unclear
-										.setAttribute('reason', _unclear_reason);
+								$unclear.setAttribute('reason', _unclear_reason);
 							}
 							if (arr['original_text']) {
 								$unclear.text = arr['original_text'];
@@ -3262,11 +2873,7 @@
 						// ******************** paratext
 						// ********************
 						/*
-						 * <fw type="STRING" place="STRING"
-						 * rend="align(STRING)">...</fw> <num type="STRING"
-						 * n="STRING" place="STRING" rend="align(STRING)">...</num>
-						 * <div type="incipit"><ab>...</ab></div> <div
-						 * type="explicit"><ab>...</ab></div>
+						 * <fw type="STRING" place="STRING" rend="align(STRING)">...</fw> <num type="STRING" n="STRING" place="STRING" rend="align(STRING)">...</num> <div type="incipit"><ab>...</ab></div> <div type="explicit"><ab>...</ab></div>
 						 */
 						if (type == '' && arr['__t'] === 'paratext') {
 
@@ -3285,42 +2892,42 @@
 							$newNode = $xml.createElement(paratextNodeName);
 
 							switch (arr['fw_type']) {
-								case 'commentary_text':
-									type = 'commentary';
-									break;
-								case 'fw_pagenumber' :
-									type = 'pageNum';
-									break;
-								case 'num_chapternumber' :
-									type = 'chapNum';
-									break;
-								case 'fw_lecttitle' :
-									type = 'lectTitle';
-									break;
-								case 'fw_chaptertitle' :
-									type = 'chapTitle';
-									break;
-								case 'fw_colophon' :
-									type = 'colophon';
-									break;
-								case 'fw_quiresig' :
-									type = 'quireSig';
-									break;
-								case 'num_ammonian' :
-									type = 'AmmSec';
-									break;
-								case 'num_eusebian' :
-									type = 'EusCan';
-									break;
-								case 'fw_euthaliana' :
-									type = 'euthaliana';
-									break;
-								case 'fw_gloss' :
-									type = 'gloss';
-									break;
-								case 'num_stichoi' :
-									type = 'stichoi';
-									break;
+							case 'commentary_text':
+								type = 'commentary';
+								break;
+							case 'fw_pagenumber':
+								type = 'pageNum';
+								break;
+							case 'num_chapternumber':
+								type = 'chapNum';
+								break;
+							case 'fw_lecttitle':
+								type = 'lectTitle';
+								break;
+							case 'fw_chaptertitle':
+								type = 'chapTitle';
+								break;
+							case 'fw_colophon':
+								type = 'colophon';
+								break;
+							case 'fw_quiresig':
+								type = 'quireSig';
+								break;
+							case 'num_ammonian':
+								type = 'AmmSec';
+								break;
+							case 'num_eusebian':
+								type = 'EusCan';
+								break;
+							case 'fw_euthaliana':
+								type = 'euthaliana';
+								break;
+							case 'fw_gloss':
+								type = 'gloss';
+								break;
+							case 'num_stichoi':
+								type = 'stichoi';
+								break;
 							}
 							$newNode.setAttribute('type', type);
 
@@ -3328,11 +2935,7 @@
 
 							// write attribute n only for
 							// certain values
-							if (attr
-									&& (type == 'pageNum' || type == 'chapNum'
-											|| type == 'quireSig'
-											|| type == 'AmmSec'
-											|| type == 'EusCan' || type == 'stichoi')) {
+							if (attr && (type == 'pageNum' || type == 'chapNum' || type == 'quireSig' || type == 'AmmSec' || type == 'EusCan' || type == 'stichoi')) {
 								$newNode.setAttribute('n', attr);
 							}
 
@@ -3401,29 +3004,17 @@
 						// ******************** supplied
 						// ********************
 						/*
-						 * <supplied source="STRING" reason="STRING"
-						 * agent="STRING>...</supplied> // ohne w if (type == '' &&
-						 * arr['__t'] === 'supplied') { continue; //TODO wie
-						 * unclear in <w> $newNode =
-						 * $xml.createElement('supplied'); $attr =
-						 * arr['supplied_source']; $attr_other =
-						 * arr['supplied_source_other']; if ($attr == 'other') {
-						 * $attr = $attr_other; }
+						 * <supplied source="STRING" reason="STRING" agent="STRING>...</supplied> // ohne w if (type == '' && arr['__t'] === 'supplied') { continue; //TODO wie unclear in <w> $newNode = $xml.createElement('supplied'); $attr = arr['supplied_source']; $attr_other =
+						 * arr['supplied_source_other']; if ($attr == 'other') { $attr = $attr_other; }
 						 * 
-						 * if ($attr != '') { $newNode.setAttribute('source',
-						 * $attr); } // $attr = substr(arr['gap_reason'], 4);
-						 * //to get just damage, hole etc. $attr_other =
-						 * arr['gap_reason_other']; if ($attr == 'other') { //no
-						 * sup_ because of substring $attr = $attr_other; } if
-						 * ($attr != '') { $newNode.setAttribute('reason',
-						 * $attr); }
+						 * if ($attr != '') { $newNode.setAttribute('source', $attr); } // $attr = substr(arr['gap_reason'], 4); //to get just damage, hole etc. $attr_other = arr['gap_reason_other']; if ($attr == 'other') { //no sup_ because of substring $attr = $attr_other; } if
+						 * ($attr != '') { $newNode.setAttribute('reason', $attr); }
 						 * 
 						 * _copyChild($xml, $newNode, $clone);
 						 * 
 						 * $newNode=insertElementW($xml,$node,$newNode);
 						 * 
-						 * $node.parentNode.replaceChild($newNode, $node);
-						 * continue; }
+						 * $node.parentNode.replaceChild($newNode, $node); continue; }
 						 */
 
 						// note
@@ -3442,8 +3033,7 @@
 							}
 
 							/*
-							 * // TODO: // numbering var _xml_id = $value['B'] +
-							 * $value['K'] + $value['V'] + '-' + gWit + '-1';
+							 * // TODO: // numbering var _xml_id = $value['B'] + $value['K'] + $value['V'] + '-' + gWit + '-1';
 							 * 
 							 */
 							var _xml_id = '_TODO_';
@@ -3456,16 +3046,14 @@
 
 							// add <handshift/>
 							if (arr['note_type'] == "changeOfHand") {
-								var $secNewNode = $xml
-										.createElement('handshift');
+								var $secNewNode = $xml.createElement('handshift');
 								$secNewNode.setAttribute('n', arr['newHand']);
-								$newNode.parentNode.insertBefore($secNewNode,
-										$newNode.nextSibling); // TODO
+								$newNode.parentNode.insertBefore($secNewNode, $newNode.nextSibling); // TODO
 								// better use function
 								// appendSibling
 							}
 							continue;
-						} 
+						}
 					}
 					// *** End for*/
 
@@ -3484,11 +3072,9 @@
 		},
 
 		/**
-		 * Returns information about the plugin as a name/value array. The
-		 * current keys are longname, author, authorurl, infourl and version.
+		 * Returns information about the plugin as a name/value array. The current keys are longname, author, authorurl, infourl and version.
 		 * 
-		 * @return {Object} Name/value array containing information about the
-		 *         plugin.
+		 * @return {Object} Name/value array containing information about the plugin.
 		 */
 		getInfo : function() {
 			return {
