@@ -12,8 +12,8 @@
 	var wceControls = {
 		'B' : "break",
 		'C' : "correction",
-		'D' : "decoration",
-		'O' : 'illegible',
+		'D' : 'illegible',
+		'O' : "decoration",
 		'A' : "abbreviation",
 		'P' : "paratext",
 		'N' : "note"
@@ -53,37 +53,66 @@
 			return 0;
 		},
 
+		_getWceControl : function(cn) {
+			var ed = WCEObj.editor;
+			if (!ed)
+				return null;
+
+			var c = ed.controlManager.controls[ed.id + '_menu-' + wceControls[cn]];
+			return c;
+		},
+
 		// set wce Button active or not
 		_setButtonStatus : function(ed, cm, node) {
+			// default value of control-status
+			var b = c = d = o = a = p = n = r = false;
+
 			var isc = ed.selection.isCollapsed();
 			var nName = node.nodeName;
 			var cName = node.className;
-
-			var b = c = d = o = a = p = n = r = false;
-			var eid = ed.id;
-			var cn = eid + "_menu-";
-			var cs = cm.controls;
 
 			var wce_attr;
 
 			if (!isc) {
 				b = true;
 				n = true;
+			} else {
+				c = true;
+				a = true;
 			}
 
-			/*
-			 * TOOD: if (nName) { nName = nName.toLowerCase(); if (nName == 'span') { wce_attr = node.getAttribute('wce'); } }
-			 */
+			if (nName) {
+				nName = nName.toLowerCase();
+				if (nName == 'span') {
+					wce_attr = node.getAttribute('wce');
+					if (wce_attr) {
+						// gap
+						if (wce_attr.indexOf("__t=gap") > -1) {
+							b = c = o = a = p = n = r = true;
+							ed.wceKeydownBlock = true;
+						} else if (wce_attr.indexOf("__t=corr") > -1) {
+							ed.wceKeydownBlock = true;
+							c = false;
+							b = d = o = a = p = n = r = true;
+						} else if (wce_attr.indexOf("__t=abbr") > -1) {
+							ed.wceKeydownBlock = true;
+							a = false;
+						}
+
+					}
+				}
+			}
 
 			// set wce buttons
-			var control_B = cs[cn + wceControls['B']];
-			var control_C = cs[cn + wceControls['C']];
-			var control_D = cs[cn + wceControls['D']];
-			var control_O = cs[cn + wceControls['O']];
-			var control_A = cs[cn + wceControls['A']];
-			var control_P = cs[cn + wceControls['P']];
-			var control_N = cs[cn + wceControls['N']];
-			var control_RF = cs[eid + '_removeformat'];
+			var gWC = WCEObj._getWceControl;
+			var control_B = gWC('B');
+			var control_C = gWC('C');
+			var control_D = gWC('D');
+			var control_O = gWC('O');
+			var control_A = gWC('A');
+			var control_P = gWC('P');
+			var control_N = gWC('N');
+			var control_RF = cm.controls[ed.id + '_removeformat'];
 
 			if (control_B) {
 				control_B.setDisabled(b);
@@ -109,6 +138,7 @@
 
 			// set "remove-format" button
 			if (cName && (cName == 'chapter_number' || cName == 'verse_number')) {
+				ed.wceKeydownBlock = true;
 				r = true;
 			}
 			if (control_RF) {
@@ -116,6 +146,9 @@
 			}
 		},
 
+		/*
+		 * 
+		 */
 		_inClass : function(n, pattern) {
 			if (!n) {
 				return false;
@@ -1535,6 +1568,20 @@
 			}
 		},
 
+		_stopEvent : function(e) {
+			if (e.stopPropagation) {
+				e.stopPropagation();
+			} else if (window.event) {
+				window.event.cancelBubble = true;
+			}
+			if (e.preventDefault) {
+				e.preventDefault();
+			}
+
+			e.returnValue = false;
+			return false;
+		},
+
 		/**
 		 * Initializes the plugin,
 		 * 
@@ -1545,8 +1592,6 @@
 		 */
 		init : function(ed, url) {
 			WCEObj.editor = ed;
-
-			var ttt = wceControls;
 
 			var _wceAdd = this._wceAdd;
 			var _wceAddNoDialog = this._wceAddNoDialog;
@@ -1560,27 +1605,45 @@
 
 			// setWceControls
 			ed.onNodeChange.add(function(ed, cm, n) {
+				ed.wceKeydownBlock = false;
 				_setButtonStatus(ed, cm, n);
 			});
 
 			ed.onKeyDown.addToTop(function(ed, e) {
+				var delBlocked = false;
 				if (!e) {
 					var e = window.event;
 				}
+
 				var ek = e.keyCode || e.charCode || 0;
+
+				// arrow key
+				if (ek == 17 || (ek > 32 && ek < 41)) {
+					return;
+				}
+
+				var _stopEvent = WCEObj._stopEvent;
+
+				// TODO: for short cut
+				if (ed.wceKeydownBlock && !e.ctrlKey) {
+					return _stopEvent(e);
+				}
 
 				if (ek == 13 || ek == 10) {
 					// Enter e.stopPropagation works only in Firefox.
-					if (e.stopPropagation) {
-						e.stopPropagation();
-						e.preventDefault();
-					}
+
+					/*
+					 * if (e.stopPropagation) { e.stopPropagation(); e.preventDefault(); }
+					 */
+					_stopEvent(e);
+
 					if (e.shiftKey) {
 						// Shift+Enter -> break dialogue
 						if (!_getWceMenuValStatus('add', '/^__t=brea/'))
 							ed.execCommand('mceAddBreak');
 					} else {
 						// Enter -> line break
+
 						var rng = ed.selection.getRng(true);
 						var startNode = rng.startContainer;
 						var startText = startNode.data ? startNode.data : startNode.innerText;
@@ -1597,40 +1660,40 @@
 					}
 				}
 
-				var delBlocked = false;
-				ed.wceKeydownBlock = false;
-
-				if (ek == 17 || (ek > 32 && ek < 41))
-					return;
-
 				// Add <pc> for some
 				// special
 				// characters
 				if (ek == 59 && !e.shiftKey) { // ; en
 					tinyMCE.activeEditor.execCommand('mceAdd_pc', ';');
-					e.preventDefault();
-					e.stopPropagation();
+					_stopEvent(e);
+					// e.preventDefault();
+					// e.stopPropagation();
 				} else if (ek == 188 && e.shiftKey) { // ; dt
 					// < en
 					tinyMCE.activeEditor.execCommand('mceAdd_pc', ';');
-					e.preventDefault();
-					e.stopPropagation();
+					_stopEvent(e);
+					// e.preventDefault();
+					// e.stopPropagation();
 				} else if (ek == 188 && !e.shiftKey) { // ,
 					tinyMCE.activeEditor.execCommand('mceAdd_pc', ',');
-					e.preventDefault();
-					e.stopPropagation();
+					_stopEvent(e);
+					// e.preventDefault();
+					// e.stopPropagation();
 				} else if (ek == 190 && !e.shiftKey) { // .
 					tinyMCE.activeEditor.execCommand('mceAdd_pc', '.');
-					e.preventDefault();
-					e.stopPropagation();
+					_stopEvent(e);
+					// e.preventDefault();
+					// e.stopPropagation();
 				} else if (ek == 191 && e.shiftKey) { // ? en
 					tinyMCE.activeEditor.execCommand('mceAdd_pc', '?');
-					e.preventDefault();
-					e.stopPropagation();
+					_stopEvent(e);
+					// e.preventDefault();
+					// e.stopPropagation();
 				} else if (ek == 219 && e.shiftKey) { // ? dt
 					tinyMCE.activeEditor.execCommand('mceAdd_pc', '?');
-					e.preventDefault();
-					e.stopPropagation();
+					_stopEvent(e);
+					// e.preventDefault();
+					// e.stopPropagation();
 				}
 
 				if (ek == 56 && e.shiftKey) // (
