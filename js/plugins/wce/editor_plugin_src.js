@@ -164,7 +164,7 @@
 			var e_index = rng.endOffset;
 
 			// nach setRng wird editor unter firefox nicht aktualisiert. Bug von Firefox?
-			if (!$.browser.msie) {
+			if (tinyMCE.isIE) {
 				ed.selection.select(s_node);
 			}
 
@@ -362,7 +362,6 @@
 		},
 
 		_showWceInfo : function(ed, e) {
-
 			var info_box = ed.wceInfoBox;
 			var sele_node = e.target;
 			var wceAttr = sele_node.getAttribute('wce');
@@ -1670,8 +1669,10 @@
 					}
 				}
 
+				var isIE = tinyMCE.isIE;
+
 				// Browser ausser IE
-				if (!delBlocked && !$.browser.msie && ek == 8) {
+				if (!delBlocked && !isIE && ek == 8) {
 					var rng = ed.selection.getRng(true);
 					var startNode = rng.startContainer;
 					var startText = startNode.data ? startNode.data : startNode.innerText;
@@ -1691,11 +1692,12 @@
 				if (delBlocked) {
 					ed.wceKeydownBlock = true;
 					// if(!ed.selection.isCollapsed())
-					if ($.browser.msie) {
+					if (isIE) {
 						// Entfernen-Key deaktivieren
 						if (ek == 46) {
 							e.keyCode = 32;
 						}
+						e.preventDefault();
 						e.returnValue = false;
 					} else {
 						e.preventDefault();
