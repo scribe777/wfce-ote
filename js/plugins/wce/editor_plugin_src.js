@@ -7,18 +7,6 @@
  */
 
 (function() {
-
-	// wce Controls names
-	var wceControls = {
-		'B' : "break",
-		'C' : "correction",
-		'D' : 'illegible',
-		'O' : "decoration",
-		'A' : "abbreviation",
-		'P' : "paratext",
-		'N' : "note"
-	};
-
 	var qcnt = 1; // quire count
 	var pcnt = 1; // page count
 	var ccnt = 1; // column count
@@ -27,125 +15,277 @@
 
 	// Load plugin specific language pack
 	tinymce.PluginManager.requireLangPack('wce');
-	// WCEObj
+	
+	/*
+	* WCEObj hat variable and constants
+	*/
 	var WCEObj = {
-		_contentHasWceAttribut : function(ed, arr) {
-			var se = ed.selection;
-			var p, v;
+		/*
+		 * init wce constants: button name, element name ....
+		 */
+		_initWCEConstants : function(ed) {
+			ed.WCE_CON = {};
+			var w = ed.WCE_CON;
+			
+			//if cursor within the element, block cursor 
+			w.blockedElemente = new Array('gap', 'corr', 'chapter_number', 'verse_number', 'abbr', 'space','note');
+			w.normalElemente = new Array('unclear'); 
 
-			for ( var i = 0; i < arr.length; i++) {
-				v = arr[i];
-				p = new RegExp("__t=" + v, "g");
+			// WCE Buttons 
+			var controls=ed.controlManager.controls;
+			var ed_id=ed.id; 
+			w.control_B = controls[ed_id+'_menu-break'];
+			w.control_C = controls[ed_id+'_menu-correction'];
+			w.control_D = controls[ed_id+'_menu-illegible'];
+			w.control_O = controls[ed_id+'_menu-decoration'];
+			w.control_A = controls[ed_id+'_menu-abbreviation'];
+			w.control_P = controls[ed_id+'_menu-paratext'];
+			w.control_N = controls[ed_id+'_menu-note']; 
+			w.control_CH = controls[ed_id+'_charmap']; // charmap
+			w.control_RF = controls[ed_id+'_removeformat'];  // Remove Format
+			w.control_PA = controls[ed_id+'_paste'];  // Paste 
+		},
 
-				if (se.getContent().match(p)) {
-					return 1;
-				}
+		/*
+		 * init wce variable
+		 */
+		_initWCEVariable : function(ed) {
+			ed.WCE_VAR = {};
+			WCEObj._resetWCEVariable(ed);
+		},
 
-				// Auswahl in note
-				var node = se.getNode();
-				if (node) {
-					var wceAttr = node.getAttribute('wce');
-					if (wceAttr && wceAttr.match(p)) {
-						return 1;
+		/*
+		 * reset wce variable
+		 */
+		_resetWCEVariable : function(ed) {
+			var w = ed.WCE_VAR;
+			w.isc = true;
+			w.textNode = null;
+			w.node = null;
+			w.isAtNodeEnd = false;
+			w.type = null; // cursor in welche wce type
+			w.isInBE = false; // is cursor in blocked Element
+			w.next = null; // nextSibling
+			w.isNextBE = false; // is nextSibling blocked Element
+			w.pre = null; // previousSibling
+			w.isPreBE = false; // is previousSibling BE
+			WCEObj._setAllControls(ed, false); // controls setActive? 
+		},
+
+		/*
+		 * is a node wcenode?
+		 */
+		_isNodeTypeOf : function(node, typeName) { 
+			var nodeName = node.nodeName;
+			if (nodeName && nodeName.toLowerCase() == 'span') {
+				//TODO
+				if(typeName=='verse_number' || typeName=='chapter_number'){ 
+					var className = node.className;
+					if (className){
+						return className.indexOf(typeName) > -1;
 					}
+					return false;
+				}
+			
+				var wceAttr = node.getAttribute('wce');
+				if (wceAttr){
+					return wceAttr.indexOf("__t=" + typeName) > -1; 
 				}
 			}
-			return 0;
+
+			return false;
 		},
 
-		_getWceControl : function(cn) {
-			var ed = WCEObj.editor;
-			if (!ed)
-				return null;
-
-			var c = ed.controlManager.controls[ed.id + '_menu-' + wceControls[cn]];
-			return c;
+		/*
+		 * is node blocked element?
+		 */
+		_isWceBE : function(ed, node) {
+			if (!node || !ed)
+				return false;
+			
+			var arr = ed.WCE_CON.blockedElemente;
+			for ( var i = 0, len = arr.length; i < len; i++) {
+				if (WCEObj._isNodeTypeOf(node, arr[i]))
+					return true;
+			}
+			return false;
 		},
 
-		// set wce Button active or not
-		_setButtonStatus : function(ed, cm, node) {
-			// default value of control-status
-			var b = c = d = o = a = p = n = r = false;
+		/*
+		 * set wce controls is active or not
+		 */
+		_setAllControls : function(ed, b) {
+			var w = ed.WCE_VAR;
+			w.not_CH = b; // control insert custom character
+			w.not_RF = b; // control RemoveFormat setActive?
+			w.not_PA = b; // control paste
+			w.not_B = b; // control B setActive?
+			w.not_C = b; // control C setActive?
+			w.not_D = b; // control D setActive?
+			w.not_O = b; // control O setActive?
+			w.not_A = b; // control A setActive?
+			w.not_P = b; // control P setActive?
+			w.not_N = b; // control N setActive?
 
-			var isc = ed.selection.isCollapsed();
-			var nName = node.nodeName;
-			var cName = node.className;
+		},
 
-			var wce_attr;
+		/*
+		 * set wce controls status
+		 */
+		_redrawContols : function(ed) {
+			var w = ed.WCE_CON;
+			var v = ed.WCE_VAR;
 
-			if (!isc) {
-				b = true;
-				n = true;
+			if (w.control_B) {
+				w.control_B.setDisabled(v.not_B);
+			}
+			if (w.control_C) {
+				w.control_C.setDisabled(v.not_C);
+			}
+			if (w.control_D) {
+				w.control_D.setDisabled(v.not_D);
+			}
+			if (w.control_O) {
+				w.control_O.setDisabled(v.not_O);
+			}
+			if (w.control_A) {
+				w.control_A.setDisabled(v.not_A);
+			}
+			if (w.control_P) {
+				w.control_P.setDisabled(v.not_P);
+			}
+			if (w.control_N) {
+				w.control_N.setDisabled(v.not_N);
+			}
+			if (w.control_CH) {
+				w.control_CH.setDisabled(v.not_CH);
+			}
+			if (w.control_RF) {
+				w.control_RF.setDisabled(v.not_RF);
+			}
+			if (w.control_PA) {
+				w.control_PA.setDisabled(v.not_PA);
+			}
+		},
+
+		/*
+		 * update wce variable
+		 */
+		_setWCEVariable : function(ed) {
+			var w = ed.WCE_VAR;
+
+			// reset WCE_VAR
+			WCEObj._resetWCEVariable(ed);
+
+			var rng = ed.selection.getRng(true);
+			var startContainer = rng.startContainer;
+			var endContainer = rng.endContainer;
+
+			if (startContainer.nodeType != 3) {
+				// ganz anfang oder Ende
+				w.not_C = true;
+				w.not_A = true;
+				return;
+			}
+
+			var startOffset = rng.startOffset;
+			var text = startContainer.nodeValue;
+
+			if (startOffset == text.length) {
+				w.isAtNodeEnd = true;
+			}
+
+			var startNode = startContainer.parentNode;
+			var nodeName = startNode.nodeName;
+
+			var _isWceBE = WCEObj._isWceBE;
+
+			w.textNode = startContainer;
+			w.node = startNode;
+
+			w.isc = ed.selection.isCollapsed();
+			if (!w.isc) {
+				w.not_B = true;
+				w.not_N = true;
 			} else {
-				c = true;
-				a = true;
+				w.not_C = true;
+				w.not_A = true;
 			}
 
-			if (nName) {
-				nName = nName.toLowerCase();
-				if (nName == 'span') {
-					wce_attr = node.getAttribute('wce');
-					if (wce_attr) {
-						// gap
-						if (wce_attr.indexOf("__t=gap") > -1) {
-							b = c = o = a = p = n = r = true;
-							ed.wceKeydownBlock = true;
-						} else if (wce_attr.indexOf("__t=corr") > -1) {
-							ed.wceKeydownBlock = true;
-							c = false;
-							b = d = o = a = p = n = r = true;
-						} else if (wce_attr.indexOf("__t=abbr") > -1) {
-							ed.wceKeydownBlock = true;
-							a = false;
-						}
+			var isNodeTypeOf = WCEObj._isNodeTypeOf;
+			var _setAllControls = WCEObj._setAllControls;
 
-					}
-				}
+			if (isNodeTypeOf(startNode, 'gap')) {
+				_setAllControls(ed, true);
+				w.not_D = false;
+				w.type = 'gap';
+			} else if (isNodeTypeOf(startNode, 'corr')) {
+				_setAllControls(ed, true);
+				w.not_C = false;
+				w.type = 'corr';
+			} else if (isNodeTypeOf(startNode, 'abbr')) {
+				w.not_A = false;
+				w.type = 'abbr';
+			} else if (isNodeTypeOf(startNode, 'chapter_number')) {
+				_setAllControls(ed, true);
+				w.type = 'chapter_number';
+			} else if (isNodeTypeOf(startNode, 'verse_number')) {
+				_setAllControls(ed, true);
+				w.type = 'verse_number';
+			} else if (isNodeTypeOf(startNode, 'brea')) {
+				w.type = 'break';
+			} else if(isNodeTypeOf(startNode, 'unclear')){
+				w.type='unclear';
+			} else if(isNodeTypeOf(startNode, 'space')){
+				_setAllControls(ed, true);
+				w.type='space';
+				w.not_O=false;
+			} else if(isNodeTypeOf(startNode, 'formatting_capitals')){
+				w.type='formatting_capitals';
+			} else if(isNodeTypeOf(startNode, 'paratext')){
+				w.type='paratext';
+			} else if(isNodeTypeOf(startNode, 'note')){
+				_setAllControls(ed, true);
+				w.not_N=false;
+				w.type='note';
 			}
-
-			// set wce buttons
-			var gWC = WCEObj._getWceControl;
-			var control_B = gWC('B');
-			var control_C = gWC('C');
-			var control_D = gWC('D');
-			var control_O = gWC('O');
-			var control_A = gWC('A');
-			var control_P = gWC('P');
-			var control_N = gWC('N');
-			var control_RF = cm.controls[ed.id + '_removeformat'];
-
-			if (control_B) {
-				control_B.setDisabled(b);
-			}
-			if (control_C) {
-				control_C.setDisabled(c);
-			}
-			if (control_D) {
-				control_D.setDisabled(d);
-			}
-			if (control_O) {
-				control_O.setDisabled(o);
-			}
-			if (control_A) {
-				control_A.setDisabled(a);
-			}
-			if (control_P) {
-				control_P.setDisabled(p);
-			}
-			if (control_N) {
-				control_N.setDisabled(n);
+			
+			w.isInBE = _isWceBE(ed, startNode);
+			if (w.isInBE) {
+				w.next = startNode.nextSibling;
+				w.pre = startNode.previousSibling;
+			} else {
+				w.next = startContainer.nextSibling;
+				w.pre = startContainer.previousSibling;
 			}
 
-			// set "remove-format" button
-			if (cName && (cName == 'chapter_number' || cName == 'verse_number')) {
-				ed.wceKeydownBlock = true;
-				r = true;
-			}
-			if (control_RF) {
-				control_RF.setDisabled(r);
-			}
+			w.isNextBE = _isWceBE(ed, w.next);
+			w.isPreBE = _isWceBE(ed, w.pre);
 		},
 
+		/*
+		 * insert space after cursor
+		 */
+		_insertSpace : function(ed, ek) {
+			var w = ed.WCE_VAR;
+			var node = w.node;
+			var next = w.next;
+			if (node && next) {
+				var newText = document.createTextNode(" ");
+				next.parentNode.insertBefore(newText, next);
+				if (ek != 32) {
+					ed.selection.select(newText);
+				} else {
+					var rng = ed.selection.getRng(true);
+					rng.setStart(newText, 1);
+					rng.setEnd(newText, 1);
+					ed.selection.setRng(rng);
+					return true;
+				}
+			}
+			return false;
+		},
+ 
 		/*
 		 * 
 		 */
@@ -170,6 +310,8 @@
 
 		// only for mouseup
 		_adaptiveSelection : function(ed) {
+			return;
+
 			var _getStartNoBlank = WCEObj._getStartNoBlank;
 			var _getEndNoBlank = WCEObj._getEndNoBlank;
 			var _inClass = WCEObj._inClass;
@@ -307,7 +449,10 @@
 			}
 		},
 
-		_wceParamsToArray : function(str) {
+		/*
+		 * @param string from attribut "wce" in <span> @return array
+		 */
+		_stringToArray : function(str) {
 			var a = [];
 			var ar = str.split('&');
 			var k, v, kv;
@@ -320,51 +465,8 @@
 			return a;
 		},
 
-		// Nur wenn Tastate "Entf" aktiviert, Ueberpruefen, ob Cursor direkt vor oder nach Verse ist
-		_contentIsBlocked : function(ek) {
-			var ed = WCEObj.editor;
-
-			if (ek != 46)
-				return false;
-
-			var rng = ed.selection.getRng(true);
-			var startNode = rng.startContainer;
-			var startText = startNode.data ? startNode.data : startNode.innerText;
-			var nodeSibling;
-
-			if (ek == 8 && rng.startOffset == 0 && typeof (startText) != 'undefined') {
-				nodeSibling = startNode.previousSibling;
-			} else if (ek == 46 && ((typeof (startText) != 'undefined' && rng.startOffset >= startText.length) || (typeof (startText) == 'undefined' && typeof (startNode) != 'undefined'))) {
-				nodeSibling = startNode.nextSibling;
-			} else
-				return false;
-
-			if (nodeSibling) {
-				return WCEObj._isNodeVerseOrChapter(nodeSibling);
-			} else {
-				return WCEObj._nextSiblingIsBlocked(startNode);
-			}
-			return false;
-		},
-
-		// Node is Verse or Chapter?
-		_isNodeVerseOrChapter : function(n) {
-			if (n.nodeType == 3)
-				return false;
-
-			var wceAttr = n.getAttribute('wce');
-			if (!wceAttr) {
-				wceAttr = n.className;
-			}
-			if (wceAttr && (wceAttr == 'verse_number' || wceAttr == 'chapter_number')) {
-				return true;
-			}
-			return false;
-		},
-
 		// Ueberpruefen, ob ausgewaehlter Text verse nummer hat
-		_contentHasVerse : function() {
-			var ed = WCEObj.editor;
+		_contentHasVerse : function(ed) {
 			var sel = ed.selection;
 			var selContent = sel.getContent();
 			// Auswahl hat verse
@@ -372,28 +474,12 @@
 				return true;
 			}
 
-			// Auswahl in verse
-			var selNode = sel.getNode();
-			if (selNode) {
-				return WCEObj._isNodeVerseOrChapter(selNode);
-			}
-			return false;
+			return ed.WCE_VAR.isInBE;
 		},
 
-		// TEST: //Nur wenn Tastate "Entf" aktiviert
-		_nextSiblingIsBlocked : function(_node) {
-			var _parentNode = _node.parentNode, _nextSibling;
-			if (_parentNode && !_parentNode.nodeName.match(/body/i)) {
-				_nextSibling = _parentNode.nextSibling;
-				if (_nextSibling) {
-					return WCEObj._isNodeVerseOrChapter(_nextSibling);
-				} else {
-					return WCEObj._nextSiblingIsBlocked(_parentNode);
-				}
-			}
-			return false;
-		},
-
+		/*
+		 * wenn mouseover, show wce node info
+		 */
 		_showWceInfo : function(ed, e) {
 			var info_box = ed.wceInfoBox;
 			var sele_node = e.target;
@@ -412,7 +498,7 @@
 				var info_text = '';
 				var k, v, kv, kv_ar;
 				for ( var i = 0; i < info_arr.length; i++) {
-					ar = WCEObj._wceParamsToArray(info_arr[i]);
+					ar = WCEObj._stringToArray(info_arr[i]);
 					var type_name = ar[ed.wceTypeParamInClass];
 					type_name = type_name.split('_');
 
@@ -643,112 +729,10 @@
 				ed.isNotDirty = 0;
 			else
 				ed.isNotDirty = 1;
-		},
-
-		_getWceMenuValStatus : function(_type, p) {
-			var ed = tinyMCE.activeEditor;
-			var _dirty = ed.isDirty();
-			if (WCEObj._contentHasVerse())
-				return true;
-
-			if (_dirty) {
-				ed.isNotDirty = 0;
-			} else {
-				ed.isNotDirty = 1;
-			}
-
-			var se = ed.selection;
-			var col = se.isCollapsed();
-
-			var el = se.getNode() || ed.getBody();
-
-			var wceAttr = el.getAttribute('wce');
-
-			if (wceAttr) {
-				switch (_type) {
-				case 'add':
-					if (p == '/^_t=paratext/' && !col) {
-						return true;
-					}
-
-					if (wceAttr.match(/_t=/))
-						return true;
-					else
-						return false;
-					break;
-
-				case 'edit':
-					if (wceAttr.match(p))
-						return false;
-					else
-						return true;
-					break;
-
-				case 'delete':
-					if (wceAttr.match(p))
-						return false;
-					else
-						return true;
-					break;
-				}
-
-			} else if (_type == 'edit' || _type == 'delete') {
-				return true;
-			}
-
-			return false;
-		},
-
-		_setWceMenuStatus : function(ed, menuId, pattern, f, unterMenuId) {
-			var control = ed.controlManager.controls[ed.id + '_' + menuId];
-			var item;
-
-			if (WCEObj._contentHasVerse() == 1) {
-				control.setDisabled(true);
-				return;
-			}
-
-			if (typeof pattern == 'undefined')
-				return;
-
-			if (control.isMenuRendered) {
-
-				if (typeof unterMenuId == 'undefined' || unterMenuId == null) {
-					item = control.menu.items[menuId + '-add'];
-				} else {
-					item = control.menu.items[menuId + '-' + unterMenuId].items[menuId + '-' + unterMenuId + '-add'];
-				}
-
-				if (f('add', pattern)) {
-					item.setDisabled(true);
-				} else
-					item.setDisabled(false);
-
-				if (typeof unterMenuId == 'undefined' || unterMenuId == null) {
-					item = control.menu.items[menuId + '-edit'];
-				} else {
-					item = control.menu.items[menuId + '-' + unterMenuId].items[menuId + '-' + unterMenuId + '-edit'];
-				}
-				if (f('edit', pattern)) {
-					item.setDisabled(true);
-				} else
-					item.setDisabled(false);
-
-				if (typeof unterMenuId == 'undefined' || unterMenuId == null) {
-					item = control.menu.items[menuId + '-delete'];
-				} else {
-					item = control.menu.items[menuId + '-' + unterMenuId].items[menuId + '-' + unterMenuId + '-delete'];
-				}
-				if (f('delete', pattern)) {
-					item.setDisabled(true);
-				} else
-					item.setDisabled(false);
-			}
-		},
-
+		}, 
+ 
 		createControl : function(n, cm) {
-			var _getWceMenuValStatus = this._getWceMenuValStatus;
-			var _setWceMenuStatus = this._setWceMenuStatus;
+			var ed = cm.editor;  
 			switch (n) {
 			/*
 			 * case 'metadata': var c = cm.createButton('menu-metadata', { title : 'Metadata', image : tinyMCE.baseURL+'/plugins/wce/img/button_meta.gif', onclick : function() { tinyMCE.activeEditor.execCommand('mceAddMetadata'); } }); return c;
@@ -757,41 +741,48 @@
 				var c = cm.createMenuButton('menu-break', {
 					title : 'Breaks',
 					image : tinyMCE.baseURL + '/plugins/wce/img/button_B-new.png',
-					icons : false,
-					onclick : function() {
-						_setWceMenuStatus(tinyMCE.activeEditor, 'menu-break', /^__t=brea/, _getWceMenuValStatus);
-					}
+					icons : false
 				});
-
+				
 				c.onRenderMenu.add(function(c, m) {
-					var pattern = /^__t=brea/;
-					var b = _getWceMenuValStatus('add', pattern);
-
+					var w = ed.WCE_VAR; 
 					m.add({
 						title : 'add',
 						id : 'menu-break-add',
 						onclick : function() {
-							tinyMCE.activeEditor.execCommand('mceAddBreak');
+							ed.execCommand('mceAddBreak');
 						}
-					}).setDisabled(b);
-
-					b = _getWceMenuValStatus('edit', pattern);
+					}); 				
+					
 					m.add({
 						title : 'edit',
 						id : 'menu-break-edit',
 						onclick : function() {
-							tinyMCE.activeEditor.execCommand('mceEditBreak');
+							ed.execCommand('mceEditBreak');
 						}
-					}).setDisabled(b);
-
-					b = _getWceMenuValStatus('delete', pattern);
+					});
+					
 					m.add({
 						title : 'delete',
 						id : 'menu-break-delete',
 						onclick : function() {
-							tinyMCE.activeEditor.execCommand('wceDelNode');
+							ed.execCommand('wceDelNode');
 						}
-					}).setDisabled(b);
+					}); 
+					 
+					m.onShowMenu.add(function(m){ 
+						var items=m.items;
+						if(w.type=='break'){
+							items['menu-break-add'].setDisabled(true); 
+							items['menu-break-edit'].setDisabled(false); 
+							items['menu-break-delete'].setDisabled(false); 
+						}else{
+							items['menu-break-add'].setDisabled(false); 
+							items['menu-break-edit'].setDisabled(true); 
+							items['menu-break-delete'].setDisabled(true);
+						}
+					});
+					
 				});
 
 				return c;
@@ -802,7 +793,7 @@
 					image : tinyMCE.baseURL + '/plugins/wce/img/button_C-new.png',
 					icons : false,
 					onclick : function() {
-						tinyMCE.activeEditor.execCommand('mceAddCorrection');
+						ed.execCommand('mceAddCorrection');
 					}
 				});
 
@@ -812,97 +803,102 @@
 				var c = cm.createMenuButton('menu-illegible', {
 					title : 'Deficiency',
 					image : tinyMCE.baseURL + '/plugins/wce/img/button_D-new.png',
-					icons : false,
-					onclick : function() {
-						_setWceMenuStatus(tinyMCE.activeEditor, 'menu-illegible', /^__t=unclear/, _getWceMenuValStatus, 'uncleartext');
-						_setWceMenuStatus(tinyMCE.activeEditor, 'menu-illegible', /^__t=gap/, _getWceMenuValStatus, 'lacuna');
-					}
+					icons : false 
 				});
 
 				c.onRenderMenu.add(function(c, m) {
-					var sub, pattern, b;
-
-					// Uncertain Letters
-					m.add({
-						title : 'Uncertain letters',
-						id : 'menu-illegible-uncleartext',
-						onclick : function() {
-							tinyMCE.activeEditor.execCommand('mceAddUnclearText');
-						}
-					});
-
+					var sub;
+					var w = ed.WCE_VAR; 
+					
 					sub = m.addMenu({
 						title : 'Uncertain Letters',
 						id : 'menu-illegible-uncleartext'
 					});
 
-					pattern = /^__t=unclear/;
-					b = _getWceMenuValStatus('add', pattern);
 					sub.add({
 						title : 'add',
 						id : 'menu-illegible-uncleartext-add',
 						onclick : function() {
-							tinyMCE.activeEditor.execCommand('mceAddUnclearText');
+							ed.execCommand('mceAddUnclearText');
 						}
-					}).setDisabled(b);
+					}) ;
 
-					b = _getWceMenuValStatus('edit', pattern);
 					sub.add({
 						title : 'edit',
 						id : 'menu-illegible-uncleartext-edit',
 						onclick : function() {
-							tinyMCE.activeEditor.execCommand('mceEditUnclearText');
+							ed.execCommand('mceEditUnclearText');
 						}
-					}).setDisabled(b);
+					}) ;
 
-					b = _getWceMenuValStatus('delete', pattern);
 					sub.add({
 						title : 'delete',
 						id : 'menu-illegible-uncleartext-delete',
 						onclick : function() {
-							tinyMCE.activeEditor.execCommand('wceDelNode');
+							ed.execCommand('wceDelNode');
 						}
-					}).setDisabled(b);
-
-					// gap/supplied
-					pattern = /^__t=gap/;
+					}) ;
+					
+					sub.onShowMenu.add(function(m){ 
+						var items=m.items;
+						if(w.type=='unclear'){
+							items['menu-illegible-uncleartext-add'].setDisabled(true); 
+							items['menu-illegible-uncleartext-edit'].setDisabled(false); 
+							items['menu-illegible-uncleartext-delete'].setDisabled(false); 
+						}else{
+							items['menu-illegible-uncleartext-add'].setDisabled(false); 
+							items['menu-illegible-uncleartext-edit'].setDisabled(true); 
+							items['menu-illegible-uncleartext-delete'].setDisabled(true);
+						}
+					});
+					 
 					sub = m.addMenu({
 						title : 'Gap',
 						id : 'menu-illegible-lacuna'
 					});
 
-					b = _getWceMenuValStatus('add', pattern);
 					sub.add({
 						title : 'add',
 						id : 'menu-illegible-lacuna-add',
 						onclick : function() {
-							tinyMCE.activeEditor.execCommand('mceAddGap');
+							ed.execCommand('mceAddGap');
 						}
-					}).setDisabled(b);
+					});
 
-					b = _getWceMenuValStatus('edit', pattern);
 					sub.add({
 						title : 'edit',
 						id : 'menu-illegible-lacuna-edit',
 						onclick : function() {
-							tinyMCE.activeEditor.execCommand('mceEditGap');
+							ed.execCommand('mceEditGap');
 						}
-					}).setDisabled(b);
+					});
 
-					b = _getWceMenuValStatus('delete', pattern);
 					sub.add({
 						title : 'delete',
 						id : 'menu-illegible-lacuna-delete',
 						onclick : function() {
-							tinyMCE.activeEditor.execCommand('wceDelNode');
+							ed.execCommand('wceDelNode');
 						}
-					}).setDisabled(b);
+					});
+					
+					sub.onShowMenu.add(function(m){ 
+						var items=m.items;
+						if(w.type=='gap'){
+							items['menu-illegible-lacuna-add'].setDisabled(true); 
+							items['menu-illegible-lacuna-edit'].setDisabled(false); 
+							items['menu-illegible-lacuna-delete'].setDisabled(false); 
+						}else{
+							items['menu-illegible-lacuna-add'].setDisabled(false); 
+							items['menu-illegible-lacuna-edit'].setDisabled(true); 
+							items['menu-illegible-lacuna-delete'].setDisabled(true);
+						}
+					}); 
 
 					m.add({ // Ghost page
 						title : 'Ghost page',
 						id : 'menu-illegible-ghostpage',
 						onclick : function() {
-							tinyMCE.activeEditor.execCommand('mceAddGhostPage');
+							ed.execCommand('mceAddGhostPage');
 						}
 					});
 				});
@@ -914,115 +910,113 @@
 				var c = cm.createMenuButton('menu-decoration', {
 					title : 'Ornamentation',
 					image : tinyMCE.baseURL + '/plugins/wce/img/button_O-new.png',
-					icons : false,
-					onclick : function() {
-						_setWceMenuStatus(tinyMCE.activeEditor, 'menu-decoration');
-						_setWceMenuStatus(tinyMCE.activeEditor, 'menu-decoration', /^__t=spaces/, _getWceMenuValStatus, 'blankspaces');
-					}
+					icons : false 
 				});
 
 				c.onRenderMenu.add(function(c, m) {
 					var sub;
-
+					var w = ed.WCE_VAR;
 					sub = m.addMenu({
 						title : 'Highlight Text',
 						id : 'menu-decoration-highlight',
-						image : tinyMCE.baseURL + '/plugins/wce/img/button_O-new.png',
-						onclick : function() {
-							_setWceMenuStatus(tinyMCE.activeEditor, 'menu-decoration-highlight');
-							_setWceMenuStatus(tinyMCE.activeEditor, 'menu-decoration-highlight', /^__t=formatting_capitals/, _getWceMenuValStatus, 'capitals');
-						}
-					});
-
+						image : tinyMCE.baseURL + '/plugins/wce/img/button_O-new.png' 
+					});  
+					
 					sub.add({
 						title : 'Rubrication',
 						onclick : function() {
-							tinyMCE.activeEditor.execCommand('mceAdd_formatting', 'rubrication');
+							ed.execCommand('mceAdd_formatting', 'rubrication');
 						}
 					});
 
 					sub.add({
 						title : 'Gold',
 						onclick : function() {
-							tinyMCE.activeEditor.execCommand('mceAdd_formatting', 'gold');
+							ed.execCommand('mceAdd_formatting', 'gold');
 						}
 					});
 
-					sub2 = sub.addMenu({
+					var sub2 = sub.addMenu({
 						title : 'Other colour'
 					});
 
 					sub2.add({
 						title : 'Blue',
 						onclick : function() {
-							tinyMCE.activeEditor.execCommand('mceAdd_formatting', 'blue');
+							ed.execCommand('mceAdd_formatting', 'blue');
 						}
 					});
 
 					sub2.add({
 						title : 'Green',
 						onclick : function() {
-							tinyMCE.activeEditor.execCommand('mceAdd_formatting', 'green');
+							ed.execCommand('mceAdd_formatting', 'green');
 						}
 					});
 
 					sub2.add({
 						title : 'Yellow',
 						onclick : function() {
-							tinyMCE.activeEditor.execCommand('mceAdd_formatting', 'yellow');
+							ed.execCommand('mceAdd_formatting', 'yellow');
 						}
 					});
 
 					sub2.add({
 						title : 'Other',
 						onclick : function() {
-							tinyMCE.activeEditor.execCommand('mceAdd_formatting', 'other');
+							ed.execCommand('mceAdd_formatting', 'other');
 						}
-					});
+					}); 
 
 					sub.add({
 						title : 'Overline',
 						onclick : function() {
-							tinyMCE.activeEditor.execCommand('mceAdd_formatting', 'overline');
+							ed.execCommand('mceAdd_formatting', 'overline');
 						}
 					});
 
 					sub2 = sub.addMenu({
 						title : 'Capitals',
 						id : 'menu-decoration-highlight-capitals',
-						onclick : function() {
-
-						}
 					});
 
-					var pattern = /^__t=formatting_capitals/;
-					var b = _getWceMenuValStatus('add', pattern);
 					sub2.add({
 						title : 'add',
 						id : 'menu-decoration-highlight-capitals-add',
 						icons : false,
 						onclick : function() {
-							tinyMCE.activeEditor.execCommand('mceAddCapitals');
+							ed.execCommand('mceAddCapitals');
 						}
-					}).setDisabled(b);
+					});
 
-					b = _getWceMenuValStatus('edit', pattern);
 					sub2.add({
 						title : 'edit',
 						id : 'menu-decoration-highlight-capitals-edit',
 						onclick : function() {
-							tinyMCE.activeEditor.execCommand('mceEditCapitals');
+							ed.execCommand('mceEditCapitals');
 						}
-					}).setDisabled(b);
-
-					b = _getWceMenuValStatus('delete', pattern);
+					});
+ 
 					sub2.add({
 						title : 'delete',
 						id : 'menu-decoration-highlight-capitals-delete',
 						onclick : function() {
-							tinyMCE.activeEditor.execCommand('wceDelNode');
+							ed.execCommand('wceDelNode');
 						}
-					}).setDisabled(b);
+					});
+					
+					sub2.onShowMenu.add(function(m){ 
+						var items=m.items;
+						if(w.type=='formatting_capitals'){
+							items['menu-decoration-highlight-capitals-add'].setDisabled(true); 
+							items['menu-decoration-highlight-capitals-edit'].setDisabled(false); 
+							items['menu-decoration-highlight-capitals-delete'].setDisabled(false); 
+						}else{
+							items['menu-decoration-highlight-capitals-add'].setDisabled(false); 
+							items['menu-decoration-highlight-capitals-edit'].setDisabled(true); 
+							items['menu-decoration-highlight-capitals-delete'].setDisabled(true);
+						}
+					}); 
 
 					sub = m.addMenu({
 						title : 'Insert special characters'
@@ -1031,35 +1025,35 @@
 					sub.add({
 						title : '\u203B	(cross with dots)',
 						onclick : function() {
-							tinyMCE.activeEditor.execCommand('mceAdd_pc', '\u203B');
+							ed.execCommand('mceAdd_pc', '\u203B');
 						}
 					});
 
 					sub.add({
 						title : '&gt;	(diple)',
 						onclick : function() {
-							tinyMCE.activeEditor.execCommand('mceAdd_pc', '&gt;');
+							ed.execCommand('mceAdd_pc', '&gt;');
 						}
 					});
 
 					sub.add({
 						title : '\u2020	(obelus)',
 						onclick : function() {
-							tinyMCE.activeEditor.execCommand('mceAdd_pc', '\u2020');
+							ed.execCommand('mceAdd_pc', '\u2020');
 						}
 					});
 
 					sub.add({
 						title : '\u00B6	(paragraphus)',
 						onclick : function() {
-							tinyMCE.activeEditor.execCommand('mceAdd_pc', '\u00B6');
+							ed.execCommand('mceAdd_pc', '\u00B6');
 						}
 					});
 
 					sub.add({
 						title : '\u03A1\u0336	(staurogram)',
 						onclick : function() {
-							tinyMCE.activeEditor.execCommand('mceAdd_pc', '\u03A1\u0336');
+							ed.execCommand('mceAdd_pc', '\u03A1\u0336');
 						}
 					});
 
@@ -1070,21 +1064,21 @@
 					sub.add({
 						title : ': (colon)',
 						onclick : function() {
-							tinyMCE.activeEditor.execCommand('mceAdd_pc', ':');
+							ed.execCommand('mceAdd_pc', ':');
 						}
 					});
 
 					sub.add({
 						title : ', (comma)',
 						onclick : function() {
-							tinyMCE.activeEditor.execCommand('mceAdd_pc', ',');
+							ed.execCommand('mceAdd_pc', ',');
 						}
 					});
 
 					sub.add({
 						title : '. (full stop)',
 						onclick : function() {
-							tinyMCE.activeEditor.execCommand('mceAdd_pc', '.');
+							ed.execCommand('mceAdd_pc', '.');
 						}
 					});
 
@@ -1092,7 +1086,7 @@
 						// \u00B7
 						title : '\u0387 (Greek Ano Teleia)',
 						onclick : function() {
-							tinyMCE.activeEditor.execCommand('mceAdd_pc', '\u0387');
+							ed.execCommand('mceAdd_pc', '\u0387');
 						}
 					});
 
@@ -1100,81 +1094,87 @@
 						// \u003B
 						title : '\u037E (Greek question mark)',
 						onclick : function() {
-							tinyMCE.activeEditor.execCommand('mceAdd_pc', '\u037E');
+							ed.execCommand('mceAdd_pc', '\u037E');
 						}
 					});
 
 					sub.add({
 						title : '\u02D9 (high dot)',
 						onclick : function() {
-							tinyMCE.activeEditor.execCommand('mceAdd_pc', '\u02D9');
+							ed.execCommand('mceAdd_pc', '\u02D9');
 						}
 					});
 
 					sub.add({
 						title : '\u0387 (middle dot)',
 						onclick : function() {
-							tinyMCE.activeEditor.execCommand('mceAdd_pc', '\u0387');
+							ed.execCommand('mceAdd_pc', '\u0387');
 						}
 					});
 
 					sub.add({
 						title : '\u02BC (modifier letter apostophe)',
 						onclick : function() {
-							tinyMCE.activeEditor.execCommand('mceAdd_pc', '\u02BC');
+							ed.execCommand('mceAdd_pc', '\u02BC');
 						}
 					});
 
 					sub.add({
 						title : '? (question mark)',
 						onclick : function() {
-							tinyMCE.activeEditor.execCommand('mceAdd_pc', '?');
+							ed.execCommand('mceAdd_pc', '?');
 						}
 					});
 
 					sub.add({
 						title : '; (semicolon)',
 						onclick : function() {
-							tinyMCE.activeEditor.execCommand('mceAdd_pc', '&semicolon;');
+							ed.execCommand('mceAdd_pc', '&semicolon;');
 						}
 					});
 
 					sub = m.addMenu({
 						title : 'Blank spaces',
-						id : 'menu-decoration-blankspaces',
-						onclick : function() {
-
-						}
+						id : 'menu-decoration-blankspaces' 
 					});
-
-					var pattern = /^__t=spaces/;
-					var b = _getWceMenuValStatus('add', pattern);
+ 
 					sub.add({
 						title : 'add',
 						id : 'menu-decoration-blankspaces-add',
 						icons : false,
 						onclick : function() {
-							tinyMCE.activeEditor.execCommand('mceAddSpaces');
+							ed.execCommand('mceAddSpaces');
 						}
-					}).setDisabled(b);
+					});
 
-					b = _getWceMenuValStatus('edit', pattern);
 					sub.add({
 						title : 'edit',
 						id : 'menu-decoration-blankspaces-edit',
 						onclick : function() {
-							tinyMCE.activeEditor.execCommand('mceEditSpaces');
+							ed.execCommand('mceEditSpaces');
 						}
-					}).setDisabled(b);
+					});
 
-					b = _getWceMenuValStatus('delete', pattern);
 					sub.add({
 						title : 'delete',
 						id : 'menu-decoration-blankspaces-delete',
 						onclick : function() {
-							tinyMCE.activeEditor.execCommand('wceDelNode');
+							ed.execCommand('wceDelNode');
 						}
-					}).setDisabled(b);
+					});
+					
+					sub.onShowMenu.add(function(m){ 
+						var items=m.items;
+						if(w.type=='formatting_capitals'){
+							items['menu-decoration-blankspaces-add'].setDisabled(true); 
+							items['menu-decoration-blankspaces-edit'].setDisabled(false); 
+							items['menu-decoration-blankspaces-delete'].setDisabled(false); 
+						}else{
+							items['menu-decoration-blankspaces-add'].setDisabled(false); 
+							items['menu-decoration-blankspaces-edit'].setDisabled(true); 
+							items['menu-decoration-blankspaces-delete'].setDisabled(true);
+						}
+					});
 
 				});
 
@@ -1185,46 +1185,47 @@
 				var c = cm.createMenuButton('menu-abbreviation', {
 					title : 'Abbreviated text',
 					image : tinyMCE.baseURL + '/plugins/wce/img/button_A-new.png',
-					icons : false,
-					onclick : function() {
-						_setWceMenuStatus(tinyMCE.activeEditor, 'menu-abbreviation', /^__t=abbr/, _getWceMenuValStatus);
-						// _setWceMenuStatus(tinyMCE.activeEditor,
-						// 'menu-abbreviation',
-						// /^__t=spaces/,
-						// _getWceMenuValStatus,
-						// 'blankspaces');
-					}
+					icons : false 
 				});
 
-				c.onRenderMenu.add(function(c, m) {
-					var pattern = /^__t=abbr/;
-					var b = _getWceMenuValStatus('add', pattern);
-
+				c.onRenderMenu.add(function(c, m) { 
+					var w = ed.WCE_VAR;
 					m.add({
 						title : 'add',
 						id : 'menu-abbreviation-add',
 						onclick : function() {
-							tinyMCE.activeEditor.execCommand('mceAddAbbr');
+							ed.execCommand('mceAddAbbr');
 						}
-					}).setDisabled(b);
+					});
 
-					b = _getWceMenuValStatus('edit', pattern);
 					m.add({
 						title : 'edit',
 						id : 'menu-abbreviation-edit',
 						onclick : function() {
-							tinyMCE.activeEditor.execCommand('mceEditAbbr');
+							ed.execCommand('mceEditAbbr');
 						}
-					}).setDisabled(b);
+					});
 
-					b = _getWceMenuValStatus('delete', pattern);
 					m.add({
 						title : 'delete',
 						id : 'menu-abbreviation-delete',
 						onclick : function() {
-							tinyMCE.activeEditor.execCommand('wceDelNode');
+							ed.execCommand('wceDelNode');
 						}
-					}).setDisabled(b);
+					});
+					
+					m.onShowMenu.add(function(m){ 
+						var items=m.items;
+						if(w.type=='abbr'){
+							items['menu-abbreviation-add'].setDisabled(true); 
+							items['menu-abbreviation-edit'].setDisabled(false); 
+							items['menu-abbreviation-delete'].setDisabled(false); 
+						}else{
+							items['menu-abbreviation-add'].setDisabled(false); 
+							items['menu-abbreviation-edit'].setDisabled(true); 
+							items['menu-abbreviation-delete'].setDisabled(true);
+						}
+					});
 				});
 
 				return c;
@@ -1233,41 +1234,47 @@
 				var c = cm.createMenuButton('menu-paratext', {
 					title : 'Paratext',
 					image : tinyMCE.baseURL + '/plugins/wce/img/button_P-new.png',
-					icons : false,
-					onclick : function() {
-						_setWceMenuStatus(tinyMCE.activeEditor, 'menu-paratext', /^__t=paratext/, _getWceMenuValStatus);
-					}
+					icons : false 
 				});
 
-				c.onRenderMenu.add(function(c, m) {
-					var pattern = /^__t=paratext/;
-					var b = _getWceMenuValStatus('add', pattern);
-
+				c.onRenderMenu.add(function(c, m) {  
+					var w = ed.WCE_VAR;
 					m.add({
 						title : 'add',
 						id : 'menu-paratext-add',
 						onclick : function() {
-							tinyMCE.activeEditor.execCommand('mceAddParatext');
+							ed.execCommand('mceAddParatext');
 						}
-					}).setDisabled(b);
+					});
 
-					b = _getWceMenuValStatus('edit', pattern);
 					m.add({
 						title : 'edit',
 						id : 'menu-paratext-edit',
 						onclick : function() {
-							tinyMCE.activeEditor.execCommand('mceEditParatext');
+							ed.execCommand('mceEditParatext');
 						}
-					}).setDisabled(b);
+					});
 
-					b = _getWceMenuValStatus('delete', pattern);
 					m.add({
 						title : 'delete',
 						id : 'menu-paratext-delete',
 						onclick : function() {
-							tinyMCE.activeEditor.execCommand('wceDelNode');
+							ed.execCommand('wceDelNode');
 						}
-					}).setDisabled(b);
+					});
+					
+					m.onShowMenu.add(function(m){ 
+						var items=m.items;
+						if(w.type=='paratext'){
+							items['menu-paratext-add'].setDisabled(true); 
+							items['menu-paratext-edit'].setDisabled(false); 
+							items['menu-paratext-delete'].setDisabled(false); 
+						}else{
+							items['menu-paratext-add'].setDisabled(false); 
+							items['menu-paratext-edit'].setDisabled(true); 
+							items['menu-paratext-delete'].setDisabled(true);
+						}
+					});
 				});
 
 				return c;
@@ -1276,41 +1283,47 @@
 				var c = cm.createMenuButton('menu-note', {
 					title : 'Note',
 					image : tinyMCE.baseURL + '/plugins/wce/img/button_N-new.png',
-					icons : false,
-					onclick : function() {
-						_setWceMenuStatus(tinyMCE.activeEditor, 'menu-note', /^__t=note/, _getWceMenuValStatus);
-					}
+					icons : false
 				});
 
-				c.onRenderMenu.add(function(c, m) {
-					var pattern = /^__t=note/;
-					var b = _getWceMenuValStatus('add', pattern);
-
+				c.onRenderMenu.add(function(c, m) { 
+					var w=ed.WCE_VAR;
 					m.add({
 						title : 'add',
 						id : 'menu-note-add',
 						onclick : function() {
-							tinyMCE.activeEditor.execCommand('mceAddNote');
+							ed.execCommand('mceAddNote');
 						}
-					}).setDisabled(b);
+					});
 
-					b = _getWceMenuValStatus('edit', pattern);
 					m.add({
 						title : 'edit',
 						id : 'menu-note-edit',
 						onclick : function() {
-							tinyMCE.activeEditor.execCommand('mceEditNote');
+							ed.execCommand('mceEditNote');
 						}
-					}).setDisabled(b);
+					});
 
-					b = _getWceMenuValStatus('delete', pattern);
 					m.add({
 						title : 'delete',
 						id : 'menu-note-delete',
 						onclick : function() {
-							tinyMCE.activeEditor.execCommand('wceDelNode');
+							ed.execCommand('wceDelNode');
 						}
-					}).setDisabled(b);
+					});
+					
+					m.onShowMenu.add(function(m){ 
+						var items=m.items;
+						if(w.type=='note'){
+							items['menu-note-add'].setDisabled(true); 
+							items['menu-note-edit'].setDisabled(false); 
+							items['menu-note-delete'].setDisabled(false); 
+						}else{
+							items['menu-note-add'].setDisabled(false); 
+							items['menu-note-edit'].setDisabled(true); 
+							items['menu-note-delete'].setDisabled(true);
+						}
+					});
 				});
 
 				return c;
@@ -1591,47 +1604,70 @@
 		 *            url Absolute URL to where the plugin is located.
 		 */
 		init : function(ed, url) {
-			WCEObj.editor = ed;
-
 			var _wceAdd = this._wceAdd;
 			var _wceAddNoDialog = this._wceAddNoDialog;
 			var _getStartNoBlank = this._getStartNoBlank;
 			var _getNextEnd = this._getNextEnd;
 			var _getEndNoBlank = this._getEndNoBlank;
-			var _getTextNode = this._getTextNode;
-			var _getWceMenuValStatus = this._getWceMenuValStatus;
-			var _setButtonStatus = this._setButtonStatus;
-			var _contentHasWceAttribut = this._contentHasWceAttribut;
+			var _getTextNode = this._getTextNode; 
 
-			// setWceControls
+			ed.keyDownDelCount = 0;
+
+			// setWCE_CONTROLS
 			ed.onNodeChange.add(function(ed, cm, n) {
-				ed.wceKeydownBlock = false;
-				_setButtonStatus(ed, cm, n);
+				WCEObj._setWCEVariable(ed);
+				WCEObj._redrawContols(ed);
+			});
+
+			ed.onKeyUp.addToTop(function(ed, e) {
+				ed.keyDownDelCount = 0;
 			});
 
 			ed.onKeyDown.addToTop(function(ed, e) {
-				var delBlocked = false;
+
 				if (!e) {
 					var e = window.event;
 				}
 
 				var ek = e.keyCode || e.charCode || 0;
-
-				// arrow key
+				// allow all arrow key
 				if (ek == 17 || (ek > 32 && ek < 41)) {
 					return;
 				}
 
+				var wcevar = ed.WCE_VAR;
 				var _stopEvent = WCEObj._stopEvent;
 
-				// TODO: for short cut
-				if (ed.wceKeydownBlock && !e.ctrlKey) {
+				// every keyDown only delete one char
+				if (ek == 46 || ek == 8) {
+					ed.keyDownDelCount++;
+					if (ed.keyDownDelCount > 1) {
+						WCEObj._setWCEVariable(ed);
+						WCEObj._redrawContols(ed);
+						return _stopEvent(e);
+					}
+				}
+
+				// TODO: if no short_cut B, C ,Z ,Y .....
+				if (wcevar.isInBE && !e.ctrlKey) {
+					if (wcevar.isAtNodeEnd && ek != 8 && ek != 46) {
+						var b = WCEObj._insertSpace(ed, ek);
+						WCEObj._setWCEVariable(ed);
+						if (b) {
+							return _stopEvent(e);
+						}
+					} else {
+						return _stopEvent(e);
+					}
+				}
+
+				// key "entf"
+				if (ek == 46 && wcevar.isNextBE && wcevar.isAtNodeEnd) {
 					return _stopEvent(e);
 				}
 
 				if (ek == 13 || ek == 10) {
 					// Enter e.stopPropagation works only in Firefox.
-
 					/*
 					 * if (e.stopPropagation) { e.stopPropagation(); e.preventDefault(); }
 					 */
@@ -1639,11 +1675,12 @@
 
 					if (e.shiftKey) {
 						// Shift+Enter -> break dialogue
-						if (!_getWceMenuValStatus('add', '/^__t=brea/'))
+						if(wcevar.type!='break'){
 							ed.execCommand('mceAddBreak');
+						} 
+							
 					} else {
 						// Enter -> line break
-
 						var rng = ed.selection.getRng(true);
 						var startNode = rng.startContainer;
 						var startText = startNode.data ? startNode.data : startNode.innerText;
@@ -1660,117 +1697,32 @@
 					}
 				}
 
-				// Add <pc> for some
-				// special
-				// characters
+				// Add <pc> for some special characters
 				if (ek == 59 && !e.shiftKey) { // ; en
 					tinyMCE.activeEditor.execCommand('mceAdd_pc', ';');
-					_stopEvent(e);
-					// e.preventDefault();
-					// e.stopPropagation();
-				} else if (ek == 188 && e.shiftKey) { // ; dt
-					// < en
+				} else if (ek == 188 && e.shiftKey) {
+					// ; dt < en
 					tinyMCE.activeEditor.execCommand('mceAdd_pc', ';');
-					_stopEvent(e);
-					// e.preventDefault();
-					// e.stopPropagation();
-				} else if (ek == 188 && !e.shiftKey) { // ,
+				} else if (ek == 188 && !e.shiftKey) {
+					// ,
 					tinyMCE.activeEditor.execCommand('mceAdd_pc', ',');
-					_stopEvent(e);
-					// e.preventDefault();
-					// e.stopPropagation();
-				} else if (ek == 190 && !e.shiftKey) { // .
+				} else if (ek == 190 && !e.shiftKey) {
+					// .
 					tinyMCE.activeEditor.execCommand('mceAdd_pc', '.');
-					_stopEvent(e);
-					// e.preventDefault();
-					// e.stopPropagation();
-				} else if (ek == 191 && e.shiftKey) { // ? en
+				} else if (ek == 191 && e.shiftKey) {
+					// ? en
 					tinyMCE.activeEditor.execCommand('mceAdd_pc', '?');
-					_stopEvent(e);
-					// e.preventDefault();
-					// e.stopPropagation();
-				} else if (ek == 219 && e.shiftKey) { // ? dt
+				} else if (ek == 219 && e.shiftKey) {
+					// ? dt
 					tinyMCE.activeEditor.execCommand('mceAdd_pc', '?');
-					_stopEvent(e);
-					// e.preventDefault();
-					// e.stopPropagation();
-				}
-
-				if (ek == 56 && e.shiftKey) // (
-				{
-
-				}
-
-				if (ek == 57 && e.shiftKey) // )
-				{
+				} else if (ek == 56 && e.shiftKey) {
+					// TODO?
+				} else if (ek == 57 && e.shiftKey) {
 					// Find corresponding ( and create substring
-					e.preventDefault();
-					e.stopPropagation();
+					_stopEvent(e);
 					// e.stopImmediatePropagation();
 					_wceAddNoDialog(ed, 'part_abbr', '');
 				}
-
-				// Tastate "Entf" deaktivieren if(ek==46) delBlocked=true;
-				if (_contentHasWceAttribut(ed, [ 'paratext', 'gap', 'note', 'spaces', 'brea' ])) {
-					delBlocked = true;
-				}
-
-				if (!delBlocked && WCEObj._contentHasVerse()) {
-					delBlocked = true;
-				}
-
-				// TEST: Nur wenn Tastate "Entf" aktiviert
-				if (!delBlocked && WCEObj._contentIsBlocked(ek)) {
-					delBlocked = true;
-				}
-
-				if (!delBlocked && ek == 46) {
-					if ((_contentHasWceAttribut(ed, [ 'brea' ]) && _getWceMenuValStatus('delete', '/^__t=brea/')) || (_contentHasWceAttribut(ed, [ 'paratext' ]) && _getWceMenuValStatus('delete', '/^__t=paratext/'))
-							|| (_contentHasWceAttribut(ed, [ 'gap' ]) && _getWceMenuValStatus('delete', '/^__t=gap/')) || (_contentHasWceAttribut(ed, [ 'note' ]) && _getWceMenuValStatus('delete', '/^__t=note/'))
-							|| (_contentHasWceAttribut(ed, [ 'spaces' ]) && _getWceMenuValStatus('delete', '/^__t=spaces/'))) {
-						tinyMCE.activeEditor.execCommand('wceDelNode');
-					}
-				}
-
-				var isIE = tinyMCE.isIE;
-
-				// Browser ausser IE
-				if (!delBlocked && !isIE && ek == 8) {
-					var rng = ed.selection.getRng(true);
-					var startNode = rng.startContainer;
-					var startText = startNode.data ? startNode.data : startNode.innerText;
-
-					if (rng.startOffset == 0 && typeof (startText) != 'undefined') {
-						var nodeSibling = startNode.previousSibling;
-						if (nodeSibling) {
-							if (WCEObj._isNodeVerseOrChapter(nodeSibling)) {
-								delBlocked = true;
-							}
-						} else if (WCEObj._nextSiblingIsBlocked(startNode)) {
-							delBlocked = true;
-						}
-					}
-				}
-
-				if (delBlocked) {
-					ed.wceKeydownBlock = true;
-					// if(!ed.selection.isCollapsed())
-					if (isIE) {
-						// Entfernen-Key deaktivieren
-						if (ek == 46) {
-							e.keyCode = 32;
-						}
-						e.preventDefault();
-						e.returnValue = false;
-					} else {
-						e.preventDefault();
-					}
-				} else if (window.event) {
-					e.returnValue = true;
-				}
-				return;
-
-				return;
 
 			});
 
@@ -1820,6 +1772,11 @@
 			 * 
 			 */
 			ed.onInit.add(function() {
+				WCEObj._initWCEConstants(ed);
+				WCEObj._initWCEVariable(ed);
+				
+				var wcevar = ed.WCE_VAR;
+
 				// Add shortcuts for wce
 				ed.addShortcut('ctrl+b', 'Add break', 'mceAddBreak_Shortcut');
 				ed.addShortcut('ctrl+c', 'Add correction', 'mceAddCorrection_Shortcut');
@@ -1893,16 +1850,19 @@
 			});
 
 			ed.addCommand('mceAddBreak_Shortcut', function() {
-				if (!_getWceMenuValStatus('add', '/^__t=brea/'))
-					ed.execCommand('mceAddBreak');
-				else if (_getWceMenuValStatus('edit', '/^__t=brea/'))
+				var w=ed.WCE_VAR;
+				if(w.not_B){
+					return;
+				}
+				if(w.type=='break'){
 					ed.execCommand('mceEditBreak');
+				}else{
+					ed.execCommand('mceAddBreak');
+				} 
 			});
 
 			// Add corrections
 			ed.addCommand('mceAddCorrection', function() {
-				if (WCEObj._contentHasVerse())
-					return true;
 
 				var _add_new_wce_node = true;
 				var sele_node = ed.selection.getNode();
@@ -1944,11 +1904,15 @@
 				_wceAdd(ed, url, '/gap.htm', 480, 320, 1, false);
 			});
 
-			ed.addCommand('mceAddGap_Shortcut', function() {
-				if (!_getWceMenuValStatus('add', '/^__t=gap/'))
-					ed.execCommand('mceAddGap');
-				else if (_getWceMenuValStatus('edit', '/^__t=gap/'))
+			ed.addCommand('mceAddGap_Shortcut', function() { 
+				if(wcevar.not_D){
+					return;
+				}
+				if(wcevar.type=='gap'){
 					ed.execCommand('mceEditGap');
+				}else{
+					ed.execCommand('mceAddGap');
+				}  
 			});
 
 			// Add unclear text/*********/
@@ -1962,11 +1926,16 @@
 				_wceAdd(ed, url, '/unclear_text.htm', 480, 320, 1, false);
 			});
 
-			ed.addCommand('mceAddUnclearText_Shortcut', function() {
-				if (!_getWceMenuValStatus('add', '/^__t=unclear/'))
-					ed.execCommand('mceAddUnclearText');
-				else if (_getWceMenuValStatus('edit', '/^__t=unclear/'))
+			ed.addCommand('mceAddUnclearText_Shortcut', function() { 
+				if(wcevar.not_D){
+					return;
+				}
+				
+				if(wcevar.type=='unclear'){
 					ed.execCommand('mceEditUnclearText');
+				}else{
+					ed.execCommand('mceAddUnclearText');
+				}					
 			});
 
 			ed.addCommand('mceAddGhostPage', function() {
@@ -1983,10 +1952,14 @@
 			});
 
 			ed.addCommand('mceAddNote_Shortcut', function() {
-				if (!_getWceMenuValStatus('add', '/^__t=note/'))
-					ed.execCommand('mceAddNote');
-				else if (_getWceMenuValStatus('edit', '/^__t=note/'))
+				if(wcevar.not_N){
+					return;
+				} 
+				if(wcevar.type=='note'){
 					ed.execCommand('mceEditNote');
+				}else{
+					ed.execCommand('mceAddNote');
+				} 
 			});
 
 			// Add abbreviation/*********/
@@ -1999,10 +1972,14 @@
 			});
 
 			ed.addCommand('mceAddAbbr_Shortcut', function() {
-				if (!_getWceMenuValStatus('add', '/^__t=abbr/'))
-					ed.execCommand('mceAddAbbr');
-				else if (_getWceMenuValStatus('edit', '/^__t=abbr/'))
+				if(wcevar.not_A){
+					return;
+				} 
+				if(wcevar.type=='abbr'){
 					ed.execCommand('mceEditAbbr');
+				}else{
+					ed.execCommand('mceAddAbbr'); 
+				} 
 			});
 
 			// Add Spaces/*********/
@@ -2025,10 +2002,15 @@
 			});
 
 			ed.addCommand('mceAddParatext_Shortcut', function() {
-				if (!_getWceMenuValStatus('add', '/^__t=paratext/'))
-					ed.execCommand('mceAddParatext');
-				else if (_getWceMenuValStatus('edit', '/^__t=paratext/'))
+				if(wcevar.not_P){
+					return;
+				}
+				
+				if(wcevar.type=='paratext'){
 					ed.execCommand('mceEditParatext');
+				}else{
+					ed.execCommand('mceAddParatext'); 
+				} 	
 			});
 
 			// Edit Metadata

@@ -1,7 +1,7 @@
 function setWceEditor(_id) {
 	tinyMCE.init({
 		// General options
-		mode : "exact",
+		mode : "exact", 
 		elements : _id,
 		theme : "advanced",
 		skin : "wce",

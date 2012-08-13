@@ -60,8 +60,8 @@ font[face=mceinline] {font-family:inherit !important}
 
 span.verse_number, span.chapter_number{
 	color:gray;	 
-	-moz-user-select: none;
-	hutia:expression(this.onselectstart=function(){return(false)});
+/*	-moz-user-select: none;
+	hutia:expression(this.onselectstart=function(){return(false)});*/
 } 
 
 span.pc, span.abbr, span.abbr_add_overline, span.part_abbr, span.supplied, span.spaces{
