@@ -15,10 +15,10 @@
 
 	// Load plugin specific language pack
 	tinymce.PluginManager.requireLangPack('wce');
-	
+
 	/*
-	* WCEObj hat variable and constants
-	*/
+	 * WCEObj hat variable and constants
+	 */
 	var WCEObj = {
 		/*
 		 * init wce constants: button name, element name ....
@@ -26,24 +26,24 @@
 		_initWCEConstants : function(ed) {
 			ed.WCE_CON = {};
 			var w = ed.WCE_CON;
-			
-			//if cursor within the element, block cursor 
-			w.blockedElemente = new Array('gap', 'corr', 'chapter_number', 'verse_number', 'abbr', 'space','note');
-			w.normalElemente = new Array('unclear'); 
 
-			// WCE Buttons 
-			var controls=ed.controlManager.controls;
-			var ed_id=ed.id; 
-			w.control_B = controls[ed_id+'_menu-break'];
-			w.control_C = controls[ed_id+'_menu-correction'];
-			w.control_D = controls[ed_id+'_menu-illegible'];
-			w.control_O = controls[ed_id+'_menu-decoration'];
-			w.control_A = controls[ed_id+'_menu-abbreviation'];
-			w.control_P = controls[ed_id+'_menu-paratext'];
-			w.control_N = controls[ed_id+'_menu-note']; 
-			w.control_CH = controls[ed_id+'_charmap']; // charmap
-			w.control_RF = controls[ed_id+'_removeformat'];  // Remove Format
-			w.control_PA = controls[ed_id+'_paste'];  // Paste 
+			// if cursor within the element, block cursor
+			w.blockedElemente = new Array('gap', 'corr', 'chapter_number', 'verse_number', 'abbr', 'space', 'note');
+			w.normalElemente = new Array('unclear');
+
+			// WCE Buttons
+			var controls = ed.controlManager.controls;
+			var ed_id = ed.id;
+			w.control_B = controls[ed_id + '_menu-break'];
+			w.control_C = controls[ed_id + '_menu-correction'];
+			w.control_D = controls[ed_id + '_menu-illegible'];
+			w.control_O = controls[ed_id + '_menu-decoration'];
+			w.control_A = controls[ed_id + '_menu-abbreviation'];
+			w.control_P = controls[ed_id + '_menu-paratext'];
+			w.control_N = controls[ed_id + '_menu-note'];
+			w.control_CH = controls[ed_id + '_charmap']; // charmap
+			w.control_RF = controls[ed_id + '_removeformat']; // Remove Format
+			w.control_PA = controls[ed_id + '_paste']; // Paste
 		},
 
 		/*
@@ -69,27 +69,27 @@
 			w.isNextBE = false; // is nextSibling blocked Element
 			w.pre = null; // previousSibling
 			w.isPreBE = false; // is previousSibling BE
-			WCEObj._setAllControls(ed, false); // controls setActive? 
+			WCEObj._setAllControls(ed, false); // controls setActive?
 		},
 
 		/*
 		 * is a node wcenode?
 		 */
-		_isNodeTypeOf : function(node, typeName) { 
+		_isNodeTypeOf : function(node, typeName) {
 			var nodeName = node.nodeName;
 			if (nodeName && nodeName.toLowerCase() == 'span') {
-				//TODO
-				if(typeName=='verse_number' || typeName=='chapter_number'){ 
+				// TODO
+				if (typeName == 'verse_number' || typeName == 'chapter_number') {
 					var className = node.className;
-					if (className){
+					if (className) {
 						return className.indexOf(typeName) > -1;
 					}
 					return false;
 				}
-			
+
 				var wceAttr = node.getAttribute('wce');
-				if (wceAttr){
-					return wceAttr.indexOf("__t=" + typeName) > -1; 
+				if (wceAttr) {
+					return wceAttr.indexOf("__t=" + typeName) > -1;
 				}
 			}
 
@@ -102,7 +102,7 @@
 		_isWceBE : function(ed, node) {
 			if (!node || !ed)
 				return false;
-			
+
 			var arr = ed.WCE_CON.blockedElemente;
 			for ( var i = 0, len = arr.length; i < len; i++) {
 				if (WCEObj._isNodeTypeOf(node, arr[i]))
@@ -180,25 +180,38 @@
 			var rng = ed.selection.getRng(true);
 			var startContainer = rng.startContainer;
 			var endContainer = rng.endContainer;
+			var startOffset = rng.startOffset;
+			var _isWceBE = WCEObj._isWceBE;
 
 			if (startContainer.nodeType != 3) {
-				// ganz anfang oder Ende
-				w.not_C = true;
-				w.not_A = true;
-				return;
+				// for ie
+				if (startContainer.nodeName.toLowerCase() == 'body') {
+					var childNodes = startContainer.childNodes;
+					if (startOffset && childNodes) {
+						w.next = childNodes[startOffset];
+						if ((startOffset - 1) > -1) {
+							w.pre = childNodes[startOffset - 1];
+						}
+						w.isAtNodeEnd = true;
+						w.isNextBE = _isWceBE(ed, w.next);
+						w.isPreBE = _isWceBE(ed, w.pre);
+						return;
+					}
+				} else {
+					// ganz anfang oder Ende
+					w.not_C = true;
+					w.not_A = true;
+					return;
+				}
 			}
 
-			var startOffset = rng.startOffset;
 			var text = startContainer.nodeValue;
-
 			if (startOffset == text.length) {
 				w.isAtNodeEnd = true;
 			}
 
 			var startNode = startContainer.parentNode;
 			var nodeName = startNode.nodeName;
-
-			var _isWceBE = WCEObj._isWceBE;
 
 			w.textNode = startContainer;
 			w.node = startNode;
@@ -234,22 +247,22 @@
 				w.type = 'verse_number';
 			} else if (isNodeTypeOf(startNode, 'brea')) {
 				w.type = 'break';
-			} else if(isNodeTypeOf(startNode, 'unclear')){
-				w.type='unclear';
-			} else if(isNodeTypeOf(startNode, 'space')){
+			} else if (isNodeTypeOf(startNode, 'unclear')) {
+				w.type = 'unclear';
+			} else if (isNodeTypeOf(startNode, 'space')) {
 				_setAllControls(ed, true);
-				w.type='space';
-				w.not_O=false;
-			} else if(isNodeTypeOf(startNode, 'formatting_capitals')){
-				w.type='formatting_capitals';
-			} else if(isNodeTypeOf(startNode, 'paratext')){
-				w.type='paratext';
-			} else if(isNodeTypeOf(startNode, 'note')){
+				w.type = 'space';
+				w.not_O = false;
+			} else if (isNodeTypeOf(startNode, 'formatting_capitals')) {
+				w.type = 'formatting_capitals';
+			} else if (isNodeTypeOf(startNode, 'paratext')) {
+				w.type = 'paratext';
+			} else if (isNodeTypeOf(startNode, 'note')) {
 				_setAllControls(ed, true);
-				w.not_N=false;
-				w.type='note';
+				w.not_N = false;
+				w.type = 'note';
 			}
-			
+
 			w.isInBE = _isWceBE(ed, startNode);
 			if (w.isInBE) {
 				w.next = startNode.nextSibling;
@@ -285,7 +298,7 @@
 			}
 			return false;
 		},
- 
+
 		/*
 		 * 
 		 */
@@ -729,10 +742,10 @@
 				ed.isNotDirty = 0;
 			else
 				ed.isNotDirty = 1;
-		}, 
- 
+		},
+
 		createControl : function(n, cm) {
-			var ed = cm.editor;  
+			var ed = cm.editor;
 			switch (n) {
 			/*
 			 * case 'metadata': var c = cm.createButton('menu-metadata', { title : 'Metadata', image : tinyMCE.baseURL+'/plugins/wce/img/button_meta.gif', onclick : function() { tinyMCE.activeEditor.execCommand('mceAddMetadata'); } }); return c;
@@ -743,17 +756,17 @@
 					image : tinyMCE.baseURL + '/plugins/wce/img/button_B-new.png',
 					icons : false
 				});
-				
+
 				c.onRenderMenu.add(function(c, m) {
-					var w = ed.WCE_VAR; 
+					var w = ed.WCE_VAR;
 					m.add({
 						title : 'add',
 						id : 'menu-break-add',
 						onclick : function() {
 							ed.execCommand('mceAddBreak');
 						}
-					}); 				
-					
+					});
+
 					m.add({
 						title : 'edit',
 						id : 'menu-break-edit',
@@ -761,28 +774,28 @@
 							ed.execCommand('mceEditBreak');
 						}
 					});
-					
+
 					m.add({
 						title : 'delete',
 						id : 'menu-break-delete',
 						onclick : function() {
 							ed.execCommand('wceDelNode');
 						}
-					}); 
-					 
-					m.onShowMenu.add(function(m){ 
-						var items=m.items;
-						if(w.type=='break'){
-							items['menu-break-add'].setDisabled(true); 
-							items['menu-break-edit'].setDisabled(false); 
-							items['menu-break-delete'].setDisabled(false); 
-						}else{
-							items['menu-break-add'].setDisabled(false); 
-							items['menu-break-edit'].setDisabled(true); 
+					});
+
+					m.onShowMenu.add(function(m) {
+						var items = m.items;
+						if (w.type == 'break') {
+							items['menu-break-add'].setDisabled(true);
+							items['menu-break-edit'].setDisabled(false);
+							items['menu-break-delete'].setDisabled(false);
+						} else {
+							items['menu-break-add'].setDisabled(false);
+							items['menu-break-edit'].setDisabled(true);
 							items['menu-break-delete'].setDisabled(true);
 						}
 					});
-					
+
 				});
 
 				return c;
@@ -803,13 +816,13 @@
 				var c = cm.createMenuButton('menu-illegible', {
 					title : 'Deficiency',
 					image : tinyMCE.baseURL + '/plugins/wce/img/button_D-new.png',
-					icons : false 
+					icons : false
 				});
 
 				c.onRenderMenu.add(function(c, m) {
 					var sub;
-					var w = ed.WCE_VAR; 
-					
+					var w = ed.WCE_VAR;
+
 					sub = m.addMenu({
 						title : 'Uncertain Letters',
 						id : 'menu-illegible-uncleartext'
@@ -821,7 +834,7 @@
 						onclick : function() {
 							ed.execCommand('mceAddUnclearText');
 						}
-					}) ;
+					});
 
 					sub.add({
 						title : 'edit',
@@ -829,7 +842,7 @@
 						onclick : function() {
 							ed.execCommand('mceEditUnclearText');
 						}
-					}) ;
+					});
 
 					sub.add({
 						title : 'delete',
@@ -837,21 +850,21 @@
 						onclick : function() {
 							ed.execCommand('wceDelNode');
 						}
-					}) ;
-					
-					sub.onShowMenu.add(function(m){ 
-						var items=m.items;
-						if(w.type=='unclear'){
-							items['menu-illegible-uncleartext-add'].setDisabled(true); 
-							items['menu-illegible-uncleartext-edit'].setDisabled(false); 
-							items['menu-illegible-uncleartext-delete'].setDisabled(false); 
-						}else{
-							items['menu-illegible-uncleartext-add'].setDisabled(false); 
-							items['menu-illegible-uncleartext-edit'].setDisabled(true); 
+					});
+
+					sub.onShowMenu.add(function(m) {
+						var items = m.items;
+						if (w.type == 'unclear') {
+							items['menu-illegible-uncleartext-add'].setDisabled(true);
+							items['menu-illegible-uncleartext-edit'].setDisabled(false);
+							items['menu-illegible-uncleartext-delete'].setDisabled(false);
+						} else {
+							items['menu-illegible-uncleartext-add'].setDisabled(false);
+							items['menu-illegible-uncleartext-edit'].setDisabled(true);
 							items['menu-illegible-uncleartext-delete'].setDisabled(true);
 						}
 					});
-					 
+
 					sub = m.addMenu({
 						title : 'Gap',
 						id : 'menu-illegible-lacuna'
@@ -880,19 +893,19 @@
 							ed.execCommand('wceDelNode');
 						}
 					});
-					
-					sub.onShowMenu.add(function(m){ 
-						var items=m.items;
-						if(w.type=='gap'){
-							items['menu-illegible-lacuna-add'].setDisabled(true); 
-							items['menu-illegible-lacuna-edit'].setDisabled(false); 
-							items['menu-illegible-lacuna-delete'].setDisabled(false); 
-						}else{
-							items['menu-illegible-lacuna-add'].setDisabled(false); 
-							items['menu-illegible-lacuna-edit'].setDisabled(true); 
+
+					sub.onShowMenu.add(function(m) {
+						var items = m.items;
+						if (w.type == 'gap') {
+							items['menu-illegible-lacuna-add'].setDisabled(true);
+							items['menu-illegible-lacuna-edit'].setDisabled(false);
+							items['menu-illegible-lacuna-delete'].setDisabled(false);
+						} else {
+							items['menu-illegible-lacuna-add'].setDisabled(false);
+							items['menu-illegible-lacuna-edit'].setDisabled(true);
 							items['menu-illegible-lacuna-delete'].setDisabled(true);
 						}
-					}); 
+					});
 
 					m.add({ // Ghost page
 						title : 'Ghost page',
@@ -910,7 +923,7 @@
 				var c = cm.createMenuButton('menu-decoration', {
 					title : 'Ornamentation',
 					image : tinyMCE.baseURL + '/plugins/wce/img/button_O-new.png',
-					icons : false 
+					icons : false
 				});
 
 				c.onRenderMenu.add(function(c, m) {
@@ -919,9 +932,9 @@
 					sub = m.addMenu({
 						title : 'Highlight Text',
 						id : 'menu-decoration-highlight',
-						image : tinyMCE.baseURL + '/plugins/wce/img/button_O-new.png' 
-					});  
-					
+						image : tinyMCE.baseURL + '/plugins/wce/img/button_O-new.png'
+					});
+
 					sub.add({
 						title : 'Rubrication',
 						onclick : function() {
@@ -966,7 +979,7 @@
 						onclick : function() {
 							ed.execCommand('mceAdd_formatting', 'other');
 						}
-					}); 
+					});
 
 					sub.add({
 						title : 'Overline',
@@ -996,7 +1009,7 @@
 							ed.execCommand('mceEditCapitals');
 						}
 					});
- 
+
 					sub2.add({
 						title : 'delete',
 						id : 'menu-decoration-highlight-capitals-delete',
@@ -1004,19 +1017,19 @@
 							ed.execCommand('wceDelNode');
 						}
 					});
-					
-					sub2.onShowMenu.add(function(m){ 
-						var items=m.items;
-						if(w.type=='formatting_capitals'){
-							items['menu-decoration-highlight-capitals-add'].setDisabled(true); 
-							items['menu-decoration-highlight-capitals-edit'].setDisabled(false); 
-							items['menu-decoration-highlight-capitals-delete'].setDisabled(false); 
-						}else{
-							items['menu-decoration-highlight-capitals-add'].setDisabled(false); 
-							items['menu-decoration-highlight-capitals-edit'].setDisabled(true); 
+
+					sub2.onShowMenu.add(function(m) {
+						var items = m.items;
+						if (w.type == 'formatting_capitals') {
+							items['menu-decoration-highlight-capitals-add'].setDisabled(true);
+							items['menu-decoration-highlight-capitals-edit'].setDisabled(false);
+							items['menu-decoration-highlight-capitals-delete'].setDisabled(false);
+						} else {
+							items['menu-decoration-highlight-capitals-add'].setDisabled(false);
+							items['menu-decoration-highlight-capitals-edit'].setDisabled(true);
 							items['menu-decoration-highlight-capitals-delete'].setDisabled(true);
 						}
-					}); 
+					});
 
 					sub = m.addMenu({
 						title : 'Insert special characters'
@@ -1135,9 +1148,9 @@
 
 					sub = m.addMenu({
 						title : 'Blank spaces',
-						id : 'menu-decoration-blankspaces' 
+						id : 'menu-decoration-blankspaces'
 					});
- 
+
 					sub.add({
 						title : 'add',
 						id : 'menu-decoration-blankspaces-add',
@@ -1162,16 +1175,16 @@
 							ed.execCommand('wceDelNode');
 						}
 					});
-					
-					sub.onShowMenu.add(function(m){ 
-						var items=m.items;
-						if(w.type=='formatting_capitals'){
-							items['menu-decoration-blankspaces-add'].setDisabled(true); 
-							items['menu-decoration-blankspaces-edit'].setDisabled(false); 
-							items['menu-decoration-blankspaces-delete'].setDisabled(false); 
-						}else{
-							items['menu-decoration-blankspaces-add'].setDisabled(false); 
-							items['menu-decoration-blankspaces-edit'].setDisabled(true); 
+
+					sub.onShowMenu.add(function(m) {
+						var items = m.items;
+						if (w.type == 'formatting_capitals') {
+							items['menu-decoration-blankspaces-add'].setDisabled(true);
+							items['menu-decoration-blankspaces-edit'].setDisabled(false);
+							items['menu-decoration-blankspaces-delete'].setDisabled(false);
+						} else {
+							items['menu-decoration-blankspaces-add'].setDisabled(false);
+							items['menu-decoration-blankspaces-edit'].setDisabled(true);
 							items['menu-decoration-blankspaces-delete'].setDisabled(true);
 						}
 					});
@@ -1185,10 +1198,10 @@
 				var c = cm.createMenuButton('menu-abbreviation', {
 					title : 'Abbreviated text',
 					image : tinyMCE.baseURL + '/plugins/wce/img/button_A-new.png',
-					icons : false 
+					icons : false
 				});
 
-				c.onRenderMenu.add(function(c, m) { 
+				c.onRenderMenu.add(function(c, m) {
 					var w = ed.WCE_VAR;
 					m.add({
 						title : 'add',
@@ -1213,16 +1226,16 @@
 							ed.execCommand('wceDelNode');
 						}
 					});
-					
-					m.onShowMenu.add(function(m){ 
-						var items=m.items;
-						if(w.type=='abbr'){
-							items['menu-abbreviation-add'].setDisabled(true); 
-							items['menu-abbreviation-edit'].setDisabled(false); 
-							items['menu-abbreviation-delete'].setDisabled(false); 
-						}else{
-							items['menu-abbreviation-add'].setDisabled(false); 
-							items['menu-abbreviation-edit'].setDisabled(true); 
+
+					m.onShowMenu.add(function(m) {
+						var items = m.items;
+						if (w.type == 'abbr') {
+							items['menu-abbreviation-add'].setDisabled(true);
+							items['menu-abbreviation-edit'].setDisabled(false);
+							items['menu-abbreviation-delete'].setDisabled(false);
+						} else {
+							items['menu-abbreviation-add'].setDisabled(false);
+							items['menu-abbreviation-edit'].setDisabled(true);
 							items['menu-abbreviation-delete'].setDisabled(true);
 						}
 					});
@@ -1234,10 +1247,10 @@
 				var c = cm.createMenuButton('menu-paratext', {
 					title : 'Paratext',
 					image : tinyMCE.baseURL + '/plugins/wce/img/button_P-new.png',
-					icons : false 
+					icons : false
 				});
 
-				c.onRenderMenu.add(function(c, m) {  
+				c.onRenderMenu.add(function(c, m) {
 					var w = ed.WCE_VAR;
 					m.add({
 						title : 'add',
@@ -1262,16 +1275,16 @@
 							ed.execCommand('wceDelNode');
 						}
 					});
-					
-					m.onShowMenu.add(function(m){ 
-						var items=m.items;
-						if(w.type=='paratext'){
-							items['menu-paratext-add'].setDisabled(true); 
-							items['menu-paratext-edit'].setDisabled(false); 
-							items['menu-paratext-delete'].setDisabled(false); 
-						}else{
-							items['menu-paratext-add'].setDisabled(false); 
-							items['menu-paratext-edit'].setDisabled(true); 
+
+					m.onShowMenu.add(function(m) {
+						var items = m.items;
+						if (w.type == 'paratext') {
+							items['menu-paratext-add'].setDisabled(true);
+							items['menu-paratext-edit'].setDisabled(false);
+							items['menu-paratext-delete'].setDisabled(false);
+						} else {
+							items['menu-paratext-add'].setDisabled(false);
+							items['menu-paratext-edit'].setDisabled(true);
 							items['menu-paratext-delete'].setDisabled(true);
 						}
 					});
@@ -1286,8 +1299,8 @@
 					icons : false
 				});
 
-				c.onRenderMenu.add(function(c, m) { 
-					var w=ed.WCE_VAR;
+				c.onRenderMenu.add(function(c, m) {
+					var w = ed.WCE_VAR;
 					m.add({
 						title : 'add',
 						id : 'menu-note-add',
@@ -1311,16 +1324,16 @@
 							ed.execCommand('wceDelNode');
 						}
 					});
-					
-					m.onShowMenu.add(function(m){ 
-						var items=m.items;
-						if(w.type=='note'){
-							items['menu-note-add'].setDisabled(true); 
-							items['menu-note-edit'].setDisabled(false); 
-							items['menu-note-delete'].setDisabled(false); 
-						}else{
-							items['menu-note-add'].setDisabled(false); 
-							items['menu-note-edit'].setDisabled(true); 
+
+					m.onShowMenu.add(function(m) {
+						var items = m.items;
+						if (w.type == 'note') {
+							items['menu-note-add'].setDisabled(true);
+							items['menu-note-edit'].setDisabled(false);
+							items['menu-note-delete'].setDisabled(false);
+						} else {
+							items['menu-note-add'].setDisabled(false);
+							items['menu-note-edit'].setDisabled(true);
 							items['menu-note-delete'].setDisabled(true);
 						}
 					});
@@ -1609,7 +1622,7 @@
 			var _getStartNoBlank = this._getStartNoBlank;
 			var _getNextEnd = this._getNextEnd;
 			var _getEndNoBlank = this._getEndNoBlank;
-			var _getTextNode = this._getTextNode; 
+			var _getTextNode = this._getTextNode;
 
 			ed.keyDownDelCount = 0;
 
@@ -1675,10 +1688,10 @@
 
 					if (e.shiftKey) {
 						// Shift+Enter -> break dialogue
-						if(wcevar.type!='break'){
+						if (wcevar.type != 'break') {
 							ed.execCommand('mceAddBreak');
-						} 
-							
+						}
+
 					} else {
 						// Enter -> line break
 						var rng = ed.selection.getRng(true);
@@ -1774,7 +1787,7 @@
 			ed.onInit.add(function() {
 				WCEObj._initWCEConstants(ed);
 				WCEObj._initWCEVariable(ed);
-				
+
 				var wcevar = ed.WCE_VAR;
 
 				// Add shortcuts for wce
@@ -1850,15 +1863,15 @@
 			});
 
 			ed.addCommand('mceAddBreak_Shortcut', function() {
-				var w=ed.WCE_VAR;
-				if(w.not_B){
+				var w = ed.WCE_VAR;
+				if (w.not_B) {
 					return;
 				}
-				if(w.type=='break'){
+				if (w.type == 'break') {
 					ed.execCommand('mceEditBreak');
-				}else{
+				} else {
 					ed.execCommand('mceAddBreak');
-				} 
+				}
 			});
 
 			// Add corrections
@@ -1904,15 +1917,15 @@
 				_wceAdd(ed, url, '/gap.htm', 480, 320, 1, false);
 			});
 
-			ed.addCommand('mceAddGap_Shortcut', function() { 
-				if(wcevar.not_D){
+			ed.addCommand('mceAddGap_Shortcut', function() {
+				if (wcevar.not_D) {
 					return;
 				}
-				if(wcevar.type=='gap'){
+				if (wcevar.type == 'gap') {
 					ed.execCommand('mceEditGap');
-				}else{
+				} else {
 					ed.execCommand('mceAddGap');
-				}  
+				}
 			});
 
 			// Add unclear text/*********/
@@ -1926,16 +1939,16 @@
 				_wceAdd(ed, url, '/unclear_text.htm', 480, 320, 1, false);
 			});
 
-			ed.addCommand('mceAddUnclearText_Shortcut', function() { 
-				if(wcevar.not_D){
+			ed.addCommand('mceAddUnclearText_Shortcut', function() {
+				if (wcevar.not_D) {
 					return;
 				}
-				
-				if(wcevar.type=='unclear'){
+
+				if (wcevar.type == 'unclear') {
 					ed.execCommand('mceEditUnclearText');
-				}else{
+				} else {
 					ed.execCommand('mceAddUnclearText');
-				}					
+				}
 			});
 
 			ed.addCommand('mceAddGhostPage', function() {
@@ -1952,14 +1965,14 @@
 			});
 
 			ed.addCommand('mceAddNote_Shortcut', function() {
-				if(wcevar.not_N){
+				if (wcevar.not_N) {
 					return;
-				} 
-				if(wcevar.type=='note'){
+				}
+				if (wcevar.type == 'note') {
 					ed.execCommand('mceEditNote');
-				}else{
+				} else {
 					ed.execCommand('mceAddNote');
-				} 
+				}
 			});
 
 			// Add abbreviation/*********/
@@ -1972,14 +1985,14 @@
 			});
 
 			ed.addCommand('mceAddAbbr_Shortcut', function() {
-				if(wcevar.not_A){
+				if (wcevar.not_A) {
 					return;
-				} 
-				if(wcevar.type=='abbr'){
+				}
+				if (wcevar.type == 'abbr') {
 					ed.execCommand('mceEditAbbr');
-				}else{
-					ed.execCommand('mceAddAbbr'); 
-				} 
+				} else {
+					ed.execCommand('mceAddAbbr');
+				}
 			});
 
 			// Add Spaces/*********/
@@ -2002,15 +2015,15 @@
 			});
 
 			ed.addCommand('mceAddParatext_Shortcut', function() {
-				if(wcevar.not_P){
+				if (wcevar.not_P) {
 					return;
 				}
-				
-				if(wcevar.type=='paratext'){
+
+				if (wcevar.type == 'paratext') {
 					ed.execCommand('mceEditParatext');
-				}else{
-					ed.execCommand('mceAddParatext'); 
-				} 	
+				} else {
+					ed.execCommand('mceAddParatext');
+				}
 			});
 
 			// Edit Metadata
