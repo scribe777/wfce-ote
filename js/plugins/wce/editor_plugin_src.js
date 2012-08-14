@@ -69,6 +69,7 @@
 			w.isNextBE = false; // is nextSibling blocked Element
 			w.pre = null; // previousSibling
 			w.isPreBE = false; // is previousSibling BE
+			w.isRedraw = false;
 			WCEObj._setAllControls(ed, false); // controls setActive?
 		},
 
@@ -183,50 +184,80 @@
 			var startOffset = rng.startOffset;
 			var _isWceBE = WCEObj._isWceBE;
 
+			var startNode;
+
+			w.isc = ed.selection.isCollapsed();
+
 			if (startContainer.nodeType != 3) {
-				// for ie
-				if (startContainer.nodeName.toLowerCase() == 'body') {
+				//In Firefox  startOffSet==0, node is empty
+				if (startOffset == 0 && tinyMCE.isGecko && w.isc && startContainer.childNodes.length == 0) {
+					startContainer.parentNode.removeChild(startContainer); 
+				}
+
+				// ganz anfang oder Ende
+				w.not_C = true;
+				w.not_A = true;
+
+				// for IE
+				if (tinyMCE.isIE && w.isc) {
+					var pre, next;
 					var childNodes = startContainer.childNodes;
 					if (startOffset && childNodes) {
-						w.next = childNodes[startOffset];
-						if ((startOffset - 1) > -1) {
-							w.pre = childNodes[startOffset - 1];
-						}
+						startNode = childNodes[startOffset - 1];
+						w.pre = startNode.privousSibling;
+						w.next = startNode.nextSibling;
+
 						w.isAtNodeEnd = true;
 						w.isNextBE = _isWceBE(ed, w.next);
 						w.isPreBE = _isWceBE(ed, w.pre);
-						return;
 					}
-				} else {
-					// ganz anfang oder Ende
-					w.not_C = true;
-					w.not_A = true;
-					return;
 				}
+				return;
 			}
 
-			var text = startContainer.nodeValue;
-			if (startOffset == text.length) {
-				w.isAtNodeEnd = true;
-			}
+			// /if startNode==textNode
+			startNode = startContainer.parentNode;
 
-			var startNode = startContainer.parentNode;
-			var nodeName = startNode.nodeName;
+			// if isCollapsed
+			if (w.isc) {
+				var text = startContainer.nodeValue;
+				if (startOffset == text.length) {
+					w.isAtNodeEnd = true;
+				}
 
-			w.textNode = startContainer;
-			w.node = startNode;
-
-			w.isc = ed.selection.isCollapsed();
-			if (!w.isc) {
-				w.not_B = true;
-				w.not_N = true;
-			} else {
 				w.not_C = true;
 				w.not_A = true;
+			} else {
+				w.not_B = true;
+				w.not_N = true;
+
 			}
 
 			var isNodeTypeOf = WCEObj._isNodeTypeOf;
 			var _setAllControls = WCEObj._setAllControls;
+
+			w.isInBE = _isWceBE(ed, startNode);
+			if (w.isInBE) {
+				w.next = startNode.nextSibling;
+				w.pre = startNode.previousSibling;
+			} else {
+				w.next = startContainer.nextSibling;
+				w.pre = startContainer.previousSibling;
+			}
+
+			w.isNextBE = _isWceBE(ed, w.next);
+			w.isPreBE = _isWceBE(ed, w.pre);
+
+			if (!w.isc) {
+				startNode = ed.selection.getNode();
+				var endNode = endContainer.parentNode;
+				if (startNode != endNode) {
+					_setAllControls(ed, true);
+					w.isInBE = true;
+					w.type = null;
+					return;
+				}
+			}
 
 			if (isNodeTypeOf(startNode, 'gap')) {
 				_setAllControls(ed, true);
@@ -262,18 +293,6 @@
 				w.not_N = false;
 				w.type = 'note';
 			}
-
-			w.isInBE = _isWceBE(ed, startNode);
-			if (w.isInBE) {
-				w.next = startNode.nextSibling;
-				w.pre = startNode.previousSibling;
-			} else {
-				w.next = startContainer.nextSibling;
-				w.pre = startContainer.previousSibling;
-			}
-
-			w.isNextBE = _isWceBE(ed, w.next);
-			w.isPreBE = _isWceBE(ed, w.pre);
 		},
 
 		/*
@@ -281,9 +300,8 @@
 		 */
 		_insertSpace : function(ed, ek) {
 			var w = ed.WCE_VAR;
-			var node = w.node;
 			var next = w.next;
-			if (node && next) {
+			if (next) {
 				var newText = document.createTextNode(" ");
 				next.parentNode.insertBefore(newText, next);
 				if (ek != 32) {
@@ -1608,6 +1626,35 @@
 			return false;
 		},
 
+		_moveCursorInPrivousSiblingEnd : function(ed, rng) {
+			var startContainer = rng.startContainer;
+			var pre = startContainer.previousSibling;
+
+			if (!pre) {
+				startContainer = startContainer.parentNode;
+
+				pre = startContainer.previousSibling;
+			}
+			if (pre) {
+				if (pre.nodeType == 1) {
+					ed.selection.select(pre);
+					rng = ed.selection.getRng(true);
+					rng.setStart(rng.endContainer, rng.endOffset);
+					ed.selection.setRng(rng);
+				} else if (pre.nodeType == 3) {
+					// for not IE
+					var len = pre.nodeValue.length;
+					if (len > -1) {
+						rng.setStart(pre, len);
+						rng.setEnde(pre, len)
+					}
+				}
+
+				WCEObj._setWCEVariable(ed);
+				WCEObj._redrawContols(ed);
+			}
+		},
+
 		/**
 		 * Initializes the plugin,
 		 * 
@@ -1632,12 +1679,31 @@
 				WCEObj._redrawContols(ed);
 			});
 
+			ed.onMouseUp.addToTop(function(ed, e) {
+				// for IE, problem when startOffset==0
+				if (tinyMCE.isIE && ed.selection.isCollapsed()) {
+					var rng = ed.selection.getRng(true);
+					if (rng.startOffset != 0) {
+						return;
+					}
+					WCEObj._moveCursorInPrivousSiblingEnd(ed, rng);
+				}
+			});
+
 			ed.onKeyUp.addToTop(function(ed, e) {
 				ed.keyDownDelCount = 0;
+
+				// wenn redraw schon bei keyDown nicht gemacht
+				if (!ed.WCE_VAR.isRedraw) {
+					WCEObj._setWCEVariable(ed);
+					WCEObj._redrawContols(ed);
+					ed.WCE_VAR.isRedraw = true;
+					return;
+				}
+				ed.WCE_VAR.isRedraw = false;
 			});
 
 			ed.onKeyDown.addToTop(function(ed, e) {
-
 				if (!e) {
 					var e = window.event;
 				}
@@ -1657,6 +1723,7 @@
 					if (ed.keyDownDelCount > 1) {
 						WCEObj._setWCEVariable(ed);
 						WCEObj._redrawContols(ed);
+						ed.WCE_VAR.isRedraw = true;
 						return _stopEvent(e);
 					}
 				}
@@ -1666,6 +1733,8 @@
 					if (wcevar.isAtNodeEnd && ek != 8 && ek != 46) {
 						var b = WCEObj._insertSpace(ed, ek);
 						WCEObj._setWCEVariable(ed);
+						WCEObj._redrawContols(ed);
+						ed.WCE_VAR.isRedraw = true;
 						if (b) {
 							return _stopEvent(e);
 						}
