@@ -61,7 +61,6 @@
 			var w = ed.WCE_VAR;
 			w.isc = true;
 			w.textNode = null;
-			w.node = null;
 			w.isAtNodeEnd = false;
 			w.type = null; // cursor in welche wce type
 			w.isInBE = false; // is cursor in blocked Element
@@ -101,8 +100,9 @@
 		 * is node blocked element?
 		 */
 		_isWceBE : function(ed, node) {
-			if (!node || !ed)
+			if (!node || node.nodeType == 3 || !ed) {
 				return false;
+			}
 
 			var arr = ed.WCE_CON.blockedElemente;
 			for ( var i = 0, len = arr.length; i < len; i++) {
@@ -110,6 +110,52 @@
 					return true;
 			}
 			return false;
+		},
+
+		/*
+		 * 
+		 */
+		_isInWceBE : function(ed, node) {
+			var _isWceBE = WCEObj._isWceBE;
+			while (node && node.nodeName.toLowerCase() != 'body') {
+				if (_isWceBE(ed, node)) {
+					return true;
+				}
+				node = node.parentNode;
+			}
+			return false;
+
+		},
+
+		/*
+		 * hier w.next wird definiert
+		 */
+		_getNextSibling : function(ed, node) {
+			if (!node || !ed) {
+				return false;
+			}
+			var parent, next;
+
+			while (node) {
+				next = node.nextSibling;
+				if (node.nodeName.toLowerCase() == "body") {
+					return null;
+				}
+
+				parent = node.parentNode;
+				if (parent && parent.lastChild != node) {
+					// Unter Firefox, nachdem "Del" ein Element wird ein #Text="" erzeugt
+					if (tinyMCE.isGecko && ed.selection.isCollapsed() && next.nodeType == 3 && next.nodeValue == "") {
+						var _next = next;
+						next = WCEObj._getNextSibling(ed, next);
+						_next.parentNode.removeChild(_next);
+					}
+					return next;
+				}
+				node = node.parentNode;
+			}
+			return null;
+
 		},
 
 		/*
@@ -182,16 +228,21 @@
 			var startContainer = rng.startContainer;
 			var endContainer = rng.endContainer;
 			var startOffset = rng.startOffset;
+
+			//
 			var _isWceBE = WCEObj._isWceBE;
+			var _getNextSibling = WCEObj._getNextSibling;
+			var _isNodeTypeOf = WCEObj._isNodeTypeOf;
+			var _setAllControls = WCEObj._setAllControls;
 
 			var startNode;
 
 			w.isc = ed.selection.isCollapsed();
 
 			if (startContainer.nodeType != 3) {
-				//In Firefox  startOffSet==0, node is empty
+				// In Firefox startOffSet==0, node is empty
 				if (startOffset == 0 && tinyMCE.isGecko && w.isc && startContainer.childNodes.length == 0) {
-					startContainer.parentNode.removeChild(startContainer); 
+					startContainer.parentNode.removeChild(startContainer);
 				}
 
 				// ganz anfang oder Ende
@@ -205,8 +256,7 @@
 					if (startOffset && childNodes) {
 						startNode = childNodes[startOffset - 1];
 						w.pre = startNode.privousSibling;
-						w.next = startNode.nextSibling;
-
+						w.next = _getNextSibling(ed, startNode);
 						w.isAtNodeEnd = true;
 						w.isNextBE = _isWceBE(ed, w.next);
 						w.isPreBE = _isWceBE(ed, w.pre);
@@ -215,7 +265,7 @@
 				return;
 			}
 
-			// /if startNode==textNode
+			// /if startContainer==textNode
 			startNode = startContainer.parentNode;
 
 			// if isCollapsed
@@ -224,7 +274,6 @@
 				if (startOffset == text.length) {
 					w.isAtNodeEnd = true;
 				}
-
 				w.not_C = true;
 				w.not_A = true;
 			} else {
@@ -233,18 +282,9 @@
 
 			}
 
-			var isNodeTypeOf = WCEObj._isNodeTypeOf;
-			var _setAllControls = WCEObj._setAllControls;
-
+			// test currnode, nextSibling, privousSilbing in BE ?
 			w.isInBE = _isWceBE(ed, startNode);
-			if (w.isInBE) {
-				w.next = startNode.nextSibling;
-				w.pre = startNode.previousSibling;
-			} else {
-				w.next = startContainer.nextSibling;
-				w.pre = startContainer.previousSibling;
-			}
-
+			w.next = _getNextSibling(ed, startContainer);
 			w.isNextBE = _isWceBE(ed, w.next);
 			w.isPreBE = _isWceBE(ed, w.pre);
 
@@ -259,36 +299,36 @@
 				}
 			}
 
-			if (isNodeTypeOf(startNode, 'gap')) {
+			if (_isNodeTypeOf(startNode, 'gap')) {
 				_setAllControls(ed, true);
 				w.not_D = false;
 				w.type = 'gap';
-			} else if (isNodeTypeOf(startNode, 'corr')) {
+			} else if (_isNodeTypeOf(startNode, 'corr')) {
 				_setAllControls(ed, true);
 				w.not_C = false;
 				w.type = 'corr';
-			} else if (isNodeTypeOf(startNode, 'abbr')) {
+			} else if (_isNodeTypeOf(startNode, 'abbr')) {
 				w.not_A = false;
 				w.type = 'abbr';
-			} else if (isNodeTypeOf(startNode, 'chapter_number')) {
+			} else if (_isNodeTypeOf(startNode, 'chapter_number')) {
 				_setAllControls(ed, true);
 				w.type = 'chapter_number';
-			} else if (isNodeTypeOf(startNode, 'verse_number')) {
+			} else if (_isNodeTypeOf(startNode, 'verse_number')) {
 				_setAllControls(ed, true);
 				w.type = 'verse_number';
-			} else if (isNodeTypeOf(startNode, 'brea')) {
+			} else if (_isNodeTypeOf(startNode, 'brea')) {
 				w.type = 'break';
-			} else if (isNodeTypeOf(startNode, 'unclear')) {
+			} else if (_isNodeTypeOf(startNode, 'unclear')) {
 				w.type = 'unclear';
-			} else if (isNodeTypeOf(startNode, 'space')) {
+			} else if (_isNodeTypeOf(startNode, 'space')) {
 				_setAllControls(ed, true);
 				w.type = 'space';
 				w.not_O = false;
-			} else if (isNodeTypeOf(startNode, 'formatting_capitals')) {
+			} else if (_isNodeTypeOf(startNode, 'formatting_capitals')) {
 				w.type = 'formatting_capitals';
-			} else if (isNodeTypeOf(startNode, 'paratext')) {
+			} else if (_isNodeTypeOf(startNode, 'paratext')) {
 				w.type = 'paratext';
-			} else if (isNodeTypeOf(startNode, 'note')) {
+			} else if (_isNodeTypeOf(startNode, 'note')) {
 				_setAllControls(ed, true);
 				w.not_N = false;
 				w.type = 'note';
@@ -1646,7 +1686,7 @@
 					var len = pre.nodeValue.length;
 					if (len > -1) {
 						rng.setStart(pre, len);
-						rng.setEnde(pre, len)
+						rng.setEnd(pre, len)
 					}
 				}
 
