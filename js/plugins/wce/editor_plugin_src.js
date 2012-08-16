@@ -128,12 +128,9 @@
 		},
 
 		/*
-		 * hier w.next wird definiert
+		 * if a node lastchild of parent, find nextsibling of parent.
 		 */
-		_getNextSibling : function(ed, node) {
-			if (!node || !ed) {
-				return false;
-			}
+		_getRelativNextSibling : function(ed, node) {
 			var parent, next;
 
 			while (node) {
@@ -147,15 +144,51 @@
 					// Unter Firefox, nachdem "Del" ein Element wird ein #Text="" erzeugt
 					if (tinyMCE.isGecko && ed.selection.isCollapsed() && next.nodeType == 3 && next.nodeValue == "") {
 						var _next = next;
-						next = WCEObj._getNextSibling(ed, next);
+						next = WCEObj._getRelativNextSibling(ed, next);
 						_next.parentNode.removeChild(_next);
 					}
 					return next;
 				}
-				node = node.parentNode;
+				node = parent;
 			}
 			return null;
 
+		},
+
+		/*
+		 * 
+		 */
+		_getRelativStartContainer : function(ed, node) {
+			var parent;
+			while (node) {
+				if (node.nodeName.toLowerCase() == "body") {
+					return node;
+				}
+				parent = node.parentNode;
+				if (parent && parent.firstChild != node) {
+					return node;
+				}
+				node = parent;
+			}
+			return null;
+		},
+
+		/*
+		 * when Cursor at End of lastChild of a parentNode, move Cursor to end of ParentNode
+		 */
+		_getRelativEndContainer : function(ed, node) {
+			var parent;
+			while (node) {
+				if (node.nodeName.toLowerCase() == "body") {
+					return node;
+				}
+				parent = node.parentNode;
+				if (parent && parent.lastChild != node) {
+					return node;
+				}
+				node = parent;
+			}
+			return null;
 		},
 
 		/*
@@ -173,7 +206,6 @@
 			w.not_A = b; // control A setActive?
 			w.not_P = b; // control P setActive?
 			w.not_N = b; // control N setActive?
-
 		},
 
 		/*
@@ -224,81 +256,121 @@
 			// reset WCE_VAR
 			WCEObj._resetWCEVariable(ed);
 
+			var _getRelativNextSibling = WCEObj._getRelativNextSibling;
+			var _isNodeTypeOf = WCEObj._isNodeTypeOf;
+			var _setAllControls = WCEObj._setAllControls;
+			var _getRelativEndContainer = WCEObj._getRelativEndContainer;
+			var _getRelativStartContainer = WCEObj._getRelativStartContainer;
+
 			var rng = ed.selection.getRng(true);
 			var startContainer = rng.startContainer;
 			var endContainer = rng.endContainer;
 			var startOffset = rng.startOffset;
-
-			//
+			var endOffset = rng.endOffset;
 			var _isWceBE = WCEObj._isWceBE;
-			var _getNextSibling = WCEObj._getNextSibling;
-			var _isNodeTypeOf = WCEObj._isNodeTypeOf;
-			var _setAllControls = WCEObj._setAllControls;
 
 			var startNode;
 
 			w.isc = ed.selection.isCollapsed();
 
-			if (startContainer.nodeType != 3) {
-				// In Firefox startOffSet==0, node is empty
-				if (startOffset == 0 && tinyMCE.isGecko && w.isc && startContainer.childNodes.length == 0) {
-					startContainer.parentNode.removeChild(startContainer);
+			// if select a text
+			if (!w.isc) {
+				if (startOffset == 0) {
+					// return nodeType==1
+					startContainer = _getRelativStartContainer(ed, startContainer);
+					w.isInBE = _isWceBE(ed, startContainer);
+				} else {
+					w.isInBE = _isWceBE(ed, startContainer.parentNode);
 				}
 
-				// ganz anfang oder Ende
-				w.not_C = true;
-				w.not_A = true;
+				w.pre = startContainer.previousSibling;
+				w.isPreBE = _isWceBE(ed, w.pre);
 
-				// for IE
-				if (tinyMCE.isIE && w.isc) {
-					var pre, next;
-					var childNodes = startContainer.childNodes;
-					if (startOffset && childNodes) {
-						startNode = childNodes[startOffset - 1];
-						w.pre = startNode.privousSibling;
-						w.next = _getNextSibling(ed, startNode);
+				// in Firefox wird endContainer ein leer Element ausgewaehlt, trotz zwei span elemente hintereinander und nicht leer sind
+				if (endOffset == 0 && tinyMCE.isGecko) {
+					// return nodeType==1
+					endContainer = _getRelativStartContainer(ed, endContainer);
+					endContainer = endContainer.previousSibling;
+					if (endContainer) {
+						ed.selection.select(endContainer);
+						var newRng = ed.selection.getRng(true);
+						rng.setEnd(newRng.endContainer, newRng.endOffset);
+						ed.selection.setRng(rng);
 						w.isAtNodeEnd = true;
-						w.isNextBE = _isWceBE(ed, w.next);
-						w.isPreBE = _isWceBE(ed, w.pre);
 					}
 				}
-				return;
-			}
 
-			// /if startContainer==textNode
-			startNode = startContainer.parentNode;
-
-			// if isCollapsed
-			if (w.isc) {
-				var text = startContainer.nodeValue;
-				if (startOffset == text.length) {
+				// cursor at textnode end?
+				if (endContainer.nodeType == 3 && endContainer.nodeValue.length == endOffset) {
+					// return nodeType==1
+					endContainer = _getRelativEndContainer(ed, endContainer);
 					w.isAtNodeEnd = true;
 				}
-				w.not_C = true;
-				w.not_A = true;
-			} else {
-				w.not_B = true;
-				w.not_N = true;
 
-			}
+				w.next = endContainer.nextSibling;
+				w.isNextBE = _isWceBE(ed, w.next);
 
-			// test currnode, nextSibling, privousSilbing in BE ?
-			w.isInBE = _isWceBE(ed, startNode);
-			w.next = _getNextSibling(ed, startContainer);
-			w.isNextBE = _isWceBE(ed, w.next);
-			w.isPreBE = _isWceBE(ed, w.pre);
-
-			if (!w.isc) {
-				startNode = ed.selection.getNode();
-				var endNode = endContainer.parentNode;
-				if (startNode != endNode) {
+				// startContainer/endContainer kann type==1 oder type==3 sein
+				if (startContainer.parentNode != endContainer.parentNode) {
 					_setAllControls(ed, true);
 					w.isInBE = true;
 					w.type = null;
 					return;
 				}
+				startNode = startContainer.parentNode;
+
+			} else {
+				if (startContainer.nodeType != 3) {
+					// In Firefox startOffSet==0, node is empty
+					if (startOffset == 0 && tinyMCE.isGecko && w.isc && startContainer.childNodes.length == 0) {
+						startContainer.parentNode.removeChild(startContainer);
+					}
+
+					// ganz anfang oder Ende
+					w.not_C = true;
+					w.not_A = true;
+
+					// for IE
+					if (tinyMCE.isIE && w.isc) {
+						var pre, next;
+						var childNodes = startContainer.childNodes;
+						if (startOffset && childNodes) {
+							startNode = childNodes[startOffset - 1];
+							w.isInBE = _isWceBE(ed, startNode);
+							w.pre = startNode.previousSibling;
+							w.next = _getRelativNextSibling(ed, startNode);
+							w.isAtNodeEnd = true;
+							w.isNextBE = _isWceBE(ed, w.next);
+							w.isPreBE = _isWceBE(ed, w.pre);
+						}
+					}
+					return;
+				}
+
+				// /if startContainer==textNode
+				startNode = startContainer.parentNode;
+
+				// if isCollapsed
+				if (w.isc) {
+					var text = startContainer.nodeValue;
+					if (startOffset == text.length) {
+						w.isAtNodeEnd = true;
+					}
+					w.not_C = true;
+					w.not_A = true;
+				} else {
+					w.not_B = true;
+					w.not_N = true;
+				}
+
+				// get currnode, nextSibling, privousSilbing in BE ?
+				w.isInBE = _isWceBE(ed, startNode);
+				w.next = _getRelativNextSibling(ed, startContainer);
+				w.isNextBE = _isWceBE(ed, w.next);
+				w.isPreBE = _isWceBE(ed, w.pre);
 			}
 
+			// get Type of wceNode
 			if (_isNodeTypeOf(startNode, 'gap')) {
 				_setAllControls(ed, true);
 				w.not_D = false;
@@ -341,16 +413,22 @@
 		_insertSpace : function(ed, ek) {
 			var w = ed.WCE_VAR;
 			var next = w.next;
+			ed.execCommand('mceAddUndoLevel');
+			ed.WCE_VAR.stopUndo = true;
 			if (next) {
-				var newText = document.createTextNode(" ");
-				next.parentNode.insertBefore(newText, next);
+				// is space key?
 				if (ek != 32) {
+					var newText = document.createTextNode("_");
+					next.parentNode.insertBefore(newText, next);
 					ed.selection.select(newText);
-				} else {
+				} else if (tinymce.isIE || tinymce.isGecko) {
 					var rng = ed.selection.getRng(true);
 					rng.setStart(newText, 1);
 					rng.setEnd(newText, 1);
 					ed.selection.setRng(rng);
+					return true;
+				} else {
+					// space key verhindern unter safari, chrome und opera
 					return true;
 				}
 			}
@@ -1652,21 +1730,25 @@
 			}
 		},
 
-		_stopEvent : function(e) {
-			if (e.stopPropagation) {
-				e.stopPropagation();
-			} else if (window.event) {
-				window.event.cancelBubble = true;
-			}
-			if (e.preventDefault) {
-				e.preventDefault();
-			}
-
-			e.returnValue = false;
+		_stopEvent : function(ed, e) {
+			ed.dom.events.prevent(e);
+			ed.dom.events.stop(e);
 			return false;
+			//
+			// if (e.stopPropagation) {
+			// e.stopPropagation();
+			// } else if (window.event) {
+			// window.event.cancelBubble = true;
+			// }
+			// if (e.preventDefault) {
+			// e.preventDefault();
+			// }
+			//
+			// e.returnValue = false;
+			// return false;
 		},
 
-		_moveCursorInPrivousSiblingEnd : function(ed, rng) {
+		_moveCursorInPreviousSiblingEnd : function(ed, rng) {
 			var startContainer = rng.startContainer;
 			var pre = startContainer.previousSibling;
 
@@ -1726,7 +1808,7 @@
 					if (rng.startOffset != 0) {
 						return;
 					}
-					WCEObj._moveCursorInPrivousSiblingEnd(ed, rng);
+					WCEObj._moveCursorInPreviousSiblingEnd(ed, rng);
 				}
 			});
 
@@ -1740,6 +1822,7 @@
 					ed.WCE_VAR.isRedraw = true;
 					return;
 				}
+
 				ed.WCE_VAR.isRedraw = false;
 			});
 
@@ -1764,28 +1847,31 @@
 						WCEObj._setWCEVariable(ed);
 						WCEObj._redrawContols(ed);
 						ed.WCE_VAR.isRedraw = true;
-						return _stopEvent(e);
+						return _stopEvent(ed, e);
 					}
 				}
 
 				// TODO: if no short_cut B, C ,Z ,Y .....
 				if (wcevar.isInBE && !e.ctrlKey) {
+					// keydown for insert letter
 					if (wcevar.isAtNodeEnd && ek != 8 && ek != 46) {
-						var b = WCEObj._insertSpace(ed, ek);
+						var isSpaceKey = WCEObj._insertSpace(ed, ek);
 						WCEObj._setWCEVariable(ed);
 						WCEObj._redrawContols(ed);
 						ed.WCE_VAR.isRedraw = true;
-						if (b) {
-							return _stopEvent(e);
+						if (isSpaceKey) {
+							return _stopEvent(ed, e);
 						}
+					} else if (ek == 46 && wcevar.isAtNodeEnd && !wcevar.isNextBE) {
+
 					} else {
-						return _stopEvent(e);
+						return _stopEvent(ed, e);
 					}
 				}
 
 				// key "entf"
 				if (ek == 46 && wcevar.isNextBE && wcevar.isAtNodeEnd) {
-					return _stopEvent(e);
+					return _stopEvent(ed, e);
 				}
 
 				if (ek == 13 || ek == 10) {
@@ -1793,7 +1879,7 @@
 					/*
 					 * if (e.stopPropagation) { e.stopPropagation(); e.preventDefault(); }
 					 */
-					_stopEvent(e);
+					_stopEvent(ed, e);
 
 					if (e.shiftKey) {
 						// Shift+Enter -> break dialogue
@@ -1841,7 +1927,7 @@
 					// TODO?
 				} else if (ek == 57 && e.shiftKey) {
 					// Find corresponding ( and create substring
-					_stopEvent(e);
+					_stopEvent(ed, e);
 					// e.stopImmediatePropagation();
 					_wceAddNoDialog(ed, 'part_abbr', '');
 				}
@@ -1898,6 +1984,17 @@
 				WCEObj._initWCEVariable(ed);
 
 				var wcevar = ed.WCE_VAR;
+
+				ed.undoManager.onAdd.add(function(um, level) {
+					if (ed.WCE_VAR.stopUndo) {
+						var i;
+						for ( var p in um.data) {
+							i = p;
+						}
+						ed.WCE_VAR.stopUndo = false;
+						um.data[i] = null;
+					}
+				});
 
 				// Add shortcuts for wce
 				ed.addShortcut('ctrl+b', 'Add break', 'mceAddBreak_Shortcut');
