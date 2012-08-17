@@ -27,8 +27,10 @@
 			ed.WCE_CON = {};
 			var w = ed.WCE_CON;
 
-			// if cursor within the element, block cursor
-			w.blockedElemente = new Array('gap', 'corr', 'chapter_number', 'verse_number', 'abbr', 'space', 'note');
+			// blocked elements :If the cursor is on the inside, will prohibit the key operation
+			w.blockedElements = new Array('gap', 'corr', 'chapter_number', 'verse_number', 'abbr', 'space', 'note');
+
+			// not blocked elements
 			w.normalElemente = new Array('unclear');
 
 			// WCE Buttons
@@ -59,9 +61,9 @@
 		 */
 		_resetWCEVariable : function(ed) {
 			var w = ed.WCE_VAR;
-			w.isc = true;
+			w.isc = true;// ist selection collapsed
 			w.textNode = null;
-			w.isAtNodeEnd = false;
+			w.isAtNodeEnd = false; // is cursor at end of node?
 			w.type = null; // cursor in welche wce type
 			w.isInBE = false; // is cursor in blocked Element
 			w.next = null; // nextSibling
@@ -97,14 +99,14 @@
 		},
 
 		/*
-		 * is node blocked element?
+		 * is text node in blocked element?
 		 */
 		_isWceBE : function(ed, node) {
 			if (!node || node.nodeType == 3 || !ed) {
 				return false;
 			}
 
-			var arr = ed.WCE_CON.blockedElemente;
+			var arr = ed.WCE_CON.blockedElements;
 			for ( var i = 0, len = arr.length; i < len; i++) {
 				if (WCEObj._isNodeTypeOf(node, arr[i]))
 					return true;
@@ -113,7 +115,7 @@
 		},
 
 		/*
-		 * 
+		 * is a Ancestor of the node a blocked element?
 		 */
 		_isInWceBE : function(ed, node) {
 			var _isWceBE = WCEObj._isWceBE;
@@ -124,11 +126,10 @@
 				node = node.parentNode;
 			}
 			return false;
-
 		},
 
 		/*
-		 * if a node lastchild of parent, find nextsibling of parent.
+		 * if a node is lastchild of parentnode, then find nextSibling of parentNode.
 		 */
 		_getRelativNextSibling : function(ed, node) {
 			var parent, next;
@@ -1777,6 +1778,113 @@
 			}
 		},
 
+		_setKeyDownEvent : function(ed, e) {
+			if (!e) {
+				var e = window.event;
+			}
+
+			var ek = e.keyCode || e.charCode || 0;
+			// allow all arrow key
+			if (ek == 17 || (ek > 32 && ek < 41)) {
+				return;
+			}
+
+			var wcevar = ed.WCE_VAR;
+			var _stopEvent = WCEObj._stopEvent;
+
+			// every keyDown only delete one char
+			if (ek == 46 || ek == 8) {
+				ed.keyDownDelCount++;
+				if (ed.keyDownDelCount > 1) {
+					WCEObj._setWCEVariable(ed);
+					WCEObj._redrawContols(ed);
+					ed.WCE_VAR.isRedraw = true;
+					return _stopEvent(ed, e);
+				}
+			}
+
+			// TODO: if no short_cut B, C ,Z ,Y .....
+			if (wcevar.isInBE && !e.ctrlKey) {
+				// keydown for insert letter
+				if (wcevar.isAtNodeEnd && ek != 8 && ek != 46) {
+					var isSpaceKey = WCEObj._insertSpace(ed, ek);
+					WCEObj._setWCEVariable(ed);
+					WCEObj._redrawContols(ed);
+					ed.WCE_VAR.isRedraw = true;
+					if (isSpaceKey) {
+						return _stopEvent(ed, e);
+					}
+				} else if (ek == 46 && wcevar.isAtNodeEnd && !wcevar.isNextBE) {
+
+				} else {
+					return _stopEvent(ed, e);
+				}
+			}
+
+			// key "entf"
+			if (ek == 46 && wcevar.isNextBE && wcevar.isAtNodeEnd) {
+				return _stopEvent(ed, e);
+			}
+
+			if (ek == 13 || ek == 10) {
+				// Enter e.stopPropagation works only in Firefox.
+				/*
+				 * if (e.stopPropagation) { e.stopPropagation(); e.preventDefault(); }
+				 */
+				_stopEvent(ed, e);
+
+				if (e.shiftKey) {
+					// Shift+Enter -> break dialogue
+					if (wcevar.type != 'break') {
+						ed.execCommand('mceAddBreak');
+					}
+
+				} else {
+					// Enter -> line break
+					var rng = ed.selection.getRng(true);
+					var startNode = rng.startContainer;
+					var startText = startNode.data ? startNode.data : startNode.innerText;
+					if (!startText) {
+						startText = startNode.innerHTML;
+					}
+					if (rng.startOffset == _getNextEnd(startText, rng.startOffset)) {
+						// at the end of a word
+						_wceAddNoDialog(ed, 'brea', 'lb', ++lcnt);
+					} else {
+						// in the middle of a word
+						_wceAddNoDialog(ed, 'brea', 'lbm', ++lcnt);
+					}
+				}
+			}
+
+			// Add <pc> for some special characters
+			if (ek == 59 && !e.shiftKey) { // ; en
+				tinyMCE.activeEditor.execCommand('mceAdd_pc', ';');
+			} else if (ek == 188 && e.shiftKey) {
+				// ; dt < en
+				tinyMCE.activeEditor.execCommand('mceAdd_pc', ';');
+			} else if (ek == 188 && !e.shiftKey) {
+				// ,
+				tinyMCE.activeEditor.execCommand('mceAdd_pc', ',');
+			} else if (ek == 190 && !e.shiftKey) {
+				// .
+				tinyMCE.activeEditor.execCommand('mceAdd_pc', '.');
+			} else if (ek == 191 && e.shiftKey) {
+				// ? en
+				tinyMCE.activeEditor.execCommand('mceAdd_pc', '?');
+			} else if (ek == 219 && e.shiftKey) {
+				// ? dt
+				tinyMCE.activeEditor.execCommand('mceAdd_pc', '?');
+			} else if (ek == 56 && e.shiftKey) {
+				// TODO?
+			} else if (ek == 57 && e.shiftKey) {
+				// Find corresponding ( and create substring
+				_stopEvent(ed, e);
+				// e.stopImmediatePropagation();
+				_wceAddNoDialog(ed, 'part_abbr', '');
+			}
+		},
+
 		/**
 		 * Initializes the plugin,
 		 * 
@@ -1826,113 +1934,12 @@
 				ed.WCE_VAR.isRedraw = false;
 			});
 
-			ed.onKeyDown.addToTop(function(ed, e) {
-				if (!e) {
-					var e = window.event;
-				}
-
-				var ek = e.keyCode || e.charCode || 0;
-				// allow all arrow key
-				if (ek == 17 || (ek > 32 && ek < 41)) {
-					return;
-				}
-
-				var wcevar = ed.WCE_VAR;
-				var _stopEvent = WCEObj._stopEvent;
-
-				// every keyDown only delete one char
-				if (ek == 46 || ek == 8) {
-					ed.keyDownDelCount++;
-					if (ed.keyDownDelCount > 1) {
-						WCEObj._setWCEVariable(ed);
-						WCEObj._redrawContols(ed);
-						ed.WCE_VAR.isRedraw = true;
-						return _stopEvent(ed, e);
-					}
-				}
-
-				// TODO: if no short_cut B, C ,Z ,Y .....
-				if (wcevar.isInBE && !e.ctrlKey) {
-					// keydown for insert letter
-					if (wcevar.isAtNodeEnd && ek != 8 && ek != 46) {
-						var isSpaceKey = WCEObj._insertSpace(ed, ek);
-						WCEObj._setWCEVariable(ed);
-						WCEObj._redrawContols(ed);
-						ed.WCE_VAR.isRedraw = true;
-						if (isSpaceKey) {
-							return _stopEvent(ed, e);
-						}
-					} else if (ek == 46 && wcevar.isAtNodeEnd && !wcevar.isNextBE) {
-
-					} else {
-						return _stopEvent(ed, e);
-					}
-				}
-
-				// key "entf"
-				if (ek == 46 && wcevar.isNextBE && wcevar.isAtNodeEnd) {
-					return _stopEvent(ed, e);
-				}
-
-				if (ek == 13 || ek == 10) {
-					// Enter e.stopPropagation works only in Firefox.
-					/*
-					 * if (e.stopPropagation) { e.stopPropagation(); e.preventDefault(); }
-					 */
-					_stopEvent(ed, e);
-
-					if (e.shiftKey) {
-						// Shift+Enter -> break dialogue
-						if (wcevar.type != 'break') {
-							ed.execCommand('mceAddBreak');
-						}
-
-					} else {
-						// Enter -> line break
-						var rng = ed.selection.getRng(true);
-						var startNode = rng.startContainer;
-						var startText = startNode.data ? startNode.data : startNode.innerText;
-						if (!startText) {
-							startText = startNode.innerHTML;
-						}
-						if (rng.startOffset == _getNextEnd(startText, rng.startOffset)) {
-							// at the end of a word
-							_wceAddNoDialog(ed, 'brea', 'lb', ++lcnt);
-						} else {
-							// in the middle of a word
-							_wceAddNoDialog(ed, 'brea', 'lbm', ++lcnt);
-						}
-					}
-				}
-
-				// Add <pc> for some special characters
-				if (ek == 59 && !e.shiftKey) { // ; en
-					tinyMCE.activeEditor.execCommand('mceAdd_pc', ';');
-				} else if (ek == 188 && e.shiftKey) {
-					// ; dt < en
-					tinyMCE.activeEditor.execCommand('mceAdd_pc', ';');
-				} else if (ek == 188 && !e.shiftKey) {
-					// ,
-					tinyMCE.activeEditor.execCommand('mceAdd_pc', ',');
-				} else if (ek == 190 && !e.shiftKey) {
-					// .
-					tinyMCE.activeEditor.execCommand('mceAdd_pc', '.');
-				} else if (ek == 191 && e.shiftKey) {
-					// ? en
-					tinyMCE.activeEditor.execCommand('mceAdd_pc', '?');
-				} else if (ek == 219 && e.shiftKey) {
-					// ? dt
-					tinyMCE.activeEditor.execCommand('mceAdd_pc', '?');
-				} else if (ek == 56 && e.shiftKey) {
-					// TODO?
-				} else if (ek == 57 && e.shiftKey) {
-					// Find corresponding ( and create substring
-					_stopEvent(ed, e);
-					// e.stopImmediatePropagation();
-					_wceAddNoDialog(ed, 'part_abbr', '');
-				}
-
-			});
+			// in Opera, if continue to delete character, will fire keypress event
+			if (tinymce.isOpera) {
+				ed.onKeyPress.addToTop(WCEObj._setKeyDownEvent);
+			} else {
+				ed.onKeyDown.addToTop(WCEObj._setKeyDownEvent);
+			}
 
 			// class="__t=wce_type&__n=wce_name...."
 			ed.wceTypeParamInClass = '__t';
