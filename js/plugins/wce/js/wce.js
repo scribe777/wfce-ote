@@ -133,7 +133,9 @@ function writeWceNodeInfo(val) {
 			if (document.getElementById('mark_as_supplied').checked == true) {
 				gap_text = '[' + selected_content + ']'; 
 			} else {
-				if (document.getElementById('unit').value == "line") {
+				if (document.getElementById('unit').value == "char") {
+					gap_text += '['+ document.getElementById('extent').value +']';
+				} else if (document.getElementById('unit').value == "line") {
 					for (var i = 0; i < document.getElementById('extent').value; i++) {
 						gap_text += '<br/>&crarr;[...]';
 					}
