@@ -370,6 +370,9 @@
 			if (!w.isc) {
 				var endNode;
 
+				w.not_B = true;
+				w.not_N = true;
+
 				// if run adaptive Selection
 				if (!isAdaptived) {
 					var adaptiveCheckbox = tinymce.DOM.get(ed.id + '_adaptive_selection');
@@ -535,17 +538,12 @@
 				startNode = startContainer.parentNode;
 
 				// if isCollapsed
-				if (w.isc) {
-					var text = startContainer.nodeValue;
-					if (startOffset == text.length) {
-						w.isAtNodeEnd = true;
-					}
-					w.not_C = true;
-					w.not_A = true;
-				} else {
-					w.not_B = true;
-					w.not_N = true;
+				var text = startContainer.nodeValue;
+				if (startOffset == text.length) {
+					w.isAtNodeEnd = true;
 				}
+				w.not_C = true;
+				w.not_A = true;
 
 				// get currnode, nextSibling, privousSilbing in BE ?
 				w.isInBE = _isWceBE(ed, startNode);

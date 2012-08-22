@@ -283,7 +283,7 @@ function writeWceNodeInfo(val) {
 		}
 	}
 
-	ed.isNotDirty = 0; 
+	ed.isNotDirty = 0;
 	tinyMCEPopup.close();
 }
 
