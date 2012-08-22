@@ -27,7 +27,7 @@
 			ed.WCE_CON = {};
 			var w = ed.WCE_CON;
 
-			// blocked elements :If the cursor is on the inside, will prohibit the key operation
+			// blocked elements :If the Caret is on the inside, will prohibit the key operation
 			w.blockedElements = new Array('gap', 'corr', 'chapter_number', 'verse_number', 'abbr', 'space', 'note');
 
 			// not blocked elements
@@ -69,9 +69,9 @@
 			var w = ed.WCE_VAR;
 			w.isc = true;// ist selection collapsed
 			w.textNode = null;
-			w.isAtNodeEnd = false; // is cursor at end of node?
-			w.type = null; // cursor in welche wce type
-			w.isInBE = false; // is cursor in blocked Element
+			w.isAtNodeEnd = false; // is Caret at end of node?
+			w.type = null; // Caret in welche wce type
+			w.isInBE = false; // is Caret in blocked Element
 			w.next = null; // nextSibling
 			w.isNextBE = false; // is nextSibling blocked Element
 			w.pre = null; // previousSibling
@@ -362,6 +362,10 @@
 
 			w.isc = ed.selection.isCollapsed();
 
+			if (!startContainer) {
+				return;
+			}
+
 			// if select a text
 			if (!w.isc) {
 				var endNode;
@@ -375,7 +379,7 @@
 					}
 				}
 
-				// after adaptive selection,in IE startContainer==node cursor muss be move
+				// after adaptive selection,in IE startContainer==node Caret muss be move
 				if (isAdaptived && tinyMCE.isIE && startContainer.nodeType == 1) {
 					startNode = WCEObj._getRealContainer(startContainer, startOffset);
 				}
@@ -398,7 +402,7 @@
 					}
 				}
 
-				// after adaptive selection,in IE startContainer==node cursor muss be move
+				// after adaptive selection,in IE startContainer==node Caret muss be move
 				if (tinyMCE.isIE && endContainer.nodeType == 1) {
 					endContainer = WCEObj._getRealContainer(endContainer, endOffset);
 				}
@@ -425,7 +429,7 @@
 					}
 				}
 
-				// cursor at textnode end?
+				// Caret at textnode end?
 				if (endContainer.nodeType == 3 && endContainer.nodeValue.length == endOffset) {
 					// return nodeType==1
 					w.isAtNodeEnd = true;
@@ -482,6 +486,27 @@
 					// In Firefox startOffSet==0, node is empty
 					if (startOffset == 0 && tinyMCE.isGecko && w.isc && startContainer.childNodes.length == 0) {
 						startContainer.parentNode.removeChild(startContainer);
+					} else if (!tinyMCE.isIE) { // if (tinyMCE.isGecko)
+						var startContainerNodeName = startContainer.nodeName;
+						if (startContainerNodeName.toLowerCase() == "body") {
+							startContainer = WCEObj._getRealContainer(startContainer, startOffset);
+							if (startContainer) {
+								startContainer = startContainer.previousSibling;
+							}
+							if (startContainer) {
+								var lastTextNode = WCEObj._getLastTextNodeOfNode(ed, startContainer);
+								if (lastTextNode) {
+									var lastTextNodeValue = lastTextNode.nodeValue;
+									if (lastTextNodeValue) {
+										rng.setStart(lastTextNode, lastTextNodeValue.length);
+										rng.setEnd(lastTextNode, lastTextNodeValue.length);
+										ed.selection.setRng(rng);
+										return WCEObj._setWCEVariable(ed);
+									}
+								}
+							}
+
+						}
 					}
 
 					// ganz anfang oder Ende
@@ -489,7 +514,7 @@
 					w.not_A = true;
 
 					// for IE
-					if (tinyMCE.isIE && w.isc) {
+					if (tinyMCE.isIE && w.isc && startContainer) {
 						var pre, next;
 						var childNodes = startContainer.childNodes;
 						if (startOffset && childNodes) {
@@ -502,6 +527,7 @@
 							w.isPreBE = _isWceBE(ed, w.pre);
 						}
 					}
+
 					return;
 				}
 
@@ -613,9 +639,29 @@
 			}
 
 			// if need move endContainer
-			if (endContainer.nodeType != 3 && tinymce.isIE) {
-				var moveEndToPrevious = true;
-				endContainer = WCEObj._getRealContainer(endContainer, endOffset);
+			if (endContainer.nodeType != 3) {
+				// in IE
+				if (tinymce.isIE) {
+					var moveEndToPrevious = true;
+					endContainer = WCEObj._getRealContainer(endContainer, endOffset);
+				} else if (tinymce.isGecko) {
+					// in Firefox at end of BODY <br data-mce-bogus="1">
+					var _endContainer = WCEObj._getRealContainer(endContainer, endOffset);
+					if (_endContainer && _endContainer.getAttribute("data-mce-bogus")) {
+						endContainer = _endContainer.previousSibling;
+						var _text = endContainer.nodeValue;
+						if (_text) {
+							rng.setEnd(endContainer, _text.length);
+							ed.selection.setRng(rng);
+							startContainer = rng.startContainer;
+							startOffset = rng.startOffset;
+							startText = startContainer.nodeValue;
+							endContainer = rng.endContainer;
+							endOffset = rng.endOffset;
+							endText = endContainer.nodeValue;
+						}
+					}
+				}
 			}
 
 			if (endOffset == 0) {
@@ -656,7 +702,7 @@
 			// startContainer == endContainer, return
 			if (startContainer == endContainer) {
 				startText = startContainer.nodeValue;
-				if (startText && startText.indexOf(" ") < 0 || startContainer.parentNode.childNodes.length == 1) {
+				if (startText && startText.indexOf(" ") < 0) {
 					rng.setStart(startContainer, 0);
 					var len = startText.length;
 					rng.setEnd(startContainer, len);
@@ -673,7 +719,7 @@
 
 			var startParent;
 			if (startText && startOffset == 0) {
-				// cursor at start
+				// Caret at start
 				startParent = WCEObj._getAncestorIfFirstChild(ed, startContainer);
 				startParent = startParent.parentNode;
 			} else {
@@ -682,7 +728,7 @@
 
 			var endParent;
 			if (endText && endOffset == endText.length) {
-				// cursor at end
+				// Caret at end
 				endParent = WCEObj._getAncestorIfLastChild(ed, endContainer);
 				endParent = endParent.parentNode;
 			} else {
@@ -738,47 +784,38 @@
 			return a;
 		},
 
-		// Ueberpruefen, ob ausgewaehlter Text verse nummer hat
-		_contentHasVerse : function(ed) {
-			var sel = ed.selection;
-			var selContent = sel.getContent();
-			// Auswahl hat verse
-			if (selContent.match(/="verse_number"/) || selContent.match(/"chapter_number"/)) {
-				return true;
-			}
-
-			return ed.WCE_VAR.isInBE;
-		},
-
 		/*
-		 * insert space after cursor
+		 * insert space after Caret
 		 */
 		_insertSpace : function(ed, ek) {
 			var w = ed.WCE_VAR;
 			var next = w.next;
 			ed.execCommand('mceAddUndoLevel');
 			ed.WCE_VAR.stopUndo = true;
-			if (next) {
-				var rng = ed.selection.getRng(true);
 
-				// is space key?
-				if (ek != 32) {
-					var newText = document.createTextNode("_");
+			var rng = ed.selection.getRng(true);
+
+			// is space key?
+			if (ek != 32) {
+				var newText = document.createTextNode("_");
+				if (next) {
 					next.parentNode.insertBefore(newText, next);
-					rng.setStart(newText, 0);
-					rng.setEnd(newText, 1);
-					ed.selection.setRng(rng);
-				} else if (tinymce.isIE || tinymce.isGecko) {
-					// rng.setStart(newText, 1);
-					// rng.setEnd(newText, 1);
-					// ed.selection.setRng(rng);
-					return true;
 				} else {
-					// space key verhindern unter safari, chrome und opera
-					return true;
+					ed.getBody().appendChild(newText);
 				}
+				rng.setStart(newText, 0);
+				rng.setEnd(newText, 1);
+				ed.selection.setRng(rng);
+				return false;// not stopEvent();
+			} else if (tinymce.isIE || tinymce.isGecko) {
+				// TODO;
+				return true;// stopEvent();
+			} else {
+				// TODO;
+				// space key verhindern unter safari, chrome und opera
+				return true; // stopEvent();
 			}
-			return false;
+
 		},
 
 		/*
@@ -1644,8 +1681,10 @@
 				inline : inline
 			}, {
 				plugin_url : url,
-				add_new_wce_node : add_new_wce_node
+				add_new_wce_node : add_new_wce_node,
+				wceobj : WCEObj
 			});
+
 		},
 
 		// bei adptive Selection
@@ -1679,8 +1718,9 @@
 		},
 
 		_getNextEnd : function(endText, startOffset) {
-			if (typeof endText == 'undefined')
+			if (!endText) {
 				return startOffset;
+			}
 
 			endText = endText.replace(/\xa0/gi, ' ');
 			startOffset = endText.indexOf(' ', startOffset);
@@ -1756,13 +1796,18 @@
 						// for a line break without an explicit number
 						number = ++lcnt;
 					}
+
 					// var num = "";
 					/*
 					 * while (num == "") { num = prompt("Number of line break", ""); }
 					 */
 					ed.selection.setContent('<span ' + wceAttr + wceClass + '>' + '<br/>&crarr;' + '</span> ');
 					lcnt = number;
-					ed.execCommand('printData');
+
+					// ed.selection.select(ed.getBody(), true); // select complete text
+					return;
+
+					// ed.execCommand('printData');
 				} else if (character == 'lbm') {
 					// line break in the middle of a word
 					if (number === 0) {
@@ -1886,10 +1931,11 @@
 		},
 
 		_stopEvent : function(ed, e) {
-			ed.dom.events.prevent(e);
-			ed.dom.events.stop(e);
+			var evs = ed.dom.events;
+			evs.prevent(e);
+			evs.stop(e);
 			return false;
-			//
+
 			// if (e.stopPropagation) {
 			// e.stopPropagation();
 			// } else if (window.event) {
@@ -1898,7 +1944,7 @@
 			// if (e.preventDefault) {
 			// e.preventDefault();
 			// }
-			//
+			//			
 			// e.returnValue = false;
 			// return false;
 		},
@@ -1906,7 +1952,7 @@
 		/*
 		 * 
 		 */
-		_moveCursorToPreviousSiblingEnd : function(ed, rng) {
+		_moveCaretToPreviousSiblingEnd : function(ed, rng) {
 			var startContainer = rng.startContainer;
 			var pre = startContainer.previousSibling;
 
@@ -1950,9 +1996,11 @@
 
 			var wcevar = ed.WCE_VAR;
 			var _stopEvent = WCEObj._stopEvent;
+			var _wceAdd = WCEObj._wceAdd;
+			var _wceAddNoDialog = WCEObj._wceAddNoDialog;
 
 			// every keyDown only delete one char
-			if (ek == 46 || ek == 8) {
+			if (!tinymce.isOpera && (ek == 46 || ek == 8)) {
 				ed.keyDownDelCount++;
 				if (ed.keyDownDelCount > 1) {
 					WCEObj._setWCEVariable(ed);
@@ -1990,12 +2038,6 @@
 			}
 
 			if (ek == 13 || ek == 10) {
-				// Enter e.stopPropagation works only in Firefox.
-				/*
-				 * if (e.stopPropagation) { e.stopPropagation(); e.preventDefault(); }
-				 */
-				_stopEvent(ed, e);
-
 				if (e.shiftKey) {
 					// Shift+Enter -> break dialogue
 					if (wcevar.type != 'break') {
@@ -2006,18 +2048,21 @@
 					// Enter -> line break
 					var rng = ed.selection.getRng(true);
 					var startNode = rng.startContainer;
-					var startText = startNode.data ? startNode.data : startNode.innerText;
-					if (!startText) {
-						startText = startNode.innerHTML;
-					}
-					if (rng.startOffset == _getNextEnd(startText, rng.startOffset)) {
+					var startText = startNode.nodeValue;
+					var startOffset = rng.startOffset;
+					var indexOfEnd = WCEObj._getNextEnd(startText, startOffset);
+
+					if (indexOfEnd && indexOfEnd == startOffset) {
 						// at the end of a word
 						_wceAddNoDialog(ed, 'brea', 'lb', ++lcnt);
 					} else {
 						// in the middle of a word
 						_wceAddNoDialog(ed, 'brea', 'lbm', ++lcnt);
 					}
+
 				}
+
+				return _stopEvent(ed, e);
 			}
 
 			// Add <pc> for some special characters
@@ -2075,7 +2120,7 @@
 					if (rng.startOffset != 0) {
 						return;
 					}
-					WCEObj._moveCursorToPreviousSiblingEnd(ed, rng);
+					WCEObj._moveCaretToPreviousSiblingEnd(ed, rng);
 				}
 
 			});
@@ -2083,7 +2128,7 @@
 			ed.onKeyUp.addToTop(function(ed, e) {
 				ed.keyDownDelCount = 0;
 
-				// wenn redraw schon bei keyDown nicht gemacht
+				// wenn redraw bei keyDown nicht gemacht
 				if (!ed.WCE_VAR.isRedraw) {
 					WCEObj._setWCEVariable(ed);
 					WCEObj._redrawContols(ed);
@@ -2094,12 +2139,25 @@
 				ed.WCE_VAR.isRedraw = false;
 			});
 
-			// in Opera, if continue to delete character, will fire keypress event
 			if (tinymce.isOpera) {
-				ed.onKeyPress.addToTop(WCEObj._setKeyDownEvent);
-			} else {
-				ed.onKeyDown.addToTop(WCEObj._setKeyDownEvent);
+				ed.onKeyPress.addToTop(function(ed, e) {
+					if (!e) {
+						var e = window.event;
+					}
+					var ek = e.keyCode || e.charCode || 0;
+					if (ek == 46 || ek == 8) {
+						ed.keyDownDelCount++;
+						if (ed.keyDownDelCount > 1) {
+							WCEObj._setWCEVariable(ed);
+							WCEObj._redrawContols(ed);
+							ed.WCE_VAR.isRedraw = true;
+							return WCEObj._stopEvent(ed, e);
+						}
+					}
+				});
 			}
+
+			ed.onKeyDown.addToTop(WCEObj._setKeyDownEvent);
 
 			// class="__t=wce_type&__n=wce_name...."
 			ed.wceTypeParamInClass = '__t';
@@ -2159,7 +2217,9 @@
 							i = p;
 						}
 						ed.WCE_VAR.stopUndo = false;
-						um.data[i] = null;
+
+						// um.data[i] = null; //because Error in IE
+						um.data[i] = um.data[i - 1];
 					}
 				});
 
@@ -2244,7 +2304,7 @@
 					wceAttr = wceNode.getAttribute('wce');
 				}
 
-				// wenn cursor in wce_corr
+				// wenn Caret in wce_corr
 				if (ed.selection.isCollapsed()) {
 					if (!wceNode) {
 						return;
@@ -2258,6 +2318,7 @@
 				}
 				_wceAdd(ed, url, '/correction.htm', 800, 600, 1, _add_new_wce_node);
 			});
+
 			// Edit corrections
 			ed.addCommand('mceEditCorrection', function() {
 				_wceAdd(ed, url, '/correction.htm', 480, 320, 1, false);
@@ -2463,6 +2524,8 @@
 			});
 
 			ed.addCommand('printData', function() {
+
+				return;
 				var ed = tinyMCE.activeEditor;
 				var oldcontent = "";
 				var newcontent = "";
