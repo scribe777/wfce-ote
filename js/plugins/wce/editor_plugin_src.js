@@ -2256,11 +2256,11 @@
 				} else if (wceNode && wceAttr && wceAttr.match(/corr/)) {
 					_add_new_wce_node = false;
 				}
-				_wceAdd(ed, url, '/correction.htm', 800, 600, 1, _add_new_wce_node);
+				_wceAdd(ed, url, '/correction.htm', 720, 560, 1, _add_new_wce_node);
 			});
 			// Edit corrections
 			ed.addCommand('mceEditCorrection', function() {
-				_wceAdd(ed, url, '/correction.htm', 480, 320, 1, false);
+				_wceAdd(ed, url, '/correction.htm', 720, 560, 1, false);
 			});
 
 			ed.addCommand('mceAddCorrection_Shortcut', function() {
