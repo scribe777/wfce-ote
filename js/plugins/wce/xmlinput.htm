@@ -1,0 +1,69 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" style="height:100%">
+<head>
+<title>TEI to HTML</title>
+<script type="text/javascript" src="../../tiny_mce_popup.js"></script>
+<script type="text/javascript" src="../../tiny_mce_src.js"></script>
+<script type="text/javascript" src="../../jquery.js"></script>
+<script type="text/javascript" src="js/wce.js"></script>
+</head>
+<body style="height:97%">
+<div style="height:95%; margin-bottom:10px" id="div0"> 
+<textarea name="tei2htmlContent" id="tei2htmlContent" style="width: 100%; overflow-y:visible; height: 98%; font-family: 'Courier New',Courier,monospace; font-size: 12px;" dir="ltr" wrap="on" class="mceFocus"></textarea> 
+</div> <div class="mceActionPanel">
+			<input type="button"  value="{#close}" onclick="tinyMCEPopup.close();"  />      <input type="button" value=" Toggle" onclick="editorToggle();"; 
+		</div> 
+
+</body> 
+<script type="text/javascript">
+	var corrector_text_editor;
+	
+	tinyMCEPopup.onInit.add(function(_ed){
+	 var x=document.getElementById('tei2htmlContent');
+		x.style.height=document.getElementById('div0').offsetHeight+ "px";
+		var str=_ed.getContent();
+		_ed.execCommand('setWceTei',[str,'_bookIndex_']);
+		var teiContent=_ed.InputTEI;
+		if(teiContent){
+			x.value=teiContent;
+		} 
+		
+		
+				corrector_text_editor=new tinymce.Editor('tei2htmlContent',{
+			mode : "textareas", 
+			theme : "advanced",
+			skin: "wce",
+			extended_valid_elements:'span[class|wce_orig|style|wce]',
+			forced_root_block : false,
+			force_br_newlines : true,
+			force_p_newlines : false,
+			entity_encoding : "raw",
+			theme_advanced_path : false,  
+ 			plugins : "wce,pagebreak,style,layer,safari,print,inlinepopups, paste", 
+
+			// Theme options
+			theme_advanced_buttons1 : "undo,redo,charmap,|,code,removeformat,|,print,contextmenu,paste,fullscreen,|,metadata,breaks,correction,illegible,decoration,abbreviation,paratext,note,|,xmloutput,|, xmlinput",
+			theme_advanced_buttons2 : "",
+			theme_advanced_toolbar_location : "top",
+			theme_advanced_toolbar_align : "left",
+			theme_advanced_statusbar_location : "bottom",
+			theme_advanced_resizing : false  
+
+		});  
+	 	corrector_text_editor.render();
+		corrector_text_editor.onInit.add(function(){
+			corrector_text_editor.hide();
+		});  
+		
+	});   
+	
+	function editorToggle(){
+		if(corrector_text_editor.isHidden()){
+			corrector_text_editor.show();
+		}else{
+			corrector_text_editor.hide();
+		}
+	}
+	 
+</script>
+</html>

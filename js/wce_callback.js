@@ -8,7 +8,11 @@ function wceExecCommandHandler(editor_id, elm, command, user_interface, value) {
 		return true;
 
 	case "setWceTei":
-		setWceTei(value);
+		var teiContent = getWceTei(user_interface[0], user_interface[1]);
+		ed.InputTEI = setWceTei(teiContent);
+		return true;
+		
+		//setWceTei(value);
 		return true;
 	}
 

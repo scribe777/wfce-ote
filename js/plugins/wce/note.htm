@@ -19,7 +19,7 @@
 							<option value="editorial">{#wce.editorial}</option>
 							<option value="transcriberquery">{#wce.transcriber}</option>
 							<option value="canonRef">{#wce.canon}</option>
-							<option value="editorial">{#wce.changeOfHand}</option>
+							<option value="changeOfHand">{#wce.changeOfHand}</option>
 							<option value="other">{#wce.other}</option>
 					</select>
 					</td>
@@ -45,10 +45,10 @@
 			</table>
 		</fieldset>
 		<div class="mceActionPanel">
-			<input type="button" id="insert" name="insert" value="{#insert}"
+			<input type="button"  name="insert" value="{#insert}"
 				onclick="cont = testOther();
 						if (cont){writeWceNodeInfo();}else{alert('{#wce.empty_other}');}"  /> <input type="button"
-				id="cancel" name="cancel" value="{#cancel}"
+				 name="cancel" value="{#cancel}"
 				onclick="tinyMCEPopup.close();" />
 		</div>
 	</form>

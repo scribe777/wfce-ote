@@ -197,7 +197,7 @@ function writeWceNodeInfo(val) {
 
 		case 'note':
 			wceClass = ' class="note"';
-			new_content = selected_content + '<span wce="' + newWceAttr + original_text + '"' + wceClass + '>Note</span>';
+			new_content = selected_content + '<span wce="' + newWceAttr + '"' + original_text + wceClass + '>Note</span>';  
 			break;
 
 		case 'abbr':
@@ -278,7 +278,14 @@ function writeWceNodeInfo(val) {
 			} else if (wce_type == 'brea') {
 				// break type
 				wce_node.innerHTML = val;
+			}else if(wce_type=='abbr'){
+				var abbrClass = 'abbr';
+				if (document.getElementById('add_overline').checked == true) {
+					abbrClass = 'abbr_add_overline';
+				} 
+				wce_node.className=abbrClass;
 			}
+			
 			wce_node.setAttribute('wce', newWceAttr);
 		}
 	}
@@ -325,6 +332,7 @@ function formUnserialize(str) {
  * @param {document-form}
  * @param {String}
  *            name of str, example: new corrector, firsthand, ....
+ * 
  */
 function formSerialize(f, wce_name) {
 	if (f == null) {
@@ -335,12 +343,18 @@ function formSerialize(f, wce_name) {
 		wce_name = '';
 	}
 
-	var arr = $(f).find(':input[@id!=""][@type!="button"][@type!="reset"]');
+	var arr = $(f).find(':input');
 	var s = type_in_uri + '=' + wce_type + '&' + name_in_uri + '=' + wce_name;
 	var a;
+	var a_type,a_id;
 	for ( var i = 0, l = arr.length; i < l; i++) {
 		a = $(arr[i]);
-
+		a_type=a.attr('type');
+		a_id=a.attr('id');
+		
+		if(!a_id || a_id=='undefined' || a_type=='reset')
+			continue;
+			
 		if (a.attr('type') == 'checkbox' && !a.attr('checked'))
 			continue;
 

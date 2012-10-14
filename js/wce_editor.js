@@ -24,7 +24,7 @@ function setWceEditor(_id) {
 		init_instance_callback : "wceReload",
 
 		// Theme options
-		theme_advanced_buttons1 : "undo,redo,charmap,|,code,removeformat,|,print,contextmenu,paste,fullscreen,|,metadata,breaks,correction,illegible,decoration,abbreviation,paratext,note,|,xmloutput",
+		theme_advanced_buttons1 : "undo,redo,charmap,|,code,removeformat,|,print,contextmenu,paste,fullscreen,|,metadata,breaks,correction,illegible,decoration,abbreviation,paratext,note,|,xmloutput,xmlinput",
 		theme_advanced_buttons2 : "",
 		theme_advanced_toolbar_location : "top",
 		theme_advanced_toolbar_align : "left",

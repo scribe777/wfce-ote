@@ -16,17 +16,17 @@
 					<td><label id="fw_label" for="fw_type">{#wce.paratext}</label>
 					</td>
 					<td><select id="fw_type" name="fw_type" onchange="checkstatus_typ()">
-							<option value="commentary_text">{#wce.fw_commentary_text}</option>
-							<option value="num_chapternumber">{#wce.fw_chapter_number}</option>
-							<option value="fw_chaptertitle">{#wce.fw_chapter_title}</option>
+							<option value="commentary">{#wce.fw_commentary_text}</option>
+							<option value="chapNum">{#wce.fw_chapter_number}</option>
+							<option value="chapTitle">{#wce.fw_chapter_title}</option>
 							<option value="fw_lecttitle">{#wce.fw_lectionary_title}</option>
-							<option value="fw_colophon">{#wce.fw_colophon}</option>
-							<option value="fw_quiresig">{#wce.fw_quiresignature}</option>
-							<option value="num_ammonian">{#wce.fw_ammonian}</option>
-							<option value="num_eusebian">{#wce.fw_eusebian}</option>
-							<option value="fw_euthaliana">{#wce.fw_euthaliana}</option>
-							<option value="fw_gloss">{#wce.fw_gloss}</option>
-							<option value="num_stichoi">{#wce.fw_stichoi}</option>
+							<option value="colophon">{#wce.fw_colophon}</option>
+							<option value="quireSig">{#wce.fw_quiresignature}</option>
+							<option value="AmmSec">{#wce.fw_ammonian}</option>
+							<option value="EusCan">{#wce.fw_eusebian}</option>
+							<option value="euthaliana">{#wce.fw_euthaliana}</option>
+							<option value="gloss">{#wce.fw_gloss}</option>
+							<option value="stichoi">{#wce.fw_stichoi}</option>
 					</select>
 					</td>
 				</tr>
@@ -75,10 +75,10 @@
 			</table>
 		</fieldset>
 		<div class="mceActionPanel">
-			<input type="button" id="insert" name="insert" value="{#insert}"
+			<input type="button"  name="insert" value="{#insert}"
 				onclick="cont = testOther();
 						if (cont){writeWceNodeInfo(getParaTag());}else{alert('{#wce.empty_other}');}" /> <input
-				type="button" id="cancel" name="cancel" value="{#cancel}"
+				type="button" name="cancel" value="{#cancel}"
 				onclick="tinyMCEPopup.close();" />
 		</div>
 	</form>
@@ -98,17 +98,18 @@
 
 	function getParaTag() {
 		var v = $('#fw_type').val();
-		if (v.match(/fw_/))
+		if (v=='chapTitle' || v =='lectTitle'|| v =='colophon'|| v =='quireSig'|| v =='euthaliana'|| v =='gloss')
 			return 'fw';
-		else if (v.match(/num_/))
-			return 'num';
-		else
+		else if (v=='commentary')
 			return '[<span class="commentary">comm</span>]';
+		else
+			return 'num';
 	}
 
 	function checkstatus_typ() {
-		if ($('#fw_type').val() == 'fw_chaptertitle' || $('#fw_type').val() == 'fw_lecttitle' || $('#fw_type').val() == 'fw_colophon' 
-			|| $('#fw_type').val() == 'fw_euthaliana' || $('#fw_type').val() == 'fw_gloss' || $('#fw_type').val() == 'commentary_text') { //don't get a number, only text
+		var v = $('#fw_type').val();
+		if (v == 'chapTitle' || v == 'lectTitle' || v == 'colophon' || v == 'euthaliana' || v == 'gloss' || v == 'commentary') {
+			//don't get a number, only text
 			document.paratextinfo.number.value = '';
 			document.paratextinfo.number.disabled = true;
 			document.getElementById('number').style.backgroundColor = "#CCCCCC";

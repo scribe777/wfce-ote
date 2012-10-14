@@ -5,7 +5,7 @@
  * 
  * License: http://tinymce.moxiecode.com/license Contributing: http://tinymce.moxiecode.com/contributing
  */
-
+  
 (function() {
 	var qcnt = 1; // quire count
 	var pcnt = 1; // page count
@@ -28,7 +28,7 @@
 			var w = ed.WCE_CON;
 
 			// blocked elements :If the Caret is on the inside, will prohibit the key operation
-			w.blockedElements = new Array('gap', 'corr', 'chapter_number', 'verse_number', 'abbr', 'space', 'note');
+			w.blockedElements = new Array('gap', 'corr', 'chapter_number', 'verse_number', 'abbr', 'spaces', 'note');
 
 			// not blocked elements
 			w.normalElemente = new Array('unclear');
@@ -574,9 +574,9 @@
 				w.type = 'break';
 			} else if (_isNodeTypeOf(startNode, 'unclear')) {
 				w.type = 'unclear';
-			} else if (_isNodeTypeOf(startNode, 'space')) {
+			} else if (_isNodeTypeOf(startNode, 'spaces')) {
 				_setAllControls(ed, true);
-				w.type = 'space';
+				w.type = 'spaces';
 				w.not_O = false;
 			} else if (_isNodeTypeOf(startNode, 'formatting_capitals')) {
 				w.type = 'formatting_capitals';
@@ -586,8 +586,7 @@
 				_setAllControls(ed, true);
 				w.not_N = false;
 				w.type = 'note';
-			}
-
+			} 
 		},
 
 		// only for mouseup
@@ -980,7 +979,7 @@
 						} else {
 							info_text += 'Absent text' + '</div>';
 						}
-						if (ar['extent'] != '') {
+						if (ar['extent'] && ar['extent'] != '') {
 							info_text += '<div>' + 'Extent: ' + ar['extent'] + ' ';
 							if (ar['unit'] == 'other') {
 								info_text += ar['unit_other'] + '</div>';
@@ -1504,7 +1503,7 @@
 
 					sub.onShowMenu.add(function(m) {
 						var items = m.items;
-						if (w.type == 'formatting_capitals') {
+						if (w.type == 'spaces') {
 							items['menu-decoration-blankspaces-add'].setDisabled(true);
 							items['menu-decoration-blankspaces-edit'].setDisabled(false);
 							items['menu-decoration-blankspaces-delete'].setDisabled(false);
@@ -1774,7 +1773,7 @@
 			switch (wceType) {
 			case 'pc':
 				wceClass = ' class="pc"';
-				wceAttr = 'wce="' + ed.wceTypeParamInClass + '=' + wceType + '"';
+				wceAttr = ' wce="' + ed.wceTypeParamInClass + '=' + wceType + '"';  
 				ed.selection.setContent('<span' + wceAttr + wceClass + '>' + character + '</span> ');
 				break;
 			case 'abbr':
@@ -1872,17 +1871,20 @@
 				// part-worded abbreviations
 				var rng = ed.selection.getRng(true);
 				wceClass = ' class="part_abbr"';
-				var startNode = rng.startContainer;
-				var startText = startNode.data ? startNode.data : startNode.innerText;
+				var startContainer = rng.startContainer; 
+				
+				if(startContainer.nodeType!=3) 
+					return ;
+				
+				var startText = startContainer.nodeValue;
 				var text = startText.substr(0, rng.startOffset);
 				var li = text.lastIndexOf('(');
-				if (li > -1) {
-					var part_abbr = text.substr(li) + ')';
-					startNode.data = startText.substr(rng.endOffset);
-
+				if (li > -1) {				
+					var part_abbr = text.substr(li) + ')'; 
+					rng.setStart(startContainer,li);
+					ed.selection.setRng(rng);
 					wceAttr = 'wce="' + ed.wceTypeParamInClass + '=' + wceType + '" ';
-					ed.selection.setContent('<span ' + wceAttr + wceClass + '>' + part_abbr + '</span>');
-					startNode.data += startText.substr(0, text.lastIndexOf('('));
+					ed.selection.setContent('<span ' + wceAttr + wceClass + '>' + part_abbr + '</span>'); 
 				} else {
 					alert("Error at part-worded abbreviation. Parentheses do not match or invalid nesting!");
 				}
@@ -2187,15 +2189,29 @@
 
 			// TEI xmloutput
 			ed.addCommand('mceXmloutput', function() {
-				_wceAdd(ed, url, '/xmloutput.htm', 580, 620, 1, true);
+				_wceAdd(ed, url, '/xmloutput.htm', 580, 420, 1, true);
 
 			});
 
 			// add TEI xmloutput button
 			ed.addButton('xmloutput', {
-				title : 'XML Output',
+				title : 'For test: \n get TEI output from HTML',
 				cmd : 'mceXmloutput',
 				image : url + '/img/xml.jpg'
+			});
+			
+			
+			// TEI xmlInput only for Test
+			ed.addCommand('mceXmlinput', function() {
+				_wceAdd(ed, url, '/xmlinput.htm', 580, 420, 1, true);
+
+			});
+
+			// add TEI xmlinput button
+			ed.addButton('xmlinput', {
+				title : 'For test: \n  get HTML output from TEI',
+				cmd : 'mceXmlinput',
+				image : url + '/img/xmlinput.jpg'
 			});
 
 			/*
@@ -2521,9 +2537,7 @@
 				}
 			});
 
-			ed.addCommand('printData', function() {
-
-				return;
+			ed.addCommand('printData', function() { // Problem in IE
 				var ed = tinyMCE.activeEditor;
 				var oldcontent = "";
 				var newcontent = "";

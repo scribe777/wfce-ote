@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <title>{#wce.reading_title}</title>
@@ -23,7 +23,7 @@
 					value="New" />
 			</div>
 		</fieldset>
-		<input type="hidden" id="original_firsthand_reading" name="original_firsthand_reading" value=""/>
+		<!--<input type="hidden" id="original_firsthand_reading" name="original_firsthand_reading" value=""/>-->
 		<fieldset id="content_fieldset"
 			style="margin-left: 170px; height: 475px; width: auto">
 			<legend>{#wce.reading_data}</legend>
@@ -137,9 +137,9 @@
 
 		</fieldset>
 		<div class="mceActionPanel" id="mceActionPanel">
-			<input type="button" id="insert" name="insert" value="{#insert}"
+			<input type="button" name="insert" value="Ok"
 				onclick="cont = testOther();if (cont){saveCurrCorrector(); writeWceNodeInfo();}else{alert('{#wce.empty_other}');}" /> <input
-				type="button" id="cancel" name="cancel" value="{#cancel}"
+				type="button" name="cancel" value="{#cancel}"
 				onclick="tinyMCEPopup.close();" />
 		</div> 
 	</form>
@@ -185,14 +185,14 @@
 			$('#content_fieldset').css('width',$('#mceActionPanel').width()-250);
 		}
 
-		$('#firsthand_reading').html(wce_node_text);
-		$('#original_firsthand_reading').val(wce_node_text); 
-		
+		$('#firsthand_reading').html(wce_node_text);  //label
+		//$('#original_firsthand_reading').val(wce_node_text); 
+		 
 		for ( var p in info_arr) {
 			addCorrector(p);
 		}
-				 
-		selectCorrItem();
+				
+		selectCorrItem(); 
 
 		if ($('#correction_ul > li').length < 1) {
 			$('#content_fieldset').attr('disabled', true);   
@@ -201,12 +201,12 @@
 		$(':input').change(function() {
 			saveCurrCorrector();
 		});
-	   
- 		setstatus_deletion();
-		checkstatus_hand();
+	
+ 		setstatus_deletion();  
+		checkstatus_hand(); 
 		checkstatus_firsthand();
 		checkstatus_correction();
-		$('#firsthand_reading').html($('#original_firsthand_reading').val());
+		//$('#firsthand_reading').html($('#original_firsthand_reading').val());
 	}
 	
 	function testOther() {
@@ -322,7 +322,7 @@
 		// default name of new corrector
 		if (corrector_name == null) {
 			corrector_name = 'new corrector';
-		}
+		} 
 
 		$('#corr_reset').click();
 		checkstatus_deletion();
@@ -331,8 +331,8 @@
 		if (_id == null) {
 			item_counter++;
 			_id = 'c' + item_counter;
-			$('#corrector_text').val($('#original_firsthand_reading').val());
-			corrector_text_editor.setContent($('#original_firsthand_reading').val());
+			$('#corrector_text').val($('#firsthand_reading').html());
+			corrector_text_editor.setContent($('#firsthand_reading').html());
 			info_arr[_id] = formSerialize(null, corrector_name);
 			corrector_name = corrector_name = $('#corrector_name').val();
 		} else {
