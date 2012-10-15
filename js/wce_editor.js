@@ -73,7 +73,7 @@ function getTEI(){
 function setTEI(teiStringInput){
 	var htmlContent=getHtmlByTei(teiStringInput);
 	if(htmlContent){
-		setData();
+		setData(htmlContent);
 	}
 }
  
