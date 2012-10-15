@@ -28,7 +28,7 @@ function getHtmlByTei(inputString) {
 	};
 
 	/*
-	 * read all nodes of $node and change and add 
+	 * read all nodes of $node and change and add
 	 */
 	var readAllChildrenOfTeiNode = function($htmlParent, $teiNode) {
 		if (!$teiNode) {
@@ -40,7 +40,7 @@ function getHtmlByTei(inputString) {
 		} else if ($teiNode.nodeType == 1) {
 			var $newParent = getHtmlNodeByTeiNode($htmlParent, $teiNode);
 
-			//stop to read  $teiNode 
+			// stop to read $teiNode
 			if (!$newParent) {
 				return;
 			}
@@ -138,7 +138,7 @@ function getHtmlByTei(inputString) {
 	};
 
 	/*
-	 *  
+	 * 
 	 * 
 	 */
 	var getWceAttributeByTei = function($teiNode, mapping) {
@@ -169,7 +169,7 @@ function getHtmlByTei(inputString) {
 	};
 
 	/*
-	 * create TEI by Html-TextNode 
+	 * create TEI by Html-TextNode
 	 */
 	var Tei2Html_TEXT = function($htmlParent, $teiNode) {
 		var textValue = $teiNode.nodeValue;
@@ -575,7 +575,7 @@ function getHtmlByTei(inputString) {
 			// <note>nnn</note><w n="2">aaa</w><w n="3"> c<hi rend="gold">a</hi> b<hi rend="green">c</hi></w><w n="4">bbb</w>
 			var $tempParent = $newDoc.createElement('t');// <t>...</t>
 			readAllChildrenOfTeiNode($tempParent, $rdg);
-			var corrector_text = $tempParent.xml;
+			var corrector_text = $tempParent.xml;corrector_text=xml2String($tempParent);
 			if (corrector_text && corrector_text.length > 7) {
 				corrector_text = corrector_text.substr(3, corrector_text.length - 8);
 				wceAttr += '&corrector_text=' + encodeURIComponent(corrector_text);
@@ -728,7 +728,7 @@ function getTeiByHtml(inputString, g_bookNumber, g_pageNumber, g_chapterNumber, 
 							$htmlNodeNext.parentNode.removeChild($htmlNodeNext);
 							break;
 						}
-						// if text begins ist note a space,  then merge
+						// if text begins ist note a space, then merge
 						if (!startHasSpace(oldNodeNextText)) {
 							startCompressionWord = true;
 							var ind = oldNodeNextText.indexOf(" ");
@@ -784,7 +784,7 @@ function getTeiByHtml(inputString, g_bookNumber, g_pageNumber, g_chapterNumber, 
 				wceAttrValue = 'chapter_number';
 			}
 		}
- 
+
 		// ******************* verse *******************
 		if (wceAttrValue.match(/verse_number/)) {
 			var textNode = $htmlNode.firstChild;
@@ -826,7 +826,7 @@ function getTeiByHtml(inputString, g_bookNumber, g_pageNumber, g_chapterNumber, 
 			return null;
 		}
 
-		// get attribute of wce "<span class="" wce="">, determination wce type 
+		// get attribute of wce "<span class="" wce="">, determination wce type
 		arr = infoArr[0];
 		if (!arr) {
 			return null;
@@ -1197,7 +1197,7 @@ function getTeiByHtml(inputString, g_bookNumber, g_pageNumber, g_chapterNumber, 
 		}
 
 		var hText = getDomNodeText($htmlNode);
-		//if "overline"£¬add <hi>
+		// if "overline"£¬add <hi>
 		if (arr['add_overline'] == 'overline') {
 			var $hi = $newDoc.createElement('hi');
 			$hi.setAttribute('rend', 'ol');
@@ -1412,7 +1412,7 @@ function getTeiByHtml(inputString, g_bookNumber, g_pageNumber, g_chapterNumber, 
 				continue;
 			}
 
-			//  before create <w>,analyze the elements of the previousSibling
+			// before create <w>,analyze the elements of the previousSibling
 			var $w = createNewWElement();
 
 			$teiParent.appendChild($w);
@@ -1439,7 +1439,7 @@ function getTeiByHtml(inputString, g_bookNumber, g_pageNumber, g_chapterNumber, 
 						}
 						$next = null;
 					} else {
-						//If it is a text node, get Content before spaces
+						// If it is a text node, get Content before spaces
 						var nextText = $next.nodeValue;
 						var ind = nextText.indexOf(" ");
 						// If there are spaces, does not belong to the previous node, stop

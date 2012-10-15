@@ -776,6 +776,9 @@
 				kv = ar[i].split('=');
 				k = kv[0];
 				v = kv[1];
+				
+			//	if(!v || v=='undefined') continue;
+				
 				a[k] = decodeURIComponent(v);
 			}
 			return a;
@@ -915,10 +918,10 @@
 							corr_str += 'deleted' + '</div>';
 						else
 							corr_str += ar['corrector_text'] + '</div>';
-						if (ar['deletion'] != 'null') // information
-							// on
-							// deletion
+						if (ar['deletion'] && ar['deletion']!='undefined') { 
+							// information  on deletion
 							corr_str += '<div style="margin-top:5px">' + 'Method of deletion: ' + ar['deletion'] + '</div>';
+						}
 						break;
 					case 'paratext':
 						info_text = '<div>' + 'Paratext type: ';
