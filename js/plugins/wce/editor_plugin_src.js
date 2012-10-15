@@ -1680,6 +1680,11 @@
 		},
 
 		_wceAdd : function(ed, url, htm, w, h, inline, add_new_wce_node) {
+			var winH=$(window).height()-100;
+			var winW=$(window).width()-60;			
+			w=winW>w?w:winW;
+			h=winH>h?h:winH;
+				
 			ed.windowManager.open({
 				file : url + htm,
 				width : w + ed.getLang('example.delta_width', 0),
