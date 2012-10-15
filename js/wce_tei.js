@@ -28,7 +28,7 @@ function setWceTei(inputString) {
 	};
 
 	/*
-	 * 遍历所有节点，添加到新的节点上 find all nodes of $node and change and add
+	 * read all nodes of $node and change and add
 	 */
 	var readAllChildrenOfTeiNode = function($htmlParent, $teiNode) {
 		if (!$teiNode) {
@@ -40,7 +40,7 @@ function setWceTei(inputString) {
 		} else if ($teiNode.nodeType == 1) {
 			var $newParent = getHtmlNodeByTeiNode($htmlParent, $teiNode);
 
-			// 停止$teiNode的其他遍历
+			//stop to read  $teiNode 
 			if (!$newParent) {
 				return;
 			}
@@ -138,7 +138,7 @@ function setWceTei(inputString) {
 	};
 
 	/*
-	 * 根据TEI元素的属性，生成wceAttr的get值
+	 *  
 	 * 
 	 */
 	var getWceAttributeByTei = function($teiNode, mapping) {
@@ -169,7 +169,7 @@ function setWceTei(inputString) {
 	};
 
 	/*
-	 * 改变
+	 * create TEI by Html-TextNode 
 	 */
 	var Tei2Html_TEXT = function($htmlParent, $teiNode) {
 		var textValue = $teiNode.nodeValue;
@@ -571,7 +571,7 @@ function setWceTei(inputString) {
 				}
 			}
 
-			// &correction_text 来自下面所有的内容
+			// &correction_text Contain:
 			// <note>nnn</note><w n="2">aaa</w><w n="3"> c<hi rend="gold">a</hi> b<hi rend="green">c</hi></w><w n="4">bbb</w>
 			var $tempParent = $newDoc.createElement('t');// <t>...</t>
 			readAllChildrenOfTeiNode($tempParent, $rdg);
@@ -675,13 +675,13 @@ function getWceTei(inputString, g_bookNumber, g_pageNumber, g_chapterNumber, g_v
 		if (!str)
 			return '';
 
-		// 返回的是xml片段还是正式的xml?
+		//  
 		// str = str.substring(6, str.length - 7);
 		return str;
 	};
 
 	/*
-	 * 遍历所有节点，添加到新的节点上 find all nodes of $node and change and add
+	 * read all nodes of $node and change and add
 	 */
 	var readAllChildrenOfHtmlNode = function($teiParent, $htmlNode, stopAddW) {
 		if (!$htmlNode) {
@@ -689,11 +689,11 @@ function getWceTei(inputString, g_bookNumber, g_pageNumber, g_chapterNumber, g_v
 		}
 
 		if ($htmlNode.nodeType == 3) {
-			// 根据text内容生产新的tei node
+			// Generate new tei node according to the html-textNode
 			html2Tei_TEXT($teiParent, $htmlNode, stopAddW);
 		} else if ($htmlNode.nodeType == 1) {
-			// 根据node内容生产新的tei node
-			// 然后这个newNode再往里面添加内容
+			// Generate new tei-node according to the html-Node
+			// then add the childNode to the tei-node
 			var arr = getTeiByHtmlNode($teiParent, $htmlNode, stopAddW);
 			if (!arr) {
 				return;
@@ -716,7 +716,7 @@ function getWceTei(inputString, g_bookNumber, g_pageNumber, g_chapterNumber, g_v
 				}
 			}
 
-			// 考察下一个
+			// Check the next Element
 			if (!startCompressionWord) {
 				var $htmlNodeNext = $htmlNode.nextSibling;
 				while ($htmlNodeNext) {
@@ -728,11 +728,11 @@ function getWceTei(inputString, g_bookNumber, g_pageNumber, g_chapterNumber, g_v
 							$htmlNodeNext.parentNode.removeChild($htmlNodeNext);
 							break;
 						}
-						// 文本开始没有空格，则合并
+						// if text begins ist note a space,  then merge
 						if (!startHasSpace(oldNodeNextText)) {
 							startCompressionWord = true;
 							var ind = oldNodeNextText.indexOf(" ");
-							// 但是要添加第一个空格之前的内容到新元素,然后保留后半部的内容在原来的doc上面
+							// read content before the first space
 							if (ind > 0) {
 								var subStr1 = oldNodeNextText.substr(0, ind);
 								var subStr2 = oldNodeNextText.substr(ind, oldNodeNextText.length);
@@ -744,12 +744,12 @@ function getWceTei(inputString, g_bookNumber, g_pageNumber, g_chapterNumber, g_v
 
 							startCompressionWord = false;
 						} else {
-							// 开始有空格， 不处理, 结束
+							// start with space, stop
 							break;
 						}
 
 						if (endHasSpace(oldNodeNextText)) {
-							// 结尾有空格,不处理, 结束
+							// end with space, stop
 							break;
 						}
 
@@ -771,7 +771,7 @@ function getWceTei(inputString, g_bookNumber, g_pageNumber, g_chapterNumber, g_v
 	};
 
 	/*
-	 * 读取原来的节点，生成TEI节点，添加到新的xml里面 return new node
+	 * read html-node, create tei-node and return
 	 */
 	var getTeiByHtmlNode = function($teiParent, $htmlNode, stopAddW) {
 		var wceAttrValue, wceType, htmlNodeName, infoArr, arr;
@@ -826,8 +826,7 @@ function getWceTei(inputString, g_bookNumber, g_pageNumber, g_chapterNumber, g_v
 			return null;
 		}
 
-		// 读取wce属性的信息，判定wce类型
-		// 每个带wce属性的span元素为1个wce类型
+		// get attribute of wce "<span class="" wce="">, determination wce type 
 		arr = infoArr[0];
 		if (!arr) {
 			return null;
@@ -940,7 +939,7 @@ function getWceTei(inputString, g_bookNumber, g_pageNumber, g_chapterNumber, g_v
 			$hi.setAttribute('height', formatting_height);
 		}
 
-		// 添加一个额外的w
+		// add a element <w>
 		if (!stopAddW) {
 			var $w = createNewWElement();
 			$w.appendChild($hi);
@@ -1158,7 +1157,7 @@ function getWceTei(inputString, g_bookNumber, g_pageNumber, g_chapterNumber, g_v
 		$teiParent.appendChild($newNode);
 		// TODO
 		if (break_type == 'lb') {
-			// TODO 为什么要添加\n
+			// TODO why add \n?
 			// for lb add newline
 			// $newNode.parentNode.insertBefore($newDoc.createTextNode("\n"), $newNode);
 		} else if (break_type == 'pb') {
@@ -1198,7 +1197,7 @@ function getWceTei(inputString, g_bookNumber, g_pageNumber, g_chapterNumber, g_v
 		}
 
 		var hText = getDomNodeText($htmlNode);
-		// 如果是overline，添加<hi>
+		//if "overline"，add <hi>
 		if (arr['add_overline'] == 'overline') {
 			var $hi = $newDoc.createElement('hi');
 			$hi.setAttribute('rend', 'ol');
@@ -1380,7 +1379,7 @@ function getWceTei(inputString, g_bookNumber, g_pageNumber, g_chapterNumber, g_v
 	}
 
 	/*
-	 * change text to TEI Node 这里会检查text是否跟其他的节点为同一个词，如果是的话，统一作为1个节点处理
+	 * change text to TEI Node. Determine if the text with other nodes belonging to a word
 	 */
 	var html2Tei_TEXT = function($teiParent, $htmlNode, stopAddW) {
 		var teiParentNodeName = $teiParent.nodeName;
@@ -1395,7 +1394,7 @@ function getWceTei(inputString, g_bookNumber, g_pageNumber, g_chapterNumber, g_v
 		}
 
 		var text = $htmlNode.nodeValue;
-		// 元素之间的空格也考虑进去
+		// The spaces between the elements
 		if ($.trim(text) == '@@@')
 			return;
 
@@ -1404,7 +1403,7 @@ function getWceTei(inputString, g_bookNumber, g_pageNumber, g_chapterNumber, g_v
 			return;
 		}
 
-		// 文本节点是否紧跟着一个节点，如果是的话，删除后面的节点？
+		// Text node is followed by a normal node？
 		var endIsSpace = endHasSpace(text);
 		var arr = text.split(' ');
 		for ( var i = 0, l = arr.length; i < l; i++) {
@@ -1413,26 +1412,26 @@ function getWceTei(inputString, g_bookNumber, g_pageNumber, g_chapterNumber, g_v
 				continue;
 			}
 
-			// 新建之前，考察是否前面直接相邻一个元素，找到w元素.
+			//  before create <w>,analyze the elements of the previousSibling
 			var $w = createNewWElement();
 
 			$teiParent.appendChild($w);
 			nodeAddText($w, str);
 
-			// 如果是最后一个元素,并且没有空格
-			// 找到后面所有相连的元素， 合并起来，并且删除这些元素
+			// If it is the last element, and there are no spaces
+			// To find the back of all connected elements, combined, and delete these elements
 			// qqq aaa<b>bbb</b>cc c
-			// 变成... <w>aaa<h>bbb</h>ccc</w>
-			// 这里aaabbbccc是一个单词
+			// result:... <w>aaa<h>bbb</h>ccc</w>
+			// "aaabbbccc" is a word
 			if (i == l - 1 && !endIsSpace && !startCompressionWord) {
 				var $next = $htmlNode.nextSibling;
 				startCompressionWord = true;
 				while ($next) {
-					// 如果下一个是正常节点，包含进去
+					// If it is the next normal node
 					if ($next.nodeType == 1) {
 						readAllChildrenOfHtmlNode($w, $next, true);
 						var $nnext = $next.nextSibling;
-						// 删除元素，以防以后再重新添加到新的doc上面
+						// Delete elements to prevent re-added to the newDoc
 						$next.parentNode.removeChild($next);
 						if ($nnext) {
 							$next = $nnext;
@@ -1440,15 +1439,15 @@ function getWceTei(inputString, g_bookNumber, g_pageNumber, g_chapterNumber, g_v
 						}
 						$next = null;
 					} else {
-						// 如果是文本节点,提取空格前面的
+						//If it is a text node, get Content before spaces
 						var nextText = $next.nodeValue;
 						var ind = nextText.indexOf(" ");
-						// 如果有空格,不属于前面的节点,停止
+						// If there are spaces, does not belong to the previous node, stop
 						if (ind == 0) {
 							break;
 						}
 
-						// 但是要添加第一个空格之前的内容到新元素,然后保留后半部的内容在原来的doc上面
+						// add content before space, keep content after space
 						if (ind > 0) {
 							var subStr1 = nextText.substr(0, ind);
 							var subStr2 = nextText.substr(ind, nextText.length);
@@ -1456,11 +1455,11 @@ function getWceTei(inputString, g_bookNumber, g_pageNumber, g_chapterNumber, g_v
 							$next.nodeValue = subStr2;
 							break;
 						} else {
-							// 如果中间没有空格, 添加所有内容到新元素
+							// If there is no space in the middle, add all the content to the <w>
 							nodeAddText($w, nextText);
 						}
 
-						// 如果结尾后面有空格, 也要停止
+						// if end with space, stop
 						if (endHasSpace(nextText)) {
 							$next.parentNode.removeChild($next);
 							break;
@@ -1505,7 +1504,7 @@ function getWceTei(inputString, g_bookNumber, g_pageNumber, g_chapterNumber, g_v
 	};
 
 	/*
-	 * 判断字符串是否空格开始
+	 * Is the string begins with a space
 	 */
 	var startHasSpace = function(str) {
 		if (str.match(/^\s+/)) {
@@ -1514,7 +1513,7 @@ function getWceTei(inputString, g_bookNumber, g_pageNumber, g_chapterNumber, g_v
 	};
 
 	/*
-	 * 判断字符串是否空格结尾
+	 * Is the string end with a space
 	 */
 	var endHasSpace = function(str) {
 		if (str.match(/\s+$/)) {
