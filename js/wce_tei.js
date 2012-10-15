@@ -1,8 +1,8 @@
 // setTEIXml
-function setWceTei(inputString) {
+function getHtmlByTei(inputString) {
 	var $newDoc, $newRoot, $newRoot;
 
-	var getHTML = function() {
+	var getHtmlString = function() {
 		var $oldDoc = loadXMLString(inputString);
 		var $oldRoot = $oldDoc.documentElement;
 
@@ -28,7 +28,7 @@ function setWceTei(inputString) {
 	};
 
 	/*
-	 * read all nodes of $node and change and add
+	 * read all nodes of $node and change and add 
 	 */
 	var readAllChildrenOfTeiNode = function($htmlParent, $teiNode) {
 		if (!$teiNode) {
@@ -594,7 +594,7 @@ function setWceTei(inputString) {
 		return null;
 	};
 
-	return getHTML();
+	return getHtmlString();
 }
 
 /**
@@ -604,7 +604,7 @@ function setWceTei(inputString) {
  */
 
 // getTEIXml
-function getWceTei(inputString, g_bookNumber, g_pageNumber, g_chapterNumber, g_verseNumber, g_columnNumber, g_witValue, g_wordNumber) {
+function getTeiByHtml(inputString, g_bookNumber, g_pageNumber, g_chapterNumber, g_verseNumber, g_columnNumber, g_witValue, g_wordNumber) {
 	if (!inputString || $.trim(inputString) == '')
 		return '';
 
@@ -634,7 +634,7 @@ function getWceTei(inputString, g_bookNumber, g_pageNumber, g_chapterNumber, g_v
 	 * Main Method <br /> return String of TEI-Format XML
 	 * 
 	 */
-	var getXML = function() {
+	var getTeiString = function() {
 		// alert(encodeURIComponent(' '));
 		inputString = inputString.replace(/>\s+</g, '> @@@ <');
 		// alert(inputString);
@@ -694,7 +694,7 @@ function getWceTei(inputString, g_bookNumber, g_pageNumber, g_chapterNumber, g_v
 		} else if ($htmlNode.nodeType == 1) {
 			// Generate new tei-node according to the html-Node
 			// then add the childNode to the tei-node
-			var arr = getTeiByHtmlNode($teiParent, $htmlNode, stopAddW);
+			var arr = getTeiNodeByHtmlNode($teiParent, $htmlNode, stopAddW);
 			if (!arr) {
 				return;
 			}
@@ -773,7 +773,7 @@ function getWceTei(inputString, g_bookNumber, g_pageNumber, g_chapterNumber, g_v
 	/*
 	 * read html-node, create tei-node and return
 	 */
-	var getTeiByHtmlNode = function($teiParent, $htmlNode, stopAddW) {
+	var getTeiNodeByHtmlNode = function($teiParent, $htmlNode, stopAddW) {
 		var wceAttrValue, wceType, htmlNodeName, infoArr, arr;
 
 		wceAttrValue = $htmlNode.getAttribute('wce');
@@ -1569,7 +1569,7 @@ function getWceTei(inputString, g_bookNumber, g_pageNumber, g_chapterNumber, g_v
 		return outArr;
 	};
 
-	return getXML();
+	return getTeiString();
 
 };
 

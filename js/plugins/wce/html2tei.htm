@@ -2,11 +2,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml" style="height:100%">
 <head>
 <title>XML Output</title>
-<script type="text/javascript" src="../../tiny_mce_popup.js"></script>   
+<script type="text/javascript" src="../../tiny_mce_popup.js"></script>  
+<script type="text/javascript" src="../../jquery.js"></script> 
+<script type="text/javascript" src="../../wce_tei.js"></script>   
 </head>
 <body style="height:97%" style="display:none; overflow:hidden;">
 <div style="height:95%; margin-bottom:10px" id="div0"> 
-<textarea name="xmlOutputSource" id="xmlOutputSource" style="width: 100%; overflow-y:visible; height: 98%; font-family: 'Courier New',Courier,monospace; font-size: 12px;" dir="ltr" wrap="on" class="mceFocus"></textarea> 
+<textarea name="html2teiOuputContainer" id="html2teiOuputContainer" style="width: 100%; overflow-y:visible; height: 98%; font-family: 'Courier New',Courier,monospace; font-size: 12px;" dir="ltr" wrap="on" class="mceFocus"></textarea> 
 </div> <div class="mceActionPanel">
 			<input type="button"  value="{#close}" onclick="tinyMCEPopup.close();" /> 
 		</div> 
@@ -14,11 +16,10 @@
 </body> 
 <script type="text/javascript">
 	tinyMCEPopup.onInit.add(function(_ed){
-		var x=document.getElementById('xmlOutputSource');
+		var x=document.getElementById('html2teiOuputContainer');
 		x.style.height=document.getElementById('div0').offsetHeight+ "px";
-		var str=_ed.getContent();
-		_ed.execCommand('getWceTei',[str,'_bookIndex_']);
-		var teiContent=_ed.TEI;
+		var str=_ed.getContent(); 
+		var teiContent=getTeiByHtml(str);
 		if(teiContent){
 			x.value=teiContent;
 		}

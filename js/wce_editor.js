@@ -1,4 +1,4 @@
-function setWceEditor(_id) {
+﻿function setWceEditor(_id) {
 	tinyMCE.baseURL= URI('js/').absoluteTo(gadgets.util.getUrlParameters()['url']);
 	tinyMCE.baseURI = new tinyMCE.util.URI(tinyMCE.baseURL);
 	tinyMCE.init({
@@ -24,7 +24,7 @@ function setWceEditor(_id) {
 		init_instance_callback : "wceReload",
 
 		// Theme options
-		theme_advanced_buttons1 : "undo,redo,charmap,|,code,removeformat,|,print,contextmenu,paste,fullscreen,|,metadata,breaks,correction,illegible,decoration,abbreviation,paratext,note,|,xmloutput,xmlinput",
+		theme_advanced_buttons1 : "undo,redo,charmap,|,code,removeformat,|,print,contextmenu,paste,fullscreen,|,metadata,breaks,correction,illegible,decoration,abbreviation,paratext,note,|,showTeiByHtml,showHtmlByTei",
 		theme_advanced_buttons2 : "",
 		theme_advanced_toolbar_location : "top",
 		theme_advanced_toolbar_align : "left",
@@ -35,12 +35,13 @@ function setWceEditor(_id) {
 	//	resizeHeight(115);
 	//}
 }
-
-var user_id, user_text_name;
+ 
 
 // wenn brower reload, set editor blank
 function wceReload() {
-	// setData('');
+	 // for test
+	// setData('<span class="chapter_number"> 1</span> <span class="verse_number"> 1</span> βιβλος <span class="corr" wce_orig="γενεσεως" wce="__t=corr&amp;__n=new corrector&amp;undefined=New&amp;original_firsthand_reading=%CE%B3%CE%B5%CE%BD%CE%B5%CF%83%CE%B5%CF%89%CF%82&amp;reading=corr&amp;corrector_name=corrector&amp;corrector_name_other=&amp;place_corr=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_other=0&amp;deletion=null&amp;editorial_note=&amp;corrector_text=%CE%B3%CE%B5%CE%BD%CE%B5%CF%83%CE%B5%CF%89%CF%82&amp;corrector_text_adaptive_selection=on&amp;corr_reset=Reset&amp;undefined=Reset&amp;insert=Insert&amp;cancel=Cancel@__t=corr&amp;__n=new corrector&amp;undefined=New&amp;original_firsthand_reading=%CE%B3%CE%B5%CE%BD%CE%B5%CF%83%CE%B5%CF%89%CF%82&amp;reading=corr&amp;corrector_name=corrector&amp;corrector_name_other=&amp;place_corr=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_other=0&amp;deletion=null&amp;editorial_note=&amp;corrector_text=%CE%B3%CE%B5%CE%BD%CE%B5%CF%83%CE%B5%CF%89%CF%82&amp;corrector_text_adaptive_selection=on&amp;corr_reset=Reset&amp;undefined=Reset&amp;insert=Insert&amp;cancel=Cancel@__t=corr&amp;__n=corrector&amp;undefined=New&amp;original_firsthand_reading=%CE%B3%CE%B5%CE%BD%CE%B5%CF%83%CE%B5%CF%89%CF%82&amp;reading=corr&amp;corrector_name=corrector&amp;corrector_name_other=&amp;place_corr=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_other=0&amp;deletion=null&amp;editorial_note=&amp;corrector_text=%CE%B3%CE%B5%CE%BD%CE%B5%CF%83%CE%B5%CF%89%CF%82&amp;corrector_text_adaptive_selection=on&amp;corr_reset=Reset&amp;undefined=Reset&amp;insert=Insert&amp;cancel=Cancel">γενεσεως</span> ιησου χριστου υιου δαυιδ υιου αβρααμ <span class="verse_number"> 2</span> αβρααμ εγεννησεν τον ισαακ ισαακ δε εγεννησεν τον ιακωβ ιακωβ δε εγεννησεν τον ιουδαν και τους αδελφους αυτου <span class="verse_number"> 3</span> ιουδας δε εγεννησεν τον φαρες και τον ζαρα εκ της θαμαρ φαρες δε εγεννησεν τον εσρωμ εσρωμ δε εγεννησεν τον αραμ <span class="verse_number"> 4</span> αραμ δε εγεννησεν τον αμιναδαβ αμιναδαβ δε εγεννησεν τον ναασσων ναασσων δε εγεννησεν τον σαλμων <span class="verse_number"> 5</span> σαλμων δε εγεννησεν τον βοες εκ της ραχαβ βοες δε εγεννησεν τον ιωβηδ εκ της ρουθ ιωβηδ δε εγεννησεν τον ιεσσαι <span class="verse_number"> 6</span> ιεσσαι δε εγεννησεν τον δαυιδ τον βασιλεα δαυιδ δε εγεννησεν τον σολομωνα εκ της του ουριου <span class="verse_number"> 7</span> σολομων δε εγεννησεν τον ροβοαμ ροβοαμ δε εγεννησεν τον αβια αβια δε εγεννησεν τον ασαφ <span class="verse_number"> 8</span> ασαφ δε εγεννησεν τον ιωσαφατ ιωσαφατ δε εγεννησεν τον ιωραμ ιωραμ δε εγεννησεν τον οζιαν <span class="verse_number"> 9</span> οζιας δε εγεννησεν τον ιωαθαμ ιωαθαμ δε εγεννησεν τον αχαζ αχαζ δε εγεννησεν τον εζεκιαν <span class="verse_number"> 10</span> εζεκιας δε εγεννησεν τον μανασση μανασσης δε εγεννησεν τον αμως αμως δε εγεννησεν τον ιωσιαν <span class="verse_number"> 11</span> ιωσιας δε εγεννησεν τον ιεχονιαν και τους αδελφους αυτου επι της μετοικεσιας βαβυλωνος <span class="verse_number"> 12</span> μετα δε την μετοικεσιαν βαβυλωνος ιεχονιας εγεννησεν τον σαλαθιηλ σαλαθιηλ δε εγεννησεν τον ζοροβαβελ');
+	 //setTEI(getTEI());
 }
 
 // get dirty-value of editor
@@ -53,26 +54,29 @@ function setEditorNotDirty(b) {
 	tinyMCE.activeEditor.isNotDirty = b;
 }
 
-// set editor content
+// set editor html content
 function setData(msg) {
 	tinyMCE.activeEditor.setContent(msg);
 }
 
-// get editor content
+// get editor html content
 function getData() {
 	return tinyMCE.activeEditor.getContent();
 }
 
-// get xml from get_xml.php/mysql-database
-function getXmlData() {
-	if (typeof user_id == 'undefined' || typeof user_text_name == 'undefined') {
-		alert('Error user_text_name / in user_id ');
-		return;
-	}
-
-	window.open('php/get_xml.php?userid=' + user_id + '&textname=' + user_text_name, 'xml');
+//get TEI String from editor html content
+function getTEI(){
+	return getTeiByHtml(getData());
 }
 
+//set editor html content from tei input
+function setTEI(teiStringInput){
+	var htmlContent=getHtmlByTei(teiStringInput);
+	if(htmlContent){
+		setData();
+	}
+}
+ 
 
 function saveDataToDB() {
 	if (!tinyMCE.activeEditor.isDirty())
@@ -95,45 +99,8 @@ function saveDataToDB() {
 		if (gadgets.util.hasFeature('pubsub-2')) gadgets.Hub.publish("interedition.transcription.saved", null);
 	});
 }
-
-// save editor-content to mysql-database
-
-// function saveDataToDB(user_text_name, chapter, user_id) {
-	// if (!tinyMCE.activeEditor.isDirty())
-		// return;
-
-	// for ( var i = 0; i < arguments.length; i++) {
-		// if (typeof arguments[i] == 'undefined' || arguments[i] == '')
-			// return;
-	// }
-
-	// $.ajax({
-		// type : 'POST',
-		// url : 'php/save.php',
-		// data : {
-			// 'filename' : user_text_name,
-			// 'chapter' : chapter,
-			// 'text' : getData(),
-			// 'userid' : user_id,
-			// 'metadata' : getMetaData()
-		// },
-		// success : function(msg) {
-			// setEditorNotDirty(1);
-			// alert(msg + "Changes are saved ");
-		// }
-	// });
-// }
-
-//
-function setMetaData(msg) {
-	tinyMCE.activeEditor.wceMetaData = msg;
-}
-
-//
-function getMetaData() {
-	return tinyMCE.activeEditor.wceMetaData;
-}
-
+ 
+ 
 function increaseLineHeight() {
 	/*
 	 * var lineheight = document.getElementById($(this)).style.lineHeight; alert(document.getElementsByTagName('textarea')[0].style.lineHeight); document.getElementByTagName('wce_editor').style.lineHeight = "30px";

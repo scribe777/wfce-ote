@@ -6,10 +6,11 @@
 <script type="text/javascript" src="../../tiny_mce_src.js"></script>
 <script type="text/javascript" src="../../jquery.js"></script>
 <script type="text/javascript" src="js/wce.js"></script>
+<script type="text/javascript" src="../../wce_tei.js"></script>   
 </head>
 <body style="height:97%">
 <div style="height:95%; margin-bottom:10px" id="div0"> 
-<textarea name="tei2htmlContent" id="tei2htmlContent" style="width: 100%; overflow-y:visible; height: 98%; font-family: 'Courier New',Courier,monospace; font-size: 12px;" dir="ltr" wrap="on" class="mceFocus"></textarea> 
+<textarea name="tei2htmlOuputContainer" id="tei2htmlOuputContainer" style="width: 100%; overflow-y:visible; height: 98%; font-family: 'Courier New',Courier,monospace; font-size: 12px;" dir="ltr" wrap="on" class="mceFocus"></textarea> 
 </div> <div class="mceActionPanel">
 			<input type="button"  value="{#close}" onclick="tinyMCEPopup.close();"  />      <input type="button" value=" Toggle" onclick="editorToggle();"; 
 		</div> 
@@ -19,17 +20,19 @@
 	var corrector_text_editor;
 	
 	tinyMCEPopup.onInit.add(function(_ed){
-	 var x=document.getElementById('tei2htmlContent');
+	 var x=document.getElementById('tei2htmlOuputContainer');
 		x.style.height=document.getElementById('div0').offsetHeight+ "px";
-		var str=_ed.getContent();
-		_ed.execCommand('setWceTei',[str,'_bookIndex_']);
-		var teiContent=_ed.InputTEI;
+		var str=_ed.getContent(); 
+		var teiContent=getTeiByHtml(str);
 		if(teiContent){
-			x.value=teiContent;
-		} 
+			var htmlContent=getHtmlByTei(teiContent);
+			if(htmlContent){
+				x.value=htmlContent;
+			} 
+		}
 		
 		
-				corrector_text_editor=new tinymce.Editor('tei2htmlContent',{
+				corrector_text_editor=new tinymce.Editor('tei2htmlOuputContainer',{
 			mode : "textareas", 
 			theme : "advanced",
 			skin: "wce",

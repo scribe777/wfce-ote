@@ -2187,30 +2187,30 @@
 				}
 			});
 
-			// TEI xmloutput
-			ed.addCommand('mceXmloutput', function() {
-				_wceAdd(ed, url, '/xmloutput.htm', 580, 420, 1, true);
+			// html to tei
+			ed.addCommand('mceHtml2Tei', function() {
+				_wceAdd(ed, url, '/html2tei.htm', 580, 420, 1, true);
 
 			});
 
-			// add TEI xmloutput button
-			ed.addButton('xmloutput', {
+			// add showTeiByHtml button
+			ed.addButton('showTeiByHtml', {
 				title : 'For test: \n get TEI output from HTML',
-				cmd : 'mceXmloutput',
+				cmd : 'mceHtml2Tei',
 				image : url + '/img/xml.jpg'
 			});
 			
 			
-			// TEI xmlInput only for Test
-			ed.addCommand('mceXmlinput', function() {
-				_wceAdd(ed, url, '/xmlinput.htm', 580, 420, 1, true);
+			// tei to html  only for Test
+			ed.addCommand('mceTei2Html', function() {
+				_wceAdd(ed, url, '/tei2html.htm', 580, 420, 1, true);
 
 			});
 
-			// add TEI xmlinput button
-			ed.addButton('xmlinput', {
+			// add showHtmlByTei button
+			ed.addButton('showHtmlByTei', {
 				title : 'For test: \n  get HTML output from TEI',
-				cmd : 'mceXmlinput',
+				cmd : 'mceTei2Html',
 				image : url + '/img/xmlinput.jpg'
 			});
 
