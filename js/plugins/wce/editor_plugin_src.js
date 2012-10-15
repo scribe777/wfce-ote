@@ -776,8 +776,8 @@
 				kv = ar[i].split('=');
 				k = kv[0];
 				v = kv[1];
-				
-			//	if(!v || v=='undefined') continue;
+				 
+			 	if(!k|| k=='undefined' || !v || v=='undefined') continue;
 				
 				a[k] = decodeURIComponent(v);
 			}
@@ -897,7 +897,10 @@
 						default: // other
 							info_text += ar['note_type_other'] + '</div>';
 						}
-						info_text += '<div style="margin-top:10px">' + ar['note_text'] + '</div>';
+						var nodeText=ar['note_text'] ;
+						if(nodeText){
+							info_text += '<div style="margin-top:10px">' + nodeText + '</div>';
+						}
 						break;
 					case 'corr':
 						corr_str += '<div style="margin-top:15px">';
@@ -918,10 +921,13 @@
 							corr_str += 'deleted' + '</div>';
 						else
 							corr_str += ar['corrector_text'] + '</div>';
-						if (ar['deletion'] && ar['deletion']!='undefined') { 
+						
+						var deletionText=ar['deletion'];
+						if (deletionText && deletionText!='null') { 
 							// information  on deletion
-							corr_str += '<div style="margin-top:5px">' + 'Method of deletion: ' + ar['deletion'] + '</div>';
+							corr_str += '<div style="margin-top:5px">' + 'Method of deletion: ' + deletionText + '</div>';
 						}
+						 
 						break;
 					case 'paratext':
 						info_text = '<div>' + 'Paratext type: ';
@@ -1034,7 +1040,7 @@
 						corr_str = '*: ' + 'Omission' + corr_str;
 					else
 						corr_str = '*: ' + $(sele_node).html() + corr_str;
-					if (ar['editorial_note'] != '') {
+					if (ar['editorial_note']) {
 						corr_str += '<div style="margin-top:5px">Note: ' + ar['editorial_note'] + '</div>';
 					}
 				}
