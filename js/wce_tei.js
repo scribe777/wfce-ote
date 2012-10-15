@@ -2,6 +2,16 @@
 function getHtmlByTei(inputString) {
 	var $newDoc, $newRoot, $newRoot;
 
+	var teiIndexData = {
+		'bookNumber' : '00',
+		'pageNumber' : 0,
+		'chapterNumber' : 0,
+		'verseNumber' : 0,
+		'wordNumber' : 0,
+		'columnNumber' : 0,
+		'witValue' : 0
+	};
+
 	var getHtmlString = function() {
 		var $oldDoc = loadXMLString(inputString);
 		var $oldRoot = $oldDoc.documentElement;
@@ -56,6 +66,11 @@ function getHtmlByTei(inputString) {
 			}
 
 			if ($teiNode.nodeName == 'w') {
+				var nValue = $teiNode.getAttribute('n');
+				if (nValue) {
+					teiIndexData['wordNumber'] = parseInt(nValue);
+				}
+
 				var $nextSibling = $teiNode.nextSibling;
 				if ($nextSibling && $nextSibling.nodeName == 'note') {
 					return;
@@ -234,9 +249,15 @@ function getHtmlByTei(inputString) {
 			var nValue = $teiNode.getAttribute('n');
 			if (nValue && nValue != '') {
 				var indexK = nValue.indexOf('K');
+				var indexB = nValue.indexOf('B');
+				if (indexB + 1 > -1 && indexK - 1 > 0) {
+					bookValue = nValue.substr(indexB + 1, indexK - 1);
+					teiIndexData['bookNumber'] = parseInt('bookValue');
+				}
 				indexK++;
 				if (indexK > 0 && indexK < nValue.length) {
 					nValue = nValue.substr(indexK);
+					teiIndexData['chapterNumber'] = parseInt(nValue);
 					nodeAddText($newNode, nValue);
 				}
 			}
@@ -259,6 +280,7 @@ function getHtmlByTei(inputString) {
 			indexV++;
 			if (indexV > 0 && indexV < nValue.length) {
 				nValue = nValue.substr(indexV);
+				teiIndexData['verseNumber'] = parseInt(nValue);
 				nodeAddText($newNode, nValue);
 			}
 		}
@@ -575,7 +597,8 @@ function getHtmlByTei(inputString) {
 			// <note>nnn</note><w n="2">aaa</w><w n="3"> c<hi rend="gold">a</hi> b<hi rend="green">c</hi></w><w n="4">bbb</w>
 			var $tempParent = $newDoc.createElement('t');// <t>...</t>
 			readAllChildrenOfTeiNode($tempParent, $rdg);
-			var corrector_text = $tempParent.xml;corrector_text=xml2String($tempParent);
+			var corrector_text = $tempParent.xml;
+			corrector_text = xml2String($tempParent);
 			if (corrector_text && corrector_text.length > 7) {
 				corrector_text = corrector_text.substr(3, corrector_text.length - 8);
 				wceAttr += '&corrector_text=' + encodeURIComponent(corrector_text);
@@ -594,7 +617,10 @@ function getHtmlByTei(inputString) {
 		return null;
 	};
 
-	return getHtmlString();
+	return {
+		'htmlString' : getHtmlString(),
+		'teiIndexData' : teiIndexData
+	}
 }
 
 /**
@@ -604,20 +630,27 @@ function getHtmlByTei(inputString) {
  */
 
 // getTEIXml
-function getTeiByHtml(inputString, g_bookNumber, g_pageNumber, g_chapterNumber, g_verseNumber, g_columnNumber, g_witValue, g_wordNumber) {
-	if (!inputString || $.trim(inputString) == '')
+function getTeiByHtml(inputString, args) {
+
+	if (!inputString || $.trim(inputString) == '') {
 		return '';
+	}
 
-	// init only for test:
-	// globale Variable
-	g_bookNumber = '04';
-	g_pageNumber = '0';
-	g_chapterNumber = '0';
-	g_verseNumber = '1';
-	g_columnNumber = '0';
-	g_witValue = '?';
-	g_wordNumber = 0;
+	if (!args) {
+		return '';
+	}
 
+	// arguments:
+	// g_bookNumber, g_pageNumber, g_chapterNumber, g_verseNumber, g_wordNumber, g_columnNumber, g_witValue,
+	var g_bookNumber = args['bookNumber'];
+	var g_pageNumber = args['pageNumber'];
+	var g_chapterNumber = args['chapterNumber'];
+	var g_verseNumber = args['verseNumber'];
+	var g_wordNumber = args['wordNumber'];
+	var g_columnNumber = args['columnNumber'];
+	var g_witValue = args['witValue'];
+
+	// node for te
 	var g_bookNode;
 	var g_chapterNode;
 	var g_veseNode;
@@ -629,6 +662,7 @@ function getTeiByHtml(inputString, g_bookNumber, g_pageNumber, g_chapterNumber, 
 
 	var $newDoc;
 	var $newRoot;
+	var g_currentParentNode;
 
 	/*
 	 * Main Method <br /> return String of TEI-Format XML
@@ -639,26 +673,35 @@ function getTeiByHtml(inputString, g_bookNumber, g_pageNumber, g_chapterNumber, 
 		inputString = inputString.replace(/>\s+</g, '> @@@ <');
 		// alert(inputString);
 
-		inputString = '<TEMP>' + inputString + '</TEMP>';
+		inputString = '<TEI>' + inputString + '</TEI>';
 
 		var $oldDoc = loadXMLString(inputString);
 
 		var $oldRoot = $oldDoc.documentElement;
 
-		$newDoc = loadXMLString("<TEMP></TEMP>");
+		$newDoc = loadXMLString("<TEI></TEI>");
 
 		// <TEMP>
 		$newRoot = $newDoc.documentElement;
 
-		// 定义开始的chapter, verse node
-		g_chapterNode = $newDoc.createElement('div');
-		g_chapterNode.setAttribute('type', 'chapter');
-		g_chapterNode.setAttribute('n', 'B' + g_bookNumber + 'K' + g_chapterNumber);
-		$newRoot.appendChild(g_chapterNode);
+		if (g_chapterNumber) {
+			g_chapterNode = $newDoc.createElement('div');
+			g_chapterNode.setAttribute('type', 'chapter');
+			g_chapterNode.setAttribute('n', 'B' + g_bookNumber + 'K' + g_chapterNumber);
+			$newRoot.appendChild(g_chapterNode);
+			g_currentParentNode = g_chapterNode;
+		}
 
-		g_veseNode = $newDoc.createElement('ab');
-		g_veseNode.setAttribute('n', 'B' + g_bookNumber + 'K' + g_chapterNumber + 'V' + g_verseNumber);
-		g_chapterNode.appendChild(g_veseNode);
+		if (g_verseNumber) {
+			g_veseNode = $newDoc.createElement('ab');
+			g_veseNode.setAttribute('n', 'B' + g_bookNumber + 'K' + g_chapterNumber + 'V' + g_verseNumber);
+			g_chapterNode.appendChild(g_veseNode);
+			g_currentParentNode = g_veseNode;
+		}
+
+		if (!g_currentParentNode) {
+			g_currentParentNode = $newRoot;
+		}
 
 		var childList = $oldRoot.childNodes;
 		for ( var i = 0, l = childList.length; i < l; i++) {
@@ -666,7 +709,7 @@ function getTeiByHtml(inputString, g_bookNumber, g_pageNumber, g_chapterNumber, 
 			if (!$c) {
 				continue;
 			} else {
-				readAllChildrenOfHtmlNode(g_veseNode, $c, false);
+				readAllChildrenOfHtmlNode(g_currentParentNode, $c, false);
 			}
 		}
 
@@ -794,6 +837,7 @@ function getTeiByHtml(inputString, g_bookNumber, g_pageNumber, g_chapterNumber, 
 				g_veseNode = $newDoc.createElement('ab');
 				g_veseNode.setAttribute('n', 'B' + g_bookNumber + 'K' + g_chapterNumber + 'V' + g_verseNumber);
 				g_chapterNode.appendChild(g_veseNode);
+				g_currentParentNode = g_veseNode;
 				g_wordNumber = 0;
 			}
 			return null;

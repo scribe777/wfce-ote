@@ -3,7 +3,7 @@
 <head>
 <title>XML Output</title>
 <script type="text/javascript" src="../../tiny_mce_popup.js"></script>  
-<script type="text/javascript" src="../../jquery.js"></script> 
+<script type="text/javascript" src="../../jquery.js"></script>  
 <script type="text/javascript" src="../../wce_tei.js"></script>   
 </head>
 <body style="height:97%" style="display:none; overflow:hidden;">
@@ -18,8 +18,8 @@
 	tinyMCEPopup.onInit.add(function(_ed){
 		var x=document.getElementById('html2teiOuputContainer');
 		x.style.height=document.getElementById('div0').offsetHeight+ "px";
-		var str=_ed.getContent(); 
-		var teiContent=getTeiByHtml(str);
+		var str=_ed.getContent();  
+		var teiContent=getTeiByHtml(str,_ed.teiIndexData);
 		if(teiContent){
 			x.value=teiContent;
 		}

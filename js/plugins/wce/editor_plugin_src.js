@@ -2204,7 +2204,7 @@
 
 			// add showTeiByHtml button
 			ed.addButton('showTeiByHtml', {
-				title : 'For test: \n get TEI output from HTML',
+				title : 'For test: \n set booknumber=00\nget TEI output from HTML',
 				cmd : 'mceHtml2Tei',
 				image : url + '/img/xml.jpg'
 			});
@@ -2230,6 +2230,16 @@
 			ed.onInit.add(function() {
 				WCEObj._initWCEConstants(ed);
 				WCEObj._initWCEVariable(ed);
+				//
+				ed.teiIndexData = {
+					'bookNumber' : '00',
+					'pageNumber' : 0,
+					'chapterNumber' : 0,
+					'verseNumber' : 0,
+					'wordNumber' : 0,
+					'columnNumber' : 0,
+					'witValue' : 0
+				}
 
 				var wcevar = ed.WCE_VAR;
 
