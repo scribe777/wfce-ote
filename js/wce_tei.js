@@ -1310,7 +1310,7 @@ function getTeiByHtml(inputString, g_bookNumber, g_pageNumber, g_chapterNumber, 
 		var newNodeName, fwType = arr['fw_type'];
 
 		if (fwType == 'commentary') {
-			newNodeName = 'comm';
+			newNodeName = 'note';
 		} else if (fwType == 'pageNum' || fwType == 'chapNum' || fwType == 'AmmSec' || fwType == 'EusCan' || fwType == 'stichoi') {
 			newNodeName = 'num';
 		} else if (fwType == 'chapTitle' || fwType == 'lectTitle' || fwType == 'colophon' || fwType == 'quireSig' || fwType == 'euthaliana' || fwType == 'gloss') {
@@ -1333,16 +1333,19 @@ function getTeiByHtml(inputString, g_bookNumber, g_pageNumber, g_chapterNumber, 
 			placeValue = arr['paratext_position_other'];
 		}
 
-		if (placeValue && placeValue != '') {
+		if (fwType != 'commentary' && placeValue && placeValue != '') {
 			$paratext.setAttribute('place', placeValue);
 		}
 
 		var rendValue = arr['paratext_alignment'];
-		if (rendValue && rendValue != '') {
+		if (fwType != 'commentary' && rendValue && rendValue != '') {
 			$paratext.setAttribute('rend', rendValue);
 		}
 
-		nodeAddText($paratext, arr['text']);
+		if (fwType == 'commentary')
+			nodeAddText($paratext, 'Untranscribed commentary text');
+		else
+			nodeAddText($paratext, arr['text']);
 
 		$teiParent.appendChild($paratext);
 		return null;

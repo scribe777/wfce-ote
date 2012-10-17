@@ -46,6 +46,7 @@ tinyMCE.addI18n('en.wce',{
 	pb_page : "Page",
 	pb_folio: "Folio",
 	formework : "Forme work",
+	covered : "Number of lines covered",
 	text : "Text or number (as written on page)",
 	number_attribute : 'Number (as used for XML attribute "n")',
 	numeral : "Corresponding number",

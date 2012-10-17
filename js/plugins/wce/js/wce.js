@@ -217,6 +217,12 @@ function writeWceNodeInfo(val) {
 			// default
 			wceClass = ' class="paratext"';
 			selected_content = val;
+			if (wce_type == 'paratext' && document.getElementById('fw_type').value == "commentary") {
+				for (var i = 0; i < document.getElementById('covered').value; i++) {
+					selected_content += '<br/>&crarr;[comm]';
+				}
+				ed.execCommand('addToCounter', 'lb', document.getElementById('covered').value);
+			}
 			break;
 
 		default:
@@ -262,7 +268,7 @@ function writeWceNodeInfo(val) {
 			else if (document.getElementById('unit').value == "page")
 				ed.execCommand('mceAdd_brea', 'pb', 0);
 		}
-
+		
 		// var wceObj=new ed.plugins.wce.WCEObj();
 		if (wceObj) {
 			wceObj._setWCEVariable(ed);

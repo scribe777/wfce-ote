@@ -923,48 +923,50 @@
 					case 'paratext':
 						info_text = '<div>' + 'Paratext type: ';
 						switch (ar['fw_type']) {
-						case 'commentary_text':
-							info_text += 'Commentary text';
+						case 'commentary':
+							info_text = '<div>' + 'This is untranscribed commentary text';
 							break;
-						case 'num_chapternumber':
+						case 'chapNum':
 							info_text += 'Chapter number';
 							break;
-						case 'fw_chaptertitle':
+						case 'chapTitle':
 							info_text += 'Chapter title';
 							break;
-						case 'fw_colophon':
+						case 'colophon':
 							info_text += 'Colophon';
 							break;
-						case 'fw_quiresig':
+						case 'quireSig':
 							info_text += 'Quire signature';
 							break;
-						case 'num_ammonian':
+						case 'AmmSec':
 							info_text += 'Ammonian section';
 							break;
-						case 'num_eusebian':
+						case 'EusCan':
 							info_text += 'Eusebian canon';
 							break;
-						case 'fw_euthaliana':
+						case 'euthaliana':
 							info_text += 'Euthaliana';
 							break;
-						case 'fw_gloss':
+						case 'gloss':
 							info_text += 'Gloss';
 							break;
-						case 'fw_lecttitle':
+						case 'lectTitle':
 							info_text += 'Lectionary title';
 							break;
-						case 'num_stichoi':
+						case 'stichoi':
 							info_text += 'Stichoi';
 							break;
 						}
 						info_text += '</div>';
-						info_text += '<div style="margin-top:10px">Value: ' + ar['text'] + '</div>';
-						if (ar['paratext_position'] == 'other') {
-							info_text += '<div style="margin-top:10px">Position: ' + ar['paratext_position_other'] + '</div>';
-						} else {
-							info_text += '<div style="margin-top:10px">Position: ' + ar['paratext_position'] + '</div>';
+						if (ar['fw_type'] != 'commentary') {
+							info_text += '<div style="margin-top:10px">Value: ' + ar['text'] + '</div>';
+							if (ar['paratext_position'] == 'other') {
+								info_text += '<div style="margin-top:10px">Position: ' + ar['paratext_position_other'] + '</div>';
+							} else {
+								info_text += '<div style="margin-top:10px">Position: ' + ar['paratext_position'] + '</div>';
+							}
+							info_text += '<div style="margin-top:10px">Alignment: ' + ar['paratext_alignment'] + '</div>';
 						}
-						info_text += '<div style="margin-top:10px">Alignment: ' + ar['paratext_alignment'] + '</div>';
 						break;
 					case 'gap':
 						if (ar['unit'] == '' && ar['gap_reason'] == '') {
@@ -1451,7 +1453,7 @@
 					});
 
 					sub.add({
-						title : '\u02BC (modifier letter apostophe)',
+						title : '\u02BC (modifier letter apostrophe)',
 						onclick : function() {
 							ed.execCommand('mceAdd_pc', '\u02BC');
 						}
@@ -2085,6 +2087,8 @@
 				tinyMCE.activeEditor.execCommand('mceAdd_pc', '?');
 			} else if (ek == 56 && e.shiftKey) {
 				// TODO?
+			} else if (ek == 57 && e.shiftKey && e.altKey) { //For Mac OS X, Middledot
+				tinyMCE.activeEditor.execCommand('mceAdd_pc', '\u0387');
 			} else if (ek == 57 && e.shiftKey) {
 				// Find corresponding ( and create substring
 				_stopEvent(ed, e);

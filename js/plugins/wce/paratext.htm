@@ -19,7 +19,7 @@
 							<option value="commentary">{#wce.fw_commentary_text}</option>
 							<option value="chapNum">{#wce.fw_chapter_number}</option>
 							<option value="chapTitle">{#wce.fw_chapter_title}</option>
-							<option value="fw_lecttitle">{#wce.fw_lectionary_title}</option>
+							<option value="lectTitle">{#wce.fw_lectionary_title}</option>
 							<option value="colophon">{#wce.fw_colophon}</option>
 							<option value="quireSig">{#wce.fw_quiresignature}</option>
 							<option value="AmmSec">{#wce.fw_ammonian}</option>
@@ -29,6 +29,11 @@
 							<option value="stichoi">{#wce.fw_stichoi}</option>
 					</select>
 					</td>
+				</tr>
+				<tr>
+					<td><label id="covered_label" for="covered">{#wce.covered}</label></td>
+					<td colspan="2"><input id="covered" name="covered" type="number" value=""
+						size="5" maxlength="" class="required number min1 mceFocus"/></td>
 				</tr>
 				<tr>
 					<td><label id="text_label" for="text">{#wce.text}</label></td>
@@ -101,20 +106,38 @@
 		if (v=='chapTitle' || v =='lectTitle'|| v =='colophon'|| v =='quireSig'|| v =='euthaliana'|| v =='gloss')
 			return 'fw';
 		else if (v=='commentary')
-			return '[<span class="commentary">comm</span>]';
+			return '[comm]';
 		else
 			return 'num';
 	}
 
 	function checkstatus_typ() {
 		var v = $('#fw_type').val();
-		if (v == 'chapTitle' || v == 'lectTitle' || v == 'colophon' || v == 'euthaliana' || v == 'gloss' || v == 'commentary') {
+		if (v == 'commentary') {
+			document.paratextinfo.number.value = '';
+			document.paratextinfo.number.disabled = true;
+			document.getElementById('number').style.backgroundColor = "#CCCCCC";
+			document.paratextinfo.edit_number.checked = "checked";
+			document.getElementById('edit_number').disabled = true;
+			document.paratextinfo.covered.disabled = false;
+			document.getElementById('covered').style.backgroundColor = "white";
+			document.paratextinfo.text.disabled = true;
+			document.getElementById('text').style.backgroundColor = "#CCCCCC";
+			document.paratextinfo.paratext_position.disabled = true;
+			document.paratextinfo.paratext_alignment.disabled = true;
+		} else if (v == 'chapTitle' || v == 'lectTitle' || v == 'colophon' || v == 'euthaliana' || v == 'gloss') {
 			//don't get a number, only text
 			document.paratextinfo.number.value = '';
 			document.paratextinfo.number.disabled = true;
 			document.getElementById('number').style.backgroundColor = "#CCCCCC";
 			document.paratextinfo.edit_number.checked = "checked";
 			document.getElementById('edit_number').disabled = true;
+			document.paratextinfo.covered.disabled = true;
+			document.getElementById('covered').style.backgroundColor = "#CCCCCC";
+			document.paratextinfo.text.disabled = false;
+			document.getElementById('text').style.backgroundColor = "white";
+			document.paratextinfo.paratext_position.disabled = false;
+			document.paratextinfo.paratext_alignment.disabled = false;
 		} else {
 			document.getElementById('edit_number').disabled = false;
 			if (document.paratextinfo.edit_number.selected == true) {
@@ -125,18 +148,13 @@
 				document.getElementById('number').style.backgroundColor = "white";
 			}
 			setnumber();
-		}
-		// no place for <num>
-		/*if ($('#fw_type').val() == 'fw_chaptertitle' || $('#fw_type').val() == 'fw_colophon' || $('#fw_type').val() == 'fw_lecttitle' || $('#fw_type').val() == 'fw_euthaliana' || $('#fw_type').val() == 'fw_gloss') {
+			document.paratextinfo.covered.disabled = true;
+			document.getElementById('covered').style.backgroundColor = "#CCCCCC";
+			document.paratextinfo.text.disabled = false;
+			document.getElementById('text').style.backgroundColor = "white";
 			document.paratextinfo.paratext_position.disabled = false;
-			document.getElementById('paratext_position').style.backgroundColor = "white";
-			checkstatus_position();
-		} else {
-			document.paratextinfo.paratext_position.disabled = true;
-			document.getElementById('paratext_position').style.backgroundColor = "#CCCCCC";
-			document.paratextinfo.paratext_position_other.disabled = true;
-			document.getElementById('paratext_position_other').style.backgroundColor = "#CCCCCC";
-		}*/
+			document.paratextinfo.paratext_alignment.disabled = false;
+		}
 	}
 
 	function checkstatus_position() {

@@ -19,12 +19,12 @@
 		/*
 		 * plugins : "wce,pagebreak,style,layer,advhr,advimage,emotions,iespell,inlinepopups,safari,preview,media,searchreplace,print,contextmenu,paste,directionality,fullscreen,noneditable,visualchars,nonbreaking,xhtmlxtras,template,wordcount,advlist,autosave",
 		 */
-		plugins : "wce,pagebreak,style,layer,safari,print,inlinepopups, contextmenu,paste,fullscreen,wordcount,autosave",
+		plugins : "wce,pagebreak,style,layer,safari,print,inlinepopups,contextmenu,paste,fullscreen,wordcount,autosave",
 
 		init_instance_callback : "wceReload",
 
 		// Theme options
-		theme_advanced_buttons1 : "undo,redo,charmap,|,code,removeformat,|,print,contextmenu,paste,fullscreen,|,metadata,breaks,correction,illegible,decoration,abbreviation,paratext,note,|,showTeiByHtml,showHtmlByTei",
+		theme_advanced_buttons1 : "undo,redo,charmap,|,code,removeformat,|,print,contextmenu,cut,copy,paste,fullscreen,|,metadata,breaks,correction,illegible,decoration,abbreviation,paratext,note,|,showTeiByHtml,showHtmlByTei",
 		theme_advanced_buttons2 : "",
 		theme_advanced_toolbar_location : "top",
 		theme_advanced_toolbar_align : "left",
