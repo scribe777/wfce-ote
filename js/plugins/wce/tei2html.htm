@@ -23,12 +23,19 @@
 	 var x=document.getElementById('tei2htmlOuputContainer');
 		x.style.height=document.getElementById('div0').offsetHeight+ "px";
 		var str=_ed.getContent(); 
-		var teiContent=getTeiByHtml(str);
+		var teiContent=getTeiByHtml(str,_ed.teiIndexData);
 		if(teiContent){
-			var htmlContent=getHtmlByTei(teiContent);
-			if(htmlContent){
-				x.value=htmlContent;
-			} 
+			var result=getHtmlByTei(teiContent);
+			if(result){
+				var htmlContent=result['htmlString'];
+				if(htmlContent){
+					x.value=htmlContent;
+				} 
+				var teiIndexData = result['teiIndexData'];
+				if (teiIndexData) {
+					//_ed.teiIndexData = teiIndexData;
+				}
+			}
 		}
 		
 		
@@ -45,7 +52,7 @@
  			plugins : "wce,pagebreak,style,layer,safari,print,inlinepopups, paste", 
 
 			// Theme options
-			theme_advanced_buttons1 : "undo,redo,charmap,|,code,removeformat,|,print,contextmenu,paste,fullscreen,|,metadata,breaks,correction,illegible,decoration,abbreviation,paratext,note,|,xmloutput,|, xmlinput",
+			theme_advanced_buttons1 : "undo,redo,charmap,|,code,removeformat,|,print,contextmenu,paste,fullscreen,|,metadata,breaks,correction,illegible,decoration,abbreviation,paratext,note,|,showTeiByHtml,|, showHtmlByTei",
 			theme_advanced_buttons2 : "",
 			theme_advanced_toolbar_location : "top",
 			theme_advanced_toolbar_align : "left",

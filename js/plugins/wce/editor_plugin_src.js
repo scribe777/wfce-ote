@@ -776,6 +776,9 @@
 				kv = ar[i].split('=');
 				k = kv[0];
 				v = kv[1];
+				 
+			 	if(!k|| k=='undefined' || !v || v=='undefined') continue;
+				
 				a[k] = decodeURIComponent(v);
 			}
 			return a;
@@ -894,7 +897,10 @@
 						default: // other
 							info_text += ar['note_type_other'] + '</div>';
 						}
-						info_text += '<div style="margin-top:10px">' + ar['note_text'] + '</div>';
+						var nodeText=ar['note_text'] ;
+						if(nodeText){
+							info_text += '<div style="margin-top:10px">' + nodeText + '</div>';
+						}
 						break;
 					case 'corr':
 						corr_str += '<div style="margin-top:15px">';
@@ -915,10 +921,13 @@
 							corr_str += 'deleted' + '</div>';
 						else
 							corr_str += ar['corrector_text'] + '</div>';
-						if (ar['deletion'] != 'null') // information
-							// on
-							// deletion
-							corr_str += '<div style="margin-top:5px">' + 'Method of deletion: ' + ar['deletion'] + '</div>';
+						
+						var deletionText=ar['deletion'];
+						if (deletionText && deletionText!='null') { 
+							// information  on deletion
+							corr_str += '<div style="margin-top:5px">' + 'Method of deletion: ' + deletionText + '</div>';
+						}
+						 
 						break;
 					case 'paratext':
 						info_text = '<div>' + 'Paratext type: ';
@@ -1033,7 +1042,7 @@
 						corr_str = '*: ' + 'Omission' + corr_str;
 					else
 						corr_str = '*: ' + $(sele_node).html() + corr_str;
-					if (ar['editorial_note'] != '') {
+					if (ar['editorial_note']) {
 						corr_str += '<div style="margin-top:5px">Note: ' + ar['editorial_note'] + '</div>';
 					}
 				}
@@ -1673,6 +1682,11 @@
 		},
 
 		_wceAdd : function(ed, url, htm, w, h, inline, add_new_wce_node) {
+			var winH=$(window).height()-100;
+			var winW=$(window).width()-60;			
+			w=winW>w?w:winW;
+			h=winH>h?h:winH;
+				
 			ed.windowManager.open({
 				file : url + htm,
 				width : w + ed.getLang('example.delta_width', 0),
@@ -2199,7 +2213,7 @@
 
 			// add showTeiByHtml button
 			ed.addButton('showTeiByHtml', {
-				title : 'For test: \n get TEI output from HTML',
+				title : 'For test: \n set booknumber=00\nget TEI output from HTML',
 				cmd : 'mceHtml2Tei',
 				image : url + '/img/xml.jpg'
 			});
@@ -2225,6 +2239,16 @@
 			ed.onInit.add(function() {
 				WCEObj._initWCEConstants(ed);
 				WCEObj._initWCEVariable(ed);
+				//
+				ed.teiIndexData = {
+					'bookNumber' : '00',
+					'pageNumber' : 0,
+					'chapterNumber' : 0,
+					'verseNumber' : 0,
+					'wordNumber' : 0,
+					'columnNumber' : 0,
+					'witValue' : 0
+				}
 
 				var wcevar = ed.WCE_VAR;
 
