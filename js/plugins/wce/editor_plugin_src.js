@@ -1405,7 +1405,106 @@
 							ed.execCommand('mceAdd_pc', '\u03A1\u0336');
 						}
 					});
+				});
 
+				// Return the new menu button instance
+				return c;
+
+			case 'abbreviation':
+				var c = cm.createMenuButton('menu-abbreviation', {
+					title : 'Abbreviated text',
+					image : tinyMCE.baseURL + '/plugins/wce/img/button_A-new.png',
+					icons : false
+				});
+
+				c.onRenderMenu.add(function(c, m) {
+					var w = ed.WCE_VAR;
+					m.add({
+						title : 'add',
+						id : 'menu-abbreviation-add',
+						onclick : function() {
+							ed.execCommand('mceAddAbbr');
+						}
+					});
+
+					m.add({
+						title : 'edit',
+						id : 'menu-abbreviation-edit',
+						onclick : function() {
+							ed.execCommand('mceEditAbbr');
+						}
+					});
+
+					m.add({
+						title : 'delete',
+						id : 'menu-abbreviation-delete',
+						onclick : function() {
+							ed.execCommand('wceDelNode');
+						}
+					});
+
+					m.onShowMenu.add(function(m) {
+						var items = m.items;
+						if (w.type == 'abbr') {
+							items['menu-abbreviation-add'].setDisabled(true);
+							items['menu-abbreviation-edit'].setDisabled(false);
+							items['menu-abbreviation-delete'].setDisabled(false);
+						} else {
+							items['menu-abbreviation-add'].setDisabled(false);
+							items['menu-abbreviation-edit'].setDisabled(true);
+							items['menu-abbreviation-delete'].setDisabled(true);
+						}
+					});
+				});
+
+				return c;
+
+			case 'paratext':
+				var c = cm.createMenuButton('menu-paratext', {
+					title : 'Paratext',
+					image : tinyMCE.baseURL + '/plugins/wce/img/button_P-new.png',
+					icons : false
+				});
+
+				c.onRenderMenu.add(function(c, m) {
+					var w = ed.WCE_VAR;
+					m.add({
+						title : 'add',
+						id : 'menu-paratext-add',
+						onclick : function() {
+							ed.execCommand('mceAddParatext');
+						}
+					});
+
+					m.add({
+						title : 'edit',
+						id : 'menu-paratext-edit',
+						onclick : function() {
+							ed.execCommand('mceEditParatext');
+						}
+					});
+
+					m.add({
+						title : 'delete',
+						id : 'menu-paratext-delete',
+						onclick : function() {
+							ed.execCommand('wceDelNode');
+						}
+					});
+
+					m.onShowMenu.add(function(m) {
+						var items = m.items;
+						if (w.type == 'paratext') {
+							items['menu-paratext-add'].setDisabled(true);
+							items['menu-paratext-edit'].setDisabled(false);
+							items['menu-paratext-delete'].setDisabled(false);
+						} else {
+							items['menu-paratext-add'].setDisabled(false);
+							items['menu-paratext-edit'].setDisabled(true);
+							items['menu-paratext-delete'].setDisabled(true);
+						}
+					});
+					
 					sub = m.addMenu({
 						title : 'Add punctuation'
 					});
@@ -1522,106 +1621,6 @@
 							items['menu-decoration-blankspaces-add'].setDisabled(false);
 							items['menu-decoration-blankspaces-edit'].setDisabled(true);
 							items['menu-decoration-blankspaces-delete'].setDisabled(true);
-						}
-					});
-
-				});
-
-				// Return the new menu button instance
-				return c;
-
-			case 'abbreviation':
-				var c = cm.createMenuButton('menu-abbreviation', {
-					title : 'Abbreviated text',
-					image : tinyMCE.baseURL + '/plugins/wce/img/button_A-new.png',
-					icons : false
-				});
-
-				c.onRenderMenu.add(function(c, m) {
-					var w = ed.WCE_VAR;
-					m.add({
-						title : 'add',
-						id : 'menu-abbreviation-add',
-						onclick : function() {
-							ed.execCommand('mceAddAbbr');
-						}
-					});
-
-					m.add({
-						title : 'edit',
-						id : 'menu-abbreviation-edit',
-						onclick : function() {
-							ed.execCommand('mceEditAbbr');
-						}
-					});
-
-					m.add({
-						title : 'delete',
-						id : 'menu-abbreviation-delete',
-						onclick : function() {
-							ed.execCommand('wceDelNode');
-						}
-					});
-
-					m.onShowMenu.add(function(m) {
-						var items = m.items;
-						if (w.type == 'abbr') {
-							items['menu-abbreviation-add'].setDisabled(true);
-							items['menu-abbreviation-edit'].setDisabled(false);
-							items['menu-abbreviation-delete'].setDisabled(false);
-						} else {
-							items['menu-abbreviation-add'].setDisabled(false);
-							items['menu-abbreviation-edit'].setDisabled(true);
-							items['menu-abbreviation-delete'].setDisabled(true);
-						}
-					});
-				});
-
-				return c;
-
-			case 'paratext':
-				var c = cm.createMenuButton('menu-paratext', {
-					title : 'Paratext',
-					image : tinyMCE.baseURL + '/plugins/wce/img/button_P-new.png',
-					icons : false
-				});
-
-				c.onRenderMenu.add(function(c, m) {
-					var w = ed.WCE_VAR;
-					m.add({
-						title : 'add',
-						id : 'menu-paratext-add',
-						onclick : function() {
-							ed.execCommand('mceAddParatext');
-						}
-					});
-
-					m.add({
-						title : 'edit',
-						id : 'menu-paratext-edit',
-						onclick : function() {
-							ed.execCommand('mceEditParatext');
-						}
-					});
-
-					m.add({
-						title : 'delete',
-						id : 'menu-paratext-delete',
-						onclick : function() {
-							ed.execCommand('wceDelNode');
-						}
-					});
-
-					m.onShowMenu.add(function(m) {
-						var items = m.items;
-						if (w.type == 'paratext') {
-							items['menu-paratext-add'].setDisabled(true);
-							items['menu-paratext-edit'].setDisabled(false);
-							items['menu-paratext-delete'].setDisabled(false);
-						} else {
-							items['menu-paratext-add'].setDisabled(false);
-							items['menu-paratext-edit'].setDisabled(true);
-							items['menu-paratext-delete'].setDisabled(true);
 						}
 					});
 				});
