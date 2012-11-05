@@ -1993,6 +1993,7 @@
 					if (len > -1) {
 						rng.setStart(pre, len);
 						rng.setEnd(pre, len)
+						ed.selection.setRng(rng);
 					}
 				}
 
