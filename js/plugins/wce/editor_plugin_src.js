@@ -1971,8 +1971,11 @@
 			var startContainer = rng.startContainer;
 			var pre = startContainer.previousSibling;
 
-			if (!pre) {
+			while (!pre) {
 				startContainer = startContainer.parentNode;
+				if(startContainer.nodeName.toLowerCase()=='body'){
+					break;
+				}
 				pre = startContainer.previousSibling;
 			}
 			if (pre) {
@@ -1984,7 +1987,7 @@
 						rng.setEnd(preTextNode, len);
 					}
 					ed.selection.setRng(rng);
-				} else if (pre.nodeType == 3) {
+				} else if (pre.nodeType == 3) {  
 					// for not IE
 					var len = pre.nodeValue.length;
 					if (len > -1) {
