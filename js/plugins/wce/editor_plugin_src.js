@@ -618,7 +618,7 @@
 			if (moveStartToNext) {
 				var next = WCEObj._getNextSiblingOfAncestor(ed, startContainer);
 				if (next) {
-					var nextTextNode = WCEObj._getLastTextNodeOfNode(ed, next);
+					var nextTextNode = WCEObj._getFirstTextNodeOfNode(ed, next);
 					if (nextTextNode) {
 						var nextText = nextTextNode.nodeValue;
 						if (nextText) {
@@ -684,9 +684,9 @@
 								ed.selection.setRng(rng);
 								// reload rng
 								rng = ed.selection.getRng(true);
-								startContainer = rng.startContainer;
-								startOffset = rng.startOffset;
-								startText = startContainer.nodeValue;
+								//startContainer = rng.startContainer;
+								//startOffset = rng.startOffset;
+								//startText = startContainer.nodeValue;
 								endContainer = rng.endContainer;
 								endOffset = rng.endOffset;
 								endText = endContainer.nodeValue;
