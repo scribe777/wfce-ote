@@ -130,7 +130,7 @@ function writeWceNodeInfo(val) {
 
 		// new content
 		var new_content;
-		var original_text = ' wce_orig="' + selected_content + '" ';
+		var original_text = ' wce_orig="' + encodeURIComponent(selected_content) + '" ';
 
 		switch (wce_type) {
 		case 'gap':

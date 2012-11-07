@@ -618,7 +618,7 @@
 			if (moveStartToNext) {
 				var next = WCEObj._getNextSiblingOfAncestor(ed, startContainer);
 				if (next) {
-					var nextTextNode = WCEObj._getLastTextNodeOfNode(ed, next);
+					var nextTextNode = WCEObj._getFirstTextNodeOfNode(ed, next);
 					if (nextTextNode) {
 						var nextText = nextTextNode.nodeValue;
 						if (nextText) {
@@ -684,9 +684,9 @@
 								ed.selection.setRng(rng);
 								// reload rng
 								rng = ed.selection.getRng(true);
-								startContainer = rng.startContainer;
-								startOffset = rng.startOffset;
-								startText = startContainer.nodeValue;
+								//startContainer = rng.startContainer;
+								//startOffset = rng.startOffset;
+								//startText = startContainer.nodeValue;
 								endContainer = rng.endContainer;
 								endOffset = rng.endOffset;
 								endText = endContainer.nodeValue;
@@ -1971,8 +1971,11 @@
 			var startContainer = rng.startContainer;
 			var pre = startContainer.previousSibling;
 
-			if (!pre) {
+			while (!pre) {
 				startContainer = startContainer.parentNode;
+				if(startContainer.nodeName.toLowerCase()=='body'){
+					break;
+				}
 				pre = startContainer.previousSibling;
 			}
 			if (pre) {
@@ -1984,12 +1987,13 @@
 						rng.setEnd(preTextNode, len);
 					}
 					ed.selection.setRng(rng);
-				} else if (pre.nodeType == 3) {
+				} else if (pre.nodeType == 3) {  
 					// for not IE
 					var len = pre.nodeValue.length;
 					if (len > -1) {
 						rng.setStart(pre, len);
 						rng.setEnd(pre, len)
+						ed.selection.setRng(rng);
 					}
 				}
 
