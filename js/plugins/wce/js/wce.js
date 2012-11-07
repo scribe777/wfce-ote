@@ -218,7 +218,7 @@ function writeWceNodeInfo(val) {
 			wceClass = ' class="paratext"';
 			selected_content = val;
 			if (wce_type == 'paratext' && document.getElementById('fw_type').value == "commentary") {
-				for (var i = 0; i < document.getElementById('covered').value; i++) {
+				for (var i = 0; i < document.getElementById('covered').value-1; i++) {
 					selected_content += '<br/>&crarr;[comm]';
 				}
 				ed.execCommand('addToCounter', 'lb', document.getElementById('covered').value);
