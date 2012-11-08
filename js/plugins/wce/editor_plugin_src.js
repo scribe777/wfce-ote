@@ -43,6 +43,7 @@
 			w.control_A = controls[ed_id + '_menu-abbreviation'];
 			w.control_P = controls[ed_id + '_menu-paratext'];
 			w.control_N = controls[ed_id + '_menu-note'];
+			w.control_PC = controls[ed_id + '_menu-punctuation'];
 			w.control_CH = controls[ed_id + '_charmap']; // charmap
 			w.control_RF = controls[ed_id + '_removeformat']; // Remove Format
 			w.control_PA = controls[ed_id + '_paste']; // Paste
@@ -293,8 +294,9 @@
 			w.not_D = b; // control D setActive?
 			w.not_O = b; // control O setActive?
 			w.not_A = b; // control A setActive?
-			w.not_P = b; // control P setActive?
+			w.not_P = b; // control M setActive?
 			w.not_N = b; // control N setActive?
+			w.not_PC = b; // control P setActive?
 		},
 
 		/*
@@ -324,6 +326,9 @@
 			}
 			if (w.control_N) {
 				w.control_N.setDisabled(v.not_N);
+			}
+			if (w.control_PC) {
+				w.control_PC.setDisabled(v.not_PC);
 			}
 			if (w.control_CH) {
 				w.control_CH.setDisabled(v.not_CH);
@@ -586,7 +591,9 @@
 				_setAllControls(ed, true);
 				w.not_N = false;
 				w.type = 'note';
-			} 
+			} else if (_isNodeTypeOf(startNode, 'punctuation')) {
+				w.type = 'punctuation';
+			}
 		},
 
 		// only for mouseup
@@ -857,6 +864,9 @@
 							break;
 						}
 						break;
+					case 'part': //part_abbr
+						info_text = '<div>' + 'Editorial expansion' + '<div>';
+						break;
 					case 'brea':
 						switch (ar['break_type']) {
 						case 'lb':
@@ -1029,6 +1039,9 @@
 						if (ar['capitals_height'] != null) { // output only if capitals
 							info_text = '<div>' + 'Height: ' + ar['capitals_height'] + '</div>';
 						}
+						break;
+					case 'pc':
+						info_text = '<div>' + 'Punctuation mark' + '</div>';
 						break;
 					default:
 						info_text = '';
@@ -1461,8 +1474,8 @@
 
 			case 'paratext':
 				var c = cm.createMenuButton('menu-paratext', {
-					title : 'Paratext',
-					image : tinyMCE.baseURL + '/plugins/wce/img/button_P-new.png',
+					title : 'Marginalia',
+					image : tinyMCE.baseURL + '/plugins/wce/img/button_M-new.png',
 					icons : false
 				});
 
@@ -1504,8 +1517,70 @@
 							items['menu-paratext-delete'].setDisabled(true);
 						}
 					});
-					
-					sub = m.addMenu({
+				});
+
+				return c;
+
+			case 'note':
+				var c = cm.createMenuButton('menu-note', {
+					title : 'Note',
+					image : tinyMCE.baseURL + '/plugins/wce/img/button_N-new.png',
+					icons : false
+				});
+
+				c.onRenderMenu.add(function(c, m) {
+					var w = ed.WCE_VAR;
+					m.add({
+						title : 'add',
+						id : 'menu-note-add',
+						onclick : function() {
+							ed.execCommand('mceAddNote');
+						}
+					});
+
+					m.add({
+						title : 'edit',
+						id : 'menu-note-edit',
+						onclick : function() {
+							ed.execCommand('mceEditNote');
+						}
+					});
+
+					m.add({
+						title : 'delete',
+						id : 'menu-note-delete',
+						onclick : function() {
+							ed.execCommand('wceDelNode');
+						}
+					});
+
+					m.onShowMenu.add(function(m) {
+						var items = m.items;
+						if (w.type == 'note') {
+							items['menu-note-add'].setDisabled(true);
+							items['menu-note-edit'].setDisabled(false);
+							items['menu-note-delete'].setDisabled(false);
+						} else {
+							items['menu-note-add'].setDisabled(false);
+							items['menu-note-edit'].setDisabled(true);
+							items['menu-note-delete'].setDisabled(true);
+						}
+					});
+				});
+
+				return c;
+				
+			case 'punctuation':
+				var c = cm.createMenuButton('menu-punctuation', {
+					title : 'Punctuation',
+					image : tinyMCE.baseURL + '/plugins/wce/img/button_P-new.png',
+					icons : false
+				});
+				
+				c.onRenderMenu.add(function(c, m) {
+					var sub;
+					var w = ed.WCE_VAR;
+					sub = m.addMenu({			
 						title : 'Add punctuation'
 					});
 
@@ -1583,12 +1658,12 @@
 
 					sub = m.addMenu({
 						title : 'Blank spaces',
-						id : 'menu-decoration-blankspaces'
+						id : 'menu-punctuation-blankspaces'
 					});
 
 					sub.add({
 						title : 'add',
-						id : 'menu-decoration-blankspaces-add',
+						id : 'menu-punctuation-blankspaces-add',
 						icons : false,
 						onclick : function() {
 							ed.execCommand('mceAddSpaces');
@@ -1597,7 +1672,7 @@
 
 					sub.add({
 						title : 'edit',
-						id : 'menu-decoration-blankspaces-edit',
+						id : 'menu-punctuation-blankspaces-edit',
 						onclick : function() {
 							ed.execCommand('mceEditSpaces');
 						}
@@ -1605,7 +1680,7 @@
 
 					sub.add({
 						title : 'delete',
-						id : 'menu-decoration-blankspaces-delete',
+						id : 'menu-punctuation-blankspaces-delete',
 						onclick : function() {
 							ed.execCommand('wceDelNode');
 						}
@@ -1614,66 +1689,17 @@
 					sub.onShowMenu.add(function(m) {
 						var items = m.items;
 						if (w.type == 'spaces') {
-							items['menu-decoration-blankspaces-add'].setDisabled(true);
-							items['menu-decoration-blankspaces-edit'].setDisabled(false);
-							items['menu-decoration-blankspaces-delete'].setDisabled(false);
+							items['menu-punctuation-blankspaces-add'].setDisabled(true);
+							items['menu-punctuation-blankspaces-edit'].setDisabled(false);
+							items['menu-punctuation-blankspaces-delete'].setDisabled(false);
 						} else {
-							items['menu-decoration-blankspaces-add'].setDisabled(false);
-							items['menu-decoration-blankspaces-edit'].setDisabled(true);
-							items['menu-decoration-blankspaces-delete'].setDisabled(true);
+							items['menu-punctuation-blankspaces-add'].setDisabled(false);
+							items['menu-punctuation-blankspaces-edit'].setDisabled(true);
+							items['menu-punctuation-blankspaces-delete'].setDisabled(true);
 						}
 					});
 				});
-
-				return c;
-
-			case 'note':
-				var c = cm.createMenuButton('menu-note', {
-					title : 'Note',
-					image : tinyMCE.baseURL + '/plugins/wce/img/button_N-new.png',
-					icons : false
-				});
-
-				c.onRenderMenu.add(function(c, m) {
-					var w = ed.WCE_VAR;
-					m.add({
-						title : 'add',
-						id : 'menu-note-add',
-						onclick : function() {
-							ed.execCommand('mceAddNote');
-						}
-					});
-
-					m.add({
-						title : 'edit',
-						id : 'menu-note-edit',
-						onclick : function() {
-							ed.execCommand('mceEditNote');
-						}
-					});
-
-					m.add({
-						title : 'delete',
-						id : 'menu-note-delete',
-						onclick : function() {
-							ed.execCommand('wceDelNode');
-						}
-					});
-
-					m.onShowMenu.add(function(m) {
-						var items = m.items;
-						if (w.type == 'note') {
-							items['menu-note-add'].setDisabled(true);
-							items['menu-note-edit'].setDisabled(false);
-							items['menu-note-delete'].setDisabled(false);
-						} else {
-							items['menu-note-add'].setDisabled(false);
-							items['menu-note-edit'].setDisabled(true);
-							items['menu-note-delete'].setDisabled(true);
-						}
-					});
-				});
-
+				
 				return c;
 			}
 
@@ -2087,25 +2113,36 @@
 			// Add <pc> for some special characters
 			if (ek == 59 && !e.shiftKey) { // ; en
 				tinyMCE.activeEditor.execCommand('mceAdd_pc', ';');
+				_stopEvent(ed, e);
 			} else if (ek == 188 && e.shiftKey) {
 				// ; dt < en
 				tinyMCE.activeEditor.execCommand('mceAdd_pc', ';');
+				_stopEvent(ed, e);
 			} else if (ek == 188 && !e.shiftKey) {
 				// ,
 				tinyMCE.activeEditor.execCommand('mceAdd_pc', ',');
+				_stopEvent(ed, e);
+			} else if (ek == 190 && e.shiftKey) {
+				// :
+				tinyMCE.activeEditor.execCommand('mceAdd_pc', ':');
+				_stopEvent(ed, e);
 			} else if (ek == 190 && !e.shiftKey) {
 				// .
 				tinyMCE.activeEditor.execCommand('mceAdd_pc', '.');
+				_stopEvent(ed, e);
 			} else if (ek == 191 && e.shiftKey) {
 				// ? en
 				tinyMCE.activeEditor.execCommand('mceAdd_pc', '?');
+				_stopEvent(ed, e);
 			} else if (ek == 219 && e.shiftKey) {
 				// ? dt
 				tinyMCE.activeEditor.execCommand('mceAdd_pc', '?');
+				_stopEvent(ed, e);
 			} else if (ek == 56 && e.shiftKey) {
-				// TODO?
+				// ( TODO?
 			} else if (ek == 57 && e.shiftKey && e.altKey) { //For Mac OS X, Middledot
 				tinyMCE.activeEditor.execCommand('mceAdd_pc', '\u0387');
+				_stopEvent(ed, e);
 			} else if (ek == 57 && e.shiftKey) {
 				// Find corresponding ( and create substring
 				_stopEvent(ed, e);
@@ -2274,8 +2311,9 @@
 				ed.addShortcut('ctrl+u', 'Add unclear text', 'mceAddUnclearText_Shortcut');
 				ed.addShortcut('ctrl+g', 'Add gap', 'mceAddGap_Shortcut');
 				ed.addShortcut('ctrl+a', 'Add abbreviation', 'mceAddAbbr_Shortcut');
-				ed.addShortcut('ctrl+p', 'Add correction', 'mceAddParatext_Shortcut');
-				ed.addShortcut('ctrl+n', 'Add correction', 'mceAddNote_Shortcut');
+				ed.addShortcut('ctrl+m', 'Add marginalia', 'mceAddParatext_Shortcut');
+				ed.addShortcut('ctrl+n', 'Add note', 'mceAddNote_Shortcut');
+				//ed.addShortcut('ctrl+p', 'Add punctuation', 'mceAddNote_Shortcut');
 
 				tinymce.dom.Event.add(ed.getDoc(), 'mousemove', function(e) {
 					WCEObj._showWceInfo(ed, e);
@@ -2490,11 +2528,19 @@
 					ed.execCommand('mceAddParatext');
 				}
 			});
+			
+			/*ed.addCommand('mceAddPunctuation_Shortcut', function() {
+				if (wcevar.not_PC) {
+					return;
+				}
 
-			// Edit Metadata
-			/*
-			 * ed.addCommand('mceAddMetadata', function() { _wceAdd(ed, url, '/metadata.htm', 600, 450, 1, false); });
-			 */
+				if (wcevar.type == 'punctuation') {
+					ed.execCommand('mceEditPunctuation');
+				} else {
+					ed.execCommand('mceAddPunctuation');
+				}
+			});*/
+
 
 			ed.addCommand('mceAdd_abbr', function(c) {
 				_wceAddNoDialog(ed, 'abbr', c);
