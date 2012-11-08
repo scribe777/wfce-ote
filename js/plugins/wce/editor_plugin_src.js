@@ -2307,7 +2307,7 @@
 
 				// Add shortcuts for wce
 				ed.addShortcut('ctrl+b', 'Add break', 'mceAddBreak_Shortcut');
-				ed.addShortcut('ctrl+c', 'Add correction', 'mceAddCorrection_Shortcut');
+				ed.addShortcut('ctrl+k', 'Add correction', 'mceAddCorrection_Shortcut');
 				ed.addShortcut('ctrl+u', 'Add unclear text', 'mceAddUnclearText_Shortcut');
 				ed.addShortcut('ctrl+g', 'Add gap', 'mceAddGap_Shortcut');
 				ed.addShortcut('ctrl+a', 'Add abbreviation', 'mceAddAbbr_Shortcut');
@@ -2421,7 +2421,8 @@
 			});
 
 			ed.addCommand('mceAddGap_Shortcut', function() {
-				if (wcevar.not_D) {
+				var w = ed.WCE_VAR;
+				if (w.not_D) {
 					return;
 				}
 				if (wcevar.type == 'gap') {
@@ -2443,11 +2444,12 @@
 			});
 
 			ed.addCommand('mceAddUnclearText_Shortcut', function() {
-				if (wcevar.not_D) {
+				var w = ed.WCE_VAR;
+				if (w.not_D) {
 					return;
 				}
 
-				if (wcevar.type == 'unclear') {
+				if (w.type == 'unclear') {
 					ed.execCommand('mceEditUnclearText');
 				} else {
 					ed.execCommand('mceAddUnclearText');
@@ -2468,10 +2470,11 @@
 			});
 
 			ed.addCommand('mceAddNote_Shortcut', function() {
-				if (wcevar.not_N) {
+				var w = ed.WCE_VAR;
+				if (w.not_N) {
 					return;
 				}
-				if (wcevar.type == 'note') {
+				if (w.type == 'note') {
 					ed.execCommand('mceEditNote');
 				} else {
 					ed.execCommand('mceAddNote');
@@ -2488,10 +2491,11 @@
 			});
 
 			ed.addCommand('mceAddAbbr_Shortcut', function() {
-				if (wcevar.not_A) {
+				var w = ed.WCE_VAR;
+				if (w.not_A) {
 					return;
 				}
-				if (wcevar.type == 'abbr') {
+				if (w.type == 'abbr') {
 					ed.execCommand('mceEditAbbr');
 				} else {
 					ed.execCommand('mceAddAbbr');
@@ -2518,11 +2522,12 @@
 			});
 
 			ed.addCommand('mceAddParatext_Shortcut', function() {
-				if (wcevar.not_P) {
+				var w = ed.WCE_VAR;
+				if (w.not_P) {
 					return;
 				}
 
-				if (wcevar.type == 'paratext') {
+				if (w.type == 'paratext') {
 					ed.execCommand('mceEditParatext');
 				} else {
 					ed.execCommand('mceAddParatext');

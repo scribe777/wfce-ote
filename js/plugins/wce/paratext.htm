@@ -255,10 +255,10 @@
 		var anz_Zeichen_M = 0;
 		var fl_erster = 0;
 
-		fehler = 0;
+		var fehler = 0;
 		if (Wert.length != laenge)
 			fehler++;
-		for (i = 0; i < Wert.length; i++) {
+		for (var i = 0; i < Wert.length; i++) {
 			Zeichen = Wert.charAt(i);
 			if (Zeichen != "I" && Zeichen != "V" && Zeichen != "X" && Zeichen != "L" && Zeichen != "C" && Zeichen != "D" && Zeichen != "M")
 				fehler++;
