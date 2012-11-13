@@ -224,7 +224,7 @@ function writeWceNodeInfo(val) {
 				ed.execCommand('addToCounter', 'lb', document.getElementById('covered').value);
 			}
 			break;
-
+		
 		default:
 			break;
 

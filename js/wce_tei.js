@@ -820,6 +820,7 @@ function getTeiByHtml(inputString, args) {
 		var wceAttrValue, wceType, htmlNodeName, infoArr, arr;
 
 		wceAttrValue = $htmlNode.getAttribute('wce');
+		
 		if (!wceAttrValue) {
 			if ($htmlNode.getAttribute('class') == 'verse_number') {
 				wceAttrValue = 'verse_number';
@@ -829,7 +830,7 @@ function getTeiByHtml(inputString, args) {
 		}
 
 		// ******************* verse *******************
-		if (wceAttrValue.match(/verse_number/)) {
+		if (wceAttrValue != null && wceAttrValue.match(/verse_number/)) {
 			var textNode = $htmlNode.firstChild;
 			if (textNode) {
 				g_verseNumber = textNode.nodeValue;
@@ -842,7 +843,7 @@ function getTeiByHtml(inputString, args) {
 			}
 			return null;
 
-		} else if (wceAttrValue.match(/chapter_number/)) {
+		} else if (wceAttrValue != null && wceAttrValue.match(/chapter_number/)) {
 			// ******************* chapter *******************
 			var textNode = $htmlNode.firstChild;
 			if (textNode) {
@@ -858,7 +859,7 @@ function getTeiByHtml(inputString, args) {
 		} else {
 			htmlNodeName = $htmlNode.nodeName;
 		}
-
+		
 		// <br>
 		if (htmlNodeName == 'br') {
 			return null;
@@ -1146,6 +1147,7 @@ function getTeiByHtml(inputString, args) {
 		var xml_id;
 		var breakNodeText = getDomNodeText($htmlNode);
 		var break_type = arr['break_type'];
+		var $newNode;
 
 		if (breakNodeText && breakNodeText.substr(0, "&#45;".length) == "&#45;") {
 			hasBreak = true;
@@ -1410,7 +1412,7 @@ function getTeiByHtml(inputString, args) {
 		if (arr['original_text']) {
 			nodeAddText($unclear, decodeURIComponent(arr['original_text']));
 		}
-
+		
 		if (!stopAddW) {
 			var $w = createNewWElement();
 			$w.appendChild($unclear);
@@ -1580,8 +1582,10 @@ function getTeiByHtml(inputString, args) {
 	 */
 	var createNewWElement = function() {
 		var $w = $newDoc.createElement('w');
-		g_wordNumber++;
-		$w.setAttribute('n', g_wordNumber);
+		/*word number not needed as it is generated automatically later
+		//g_wordNumber++;
+		//$w.setAttribute('n', g_wordNumber);
+		*/
 		return $w;
 	};
 
@@ -1594,7 +1598,7 @@ function getTeiByHtml(inputString, args) {
 		var outArr = new Array();
 
 		var arr0 = str.split('@');
-		var k0, v0, k1, v1, k2, v2, arr1, arr2;
+		var p1, k0, v0, k1, v, v1, k2, v2, arr1, arr2;
 		for (k0 in arr0) {
 			v = arr0[k0];
 			outArr[k0] = new Array();

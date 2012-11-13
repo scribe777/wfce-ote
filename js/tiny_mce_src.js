@@ -16356,7 +16356,7 @@ tinymce.ForceBlocks = function(editor) {
 
 		function addKeyboardShortcuts() {
 			// Add some inline shortcuts
-			ed.addShortcut('ctrl+b', 'bold_desc', 'Bold');
+			/*ed.addShortcut('ctrl+b', 'bold_desc', 'Bold');
 			ed.addShortcut('ctrl+i', 'italic_desc', 'Italic');
 			ed.addShortcut('ctrl+u', 'underline_desc', 'Underline');
 
@@ -16367,7 +16367,7 @@ tinymce.ForceBlocks = function(editor) {
 
 			ed.addShortcut('ctrl+7', '', ['FormatBlock', false, 'p']);
 			ed.addShortcut('ctrl+8', '', ['FormatBlock', false, 'div']);
-			ed.addShortcut('ctrl+9', '', ['FormatBlock', false, 'address']);
+			ed.addShortcut('ctrl+9', '', ['FormatBlock', false, 'address']);*/
 		};
 
 		// Public functions
