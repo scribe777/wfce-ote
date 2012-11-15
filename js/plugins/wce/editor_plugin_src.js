@@ -582,7 +582,7 @@
 			} else if (_isNodeTypeOf(startNode, 'spaces')) {
 				_setAllControls(ed, true);
 				w.type = 'spaces';
-				w.not_O = false;
+				w.not_PC = false;
 			} else if (_isNodeTypeOf(startNode, 'formatting_capitals')) {
 				w.type = 'formatting_capitals';
 			} else if (_isNodeTypeOf(startNode, 'paratext')) {
@@ -992,7 +992,7 @@
 							info_text = 'No information about the reason and extension of the gap available';
 							break;
 						}
-						info_text = '<div>' + 'Reason: ';
+						info_text = '<div>' + 'Gap' + '</div><div style="margin-top:10px"> Reason: ';
 						if (ar['gap_reason'] == 'lacuna') {
 							info_text += 'Lacuna' + '</div>';
 						} else if (ar['gap_reason'] == 'illegible') {
@@ -1001,7 +1001,7 @@
 							info_text += 'Absent text' + '</div>';
 						}
 						if (ar['extent'] && ar['extent'] != '') {
-							info_text += '<div>' + 'Extent: ' + ar['extent'] + ' ';
+							info_text += '<div style="margin-top:10px">' + 'Extent: ' + ar['extent'] + ' ';
 							if (ar['unit'] == 'other') {
 								info_text += ar['unit_other'] + '</div>';
 							} else {
@@ -1009,7 +1009,7 @@
 							}
 						}
 						if (ar['mark_as_supplied'] == 'supplied') {
-							info_text += '<div>' + 'Supplied source: ';
+							info_text += '<div style="margin-top:10px">' + 'Supplied source: ';
 							if (ar['supplied_source'] == 'other') {
 								info_text += ar['supplied_source_other'] + '</div>';
 							} else {
@@ -1028,7 +1028,7 @@
 						info_text += '</div>';
 						break;
 					case 'spaces':
-						info_text = '<div>' + 'Extent: ' + ar['sp_extent'] + ' ';
+						info_text = '<div>' + 'Spaces</div><div style="margin-top:10px">Extent: ' + ar['sp_extent'] + ' ';
 						if (ar['sp_unit'] == 'other') {
 							info_text += ar['sp_unit_other'] + '(s)' + '</div>';
 						} else {
@@ -1037,7 +1037,7 @@
 						break;
 					case 'formatting':
 						if (ar['capitals_height'] != null) { // output only if capitals
-							info_text = '<div>' + 'Height: ' + ar['capitals_height'] + '</div>';
+							info_text = '<div>' + 'Capitals' + '</div><div style="margin-top:10px">' + 'Height: ' + ar['capitals_height'] + '</div>';
 						}
 						break;
 					case 'pc':
@@ -1394,7 +1394,7 @@
 					sub.add({
 						title : '&gt;	(diple)',
 						onclick : function() {
-							ed.execCommand('mceAdd_pc', '&gt;');
+							ed.execCommand('mceAdd_pc', '\u0026diple;');
 						}
 					});
 
@@ -2425,7 +2425,7 @@
 				if (w.not_D) {
 					return;
 				}
-				if (wcevar.type == 'gap') {
+				if (w.type == 'gap') {
 					ed.execCommand('mceEditGap');
 				} else {
 					ed.execCommand('mceAddGap');

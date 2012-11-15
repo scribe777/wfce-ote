@@ -82,7 +82,26 @@
 						size="50" maxlength="" class="required number min1 mceFocus" />
 					</td>
 				</tr>
-				
+				<tr>
+					<td><label id="paratext_position_label"
+						for="paratext_position">{#wce.position}</label>
+					</td>
+					<td colspan="2"><select id="paratext_position" name="paratext_position" onchange="checkstatus_position()">
+							<option value="pagetop">{#wce.position_top}</option>
+							<option value="pagebottom">{#wce.position_bottom}</option>
+							<option value="pageleft">{#wce.position_left}</option>
+							<option value="pageright">{#wce.position_right}</option>
+							<option value="above">{#wce.position_above}</option>
+							<option value="below">{#wce.position_below}</option>
+							<option value="self">{#wce.position_thispoint}</option>
+							<option value="other">{#wce.other}</option>
+					</select>
+					</td>
+					<td colspan="4"><input id="paratext_position_other"
+						name="paratext_position_other" type="text" value="" size="20"
+						maxlength="" class="required number min1 mceFocus" />
+					</td>
+				</tr>
 			</table>
 		</fieldset>
 		<div class="mceActionPanel">
@@ -134,9 +153,8 @@
 			}
 		}
 		checkstatus_break();
-		//setstatus_pb_type();
+		checkstatus_position();
 	}
-	
 	
 	function qs() {
 		var query = window.location.search.substring(1);
@@ -192,9 +210,11 @@
 	function checkstatus_break() {
 		if (document.breakinfo.break_type.options[0].selected == true) { //LB
 			document.breakinfo.lb_alignment.disabled = false;
+			document.getElementById('lb_alignment').style.backgroundColor = "white";
 			document.breakinfo.number.value = qsParm['line'];
 		} else {
 			document.breakinfo.lb_alignment.disabled = true;
+			document.getElementById('lb_alignment').style.backgroundColor = "#CCCCCC";
 		}
 		if (document.breakinfo.break_type.options[1].selected == true) { //CB
 			document.breakinfo.number.value = qsParm['column'];
@@ -208,6 +228,8 @@
 			document.getElementById('running_title').style.backgroundColor = "white";
 			document.breakinfo.page_number.disabled = false;
 			document.getElementById('page_number').style.backgroundColor = "white";
+			document.breakinfo.paratext_position.disabled = false;
+			document.getElementById('paratext_position').style.backgroundColor = "white";
 			document.breakinfo.facs.disabled = false;
 			document.getElementById('facs').style.backgroundColor = "white";
 			if (qsParm['mode'] == 'new' && qsParm['rectoverso'] == 'true') { //only for new entries; old ones keep their counting
@@ -218,6 +240,7 @@
 					document.breakinfo.pb_type.options[1].selected = true;
 			} else 
 				document.breakinfo.number.value = qsParm['page'];
+			checkstatus_position();
 		} else {
 			document.breakinfo.pb_type.disabled = true;
 			document.getElementById('pb_type').style.backgroundColor = "#CCCCCC";
@@ -227,14 +250,28 @@
 			document.getElementById('running_title').style.backgroundColor = "#CCCCCC";
 			document.breakinfo.page_number.disabled = true;
 			document.getElementById('page_number').style.backgroundColor = "#CCCCCC";
+			document.breakinfo.paratext_position.disabled = true;
+			document.getElementById('paratext_position').style.backgroundColor = "#CCCCCC";
+			document.breakinfo.paratext_position_other.disabled = true;
+			document.getElementById('paratext_position_other').style.backgroundColor = "#CCCCCC";
 			document.breakinfo.facs.disabled = true;
 			document.getElementById('facs').style.backgroundColor = "#CCCCCC";
 		}
 		if (document.breakinfo.break_type.options[3].selected == true) { //QB
 			document.breakinfo.number.value = qsParm['quire'];
-		}
+		}	
 	}
 
+	function checkstatus_position() {
+		if (document.breakinfo.paratext_position.options[7].selected == true) {
+			document.breakinfo.paratext_position_other.disabled = false;
+			document.getElementById('paratext_position_other').style.backgroundColor = "white";
+		} else {
+			document.breakinfo.paratext_position_other.disabled = true;
+			document.getElementById('paratext_position_other').style.backgroundColor = "#CCCCCC";
+		}
+	}
+	
 	function setstatus_pb_type () {
 		if (document.breakinfo.pb_type.options[0].selected == true) { //empty
 			document.breakinfo.number.value = qsParm['page'];

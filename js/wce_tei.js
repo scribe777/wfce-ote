@@ -405,7 +405,7 @@ function getHtmlByTei(inputString) {
 		var wceAttr = '__t=abbr&__n=';
 		var mapping = {
 			'type' : {
-				'0' : '@nomSac@numeral',
+				'0' : '@nomSac@num',
 				'1' : '&abbr_type=',
 				'2' : '&abbr_type=other&abbr_type_other='
 			}
@@ -679,10 +679,11 @@ function getTeiByHtml(inputString, args) {
 
 		var $oldRoot = $oldDoc.documentElement;
 
-		$newDoc = loadXMLString("<TEI></TEI>");
+		$newDoc = loadXMLString('<TEI></TEI>');
 
 		// <TEMP>
 		$newRoot = $newDoc.documentElement;
+		$newRoot.setAttribute('xmlns', 'http://www.tei-c.org/ns/1.0');
 
 		if (g_chapterNumber) {
 			g_chapterNode = $newDoc.createElement('div');
@@ -1059,7 +1060,7 @@ function getTeiByHtml(inputString, args) {
 	 * type correction, return <app><rdg> ....
 	 */
 	var html2Tei_correction = function(infoArr, $teiParent, $htmlNode, stopAddW) {
-		var $app;
+		var $app, $seg;
 		var xml_id;
 		var startWordNumberInCorrection = g_wordNumber;
 		for ( var i = 0, l = infoArr.length; i < l; i++) {
@@ -1076,10 +1077,16 @@ function getTeiByHtml(inputString, args) {
 				var $orig = $newDoc.createElement('rdg');
 				$orig.setAttribute('type', 'orig');
 				$orig.setAttribute('hand', 'firsthand');
-				var origText = $htmlNode.getAttribute('wce_orig');
-				if (origText) {
+				
+				if (arr['blank_firsthand'] === 'on') { //Blank first hand reading
+					var origText = 'ommission'; //TODO: This has to be &om;
 					html2Tei_correctionAddW($orig, origText);
-					g_wordNumber = startWordNumberInCorrection;
+				} else {
+					var origText = $htmlNode.getAttribute('wce_orig');
+					if (origText) {
+						html2Tei_correctionAddW($orig, origText);
+						g_wordNumber = startWordNumberInCorrection;
+					}
 				}
 				$app.appendChild($orig);
 			}
@@ -1094,9 +1101,9 @@ function getTeiByHtml(inputString, args) {
 			$rdg.setAttribute('hand', corrector_name);
 
 			// deletion
-			var deletion = arr['deletion'];
+			var deletion = decodeURIComponent(arr['deletion']);
 			if (deletion && deletion != 'null' && deletion != '') {
-				$rdg.setAttribute('deletion', deletion.replace(',', '+'));
+				$rdg.setAttribute('deletion', deletion.replace(/\,/g, '+'));
 			}
 			// editorial_note
 			var editorial_note = arr['editorial_note'];
@@ -1107,13 +1114,24 @@ function getTeiByHtml(inputString, args) {
 				xml_id = 'P' + g_pageNumber + 'C' + g_columnNumber + 'L' + _line + '-' + g_witValue + '-1';
 				$note.setAttribute('xml:id', xml_id);// TODO:
 				nodeAddText($note, editorial_note);
-				$rdg.appendChild($note);
+				$teiParent.insertBefore($note, $app.nextSibling);
 			}
 
+			var place = arr['place_corr'];
 			var corrector_text = arr['corrector_text'];
-			if (corrector_text) {
-				html2Tei_correctionAddW($rdg, corrector_text);
-			}
+			if (place === 'pageleft' || place === 'pageright' || place === 'pagetop' || place === 'pagebottom') { //define <seg> element for marginal material
+				$seg = $newDoc.createElement('seg');
+				$seg.setAttribute('type', 'margin');
+				$seg.setAttribute('subtype', place);
+				if (corrector_text) { //add to <seg>
+					html2Tei_correctionAddW($seg, corrector_text);
+				}
+				$rdg.appendChild($seg);
+			} else { //non-marginal material
+				if (corrector_text) { //add to <rdg>
+					html2Tei_correctionAddW($rdg, corrector_text);
+				}
+			}			
 			$app.appendChild($rdg);
 		}
 		return {
@@ -1136,22 +1154,17 @@ function getTeiByHtml(inputString, args) {
 			}
 		}
 	};
-
+	
 	/*
 	 * type break,
 	 */
 	// break_type= lb / cb /qb / pb number= pb_type= running_title= lb_alignment, Page (Collate |P 121|): <pb n="121" type="page" xml:id="P121-wit" /> Folio (Collate |F 3v|): <pb n="3v" type="folio" xml:id="P3v-wit" /> Column (Collate |C 2|): <cb n="2" xml:id="P3vC2-wit" />
 	// Line (Collate |L 37|): <lb n="37" xml:id="P3vC2L37-wit" />
 	var html2Tei_break = function(arr, $teiParent, $htmlNode, stopAddW) {
-		var hasBreak = false;
 		var xml_id;
 		var breakNodeText = getDomNodeText($htmlNode);
 		var break_type = arr['break_type'];
 		var $newNode;
-
-		if (breakNodeText && breakNodeText.substr(0, "&#45;".length) == "&#45;") {
-			hasBreak = true;
-		}
 
 		if (break_type == 'gb') {
 			// special role of quire breaks
@@ -1189,16 +1202,15 @@ function getTeiByHtml(inputString, args) {
 				}
 				if (arr['facs'] != '') {
 					// use URL for facs attribute
-					$newNode.setAttribute('facs', arr['facs']);
+					$newNode.setAttribute('facs', decodeURIComponent(arr['facs']));
 				}
 				xml_id = 'P' + breaPage + '-' + g_witValue;
 				break;
 			}
-			$newNode.setAttribute('xml:id', xml_id);
-			if (hasBreak) {
+			$newNode.setAttribute("xml:id", xml_id);//IE gets confused here
+			if (arr['hasBreak'] === 'yes') {
 				$newNode.setAttribute('break', 'no');
 			}
-
 		}
 		$teiParent.appendChild($newNode);
 		// TODO
@@ -1213,11 +1225,23 @@ function getTeiByHtml(inputString, args) {
 				$secNewNode = $newDoc.createElement('fw');
 				$secNewNode.setAttribute('type', 'runTitle');
 				nodeAddText($secNewNode, arr['running_title']);
-				$newNode.parentNode.appendChild($secNewNode);
+				var placeValue = arr['paratext_position'];
+				if (placeValue == 'other') {
+					placeValue = arr['paratext_position_other'];
+				}
+				if (placeValue === 'pageleft' || placeValue === 'pageright' || placeValue === 'pagetop' || placeValue === 'pagebottom') { //define <seg> element for marginal material
+					$seg = $newDoc.createElement('seg');
+					$seg.setAttribute('type', 'margin');
+					$seg.setAttribute('subtype', placeValue);
+					$seg.appendChild($secNewNode);
+					$newNode.parentNode.appendChild($seg);
+				} else { //non-marginal material
+					$newNode.parentNode.appendChild($secNewNode);
+				}
 			}
 			if (arr['page_number'] != '') {
 				$secNewNode = $newDoc.createElement('fw');
-				$secNewNode.setAttribute('type', 'PageNum');
+				$secNewNode.setAttribute('type', 'pageNum');
 				nodeAddText($secNewNode, arr['page_number']);
 				$newNode.parentNode.appendChild($secNewNode);
 			}
@@ -1282,7 +1306,11 @@ function getTeiByHtml(inputString, args) {
 			}
 		}
 		if (note_type_value != '') {
-			$note.setAttribute('type', note_type_value);
+			if (note_type_value === 'changeOfHand') {
+				$note.setAttribute('type', 'editorial');
+			} else {
+				$note.setAttribute('type', note_type_value);
+			}
 		}
 
 		/*
@@ -1300,7 +1328,7 @@ function getTeiByHtml(inputString, args) {
 		$teiParent.appendChild($note);
 
 		// add <handshift/>
-		if (arr['note_type'] == "changeOfHand") {
+		if (note_type_value === "changeOfHand") {
 			var $secNewNode = $newDoc.createElement('handshift');
 			$secNewNode.setAttribute('n', arr['newHand']);
 			$teiParent.appendChild($secNewNode);
@@ -1393,7 +1421,15 @@ function getTeiByHtml(inputString, args) {
 		else
 			nodeAddText($paratext, arr['text']);
 
-		$teiParent.appendChild($paratext);
+		if (placeValue === 'pageleft' || placeValue === 'pageright' || placeValue === 'pagetop' || placeValue === 'pagebottom') { //define <seg> element for marginal material
+			$seg = $newDoc.createElement('seg');
+			$seg.setAttribute('type', 'margin');
+			$seg.setAttribute('subtype', placeValue);
+			$seg.appendChild($paratext);
+			$teiParent.appendChild($seg);
+		} else {
+			$teiParent.appendChild($paratext);
+		}
 		return null;
 	};
 

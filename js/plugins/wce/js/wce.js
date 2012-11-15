@@ -224,7 +224,11 @@ function writeWceNodeInfo(val) {
 				ed.execCommand('addToCounter', 'lb', document.getElementById('covered').value);
 			}
 			break;
-		
+			
+		case 'formatting_capitals': //only for formatting_capitals needed
+			wceClass = ' class="formatting_capitals"';
+			break;
+			
 		default:
 			break;
 
@@ -284,7 +288,7 @@ function writeWceNodeInfo(val) {
 			} else if (wce_type == 'brea') {
 				// break type
 				wce_node.innerHTML = val;
-			}else if(wce_type=='abbr'){
+			} else if(wce_type=='abbr'){
 				var abbrClass = 'abbr';
 				if (document.getElementById('add_overline').checked == true) {
 					abbrClass = 'abbr_add_overline';
