@@ -5,7 +5,9 @@
 <script type="text/javascript" src="../../tiny_mce_popup.js"></script>
 <script type="text/javascript" src="../../tiny_mce_src.js"></script>
 <script type="text/javascript" src="../../jquery.js"></script>
+<script type="text/javascript" src="../../rangy-core.js"></script>
 <script type="text/javascript" src="js/wce.js"></script>
+
 </head>
 
 <body id="table" style="display: none">
@@ -179,7 +181,7 @@
 	});
 	
 	
-	function init() {  
+	function init() { 
 		wceInfoInit('corr'); 
 		if($.browser.safari){
 			$('#content_fieldset').css('width',$('#mceActionPanel').width()-250);
