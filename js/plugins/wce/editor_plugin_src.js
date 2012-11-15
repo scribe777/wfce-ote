@@ -5,7 +5,7 @@
  * 
  * License: http://tinymce.moxiecode.com/license Contributing: http://tinymce.moxiecode.com/contributing
  */
-  
+
 (function() {
 	var qcnt = 1; // quire count
 	var pcnt = 1; // page count
@@ -69,16 +69,14 @@
 
 			var w = ed.WCE_VAR;
 			w.isc = true;// ist selection collapsed
-			w.textNode = null;
-			w.isAtNodeEnd = false; // is Caret at end of node?
+			w.isCollapsedAtNodeEnd = false; // is Caret at end of node?
 			w.type = null; // Caret in welche wce type
 			w.isInBE = false; // is Caret in blocked Element
-			w.next = null; // nextSibling
-			w.isNextBE = false; // is nextSibling blocked Element
-			w.pre = null; // previousSibling
-			w.isPreBE = false; // is previousSibling BE
-			w.isRedraw = false;
-			w.inputBlock = false;
+			w.nextElem = null; // nextSibling
+			w.isNextElemBE = false; // is nextSibling blocked Element
+			w.isRedrawn = false;
+			w.doAdaptivSel = false;
+			w.inputDisable = false;
 			WCEObj._setAllControls(ed, false); // controls setActive?
 		},
 
@@ -151,31 +149,7 @@
 				next = WCEObj._getNextSiblingOfAncestor(ed, next);
 				_next.parentNode.removeChild(_next);
 			}
-
 			return next;
-
-			// var parent, next;
-			//
-			// while (node) {
-			// next = node.nextSibling;
-			// if (node.nodeName.toLowerCase() == "body") {
-			// return null;
-			// }
-			//
-			// parent = node.parentNode;
-			// if (parent && parent.lastChild != node) {
-			// // Unter Firefox, nachdem "Del" ein Element wird ein #Text="" erzeugt
-			// if (tinyMCE.isGecko && ed.selection.isCollapsed() && next.nodeType == 3 && next.nodeValue == "") {
-			// var _next = next;
-			// next = WCEObj._getNextSiblingOfAncestor(ed, next);
-			// _next.parentNode.removeChild(_next);
-			// }
-			// return next;
-			// }
-			// node = parent;
-			// }
-			// return null;
-
 		},
 
 		/*
@@ -195,9 +169,10 @@
 		 * so lang as node is firstChild, find outmost Ancestor. Reverse of _getFirstTextNodeOfNode()
 		 */
 		_getAncestorIfFirstChild : function(ed, node) {
-			var parent;
+			var nodeName, parent;
 			while (node) {
-				if (node.nodeName.toLowerCase() == "body") {
+				nodeName = node.nodeName.toLowerCase();
+				if (nodeName == ('body' || 'html')) {
 					return node;
 				}
 				parent = node.parentNode;
@@ -233,16 +208,67 @@
 				}
 				return WCEObj._getFirstTextNodeOfNode(ed, firstChild);
 			}
+		},
 
+		/*
+		 * 
+		 */
+		_moveCaretToEndOfPreviousSibling : function(ed, rng, node) {
+			var ancestor = WCEObj._getAncestorIfFirstChild(ed, node);
+			if (ancestor) {
+				var pre = ancestor.previousSibling;
+				if (pre) {
+					var preTextNode = WCEObj._getLastTextNodeOfNode(ed, pre);
+					if (preTextNode) {
+						var preTextNodeValue = preTextNode.nodeValue;
+						var preTextNodeLength = preTextNodeValue.length;
+
+						if (preTextNodeLength < 0) {
+							preTextNodeLength = 0;
+						}
+						rng.setEnd(preTextNode, preTextNodeLength);
+						WCEObj._setRNG(ed, rng);
+
+						if (ed.WCE_VAR.doAdaptivSel) {
+							return WCEObj._adaptiveSelection(ed, rng);
+						}
+					}
+				}
+			}
+
+			return rng;
+		},
+
+		/*
+		 * 
+		 */
+		_moveCaretToStartOfNextSibling : function(ed, rng, node) {
+			var ancestor = WCEObj._getAncestorIfLastChild(ed, node);
+			if (ancestor) {
+				var next = ancestor.nextSibling;
+				if (next) {
+					var nextTextNode = WCEObj._getFirstTextNodeOfNode(ed, next);
+					if (nextTextNode) {
+						rng.setStart(nextTextNode, 0);
+						WCEObj._setRNG(ed, rng);
+						if (ed.WCE_VAR.doAdaptivSel) {
+							return WCEObj._adaptiveSelection(ed, rng);
+						}
+					}
+				}
+			}
+
+			return rng;
 		},
 
 		/*
 		 * so lang as node is lastChild, find outmost Ancestor. Reverse of _getLastTextNodeOfNode()
 		 */
 		_getAncestorIfLastChild : function(ed, node) {
-			var parent;
+			var parent, nodeName;
 			while (node) {
-				if (node.nodeName.toLowerCase() == "body") {
+				nodeName = node.nodeName.toLowerCase();
+				if (nodeName == "body" || nodeName == 'html') {
 					return node;
 				}
 				parent = node.parentNode;
@@ -341,435 +367,297 @@
 			}
 		},
 
+		// for IE
+		_getSEL : function(ed) {
+			var sel, win = ed.getWin();
+			if (win.getSelection) {
+				// IE 9
+				sel = win.getSelection();
+			} else {
+				// IE <=8
+				sel = rangy.getSelection(win);
+			}
+			return sel;
+		},
+
+		_getRNG : function(ed) {
+			if (!tinyMCE.isIE) {
+				return ed.selection.getRng(true);
+			}
+
+			// IE
+			var sel = WCEObj._getSEL(ed);
+			if (sel && sel.rangeCount > 0) {
+				return sel.getRangeAt(0);
+			}
+			return null;
+		},
+
+		_setRNG : function(ed, rng) {
+			if (!tinyMCE.isIE && !tinyMCE.isGecko) {
+				ed.selection.setRng(rng);
+			} else {
+				var sel = WCEObj._getSEL(ed);
+				if (sel.setSingleRange) {
+					sel.setSingleRange(rng);
+				} else {
+					sel.removeAllRanges();
+					sel.addRange(rng);
+				}
+			}
+		},
+
+		_selectionHasBlockElement : function(ed) {
+			try {
+				var elem = $('<div/>').html(ed.selection.getContent());
+				var isWceBE = WCEObj._isWceBE;
+				var testNode = function(node) {
+					if (isWceBE(ed, node)) {
+						return true;
+					}
+					var list = node.childNodes;
+					if (!list) {
+						return false;
+					}
+
+					for ( var i = 0, c, len = list.length; i < len; i++) {
+						c = list[i];
+						if (c.nodeType == 1) {
+							return testNode(c);
+						}
+					}
+					return false;
+				};
+				return testNode(elem[0]);
+			} catch (e) {
+				return false;
+			}
+		},
+
 		/*
 		 * update wce variable
 		 */
-		_setWCEVariable : function(ed, isAdaptived) {
-			var w = ed.WCE_VAR;
-
+		_setWCEVariable : function(ed) {
 			// reset WCE_VAR
 			WCEObj._resetWCEVariable(ed);
 
-			var _getNextSiblingOfAncestor = WCEObj._getNextSiblingOfAncestor;
+			// init
+			var w = ed.WCE_VAR;
 			var _isNodeTypeOf = WCEObj._isNodeTypeOf;
 			var _setAllControls = WCEObj._setAllControls;
 			var _getAncestorIfLastChild = WCEObj._getAncestorIfLastChild;
 			var _getAncestorIfFirstChild = WCEObj._getAncestorIfFirstChild;
-
-			var rng = ed.selection.getRng(true);
-			var startContainer = rng.startContainer;
-			var endContainer = rng.endContainer;
-			var startOffset = rng.startOffset;
-			var endOffset = rng.endOffset;
-			var _isWceBE = WCEObj._isWceBE;
-
-			var startNode;
-
-			w.isc = ed.selection.isCollapsed();
-
-			if (!startContainer) {
+			var _moveCaretToEndOfPreviousSibling = WCEObj._moveCaretToEndOfPreviousSibling;
+			var _moveCaretToStartOfNextSibling = WCEObj._moveCaretToStartOfNextSibling;
+			var _adaptiveSelection = WCEObj._adaptiveSelection;
+			var _getRNG = WCEObj._getRNG;
+			// getRange
+			var rng = WCEObj._getRNG(ed);
+			if (!rng) {
 				return;
 			}
 
-			// if select a text
-			if (!w.isc) {
-				var endNode;
+			var _isWceBE = WCEObj._isWceBE;
+			var selectedNode;
+			w.isc = ed.selection.isCollapsed();
 
+			// delete in firefox can create empty element and startOffset==0
+			var startContainer = rng.startContainer;
+			if (startContainer.nodeType == 1 && !tinyMCE.isIE && startContainer.childNodes.length == 0 && rng.startOffset == 0 && startContainer.nodeName.toLowerCase != 'body' && startContainer.nodeName.toLowerCase != 'html') {
+				startContainer.parentNode.removeChild(startContainer);
+				return WCEObj._setWCEVariable(ed);
+			}
+
+			if (w.isc) {
+				//  
+				// move caret to EndOfPreviousSibling,manly for IE:
+				if (rng.startOffset == 0) {
+					rng = _moveCaretToEndOfPreviousSibling(ed, rng, startContainer);
+				}
+				startContainer = rng.startContainer;
 				w.not_B = true;
 				w.not_N = true;
 
-				// if run adaptive Selection
-				if (!isAdaptived) {
-					var adaptiveCheckbox = tinymce.DOM.get(ed.id + '_adaptive_selection');
-					if (adaptiveCheckbox && adaptiveCheckbox.checked) {
-						WCEObj._adaptiveSelection(ed);
-						return WCEObj._setWCEVariable(ed, true);
-					}
-				}
-
-				// after adaptive selection,in IE startContainer==node Caret muss be move
-				if (isAdaptived && tinyMCE.isIE && startContainer.nodeType == 1) {
-					startNode = WCEObj._getRealContainer(startContainer, startOffset);
-				}
-
-				var startText = startContainer.nodeValue;
-				if (!startNode && startText && startText.length == startOffset) {
-					// at #text end
-					var _startContainer = WCEObj._getAncestorIfLastChild(ed, startContainer);
-					if (_startContainer) {
-						startNode = _startContainer.nextSibling;
-					}
-				}
-
-				if (!startNode && startContainer.nodeType == 3) {
+				if (startContainer.nodeType == 3) {
+					selectedNode = startContainer.parentNode;
 					var startText = startContainer.nodeValue;
-					if (startText && startOffset == 0) {
-						startNode = WCEObj._getAncestorIfFirstChild(ed, startContainer);
+					if (startText && startText.length == rng.endOffset) {
+						w.isCollapsedAtNodeEnd = true;
+					}
+				} else {
+					selectedNode = startContainer;
+				}
+
+				w.nextElem = WCEObj._getNextSiblingOfAncestor(ed, startContainer);
+				w.isNextElemBE = _isWceBE(ed, w.nextElem);
+			} else {
+				// if select text
+
+				var adaptiveCheckbox = tinymce.DOM.get(ed.id + '_adaptive_selection');
+				if (adaptiveCheckbox && adaptiveCheckbox.checked) {
+					w.doAdaptivSel = true;
+					var tempRng = rng.cloneRange();
+					rng = _adaptiveSelection(ed, rng);
+					if (tempRng.startOffset == rng.startOffset && tempRng.endOffset == rng.endOffset) {
+						// adaptiveCaret
+						rng = WCEObj._adaptiveCaret(ed, rng);
+					}
+				} else {
+					// adaptiveCaret
+					rng = WCEObj._adaptiveCaret(ed, rng);
+				}
+
+				// w.inputDisable
+				// find startNode,endNode
+				var startNode, endNode, selectedNodeStart, selectedNodeEnd;
+				startContainer = rng.startContainer;
+				var endContainer = rng.endContainer;
+				if (startContainer.parentNode === endContainer.parentNode) {
+					startNode = startContainer.parentNode;
+					endNode = startNode;
+					selectedNodeStart = startNode;
+					selectedNodeEnd = startNode;
+				} else {
+					if (startContainer.nodeType == 3) {
+						selectedNodeStart = startContainer.parentNode;
+						if (rng.startOffset == 0) {
+							startNode = WCEObj._getAncestorIfFirstChild(ed, startContainer);
+							if (startNode)
+								startNode = startNode.parentNode;
+						} else {
+							startNode = startContainer.parentNode;
+						}
 					} else {
 						startNode = startContainer;
+						selectedNodeStart = startContainer;
 					}
-				}
-
-				// after adaptive selection,in IE startContainer==node Caret muss be move
-				if (tinyMCE.isIE && endContainer.nodeType == 1) {
-					endContainer = WCEObj._getRealContainer(endContainer, endOffset);
-				}
-
-				// in Firefox wird endContainer ein leer Element ausgewaehlt, trotz zwei span elemente hintereinander und nicht leer sind
-				// in dem Fall soll endContainer auf Prevoius dieses Element sein.
-				if (endOffset == 0 && tinyMCE.isGecko) {
-					// return nodeType==1
-					var _endContainer = _getAncestorIfFirstChild(ed, endContainer);
-					if (_endContainer) {
-						endNode = _endContainer.previousSibling;
-					}
-
-					if (endNode) {
-						var endTextNode = WCEObj._getLastTextNodeOfNode(ed, endNode);
-						if (endTextNode) {
-							var endText = endTextNode.nodeValue;
-							if (endText) {
-								rng.setEnd(endTextNode, endText.length);
-								ed.selection.setRng(rng);
+					if (endContainer.nodeType == 3) {
+						selectedNodeEnd = endContainer.parentNode;
+						var endText = endContainer.nodeValue;
+						if (endText && rng.endOffset == endText.length) {
+							endNode = WCEObj._getAncestorIfLastChild(ed, endContainer);
+							if (endNode) {
+								endNode = endNode.parentNode;
 							}
+						} else {
+							endNode = endContainer.parentNode;
 						}
-
-					}
-				}
-
-				// Caret at textnode end?
-				if (endContainer.nodeType == 3 && endContainer.nodeValue.length == endOffset) {
-					// return nodeType==1
-					w.isAtNodeEnd = true;
-				}
-
-				if (!endNode && endContainer.nodeType == 3) {
-					if (w.isAtNodeEnd) {
-						endNode = _getAncestorIfLastChild(ed, endContainer);
 					} else {
 						endNode = endContainer;
+						selectedNodeEnd = endContainer;
 					}
 				}
 
-				if (startContainer == endContainer) {
-					endNode = startNode;
-				} else {
-					w.inputBlock = true;
-				}
-
-				// w.next = endNode.nextSibling
-				// w.isNextBE = _isWceBE(ed, w.next);
-				w.pre = startNode.previousSibling;
-				w.isPreBE = _isWceBE(ed, w.pre);
-
-				// startContainer/endContainer kann type==1 oder type==3 sein
-				if (!startNode || !endNode || startNode.parentNode != endNode.parentNode) {
+				if (startNode && startNode != endNode) {
 					_setAllControls(ed, true);
 					w.isInBE = true;
 					w.type = null;
+					w.inputDisable = true;
 					return;
 				}
 
-				if (startNode != endNode) {
-					_setAllControls(ed, true);
-					w.not_C = false;
-					w.not_D = false;
-					w.not_P = false;
-					w.not_A = false;
-					return;
+				if (selectedNodeStart === selectedNodeEnd) {
+					selectedNode = selectedNodeStart;
+				} else {
+					selectedNode = startNode;
 				}
 
-				if (startNode.nodeType == 3) {
-					startNode = startNode.parentNode;
+				if (WCEObj._selectionHasBlockElement(ed)) {
+					w.inputDisable = true;
 				}
-
-				w.isInBE = _isWceBE(ed, startNode);
-
-				if (w.isInBE) {
-					w.inputBlock = true;
-				}
-
-			} else {
-				if (startContainer.nodeType != 3) {
-					// In Firefox startOffSet==0, node is empty
-					if (startOffset == 0 && tinyMCE.isGecko && w.isc && startContainer.childNodes.length == 0) {
-						startContainer.parentNode.removeChild(startContainer);
-					} else if (!tinyMCE.isIE) { // if (tinyMCE.isGecko)
-						var startContainerNodeName = startContainer.nodeName;
-						if (startContainerNodeName.toLowerCase() == "body") {
-							startContainer = WCEObj._getRealContainer(startContainer, startOffset);
-							if (startContainer) {
-								startContainer = startContainer.previousSibling;
-							}
-							if (startContainer) {
-								var lastTextNode = WCEObj._getLastTextNodeOfNode(ed, startContainer);
-								if (lastTextNode) {
-									var lastTextNodeValue = lastTextNode.nodeValue;
-									if (lastTextNodeValue) {
-										rng.setStart(lastTextNode, lastTextNodeValue.length);
-										rng.setEnd(lastTextNode, lastTextNodeValue.length);
-										ed.selection.setRng(rng);
-										return WCEObj._setWCEVariable(ed);
-									}
-								}
-							}
-
-						}
-					}
-
-					// ganz anfang oder Ende
-					w.not_C = true;
-					w.not_A = true;
-
-					// for IE
-					if (tinyMCE.isIE && w.isc && startContainer) {
-						var pre, next;
-						var childNodes = startContainer.childNodes;
-						if (startOffset && childNodes) {
-							startNode = childNodes[startOffset - 1];
-							w.isInBE = _isWceBE(ed, startNode);
-							w.pre = startNode.previousSibling;
-							w.next = _getNextSiblingOfAncestor(ed, startNode);
-							w.isAtNodeEnd = true;
-							w.isNextBE = _isWceBE(ed, w.next);
-							w.isPreBE = _isWceBE(ed, w.pre);
-						}
-					}
-
-					return;
-				}
-
-				// /if startContainer==textNode
-				startNode = startContainer.parentNode;
-
-				// if isCollapsed
-				var text = startContainer.nodeValue;
-				if (startOffset == text.length) {
-					w.isAtNodeEnd = true;
-				}
-				w.not_C = true;
-				w.not_A = true;
-
-				// get currnode, nextSibling, privousSilbing in BE ?
-				w.isInBE = _isWceBE(ed, startNode);
-				w.next = _getNextSiblingOfAncestor(ed, startContainer);
-				w.isNextBE = _isWceBE(ed, w.next);
-				w.isPreBE = _isWceBE(ed, w.pre);
 			}
 
+			w.isInBE = _isWceBE(ed, selectedNode);
+
 			// get Type of wceNode
-			if (_isNodeTypeOf(startNode, 'gap')) {
+			if (_isNodeTypeOf(selectedNode, 'gap')) {
 				_setAllControls(ed, true);
 				w.not_D = false;
 				w.type = 'gap';
-			} else if (_isNodeTypeOf(startNode, 'corr')) {
+			} else if (_isNodeTypeOf(selectedNode, 'corr')) {
 				_setAllControls(ed, true);
 				w.not_C = false;
 				w.type = 'corr';
-			} else if (_isNodeTypeOf(startNode, 'abbr')) {
+			} else if (_isNodeTypeOf(selectedNode, 'abbr')) {
 				w.not_A = false;
 				w.type = 'abbr';
-			} else if (_isNodeTypeOf(startNode, 'chapter_number')) {
+			} else if (_isNodeTypeOf(selectedNode, 'chapter_number')) {
 				_setAllControls(ed, true);
 				w.type = 'chapter_number';
-			} else if (_isNodeTypeOf(startNode, 'verse_number')) {
+			} else if (_isNodeTypeOf(selectedNode, 'verse_number')) {
 				_setAllControls(ed, true);
 				w.type = 'verse_number';
-			} else if (_isNodeTypeOf(startNode, 'brea')) {
+			} else if (_isNodeTypeOf(selectedNode, 'brea')) {
 				w.type = 'break';
-			} else if (_isNodeTypeOf(startNode, 'unclear')) {
+			} else if (_isNodeTypeOf(selectedNode, 'unclear')) {
 				w.type = 'unclear';
-			} else if (_isNodeTypeOf(startNode, 'spaces')) {
+			} else if (_isNodeTypeOf(selectedNode, 'spaces')) {
 				_setAllControls(ed, true);
 				w.type = 'spaces';
 				w.not_PC = false;
-			} else if (_isNodeTypeOf(startNode, 'formatting_capitals')) {
+			} else if (_isNodeTypeOf(selectedNode, 'formatting_capitals')) {
 				w.type = 'formatting_capitals';
-			} else if (_isNodeTypeOf(startNode, 'paratext')) {
+			} else if (_isNodeTypeOf(selectedNode, 'paratext')) {
 				w.type = 'paratext';
-			} else if (_isNodeTypeOf(startNode, 'note')) {
+			} else if (_isNodeTypeOf(selectedNode, 'note')) {
 				_setAllControls(ed, true);
 				w.not_N = false;
 				w.type = 'note';
-			} else if (_isNodeTypeOf(startNode, 'punctuation')) {
-				w.type = 'punctuation';
 			}
 		},
 
+		// startCoantainer: if caret at end, move it to Beginn of nextSiling
+		// endContainter: if caret at 0, move it to previousSibling
+		_adaptiveCaret : function(ed, rng) {
+			var startContainer = rng.startContainer;
+			var startText = startContainer.nodeValue;
+			if (startText) {
+				if (rng.startOffset == startText.length) {
+					rng = WCEObj._moveCaretToStartOfNextSibling(ed, rng, startContainer);
+				}
+			}
+
+			if (rng.endOffset == 0) {
+				rng = WCEObj._moveCaretToEndOfPreviousSibling(ed, rng, rng.endContainer);
+			}
+
+			return rng;
+		},
+
 		// only for mouseup
-		_adaptiveSelection : function(ed) {
-			var _getTextLeftPosition = WCEObj._getTextLeftPosition;
-			var _getTextRightPosition = WCEObj._getTextRightPosition;
-
-			var rng = ed.selection.getRng(true);
-
+		_adaptiveSelection : function(ed, rng) {
 			var startContainer = rng.startContainer; // #text
 			var startOffset = rng.startOffset;
 
 			var endContainer = rng.endContainer; // #text
 			var endOffset = rng.endOffset;
 
-			var newStartOffset, newEndOffset;
 			var startText = startContainer.nodeValue;
 			var endText = endContainer.nodeValue;
 
-			// if need move startContainer: only (a few) space after sartContainer
-			if (startOffset != 0) {
-				if (startText) {
-					var subText = startText.substr(startOffset, startText.length);
-					if (subText && tinymce.trim(subText) == "") {
-						var moveStartToNext = true;
-					}
-				}
-			}
-			if (moveStartToNext) {
-				var next = WCEObj._getNextSiblingOfAncestor(ed, startContainer);
-				if (next) {
-					var nextTextNode = WCEObj._getFirstTextNodeOfNode(ed, next);
-					if (nextTextNode) {
-						var nextText = nextTextNode.nodeValue;
-						if (nextText) {
-							rng.setStart(nextTextNode, 0);
-							ed.selection.setRng(rng);
-							startContainer = rng.startContainer;
-							startOffset = rng.startOffset;
-							startText = startContainer.nodeValue;
-							endContainer = rng.endContainer;
-							endOffset = rng.endOffset;
-							endText = endContainer.nodeValue;
-						}
-					}
-				}
-			}
+			var newStartOffset, newEndOffset, rngIsChanged;
 
-			// if need move endContainer
-			if (endContainer.nodeType != 3) {
-				// in IE
-				if (tinymce.isIE) {
-					var moveEndToPrevious = true;
-					endContainer = WCEObj._getRealContainer(endContainer, endOffset);
-				} else if (tinymce.isGecko) {
-					// in Firefox at end of BODY <br data-mce-bogus="1">
-					var _endContainer = WCEObj._getRealContainer(endContainer, endOffset);
-					if (_endContainer && _endContainer.getAttribute("data-mce-bogus")) {
-						endContainer = _endContainer.previousSibling;
-						var _text = endContainer.nodeValue;
-						if (_text) {
-							rng.setEnd(endContainer, _text.length);
-							ed.selection.setRng(rng);
-							startContainer = rng.startContainer;
-							startOffset = rng.startOffset;
-							startText = startContainer.nodeValue;
-							endContainer = rng.endContainer;
-							endOffset = rng.endOffset;
-							endText = endContainer.nodeValue;
-						}
-					}
-				}
-			}
-
-			if (endOffset == 0) {
-				var moveEndToPrevious = true;
-			} else {
-				if (endText) {
-					var subText = endText.substr(0, endOffset);
-					if (subText && tinymce.trim(subText) == "") {
-						var moveEndToPrevious = true;
-					}
-				}
-			}
-			if (moveEndToPrevious) {
-				var pre = WCEObj._getAncestorIfLastChild(ed, endContainer);
-				if (pre) {
-					pre = pre.previousSibling;
-					if (pre) {
-						var preLastTextNode = WCEObj._getLastTextNodeOfNode(ed, pre);
-						if (preLastTextNode) {
-							var preText = preLastTextNode.nodeValue;
-							if (preText) {
-								rng.setEnd(preLastTextNode, preText.length);
-								ed.selection.setRng(rng);
-								// reload rng
-								rng = ed.selection.getRng(true);
-								//startContainer = rng.startContainer;
-								//startOffset = rng.startOffset;
-								//startText = startContainer.nodeValue;
-								endContainer = rng.endContainer;
-								endOffset = rng.endOffset;
-								endText = endContainer.nodeValue;
-							}
-						}
-					}
-				}
-			}
-
-			// startContainer == endContainer, return
-			if (startContainer == endContainer) {
-				startText = startContainer.nodeValue;
-				if (startText && startText.indexOf(" ") < 0) {
-					rng.setStart(startContainer, 0);
-					var len = startText.length;
-					rng.setEnd(startContainer, len);
-					ed.selection.setRng(rng);
-				} else if (startText) {
-					newStartOffset = _getTextLeftPosition(startText, startOffset);
-					newEndOffset = _getTextRightPosition(startText, endOffset);
+			if (startText) {
+				var newStartOffset = WCEObj._getTextLeftPosition(startText, startOffset);
+				if (newStartOffset != startOffset) {
 					rng.setStart(startContainer, newStartOffset);
+					rngIsChanged = true;
+				}
+			}
+
+			if (endText) {
+				var newEndOffset = WCEObj._getTextRightPosition(endText, endOffset);
+				if (newEndOffset != endOffset) {
 					rng.setEnd(endContainer, newEndOffset);
-					ed.selection.setRng(rng);
-				}
-				return;
-			}
-
-			var startParent;
-			if (startText && startOffset == 0) {
-				// Caret at start
-				startParent = WCEObj._getAncestorIfFirstChild(ed, startContainer);
-				startParent = startParent.parentNode;
-			} else {
-				startParent = startContainer.parentNode;
-			}
-
-			var endParent;
-			if (endText && endOffset == endText.length) {
-				// Caret at end
-				endParent = WCEObj._getAncestorIfLastChild(ed, endContainer);
-				endParent = endParent.parentNode;
-			} else {
-				endParent = endContainer.parentNode;
-			}
-
-			// startParent == endParent
-			if (startParent == endParent) {
-				startText = startContainer.nodeValue;
-				endText = endContainer.nodeValue;
-				if (startText && endText) {
-					newStartOffset = _getTextLeftPosition(startText, startOffset);
-					newEndOffset = _getTextRightPosition(endText, endOffset);
-					if (newEndOffset < 0) {
-						rng.setEnd(endContainer, 0);
-						ed.selection.setRng(rng);
-						return WCEObj._adaptiveSelection(ed);
-					}
-					rng.setStart(startContainer, newStartOffset);
-					rng.setEnd(endContainer, newEndOffset);
-					ed.selection.setRng(rng);
-				}
-				return;
-			}
-
-			// startContainer!=endContainer;
-			startText = endContainer.nodeValue;
-			if (startText && endOffset == 1 && startText.indexOf(" ") == 0) {
-				endContainer = endContainer.previousSibling;
-				if (endContainer) {
-					endContainer = WCEObj._getLastTextNodeOfNode(ed, endContainer);
-					if (endContainer && endContainer.nodeType == 3) {
-						rng.setEnd(endContainer, endContainer.nodeValue.length);
-						ed.selection.setRng(rng);
-					}
+					rngIsChanged = true;
 				}
 			}
+
+			if (rngIsChanged) {
+				WCEObj._setRNG(ed, rng);
+				WCEObj._adaptiveCaret(ed, rng);
+			}
+			return rng;
 		},
 
 		/*
@@ -783,9 +671,10 @@
 				kv = ar[i].split('=');
 				k = kv[0];
 				v = kv[1];
-				 
-			 	if(!k|| k=='undefined' || !v || v=='undefined') continue;
-				
+
+				if (!k || k == 'undefined' || !v || v == 'undefined')
+					continue;
+
 				a[k] = decodeURIComponent(v);
 			}
 			return a;
@@ -796,33 +685,31 @@
 		 */
 		_insertSpace : function(ed, ek) {
 			var w = ed.WCE_VAR;
-			var next = w.next;
-			ed.execCommand('mceAddUndoLevel');
-			ed.WCE_VAR.stopUndo = true;
+			var next = w.nextElem;
 
-			var rng = ed.selection.getRng(true);
-
-			// is space key?
-			if (ek != 32) {
-				var newText = document.createTextNode("_");
-				if (next) {
-					next.parentNode.insertBefore(newText, next);
-				} else {
-					ed.getBody().appendChild(newText);
-				}
-				rng.setStart(newText, 0);
-				rng.setEnd(newText, 1);
-				ed.selection.setRng(rng);
-				return false;// not stopEvent();
-			} else if (tinymce.isIE || tinymce.isGecko) {
-				// TODO;
-				return true;// stopEvent();
+			var sel = WCEObj._getSEL(ed);
+			var rng = sel.getRangeAt(0);
+			var rng1 = rng.cloneRange();
+			var newText = document.createTextNode(" ");
+			if (next) {
+				next.parentNode.insertBefore(newText, next);
 			} else {
-				// TODO;
-				// space key verhindern unter safari, chrome und opera
-				return true; // stopEvent();
+				ed.getBody().appendChild(newText);
+			}
+			rng1.setStart(newText, 1);
+			rng1.setEnd(newText, 1);
+
+			if (sel.setSingleRange) {
+				sel.setSingleRange(rng1);
+			} else {
+				sel.removeAllRanges();
+				sel.addRange(rng1);
 			}
 
+			if (ek == 32) {
+				return true;
+			}
+			return false;
 		},
 
 		/*
@@ -864,7 +751,7 @@
 							break;
 						}
 						break;
-					case 'part': //part_abbr
+					case 'part': // part_abbr
 						info_text = '<div>' + 'Editorial expansion' + '<div>';
 						break;
 					case 'brea':
@@ -907,8 +794,8 @@
 						default: // other
 							info_text += ar['note_type_other'] + '</div>';
 						}
-						var nodeText=ar['note_text'] ;
-						if(nodeText){
+						var nodeText = ar['note_text'];
+						if (nodeText) {
 							info_text += '<div style="margin-top:10px">' + nodeText + '</div>';
 						}
 						break;
@@ -931,13 +818,13 @@
 							corr_str += 'deleted' + '</div>';
 						else
 							corr_str += ar['corrector_text'] + '</div>';
-						
-						var deletionText=ar['deletion'];
-						if (deletionText && deletionText!='null') { 
-							// information  on deletion
+
+						var deletionText = ar['deletion'];
+						if (deletionText && deletionText != 'null') {
+							// information on deletion
 							corr_str += '<div style="margin-top:5px">' + 'Method of deletion: ' + deletionText + '</div>';
 						}
-						 
+
 						break;
 					case 'paratext':
 						info_text = '<div>' + 'Paratext type: ';
@@ -1569,18 +1456,18 @@
 				});
 
 				return c;
-				
+
 			case 'punctuation':
 				var c = cm.createMenuButton('menu-punctuation', {
 					title : 'Punctuation',
 					image : tinyMCE.baseURL + '/plugins/wce/img/button_P-new.png',
 					icons : false
 				});
-				
+
 				c.onRenderMenu.add(function(c, m) {
 					var sub;
 					var w = ed.WCE_VAR;
-					sub = m.addMenu({			
+					sub = m.addMenu({
 						title : 'Add punctuation'
 					});
 
@@ -1699,7 +1586,7 @@
 						}
 					});
 				});
-				
+
 				return c;
 			}
 
@@ -1707,11 +1594,11 @@
 		},
 
 		_wceAdd : function(ed, url, htm, w, h, inline, add_new_wce_node) {
-			var winH=$(window).height()-100;
-			var winW=$(window).width()-60;			
-			w=winW>w?w:winW;
-			h=winH>h?h:winH;
-				
+			var winH = $(window).height() - 100;
+			var winW = $(window).width() - 60;
+			w = winW > w ? w : winW;
+			h = winH > h ? h : winH;
+
 			ed.windowManager.open({
 				file : url + htm,
 				width : w + ed.getLang('example.delta_width', 0),
@@ -1723,36 +1610,6 @@
 				wceobj : WCEObj
 			});
 
-		},
-
-		// bei adptive Selection
-		_getTextLeftPosition : function(startText, startOffset) {
-			if (typeof startText == 'undefined')
-				return startOffset;
-
-			var ch, pre_ch;
-			var nbsp = '\xa0';
-			var hasBlank = false;
-			for ( var i = startOffset; i <= startText.length; i++) {
-				ch = startText.charAt(i);
-
-				if (ch == ' ' || ch == nbsp) {
-					hasBlank = true;
-				}
-				if (ch != ' ' && ch != nbsp) {
-					pre_ch = startText.charAt(i - 1);
-					if (i == 0 || pre_ch == ' ' || pre_ch == nbsp || hasBlank) {
-						return i;
-					}
-				}
-				startOffset = i;
-			}
-
-			// Ende des String
-			if (startOffset == startText.length) {
-				return -2;
-			}
-			return startOffset;
 		},
 
 		_getNextEnd : function(endText, startOffset) {
@@ -1769,26 +1626,65 @@
 		},
 
 		// bei adptive Selection
-		_getTextRightPosition : function(endText, endOffset) {
-			var ch;
-			var nbsp = '\xa0';
-
-			// Endespunkt der Auswahl
-			for ( var i = endOffset; i > -1; i--) {
-				// ende des Textes
-				if (i == endText.length && i > 0 && endText.charAt(i - 1) != ' ' && endText.charAt(i - 1) != nbsp)
-					break;
-
-				ch = endText.charAt(i);
-
-				if (ch == ' ' || ch == nbsp) {
-					if (i > 0 && (endText.charAt(i - 1) != ' ' && endText.charAt(i - 1) != nbsp))
-						break;
-				}
-				endOffset--;
+		_getTextLeftPosition : function(text, idx) {
+			if (!text) {
+				return idx;
 			}
 
-			return endOffset;
+			var len = text.length;
+			if (len <= 0) {
+				return 0;
+			}
+
+			var c;
+			for ( var i = idx; i > -1 && i < len; i--) {
+				c = text.charAt(i);
+				if (c == ' ' || c == '\xa0') {
+					return i + 1;
+				}
+				idx--;
+			}
+			if (idx < 0) {
+				idx = 0;
+			}
+			return idx;
+
+		},
+
+		// bei adptive Selection
+		_getTextRightPosition : function(text, idx) {
+			if (!text) {
+				return st;
+			}
+
+			var len = text.length;
+			var c, pre_c;
+			var nbsp = '\xa0';
+			for ( var i = idx; i > -1; i--) {
+				ch = text.charAt(i);
+
+				// ende des Textes
+				if (i == len && i > 0) {
+					// 如果前一个不是空格
+					pre_c = ch = text.charAt(i - 1);
+					if (pre_c != ' ' && pre_c != nbsp)
+						break;
+				}
+
+				ch = text.charAt(i);
+				if (ch == ' ' || ch == nbsp) {
+					pre_c = ch = text.charAt(i - 1);
+					if (i > 0 && (pre_c != ' ' && pre_c != nbsp)) {
+						break;
+					}
+				}
+				idx--;
+			}
+			if (idx < 0) {
+				idx = 0;
+			}
+			return idx;
+
 		},
 
 		_getTextNode : function(_node) {
@@ -1814,7 +1710,7 @@
 			switch (wceType) {
 			case 'pc':
 				wceClass = ' class="pc"';
-				wceAttr = ' wce="' + ed.wceTypeParamInClass + '=' + wceType + '"';  
+				wceAttr = ' wce="' + ed.wceTypeParamInClass + '=' + wceType + '"';
 				ed.selection.setContent('<span' + wceAttr + wceClass + '>' + character + '</span> ');
 				break;
 			case 'abbr':
@@ -1910,22 +1806,22 @@
 				break;
 			case 'part_abbr':
 				// part-worded abbreviations
-				var rng = ed.selection.getRng(true);
+				var rng = WCEObj._getRNG(ed);
 				wceClass = ' class="part_abbr"';
-				var startContainer = rng.startContainer; 
-				
-				if(startContainer.nodeType!=3) 
-					return ;
-				
+				var startContainer = rng.startContainer;
+
+				if (startContainer.nodeType != 3)
+					return;
+
 				var startText = startContainer.nodeValue;
 				var text = startText.substr(0, rng.startOffset);
 				var li = text.lastIndexOf('(');
-				if (li > -1) {				
-					var part_abbr = text.substr(li) + ')'; 
-					rng.setStart(startContainer,li);
-					ed.selection.setRng(rng);
+				if (li > -1) {
+					var part_abbr = text.substr(li) + ')';
+					rng.setStart(startContainer, li);
+					WCEObj._setRNG(ed, rng);
 					wceAttr = 'wce="' + ed.wceTypeParamInClass + '=' + wceType + '" ';
-					ed.selection.setContent('<span ' + wceAttr + wceClass + '>' + part_abbr + '</span>'); 
+					ed.selection.setContent('<span ' + wceAttr + wceClass + '>' + part_abbr + '</span>');
 				} else {
 					alert("Error at part-worded abbreviation. Parentheses do not match or invalid nesting!");
 				}
@@ -1990,50 +1886,13 @@
 			// return false;
 		},
 
-		/*
-		 * 
-		 */
-		_moveCaretToPreviousSiblingEnd : function(ed, rng) {
-			var startContainer = rng.startContainer;
-			var pre = startContainer.previousSibling;
-
-			while (!pre) {
-				startContainer = startContainer.parentNode;
-				if(startContainer.nodeName.toLowerCase()=='body'){
-					break;
-				}
-				pre = startContainer.previousSibling;
-			}
-			if (pre) {
-				if (pre.nodeType == 1) {
-					var preTextNode = WCEObj._getLastTextNodeOfNode(ed, pre);
-					if (preTextNode) {
-						var len = preTextNode.length;
-						rng.setStart(preTextNode, len);
-						rng.setEnd(preTextNode, len);
-					}
-					ed.selection.setRng(rng);
-				} else if (pre.nodeType == 3) {  
-					// for not IE
-					var len = pre.nodeValue.length;
-					if (len > -1) {
-						rng.setStart(pre, len);
-						rng.setEnd(pre, len)
-						ed.selection.setRng(rng);
-					}
-				}
-
-				WCEObj._setWCEVariable(ed);
-				WCEObj._redrawContols(ed);
-			}
-		},
-
 		_setKeyDownEvent : function(ed, e) {
 			if (!e) {
 				var e = window.event;
 			}
 
 			var ek = e.keyCode || e.charCode || 0;
+
 			// allow all arrow key
 			if (ek == 17 || (ek > 32 && ek < 41)) {
 				return;
@@ -2043,34 +1902,36 @@
 			var _stopEvent = WCEObj._stopEvent;
 			var _wceAdd = WCEObj._wceAdd;
 			var _wceAddNoDialog = WCEObj._wceAddNoDialog;
+			var _setWCEVariable = WCEObj._setWCEVariable;
+			var _redrawContols = WCEObj._redrawContols;
 
-			// every keyDown only delete one char
+			if (wcevar.inputDisable && !e.ctrlKey) {
+				return _stopEvent(ed, e);
+			}
+
+			// press and hold to delete char prohibited
 			if (!tinymce.isOpera && (ek == 46 || ek == 8)) {
 				ed.keyDownDelCount++;
 				if (ed.keyDownDelCount > 1) {
-					WCEObj._setWCEVariable(ed);
-					WCEObj._redrawContols(ed);
-					wcevar.isRedraw = true;
+					_setWCEVariable(ed);
+					_redrawContols(ed);
+					wcevar.isRedrawn = true;
 					return _stopEvent(ed, e);
 				}
-			}
-
-			if (wcevar.inputBlock && !e.ctrlKey) {
-				return (_stopEvent(ed, e))
 			}
 
 			// TODO: if no short_cut B, C ,Z ,Y .....
 			if (wcevar.isInBE && !e.ctrlKey) {
 				// keydown for insert letter
-				if (wcevar.isc && wcevar.isAtNodeEnd && ek != 8 && ek != 46) {
+				if (wcevar.isCollapsedAtNodeEnd && ek != 8 && ek != 46) {
 					var isSpaceKey = WCEObj._insertSpace(ed, ek);
-					WCEObj._setWCEVariable(ed);
-					WCEObj._redrawContols(ed);
-					ed.WCE_VAR.isRedraw = true;
+					_setWCEVariable(ed);
+					_redrawContols(ed);
+					ed.WCE_VAR.isRedrawn = true;
 					if (isSpaceKey) {
 						return _stopEvent(ed, e);
 					}
-				} else if (ek == 46 && wcevar.isAtNodeEnd && !wcevar.isNextBE) {
+				} else if (ek == 46 && wcevar.isCollapsedAtNodeEnd && !wcevar.isNextElemBE) {
 
 				} else {
 					return _stopEvent(ed, e);
@@ -2078,7 +1939,7 @@
 			}
 
 			// key "entf"
-			if (ek == 46 && wcevar.isNextBE && wcevar.isAtNodeEnd) {
+			if (ek == 46 && wcevar.isNextElemBE && wcevar.isCollapsedAtNodeEnd) {
 				return _stopEvent(ed, e);
 			}
 
@@ -2091,18 +1952,19 @@
 
 				} else {
 					// Enter -> line break
-					var rng = ed.selection.getRng(true);
-					var startNode = rng.startContainer;
-					var startText = startNode.nodeValue;
-					var startOffset = rng.startOffset;
-					var indexOfEnd = WCEObj._getNextEnd(startText, startOffset);
-
-					if (indexOfEnd && indexOfEnd == startOffset) {
+					var sel = WCEObj._getSEL(ed);
+					var rng = sel.getRangeAt(0);
+					var startText = rng.startContainer.nodeValue;
+					if (startText) {
+						var startOffset = rng.startOffset;
+						var indexOfEnd = WCEObj._getNextEnd(startText, startOffset);
 						// at the end of a word
-						_wceAddNoDialog(ed, 'brea', 'lb', ++lcnt);
-					} else {
-						// in the middle of a word
-						_wceAddNoDialog(ed, 'brea', 'lbm', ++lcnt);
+						if (indexOfEnd && indexOfEnd == startOffset) {
+							_wceAddNoDialog(ed, 'brea', 'lb', ++lcnt);
+						} else {
+							// in the middle of a word
+							_wceAddNoDialog(ed, 'brea', 'lbm', ++lcnt);
+						}
 					}
 
 				}
@@ -2140,7 +2002,7 @@
 				_stopEvent(ed, e);
 			} else if (ek == 56 && e.shiftKey) {
 				// ( TODO?
-			} else if (ek == 57 && e.shiftKey && e.altKey) { //For Mac OS X, Middledot
+			} else if (ek == 57 && e.shiftKey && e.altKey) { // For Mac OS X, Middledot
 				tinyMCE.activeEditor.execCommand('mceAdd_pc', '\u0387');
 				_stopEvent(ed, e);
 			} else if (ek == 57 && e.shiftKey) {
@@ -2171,30 +2033,18 @@
 				WCEObj._redrawContols(ed);
 			});
 
-			ed.onMouseUp.addToTop(function(ed, e) {
-				// for IE, problem when startOffset==0
-				if (tinyMCE.isIE && ed.selection.isCollapsed()) {
-					var rng = ed.selection.getRng(true);
-					if (rng.startOffset != 0) {
-						return;
-					}
-					WCEObj._moveCaretToPreviousSiblingEnd(ed, rng);
-				}
-
-			});
-
 			ed.onKeyUp.addToTop(function(ed, e) {
 				ed.keyDownDelCount = 0;
 
 				// wenn redraw bei keyDown nicht gemacht
-				if (!ed.WCE_VAR.isRedraw) {
+				if (!ed.WCE_VAR.isRedrawn) {
 					WCEObj._setWCEVariable(ed);
 					WCEObj._redrawContols(ed);
-					ed.WCE_VAR.isRedraw = true;
+					ed.WCE_VAR.isRedrawn = true;
 					return;
 				}
 
-				ed.WCE_VAR.isRedraw = false;
+				ed.WCE_VAR.isRedrawn = false;
 			});
 
 			if (tinymce.isOpera) {
@@ -2208,7 +2058,7 @@
 						if (ed.keyDownDelCount > 1) {
 							WCEObj._setWCEVariable(ed);
 							WCEObj._redrawContols(ed);
-							ed.WCE_VAR.isRedraw = true;
+							ed.WCE_VAR.isRedrawn = true;
 							return WCEObj._stopEvent(ed, e);
 						}
 					}
@@ -2257,9 +2107,8 @@
 				cmd : 'mceHtml2Tei',
 				image : url + '/img/xml.jpg'
 			});
-			
-			
-			// tei to html  only for Test
+
+			// tei to html only for Test
 			ed.addCommand('mceTei2Html', function() {
 				_wceAdd(ed, url, '/tei2html.htm', 580, 420, 1, true);
 
@@ -2313,7 +2162,7 @@
 				ed.addShortcut('ctrl+a', 'Add abbreviation', 'mceAddAbbr_Shortcut');
 				ed.addShortcut('ctrl+m', 'Add marginalia', 'mceAddParatext_Shortcut');
 				ed.addShortcut('ctrl+n', 'Add note', 'mceAddNote_Shortcut');
-				//ed.addShortcut('ctrl+p', 'Add punctuation', 'mceAddNote_Shortcut');
+				// ed.addShortcut('ctrl+p', 'Add punctuation', 'mceAddNote_Shortcut');
 
 				tinymce.dom.Event.add(ed.getDoc(), 'mousemove', function(e) {
 					WCEObj._showWceInfo(ed, e);
@@ -2533,19 +2382,12 @@
 					ed.execCommand('mceAddParatext');
 				}
 			});
-			
-			/*ed.addCommand('mceAddPunctuation_Shortcut', function() {
-				if (wcevar.not_PC) {
-					return;
-				}
 
-				if (wcevar.type == 'punctuation') {
-					ed.execCommand('mceEditPunctuation');
-				} else {
-					ed.execCommand('mceAddPunctuation');
-				}
-			});*/
-
+			/*
+			 * ed.addCommand('mceAddPunctuation_Shortcut', function() { if (wcevar.not_PC) { return; }
+			 * 
+			 * if (wcevar.type == 'punctuation') { ed.execCommand('mceEditPunctuation'); } else { ed.execCommand('mceAddPunctuation'); } });
+			 */
 
 			ed.addCommand('mceAdd_abbr', function(c) {
 				_wceAddNoDialog(ed, 'abbr', c);
@@ -2650,19 +2492,19 @@
 				tinymce.activeEditor.selection.collapse(false); // collapse to end of selection
 				ed.execCommand('mceInsertContent', false, '<span class="marker">\ufeff</span>'); // set a marker for the end
 
-				var rng = ed.selection.getRng(1);
+				var rng = WCEObj._getRNG(ed);
 				var rng2 = rng.cloneRange();
 
 				// set start of range to begin at the marker
 				rng2.setStartAfter($(ed.getBody()).find('span.marker').get(0)); // start selection at marker
 				rng2.setEndBefore($(ed.getBody()).find('span.marker').get(1)); // end selection at the end of the text, TODO: limit to region affected, i.e. till the next higher-level break
-				ed.selection.setRng(rng2);
+				WCEObj._setRNG(ed, rng2);
 
 				oldcontent = ed.selection.getContent(); // get content to be modified
 
 				$(ed.getBody()).find('span.marker').remove(); // delete marker
 
-				ed.selection.setRng(rng);
+				WCEObj._setRNG(ed, rng);
 
 				var pos = oldcontent.search(searchString);
 

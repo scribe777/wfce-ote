@@ -50,6 +50,7 @@
 <script type="text/javascript" src="js/wce_editor.js"></script>
 <script type="text/javascript" src="js/wce_tei.js"></script>
 <script type="text/javascript" src="js/wce_callback.js"></script>
+<script type="text/javascript" src="js/rangy-core.js"></script>
 <link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1/themes/base/jquery-ui.css"/>
 
 <title>Workspace for Collaborative Editing</title>
