@@ -367,14 +367,14 @@
 			}
 		},
 
-		//for IE
+		// for IE
 		_getSEL : function(ed) {
 			var sel, win = ed.getWin();
-			if (win.getSelection) { 
+			if (win.getSelection) {
 				// IE 9
 				sel = win.getSelection();
 			} else {
-				//IE <=8
+				// IE <=8
 				sel = rangy.getSelection(win);
 			}
 			return sel;
@@ -385,7 +385,7 @@
 				return ed.selection.getRng(true);
 			}
 
-			//IE
+			// IE
 			var sel = WCEObj._getSEL(ed);
 			if (sel && sel.rangeCount > 0) {
 				return sel.getRangeAt(0);
@@ -407,9 +407,31 @@
 			}
 		},
 
-		_contentHasBlockElement : function(content) {
-			// TODO
-			return false;
+		_selectionHasBlockElement : function(ed) {
+			try {
+				var elem = $('<div/>').html(ed.selection.getContent());
+				var isWceBE = WCEObj._isWceBE;
+				var testNode = function(node) {
+					if (isWceBE(ed, node)) {
+						return true;
+					}
+					var list = node.childNodes;
+					if (!list) {
+						return false;
+					}
+
+					for ( var i = 0, c, len = list.length; i < len; i++) {
+						c = list[i];
+						if (c.nodeType == 1) {
+							return testNode(c);
+						}
+					}
+					return false;
+				};
+				return testNode(elem[0]);
+			} catch (e) {
+				return false;
+			}
 		},
 
 		/*
@@ -540,8 +562,8 @@
 					selectedNode = startNode;
 				}
 
-				if (WCEObj._contentHasBlockElement(ed.selection.getContent())) {
-					w.inputBlock = true;
+				if (WCEObj._selectionHasBlockElement(ed)) {
+					w.inputDisable = true;
 				}
 			}
 
