@@ -28,10 +28,10 @@
 			var w = ed.WCE_CON;
 
 			// blocked elements :If the Caret is on the inside, will prohibit the key operation
-			w.blockedElements = new Array('gap', 'corr', 'chapter_number', 'verse_number', 'abbr', 'spaces', 'note');
+			w.blockedElements = new Array('gap', 'corr', 'chapter_number', 'verse_number', 'abbr', 'spaces', 'note', 'unclear');
 
 			// not blocked elements
-			w.normalElemente = new Array('unclear');
+			// w.normalElemente = new Array('unclear');
 
 			// WCE Buttons
 			var controls = ed.controlManager.controls;
@@ -682,9 +682,7 @@
 			if (text) {
 				var endOffset = rng.endOffset;
 				var len = text.length;
-				if (endOffset == len) {
-					return true;
-				}
+
 				if (endOffset == 0 && len > 0) {
 					return false;
 				}
