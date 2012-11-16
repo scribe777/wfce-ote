@@ -459,24 +459,24 @@
 
 			var _isWceBE = WCEObj._isWceBE;
 			var selectedNode;
+			var startContainer = rng.startContainer;
 			w.isc = ed.selection.isCollapsed();
 
 			// delete in firefox can create empty element and startOffset==0
-			var startContainer = rng.startContainer;
 			if (startContainer.nodeType == 1 && !tinyMCE.isIE && startContainer.childNodes.length == 0 && rng.startOffset == 0 && startContainer.nodeName.toLowerCase != 'body' && startContainer.nodeName.toLowerCase != 'html') {
 				startContainer.parentNode.removeChild(startContainer);
 				return WCEObj._setWCEVariable(ed);
 			}
 
 			if (w.isc) {
-				//  
+				w.not_C = true;
+				w.not_A = true;
+
 				// move caret to EndOfPreviousSibling,manly for IE:
 				if (rng.startOffset == 0) {
 					rng = _moveCaretToEndOfPreviousSibling(ed, rng, startContainer);
 				}
 				startContainer = rng.startContainer;
-				w.not_B = true;
-				w.not_N = true;
 
 				if (startContainer.nodeType == 3) {
 					selectedNode = startContainer.parentNode;
@@ -488,10 +488,16 @@
 					selectedNode = startContainer;
 				}
 
+				if (!WCEObj._canInsertNote(rng)) {
+					w.not_N = true;
+				}
+
 				w.nextElem = WCEObj._getNextSiblingOfAncestor(ed, startContainer);
 				w.isNextElemBE = _isWceBE(ed, w.nextElem);
 			} else {
 				// if select text
+				w.not_B = true;
+				w.not_N = true;
 
 				var adaptiveCheckbox = tinymce.DOM.get(ed.id + '_adaptive_selection');
 				if (adaptiveCheckbox && adaptiveCheckbox.checked) {
@@ -510,8 +516,9 @@
 				// w.inputDisable
 				// find startNode,endNode
 				var startNode, endNode, selectedNodeStart, selectedNodeEnd;
-				startContainer = rng.startContainer;
 				var endContainer = rng.endContainer;
+
+				startContainer = rng.startContainer;
 				if (startContainer.parentNode === endContainer.parentNode) {
 					startNode = startContainer.parentNode;
 					endNode = startNode;
@@ -579,6 +586,7 @@
 				w.not_C = false;
 				w.type = 'corr';
 			} else if (_isNodeTypeOf(selectedNode, 'abbr')) {
+				_setAllControls(ed, true);
 				w.not_A = false;
 				w.type = 'abbr';
 			} else if (_isNodeTypeOf(selectedNode, 'chapter_number')) {
@@ -590,11 +598,13 @@
 			} else if (_isNodeTypeOf(selectedNode, 'brea')) {
 				w.type = 'break';
 			} else if (_isNodeTypeOf(selectedNode, 'unclear')) {
+				_setAllControls(ed, true);
+				w.not_D = false;
 				w.type = 'unclear';
 			} else if (_isNodeTypeOf(selectedNode, 'spaces')) {
 				_setAllControls(ed, true);
 				w.type = 'spaces';
-				w.not_PC = false;
+				w.not_O = false;
 			} else if (_isNodeTypeOf(selectedNode, 'formatting_capitals')) {
 				w.type = 'formatting_capitals';
 			} else if (_isNodeTypeOf(selectedNode, 'paratext')) {
@@ -658,6 +668,36 @@
 				WCEObj._adaptiveCaret(ed, rng);
 			}
 			return rng;
+		},
+
+		/*
+		 * 
+		 */
+		_canInsertNote : function(rng) {
+			var endContainer = rng.endContainer;
+			if (!endContainer) {
+				return false;
+			}
+			var text = endContainer.nodeValue;
+			if (text) {
+				var endOffset = rng.endOffset;
+				var len = text.length;
+				if (endOffset == len) {
+					return true;
+				}
+				if (endOffset == 0 && len > 0) {
+					return false;
+				}
+				if (endOffset < len && endOffset > 0) {
+					var c = text.charAt(endOffset - 1);
+					var c1 = text.charAt(endOffset);
+					if ((c != ' ' && c != '\xa0') && (c1 == ' ' || c1 == '\xa0')) {
+						return true;
+					}
+				}
+			}
+
+			return false;
 		},
 
 		/*
