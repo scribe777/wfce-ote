@@ -772,7 +772,7 @@ function getTeiByHtml(inputString, args) {
 							$htmlNodeNext.parentNode.removeChild($htmlNodeNext);
 							break;
 						}
-						// if text begins ist note a space, then merge
+						// if text begins not with a space, then merge
 						if (!startHasSpace(oldNodeNextText)) {
 							startCompressionWord = true;
 							var ind = oldNodeNextText.indexOf(" ");
@@ -1474,7 +1474,7 @@ function getTeiByHtml(inputString, args) {
 
 		// text to ignore
 		// text of unclear setup by html2Tei_unclear
-		var nodeTextToIgnore = new Array('gap', 'app', 'lb', 'cb', 'pb', 'abbr', 'unclear', 'ex', 'note');
+		var nodeTextToIgnore = new Array('gap', 'app', 'gb', 'lb', 'cb', 'pb', 'abbr', 'unclear', 'ex', 'note');
 		for ( var i = 0, l = nodeTextToIgnore.length; i < l; i++) {
 			if (teiParentNodeName == nodeTextToIgnore[i]) {
 				return;

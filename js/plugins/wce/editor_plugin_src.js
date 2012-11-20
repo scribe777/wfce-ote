@@ -1993,13 +1993,14 @@
 				} else {
 					// Enter -> line break
 					var sel = WCEObj._getSEL(ed);
+					//sel.modify("extend", "forward", "character");
 					var rng = sel.getRangeAt(0);
 					var startText = rng.startContainer.nodeValue;
 					if (startText) {
 						var startOffset = rng.startOffset;
 						var indexOfEnd = WCEObj._getNextEnd(startText, startOffset);
 						// at the end of a word
-						if (indexOfEnd && indexOfEnd == startOffset) {
+						if ((indexOfEnd && indexOfEnd == startOffset) || (startText.substr(startOffset-1, 1) == " ")) {
 							_wceAddNoDialog(ed, 'brea', 'lb', ++lcnt);
 						} else {
 							// in the middle of a word

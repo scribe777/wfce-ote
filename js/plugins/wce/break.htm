@@ -306,7 +306,7 @@
 		var rng = ed.selection.getRng(true);
 		var startNode = rng.startContainer;
 		var startText = startNode.data ? startNode.data : startNode.innerText;
-		if (rng.startOffset == _getNextEnd(startText,rng.startOffset))
+		if ((rng.startOffset == _getNextEnd(startText,rng.startOffset)) || (startText.substr(rng.startOffset-1, 1) == " "))
 			return 'lb';
 		return 'lbm';
 	}
