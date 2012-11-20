@@ -11,7 +11,7 @@ function getHtmlByTei(inputString) {
 		'columnNumber' : 0,
 		'witValue' : 0
 	};
-
+	
 	var getHtmlString = function() {
 		var $oldDoc = loadXMLString(inputString);
 		var $oldRoot = $oldDoc.documentElement;
@@ -1119,6 +1119,9 @@ function getTeiByHtml(inputString, args) {
 
 			var place = arr['place_corr'];
 			var corrector_text = arr['corrector_text'];
+			if (arr['blank_correction'] == 'on') {
+				corrector_text = 'ommission'; //TODO: This should as well be &om;
+			}
 			if (place === 'pageleft' || place === 'pageright' || place === 'pagetop' || place === 'pagebottom') { //define <seg> element for marginal material
 				$seg = $newDoc.createElement('seg');
 				$seg.setAttribute('type', 'margin');

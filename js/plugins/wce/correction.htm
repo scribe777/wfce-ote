@@ -25,7 +25,7 @@
 					value="New" />
 			</div>
 		</fieldset>
-		<!--<input type="hidden" id="original_firsthand_reading" name="original_firsthand_reading" value=""/>-->
+		<input type="hidden" id="original_firsthand_reading" name="original_firsthand_reading" />
 		<fieldset id="content_fieldset"
 			style="margin-left: 170px; height: 475px; width: auto">
 			<legend>{#wce.reading_data}</legend>
@@ -41,9 +41,9 @@
 						</select></td>
 					</tr>
 					<tr>
-						<td><label id="firsthand_label" for="firsthand_reading">First
-								hand reading</label></td>
-						<td colspan="1"><label id="firsthand_reading"
+						<td><label id="firsthand_label" name="firsthand_label" for="firsthand_reading">
+							First hand reading</label></td>
+						<td colspan="1"><label id="firsthand_reading" name="firsthand_reading"
 							style="color: green" /></td>
 						<td><input type="checkbox" name="blank_firsthand"
 							id="blank_firsthand" onclick="checkstatus_firsthand()">{#wce.blank_firsthand}
@@ -65,13 +65,10 @@
 							onkeyup="saveCurrCorrector(true);" type="text" value="" size="30" />
 						</td>
 					</tr>
-					
 					<tr>
 						<td><input type="checkbox" name="blank_correction"
-							id="blank_correction" value="blank_correction"
+							id="blank_correction" 
 							onclick="checkstatus_correction()">{#wce.blank_correction}
-
-						
 						</td>
 					</tr>
 					<tr>
@@ -165,7 +162,7 @@
  			plugins : "wce,pagebreak,style,layer,safari,print,inlinepopups, paste", 
 
 			// Theme options
-			theme_advanced_buttons1 : "undo,redo,charmap,|,code,removeformat,|,print,contextmenu,paste,fullscreen,|,breaks,illegible,decoration,abbreviation,paratext",
+			theme_advanced_buttons1 : "undo,redo,charmap,|,code,removeformat,|,print,contextmenu,paste,fullscreen,|,breaks,illegible,decoration,abbreviation,paratext,punctuation",
 			theme_advanced_buttons2 : "",
 			theme_advanced_toolbar_location : "top",
 			theme_advanced_toolbar_align : "left",
@@ -187,8 +184,14 @@
 			$('#content_fieldset').css('width',$('#mceActionPanel').width()-250);
 		}
 
-		$('#firsthand_reading').html(selected_content);  //label 
-		 
+		
+		if (info_arr.length == 0) {
+			$('#firsthand_reading').html(selected_content); 
+			$('#original_firsthand_reading').html(selected_content); //Save initial value for later use
+		} else {
+			$('#firsthand_reading').value = $('#original_firsthand_reading').val(); //Use old value
+		}
+		
 		for ( var p in info_arr) {
 			addCorrector(p);
 		}
@@ -207,7 +210,6 @@
 		checkstatus_hand(); 
 		checkstatus_firsthand();
 		checkstatus_correction();
-		//$('#firsthand_reading').html($('#original_firsthand_reading').val());
 	}
 	
 	function testOther() {
@@ -243,7 +245,7 @@
 			if(!$('#content_fieldset').attr('disabled')){
 				$('#corrector_text').attr('disabled', false);
 				corrector_text_editor.show();
-			}else{
+			}else {
 				$('#corrector_text').attr('disabled', true);
 				corrector_text_editor.hide();
 			}
@@ -332,8 +334,8 @@
 		if (_id == null) {
 			item_counter++;
 			_id = 'c' + item_counter;
-			$('#corrector_text').val($('#firsthand_reading').html());
-			corrector_text_editor.setContent($('#firsthand_reading').html());
+			$('#corrector_text').val($('#original_firsthand_reading').html());
+			corrector_text_editor.setContent($('#original_firsthand_reading').html());
 			info_arr[_id] = formSerialize(null, corrector_name);
 			corrector_name = corrector_name = $('#corrector_name').val();
 		} else {

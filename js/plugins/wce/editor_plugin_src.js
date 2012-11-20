@@ -852,7 +852,7 @@
 						}
 						corr_str += '</div>';
 						corr_str += '<div style="margin-top:5px">' + ar[ed.wceNameParamInClass] + ': ';
-						if (ar['blank_correction'] == 'blank_correction')
+						if (ar['blank_correction'] == 'on')
 							corr_str += 'deleted' + '</div>';
 						else
 							corr_str += ar['corrector_text'] + '</div>';
@@ -1761,14 +1761,15 @@
 			case 'brea':
 				// style = 'style="border: 1px dotted #f00; margin:0px; padding:0; color:#666"';
 				wceClass = ' class="brea"';
-				wceAttr = 'wce="__t=brea&amp;__n=&amp;break_type=lb&amp;number=' + number + '&amp;pb_type=&amp;fibre_type=&amp;running_title=&amp;lb_alignment=&amp;insert=Insert&amp;cancel=Cancel" ';
 				if (character == 'lb') {
 					// line break at the end of a word
 					if (number === 0) {
 						// for a line break without an explicit number
 						number = ++lcnt;
 					}
-
+					
+					wceAttr = 'wce="__t=brea&amp;__n=&amp;hasBreak=no&amp;break_type=lb&amp;number=' + number + '&amp;pb_type=&amp;fibre_type=&amp;running_title=&amp;lb_alignment=&amp;insert=Insert&amp;cancel=Cancel" ';
+					
 					// var num = "";
 					/*
 					 * while (num == "") { num = prompt("Number of line break", ""); }
@@ -1786,13 +1787,14 @@
 						// for a line break without an explicit number
 						number = ++lcnt;
 					}
+					
+					// set new wceAttr with hasBreak=yes
+					wceAttr = 'wce="__t=brea&amp;__n=&amp;hasBreak=yes&amp;break_type=lb&amp;number=' + number + '&amp;pb_type=&amp;fibre_type=&amp;running_title=&amp;lb_alignment=&amp;insert=Insert&amp;cancel=Cancel" ';
 					// var num = "";
 					/*
 					 * while (num == "") { num = prompt("Number of line break", ""); }
 					 */
-
-					wceAttr = 'wce="__t=brea&amp;__n=&amp;break_type=lb&amp;number=' + number + '&amp;pb_type=&amp;fibre_type=&amp;running_title=&amp;lb_alignment=&amp;insert=Insert&amp;cancel=Cancel" ';
-					ed.selection.setContent('<span ' + wceAttr + wceClass + '>' + '&#45;<br/>&crarr;' + '</span> ');
+					ed.selection.setContent('<span ' + wceAttr + wceClass + '>' + '&hyphen;<br/>&crarr;' + '</span>');
 					lcnt = number;
 				} else if (character == 'cb') {
 					// column break
