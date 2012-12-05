@@ -750,6 +750,84 @@
 			return false;
 		},
 
+		_setInfoBoxOffset : function(ed, node) {
+			var el = ed.getContentAreaContainer();
+			var _x = 0;
+			var _y = 0;
+			while (el && !isNaN(el.offsetLeft) && !isNaN(el.offsetTop)) {
+				_x += el.offsetLeft - el.scrollLeft;
+				_y += el.offsetTop - el.scrollTop;
+				el = el.offsetParent;
+			}
+			var nodeOffset = tinymce.DOM.getPos(node);
+			var node_top = nodeOffset.y + _y;
+			var node_left = nodeOffset.x + _x;
+
+			var infoBox = ed.wceInfoBox;
+			var infoBoxArrowTop = ed.wceInfoBoxArrowTop;
+			var infoBoxArrowBottom = ed.wceInfoBoxArrowBottom;
+
+			var node_w = parseInt($(node).outerWidth());
+			var node_h = parseInt($(node).outerHeight());
+			var infoBox_w = $(infoBox).outerWidth();
+			var infoBox_h = $(infoBox).outerHeight();
+
+			var infoBox_left = node_left;
+			var infoBox_top = node_top + node_h;
+
+			$(infoBoxArrowTop).css({
+				'border-color' : 'transparent',
+				'border-style' : 'solid',
+				'border-width' : '6px',
+				'height' : '0',
+				'width' : '0'
+			});
+
+			$(infoBoxArrowBottom).css({
+				'border-color' : 'transparent',
+				'border-style' : 'solid',
+				'border-width' : '6px',
+				'height' : '0',
+				'width' : '0'
+			});
+
+			var margin_left = '4px';
+			if ((node_left + infoBox_w) > parseInt($(window).width())) {
+				infoBox_left = node_left + node_w - infoBox_w;
+				margin_left = (infoBox_w - 20) + 'px';
+			}
+
+			var arrowTop = false;
+			if (node_top + node_h + infoBox_h > parseInt($(window).height() + $(window).scrollTop())) {
+				var new_top = node_top - infoBox_h;
+				if (new_top > 0) {
+					infoBox_top = new_top;
+					arrowTop = true;
+				}
+			}
+
+			if (!arrowTop) {
+				$(infoBoxArrowTop).css({
+					'border-bottom-color' : 'rgb(25,25,25)',
+					'border-bottom-color' : 'rgba(25,25,25,0.92)',
+					'margin-left' : margin_left,
+					'margin-right' : '4px'
+				});
+			} else {
+				$(infoBoxArrowBottom).css({
+					'border-top-color' : 'rgb(25,25,25)',
+					'border-top-color' : 'rgba(25,25,25,0.92)',
+					'margin-left' : margin_left,
+					'margin-right' : '4px'
+				});
+			}
+
+			tinymce.DOM.setStyles(infoBox, {
+				'top' : infoBox_top,
+				'left' : infoBox_left
+			});
+		},
+
 		/*
 		 * wenn mouseover, show wce node info
 		 */
@@ -766,6 +844,10 @@
 				info_arr = wceAttr.split('@');
 			}
 			if (info_arr != null && info_arr.length > 0 && wceAttr.indexOf(ed.wceTypeParamInClass + '=') > -1) {
+
+				if (ed.isInfoBoxDisplay && ed.infoBoxTargetNode === sele_node)
+					return;
+
 				var ar;
 				var corr_str = '';
 				var info_text = '';
@@ -991,25 +1073,27 @@
 
 				// information display
 				if (info_text != '') {
-					var new_top = e.clientY;
-					var new_left = e.clientX;
-					if (ed.getParam('fullscreen_is_enabled')) {
-						new_top = new_top + 30;
-						new_left = new_left + 30;
-					} else {
-						new_top = new_top + 80;
-						new_left = new_left + 80;
-					}
+					// var new_top = e.clientY;
+					// var new_left = e.clientX;
+					// if (ed.getParam('fullscreen_is_enabled')) {
+					// new_top = new_top + 30;
+					// new_left = new_left + 30;
+					// } else {
+					// new_top = new_top + 80;
+					// new_left = new_left + 80;
+					// }
 
-					tinymce.DOM.setStyles(info_box, {
-						'top' : new_top,
-						'left' : new_left
-					});
-					info_box.innerHTML = '<div style="background-color: #eee; white-space:normal; padding:10px;border: 1px solid #ff0000">' + info_text + '</div>';
+					WCEObj._setInfoBoxOffset(ed, sele_node);
+					// info_box.innerHTML = '<div style="background-color: #eee; white-space:normal; padding:10px;border: 1px solid #ff0000">' + info_text + '</div>';
+					ed.wceInfoBoxContent.html(info_text);
 					$(info_box).show();
+					ed.isInfoBoxDisplay = true;
+					ed.infoBoxTargetNode = sele_node;
 				}
 			} else {
 				$(info_box).hide();
+				ed.isInfoBoxDisplay = false;
+				ed.infoBoxTargetNode = null;
 			}
 			// set isNotDirty back
 			if (_dirty)
@@ -1767,9 +1851,9 @@
 						// for a line break without an explicit number
 						number = ++lcnt;
 					}
-					
+
 					wceAttr = 'wce="__t=brea&amp;__n=&amp;hasBreak=no&amp;break_type=lb&amp;number=' + number + '&amp;pb_type=&amp;fibre_type=&amp;running_title=&amp;lb_alignment=&amp;insert=Insert&amp;cancel=Cancel" ';
-					
+
 					// var num = "";
 					/*
 					 * while (num == "") { num = prompt("Number of line break", ""); }
@@ -1787,7 +1871,7 @@
 						// for a line break without an explicit number
 						number = ++lcnt;
 					}
-					
+
 					// set new wceAttr with hasBreak=yes
 					wceAttr = 'wce="__t=brea&amp;__n=&amp;hasBreak=yes&amp;break_type=lb&amp;number=' + number + '&amp;pb_type=&amp;fibre_type=&amp;running_title=&amp;lb_alignment=&amp;insert=Insert&amp;cancel=Cancel" ';
 					// var num = "";
@@ -1993,14 +2077,14 @@
 				} else {
 					// Enter -> line break
 					var sel = WCEObj._getSEL(ed);
-					//sel.modify("extend", "forward", "character");
+					// sel.modify("extend", "forward", "character");
 					var rng = sel.getRangeAt(0);
 					var startText = rng.startContainer.nodeValue;
 					if (startText) {
 						var startOffset = rng.startOffset;
 						var indexOfEnd = WCEObj._getNextEnd(startText, startOffset);
 						// at the end of a word
-						if ((indexOfEnd && indexOfEnd == startOffset) || (startText.substr(startOffset-1, 1) == " ")) {
+						if ((indexOfEnd && indexOfEnd == startOffset) || (startText.substr(startOffset - 1, 1) == " ")) {
 							_wceAddNoDialog(ed, 'brea', 'lb', ++lcnt);
 						} else {
 							// in the middle of a word
@@ -2113,17 +2197,46 @@
 			ed.wceNameParamInClass = '__n';
 
 			// Information-box
-			ed.wceInfoBox = document.createElement("div");
-			document.body.appendChild(ed.wceInfoBox);
-			tinymce.DOM.setStyles(ed.wceInfoBox, {
-				'height' : '300px',
+			var infoBox = $('<div></div>');
+			var infoBox_content = $('<div></div>');
+			var infoBox_arrowTop = $('<div style="border: 6px solid #fff"><div></div></div>');
+			var infoBox_arrowBottom = $('<div style="border: 6px solid #fff"><div></div></div>');
+
+			$(infoBox).html(infoBox_arrowBottom);
+			$(infoBox).prepend(infoBox_content);
+			$(infoBox).prepend(infoBox_arrowTop);
+
+			ed.wceInfoBox = infoBox;
+			ed.wceInfoBoxContent = infoBox_content;
+			ed.wceInfoBoxArrowTop = infoBox_arrowTop;
+			ed.wceInfoBoxArrowBottom = infoBox_arrowBottom;
+
+			tinymce.DOM.setStyles(infoBox, {
+				'height' : 'auto',
 				'font-size' : '12px',
 				'width' : 'auto',
 				'position' : 'absolute',
 				'z-index' : '300000',
 				'overflow' : 'auto',
-				'display' : 'none'
+				'display' : 'none',
 			});
+			tinymce.DOM.setStyles(infoBox_content, {
+				'color' : '#fff',
+				'text-shadow' : '0 0 2px #000',
+				'padding' : '4px 8px',
+				'background-color' : 'rgb(25,25,25)',
+				'background-color' : 'rgba(25,25,25,0.92)',
+				'background-image' : '-webkit-gradient(linear, 0% 0%, 0% 100%, from(transparent), to(#000))',
+				'border-radius' : '3px',
+				'-webkit-border-radius' : '3px',
+				'-moz-border-radius' : '3px',
+				'box-shadow' : '0 0 3px #555',
+				'-webkit-box-shadow' : '0 0 3px #555',
+				'-moz-box-shadow' : '0 0 3px #555',
+				'top' : 0,
+				'left' : 0
+			});
+			$(document.body).append(infoBox);
 
 			// add adaptive selection checkbox
 			ed.onPostRender.add(function(ed, cm) {
