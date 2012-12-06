@@ -2161,7 +2161,23 @@
 				cmd : 'mceTei2Html',
 				image : url + '/img/xmlinput.jpg'
 			});
-
+			
+			ed.addCommand('mceReload', function(lang) {
+				// TODO: implementation
+			});
+			
+			ed.addButton('english', {
+				title : 'Switch to English language (not implemented yet)',
+				cmd : 'mceReload("en")',
+				image : url + '/img/gb.png'
+			});
+			
+			ed.addButton('german', {
+				title : 'Switch to German language (not implemented yet)',
+				cmd : 'mceReload("de")',
+				image : url + '/img/de.png'
+			});
+			
 			/*
 			 * onInit
 			 * 
@@ -2229,7 +2245,7 @@
 				if (wceNode) {
 					ed.selection.select(wceNode);
 					var wceAttr = wceNode.getAttribute('wce');
-					var originalText = wceNode.getAttribute('wce_orig');
+					var originalText = decodeURIComponent(wceNode.getAttribute('wce_orig'));
 
 					/*
 					 * // if tag to remove var node_to_remove = [ 'paratext', 'note', 'gap', 'brea' ]; var to_remove = false; for ( var i = 0; i < node_to_remove.length; i++) { if (wceAttr.indexOf(ed.wceTypeParamInClass + '=' + node_to_remove[i]) > -1) { to_remove = true; break; } }
