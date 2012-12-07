@@ -25,7 +25,7 @@
 		init_instance_callback : "wceReload",
 
 		// Theme options
-		theme_advanced_buttons1 : "undo,redo,charmap,|,code,removeformat,|,save,print,contextmenu,cut,copy,paste,fullscreen,|,breaks,correction,illegible,decoration,abbreviation,paratext,note,punctuation,|,showTeiByHtml,showHtmlByTei",
+		theme_advanced_buttons1 : "undo,redo,charmap,|,code,removeformat,|,save,print,contextmenu,cut,copy,paste,fullscreen,|,breaks,correction,illegible,decoration,abbreviation,paratext,note,punctuation,|,versemodify,showTeiByHtml,showHtmlByTei",
 		theme_advanced_buttons2 : "",
 		theme_advanced_toolbar_location : "top",
 		theme_advanced_toolbar_align : "left",

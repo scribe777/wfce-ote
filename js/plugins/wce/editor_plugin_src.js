@@ -2274,7 +2274,19 @@
 				cmd : 'mceTei2Html',
 				image : url + '/img/xmlinput.jpg'
 			});
+			
+			// verse modify
+			ed.addCommand('mceVerseModify', function() {
+				_wceAdd(ed, url, '/verse.htm', 180, 240, 1, true);
 
+			});
+
+			// add verse modify button
+			ed.addButton('versemodify', {
+				title : 'Verse Modify',
+				cmd : 'mceVerseModify',
+				image : url + '/img/button_V-new.png'
+			});
 			/*
 			 * onInit
 			 * 

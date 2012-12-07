@@ -1,0 +1,96 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" style="height:100%">
+<head>
+<title>Verse Modify</title>
+<script type="text/javascript" src="../../tiny_mce_popup.js"></script>
+<script type="text/javascript" src="js/wce.js"></script>
+<script type="text/javascript" src="../../jquery.js"></script>
+</head>
+<body id="table">
+	<form onsubmit="return false;" action="#" name="noteinfo">
+		<div class="mceActionPanel" style="margin-bottom:10px">
+			<input type="button"  name="ok" value="Ok"
+				onclick="updateVerse();tinyMCEPopup.close();"  /> <input type="button"
+				 name="cancel" value="{#cancel}"
+				onclick="tinyMCEPopup.close();" />
+		</div>
+		<div>Verse to delete</div>
+		<div style="border:1px solid #ccc;width:auto; height:180px;  overflow-y:auto" id="verseList"></div>
+	</form>
+</body>
+<script type="text/javascript">
+var verseNode; 
+var contentWithVerse;
+
+	tinyMCEPopup.onInit.add(function(_ed){
+		ed=_ed;
+		setConstants(); 
+		init();
+	}); 
+	
+	function init() {
+		var node;
+		var se_node=ed.selection.getNode();
+		if(se_node){
+			var className=se_node.className;
+			if(className && className.match(/verse_number/)){
+				node=se_node;
+				verseNode=node; 
+			}
+		}
+		
+		if(!node){
+			node = $('<div/>').html(selected_content)[0];
+			contentWithVerse=node;
+		}
+		
+		$('#verseList').html(getVerseList(node)); 
+	}
+	
+	function getVerseList(node){
+		var out="";
+		if(!node || node.nodeType!=1){
+			return out;
+		}
+		
+		var list=node.childNodes;
+		for(var i=0,len=list.length; i<len; i++){
+			var n=list[i];
+			if(n.nodeType==1){
+				out+=getVerseList(n); 
+			}
+		}
+		
+		var className=node.className;
+		if(className && className.match(/verse_number/)){
+			var v=$.trim(node.innerHTML);
+			if(v && v!='')
+				out+='<input type="checkbox" value="'+v+'">Verse '+v+'</input><br />'; 
+		}	
+		return out;		
+	}
+	
+	function updateVerse(){
+		var verseList=$('#verseList').find('input:checkbox');
+		for(var i=0,len=verseList.length; i<len; i++){
+			var cb=verseList[i];
+			if($(cb).attr('checked')){
+				var verseNr=$(cb).val();				 
+				var spanList=$(contentWithVerse).find('span');
+				for(var j=0,len2=spanList.length; j<len2; j++){
+					var span=spanList[j];
+					var spanValue=$(span).html().trim();
+					if(spanValue==verseNr){
+						$(span).remove();
+					}					
+				}
+			}
+		} 
+		if(verseNode){
+			$(verseHtml).remove();
+		}else{
+			ed.selection.setContent($(contentWithVerse).html());
+		}
+	}
+</script>
+</html>
