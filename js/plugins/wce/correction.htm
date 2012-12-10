@@ -21,7 +21,7 @@
 				</ul>
 			</div>
 			<div style="text-align: right">
-				<input type="button" onclick="cont = testOther();if (cont){addCorrector(); selectCorrItem();}else{alert('{#wce.empty_other}');}"
+				<input type="button" onclick="if (testOther()){addCorrector(); selectCorrItem();}else{alert('{#wce.empty_other}');}"
 					value="New" />
 			</div>
 		</fieldset>
@@ -137,7 +137,7 @@
 		</fieldset>
 		<div class="mceActionPanel" id="mceActionPanel">
 			<input type="button" name="insert" value="Ok"
-				onclick="cont = testOther();if (cont){saveCurrCorrector(); writeWceNodeInfo();}else{alert('{#wce.empty_other}');}" /> <input
+				onclick="if (testOther()){saveCurrCorrector(); writeWceNodeInfo();}else{alert('{#wce.empty_other}');}" /> <input
 				type="button" name="cancel" value="{#cancel}"
 				onclick="tinyMCEPopup.close();" />
 		</div> 
@@ -187,7 +187,7 @@
 		
 		if (info_arr.length == 0) {
 			$('#firsthand_reading').html(selected_content); 
-			$('#original_firsthand_reading').html(selected_content); //Save initial value for later use
+			$('#original_firsthand_reading').val(selected_content); //Save initial value for later use
 		} else {
 			$('#firsthand_reading').value = $('#original_firsthand_reading').val(); //Use old value
 		}
@@ -334,9 +334,10 @@
 		if (_id == null) {
 			item_counter++;
 			_id = 'c' + item_counter;
-			$('#corrector_text').val($('#original_firsthand_reading').html());
-			corrector_text_editor.setContent($('#original_firsthand_reading').html());
-			info_arr[_id] = formSerialize(null, corrector_name);
+			var first_val=$('#original_firsthand_reading').val();
+			$('#corrector_text').val(first_val); 
+			corrector_text_editor.setContent(first_val);
+			info_arr[_id] = formSerialize(null, corrector_name);  
 			corrector_name = corrector_name = $('#corrector_name').val();
 		} else {
 			if (typeof info_arr[_id] != 'undefined' && info_arr[_id] != '') {
@@ -404,7 +405,7 @@
 
 		if (_id == null) {
 			_id = 'c' + item_counter;
-		}
+		} 
 		curr_item_id = _id;
 		$('#correction_ul > li > a').css({
 			'color' : '#000',
@@ -419,7 +420,7 @@
 			$('#corr_reset').click();
 		} else {
 			formUnserialize(str);
-		}
+		} 
 		checkstatus_hand();
 		checkstatus_correction();
 		setstatus_deletion();

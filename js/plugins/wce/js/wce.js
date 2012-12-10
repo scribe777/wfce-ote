@@ -318,7 +318,7 @@ function formUnserialize(str) {
 
 	var arr = str.split('&');
 	var kv, k, v;
-
+ 
 	for ( var i = 2; i < arr.length; i++) {
 		kv = arr[i].split('=');
 		k = kv[0];
@@ -328,12 +328,14 @@ function formUnserialize(str) {
 		if ($('#' + k).attr('type') == 'checkbox') {
 			$('#' + k).attr('checked', true);
 		} else {
+			if(!v) continue; 
+			var dec_v=decodeURIComponent(v);  
 			if (k == 'corrector_text' && corrector_text_editor) {
-				corrector_text_editor.setContent(decodeURIComponent(v));
+				corrector_text_editor.setContent(dec_v);
 			}
-			$('#' + k).val(decodeURIComponent(v));
+			$('#' + k).val(dec_v); 
 		}
-	}
+	}  
 }
 
 /**
