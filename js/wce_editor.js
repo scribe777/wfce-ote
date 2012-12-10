@@ -1,4 +1,4 @@
-﻿function setWceEditor(_id) {
+﻿﻿function setWceEditor(_id, rtl, finishCallback, de) {
 	tinyMCE.baseURL = URI('js/').absoluteTo(gadgets.util.getUrlParameters()['url']);
 	tinyMCE.baseURI = new tinyMCE.util.URI(tinyMCE.baseURL);
 	tinyMCE.init({
@@ -15,7 +15,8 @@
 		theme_advanced_path : false,
 		execcommand_callback : 'wceExecCommandHandler',
 		save_onsavecallback : "saveDataToDB",
-		language : 'en',
+		directionality : (rtl) ? "rtl" : "ltr",
+		language : (de) ? "de" : "en", 
 		// invalid_elements:'p',
 		/*
 		 * plugins : "wce,pagebreak,style,layer,advhr,advimage,emotions,iespell,inlinepopups,safari,preview,media,searchreplace,print,contextmenu,paste,directionality,fullscreen,noneditable,visualchars,nonbreaking,xhtmlxtras,template,wordcount,advlist,autosave",
@@ -25,16 +26,16 @@
 		init_instance_callback : "wceReload",
 
 		// Theme options
-		theme_advanced_buttons1 : "undo,redo,charmap,|,code,removeformat,|,save,print,contextmenu,cut,copy,paste,fullscreen,|,breaks,correction,illegible,decoration,abbreviation,paratext,note,punctuation,|,showTeiByHtml,showHtmlByTei",
+		theme_advanced_buttons1 : "undo,redo,charmap,|,code,removeformat,|,save,print,contextmenu,cut,copy,paste,fullscreen,|,breaks,correction,illegible,decoration,abbreviation,paratext,note,punctuation,|,showTeiByHtml,showHtmlByTei,|,english,german",
 		theme_advanced_buttons2 : "",
 		theme_advanced_toolbar_location : "top",
 		theme_advanced_toolbar_align : "left",
 		theme_advanced_statusbar_location : "bottom",
-		theme_advanced_resizing : false
+		theme_advanced_resizing : false,
+		oninit : function() {  // Once initialized, tell the editor to go fullscreen
+			if (finishCallback) finishCallback();
+		}
 	});
-	// oninit : function() { // Once initialized, tell the editor to go fullscreen
-	// resizeHeight(115);
-	// }
 }
 
 // wenn brower reload, set editor blank
@@ -115,7 +116,7 @@ function setTEI(teiStringInput) {
 	if (result) {
 		var htmlContent = result['htmlString'];
 		if (htmlContent)
-			setData();
+			setData(htmlContent);
 	}
 	var teiIndexData = result['teiIndexData'];
 	if (teiIndexData) {
