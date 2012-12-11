@@ -137,8 +137,17 @@ function getHtmlByTei(inputString) {
 		case 'space':
 			return Tei2Html_space($htmlParent, $teiNode); // spaces
 
+		case 'qb':
+			return Tei2Html_break($htmlParent, $teiNode, 'qb'); // Quire break
+			
+		case 'pb':
+			return Tei2Html_break($htmlParent, $teiNode, 'pb'); // page break
+
+		case 'cb':
+			return Tei2Html_break($htmlParent, $teiNode, 'cb'); // column break
+
 		case 'lb':
-			return Tei2Html_lb($htmlParent, $teiNode); // break
+			return Tei2Html_break($htmlParent, $teiNode, 'lb'); // line break
 
 		case 'note':
 			return Tei2Html_note($htmlParent, $teiNode); // note
@@ -146,6 +155,9 @@ function getHtmlByTei(inputString) {
 		case 'app':
 			return Tei2Html_app($htmlParent, $teiNode); // correction
 
+		case 'seg': // marginal information
+			return $htmlParent;
+					
 		default:
 			return $htmlParent;
 		}
@@ -307,36 +319,58 @@ function getHtmlByTei(inputString) {
 	var Tei2Html_gap_supplied = function($htmlParent, $teiNode, teiNodeName) {
 		// <gap reason="lacuna" unit="char" />
 		$newNode = $newDoc.createElement('span');
-		$newNode.setAttribute('class', teiNodeName);
+		$newNode.setAttribute('class', 'gap'); // for gap *and* supplied
 
-		var wceAttr = '__t=gap&__n=';
+		var wceAttr = '__t=gap&__n=&gap_reason_dummy_lacuna=lacuna&gap_reason_dummy_illegible=illegible';
 		var mapping = {
 			'reason' : '&gap_reason=',
 			'unit' : {
 				'0' : '@char@line@page@quire',
-				'1' : '&unit=',
+				'1' : '&unit_other=&unit=',
 				'2' : '&unit=other&unit_other='
 			},
 			'extent' : '&extent=',
 			'source' : {
-				'0' : '@na27@transcriber',
-				'1' : '&supplied_source=',
+				'0' : '@na27@transcriber@tr',
+				'1' : '&supplied_source_other=&supplied_source=',
 				'2' : '&supplied_source=other&&supplied_source_other='
 			}
 		};
 		wceAttr += getWceAttributeByTei($teiNode, mapping);
+		if (teiNodeName == 'supplied') {
+			wceAttr += '&mark_as_supplied=supplied';
+			$newNode.setAttribute('wce_orig', $teiNode.firstChild.nodeValue); // get the content and save it as original
+		}
+				
 		$newNode.setAttribute('wce', wceAttr);
 
-		if (wceAttr.indexOf('unit=char') > -1) {
-			nodeAddText($newNode, '[]');
-		} else if (wceAttr.indexOf('unit=line') > -1) {
-			// TODO
-		} else if (wceAttr.indexOf('unit=page') > -1) {
-			// TODO
-		} else if (wceAttr.indexOf('unit=quire') > -1) {
-			// TODO
-		} else {
-			nodeAddText($newNode, '[...]');
+		if (teiNodeName == 'supplied') { // supplied
+			nodeAddText($newNode, '[' + $teiNode.firstChild.nodeValue + ']');
+		} else { // gap
+			gap_text = '';
+			if (wceAttr.indexOf('unit=char') > -1) {
+				nodeAddText($newNode, '[' + $teiNode.getAttribute('extent') + ']');
+			} else if (wceAttr.indexOf('unit=line') > -1) {
+				// TODO: numbering
+				for ( var i = 0; i < $teiNode.getAttribute('extent'); i++) {
+					gap_text += '<br/>&crarr;[...]';
+				}
+				nodeAddText($newNode, gap_text);
+			} else if (wceAttr.indexOf('unit=page') > -1) {
+				// TODO: numbering
+				for ( var i = 0; i < $teiNode.getAttribute('extent'); i++) {
+					gap_text += '<br/>PB<br/>[...]';
+				}
+				nodeAddText($newNode, gap_text);
+			} else if (wceAttr.indexOf('unit=quire') > -1) {
+				// TODO: numbering
+				for ( var i = 0; i < $teiNode.getAttribute('extent'); i++) {
+					gap_text += '<br/>QB<br/>[...]';
+				}
+				nodeAddText($newNode, gap_text);
+			} else {
+				nodeAddText($newNode, '[...]');
+			}
 		}
 		$htmlParent.appendChild($newNode);
 		return null;
@@ -397,16 +431,17 @@ function getHtmlByTei(inputString) {
 		// <abbr type="nomSac"> <hi rend="ol">aaa</hi> </abbr>
 		// <span class="abbr_add_overline"
 		// wce_orig="aaa" wce="__t=abbr&amp;__n=&amp;original_abbr_text=&amp;abbr_type=nomSac&amp;abbr_type_other=&amp;add_overline=overline">aaa</span>
+		// TODO wce_orig: is that really needed?
 		var cList = $teiNode.childNodes;
 		var className = teiNodeName;
 
 		var overlineCheckboxValue = '';
 
-		var wceAttr = '__t=abbr&__n=';
+		var wceAttr = '__t=abbr&__n=&original_abbr_text=';
 		var mapping = {
 			'type' : {
 				'0' : '@nomSac@num',
-				'1' : '&abbr_type=',
+				'1' : '&abbr_type_other=&abbr_type=',
 				'2' : '&abbr_type=other&abbr_type_other='
 			}
 		};
@@ -444,7 +479,7 @@ function getHtmlByTei(inputString) {
 		var mapping = {
 			'unit' : {
 				'0' : '@char@line',
-				'1' : '&sp_unit=',
+				'1' : '&sp_unit_other=&sp_unit=',
 				'2' : '&sp_unit=other&sp_unit_other='
 			},
 			'extent' : '&sp_extent='
@@ -460,20 +495,114 @@ function getHtmlByTei(inputString) {
 	/*
 	 * <lb>
 	 */
-	var Tei2Html_lb = function($htmlParent, $teiNode) {
+	var Tei2Html_break = function($htmlParent, $teiNode, type) {
 		//
 		// <span class="brea" wce="__t=brea&amp;__n=&amp;break_type=lb&amp;number=2&amp;pb_type=&amp;fibre_type=&amp;running_title=&amp;lb_alignment=&amp;insert=Insert&amp;cancel=Cancel"> - <br /> </span>
 		//
 		var $newNode = $newDoc.createElement('span');
 		$newNode.setAttribute('class', 'brea');
 
-		// TODO
-		var wceAttr = '__t=paratext&__n=';
+		/*wce="__t=brea&amp;__n=&amp;hasBreak=no&amp;
+		break_type=lb&amp;number=2&amp;pb_type=&amp;fibre_type=&amp;
+		lb_alignment=centerJust&amp;facs=&amp;page_number=&amp;
+		running_title=&amp;paratext_position=pagetop&amp;paratext_position_other=">
+		*/
+		// For all types of breaks
+		var wceAttr = '__t=brea&__n=&break_type=' + type + '';
+		
+		switch (type) {
+		case 'pb': // page break
+			//pb n="2rx" type="folio" facs="edfwe" xml:id="P2rx-0" break="no"/><fw type="runTitle"
+			var number = getWceAttributeByTei($teiNode, {'n' : 'n'});
+			var pbtype = getWceAttributeByTei($teiNode, {'type' : 'p'});
+			if (pbtype == "page") {
+				if (number.match("[0-9]$")) { // ends with a digit => no fibre type
+					wceAttr += '&number=' + number + '&pb_type=&fibre_type=';
+				} else {
+					wceAttr += '&number=' + number.substring(1,number.length-1) + '&fibre_type=' + number.substring(number.length-1);
+				}
+			} else { //folio
+				if (number.match("[rv]$")) { // ends with r|v => no fibre type
+					wceAttr += '&number=' + number.substring(1,number.length-1) + '&pb_type=' + number.substring(number.length-1) + '&fibre_type=';
+				} else {
+					wceAttr += '&number=' + number.substring(1,number.length-2) + '&pb_type=' + number.substring(number.length-2, number.length-1) + '&fibre_type=' + number.substring(number.length-1);
+				}
+			}
+					
+			var mapping = {
+				'facs' : '&facs='
+			};
+			wceAttr += getWceAttributeByTei($teiNode, mapping) + '&lb_alignment=';
+			// Get infos about following <fw> elements
+			// TODO
+			var $next = $teiNode.nextSibling;
+			
+			if ($next != null && $next.nodeName == 'seg') { // fw element in margin
+				var rt = $next.firstChild.firstChild.nodeValue; // has to be a running title
+				var position = $next.getAttribute('subtype');
+				wceAttr += '&running_title=' + rt + '&paratext_position=' + position;
+			} else if ($next != null && $next.nodeName == 'fw') { // fw element
+				var fwtype = $next.getAttribute('type');
+				if (fwtype == 'pageNum') { //page number
+					wceAttr += '&page_number=' + $next.firstChild.nodeValue;
+				} else if (fwtype == 'runTitle') { // running title
+					wceAttr += '&running_title=' + $next.firstChild.nodeValue; // TODO: What happens to position if not in the marginal (=> <seg>)
+				}
+			} else { // if there is no <seg> or <fw> break
+				break;
+			}
+			// there can be a second <fw> element
+			$nnext = $next.nextSibling;
+			if ($nnext != null && $nnext.nodeName == 'fw') { // fw element
+				fwtype = $nnext.getAttribute('type');
+				if (fwtype == 'pageNum') { //page number
+					wceAttr += '&page_number=' + $nnext.firstChild.nodeValue;
+				} else if (fwtype == 'runTitle') { // running title
+					wceAttr += '&running_title=' + $nnext.firstChild.nodeValue;
+				}
+			}
+			break;
+		default: //qb, cb and lb
+			wceAttr += getWceAttributeByTei($teiNode, {'n' : '&number='});
+			if (type == 'lb') {
+				wceAttr += getWceAttributeByTei($teiNode, {'rend' : '&lb_alignment='});
+			} else { // set empty alignment for pb, qb and cb
+				wceAttr += '&lb_alignment=';
+			}
+			wceAttr += '&pb_type=&fibre_type=&facs=&page_number=&running_title=&paratext_position=pagetop&paratext_position_other=';
+		}
 
-		nodeAddText($newNode, '\u002D');
-		$br = $newDoc.createElement('br');
-		$newNode.appendChild($br);
-		nodeAddText($newNode, '\u21B5');
+		if ($teiNode.getAttribute('break') != null) { // attribute break="no" exists
+			wceAttr += '&hasBreak=yes';
+			nodeAddText($newNode, '\u002D');
+		} else {
+			wceAttr += '&hasBreak=no';
+		}
+				
+		$newNode.setAttribute('wce', wceAttr);
+		
+		switch (type) {
+		case 'qb':
+			$br = $newDoc.createElement('br');
+			$newNode.appendChild($br);
+			nodeAddText($newNode, 'QB');
+			break;
+		case 'pb': // page break
+			$br = $newDoc.createElement('br');
+			$newNode.appendChild($br);
+			nodeAddText($newNode, 'PB');
+			break;
+		case 'cb': // page break
+			$br = $newDoc.createElement('br');
+			$newNode.appendChild($br);
+			nodeAddText($newNode, 'CB');
+			break;
+		case 'lb': // line break
+			$br = $newDoc.createElement('br');
+			$newNode.appendChild($br);
+			nodeAddText($newNode, '\u21B5');
+			break;
+		}
 		$htmlParent.appendChild($newNode);
 		nodeAddText($htmlParent, ' ');
 		return null;
@@ -484,6 +613,17 @@ function getHtmlByTei(inputString) {
 	 */
 	var Tei2Html_paratext = function($htmlParent, $teiNode, teiNodeName) {
 		// <comm type="commentary" place="pagetop" rend="left">ddd</comm>
+		
+		// First check if the <fw> element belongs to a page break (<pb>) element. Then return without doing anything. Otherwise continue.
+		// <pb/><seg><fw></fw></seg>
+		// <pb/><fw></fw>
+		// <pb/><fw></fw><fw></fw>
+		if (teiNodeName == 'fw' && (($teiNode.parentNode.previousSibling != null && $teiNode.parentNode.previousSibling.nodeName == 'pb')
+			|| ($teiNode.previousSibling != null && $teiNode.previousSibling.nodeName == 'pb')
+			|| ($teiNode.previousSibling.previousSibling.nodeName != null && $teiNode.previousSibling.previousSibling.nodeName == 'pb'))) {  // <fw> as addition to <pb>
+			return null;
+		}
+		
 		var $newNode = $newDoc.createElement('span');
 		$newNode.setAttribute('class', 'paratext');
 
@@ -887,7 +1027,22 @@ function getTeiByHtml(inputString, args) {
 
 		// gap
 		if (wceType == 'gap') {
-			return html2Tei_gap(arr, $teiParent, $htmlNode, stopAddW);
+			var text = getDomNodeText($htmlNode).split(" "); // split up content at word boundaries
+			if (text.length > 1) {
+				var $parent = $htmlNode.parentNode;
+				$htmlNode.removeChild($htmlNode.firstChild); // remove text from node
+				for (var i = text.length-1; i > 0; i--) { // clone node and modify content; descending to get the correct order in the XML
+					$addNode = $htmlNode.cloneNode(true);
+					nodeAddText($addNode, text[i].replace(/[\[\]]/g,"")); // replace brackets
+					$parent.insertBefore($addNode, $htmlNode.nextSibling);
+				}
+				// Information about first one (i=0) are put into old htmlNode
+				nodeAddText($htmlNode, text[0].replace("[","")); //remove "["
+				return html2Tei_gap(arr, $teiParent, $htmlNode, true); // get result from first part and return to main routine
+			}
+			else { //no word boundaries
+				return html2Tei_gap(arr, $teiParent, $htmlNode, stopAddW);
+			}
 		}
 
 		// correction
@@ -1043,10 +1198,19 @@ function getTeiByHtml(inputString, args) {
 			// add text
 			var newNodeText = getDomNodeText($htmlNode);
 			if (newNodeText) {
-				newNodeText = newNodeText.substr(1, newNodeText.length - 2);
+				$htmlNode.removeChild($htmlNode.firstChild);
+				newNodeText = newNodeText.replace(/[\[\]]/g,""); //get rid of brackets [...]
 				nodeAddText($newNode, newNodeText);
 			}
 		}
+		
+		/*if (!stopAddW) {
+			var $w = createNewWElement();
+			$w.appendChild($newNode);
+			$teiParent.appendChild($w);
+		} else {
+			$teiParent.appendChild($newNode);
+		}*/
 		$teiParent.appendChild($newNode);
 
 		return {
@@ -1191,15 +1355,15 @@ function getTeiByHtml(inputString, args) {
 				break;
 			case 'pb':
 				var breaPage;
-				// Decide whether folio or page
-				if (arr['pb_type'] != '' || arr['fibre_type'] != '') {
+				// Set page number and decide which type (folio|page)
+				if (arr['pb_type'] != '') {
 					// folio
 					breaPage = arr['number'] + arr['pb_type'] + arr['fibre_type'];
 					$newNode.setAttribute('n', breaPage);
 					$newNode.setAttribute('type', 'folio');
 				} else {
 					// page
-					breaPage = arr['number'];
+					breaPage = arr['number'] + arr['fibre_type'];
 					$newNode.setAttribute('n', breaPage);
 					$newNode.setAttribute('type', 'page');
 				}

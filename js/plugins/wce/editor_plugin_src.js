@@ -1401,9 +1401,9 @@
 					});
 
 					sub.add({
-						title : '&gt;	(diple)',
+						title : '\u003E (diple)',
 						onclick : function() {
-							ed.execCommand('mceAdd_pc', '\u0026diple;');
+							ed.execCommand('mceAdd_pc', '\u003E');
 						}
 					});
 
@@ -1852,7 +1852,8 @@
 						number = ++lcnt;
 					}
 
-					wceAttr = 'wce="__t=brea&amp;__n=&amp;hasBreak=no&amp;break_type=lb&amp;number=' + number + '&amp;pb_type=&amp;fibre_type=&amp;running_title=&amp;lb_alignment=&amp;insert=Insert&amp;cancel=Cancel" ';
+					wceAttr = 'wce="__t=brea&amp;__n=&amp;hasBreak=no&amp;break_type=lb&amp;number=' + number 
+						+ '&amp;pb_type=&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment=&amp;insert=Insert&amp;cancel=Cancel" ';
 
 					// var num = "";
 					/*
@@ -1873,7 +1874,8 @@
 					}
 
 					// set new wceAttr with hasBreak=yes
-					wceAttr = 'wce="__t=brea&amp;__n=&amp;hasBreak=yes&amp;break_type=lb&amp;number=' + number + '&amp;pb_type=&amp;fibre_type=&amp;running_title=&amp;lb_alignment=&amp;insert=Insert&amp;cancel=Cancel" ';
+					wceAttr = 'wce="__t=brea&amp;__n=&amp;hasBreak=yes&amp;break_type=lb&amp;number=' + number +
+						'&amp;pb_type=&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment=&amp;insert=Insert&amp;cancel=Cancel" ';
 					// var num = "";
 					/*
 					 * while (num == "") { num = prompt("Number of line break", ""); }
@@ -1887,7 +1889,8 @@
 						number = ++ccnt;
 					}
 
-					wceAttr = 'wce="__t=brea&amp;__n=&amp;break_type=cb&amp;number=' + number + '&amp;pb_type=&amp;fibre_type=&amp;running_title=&amp;lb_alignment=&amp;insert=Insert&amp;cancel=Cancel" ';
+					wceAttr = 'wce="__t=brea&amp;__n=&amp;break_type=cb&amp;number=' + number 
+						+ '&amp;pb_type=&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment=&amp;insert=Insert&amp;cancel=Cancel" ';
 					ed.selection.setContent('<br/><span ' + wceAttr + wceClass + '>' + 'CB' + '</span> ');
 					ccnt = number;
 				} else if (character == 'pb') {
@@ -1911,7 +1914,8 @@
 							new_pb_type = "r";
 						}
 					}
-					wceAttr = 'wce="__t=brea&amp;__n=&amp;break_type=pb&amp;number=' + new_number + '&amp;pb_type=' + new_pb_type + '&amp;fibre_type=&amp;running_title=&amp;lb_alignment=&amp;insert=Insert&amp;cancel=Cancel' + '"';
+					wceAttr = 'wce="__t=brea&amp;__n=&amp;break_type=pb&amp;number=' + new_number + '&amp;pb_type=' + new_pb_type 
+						+ '&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment=&amp;insert=Insert&amp;cancel=Cancel' + '"';
 					ed.selection.setContent('<br/><span ' + wceAttr + wceClass + '>' + 'PB' + '</span> ');
 
 					// duplication cf. wce.js, line 215
@@ -1923,7 +1927,8 @@
 						// for a line break without an explicit number
 						number = ++qcnt;
 					}
-					wceAttr = 'wce="__t=brea&amp;__n=&amp;break_type=gb&amp;number=' + number + '&amp;pb_type=&amp;fibre_type=&amp;running_title=&amp;lb_alignment=&amp;insert=Insert&amp;cancel=Cancel' + '" ';
+					wceAttr = 'wce="__t=brea&amp;__n=&amp;break_type=gb&amp;number=' + number 
+						+ '&amp;pb_type=&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment=&amp;insert=Insert&amp;cancel=Cancel' + '" ';
 					ed.selection.setContent('<br/><span ' + wceAttr + wceClass + '>' + 'QB' + '</span> ');
 					qcnt = number;
 				}

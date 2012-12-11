@@ -172,37 +172,69 @@
 	function getBreakTag() {
 		var v = $('#break_type').val();
 		if (v == 'lb') {
-			if (lbposition() == 'lb') {
-				document.breakinfo.hasBreak.value = 'no';
-				return '<br/>&crarr;';
-			} else {
-				document.breakinfo.hasBreak.value = 'yes';
-				return '&hyphen;<br/>&crarr;';
+			if (qsParm['mode'] == 'new') { // new lb
+				if (lbposition() == 'lb') {
+					document.breakinfo.hasBreak.value = 'no';
+					return '<br/>&crarr;';
+				} else {
+					document.breakinfo.hasBreak.value = 'yes';
+					return '&hyphen;<br/>&crarr;';
+				}
+			} else { // modifying existing one => keep setting
+				if (document.breakinfo.hasBreak.value == 'yes') {
+					return '&hyphen;<br/>&crarr;';
+				} else {
+					return '<br/>&crarr;';
+				}
 			}
 		}
 		else if (v == 'cb') {
-			if (lbposition() == 'lb') {
-				document.breakinfo.hasBreak.value = 'no';
-				return '<br/>CB';
-			} else {
-				document.breakinfo.hasBreak.value = 'yes';
-				return '&hyphen;<br/>CB';
+			if (qsParm['mode'] == 'new') { // new cb
+				if (lbposition() == 'lb') {
+					document.breakinfo.hasBreak.value = 'no';
+					return '<br/>CB';
+				} else {
+					document.breakinfo.hasBreak.value = 'yes';
+					return '&hyphen;<br/>CB';
+				}
+			} else { // modifying existing one => keep setting
+				if (document.breakinfo.hasBreak.value == 'yes') {
+					return '&hyphen;<br/>CB';
+				} else {
+					return '<br/>CB';
+				}
 			}
 		} else if (v == 'pb') {
-			if (lbposition() == 'lb') {
-			    document.breakinfo.hasBreak.value = 'no';
-				return '<br/>PB';
-			} else {
-				document.breakinfo.hasBreak.value = 'yes';
-				return '&hyphen;<br/>PB';
+			if (qsParm['mode'] == 'new') { // new pb
+				if (lbposition() == 'lb') {
+					document.breakinfo.hasBreak.value = 'no';
+					return '<br/>PB';
+				} else {
+					document.breakinfo.hasBreak.value = 'yes';
+					return '&hyphen;<br/>PB';
+				}
+			} else { // modifying existing one => keep setting
+				if (document.breakinfo.hasBreak.value == 'yes') {
+					return '&hyphen;<br/>PB';
+				} else {
+					return '<br/>PB';
+				}
 			}
 		} else { // QB
-			if (lbposition() == 'lb') {
-				document.breakinfo.hasBreak.value = 'no';
-				return '<br/>QB';
-			} else {
-				document.breakinfo.hasBreak.value = 'yes';
-				return '&hyphen;<br/>QB';
+			if (qsParm['mode'] == 'new') { // new qb
+				if (lbposition() == 'lb') {
+					document.breakinfo.hasBreak.value = 'no';
+					return '<br/>QB';
+				} else {
+					document.breakinfo.hasBreak.value = 'yes';
+					return '&hyphen;<br/>QB';
+				}
+			} else { // modifying existing one => keep setting
+				if (document.breakinfo.hasBreak.value == 'yes') {
+					return '&hyphen;<br/>QB';
+				} else {
+					return '<br/>QB';
+				}
 			}
 		}
 	}
