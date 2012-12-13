@@ -662,6 +662,11 @@ function getHtmlByTei(inputString) {
 	 */
 	var Tei2Html_note = function($htmlParent, $teiNode) {
 		// <note type="$ note_type" n="$newHand" xml:id="_TODO_" > $note_text </note>
+		// First check, if it is a editorial note to a correction
+		if ($teiNode.previousSibling != null && $teiNode.previousSibling.nodeName == 'app') { //<app>...</app><note>...</note>
+			return null;
+		}
+		
 		var $newNode = $newDoc.createElement('span');
 		$newNode.setAttribute('class', 'note');
 
@@ -699,21 +704,29 @@ function getHtmlByTei(inputString) {
 		var wceAttr = '';
 		var origText;
 		var rdgAttr;
-		for ( var i = 0, l = rdgs.length; i < l; i++) {
+		
+		origText = getDomNodeText(rdgs[0]); //add original reading once
+		$newNode.setAttribute('wce_orig', origText);
+		
+		for ( var i = 1, l = rdgs.length; i < l; i++) { // [0] is always original => no extra output
 			$rdg = rdgs[i];
 			typeValue = $rdg.getAttribute('type');
 			handValue = $rdg.getAttribute('hand');
 			deletionValue = $rdg.getAttribute('deletion');
 
-			if (typeValue == 'orig' && handValue == 'firsthand') {
-				wceAttr += '__t=corr&__n=' + handValue + '&corrector_name=' + handValue;
-				origText = getDomNodeText($rdg);
-			} else if ('@corrector@firsthand@corrector1@corrector2@corrector3'.indexOf(handValue) > -1) {
-				wceAttr += '@__t=corr&__n=' + handValue + '&corrector_name=' + handValue;
-			} else {
-				wceAttr += '@__t=corr&__n=' + handValue + '&corrector_name=other&corrector_name_other=' + handValue;
+			if (i == 1)
+				wceAttr += '__t=corr';
+			else
+				wceAttr += '@__t=corr';
+				
+			if ('@corrector@firsthand@corrector1@corrector2@corrector3'.indexOf(handValue) > -1) {
+				wceAttr += '&__n=' + handValue + '&corrector_name_other=&corrector_name=' + handValue;
+			} else { //other corrector
+				wceAttr += '&__n=' + handValue + '&corrector_name=other&corrector_name_other=' + handValue;
 			}
 
+			wceAttr += '&original_firsthand_reading=' + origText;
+			
 			if (deletionValue) {
 				// deletion="underline%2Cunderdot%2Cstrikethrough"
 				// &deletion_erased=0
@@ -732,7 +745,7 @@ function getHtmlByTei(inputString) {
 					}
 				}
 			}
-
+						
 			// &correction_text Contain:
 			// <note>nnn</note><w n="2">aaa</w><w n="3"> c<hi rend="gold">a</hi> b<hi rend="green">c</hi></w><w n="4">bbb</w>
 			var $tempParent = $newDoc.createElement('t');// <t>...</t>
@@ -749,10 +762,16 @@ function getHtmlByTei(inputString) {
 		if (origText != '') {
 			nodeAddText($newNode, origText);
 		}
+		
+		// TODO: Note should be added to the corresponding reading rather than to the complete app element, but do we know?
+		if ($teiNode.nextSibling != null && $teiNode.nextSibling.nodeName == 'note') { //editorial note ahead
+			wceAttr += '&editorial_note=' + $teiNode.nextSibling.firstChild.nodeValue;
+		}
+		
 		if (wceAttr != '') {
 			$newNode.setAttribute('wce', wceAttr);
 		}
-
+		
 		$htmlParent.appendChild($newNode);
 		return null;
 	};
@@ -1655,7 +1674,7 @@ function getTeiByHtml(inputString, args) {
 			return;
 		}
 
-		// Text node is followed by a normal node£¿
+		// Text node is followed by a normal node
 		var endIsSpace = endHasSpace(text);
 		var arr = text.split(' ');
 		for ( var i = 0, l = arr.length; i < l; i++) {
@@ -1898,3 +1917,17 @@ function nodeAddText($node, str) {
 		$node.appendChild($node.ownerDocument.createTextNode(str));
 	}
 };
+
+/*
+ * trim a string (cf. http://blog.stevenlevithan.com/archives/faster-trim-javascript)
+ */
+ /*function trim (str) {
+	str = str.replace(/^\s+/, '');
+	for (var i = str.length - 1; i >= 0; i--) {
+		if (/\S/.test(str.charAt(i))) {
+			str = str.substring(0, i + 1);
+			break;
+		}
+	}
+	return str;
+}*/
