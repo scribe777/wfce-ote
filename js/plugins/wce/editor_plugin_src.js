@@ -588,6 +588,7 @@
 			} else if (_isNodeTypeOf(selectedNode, 'abbr')) {
 				_setAllControls(ed, true);
 				w.not_A = false;
+				//w.not_C = false;// Must be activated sometime, but the complete mechanism of combining elements is still a bit buggy
 				w.type = 'abbr';
 			} else if (_isNodeTypeOf(selectedNode, 'chapter_number')) {
 				_setAllControls(ed, true);
@@ -1110,7 +1111,7 @@
 			 */
 			case 'breaks':
 				var c = cm.createMenuButton('menu-break', {
-					title : 'Breaks',
+					title : 'Breaks (STRG+B)',
 					image : tinyMCE.baseURL + '/plugins/wce/img/button_B-new.png',
 					icons : false
 				});
@@ -1160,7 +1161,7 @@
 
 			case 'correction':
 				var c = cm.createButton('menu-correction', {
-					title : 'Corrections',
+					title : 'Corrections (STRG+K)',
 					image : tinyMCE.baseURL + '/plugins/wce/img/button_C-new.png',
 					icons : false,
 					onclick : function() {
@@ -1182,7 +1183,7 @@
 					var w = ed.WCE_VAR;
 
 					sub = m.addMenu({
-						title : 'Uncertain Letters',
+						title : 'Uncertain Letters (STRG+U)',
 						id : 'menu-illegible-uncleartext'
 					});
 
@@ -1224,7 +1225,7 @@
 					});
 
 					sub = m.addMenu({
-						title : 'Gap',
+						title : 'Gap (STRG+G)',
 						id : 'menu-illegible-lacuna'
 					});
 
@@ -1434,7 +1435,7 @@
 
 			case 'abbreviation':
 				var c = cm.createMenuButton('menu-abbreviation', {
-					title : 'Abbreviated text',
+					title : 'Abbreviated text (STRG+A)',
 					image : tinyMCE.baseURL + '/plugins/wce/img/button_A-new.png',
 					icons : false
 				});
@@ -1483,7 +1484,7 @@
 
 			case 'paratext':
 				var c = cm.createMenuButton('menu-paratext', {
-					title : 'Marginalia',
+					title : 'Marginalia (STRG+M)',
 					image : tinyMCE.baseURL + '/plugins/wce/img/button_M-new.png',
 					icons : false
 				});
@@ -1532,7 +1533,7 @@
 
 			case 'note':
 				var c = cm.createMenuButton('menu-note', {
-					title : 'Note',
+					title : 'Note (STRG+N)',
 					image : tinyMCE.baseURL + '/plugins/wce/img/button_N-new.png',
 					icons : false
 				});
@@ -1859,7 +1860,7 @@
 					/*
 					 * while (num == "") { num = prompt("Number of line break", ""); }
 					 */
-					ed.selection.setContent('<span ' + wceAttr + wceClass + '>' + '<br/>&crarr;' + '</span> ');
+					ed.selection.setContent('<span ' + wceAttr + wceClass + '>' + '<br/>&crarr;' + '</span>');
 					lcnt = number;
 
 					// ed.selection.select(ed.getBody(), true); // select complete text
@@ -1875,12 +1876,12 @@
 
 					// set new wceAttr with hasBreak=yes
 					wceAttr = 'wce="__t=brea&amp;__n=&amp;hasBreak=yes&amp;break_type=lb&amp;number=' + number +
-						'&amp;pb_type=&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment=&amp;insert=Insert&amp;cancel=Cancel" ';
+						'&amp;pb_type=&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment=&amp;insert=Insert&amp;cancel=Cancel"';
 					// var num = "";
 					/*
 					 * while (num == "") { num = prompt("Number of line break", ""); }
 					 */
-					ed.selection.setContent('<span ' + wceAttr + wceClass + '>' + '&hyphen;<br/>&crarr;' + '</span>');
+					ed.selection.setContent('<span ' + wceAttr + wceClass + '>' + '&#8208;<br/>&crarr;' + '</span>'); //&#8208; instead of &hyphen; because of IE9
 					lcnt = number;
 				} else if (character == 'cb') {
 					// column break
@@ -1890,8 +1891,8 @@
 					}
 
 					wceAttr = 'wce="__t=brea&amp;__n=&amp;break_type=cb&amp;number=' + number 
-						+ '&amp;pb_type=&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment=&amp;insert=Insert&amp;cancel=Cancel" ';
-					ed.selection.setContent('<br/><span ' + wceAttr + wceClass + '>' + 'CB' + '</span> ');
+						+ '&amp;pb_type=&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment=&amp;insert=Insert&amp;cancel=Cancel"';
+					ed.selection.setContent('<br/><span ' + wceAttr + wceClass + '>' + 'CB' + '</span>');
 					ccnt = number;
 				} else if (character == 'pb') {
 					// page break
@@ -1916,7 +1917,7 @@
 					}
 					wceAttr = 'wce="__t=brea&amp;__n=&amp;break_type=pb&amp;number=' + new_number + '&amp;pb_type=' + new_pb_type 
 						+ '&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment=&amp;insert=Insert&amp;cancel=Cancel' + '"';
-					ed.selection.setContent('<br/><span ' + wceAttr + wceClass + '>' + 'PB' + '</span> ');
+					ed.selection.setContent('<br/><span ' + wceAttr + wceClass + '>' + 'PB' + '</span>');
 
 					// duplication cf. wce.js, line 215
 					// ed.execCommand('mceAdd_brea', 'cb', '1');
@@ -1928,8 +1929,8 @@
 						number = ++qcnt;
 					}
 					wceAttr = 'wce="__t=brea&amp;__n=&amp;break_type=gb&amp;number=' + number 
-						+ '&amp;pb_type=&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment=&amp;insert=Insert&amp;cancel=Cancel' + '" ';
-					ed.selection.setContent('<br/><span ' + wceAttr + wceClass + '>' + 'QB' + '</span> ');
+						+ '&amp;pb_type=&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment=&amp;insert=Insert&amp;cancel=Cancel' + '"';
+					ed.selection.setContent('<br/><span ' + wceAttr + wceClass + '>' + 'QB' + '</span>');
 					qcnt = number;
 				}
 				break;
@@ -2101,8 +2102,9 @@
 
 				return _stopEvent(ed, e);
 			}
-
+			
 			// Add <pc> for some special characters
+			// We need a lot of cases, because of different kyeboard layouts, different browsers and different platforms
 			if (ek == 59 && !e.shiftKey) { // ; en
 				tinyMCE.activeEditor.execCommand('mceAdd_pc', ';');
 				_stopEvent(ed, e);
@@ -2122,6 +2124,9 @@
 				// .
 				tinyMCE.activeEditor.execCommand('mceAdd_pc', '.');
 				_stopEvent(ed, e);
+			} else if (ek == 63 && e.shiftKey) { // for FF
+				tinyMCE.activeEditor.execCommand('mceAdd_pc', '?');
+				_stopEvent(ed, e);
 			} else if (ek == 191 && e.shiftKey) {
 				// ? en
 				tinyMCE.activeEditor.execCommand('mceAdd_pc', '?');
@@ -2140,6 +2145,24 @@
 				_stopEvent(ed, e);
 				// e.stopImmediatePropagation();
 				_wceAddNoDialog(ed, 'part_abbr', '');
+			}
+		},
+		
+		_setKeyPressEvent : function(ed, e) {
+			if (!e) {
+				var e = window.event;
+			}
+
+			var ek = e.keyCode || e.charCode || 0;
+			
+			if (isWebKit) { // for Chrome (on Linux): ":" and ";" both give the same keydown code 186 (???)
+				if (ek == 58 && e.shiftKey) { // :
+					tinyMCE.activeEditor.execCommand('mceAdd_pc', ':');
+					_stopEvent(ed, e);
+				} else if (ek == 59 && e.shiftKey) { // ;
+					tinyMCE.activeEditor.execCommand('mceAdd_pc', ';');
+					_stopEvent(ed, e);
+				}
 			}
 		},
 
@@ -2196,7 +2219,8 @@
 			}
 
 			ed.onKeyDown.addToTop(WCEObj._setKeyDownEvent);
-
+			ed.onKeyPress.addToTop(WCEObj._setKeyPressEvent); //needed for Chrome (Linux) :-(
+			
 			// class="__t=wce_type&__n=wce_name...."
 			ed.wceTypeParamInClass = '__t';
 			ed.wceNameParamInClass = '__n';
