@@ -842,8 +842,29 @@ function getTeiByHtml(inputString, args) {
 
 		// <TEMP>
 		$newRoot = $newDoc.documentElement;
-		$newRoot.setAttribute('xmlns', 'http://www.tei-c.org/ns/1.0');
-
+		//$newRoot.setAttribute('xmlns', 'http://www.tei-c.org/ns/1.0');
+		
+		/*$teiHeader = $newDoc.createElement('teiHeader');
+		$fileDesc = $newDoc.createElement('fileDesc');
+		$titleStmt = $newDoc.createElement('titleStmt');
+		$title = $newDoc.createElement('title');
+		$titleStmt.appendChild($title);
+		$fileDesc.appendChild($titleStmt);
+		$publicationStmt = $newDoc.createElement('publicationStmt');
+        $p = $newDoc.createElement('p');
+		$publicationStmt.appendChild($p);
+		$fileDesc.appendChild($publicationStmt);
+		$sourceDesc = $newDoc.createElement('sourceDesc');
+		$p = $newDoc.createElement('p');
+		$sourceDesc.appendChild($p);
+		$fileDesc.appendChild($sourceDesc);
+        $teiHeader.appendChild($fileDesc);
+		$newRoot.appendChild($teiHeader);
+		
+		$body = $newDoc.createElement('body');
+		$text = $newDoc.createElement('text');
+		*/
+		
 		if (g_chapterNumber) {
 			g_chapterNode = $newDoc.createElement('div');
 			g_chapterNode.setAttribute('type', 'chapter');
@@ -872,7 +893,7 @@ function getTeiByHtml(inputString, args) {
 				readAllChildrenOfHtmlNode(g_currentParentNode, $c, false);
 			}
 		}
-
+		
 		// DOM to String
 		var str = xml2String($newRoot);
 		if (!str)
@@ -880,6 +901,9 @@ function getTeiByHtml(inputString, args) {
 
 		//  
 		// str = str.substring(6, str.length - 7);
+		// add an required header to get a valid XML
+		str = str.replace('<TEI>', '<TEI xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.tei-c.org/ns/1.0 http://urts173.uni-trier.de/~gany2d01/test/TEI-NTMSS.xsd" xmlns="http://www.tei-c.org/ns/1.0" ><teiHeader><fileDesc><titleStmt><title/> </titleStmt><publicationStmt><p/></publicationStmt><sourceDesc><msDesc><msIdentifier></msIdentifier></msDesc></sourceDesc></fileDesc></teiHeader><text><body>');
+		str = str.replace("</TEI>", "</body></text></TEI>");
 		return str;
 	};
 
