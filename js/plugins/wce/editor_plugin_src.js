@@ -2155,11 +2155,11 @@
 
 			var ek = e.keyCode || e.charCode || 0;
 			
-			if (isWebKit) { // for Chrome (on Linux): ":" and ";" both give the same keydown code 186 (???)
-				if (ek == 58 && e.shiftKey) { // :
+			if (isWebKit) { // for Chrome (on Linux and Mac): ":" and ";" both give the same keydown code 186 (???). So we use keypress for them
+				if (ek == 58) { // :
 					tinyMCE.activeEditor.execCommand('mceAdd_pc', ':');
 					_stopEvent(ed, e);
-				} else if (ek == 59 && e.shiftKey) { // ;
+				} else if (ek == 59) { // ;
 					tinyMCE.activeEditor.execCommand('mceAdd_pc', ';');
 					_stopEvent(ed, e);
 				}
