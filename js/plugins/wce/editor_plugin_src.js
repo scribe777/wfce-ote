@@ -1027,13 +1027,15 @@
 						break;
 					case 'unclear':
 						info_text = '<div>' + 'Uncertain letters' + '</div>';
-						info_text += '<div>' + 'Reason: ';
-						if (ar['unclear_text_reason'] == 'other') {
-							info_text += ar['unclear_text_reason_other'];
-						} else {
-							info_text += ar['unclear_text_reason'];
+						if (ar['unclear_text_reason'] != null) {
+							info_text += '<div>' + 'Reason: ';
+							if (ar['unclear_text_reason'] == 'other') {
+								info_text += ar['unclear_text_reason_other'];
+							} else {
+								info_text += ar['unclear_text_reason'];
+							}
+							info_text += '</div>';
 						}
-						info_text += '</div>';
 						break;
 					case 'spaces':
 						info_text = '<div>' + 'Spaces</div><div style="margin-top:10px">Extent: ' + ar['sp_extent'] + ' ';
@@ -2155,7 +2157,7 @@
 
 			var ek = e.keyCode || e.charCode || 0;
 			
-			if (isWebKit) { // for Chrome (on Linux and Mac): ":" and ";" both give the same keydown code 186 (???). So we use keypress for them
+			if (tinymce.isWebKit) { // for Chrome (on Linux and Mac): ":" and ";" both give the same keydown code 186 (???). So we use keypress for them
 				if (ek == 58) { // :
 					tinyMCE.activeEditor.execCommand('mceAdd_pc', ':');
 					_stopEvent(ed, e);

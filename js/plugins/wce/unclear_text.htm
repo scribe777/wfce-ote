@@ -24,8 +24,9 @@
 							<option value="damage to page">{#wce.damage_to_page}</option>
 							<option value="other">{#wce.other}</option>
 					</select></td>
-					<td><input id="original_text" name="original_text" value=""
-						type="hidden" /> <input id="unclear_text_reason_other"
+					<td><!--<input id="original_text" name="original_text" value=""
+						type="hidden" />-->
+						<input id="unclear_text_reason_other"
 						name="unclear_text_reason_other" type="text" value="" size="30"
 						maxlength="" class="required number min1 mceFocus" />
 					</td>
@@ -66,9 +67,9 @@
 
 	function setstatus_unclear_text() {
 		checkstatus_unclear_text_reason();
-		if ($('#original_text').val() == '') {
+		/*if ($('#original_text').val() == '') {
 			$('#original_text').val(selected_content);
-		}
+		}*/
 	}
 	
 	function testOther() {

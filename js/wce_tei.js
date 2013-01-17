@@ -240,7 +240,24 @@ function getHtmlByTei(inputString) {
 	var Tei2Html_unclear = function($htmlParent, $teiNode) {
 		var $newNode = $newDoc.createElement('span');
 		$newNode.setAttribute('class', 'unclear');
-		$newNode.setAttribute('wce', '__t=unclear');
+		var wceAttr = '__t=unclear&__n=';
+		
+		$newNode.setAttribute('wce_orig', $teiNode.firstChild.nodeValue);
+		
+		if (!$teiNode.getAttribute('reason')) { // no reason given
+			wceAttr += '&unclear_text_reason=&unclear_text_reason_other=';
+		} else {
+			var mapping = {
+				'reason' : {
+					'0' : '@poor image@faded ink@damage to page',
+					'1' : '&unclear_text_reason_other=&unclear_text_reason=',
+					'2' : '&unclear_text_reason=other&unclear_text_reason_other='
+				},
+			};
+			wceAttr += getWceAttributeByTei($teiNode, mapping);
+		}
+		$newNode.setAttribute('wce', wceAttr);
+		
 		$htmlParent.appendChild($newNode);
 		return $newNode;
 	};
@@ -904,6 +921,11 @@ function getTeiByHtml(inputString, args) {
 		// add an required header to get a valid XML
 		str = str.replace('<TEI>', '<TEI xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.tei-c.org/ns/1.0 http://urts173.uni-trier.de/~gany2d01/test/TEI-NTMSS.xsd" xmlns="http://www.tei-c.org/ns/1.0" ><teiHeader><fileDesc><titleStmt><title/> </titleStmt><publicationStmt><p/></publicationStmt><sourceDesc><msDesc><msIdentifier></msIdentifier></msDesc></sourceDesc></fileDesc></teiHeader><text><body>');
 		str = str.replace("</TEI>", "</body></text></TEI>");
+		
+		// Now we do some "magic" regex substitution do get correct <w> elements
+		str = str.replace(/<\/supplied><supplied/g, "</supplied></w><w><supplied");
+		str = str.replace(/<\/unclear><unclear/g, "</unclear></w><w><unclear");
+		str = str.replace(/<\/w><unclear/g, "</w><w><unclear");
 		return str;
 	};
 
@@ -1081,9 +1103,12 @@ function getTeiByHtml(inputString, args) {
 				}
 				// Information about first one (i=0) are put into old htmlNode
 				nodeAddText($htmlNode, text[0].replace("[","")); //remove "["
-				return html2Tei_gap(arr, $teiParent, $htmlNode, true); // get result from first part and return to main routine
+				return html2Tei_gap(arr, $teiParent, $htmlNode, stopAddW); // get result from first part and return to main routine
 			}
 			else { //no word boundaries
+				//if ($htmlNode.nextSibling.nodeName == 'gap')//gap node from the middle of a sequence
+				//	return html2Tei_gap(arr, $teiParent, $htmlNode, false);
+				//else // isolated gap or last one in a sequence
 				return html2Tei_gap(arr, $teiParent, $htmlNode, stopAddW);
 			}
 		}
@@ -1125,7 +1150,25 @@ function getTeiByHtml(inputString, args) {
 
 		// unclear
 		if (wceType == 'unclear') {
-			return html2Tei_unclear(arr, $teiParent, $htmlNode, stopAddW);
+			var text = getDomNodeText($htmlNode).split(" "); // split up content at word boundaries
+			var orig_text = $htmlNode.getAttribute('wce_orig').split("%20"); //split up original text attribute
+			if (text.length > 1) {
+				var $parent = $htmlNode.parentNode;
+				$htmlNode.removeChild($htmlNode.firstChild); // remove text from node
+				for (var i = text.length-1; i > 0; i--) { // clone node and modify content; descending to get the correct order in the XML
+					$addNode = $htmlNode.cloneNode(true);
+					$addNode.setAttribute('wce_orig', orig_text[i]);// set attribute wce_orig
+					nodeAddText($addNode, text[i]);
+					$parent.insertBefore($addNode, $htmlNode.nextSibling);
+				}
+				// Information about first one (i=0) are put into old htmlNode
+				$htmlNode.setAttribute('wce_orig', orig_text[0]);// set attribute wce_orig
+				nodeAddText($htmlNode, text[0]);
+				return html2Tei_unclear(arr, $teiParent, $htmlNode, stopAddW); // get result from first part and return to main routine
+			}
+			else { //no word boundaries
+				return html2Tei_unclear(arr, $teiParent, $htmlNode, stopAddW);
+			}
 		}
 
 		// part_abbr
@@ -1247,18 +1290,18 @@ function getTeiByHtml(inputString, args) {
 			}
 		}
 		
-		/*if (!stopAddW) {
+		if (!stopAddW) {
 			var $w = createNewWElement();
 			$w.appendChild($newNode);
 			$teiParent.appendChild($w);
 		} else {
 			$teiParent.appendChild($newNode);
-		}*/
-		$teiParent.appendChild($newNode);
+		}
+		//$teiParent.appendChild($newNode);
 
 		return {
 			0 : $newNode,
-			1 : false
+			1 : true
 		};
 
 	};
@@ -1655,8 +1698,8 @@ function getTeiByHtml(inputString, args) {
 		if (reasonValue && reasonValue != '') {
 			$unclear.setAttribute('reason', decodeURIComponent(reasonValue));
 		}
-		if (arr['original_text']) {
-			nodeAddText($unclear, decodeURIComponent(arr['original_text']));
+		if ($htmlNode.getAttribute('wce_orig')) {
+			nodeAddText($unclear, decodeURIComponent($htmlNode.getAttribute('wce_orig')));
 		}
 		
 		if (!stopAddW) {
