@@ -879,17 +879,23 @@
 						switch (ar['break_type']) {
 						case 'lb':
 							info_text = '<div>Number: ' + ar['number'] + '</div>';
-							if (ar['lb_alignment'] != '') {
+							if (ar['lb_alignment']) {
 								info_text += '<div>Alignment: ' + ar['lb_alignment'];
 							}
 							break;
 						case 'pb':
-							info_text = '<div>' + 'Page number (in sequence): ' + ar['number'] + ar['pb_type'] + ar['fibre_type'] + '</div>';
-							if (ar['page_number'] != '') {
+							info_text = '<div>' + 'Page number (in sequence): ' + ar['number'] + ar['pb_type'];
+							if (ar['fibre_type'])
+								info_text += ar['fibre_type'];
+							info_text += '</div>';
+							if (ar['page_number']) {
 								info_text += '<div>' + 'Page number (as written): ' + ar['page_number'] + '</div>';
 							}
-							if (ar['running_title'] != '') {
-								info_text += '<div>' + 'Running title: ' + ar['running_title'] + '</div>';
+							if (ar['running_title']) {
+								info_text += '<div>' + 'Running title: ' + ar['running_title'] + ' (' + ar['paratext_position'] + ')' + '</div>';
+							}
+							if (ar['facs']) {
+								info_text += '<div>' + 'URL to digital image: ' + ar['facs'] + '</div>';
 							}
 							break;
 						default:
@@ -1008,7 +1014,7 @@
 						} else {
 							info_text += 'Absent text' + '</div>';
 						}
-						if (ar['extent'] && ar['extent'] != '') {
+						if (ar['extent'] && ar['extent'] != null) {
 							info_text += '<div style="margin-top:10px">' + 'Extent: ' + ar['extent'] + ' ';
 							if (ar['unit'] == 'other') {
 								info_text += ar['unit_other'] + '</div>';
