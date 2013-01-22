@@ -742,7 +742,8 @@ function getHtmlByTei(inputString) {
 				wceAttr += '&__n=' + handValue + '&corrector_name=other&corrector_name_other=' + handValue;
 			}
 
-			wceAttr += '&original_firsthand_reading=' + origText;
+			wceAttr += '&reading=' + typeValue;
+			wceAttr += '&original_firsthand_reading=' + encodeURIComponent(origText);
 			
 			if (deletionValue) {
 				// deletion="underline%2Cunderdot%2Cstrikethrough"
@@ -761,6 +762,8 @@ function getHtmlByTei(inputString) {
 						wceAttr += '&deletion_' + deletionItem + '=0';
 					}
 				}
+			} else { // no deletion given
+				wceAttr += '&deletion_erased=0&deletion_underline=0&deletion_underdot=0&deletion_strikethrough=0&deletion_vertical_line=0&deletion_other=0';
 			}
 						
 			// &correction_text Contain:
@@ -780,9 +783,10 @@ function getHtmlByTei(inputString) {
 			nodeAddText($newNode, origText);
 		}
 		
-		// TODO: Note should be added to the corresponding reading rather than to the complete app element, but do we know?
+		// TODO: Note should be added to the corresponding reading rather than to the complete app element, but how do we know?
+		wceAttr += '&editorial_note=';
 		if ($teiNode.nextSibling != null && $teiNode.nextSibling.nodeName == 'note') { //editorial note ahead
-			wceAttr += '&editorial_note=' + $teiNode.nextSibling.firstChild.nodeValue;
+			wceAttr += $teiNode.nextSibling.firstChild.nodeValue;
 		}
 		
 		if (wceAttr != '') {

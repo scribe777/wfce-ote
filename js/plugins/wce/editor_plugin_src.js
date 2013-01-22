@@ -951,7 +951,9 @@
 							// information on deletion
 							corr_str += '<div style="margin-top:5px">' + 'Method of deletion: ' + deletionText + '</div>';
 						}
-
+						if (ar['editorial_note']) {
+							corr_str += '<div style="margin-top:5px">Note: ' + ar['editorial_note'] + '</div>';
+						}
 						break;
 					case 'paratext':
 						info_text = '<div>' + 'Paratext type: ';
@@ -1071,9 +1073,6 @@
 						corr_str = '*: ' + 'Omission' + corr_str;
 					else
 						corr_str = '*: ' + $(sele_node).html() + corr_str;
-					if (ar['editorial_note']) {
-						corr_str += '<div style="margin-top:5px">Note: ' + ar['editorial_note'] + '</div>';
-					}
 				}
 
 				if (type_name == 'corr') {
