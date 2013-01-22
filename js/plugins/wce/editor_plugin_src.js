@@ -864,7 +864,7 @@
 						case 'nomSac':
 							info_text = 'Nomen Sacrum';
 							break;
-						case 'numeral':
+						case 'num':
 							info_text = 'Numeral';
 							break;
 						case 'other':
