@@ -725,7 +725,7 @@ function getHtmlByTei(inputString) {
 		origText = getDomNodeText(rdgs[0]); //add original reading once
 		$newNode.setAttribute('wce_orig', origText);
 		
-		for ( var i = 1, l = rdgs.length; i < l; i++) { // [0] is always original => no extra output
+		for (var i = 1, l = rdgs.length; i < l; i++) { // [0] is always original => no extra output
 			$rdg = rdgs[i];
 			typeValue = $rdg.getAttribute('type');
 			handValue = $rdg.getAttribute('hand');
@@ -753,17 +753,20 @@ function getHtmlByTei(inputString) {
 				// &deletion_strikethrough=1
 				// &deletion_vertical_line=0
 				// &deletion_other=0
-				var deletionArr = new Array('erased', 'underline', 'underdot', 'strikethrough', 'vertical_line', 'other');
+				var deletionstr = '';
+				var deletionArr = new Array('erased', 'underline', 'underdot', 'strikethrough', 'vertical line', 'other');
 				for ( var d = 0; d < deletionArr.length; d++) {
 					var deletionItem = deletionArr[d];
 					if (deletionValue.indexOf(deletionItem) > -1) {
 						wceAttr += '&deletion_' + deletionItem + '=1';
+						deletionstr += ',' + deletionItem;
 					} else {
 						wceAttr += '&deletion_' + deletionItem + '=0';
 					}
 				}
+				wceAttr += '&deletion=' + encodeURIComponent(deletionstr.substring(1)); // to get rid of very first ","
 			} else { // no deletion given
-				wceAttr += '&deletion_erased=0&deletion_underline=0&deletion_underdot=0&deletion_strikethrough=0&deletion_vertical_line=0&deletion_other=0';
+				wceAttr += '&deletion_erased=0&deletion_underline=0&deletion_underdot=0&deletion_strikethrough=0&deletion_vertical_line=0&deletion_other=0&deletion=null';
 			}
 						
 			// &correction_text Contain:
@@ -776,17 +779,19 @@ function getHtmlByTei(inputString) {
 				corrector_text = corrector_text.substr(3, corrector_text.length - 8);
 				wceAttr += '&corrector_text=' + encodeURIComponent(corrector_text);
 			}
-			// alert(wceAttr);
+			
+			wceAttr += '&editorial_note=';
+			var $test = $teiNode.nextSibling; // this is the only candidate for a match
+			if ($test != null && $test.nodeName == 'note' && $test.getAttribute('type') == 'transcriber') { //editorial note ahead
+				if ($test.getAttribute('n') == i) { // note belongs to actual rdg-element
+					wceAttr += $teiNode.nextSibling.firstChild.nodeValue; //set the correct attribute value
+					$teiNode.parentNode.removeChild($test); //remove this note from the list
+				}
+			}
 		}
 
 		if (origText != '') {
 			nodeAddText($newNode, origText);
-		}
-		
-		// TODO: Note should be added to the corresponding reading rather than to the complete app element, but how do we know?
-		wceAttr += '&editorial_note=';
-		if ($teiNode.nextSibling != null && $teiNode.nextSibling.nodeName == 'note') { //editorial note ahead
-			wceAttr += $teiNode.nextSibling.firstChild.nodeValue;
 		}
 		
 		if (wceAttr != '') {
@@ -794,6 +799,7 @@ function getHtmlByTei(inputString) {
 		}
 		
 		$htmlParent.appendChild($newNode);
+		nodeAddText($htmlParent, ' ');
 		return null;
 	};
 
@@ -863,28 +869,6 @@ function getTeiByHtml(inputString, args) {
 
 		// <TEMP>
 		$newRoot = $newDoc.documentElement;
-		//$newRoot.setAttribute('xmlns', 'http://www.tei-c.org/ns/1.0');
-		
-		/*$teiHeader = $newDoc.createElement('teiHeader');
-		$fileDesc = $newDoc.createElement('fileDesc');
-		$titleStmt = $newDoc.createElement('titleStmt');
-		$title = $newDoc.createElement('title');
-		$titleStmt.appendChild($title);
-		$fileDesc.appendChild($titleStmt);
-		$publicationStmt = $newDoc.createElement('publicationStmt');
-        $p = $newDoc.createElement('p');
-		$publicationStmt.appendChild($p);
-		$fileDesc.appendChild($publicationStmt);
-		$sourceDesc = $newDoc.createElement('sourceDesc');
-		$p = $newDoc.createElement('p');
-		$sourceDesc.appendChild($p);
-		$fileDesc.appendChild($sourceDesc);
-        $teiHeader.appendChild($fileDesc);
-		$newRoot.appendChild($teiHeader);
-		
-		$body = $newDoc.createElement('body');
-		$text = $newDoc.createElement('text');
-		*/
 		
 		if (g_chapterNumber) {
 			g_chapterNode = $newDoc.createElement('div');
@@ -1317,11 +1301,16 @@ function getTeiByHtml(inputString, args) {
 		var $app, $seg;
 		var xml_id;
 		var startWordNumberInCorrection = g_wordNumber;
+		var notecount; //to determine the correct position of the <note> insertion
+		var rdgcount;
+		
 		for ( var i = 0, l = infoArr.length; i < l; i++) {
 			var arr = infoArr[i];
 			g_wordNumber = startWordNumberInCorrection;
 
 			if (!$app) {
+				notecount = 0;
+				rdgcount = 0;
 				// new Element <app>
 				$app = $newDoc.createElement('app');
 				$teiParent.appendChild($app);
@@ -1344,8 +1333,8 @@ function getTeiByHtml(inputString, args) {
 				}
 				$app.appendChild($orig);
 			}
-
 			// new Element<rdg>,child of <app>($newNode)
+			rdgcount++;
 			var $rdg = $newDoc.createElement('rdg');
 			$rdg.setAttribute('type', arr['reading']);
 			var corrector_name = arr['corrector_name'];
@@ -1359,18 +1348,7 @@ function getTeiByHtml(inputString, args) {
 			if (deletion && deletion != 'null' && deletion != '') {
 				$rdg.setAttribute('deletion', deletion.replace(/\,/g, '+'));
 			}
-			// editorial_note
-			var editorial_note = arr['editorial_note'];
-			if (editorial_note != '') {
-				var $note = $newDoc.createElement('note');
-				$note.setAttribute('type', 'transcriber');
-				var _line = '';// TODO
-				xml_id = 'P' + g_pageNumber + 'C' + g_columnNumber + 'L' + _line + '-' + g_witValue + '-1';
-				$note.setAttribute('xml:id', xml_id);// TODO:
-				nodeAddText($note, editorial_note);
-				$teiParent.insertBefore($note, $app.nextSibling);
-			}
-
+			
 			var place = arr['place_corr'];
 			var corrector_text = arr['corrector_text'];
 			if (arr['blank_correction'] == 'on') {
@@ -1390,6 +1368,20 @@ function getTeiByHtml(inputString, args) {
 				}
 			}			
 			$app.appendChild($rdg);
+			
+			// editorial_note
+			var editorial_note = arr['editorial_note'];
+			if (editorial_note != '') {
+				notecount++;
+				var $note = $newDoc.createElement('note');
+				$note.setAttribute('type', 'transcriber');
+				$note.setAttribute('n', rdgcount); //store information about corresponding reading in "n" attribute
+				var _line = '';// TODO line numbering
+				xml_id = 'P' + g_pageNumber + 'C' + g_columnNumber + 'L' + _line + '-' + g_witValue + '-1';
+				$note.setAttribute('xml:id', xml_id);// TODO:
+				nodeAddText($note, editorial_note);
+				$app.parentNode.appendChild($note); //insert $note at the very end
+			}
 		}
 		return {
 			0 : $app,
