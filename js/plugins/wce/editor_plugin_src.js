@@ -892,7 +892,11 @@
 								info_text += '<div>' + 'Page number (as written): ' + ar['page_number'] + '</div>';
 							}
 							if (ar['running_title']) {
-								info_text += '<div>' + 'Running title: ' + ar['running_title'] + ' (' + ar['paratext_position'] + ')' + '</div>';
+								info_text += '<div>' + 'Running title: ' + ar['running_title'] + ' (';
+								if (ar['paratext_position'] == 'other')
+									info_text += ar['paratext_position_other'] + ')' + '</div>';
+								else
+									info_text += ar['paratext_position'] + ')' + '</div>';
 							}
 							if (ar['facs']) {
 								info_text += '<div>' + 'URL to digital image: ' + ar['facs'] + '</div>';
@@ -2301,7 +2305,6 @@
 			// tei to html only for Test
 			ed.addCommand('mceTei2Html', function() {
 				_wceAdd(ed, url, '/tei2html.htm', 580, 420, 1, true);
-
 			});
 
 			// add showHtmlByTei button
@@ -2327,6 +2330,30 @@
 				image : url + '/img/de.png'
 			});
 			
+			ed.addButton('version', {
+				title : "Information about the editor's version",
+				cmd : 'mceVersion',
+			});
+			
+			ed.addCommand('mceVersion', function() {
+				var http=new XMLHttpRequest();
+				http.open('HEAD','http://ntvmr.uni-muenster.de/community/modules/transedit/version.txt',false);
+				http.send(null);
+				if (http.status!=200) return undefined;
+				var wort = http.getResponseHeader('Last-modified');
+				if(wort.length == 19)
+					datum = wort.substring(11,15) + "-" + wort.substring(7,10) + "-" + wort.substring(5,7) + " " + wort.substring(16);
+				if (wort.length == 29) {
+					if (wort.search("Jan") != -1)monat = "01"; if(wort.search("Feb") != -1)monat = "02";
+					if (wort.search("Mar") != -1)monat = "03"; if(wort.search("Apr") != -1)monat = "04";
+					if (wort.search("May") != -1)monat = "05"; if(wort.search("Jun") != -1)monat = "06";
+					if (wort.search("Jul") != -1)monat = "07"; if(wort.search("Aug") != -1)monat = "08";
+					if (wort.search("Sep") != -1)monat = "09"; if(wort.search("Oct") != -1)monat = "10";
+					if (wort.search("Nov") != -1)monat = "11"; if(wort.search("Dec") != -1)monat = "12";
+					datum = wort.substring(12,16) + "-" + monat + "-" + wort.substring(5,7) + " " + wort.substring(18);
+				}
+				alert('This version of the transcription editor was last modified on: ' + datum);
+			});
 			
 			// verse modify
 			ed.addCommand('mceVerseModify', function() {

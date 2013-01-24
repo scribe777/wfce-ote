@@ -550,33 +550,33 @@ function getHtmlByTei(inputString) {
 				'facs' : '&facs='
 			};
 			wceAttr += getWceAttributeByTei($teiNode, mapping) + '&lb_alignment=';
+			
 			// Get infos about following <fw> elements
-			// TODO
 			var $next = $teiNode.nextSibling;
 			
-			if ($next != null && $next.nodeName == 'seg') { // fw element in margin
+			if ($next != null && $next.nodeName == 'seg') { // seg element following => running header
 				var rt = $next.firstChild.firstChild.nodeValue; // has to be a running title
 				var position = $next.getAttribute('subtype');
-				wceAttr += '&running_title=' + rt + '&paratext_position=' + position;
-			} else if ($next != null && $next.nodeName == 'fw') { // fw element
-				var fwtype = $next.getAttribute('type');
-				if (fwtype == 'pageNum') { //page number
-					wceAttr += '&page_number=' + $next.firstChild.nodeValue;
-				} else if (fwtype == 'runTitle') { // running title
-					wceAttr += '&running_title=' + $next.firstChild.nodeValue; // TODO: What happens to position if not in the marginal (=> <seg>)
+				wceAttr += '&running_title=' + rt + '&paratext_position=';
+				if ($next.getAttribute('type') === 'margin' || $next.getAttribute('type') === 'line') //standard values
+					wceAttr += position + '&paratext_position_other=';
+				else //"other" value
+					wceAttr += 'other&paratext_position_other=' + $next.getAttribute('type');
+					
+				// Is there a pagenumber as well? <seg><fw>...</fw></seg><fw type="pagenum">...
+				wceAttr += '&page_number='
+				$nnext = $next.nextSibling;
+				if ($nnext != null && $nnext.nodeName == 'fw' && $nnext.getAttribute('type') == 'pageNum') { // page number
+					wceAttr += $nnext.firstChild.nodeValue;
+					$teiNode.parentNode.removeChild($nnext);
 				}
+				$teiNode.parentNode.removeChild($next);
+			} else if ($next != null && $next.nodeName == 'fw' && $next.getAttribute('type') == 'pageNum') { // fw element following => page number; no running header
+				wceAttr += '&running_title=&paratext_position=pagetop&paratext_position_other=&page_number=' + $next.firstChild.nodeValue; 
+				$teiNode.parentNode.removeChild($next);
 			} else { // if there is no <seg> or <fw> break
+				wceAttr += '&running_title=&paratext_position=pagetop&paratext_position_other=&page_number=';
 				break;
-			}
-			// there can be a second <fw> element
-			$nnext = $next.nextSibling;
-			if ($nnext != null && $nnext.nodeName == 'fw') { // fw element
-				fwtype = $nnext.getAttribute('type');
-				if (fwtype == 'pageNum') { //page number
-					wceAttr += '&page_number=' + $nnext.firstChild.nodeValue;
-				} else if (fwtype == 'runTitle') { // running title
-					wceAttr += '&running_title=' + $nnext.firstChild.nodeValue;
-				}
 			}
 			break;
 		default: //qb, cb and lb
@@ -635,29 +635,41 @@ function getHtmlByTei(inputString) {
 		// <pb/><seg><fw></fw></seg>
 		// <pb/><fw></fw>
 		// <pb/><fw></fw><fw></fw>
-		if (teiNodeName == 'fw' && (($teiNode.parentNode.previousSibling != null && $teiNode.parentNode.previousSibling.nodeName == 'pb')
+		/*if (teiNodeName == 'fw' && (($teiNode.parentNode.previousSibling != null && $teiNode.parentNode.previousSibling.nodeName == 'pb')
 			|| ($teiNode.previousSibling != null && $teiNode.previousSibling.nodeName == 'pb')
 			|| ($teiNode.previousSibling.previousSibling.nodeName != null && $teiNode.previousSibling.previousSibling.nodeName == 'pb'))) {  // <fw> as addition to <pb>
 			return null;
-		}
+		}*/
 		
 		var $newNode = $newDoc.createElement('span');
 		$newNode.setAttribute('class', 'paratext');
 
 		// set span attribute wce
 		var wceAttr = '__t=paratext&__n=&text=' + getDomNodeText($teiNode) + '';
+		
 		var mapping = {
 			'n' : '&edit_number=',
-			'place' : {
+			/*'place' : {
 				'0' : '@pagetop@pagebottom@pageleft@pageright@above@below@self',
 				'1' : '&paratext_position=',
 				'2' : '&paratext_position=other&paratext_position_other='
-			},
+			},*/
 			'rend' : '&paratext_alignment=',
 			'type' : '&fw_type='
 		};
 
 		wceAttr += getWceAttributeByTei($teiNode, mapping);
+		
+		var $next = $teiNode.parentNode;
+			
+		if ($next != null && $next.nodeName == 'seg') { // seg element as parent node (has to be that way, testing anyway)
+			wceAttr += '&paratext_position=';
+			if ($next.getAttribute('type') === 'margin' || $next.getAttribute('type') === 'line') //standard values
+				wceAttr += $next.getAttribute('subtype') + '&paratext_position_other=';
+			else //"other" value
+				wceAttr += 'other&paratext_position_other=' + $next.getAttribute('type');
+		}	
+				
 		$newNode.setAttribute('wce', wceAttr);
 		if (teiNodeName == 'comm') {
 			$commentary = $newDoc.createElement('span');
@@ -787,6 +799,19 @@ function getHtmlByTei(inputString) {
 					wceAttr += $teiNode.nextSibling.firstChild.nodeValue; //set the correct attribute value
 					$teiNode.parentNode.removeChild($test); //remove this note from the list
 				}
+			}
+			
+			wceAttr += '&place_corr=';
+			var $test = $rdg.firstChild;
+			if ($test != null && $test.nodeName == 'seg') { //seg element ahead -> place of correction
+				if ($test.getAttribute('type') == 'line') {
+					wceAttr += $test.getAttribute('subtype'); //overwritten, above, below
+				} else if ($test.getAttribute('type') == 'margin') {
+					wceAttr += $test.getAttribute('subtype'); //pagetop, pagebottom, pageleft, pageright
+				} else {
+					wceAttr += 'elsewhere';
+				}
+				$rdg.removeChild($test); //remove this child from the list
 			}
 		}
 
@@ -1362,6 +1387,21 @@ function getTeiByHtml(inputString, args) {
 					html2Tei_correctionAddW($seg, corrector_text);
 				}
 				$rdg.appendChild($seg);
+			} else if (place === 'overwritten' || place === 'above' || place === 'below') {
+				$seg = $newDoc.createElement('seg');
+				$seg.setAttribute('type', 'line');
+				$seg.setAttribute('subtype', place);
+				if (corrector_text) { //add to <seg>
+					html2Tei_correctionAddW($seg, corrector_text);
+				}
+				$rdg.appendChild($seg);
+			} else if (place === 'elsewhere') {
+				$seg = $newDoc.createElement('seg');
+				$seg.setAttribute('type', 'elsewhere');
+				if (corrector_text) { //add to <seg>
+					html2Tei_correctionAddW($seg, corrector_text);
+				}
+				$rdg.appendChild($seg);
 			} else { //non-marginal material
 				if (corrector_text) { //add to <rdg>
 					html2Tei_correctionAddW($rdg, corrector_text);
@@ -1484,8 +1524,17 @@ function getTeiByHtml(inputString, args) {
 					$seg.setAttribute('subtype', placeValue);
 					$seg.appendChild($secNewNode);
 					$newNode.parentNode.appendChild($seg);
-				} else { //non-marginal material
-					$newNode.parentNode.appendChild($secNewNode);
+				} else if (placeValue === 'above' || placeValue === 'below' || placeValue === 'self') { // above, below, self
+					$seg = $newDoc.createElement('seg');
+					$seg.setAttribute('type', 'line');
+					$seg.setAttribute('subtype', placeValue);
+					$seg.appendChild($secNewNode);
+					$newNode.parentNode.appendChild($seg);
+				} else { //other position
+					$seg = $newDoc.createElement('seg');
+					$seg.setAttribute('type', placeValue);
+					$seg.appendChild($secNewNode);
+					$newNode.parentNode.appendChild($seg);
 				}
 			}
 			if (arr['page_number'] != '') {
@@ -1656,9 +1705,10 @@ function getTeiByHtml(inputString, args) {
 			placeValue = arr['paratext_position_other'];
 		}
 
+		/* place has been transfered to a <seg> element
 		if (fwType != 'commentary' && placeValue && placeValue != '') {
 			$paratext.setAttribute('place', placeValue);
-		}
+		}*/
 
 		var rendValue = arr['paratext_alignment'];
 		if (fwType != 'commentary' && rendValue && rendValue != '') {
@@ -1676,8 +1726,17 @@ function getTeiByHtml(inputString, args) {
 			$seg.setAttribute('subtype', placeValue);
 			$seg.appendChild($paratext);
 			$teiParent.appendChild($seg);
-		} else {
-			$teiParent.appendChild($paratext);
+		} else if (placeValue === 'above' || placeValue === 'below' || placeValue === 'self') {
+			$seg = $newDoc.createElement('seg');
+			$seg.setAttribute('type', 'line');
+			$seg.setAttribute('subtype', placeValue);
+			$seg.appendChild($paratext);
+			$teiParent.appendChild($seg);
+		} else { //"other"
+			$seg = $newDoc.createElement('seg');
+			$seg.setAttribute('type', placeValue);
+			$seg.appendChild($paratext);
+			$teiParent.appendChild($seg);
 		}
 		return null;
 	};
