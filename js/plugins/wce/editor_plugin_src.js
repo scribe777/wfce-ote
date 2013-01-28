@@ -884,7 +884,9 @@
 							}
 							break;
 						case 'pb':
-							info_text = '<div>' + 'Page number (in sequence): ' + ar['number'] + ar['pb_type'];
+							info_text = '<div>' + 'Page number (in sequence): ' + ar['number'];
+							if (ar['pb_type'])
+								info_text += ar['pb_type'];
 							if (ar['fibre_type'])
 								info_text += ar['fibre_type'];
 							info_text += '</div>';
