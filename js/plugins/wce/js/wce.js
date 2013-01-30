@@ -217,13 +217,14 @@ function writeWceNodeInfo(val) {
 		case 'paratext':
 			// default
 			wceClass = ' class="paratext"';
-			selected_content = val;
-			if (wce_type == 'paratext' && document.getElementById('fw_type').value == "commentary") {
-				for (var i = 0; i < document.getElementById('covered').value-1; i++) {
-					selected_content += '<br/>&crarr;[comm]';
+			if (document.getElementById('fw_type').value == "commentary") {
+				selected_content = '';
+				for (var i = 0; i < document.getElementById('covered').value; i++) {
+					selected_content += '<br/>&crarr;[<span class="commentary" ' + 'wce="__t=paratext&__n=&fw_type=commentary&covered=' + document.getElementById('covered').value + '">comm</span>]';
 				}
 				ed.execCommand('addToCounter', 'lb', document.getElementById('covered').value);
-			}
+			} else
+				selected_content = val;
 			break;
 			
 		case 'formatting_capitals': //only for formatting_capitals needed
@@ -280,12 +281,46 @@ function writeWceNodeInfo(val) {
 			wceObj._redrawContols(ed);
 		}
 
-	} else {
+	} else { //edit mode
 		// update wce
 		if (wce_node != null) {
 			if (wce_type == 'paratext') {
-				// num or fw
-				wce_node.innerHTML = val;
+				if (document.getElementById('fw_type').value == 'commentary') { // commentary note
+					if (wce_node.getAttribute('class') === 'commentary') { //<span class=commentary>
+						wce_node_new = wce_node.parentNode.cloneNode(false); // copy without children
+						wce_attr = '__t=paratext&__n=&fw_type=commentary&covered=' + document.getElementById('covered').value;
+						wce_node_new.setAttribute('wce', wce_attr); //correct value for covered
+						for (var i = 0; i < document.getElementById('covered').value; i++) {
+							$br = document.createElement('br');
+							wce_node_new.appendChild($br);
+							$text = document.createTextNode('\u21B5[');
+							wce_node_new.appendChild($text);
+							$span = document.createElement('span');
+							$span.setAttribute('class', 'commentary');
+							$span.setAttribute('wce', wce_attr);
+							$text = document.createTextNode('comm');
+							$span.appendChild($text);
+							wce_node_new.appendChild($span);
+							wce_node_new.appendChild(document.createTextNode(']'));
+						}
+						wce_node.parentNode.parentNode.replaceChild(wce_node_new, wce_node.parentNode);
+							//alert(i);
+							//wce_node.parentNode.removeChild(wce_node.parentNode.firstChild);
+							//wce_node.parentNode.replaceChild(document.createElement('br'),wce_node.parentNode.firstChild);
+						//}
+					} else { //<span class="paratext">
+						wce_node.removeChild(wce_node.firstChild); // remove old content
+					
+					var new_content = '';
+					for (var i = 0; i < document.getElementById('covered').value; i++) {
+						new_content += '<br/>&crarr;[<span class="commentary" ' + 'wce="__t=paratext&__n=&fw_type=commentary&covered=' + document.getElementById('covered').value + '">comm</span>]';
+					}
+					wce_node.innerHTML = new_content;
+					}
+					ed.execCommand('addToCounter', 'lb', document.getElementById('covered').value); //TODO: old value has to be subtract first
+				} else { // num or fw
+					wce_node.innerHTML = val;
+				}
 			} else if (wce_type == 'brea') {
 				// break type
 				wce_node.innerHTML = val;

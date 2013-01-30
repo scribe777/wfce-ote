@@ -671,16 +671,16 @@ function getHtmlByTei(inputString) {
 		}	
 				
 		$newNode.setAttribute('wce', wceAttr);
-		if (teiNodeName == 'comm') {
+		/*if (teiNodeName == 'comm') {
 			$commentary = $newDoc.createElement('span');
 			$commentary.setAttribute('class', 'commentary');
 			nodeAddText($commentary, teiNodeName);
 			nodeAddText($newNode, '[');
 			$newNode.appendChild($commentary);
 			nodeAddText($newNode, ']');
-		} else {
+		} else {*/
 			nodeAddText($newNode, teiNodeName);
-		}
+		//}
 
 		$htmlParent.appendChild($newNode);
 		return null;
@@ -697,22 +697,42 @@ function getHtmlByTei(inputString) {
 		}
 		
 		var $newNode = $newDoc.createElement('span');
-		$newNode.setAttribute('class', 'note');
+		
+		if ($teiNode.getAttribute('type') === 'commentary') { // commentary text
+			$newNode.setAttribute('class', 'paratext');
+			var cl = 1;
+			if ($teiNode.getAttribute('n')) //for old versions
+				cl = $teiNode.getAttribute('n');
+			var wceAttr = '__t=paratext&__n=&fw_type=commentary&covered=' + cl + '&text=&number=&edit_number=on&paratext_position=pagetop&paratext_position_other=&paratext_alignment=left';
+			$newNode.setAttribute('wce', wceAttr);
+			for (var i = 0; i < cl; i++) {
+				$newNode.appendChild($newDoc.createElement('br'));
+				nodeAddText($newNode, '\u21b5[');
+				$span = $newDoc.createElement('span');
+				$span.setAttribute('class', 'commentary');
+				$span.setAttribute('wce', '__t=paratext&__n=&fw_type=commentary&covered=' + cl);
+				nodeAddText($span,'comm');
+				$newNode.appendChild($span);
+				nodeAddText($newNode, ']');
+			}
+		} else {
+			$newNode.setAttribute('class', 'note');
 
-		var wceAttr = '__t=note&__n=&note_text=' + getDomNodeText($teiNode) + '';
-		var mapping = {
-			'xml:id' : null,
-			'type' : {
-				'0' : '@editorial@transcriberquery@canonRef@changeOfHand',
-				'1' : '&note_type=',
-				'2' : '&note_type=other&note_type_other='
-			},
-			'n' : '&newHand='
-		};
-		wceAttr += getWceAttributeByTei($teiNode, mapping);
+			var wceAttr = '__t=note&__n=&note_text=' + getDomNodeText($teiNode) + '';
+			var mapping = {
+				'xml:id' : null,
+				'type' : {
+					'0' : '@editorial@transcriberquery@canonRef@changeOfHand',
+					'1' : '&note_type=',
+					'2' : '&note_type=other&note_type_other='
+				},
+				'n' : '&newHand='
+			};
+			wceAttr += getWceAttributeByTei($teiNode, mapping);
 
-		$newNode.setAttribute('wce', wceAttr);
-		nodeAddText($newNode, 'Note');
+			$newNode.setAttribute('wce', wceAttr);
+			nodeAddText($newNode, 'Note');
+		}
 		$htmlParent.appendChild($newNode);
 		nodeAddText($htmlParent, ' ');
 		return null;
@@ -1691,6 +1711,8 @@ function getTeiByHtml(inputString, args) {
 
 		var $paratext = $newDoc.createElement(newNodeName);
 		$paratext.setAttribute('type', fwType);
+		if (fwType == 'commentary')
+			$paratext.setAttribute('n', arr['covered']);
 
 		// n
 		// write attribute n only for certain values
@@ -1715,28 +1737,30 @@ function getTeiByHtml(inputString, args) {
 			$paratext.setAttribute('rend', rendValue);
 		}
 
-		if (fwType == 'commentary')
+		if (fwType == 'commentary') {
 			nodeAddText($paratext, 'Untranscribed commentary text');
-		else
+			$teiParent.appendChild($paratext);
+		} else { // only if not commentary
 			nodeAddText($paratext, arr['text']);
 
-		if (placeValue === 'pageleft' || placeValue === 'pageright' || placeValue === 'pagetop' || placeValue === 'pagebottom') { //define <seg> element for marginal material
-			$seg = $newDoc.createElement('seg');
-			$seg.setAttribute('type', 'margin');
-			$seg.setAttribute('subtype', placeValue);
-			$seg.appendChild($paratext);
-			$teiParent.appendChild($seg);
-		} else if (placeValue === 'above' || placeValue === 'below' || placeValue === 'self') {
-			$seg = $newDoc.createElement('seg');
-			$seg.setAttribute('type', 'line');
-			$seg.setAttribute('subtype', placeValue);
-			$seg.appendChild($paratext);
-			$teiParent.appendChild($seg);
-		} else { //"other"
-			$seg = $newDoc.createElement('seg');
-			$seg.setAttribute('type', placeValue);
-			$seg.appendChild($paratext);
-			$teiParent.appendChild($seg);
+			if (placeValue === 'pageleft' || placeValue === 'pageright' || placeValue === 'pagetop' || placeValue === 'pagebottom') { //define <seg> element for marginal material
+				$seg = $newDoc.createElement('seg');
+				$seg.setAttribute('type', 'margin');
+				$seg.setAttribute('subtype', placeValue);
+				$seg.appendChild($paratext);
+				$teiParent.appendChild($seg);
+			} else if (placeValue === 'above' || placeValue === 'below' || placeValue === 'self') {
+				$seg = $newDoc.createElement('seg');
+				$seg.setAttribute('type', 'line');
+				$seg.setAttribute('subtype', placeValue);
+				$seg.appendChild($paratext);
+				$teiParent.appendChild($seg);
+			} else { //"other"
+				$seg = $newDoc.createElement('seg');
+				$seg.setAttribute('type', placeValue);
+				$seg.appendChild($paratext);
+				$teiParent.appendChild($seg);
+			}
 		}
 		return null;
 	};

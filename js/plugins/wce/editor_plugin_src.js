@@ -608,7 +608,7 @@
 				w.not_O = false;
 			} else if (_isNodeTypeOf(selectedNode, 'formatting_capitals')) {
 				w.type = 'formatting_capitals';
-			} else if (_isNodeTypeOf(selectedNode, 'paratext')) {
+			} else if (_isNodeTypeOf(selectedNode, 'paratext') || selectedNode.getAttribute('class') === 'commentary') { //special node for commentary note which is a paratextual element
 				w.type = 'paratext';
 			} else if (_isNodeTypeOf(selectedNode, 'note')) {
 				_setAllControls(ed, true);
@@ -2604,7 +2604,7 @@
 				_wceAdd(ed, url, '/spaces.htm', 480, 320, 1, true);
 			});
 
-			// Add Spaces/*********/
+			// Edit Spaces/*********/
 			ed.addCommand('mceEditSpaces', function() {
 				_wceAdd(ed, url, '/spaces.htm', 480, 320, 1, false);
 			});
