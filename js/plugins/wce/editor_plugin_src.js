@@ -588,7 +588,7 @@
 			} else if (_isNodeTypeOf(selectedNode, 'abbr')) {
 				_setAllControls(ed, true);
 				w.not_A = false;
-				//w.not_C = false;// Must be activated sometime, but the complete mechanism of combining elements is still a bit buggy
+				w.not_C = false;// Must be activated sometime, but the complete mechanism of combining elements is still a bit buggy
 				w.type = 'abbr';
 			} else if (_isNodeTypeOf(selectedNode, 'chapter_number')) {
 				_setAllControls(ed, true);
@@ -965,7 +965,9 @@
 						info_text = '<div>' + 'Paratext type: ';
 						switch (ar['fw_type']) {
 						case 'commentary':
-							info_text = '<div>' + 'This is untranscribed commentary text';
+							info_text = '<div>' + 'This is untranscribed commentary text' + '</div>';
+							if (ar['covered'])
+								info_text += '<div style="margin-top:5px">' + ar['covered'] + ' line(s) covered.';
 							break;
 						case 'chapNum':
 							info_text += 'Chapter number';

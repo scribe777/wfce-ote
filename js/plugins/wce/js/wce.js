@@ -219,10 +219,15 @@ function writeWceNodeInfo(val) {
 			wceClass = ' class="paratext"';
 			if (document.getElementById('fw_type').value == "commentary") {
 				selected_content = '';
-				for (var i = 0; i < document.getElementById('covered').value; i++) {
-					selected_content += '<br/>&crarr;[<span class="commentary" ' + 'wce="__t=paratext&__n=&fw_type=commentary&covered=' + document.getElementById('covered').value + '">comm</span>]';
+				var cl = document.getElementById('covered').value;
+				if (cl != '' && cl > 0) {
+					for (var i = 0; i < cl; i++) {
+						selected_content += '<br/>&crarr;[<span class="commentary" ' + 'wce="__t=paratext&__n=&fw_type=commentary&covered=' + cl + '">comm</span>]';
+					}
+					ed.execCommand('addToCounter', 'lb', document.getElementById('covered').value);
+				} else { // no value given for covered lines
+					selected_content += '[<span class="commentary" ' + 'wce="__t=paratext&__n=&fw_type=commentary&covered=">comm</span>]';
 				}
-				ed.execCommand('addToCounter', 'lb', document.getElementById('covered').value);
 			} else
 				selected_content = val;
 			break;
@@ -286,14 +291,29 @@ function writeWceNodeInfo(val) {
 		if (wce_node != null) {
 			if (wce_type == 'paratext') {
 				if (document.getElementById('fw_type').value == 'commentary') { // commentary note
+					var cl = document.getElementById('covered').value;
 					if (wce_node.getAttribute('class') === 'commentary') { //<span class=commentary>
 						wce_node_new = wce_node.parentNode.cloneNode(false); // copy without children
-						wce_attr = '__t=paratext&__n=&fw_type=commentary&covered=' + document.getElementById('covered').value;
-						wce_node_new.setAttribute('wce', wce_attr); //correct value for covered
-						for (var i = 0; i < document.getElementById('covered').value; i++) {
-							$br = document.createElement('br');
-							wce_node_new.appendChild($br);
-							$text = document.createTextNode('\u21B5[');
+						if (cl != '' && cl > 0) { //value of 0 same as empty field
+							wce_attr = '__t=paratext&__n=&fw_type=commentary&covered=' + cl;
+							wce_node_new.setAttribute('wce', wce_attr); //correct value for covered
+							for (var i = 0; i < cl; i++) {
+								$br = document.createElement('br');
+								wce_node_new.appendChild($br);
+								$text = document.createTextNode('\u21B5[');
+								wce_node_new.appendChild($text);
+								$span = document.createElement('span');
+								$span.setAttribute('class', 'commentary');
+								$span.setAttribute('wce', wce_attr);
+								$text = document.createTextNode('comm');
+								$span.appendChild($text);
+								wce_node_new.appendChild($span);
+								wce_node_new.appendChild(document.createTextNode(']'));
+							}
+						} else { // no value for covered lines was given
+							wce_attr = '__t=paratext&__n=&fw_type=commentary&covered=';
+							wce_node_new.setAttribute('wce', wce_attr); //correct value for covered
+							$text = document.createTextNode('[');
 							wce_node_new.appendChild($text);
 							$span = document.createElement('span');
 							$span.setAttribute('class', 'commentary');
@@ -304,10 +324,6 @@ function writeWceNodeInfo(val) {
 							wce_node_new.appendChild(document.createTextNode(']'));
 						}
 						wce_node.parentNode.parentNode.replaceChild(wce_node_new, wce_node.parentNode);
-							//alert(i);
-							//wce_node.parentNode.removeChild(wce_node.parentNode.firstChild);
-							//wce_node.parentNode.replaceChild(document.createElement('br'),wce_node.parentNode.firstChild);
-						//}
 					} else { //<span class="paratext">
 						wce_node.removeChild(wce_node.firstChild); // remove old content
 					

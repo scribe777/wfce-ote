@@ -700,17 +700,29 @@ function getHtmlByTei(inputString) {
 		
 		if ($teiNode.getAttribute('type') === 'commentary') { // commentary text
 			$newNode.setAttribute('class', 'paratext');
-			var cl = 1;
-			if ($teiNode.getAttribute('n')) //for old versions
+			var cl = 0; //default value for old documents
+			if ($teiNode.getAttribute('n')) 
 				cl = $teiNode.getAttribute('n');
+			if (cl == 0)
+				cl = '';
 			var wceAttr = '__t=paratext&__n=&fw_type=commentary&covered=' + cl + '&text=&number=&edit_number=on&paratext_position=pagetop&paratext_position_other=&paratext_alignment=left';
 			$newNode.setAttribute('wce', wceAttr);
-			for (var i = 0; i < cl; i++) {
-				$newNode.appendChild($newDoc.createElement('br'));
-				nodeAddText($newNode, '\u21b5[');
+			if (cl != '') {
+				for (var i = 0; i < cl; i++) {
+					$newNode.appendChild($newDoc.createElement('br'));
+					nodeAddText($newNode, '\u21b5[');
+					$span = $newDoc.createElement('span');
+					$span.setAttribute('class', 'commentary');
+					$span.setAttribute('wce', '__t=paratext&__n=&fw_type=commentary&covered=' + cl);
+					nodeAddText($span,'comm');
+					$newNode.appendChild($span);
+					nodeAddText($newNode, ']');
+				}
+			} else {
+				nodeAddText($newNode, '[');
 				$span = $newDoc.createElement('span');
 				$span.setAttribute('class', 'commentary');
-				$span.setAttribute('wce', '__t=paratext&__n=&fw_type=commentary&covered=' + cl);
+				$span.setAttribute('wce', '__t=paratext&__n=&fw_type=commentary&covered=');
 				nodeAddText($span,'comm');
 				$newNode.appendChild($span);
 				nodeAddText($newNode, ']');
@@ -1712,8 +1724,10 @@ function getTeiByHtml(inputString, args) {
 		var $paratext = $newDoc.createElement(newNodeName);
 		$paratext.setAttribute('type', fwType);
 		if (fwType == 'commentary')
-			$paratext.setAttribute('n', arr['covered']);
-
+			if (arr['covered'] != '' && arr['covered'] > 0) //Value of 0 handles as empty value
+				$paratext.setAttribute('n', arr['covered']);
+			else //no value for covered lines given
+				$paratext.setAttribute('n', '0');
 		// n
 		// write attribute n only for certain values
 		var numberValue = arr['number'];
