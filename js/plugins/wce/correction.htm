@@ -12,7 +12,7 @@
 
 <body id="table" style="display: none">
 	<form onsubmit="insertTable();return false;" action="#"
-		name="readinginfo" style="margin: 0; padding: 0">
+		name="readinginfo" style="margin: 0; padding: 0" onkeydown="checkKeydown()">
 		<fieldset style="width: 150px; float: left; height: 475px">
 			<legend>{#wce.reading_list}</legend>
 			<div style="height: 445px; overflow: auto">
@@ -136,9 +136,9 @@
 
 		</fieldset>
 		<div class="mceActionPanel" id="mceActionPanel">
-			<input type="button" name="insert" value="Ok"
-				onclick="if (testOther()){saveCurrCorrector(); writeWceNodeInfo();}else{alert('{#wce.empty_other}');}" /> <input
-				type="button" name="cancel" value="{#cancel}"
+			<input type="button" id="insert" name="insert" value="Ok"
+				onclick="if (testOther()){saveCurrCorrector(); writeWceNodeInfo();}else{alert('{#wce.empty_other}');}" />
+			<input type="button" id="cancel" name="cancel" value="{#cancel}"
 				onclick="tinyMCEPopup.close();" />
 		</div> 
 	</form>
@@ -426,6 +426,14 @@
 		checkstatus_hand();
 		checkstatus_correction();
 		setstatus_deletion();
+	}
+	
+	function checkKeydown() {
+		event = event || window.event;
+		var charCode = event.keyCode || event.which;
+		if (charCode == 13 || charCode == 10) {
+			document.getElementById('insert').click();
+		}
 	}
 </script>
 

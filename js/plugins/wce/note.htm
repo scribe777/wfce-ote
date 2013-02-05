@@ -7,7 +7,7 @@
 <script type="text/javascript" src="js/wce.js"></script>
 </head>
 <body id="table" style="display: none">
-	<form onsubmit="return false;" action="#" name="noteinfo">
+	<form onsubmit="return false;" action="#" name="noteinfo" onkeydown="checkKeydown()">
 		<fieldset>
 			<legend>{#wce.note_data}</legend>
 			<table border="0" cellpadding="4" cellspacing="0" width="100%">
@@ -45,10 +45,10 @@
 			</table>
 		</fieldset>
 		<div class="mceActionPanel">
-			<input type="button"  name="insert" value="{#insert}"
+			<input type="button" id="insert" name="insert" value="{#insert}"
 				onclick="cont = testOther();
-						if (cont){writeWceNodeInfo();}else{alert('{#wce.empty_other}');}"  /> <input type="button"
-				 name="cancel" value="{#cancel}"
+						if (cont){writeWceNodeInfo();}else{alert('{#wce.empty_other}');}"/>
+			<input type="button" id="cancel" name="cancel" value="{#cancel}"
 				onclick="tinyMCEPopup.close();" />
 		</div>
 	</form>
@@ -93,6 +93,14 @@
 		if (document.noteinfo.note_type.options[4].selected == true && document.getElementById('note_type_other').value == '') 
 			return false;
 	return true;
+	}
+
+	function checkKeydown() {
+		event = event || window.event;
+		var charCode = event.keyCode || event.which;
+		if (charCode == 13 || charCode == 10) {
+			document.getElementById('insert').click();
+		}
 	}	
 </script>
 </html>

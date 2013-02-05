@@ -8,7 +8,7 @@
 </head>
 
 <body id="table" style="display: none">
-	<form onsubmit="return false;" action="#" name="spacesinfo">
+	<form onsubmit="return false;" action="#" name="spacesinfo" onkeydown="checkKeydown()">
 		<input type="hidden" id="original_spaces_text"
 			name="original_spaces_text" value="" />
 		<fieldset>
@@ -40,10 +40,10 @@
 			</table>
 		</fieldset>
 		<div class="mceActionPanel">
-			<input type="button"  name="insert" value="{#insert}"
+			<input type="button" id="insert" name="insert" value="{#insert}"
 				onclick="cont = testOther();
-						if (cont){writeWceNodeInfo();}else{alert('{#wce.empty_other}');}" /> <input type="button"
-				 name="cancel" value="{#cancel}"
+						if (cont){writeWceNodeInfo();}else{alert('{#wce.empty_other}');}" />
+			<input type="button" id="cancel" name="cancel" value="{#cancel}"
 				onclick="tinyMCEPopup.close();" />
 		</div>
 	</form>
@@ -78,6 +78,14 @@
 		if (document.spacesinfo.sp_unit.options[2].selected == true && document.getElementById('sp_unit_other').value == '') 
 			return false;
 	return true;
+	}
+	
+	function checkKeydown() {
+		event = event || window.event;
+		var charCode = event.keyCode || event.which;
+		if (charCode == 13 || charCode == 10) {
+			document.getElementById('insert').click();
+		}
 	}
 </script>
 </html>

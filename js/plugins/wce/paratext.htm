@@ -8,7 +8,7 @@
 </head>
 
 <body id="table" style="display: none">
-	<form onsubmit="return false;" action="#" name="paratextinfo" onload="setstatus_paratext()">
+	<form onsubmit="return false;" action="#" name="paratextinfo" onload="setstatus_paratext()" onkeydown="checkKeydown()">
 		<fieldset>
 			<legend>{#wce.paratext_data}</legend>
 			<table border="0" cellpadding="4" cellspacing="0" width="100%">
@@ -80,10 +80,10 @@
 			</table>
 		</fieldset>
 		<div class="mceActionPanel">
-			<input type="button"  name="insert" value="{#insert}"
+			<input type="button"  id="insert" name="insert" value="{#insert}"
 				onclick="cont = testOther();
-						if (cont){writeWceNodeInfo(getParaTag());}else{alert('{#wce.empty_other}');}" /> <input
-				type="button" name="cancel" value="{#cancel}"
+						if (cont){writeWceNodeInfo(getParaTag());}else{alert('{#wce.empty_other}');}" />
+			<input type="button" id="cancel" name="cancel" value="{#cancel}"
 				onclick="tinyMCEPopup.close();" />
 		</div>
 	</form>
@@ -370,6 +370,14 @@
 		var oldnumber = document.paratextinfo.number.value; // save number
 		setnumber();
 		document.paratextinfo.number.value = oldnumber; // set former number for editing
+	}
+	
+	function checkKeydown() {
+		event = event || window.event;
+		var charCode = event.keyCode || event.which;
+		if (charCode == 13 || charCode == 10) {
+			document.getElementById('insert').click();
+		}
 	}
 </script>
 </html>

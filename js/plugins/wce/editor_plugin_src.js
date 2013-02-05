@@ -2120,7 +2120,7 @@
 			
 			// Add <pc> for some special characters
 			// We need a lot of cases, because of different kyeboard layouts, different browsers and different platforms
-			if (ek == 59 && !e.shiftKey) { // ; en
+			if (ek == 59 && !e.shiftKey && !tinymce.isWebKit) { // ; en
 				tinyMCE.activeEditor.execCommand('mceAdd_pc', ';');
 				_stopEvent(ed, e);
 			} else if (ek == 188 && e.shiftKey) {
@@ -2170,7 +2170,7 @@
 
 			var ek = e.keyCode || e.charCode || 0;
 			
-			if (tinymce.isWebKit) { // for Chrome (on Linux and Mac): ":" and ";" both give the same keydown code 186 (???). So we use keypress for them
+			if (tinymce.isWebKit) { // for Chrome (on Linux and Mac) and Safari: ":" and ";" both give the same keydown code 186 (???). So we use keypress for them
 				if (ek == 58) { // :
 					tinyMCE.activeEditor.execCommand('mceAdd_pc', ':');
 					_stopEvent(ed, e);

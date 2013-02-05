@@ -8,7 +8,7 @@
 </head>
 
 <body id="table" style="display: none">
-	<form onsubmit="return false;" action="#" name="breakinfo">
+	<form onsubmit="return false;" action="#" name="breakinfo" onkeydown="checkKeydown()">
 		<input type="hidden" id="hasBreak" name="hasBreak" value="" />
 		<fieldset>
 			<legend>{#wce.break_data}</legend>
@@ -105,10 +105,10 @@
 			</table>
 		</fieldset>
 		<div class="mceActionPanel">
-			<input type="button"  name="insert" value="{#insert}"
+			<input type="button" id="insert" name="insert" value="{#insert}"
 				onclick="var cont = testNumber();
-				if (cont){writeWceNodeInfo(getBreakTag());}else{alert('{#wce.empty_number}');}" /> <input type="button"
-				 name="cancel" value="{#cancel}"
+				if (cont){writeWceNodeInfo(getBreakTag());}else{alert('{#wce.empty_number}');}" />
+			<input type="button" id="cancel"  name="cancel" value="{#cancel}"
 				onclick="ed.execCommand('resetCounter');tinyMCEPopup.close();" />
 		</div>
 	</form>
@@ -341,6 +341,14 @@
 		if ((rng.startOffset == _getNextEnd(startText,rng.startOffset)) || (startText.substr(rng.startOffset-1, 1) == " "))
 			return 'lb';
 		return 'lbm';
+	}
+	
+	function checkKeydown() {
+		event = event || window.event;
+		var charCode = event.keyCode || event.which;
+		if (charCode == 13 || charCode == 10) {
+			document.getElementById('insert').click();
+		}
 	}
 </script>
 </html>
