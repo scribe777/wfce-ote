@@ -671,17 +671,8 @@ function getHtmlByTei(inputString) {
 		}	
 				
 		$newNode.setAttribute('wce', wceAttr);
-		/*if (teiNodeName == 'comm') {
-			$commentary = $newDoc.createElement('span');
-			$commentary.setAttribute('class', 'commentary');
-			nodeAddText($commentary, teiNodeName);
-			nodeAddText($newNode, '[');
-			$newNode.appendChild($commentary);
-			nodeAddText($newNode, ']');
-		} else {*/
-			nodeAddText($newNode, teiNodeName);
-		//}
-
+		nodeAddText($newNode, teiNodeName);
+		
 		$htmlParent.appendChild($newNode);
 		return null;
 	};
@@ -692,7 +683,9 @@ function getHtmlByTei(inputString) {
 	var Tei2Html_note = function($htmlParent, $teiNode) {
 		// <note type="$ note_type" n="$newHand" xml:id="_TODO_" > $note_text </note>
 		// First check, if it is a editorial note to a correction
-		if ($teiNode.previousSibling != null && $teiNode.previousSibling.nodeName == 'app') { //<app>...</app><note>...</note>
+		// TODO: Check condition: transcriber vs. transcriberquery
+		// *Only* return for editorial notes
+		if ($teiNode.getAttribute('type') === 'transcriber' && $teiNode.previousSibling != null && $teiNode.previousSibling.nodeName == 'app') { //<app>...</app><note type="transcriber">...</note>
 			return null;
 		}
 		
@@ -730,18 +723,20 @@ function getHtmlByTei(inputString) {
 		} else {
 			$newNode.setAttribute('class', 'note');
 
-			var wceAttr = '__t=note&__n=&note_text=' + getDomNodeText($teiNode) + '';
-			var mapping = {
-				'xml:id' : null,
-				'type' : {
-					'0' : '@editorial@transcriberquery@canonRef@changeOfHand',
-					'1' : '&note_type=',
-					'2' : '&note_type=other&note_type_other='
-				},
-				'n' : '&newHand='
-			};
-			wceAttr += getWceAttributeByTei($teiNode, mapping);
-
+			var wceAttr = '__t=note&__n=&note_text=' + encodeURIComponent(getDomNodeText($teiNode)) + '';
+			if ($teiNode.firstChild && $teiNode.firstChild.nodeName === 'handshift') { // child node <handshift/> => note_type=changeOfHand
+				wceAttr += '&note_type=changeOfHand&note_type_other=&newHand=' + encodeURIComponent($teiNode.firstChild.getAttribute('n'));
+			} else {
+				var mapping = {
+					'xml:id' : null,
+					'type' : {
+						'0' : '@editorial@transcriberquery@canonRef',
+						'1' : '&note_type=',
+						'2' : '&note_type=other&note_type_other='
+					}
+				};
+				wceAttr += getWceAttributeByTei($teiNode, mapping) + '&newhand=';
+			}
 			$newNode.setAttribute('wce', wceAttr);
 			nodeAddText($newNode, 'Note');
 		}
@@ -763,11 +758,16 @@ function getHtmlByTei(inputString) {
 		var rdgs = $teiNode.childNodes;
 		var $rdg, typeValue, handValue, deletionValue;
 		var wceAttr = '';
-		var origText;
+		var origText = '';
 		var rdgAttr;
 		
-		origText = getDomNodeText(rdgs[0]); //add original reading once
-		$newNode.setAttribute('wce_orig', origText);
+		var collection = rdgs[0].childNodes;
+		for (var i = 0, l = collection.length; i < l; i++) {
+			origText += collection[i].firstChild.nodeValue + ' '; // add text word for word
+		}
+		origText = origText.trim();
+		
+		$newNode.setAttribute('wce_orig', encodeURIComponent(origText));
 		
 		for (var i = 1, l = rdgs.length; i < l; i++) { // [0] is always original => no extra output
 			$rdg = rdgs[i];
@@ -856,7 +856,8 @@ function getHtmlByTei(inputString) {
 		}
 		
 		$htmlParent.appendChild($newNode);
-		nodeAddText($htmlParent, ' ');
+		if ($teiNode.nextSibling && $teiNode.nextSibling.nodeName === 'w') // add space only if new word follows
+			nodeAddText($htmlParent, ' ');
 		return null;
 	};
 
@@ -1653,16 +1654,16 @@ function getTeiByHtml(inputString, args) {
 		}
 		var xml_id = '_TODO_';
 		$note.setAttribute('xml:id', xml_id);
-		nodeAddText($note, arr['note_text']);
-
-		$teiParent.appendChild($note);
-
-		// add <handshift/>
+		
+		// add <handshift/> if necessary
 		if (note_type_value === "changeOfHand") {
 			var $secNewNode = $newDoc.createElement('handshift');
-			$secNewNode.setAttribute('n', arr['newHand']);
-			$teiParent.appendChild($secNewNode);
+			$secNewNode.setAttribute('n', decodeURIComponent(arr['newHand']));
+			$note.appendChild($secNewNode);
 		}
+
+		nodeAddText($note, decodeURIComponent(arr['note_text'])); // add text to node
+		$teiParent.appendChild($note); //add node to tree
 
 		return {
 			0 : $note,

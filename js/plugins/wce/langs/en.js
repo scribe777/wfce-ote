@@ -1,4 +1,5 @@
 tinyMCE.addI18n('en.wce',{
+	New: "New",
 	language : "Language",
 	note_desc : "Add note",
 	note_edit_desc : "Edit note",
@@ -206,7 +207,7 @@ tinyMCE.addI18n('en.wce',{
 	meta_revisionDesc : "Revision description",
 	meta_tab_general : "Misc",
 	meta_general : "Misc settings",
-	empty_other : "Please enter text for all &quot;other&quot; fields",
+	empty_other : "Please enter text for all required and all &quot;other&quot; fields",
 	empty_number : "Please enter a number (used as attribute &quot;n&quot;)",
 	save : 'Your changes have not been saved yet.\nClick "OK" to save them or "Cancel" to discard changes.',
 	capitals_data: 'Information about capitals',

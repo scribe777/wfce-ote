@@ -1,4 +1,5 @@
 tinyMCE.addI18n('de.wce',{
+	New: "Neu",
 	language : "Sprache",
 	note_desc : "Anmerkung hinzufügen",
 	note_edit_desc : "Anmerkung bearbeiten",
@@ -153,8 +154,8 @@ tinyMCE.addI18n('de.wce',{
 	spaces_title : "Bitte die Leerstellen bestimmen",
 	spaces_data : "Informationen über die Leerstellen",
 	reading_list : "Liste der Korrekturen",
-	empty_other : "Please enter text for all &quot;other&quot; fields",
-	empty_number : "Please enter a number (used as attribute &quot;n&quot;)",
+	empty_other : "Bitte füllen Sie alle Pflichfelder sowie alle &quot;other&quot;-Felder aus",
+	empty_number : "Bitte geben Sie eine Zahl ein (wird als Attribut &quot;n&quot; verwendet)",
 	save : 'Die Änderungen sind noch nicht gespeichert worden. Klicken Sie "OK" um sie zu speichern, oder "Cancel" um die Änderungen zu verwerfen',
 	capitals_data: 'Informationen über die Großbuchstaben',
 	capitals_height : 'Höhe der Großbuchstaben'

@@ -8,7 +8,7 @@
 </head>
 
 <body id="table" style="display: none">
-	<form onsubmit="return false;" action="#" name="unclear_text_info" onkeydown="checkKeydown()">
+	<form onsubmit="return false;" action="#" name="unclear_text_info">
 		<fieldset>
 			<legend>{#wce.unclear_text_data}</legend>
 			<table border="0" cellpadding="4" cellspacing="0" width="100%">
@@ -78,12 +78,16 @@
 	return true;
 	}
 	
-	function checkKeydown() {
-		event = event || window.event;
-		var charCode = event.keyCode || event.which;
-		if (charCode == 13 || charCode == 10) {
+	$(document).keydown(function(e) {
+		var evt = e || window.event
+		if (evt.keyCode == 13 || evt.keyCode == 10) {
 			document.getElementById('insert').click();
+			return false;
+		/*e.stopPropagation();
+			if (e.preventDefault)
+				e.preventDefault();*/
+			//e.returnValue = false;
 		}
-	}
+	});
 </script>
 </html>

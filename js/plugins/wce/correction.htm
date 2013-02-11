@@ -22,7 +22,7 @@
 			</div>
 			<div style="text-align: right">
 				<input type="button" onclick="if (testOther()){addCorrector(); selectCorrItem();}else{alert('{#wce.empty_other}');}"
-					value="New" />
+					value="{#wce.New}" />
 			</div>
 		</fieldset>
 		<input type="hidden" id="original_firsthand_reading" name="original_firsthand_reading" />
@@ -137,7 +137,7 @@
 		</fieldset>
 		<div class="mceActionPanel" id="mceActionPanel">
 			<input type="button" id="insert" name="insert" value="{#insert}"
-				onclick="if (testOther()){saveCurrCorrector(); writeWceNodeInfo();}else{alert('{#wce.empty_other}');}" />
+				onclick="if (testOther_insert()){saveCurrCorrector(); writeWceNodeInfo();}else{alert('{#wce.empty_other}');}" />
 			<input type="button" id="cancel" name="cancel" value="{#cancel}"
 				onclick="tinyMCEPopup.close();" />
 		</div> 
@@ -218,6 +218,12 @@
 		if (document.readinginfo.corrector_name.options[5].selected == true && document.getElementById('corrector_name_other').value == '') 
 			return false;
 	return true;
+	}
+	
+	function testOther_insert() {
+		if (!testOther() || item_counter == -1) // no corrections given
+			return false;
+		return true;
 	}
 	
 	function checkstatus_hand() {
@@ -428,13 +434,13 @@
 		setstatus_deletion();
 	}
 	
-	function checkKeydown() {
-		event = event || window.event;
-		var charCode = event.keyCode || event.which;
-		if (charCode == 13 || charCode == 10) {
+	/*$(document).keydown(function(e) {
+		var evt = e || window.event
+		if (evt.keyCode == 13 || evt.keyCode == 10) {
 			document.getElementById('insert').click();
+			return false;
 		}
-	}
+	});*/
 </script>
 
 </html>
