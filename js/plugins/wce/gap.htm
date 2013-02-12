@@ -246,16 +246,14 @@
 	return true;
 	}
 	
-	$(document).keydown(function(e) {
-		var evt = e || window.event
-		if (evt.keyCode == 13 || evt.keyCode == 10) {
-			document.getElementById('insert').click();
-			return false;
-		/*e.stopPropagation();
-			if (e.preventDefault)
-				e.preventDefault();*/
-			//e.returnValue = false;
-		}
-	});
+	if (!tinyMCE.isIE) {
+		$(document).keydown(function(e) {
+			var evt = e || window.event
+			if (evt.keyCode == 13 || evt.keyCode == 10) {
+				document.getElementById('insert').click();
+				return false;
+			}
+		});
+	}
 </script>
 </html>
