@@ -14,8 +14,10 @@
 				 name="cancel" value="{#cancel}"
 				onclick="tinyMCEPopup.close();" />
 		</div>
-		<div>Verse to delete</div>
-		<div style="border:1px solid #ccc;width:auto; height:180px;  overflow-y:auto" id="verseList"></div>
+		<div><input type="radio" id="insertVerseRadio" name="versemodify" onclick="canInsertVerse();">Insert Verse Nummer: </input><input id="insertVerseNummer" type="text" /></div>
+		<div id="deleteVerseDiv"><div><input type="radio" id="deleteVerseRadio" onclick="canDeleteVerse();" name="versemodify"/>Verse to delete</div>
+		<fieldset style="border:1px solid #ccc;width:auto; height:180px;  overflow-y:auto" id="verseList"></fieldset>
+		</div>
 	</form>
 </body>
 <script type="text/javascript">
@@ -28,23 +30,26 @@ var contentWithVerse;
 		init();
 	}); 
 	
+	function canInsertVerse(){
+		$('#insertVerseRadio').attr('checked','checked');
+		$('#verseList').attr('disabled','disabled');
+		$('#insertVerseNummer').removeAttr('disabled'); 
+	}
+	function canDeleteVerse(){
+		$('#insertVerseNummer').attr('disabled','disabled');
+		$('#inserVerseDiv').attr('disabled','disabled');
+		$('#deleteVerseRadio').attr('checked','checked');
+		$('#verseList').removeAttr('disabled');
+	}
+	
 	function init() {
-		var node;
-		var se_node=ed.selection.getNode();
-		if(se_node){
-			var className=se_node.className;
-			if(className && className.match(/verse_number/)){
-				node=se_node;
-				verseNode=node; 
-			}
+		if(!ed.selection.isCollapsed()){ 
+			canDeleteVerse();
+		}else{
+			canInsertVerse();
 		}
-		
-		if(!node){
-			node = $('<div/>').html(selected_content)[0];
-			contentWithVerse=node;
-		}
-		
-		$('#verseList').html(getVerseList(node)); 
+		contentWithVerse=$('<div/>').html(ed.getContent())[0];
+		$('#verseList').html(getVerseList(contentWithVerse)); 
 	}
 	
 	function getVerseList(node){
@@ -70,27 +75,67 @@ var contentWithVerse;
 		return out;		
 	}
 	
-	function updateVerse(){
+	function updateVerse(){ 
+		if($('#insertVerseRadio').attr('checked')){
+			var newVerseNr=$('#insertVerseNummer').val().trim();
+			newVerseNr=newVerseNr.replace(/\D/g,'');
+			if(newVerseNr!=''){
+				ed.selection.setContent('<span class="verse_number"> '+newVerseNr+'</span>');
+			}
+			return;
+		}
+		
 		var verseList=$('#verseList').find('input:checkbox');
-		for(var i=0,len=verseList.length; i<len; i++){
+		for(var i=0,len=verseList.length; i<len; i++){ 
 			var cb=verseList[i];
 			if($(cb).attr('checked')){
-				var verseNr=$(cb).val();				 
+				var verseNr=$(cb).val();				
+				var startNode=null,endNode=null;
 				var spanList=$(contentWithVerse).find('span');
 				for(var j=0,len2=spanList.length; j<len2; j++){
 					var span=spanList[j];
 					var spanValue=$(span).html().trim();
-					if(spanValue==verseNr){
-						$(span).remove();
+					if(!span.className){
+						continue;
+					}
+					if(span.className.toLowerCase()=='verse_number'){						
+						if(startNode){
+							endNode=span;
+							break;
+						}else if(spanValue==verseNr){
+							startNode=span; 
+						} 
 					}					
 				}
+				if(startNode){ 
+					var startText=document.createTextNode('[@['); 
+					startNode.parentNode.insertBefore(startText,startNode);  
+				}
+				if(endNode){
+					var endText=document.createTextNode(']@]');  
+					endNode.parentNode.insertBefore(endText,endNode); 
+					
+				}
+				
+				var content=$(contentWithVerse).html();
+				var index1,index2;
+				if(startNode && endNode){ 
+					index1 = content.indexOf("[@[");
+					index2= content.indexOf("]@]");
+					var con=content.substring(0,index1);
+					con+=content.substring(index2+3);
+					content=con;
+				} 
+				else if(startNode){
+					index1 = content.indexOf("[@[");
+					content=content.substring(0,index1); 
+				}
+				contentWithVerse=$('<div/>').html(content)[0];
 			}
 		} 
-		if(verseNode){
-			$(verseHtml).remove();
-		}else{
-			ed.selection.setContent($(contentWithVerse).html());
-		}
+		ed.setContent($(contentWithVerse).html());  
 	}
+	
+	 
 </script>
 </html>
