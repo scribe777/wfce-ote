@@ -546,10 +546,10 @@ function getHtmlByTei(inputString) {
 				}
 			}
 					
-			var mapping = {
-				'facs' : '&facs='
-			};
-			wceAttr += getWceAttributeByTei($teiNode, mapping) + '&lb_alignment=';
+			wceAttr += '&facs=';
+			if ($teiNode.getAttribute('facs'))
+				wceAttr += $teiNode.getAttribute('facs');
+			wceAttr += '&lb_alignment=';
 			
 			// Get infos about following <fw> elements
 			var $next = $teiNode.nextSibling;
@@ -581,11 +581,9 @@ function getHtmlByTei(inputString) {
 			break;
 		default: //qb, cb and lb
 			wceAttr += getWceAttributeByTei($teiNode, {'n' : '&number='});
-			if (type == 'lb') {
-				wceAttr += getWceAttributeByTei($teiNode, {'rend' : '&lb_alignment='});
-			} else { // set empty alignment for pb, qb and cb
-				wceAttr += '&lb_alignment=';
-			}
+			wceAttr += '&lb_alignment=';
+			if ($teiNode.getAttribute('rend'))
+				wceAttr += $teiNode.getAttribute('rend');
 			wceAttr += '&pb_type=&fibre_type=&facs=&page_number=&running_title=&paratext_position=pagetop&paratext_position_other=';
 		}
 

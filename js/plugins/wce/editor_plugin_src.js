@@ -27,8 +27,8 @@
 			ed.WCE_CON = {};
 			var w = ed.WCE_CON;
 
-			// blocked elements :If the Caret is on the inside, will prohibit the key operation
-			w.blockedElements = new Array('gap', 'corr', 'chapter_number', 'verse_number', 'abbr', 'spaces', 'note', 'unclear');
+			// blocked elements :If the Caret is inside, this will prohibit the key operation
+			w.blockedElements = new Array('gap', 'corr', 'chapter_number', 'verse_number', 'abbr', 'spaces', 'note', 'unclear', 'brea', 'paratext');
 
 			// not blocked elements
 			// w.normalElemente = new Array('unclear');
@@ -166,7 +166,7 @@
 		},
 
 		/*
-		 * so lang as node is firstChild, find outmost Ancestor. Reverse of _getFirstTextNodeOfNode()
+		 * As long as node is firstChild, find outmost Ancestor. Reverse of _getFirstTextNodeOfNode()
 		 */
 		_getAncestorIfFirstChild : function(ed, node) {
 			var nodeName, parent;
@@ -472,7 +472,7 @@
 				w.not_C = true;
 				w.not_A = true;
 
-				// move caret to EndOfPreviousSibling,manly for IE:
+				// move caret to EndOfPreviousSibling, mainly for IE:
 				if (rng.startOffset == 0) {
 					rng = _moveCaretToEndOfPreviousSibling(ed, rng, startContainer);
 				}
@@ -488,14 +488,14 @@
 					selectedNode = startContainer;
 				}
 
-				if (!WCEObj._canInsertNote(rng)) {
+				if (!WCEObj._canInsertNote(ed, rng)) {
 					w.not_N = true;
 				}
 
 				w.nextElem = WCEObj._getNextSiblingOfAncestor(ed, startContainer);
 				w.isNextElemBE = _isWceBE(ed, w.nextElem);
 			} else {
-				// if select text
+				// if text is selected
 				w.not_B = true;
 				w.not_N = true;
 
@@ -584,6 +584,9 @@
 			} else if (_isNodeTypeOf(selectedNode, 'corr')) {
 				_setAllControls(ed, true);
 				w.not_C = false;
+				if (WCEObj._canInsertNote(ed, rng)) {
+					w.not_N = false;
+				}
 				w.type = 'corr';
 			} else if (_isNodeTypeOf(selectedNode, 'abbr')) {
 				_setAllControls(ed, true);
@@ -597,6 +600,8 @@
 				_setAllControls(ed, true);
 				w.type = 'verse_number';
 			} else if (_isNodeTypeOf(selectedNode, 'brea')) {
+				_setAllControls(ed, true);
+				w.not_B = false;
 				w.type = 'break';
 			} else if (_isNodeTypeOf(selectedNode, 'unclear')) {
 				_setAllControls(ed, true);
@@ -604,11 +609,13 @@
 				w.type = 'unclear';
 			} else if (_isNodeTypeOf(selectedNode, 'spaces')) {
 				_setAllControls(ed, true);
-				w.type = 'spaces';
 				w.not_O = false;
+				w.type = 'spaces';
 			} else if (_isNodeTypeOf(selectedNode, 'formatting_capitals')) {
 				w.type = 'formatting_capitals';
 			} else if (_isNodeTypeOf(selectedNode, 'paratext') || selectedNode.getAttribute('class') === 'commentary') { //special node for commentary note which is a paratextual element
+				_setAllControls(ed, true);
+				w.not_P = false;
 				w.type = 'paratext';
 			} else if (_isNodeTypeOf(selectedNode, 'note')) {
 				_setAllControls(ed, true);
@@ -674,7 +681,7 @@
 		/*
 		 * 
 		 */
-		_canInsertNote : function(rng) {
+		_canInsertNote : function(ed, rng) {
 			var endContainer = rng.endContainer;
 			if (!endContainer) {
 				return false;
@@ -694,8 +701,14 @@
 						return true;
 					}
 				}
+				if (endOffset == len && endOffset > 0) { //special case for first position after correction
+					var c = text.charAt(endOffset - 1);
+					var c1 = text.charAt(endOffset);
+					if (c != ' ' && c != '\xa0' && !c1) {
+						return true;
+					}
+				}
 			}
-
 			return false;
 		},
 
@@ -1126,7 +1139,7 @@
 			 */
 			case 'breaks':
 				var c = cm.createMenuButton('menu-break', {
-					title : 'Breaks (STRG+B)',
+					title : 'Breaks (Ctrl+Alt+B)',
 					image : tinyMCE.baseURL + '/plugins/wce/img/button_B-new.png',
 					icons : false
 				});
@@ -1176,7 +1189,7 @@
 
 			case 'correction':
 				var c = cm.createButton('menu-correction', {
-					title : 'Corrections (STRG+K)',
+					title : 'Corrections (Ctrl+Alt+K)',
 					image : tinyMCE.baseURL + '/plugins/wce/img/button_C-new.png',
 					icons : false,
 					onclick : function() {
@@ -1198,7 +1211,7 @@
 					var w = ed.WCE_VAR;
 
 					sub = m.addMenu({
-						title : 'Uncertain Letters (STRG+U)',
+						title : 'Uncertain Letters (Ctrl+Alt+U)',
 						id : 'menu-illegible-uncleartext'
 					});
 
@@ -1240,7 +1253,7 @@
 					});
 
 					sub = m.addMenu({
-						title : 'Gap (STRG+G)',
+						title : 'Gap (Ctrl+Alt+G)',
 						id : 'menu-illegible-lacuna'
 					});
 
@@ -1450,7 +1463,7 @@
 
 			case 'abbreviation':
 				var c = cm.createMenuButton('menu-abbreviation', {
-					title : 'Abbreviated text (STRG+A)',
+					title : 'Abbreviated text (Ctrl+Alt+A)',
 					image : tinyMCE.baseURL + '/plugins/wce/img/button_A-new.png',
 					icons : false
 				});
@@ -1499,7 +1512,7 @@
 
 			case 'paratext':
 				var c = cm.createMenuButton('menu-paratext', {
-					title : 'Marginalia (STRG+M)',
+					title : 'Marginalia (Ctrl+Alt+M)',
 					image : tinyMCE.baseURL + '/plugins/wce/img/button_M-new.png',
 					icons : false
 				});
@@ -1548,7 +1561,7 @@
 
 			case 'note':
 				var c = cm.createMenuButton('menu-note', {
-					title : 'Note (STRG+N)',
+					title : 'Note (Ctrl+Alt+N)',
 					image : tinyMCE.baseURL + '/plugins/wce/img/button_N-new.png',
 					icons : false
 				});
@@ -1727,7 +1740,7 @@
 
 				return c;
 			}
-
+			
 			return null;
 		},
 
@@ -1789,7 +1802,7 @@
 
 		},
 
-		// bei adptive Selection
+		// bei adaptive Selection
 		_getTextRightPosition : function(text, idx) {
 			if (!text) {
 				return st;
@@ -1875,7 +1888,7 @@
 					/*
 					 * while (num == "") { num = prompt("Number of line break", ""); }
 					 */
-					ed.selection.setContent('<span ' + wceAttr + wceClass + '>' + '<br/>&crarr;' + '</span>');
+					ed.selection.setContent('<span ' + wceAttr + wceClass + '>' + '<br/>&crarr;' + '</span> ');
 					lcnt = number;
 
 					// ed.selection.select(ed.getBody(), true); // select complete text
@@ -1896,7 +1909,7 @@
 					/*
 					 * while (num == "") { num = prompt("Number of line break", ""); }
 					 */
-					ed.selection.setContent('<span ' + wceAttr + wceClass + '>' + '&#8208;<br/>&crarr;' + '</span>'); //&#8208; instead of &hyphen; because of IE9
+					ed.selection.setContent('<span ' + wceAttr + wceClass + '>' + '&#8208;<br/>&crarr;' + '</span> '); //&#8208; instead of &hyphen; because of IE9
 					lcnt = number;
 				} else if (character == 'cb') {
 					// column break
@@ -2077,7 +2090,7 @@
 						return _stopEvent(ed, e);
 					}
 				} else if (ek == 46 && wcevar.isCollapsedAtNodeEnd && !wcevar.isNextElemBE) {
-
+				
 				} else {
 					return _stopEvent(ed, e);
 				}
@@ -2094,7 +2107,6 @@
 					if (wcevar.type != 'break') {
 						ed.execCommand('mceAddBreak');
 					}
-
 				} else {
 					// Enter -> line break
 					var sel = WCEObj._getSEL(ed);
@@ -2112,9 +2124,7 @@
 							_wceAddNoDialog(ed, 'brea', 'lbm', ++lcnt);
 						}
 					}
-
 				}
-
 				return _stopEvent(ed, e);
 			}
 			
@@ -2289,7 +2299,7 @@
 				if (row) {
 					tinymce.DOM.add(row.parentNode, 'div', {
 						'style' : ''
-					}, '<input type="checkbox" checked="checked"  id="' + id + '"> Adaptive selection</input>');
+					}, '<input type="checkbox" id="' + id + '"> Adaptive selection</input>');
 				}
 			});
 
@@ -2298,7 +2308,16 @@
 				_wceAdd(ed, url, '/html2tei.htm', 580, 420, 1, true);
 
 			});
-
+			
+			
+			// add verse modify button
+			ed.addButton('versemodify', {
+				title : 'Modify verses', //TODO: SHortcut does not work (Ctrl+Alt+V)',
+				cmd : 'mceVerseModify',
+				image : url + '/img/button_V-new.png'
+			});
+			
+			
 			// add showTeiByHtml button
 			ed.addButton('showTeiByHtml', {
 				title : 'For test: \n set booknumber=00\nget TEI output from HTML',
@@ -2359,18 +2378,6 @@
 				alert('This version of the transcription editor was last modified on: ' + datum);
 			});
 			
-			// verse modify
-			ed.addCommand('mceVerseModify', function() {
-				_wceAdd(ed, url, '/verse.htm', 180, 240, 1, true);
-
-			});
-
-			// add verse modify button
-			ed.addButton('versemodify', {
-				title : 'Verse Modify',
-				cmd : 'mceVerseModify',
-				image : url + '/img/button_V-new.png'
-			});
 			/*
 			 * onInit
 			 * 
@@ -2405,13 +2412,14 @@
 				});
 
 				// Add shortcuts for wce
-				ed.addShortcut('ctrl+b', 'Add break', 'mceAddBreak_Shortcut');
-				ed.addShortcut('ctrl+k', 'Add correction', 'mceAddCorrection_Shortcut');
-				ed.addShortcut('ctrl+u', 'Add unclear text', 'mceAddUnclearText_Shortcut');
-				ed.addShortcut('ctrl+g', 'Add gap', 'mceAddGap_Shortcut');
-				ed.addShortcut('ctrl+a', 'Add abbreviation', 'mceAddAbbr_Shortcut');
-				ed.addShortcut('ctrl+m', 'Add marginalia', 'mceAddParatext_Shortcut');
-				ed.addShortcut('ctrl+n', 'Add note', 'mceAddNote_Shortcut');
+				ed.addShortcut('ctrl+alt+b', 'Add break', 'mceAddBreak_Shortcut');
+				ed.addShortcut('ctrl+alt+c', 'Add correction', 'mceAddCorrection_Shortcut');
+				ed.addShortcut('ctrl+alt+u', 'Add unclear text', 'mceAddUnclearText_Shortcut');
+				ed.addShortcut('ctrl+alt+g', 'Add gap', 'mceAddGap_Shortcut');
+				ed.addShortcut('ctrl+alt+a', 'Add abbreviation', 'mceAddAbbr_Shortcut');
+				ed.addShortcut('ctrl+alt+m', 'Add marginalia', 'mceAddParatext_Shortcut');
+				ed.addShortcut('ctrl+alt+n', 'Add note', 'mceAddNote_Shortcut');
+				ed.addShortcut('ctrl+alt+v', 'Modify verses', 'mceVerseModify_Shortcut');
 				// ed.addShortcut('ctrl+p', 'Add punctuation', 'mceAddNote_Shortcut');
 
 				tinymce.dom.Event.add(ed.getDoc(), 'mousemove', function(e) {
@@ -2439,17 +2447,21 @@
 					ed.selection.select(wceNode);
 					var wceAttr = wceNode.getAttribute('wce');
 					var originalText = decodeURIComponent(wceNode.getAttribute('wce_orig'));
-
+					
 					/*
 					 * // if tag to remove var node_to_remove = [ 'paratext', 'note', 'gap', 'brea' ]; var to_remove = false; for ( var i = 0; i < node_to_remove.length; i++) { if (wceAttr.indexOf(ed.wceTypeParamInClass + '=' + node_to_remove[i]) > -1) { to_remove = true; break; } }
 					 * 
 					 * if (to_remove) { $(wceNode).remove(); } else if (typeof originalText != 'undefined') { ed.selection.setContent(originalText);alert(originalText); }
 					 */
-					wceNode.parentNode.removeChild(wceNode);
+					 
+					if (wceNode.getAttribute('class') === 'commentary') // cursor is inside [comm]
+						wceNode.parentNode.parentNode.removeChild(wceNode.parentNode);
+					else
+						wceNode.parentNode.removeChild(wceNode);
 
-					if (originalText)
+					if ((originalText) && originalText != 'null') //TODO: I am not sure why we still need the string 'null' (but it works)
 						ed.selection.setContent(originalText);
-
+					
 					ed.isNotDirty = 0;
 				}
 			});
@@ -2662,7 +2674,17 @@
 			ed.addCommand('mceAdd_formatting', function(c) {
 				_wceAddNoDialog(ed, 'formatting_' + c, '');
 			});
+			
+			// verse modify
+			ed.addCommand('mceVerseModify', function() {
+				_wceAdd(ed, url, '/verse.htm', 360, 750, 1, true);
 
+			});
+			
+			ed.addCommand('mceVerseModify_Shortcut', function() {
+				ed.execCommand('mceVerseModify');
+			});
+			
 			ed.addCommand('setCounter', function(bt, n) {
 				// First reset counters
 				qcnt--;

@@ -122,7 +122,7 @@ var baseTextServiceURL = 'http://crosswire.org/study/fetchdata.jsp';
 		document.getElementById(tinyMCE.activeEditor.id + '_ifr').style.height = (height - minus) + "px";
 	}
 
-$(document).ready(function(){
+	$(document).ready(function(){
 
 	if (parent && parent.Liferay) $('#discussButtonSpan').show();
 	else $('#discussButtonSpan').hide();

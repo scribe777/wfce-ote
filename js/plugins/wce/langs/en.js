@@ -145,11 +145,11 @@ tinyMCE.addI18n('en.wce',{
 	supplied_source_title : "Please specify the supplied source",
 	supplied_source_data : "Information about the supplied source",
 	supplied_source : "Supplied source",
-	na27 : "NA27",
+	na27 : "NA28",
 	TR : "TR",
-	paratext : "Paratext",
-	paratext_title : "Specify paratext",
-	paratext_data : "Information about paratext",
+	paratext : "Marginalia",
+	paratext_title : "Specify marginalia",
+	paratext_data : "Information about marginalia",
 	position : "Position",
 	position_top : "top margin",
 	position_bottom : "bottom margin",
@@ -211,5 +211,7 @@ tinyMCE.addI18n('en.wce',{
 	empty_number : "Please enter a number (used as attribute &quot;n&quot;)",
 	save : 'Your changes have not been saved yet.\nClick "OK" to save them or "Cancel" to discard changes.',
 	capitals_data: 'Information about capitals',
-	capitals_height : 'Height of the capitals'
+	capitals_height : 'Height of the capitals',
+	verse_insert : 'Insert Verse Nummer:',
+	verse_remove : 'Remove the following verse(s):'
 });

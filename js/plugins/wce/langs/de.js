@@ -129,11 +129,11 @@ tinyMCE.addI18n('de.wce',{
 	poor_image : "Schlechtes Bild",
 	faded_ink : "Verblichene Tinte",
 	damage_to_page : "Schaden",
-	na27 : "NA27",
+	na27 : "NA28",
 	TR : "Textus Receptus",
-	paratext : "Paratext ",
-	paratext_title : "Bitte Paratext bestimmen",
-	paratext_data : "Informationen über Paratext",
+	paratext : "Marginalia ",
+	paratext_title : "Bitte Marginalia bestimmen",
+	paratext_data : "Informationen über Marginalia",
 	position : "Position",
 	position_top : "Oberer Rand",
 	position_bottom : "Unterer Rand",
@@ -158,5 +158,7 @@ tinyMCE.addI18n('de.wce',{
 	empty_number : "Bitte geben Sie eine Zahl ein (wird als Attribut &quot;n&quot; verwendet)",
 	save : 'Die Änderungen sind noch nicht gespeichert worden. Klicken Sie "OK" um sie zu speichern, oder "Cancel" um die Änderungen zu verwerfen',
 	capitals_data: 'Informationen über die Großbuchstaben',
-	capitals_height : 'Höhe der Großbuchstaben'
+	capitals_height : 'Höhe der Großbuchstaben',
+	verse_insert : 'Füge Versnummer ein:',
+	verse_remove : 'Entferne folgende Verse:'
 });

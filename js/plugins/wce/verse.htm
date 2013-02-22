@@ -8,15 +8,18 @@
 </head>
 <body id="table">
 	<form onsubmit="return false;" action="#" name="noteinfo">
-		<div class="mceActionPanel" style="margin-bottom:10px">
-			<input type="button"  name="ok" value="Ok"
-				onclick="updateVerse();tinyMCEPopup.close();"  /> <input type="button"
-				 name="cancel" value="{#cancel}"
-				onclick="tinyMCEPopup.close();" />
+		<div>
+		<input type="radio" id="insertVerseRadio" name="versemodify" onclick="canInsertVerse();">{#wce.verse_insert}</input>
+		<input id="insertVerseNummer" type="text" /></div>
+		<div id="deleteVerseDiv" style="margin-top:10px"><div>
+		<input type="radio" id="deleteVerseRadio" onclick="canDeleteVerse();" name="versemodify"/>{#wce.verse_remove}</div>
+		<fieldset style="border:1px solid #ccc;width:auto; height:auto; overflow-y:auto" id="verseList"></fieldset>
 		</div>
-		<div><input type="radio" id="insertVerseRadio" name="versemodify" onclick="canInsertVerse();">Insert Verse Nummer: </input><input id="insertVerseNummer" type="text" /></div>
-		<div id="deleteVerseDiv"><div><input type="radio" id="deleteVerseRadio" onclick="canDeleteVerse();" name="versemodify"/>Verse to delete</div>
-		<fieldset style="border:1px solid #ccc;width:auto; height:180px;  overflow-y:auto" id="verseList"></fieldset>
+		<div class="mceActionPanel" style="margin-bottom:10px">
+			<input type="button" id="ok" name="ok" value="OK"
+				onclick="updateVerse();tinyMCEPopup.close();" />
+			<input type="button" name="cancel" value="{#cancel}"
+				onclick="tinyMCEPopup.close();" />
 		</div>
 	</form>
 </body>
@@ -166,6 +169,16 @@ var contentWithVerse;
 		}
 		
 		_delVerse(contentWithVerse);
+	}
+	
+	if (!tinyMCE.isIE) {
+		$(document).keydown(function(e) {
+			var evt = e || window.event
+			if (evt.keyCode == 13 || evt.keyCode == 10) {
+				document.getElementById('ok').click();
+				return false;
+			}
+		});
 	}
 </script>
 </html>

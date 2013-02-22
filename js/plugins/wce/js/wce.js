@@ -199,6 +199,7 @@ function writeWceNodeInfo(val) {
 		case 'note':
 			wceClass = ' class="note"';
 			new_content = selected_content + '<span wce="' + newWceAttr + '"' + original_text + wceClass + '>Note</span>';  
+			wceObj._insertSpace(ed, 32);
 			break;
 
 		case 'abbr':
@@ -241,10 +242,16 @@ function writeWceNodeInfo(val) {
 
 		}
 
-		if (new_content == null)
-			new_content = '<span wce="' + newWceAttr + '"' + wceClass + original_text + '>' + selected_content + '</span>';
-
+		if (new_content == null) {
+			if (wce_type === 'brea' || wce_type === 'paratext') // do not write original_text for breaks and paratext
+				new_content = '<span wce="' + newWceAttr + '"' + wceClass + '>' + selected_content + '</span>';
+			else
+				new_content = '<span wce="' + newWceAttr + '"' + wceClass + original_text + '>' + selected_content + '</span>';
+		}
+		//if (wce_type == 'brea') //only for lb
+		//	new_content += ' ';
 		ed.selection.setContent(new_content);
+		
 		if (wce_type == 'brea') {
 			var new_pbcnt = 0;
 			switch (document.getElementById('break_type').value) {
@@ -339,7 +346,7 @@ function writeWceNodeInfo(val) {
 				}
 			} else if (wce_type == 'brea') {
 				// break type
-				wce_node.innerHTML = val;
+				wce_node.innerHTML = val;	
 			} else if (wce_type == 'abbr'){
 				var abbrClass = 'abbr';
 				if (document.getElementById('add_overline').checked == true) {

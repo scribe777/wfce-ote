@@ -14,7 +14,8 @@
 				<tr>
 					<td><label id="note_type_label" for="note_type">{#wce.note_type}</label>
 					</td>
-					<td><select id="note_type" name="note_type"
+					<td>
+					<select id="note_type" name="note_type"
 						onclick="checkstatus_notetype()">
 							<option value="editorial">{#wce.editorial}</option>
 							<option value="transcriberquery">{#wce.transcriber}</option>
@@ -104,5 +105,17 @@
 			}
 		});
 	}
+
+	/*if (!tinyMCE.isIE) {
+		$(document).ready(function() {	
+			$('select').keydown(function(e) {
+				var evt = e || window.event
+				if (evt.keyCode == 13 || evt.keyCode == 10) {
+					document.getElementById('insert').click();
+					return false;
+				}
+			});
+		});
+	}*/
 </script>
 </html>
