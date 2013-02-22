@@ -107,6 +107,8 @@ var contentWithVerse;
 						} 
 					}					
 				}
+				delVerse(startNode,endNode);
+				/*
 				if(startNode){ 
 					var startText=document.createTextNode('[@['); 
 					startNode.parentNode.insertBefore(startText,startNode);  
@@ -131,11 +133,39 @@ var contentWithVerse;
 					content=content.substring(0,index1); 
 				}
 				contentWithVerse=$('<div/>').html(content)[0];
+				*/
 			}
 		} 
 		ed.setContent($(contentWithVerse).html());  
 	}
 	
-	 
+	function delVerse(startNode,endNode){
+		var start;
+		var _delVerse=function(node){
+			if(node==startNode){
+				start=true;
+			}else if(node==endNode){
+				start=false;
+				return true;
+			}else{
+				var temp=node.childNodes;
+				var list=new Array();
+				for(var i=0,len=temp.length;i<len;i++){
+					list[i]=temp[i];
+				}				
+				for(var i=0,len=list.length;i<len;i++){
+					var n=list[i];
+					if(_delVerse(n)){
+						return true;
+					}
+				}
+			}
+			if(start){				
+				$(node).remove();
+			}
+		}
+		
+		_delVerse(contentWithVerse);
+	}
 </script>
 </html>
