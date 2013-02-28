@@ -1077,6 +1077,15 @@
 					case 'formatting':
 						if (ar['capitals_height'] != null) { // output only if capitals
 							info_text = '<div>' + 'Capitals' + '</div><div style="margin-top:10px">' + 'Height: ' + ar['capitals_height'] + '</div>';
+						} else { // all other formatting
+							if (ar['__t'] === 'formatting_displaced-above')
+								info_text = '<div>' + 'Displaced above' + '</div>';
+							else if (ar['__t'] === 'formatting_displaced-below')
+								info_text = '<div>' + 'Displaced below' + '</div>';
+							else if (ar['__t'] === 'formatting_displaced-other')
+								info_text = '<div>' + 'Displaced' + '</div>';
+							else
+								info_text = '<div>' + 'Highlighted text' + '</div>';
 						}
 						break;
 					case 'pc':
@@ -1417,6 +1426,32 @@
 							items['menu-decoration-highlight-capitals-delete'].setDisabled(true);
 						}
 					});
+					
+					var sub2 = sub.addMenu({
+						title : 'Displaced'
+					});
+
+					sub2.add({
+						title : 'Above',
+						onclick : function() {
+							ed.execCommand('mceAdd_formatting', 'displaced-above');
+						}
+					});
+
+					sub2.add({
+						title : 'Below',
+						onclick : function() {
+							ed.execCommand('mceAdd_formatting', 'displaced-below');
+						}
+					});
+
+					sub2.add({
+						title : 'Other',
+						onclick : function() {
+							ed.execCommand('mceAdd_formatting', 'displaced-other');
+						}
+					});
+
 
 					sub = m.addMenu({
 						title : 'Insert special characters'
@@ -2179,6 +2214,7 @@
 			}
 
 			var ek = e.keyCode || e.charCode || 0;
+			var _stopEvent = WCEObj._stopEvent;
 			
 			if (tinymce.isWebKit) { // for Chrome (on Linux and Mac) and Safari: ":" and ";" both give the same keydown code 186 (???). So we use keypress for them
 				if (ek == 58) { // :
@@ -2188,6 +2224,12 @@
 					tinyMCE.activeEditor.execCommand('mceAdd_pc', ';');
 					_stopEvent(ed, e);
 				}
+			}
+			
+			if (ek == 123) {
+				if (!ed.WCE_VAR.not_N)
+					tinyMCE.activeEditor.execCommand('mceAddNote');
+				_stopEvent(ed, e);
 			}
 		},
 

@@ -429,6 +429,15 @@ function getHtmlByTei(inputString) {
 		case 'ol':
 			className = 'formatting_overline';
 			break;
+		case 'displaced-above':
+			className = 'formatting_displaced-above';
+			break;
+		case 'displaced-below':
+			className = 'formatting_displaced-below';
+			break;
+		case 'displaced-other':
+			className = 'formatting_displaced-other';
+			break;
 		}
 		if (!className)
 			return null;
@@ -1261,6 +1270,16 @@ function getTeiByHtml(inputString, args) {
 			break;
 		case 'formatting_overline':
 			formatting_rend = 'ol';
+			break;
+		case 'formatting_displaced-above':
+			formatting_rend = 'displaced-above';
+			break;
+		case 'formatting_displaced-below':
+			formatting_rend = 'displaced-below';
+			break;
+		case 'formatting_displaced-other':
+			formatting_rend = 'displaced-other';
+			break;
 		}
 
 		if (formatting_rend != '') {
