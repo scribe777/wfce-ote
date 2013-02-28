@@ -37,7 +37,7 @@
 			</table>
 		</fieldset>
 		<div class="mceActionPanel">
-			<input type="button" name="insert" value="{#insert}"
+			<input type="button" id="insert" name="insert" value="{#insert}"
 				onclick="cont = testOther();
 						if (cont){writeWceNodeInfo();}else{alert('{#wce.empty_other}');}" /> <input type="button"
 				 name="cancel" value="{#cancel}"
@@ -53,6 +53,7 @@
 	});
 		
 	function init() {
+		comboBindReturnEvent('insert'); 
 		wceInfoInit('abbr');
 		readWceNodeInfo();
 		checkstatus_abbrtype();

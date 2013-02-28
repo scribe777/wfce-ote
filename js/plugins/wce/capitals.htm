@@ -22,7 +22,7 @@
 		</fieldset>
 		</div>
 		<div class="mceActionPanel">
-			<input type="button"   name="insert" value="{#insert}"
+			<input type="button"  id="insert" name="insert" value="{#insert}"
 				onclick="writeWceNodeInfo();" /> <input type="button"
 				 name="cancel" value="{#cancel}"
 				onclick="tinyMCEPopup.close();" />
@@ -37,6 +37,7 @@
 	});	
 	
 	function init() {
+		comboBindReturnEvent('insert'); 
 		wceInfoInit('formatting_capitals');
 		readWceNodeInfo();
 	}

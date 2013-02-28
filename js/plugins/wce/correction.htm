@@ -179,6 +179,7 @@
 	
 	
 	function init() { 
+		comboBindReturnEvent('insert'); 
 		wceInfoInit('corr'); 
 		if($.browser.safari){
 			$('#content_fieldset').css('width',$('#mceActionPanel').width()-250);

@@ -540,3 +540,13 @@ function arrayToString(arr) {
 	};
 	window.XBTooltip = window.XBT = XBTooltip;
 })(this, this.document);
+
+
+function comboBindReturnEvent(id1){
+	$('select').keydown(function(event){
+		var keyCode = event.keyCode ? event.keyCode : event.charCode ? event.charCode :	event.which;	
+		if (keyCode == 13) { 
+			$('#'+id1).click(); 
+		}
+    });  
+}
