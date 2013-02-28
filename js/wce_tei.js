@@ -895,7 +895,7 @@ function getTeiByHtml(inputString, args) {
 	// node for te
 	var g_bookNode;
 	var g_chapterNode;
-	var g_veseNode;
+	var g_verseNode;
 	var tempNode;
 
 	var gIndex_s = 0;
@@ -926,7 +926,7 @@ function getTeiByHtml(inputString, args) {
 		// <TEMP>
 		$newRoot = $newDoc.documentElement;
 		
-		if (g_chapterNumber) {
+		/*if (g_chapterNumber) {
 			g_chapterNode = $newDoc.createElement('div');
 			g_chapterNode.setAttribute('type', 'chapter');
 			g_chapterNode.setAttribute('n', 'B' + g_bookNumber + 'K' + g_chapterNumber);
@@ -935,11 +935,11 @@ function getTeiByHtml(inputString, args) {
 		}
 
 		if (g_verseNumber) {
-			g_veseNode = $newDoc.createElement('ab');
-			g_veseNode.setAttribute('n', 'B' + g_bookNumber + 'K' + g_chapterNumber + 'V' + g_verseNumber);
-			g_chapterNode.appendChild(g_veseNode);
-			g_currentParentNode = g_veseNode;
-		}
+			g_verseNode = $newDoc.createElement('ab');
+			g_verseNode.setAttribute('n', 'B' + g_bookNumber + 'K' + g_chapterNumber + 'V' + g_verseNumber);
+			g_chapterNode.appendChild(g_verseNode);
+			g_currentParentNode = g_verseNode;
+		}*/
 
 		if (!g_currentParentNode) {
 			g_currentParentNode = $newRoot;
@@ -1085,10 +1085,10 @@ function getTeiByHtml(inputString, args) {
 			if (textNode) {
 				g_verseNumber = textNode.nodeValue;
 				g_verseNumber = $.trim(g_verseNumber);
-				g_veseNode = $newDoc.createElement('ab');
-				g_veseNode.setAttribute('n', 'B' + g_bookNumber + 'K' + g_chapterNumber + 'V' + g_verseNumber);
-				g_chapterNode.appendChild(g_veseNode);
-				g_currentParentNode = g_veseNode;
+				g_verseNode = $newDoc.createElement('ab');
+				g_verseNode.setAttribute('n', 'B' + g_bookNumber + 'K' + g_chapterNumber + 'V' + g_verseNumber);
+				g_chapterNode.appendChild(g_verseNode);
+				g_currentParentNode = g_verseNode;
 				g_wordNumber = 0;
 			}
 			return null;

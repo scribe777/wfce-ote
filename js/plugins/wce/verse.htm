@@ -46,11 +46,11 @@ var contentWithVerse;
 	}
 	
 	function init() {
-		if(!ed.selection.isCollapsed()){ 
+		//if(!ed.selection.isCollapsed()){ 
 			canDeleteVerse();
-		}else{
-			canInsertVerse();
-		}
+		//}else{
+			//canInsertVerse();
+		//}
 		contentWithVerse=$('<div/>').html(ed.getContent())[0];
 		$('#verseList').html(getVerseList(contentWithVerse)); 
 	}
