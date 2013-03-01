@@ -53,7 +53,7 @@
 		comboBindReturnEvent('insert'); 
 		wceInfoInit('unclear');
 		readWceNodeInfo();
-		setstatus_unclear_text()
+		checkstatus_unclear_text_reason();
 	}
 
 	function checkstatus_unclear_text_reason() {
@@ -66,13 +66,6 @@
 		}
 	}
 
-	function setstatus_unclear_text() {
-		checkstatus_unclear_text_reason();
-		/*if ($('#original_text').val() == '') {
-			$('#original_text').val(selected_content);
-		}*/
-	}
-	
 	function testOther() {
 		if (document.unclear_text_info.unclear_text_reason.options[4].selected == true && document.getElementById('unclear_text_reason_other').value == '') 
 			return false;

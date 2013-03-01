@@ -1,4 +1,4 @@
-﻿﻿function setWceEditor(_id, rtl, finishCallback, de) {
+﻿﻿function setWceEditor(_id, rtl, finishCallback, lang) {
 	tinyMCE.baseURL = URI('js/').absoluteTo(gadgets.util.getUrlParameters()['url']);
 	tinyMCE.baseURI = new tinyMCE.util.URI(tinyMCE.baseURL);
 	tinyMCE.init({
@@ -16,7 +16,7 @@
 		execcommand_callback : 'wceExecCommandHandler',
 		save_onsavecallback : "saveDataToDB",
 		directionality : (rtl) ? "rtl" : "ltr",
-		language : (de) ? "de" : "en", 
+		language : (lang) ? lang : "en", 
 		// invalid_elements:'p',
 		/*
 		 * plugins : "wce,pagebreak,style,layer,advhr,advimage,emotions,iespell,inlinepopups,safari,preview,media,searchreplace,print,contextmenu,paste,directionality,fullscreen,noneditable,visualchars,nonbreaking,xhtmlxtras,template,wordcount,advlist,autosave",

@@ -100,23 +100,11 @@
 	if (!tinyMCE.isIE) {
 		$(document).keydown(function(e) {
 			var evt = e || window.event
-			if (evt.keyCode == 13 || evt.keyCode == 10) {
+			if ((evt.keyCode == 13 || evt.keyCode == 10) && !evt.shiftKey) {
 				document.getElementById('insert').click();
 				return false;
 			}
 		});
 	}
-
-	/*if (!tinyMCE.isIE) {
-		$(document).ready(function() {	
-			$('select').keydown(function(e) {
-				var evt = e || window.event
-				if (evt.keyCode == 13 || evt.keyCode == 10) {
-					document.getElementById('insert').click();
-					return false;
-				}
-			});
-		});
-	}*/
 </script>
 </html>
