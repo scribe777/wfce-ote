@@ -1326,9 +1326,8 @@
 					var sub;
 					var w = ed.WCE_VAR;
 					sub = m.addMenu({
-						title : 'Highlight Text',
-						id : 'menu-decoration-highlight',
-						image : tinyMCE.baseURL + '/plugins/wce/img/button_O-new.png'
+						title : 'Highlight text',
+						id : 'menu-decoration-highlight'
 					});
 
 					sub.add({
@@ -1427,25 +1426,26 @@
 						}
 					});
 					
-					var sub2 = sub.addMenu({
-						title : 'Displaced'
+					sub = m.addMenu({
+						title : 'Displaced text',
+						id : 'menu-decoration-displaced'
 					});
-
-					sub2.add({
+					
+					sub.add({
 						title : 'Above',
 						onclick : function() {
 							ed.execCommand('mceAdd_formatting', 'displaced-above');
 						}
 					});
 
-					sub2.add({
+					sub.add({
 						title : 'Below',
 						onclick : function() {
 							ed.execCommand('mceAdd_formatting', 'displaced-below');
 						}
 					});
 
-					sub2.add({
+					sub.add({
 						title : 'Other',
 						onclick : function() {
 							ed.execCommand('mceAdd_formatting', 'displaced-other');
