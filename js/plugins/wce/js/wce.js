@@ -543,10 +543,20 @@ function arrayToString(arr) {
 
 
 function comboBindReturnEvent(id1){
-	$('select').keydown(function(event){
-		var keyCode = event.keyCode ? event.keyCode : event.charCode ? event.charCode :	event.which;	
-		if (keyCode == 13) { 
-			$('#'+id1).click(); 
+	var entryEvent=function(e){
+		if (!e) {
+			var e = window.event;
 		}
-    });  
+		var keyCode = e.keyCode ? e.keyCode : e.charCode ? e.charCode :	e.which;
+		if (keyCode == 13) {
+			$('#'+id1).click();  
+		}   
+	};	
+	
+	//test in firefox, safari, chrome
+	if(!tinyMCE.isIE && !tinyMCE.isOpera){   
+		$('#'+id1).focus(); 
+		$('select').keydown(function(e){entryEvent(e)}); 
+	 	$(':checkbox').click(function(e){$('#'+id1).focus()});
+	}  
 }
