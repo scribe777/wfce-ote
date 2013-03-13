@@ -212,6 +212,8 @@ tinyMCE.addI18n('en.wce',{
 	save : 'Your changes have not been saved yet.\nClick "OK" to save them or "Cancel" to discard changes.',
 	capitals_data: 'Information about capitals',
 	capitals_height : 'Height of the capitals',
-	verse_insert : 'Insert Verse Nummer:',
-	verse_remove : 'Remove the following verse(s):'
+	verse_insert : 'Insert verse number: ',
+	verse_remove : 'Remove the following verse(s): ',
+	inscriptio_insert : 'Insert inscriptio: ',
+	subscriptio_insert : 'Insert subscriptio: '
 });

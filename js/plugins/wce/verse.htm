@@ -8,12 +8,23 @@
 </head>
 <body id="table">
 	<form onsubmit="return false;" action="#" name="noteinfo">
-		<div>
-		<input type="radio" id="insertVerseRadio" name="versemodify" onclick="canInsertVerse();">{#wce.verse_insert}</input>
-		<input id="insertVerseNummer" type="text" /></div>
-		<div id="deleteVerseDiv" style="margin-top:10px"><div>
-		<input type="radio" id="deleteVerseRadio" onclick="canDeleteVerse();" name="versemodify"/>{#wce.verse_remove}</div>
-		<fieldset style="border:1px solid #ccc;width:auto; height:auto; overflow-y:auto" id="verseList"></fieldset>
+		<div id="insertVerseDiv">
+			<div>
+				<input type="radio" id="insertVerseRadio" name="versemodify" onclick="canInsertVerse();">{#wce.verse_insert}</input>
+				<input id="insertVerseNummer" type="text" />
+			</div>
+			<div>
+				<input type="radio" id="insertInscriptioRadio" name="versemodify" onclick="canInsertInscriptio();">{#wce.inscriptio_insert}</input>
+			</div>
+			<div>
+				<input type="radio" id="insertSubscriptioRadio" name="versemodify" onclick="canInsertSubscriptio();">{#wce.subscriptio_insert}</input>
+			</div>
+		</div>
+		<div id="deleteVerseDiv" style="margin-top:10px">
+			<div>
+				<input type="radio" id="deleteVerseRadio" onclick="canDeleteVerse();" name="versemodify"/>{#wce.verse_remove}
+			</div>
+			<fieldset style="border:1px solid #ccc;width:auto; height:auto; overflow-y:auto" id="verseList"></fieldset>
 		</div>
 		<div class="mceActionPanel" style="margin-bottom:10px">
 			<input type="button" id="ok" name="ok" value="OK"
@@ -38,26 +49,33 @@ var contentWithVerse;
 		$('#verseList').attr('disabled','disabled');
 		$('#insertVerseNummer').removeAttr('disabled'); 
 	}
+	
+	function canInsertInscriptio(){
+		$('#insertInscriptioRadio').attr('checked','checked');
+		$('#verseList').attr('disabled','disabled');
+	}
+	
+	function canInsertSubscriptio(){
+		$('#insertSubscriptioRadio').attr('checked','checked');
+		$('#verseList').attr('disabled','disabled');
+	}
+	
 	function canDeleteVerse(){
 		$('#insertVerseNummer').attr('disabled','disabled');
-		$('#inserVerseDiv').attr('disabled','disabled');
+		$('#insertVerseDiv').attr('disabled','disabled');
 		$('#deleteVerseRadio').attr('checked','checked');
 		$('#verseList').removeAttr('disabled');
 	}
 	
 	function init() {
-		//if(!ed.selection.isCollapsed()){ 
-			canDeleteVerse();
-		//}else{
-			//canInsertVerse();
-		//}
-		contentWithVerse=$('<div/>').html(ed.getContent())[0];
+		canDeleteVerse();
+		contentWithVerse=$('<div/>').html(ed.getContent())[0]; //selects everything starting the complete chapter
 		$('#verseList').html(getVerseList(contentWithVerse)); 
 	}
 	
 	function getVerseList(node){
 		var out="";
-		if(!node || node.nodeType!=1){
+		if(!node || node.nodeType != 1){
 			return out;
 		}
 		
@@ -79,33 +97,67 @@ var contentWithVerse;
 	}
 	
 	function updateVerse(){ 
-		if($('#insertVerseRadio').attr('checked')){
-			var newVerseNr=$('#insertVerseNummer').val().trim();
-			newVerseNr=newVerseNr.replace(/\D/g,'');
-			if(newVerseNr!=''){
-				ed.selection.setContent('<span class="verse_number"> '+newVerseNr+'</span>');
+		if ($('#insertVerseRadio').attr('checked')){
+			var newVerseNr = $('#insertVerseNummer').val().trim();
+			newVerseNr = newVerseNr.replace(/\D/g,'');
+			if (newVerseNr != ''){
+				ed.selection.setContent('<span class="verse_number"> ' + newVerseNr + '</span> ');
 			}
+			return;
+		} else if ($('#insertInscriptioRadio').attr('checked')){
+			var node;
+			/*node = document.getElementsByTagName('span');
+			for (var i = node.length-1; i>=0; i--) {
+				if
+				node[i].innerHTML = 'hello world';
+			}*/
+			 var container = null;
+            if (window.getSelection) {  // all browsers, except IE before version 9
+                var selectionRange = window.getSelection ();
+                if (selectionRange.rangeCount > 0) {
+                    var range = selectionRange.getRangeAt (0);
+                    container = range.commonAncestorContainer;
+                }
+            } 
+            else {
+                if (document.selection) {        // Internet Explorer
+                    var textRange = document.selection.createRange ();
+                    container = textRange.parentElement ();
+                }
+            }
+
+            if (container) {
+                alert ("The name of the container node: " + container.nodeName);
+            }
+            else {
+                alert ("Container object for the selection is not available!");
+            }
+			//sometimes the insertion is not correctly set
+			ed.selection.setContent('<span class="chapter_number"> ' + 'Inscriptio ' + '</span><span class="verse_number"></span>PLACE THE INCIPIT HERE! <span class="chapter_number"></span>');
+			return;
+		} else if ($('#insertSubscriptioRadio').attr('checked')){
+			ed.selection.setContent('<span class="chapter_number"> ' + 'Subscriptio ' + '</span><span class="verse_number"></span>PLACE THE SUBSCRIPTIO HERE! ');
 			return;
 		}
 		
 		var verseList=$('#verseList').find('input:checkbox');
-		for(var i=0,len=verseList.length; i<len; i++){ 
+		for (var i=0,len=verseList.length; i<len; i++){ 
 			var cb=verseList[i];
-			if($(cb).attr('checked')){
+			if ($(cb).attr('checked')){
 				var verseNr=$(cb).val();				
 				var startNode=null,endNode=null;
 				var spanList=$(contentWithVerse).find('span');
-				for(var j=0,len2=spanList.length; j<len2; j++){
+				for (var j=0,len2=spanList.length; j<len2; j++){
 					var span=spanList[j];
 					var spanValue=$(span).html().trim();
-					if(!span.className){
+					if (!span.className){
 						continue;
 					}
-					if(span.className.toLowerCase()=='verse_number'){						
-						if(startNode){
+					if (span.className.toLowerCase()=='verse_number'){						
+						if (startNode){
 							endNode=span;
 							break;
-						}else if(spanValue==verseNr){
+						} else if(spanValue==verseNr){
 							startNode=span; 
 						} 
 					}					
@@ -147,10 +199,10 @@ var contentWithVerse;
 		var _delVerse=function(node){
 			if(node==startNode){
 				start=true;
-			}else if(node==endNode){
+			} else if (node == endNode) {
 				start=false;
 				return true;
-			}else{
+			} else {
 				var temp=node.childNodes;
 				var list=new Array();
 				for(var i=0,len=temp.length;i<len;i++){

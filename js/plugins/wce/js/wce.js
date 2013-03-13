@@ -178,11 +178,6 @@ function writeWceNodeInfo(val) {
 			}
 			break;
 
-		/*case 'supplied':
-			wceClass = ' class="supplied"';
-			break;
-		*/
-	
 		case 'unclear':
 			wceClass = ' class="unclear"';
 			var unclear_text = "";

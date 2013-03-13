@@ -780,7 +780,7 @@ function getHtmlByTei(inputString) {
 			$rdg = rdgs[i];
 			typeValue = $rdg.getAttribute('type');
 			handValue = $rdg.getAttribute('hand');
-			deletionValue = $rdg.getAttribute('deletion');
+			deletionValue = $rdg.getAttribute('rend');
 
 			if (i == 1)
 				wceAttr += '__t=corr';
@@ -805,7 +805,7 @@ function getHtmlByTei(inputString) {
 				// &deletion_vertical_line=0
 				// &deletion_other=0
 				var deletionstr = '';
-				var deletionArr = new Array('erased', 'underline', 'underdot', 'strikethrough', 'vertical line', 'other');
+				var deletionArr = new Array('erased', 'underline', 'underdot', 'strikethrough', 'vertical_line', 'other');
 				for ( var d = 0; d < deletionArr.length; d++) {
 					var deletionItem = deletionArr[d];
 					if (deletionValue.indexOf(deletionItem) > -1) {
@@ -907,6 +907,8 @@ function getTeiByHtml(inputString, args) {
 	var g_verseNode;
 	var tempNode;
 
+	var old_chapterNumber = 0;
+		
 	var gIndex_s = 0;
 
 	var startCompressionWord = false;
@@ -1077,7 +1079,7 @@ function getTeiByHtml(inputString, args) {
 	 */
 	var getTeiNodeByHtmlNode = function($teiParent, $htmlNode, stopAddW) {
 		var wceAttrValue, wceType, htmlNodeName, infoArr, arr;
-
+		
 		wceAttrValue = $htmlNode.getAttribute('wce');
 		
 		if (!wceAttrValue) {
@@ -1099,6 +1101,11 @@ function getTeiByHtml(inputString, args) {
 				g_chapterNode.appendChild(g_verseNode);
 				g_currentParentNode = g_verseNode;
 				g_wordNumber = 0;
+			} else { //empty verse
+				g_verseNode = $newDoc.createElement('ab');
+				g_chapterNode.appendChild(g_verseNode);
+				g_currentParentNode = g_verseNode;
+				g_wordNumber = 0;
 			}
 			return null;
 
@@ -1108,10 +1115,19 @@ function getTeiByHtml(inputString, args) {
 			if (textNode) {
 				g_chapterNumber = textNode.nodeValue;
 				g_chapterNumber = $.trim(g_chapterNumber);
-				g_chapterNode = $newDoc.createElement('div');
-				g_chapterNode.setAttribute('type', 'chapter');
-				g_chapterNode.setAttribute('n', 'B' + g_bookNumber + 'K' + g_chapterNumber);
-				$newRoot.appendChild(g_chapterNode);
+				if (g_chapterNumber != old_chapterNumber) { //ignore repeated chapter numbers
+					old_chapterNumber = g_chapterNumber;
+					g_chapterNode = $newDoc.createElement('div');
+					if (g_chapterNumber === 'Inscriptio')
+						g_chapterNode.setAttribute('type', 'incipit');
+					else if (g_chapterNumber === 'Subscriptio')
+						g_chapterNode.setAttribute('type', 'explicit');
+					else {
+						g_chapterNode.setAttribute('type', 'chapter');
+						g_chapterNode.setAttribute('n', 'B' + g_bookNumber + 'K' + g_chapterNumber);
+					}
+					$newRoot.appendChild(g_chapterNode);
+				}
 			}
 			return null;
 
@@ -1421,7 +1437,7 @@ function getTeiByHtml(inputString, args) {
 			// deletion
 			var deletion = decodeURIComponent(arr['deletion']);
 			if (deletion && deletion != 'null' && deletion != '') {
-				$rdg.setAttribute('deletion', deletion.replace(/\,/g, '+'));
+				$rdg.setAttribute('rend', deletion.replace(/\,/g, ' '));
 			}
 			
 			var place = arr['place_corr'];

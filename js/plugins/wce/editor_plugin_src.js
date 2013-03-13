@@ -965,10 +965,10 @@
 						else
 							corr_str += ar['corrector_text'] + '</div>';
 
-						var deletionText = ar['deletion'];
+						var deletionText = ar['deletion'].replace(/\,/g, ', ');
 						if (deletionText && deletionText != 'null') {
 							// information on deletion
-							corr_str += '<div style="margin-top:5px">' + 'Method of deletion: ' + deletionText + '</div>';
+							corr_str += '<div style="margin-top:5px">' + 'Method(s) of deletion: ' + deletionText + '</div>';
 						}
 						if (ar['editorial_note']) {
 							corr_str += '<div style="margin-top:5px">Note: ' + ar['editorial_note'] + '</div>';
@@ -1198,7 +1198,7 @@
 
 			case 'correction':
 				var c = cm.createButton('menu-correction', {
-					title : 'Corrections (Ctrl+Alt+K)',
+					title : 'Corrections (Ctrl+Alt+C)',
 					image : tinyMCE.baseURL + '/plugins/wce/img/button_C-new.png',
 					icons : false,
 					onclick : function() {

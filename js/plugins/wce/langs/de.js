@@ -159,6 +159,8 @@ tinyMCE.addI18n('de.wce',{
 	save : 'Die Änderungen sind noch nicht gespeichert worden. Klicken Sie "OK" um sie zu speichern, oder "Cancel" um die Änderungen zu verwerfen',
 	capitals_data: 'Informationen über die Großbuchstaben',
 	capitals_height : 'Höhe der Großbuchstaben',
-	verse_insert : 'Füge Versnummer ein:',
-	verse_remove : 'Entferne folgende Verse:'
+	verse_insert : 'Füge Versnummer ein: ',
+	verse_remove : 'Entferne folgende Verse: ',
+	inscriptio_insert : 'Füge inscriptio ein: ',
+	subscriptio_insert : 'Füge Subscriptio ein: '
 });
