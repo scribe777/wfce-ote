@@ -43,6 +43,7 @@ tinyMCE.addI18n('en.wce',{
 	papyrus_fibre_v : "\u2002\u2191",
 	pb_type : "Type of page break",
 	pb_position : "Position",
+	pb_hyphen : "Previous page ends with hyphenated word",
 	fibre_type : "Papyrus fibre",
 	pb_page : "Page",
 	pb_folio: "Folio",

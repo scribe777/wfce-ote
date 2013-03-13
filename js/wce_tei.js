@@ -628,7 +628,9 @@ function getHtmlByTei(inputString) {
 			break;
 		}
 		$htmlParent.appendChild($newNode);
-		nodeAddText($htmlParent, ' ');
+		
+		if ($teiNode.nextSibling && $teiNode.nextSibling.nodeName === 'w') // add space only if new word follows
+			nodeAddText($htmlParent, ' ');
 		return null;
 	};
 

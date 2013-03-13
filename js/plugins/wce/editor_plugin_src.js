@@ -1909,7 +1909,7 @@
 			case 'brea':
 				// style = 'style="border: 1px dotted #f00; margin:0px; padding:0; color:#666"';
 				wceClass = ' class="brea"';
-				if (character == 'lb') {
+				if (character == 'lb1' || character == 'lb2') {
 					// line break at the end of a word
 					if (number === 0) {
 						// for a line break without an explicit number
@@ -1918,18 +1918,29 @@
 
 					wceAttr = 'wce="__t=brea&amp;__n=&amp;hasBreak=no&amp;break_type=lb&amp;number=' + number 
 						+ '&amp;pb_type=&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment=&amp;insert=Insert&amp;cancel=Cancel" ';
-
-					// var num = "";
-					/*
-					 * while (num == "") { num = prompt("Number of line break", ""); }
-					 */
-					ed.selection.setContent('<span ' + wceAttr + wceClass + '>' + '<br/>&crarr;' + '</span> ');
+					
+					if (character == 'lb1') // add an extra space
+						ed.selection.setContent(' <span ' + wceAttr + wceClass + '>' + '<br/>&crarr;' + '</span>');
+					else //lb2
+						ed.selection.setContent('<span ' + wceAttr + wceClass + '>' + '<br/>&crarr;' + '</span> ');
 					lcnt = number;
 
 					// ed.selection.select(ed.getBody(), true); // select complete text
-					return;
+					//return;
 
 					// ed.execCommand('printData');
+				} else if (character == 'lb') {
+					// page, quire or column break in the middle of a word; hyphen is already set
+					if (number === 0) {
+						// for a line break without an explicit number
+						number = ++lcnt;
+					}
+
+					// set new wceAttr with hasBreak=yes
+					wceAttr = 'wce="__t=brea&amp;__n=&amp;hasBreak=no&amp;break_type=lb&amp;number=' + number +
+						'&amp;pb_type=&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment=&amp;insert=Insert&amp;cancel=Cancel"';
+					ed.selection.setContent('<span ' + wceAttr + wceClass + '>' + '<br/>&crarr;' + '</span>'); //&#8208; instead of &hyphen; because of IE9
+					lcnt = number;
 				} else if (character == 'lbm') {
 					// line break in the middle of a word
 					if (number === 0) {
@@ -1940,11 +1951,7 @@
 					// set new wceAttr with hasBreak=yes
 					wceAttr = 'wce="__t=brea&amp;__n=&amp;hasBreak=yes&amp;break_type=lb&amp;number=' + number +
 						'&amp;pb_type=&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment=&amp;insert=Insert&amp;cancel=Cancel"';
-					// var num = "";
-					/*
-					 * while (num == "") { num = prompt("Number of line break", ""); }
-					 */
-					ed.selection.setContent('<span ' + wceAttr + wceClass + '>' + '&#8208;<br/>&crarr;' + '</span> '); //&#8208; instead of &hyphen; because of IE9
+					ed.selection.setContent('<span ' + wceAttr + wceClass + '>' + '&#8208;<br/>&crarr;' + '</span>'); //&#8208; instead of &hyphen; because of IE9
 					lcnt = number;
 				} else if (character == 'cb') {
 					// column break
@@ -2152,10 +2159,12 @@
 						var startOffset = rng.startOffset;
 						var indexOfEnd = WCEObj._getNextEnd(startText, startOffset);
 						// at the end of a word
-						if ((indexOfEnd && indexOfEnd == startOffset) || (startText.substr(startOffset - 1, 1) == " ")) {
-							_wceAddNoDialog(ed, 'brea', 'lb', ++lcnt);
-						} else {
-							// in the middle of a word
+						if (indexOfEnd && indexOfEnd == startOffset) {
+							//add an additional space
+							_wceAddNoDialog(ed, 'brea', 'lb1', ++lcnt);
+						} else if (startText.substr(startOffset - 1, 1) == " ") { //return after space
+							_wceAddNoDialog(ed, 'brea', 'lb2', ++lcnt);
+						} else { // return in the middle of a word
 							_wceAddNoDialog(ed, 'brea', 'lbm', ++lcnt);
 						}
 					}
@@ -2510,11 +2519,11 @@
 
 			// Add breaks
 			ed.addCommand('mceAddBreak', function() {
-				_wceAdd(ed, url, '/break.htm?mode=new&quire=' + ++qcnt + '&page=' + ++pcnt + '&column=' + ++ccnt + '&line=' + ++lcnt + '&rectoverso=' + rectoverso, 480, 320, 1, true);
+				_wceAdd(ed, url, '/break.htm?mode=new&quire=' + ++qcnt + '&page=' + ++pcnt + '&column=' + ++ccnt + '&line=' + ++lcnt + '&rectoverso=' + rectoverso, 520, 320, 1, true);
 			});
 			// Edit breaks
 			ed.addCommand('mceEditBreak', function() {
-				_wceAdd(ed, url, '/break.htm?mode=edit&quire=' + ++qcnt + '&page=' + ++pcnt + '&column=' + ++ccnt + '&line=' + ++lcnt + '&rectoverso=' + rectoverso, 480, 320, 1, false);
+				_wceAdd(ed, url, '/break.htm?mode=edit&quire=' + ++qcnt + '&page=' + ++pcnt + '&column=' + ++ccnt + '&line=' + ++lcnt + '&rectoverso=' + rectoverso, 520, 320, 1, false);
 			});
 
 			ed.addCommand('mceAddBreak_Shortcut', function() {

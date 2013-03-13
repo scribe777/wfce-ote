@@ -23,11 +23,14 @@
 							<option value="pb">{#wce.pagebreak}</option>
 							<option value="gb">{#wce.quire}</option>
 					</select></td>
+					<td colspan="5"><input type="checkbox" name="pb_hyphen"
+						id="pb_hyphen" >{#wce.pb_hyphen}</input>
+					</td>
 				</tr>
 				<tr>
 					<td><label id="number_label" for="number">{#wce.number}</label>
 					</td>
-					<td><input id="number" name="number" type="text" value=""
+					<td colspan="2"><input id="number" name="number" type="text" value=""
 						size="10" maxlength="" class="required number min1 mceFocus" />
 					</td>
 					<td><label id="pb_type_label" for="pb_type">{#wce.pb_position}</label>
@@ -174,10 +177,13 @@
 		var v = $('#break_type').val();
 		if (v == 'lb') {
 			if (qsParm['mode'] == 'new') { // new lb
-				if (lbposition() == 'lb') {
+				if (lbposition() == 'lb1'){
 					document.breakinfo.hasBreak.value = 'no';
-					return '<br/>&crarr;';
-				} else {
+					return ' <br/>&crarr;';
+				} else if (lbposition() == 'lb2') {
+					document.breakinfo.hasBreak.value = 'no';
+					return '<br/>&crarr; ';
+				} else { //lbm
 					document.breakinfo.hasBreak.value = 'yes';
 					return '&#8208;<br/>&crarr;';
 				}
@@ -185,16 +191,22 @@
 				if (document.breakinfo.hasBreak.value == 'yes') {
 					return '&#8208;<br/>&crarr;';
 				} else {
-					return '<br/>&crarr;';
+					if (lbposition() == 'lb1')
+						return ' <br/>&crarr;';
+					else //lb2
+						return '<br/>&crarr; ';
 				}
 			}
 		}
 		else if (v == 'cb') {
 			if (qsParm['mode'] == 'new') { // new cb
-				if (lbposition() == 'lb') {
+				if (lbposition() == 'lb1'){
 					document.breakinfo.hasBreak.value = 'no';
-					return '<br/>CB';
-				} else {
+					return ' <br/>CB';
+				} else if (lbposition() == 'lb2') {
+					document.breakinfo.hasBreak.value = 'no';
+					return '<br/>CB ';
+				} else { //lbm
 					document.breakinfo.hasBreak.value = 'yes';
 					return '&#8208;<br/>CB';
 				}
@@ -202,31 +214,49 @@
 				if (document.breakinfo.hasBreak.value == 'yes') {
 					return '&#8208;<br/>CB';
 				} else {
-					return '<br/>CB';
+					if (lbposition() == 'lb1')
+						return ' <br/>CB';
+					else //lb2
+						return '<br/>CB ';
 				}
 			}
 		} else if (v == 'pb') {
 			if (qsParm['mode'] == 'new') { // new pb
-				if (lbposition() == 'lb') {
-					document.breakinfo.hasBreak.value = 'no';
-					return '<br/>PB';
-				} else {
+				if (lbposition() == 'lb1' || lbposition() == 'lb2') {
+					checkstatus_hyphen(); //get information about previous page; maybe there was a hyphenation
+					if (document.breakinfo.hasBreak.value == 'yes')
+						return '&#8208;<br/>PB';
+					else {
+						if (lbposition() == 'lb1')
+							return ' <br/>PB';
+						else //lb2
+							return '<br/>PB ';
+					}
+				} else { //lbm: page break with hyphenated word
 					document.breakinfo.hasBreak.value = 'yes';
+					document.breakinfo.pb_hyphen.checked = true; //set checkbox in dialogue
 					return '&#8208;<br/>PB';
 				}
 			} else { // modifying existing one => keep setting
+				checkstatus_hyphen(); //was this page break marked as "starts after hyphenated word"?
 				if (document.breakinfo.hasBreak.value == 'yes') {
 					return '&#8208;<br/>PB';
 				} else {
-					return '<br/>PB';
+					if (lbposition() == 'lb1')
+						return ' <br/>PB';
+					else //lb2
+						return '<br/>PB ';
 				}
 			}
 		} else { // QB
 			if (qsParm['mode'] == 'new') { // new qb
-				if (lbposition() == 'lb') {
+				if (lbposition() == 'lb1') {
 					document.breakinfo.hasBreak.value = 'no';
-					return '<br/>QB';
-				} else {
+					return ' <br/>QB';
+				} else if (lbposition() == 'lb2') {
+					document.breakinfo.hasBreak.value = 'no';
+					return '<br/>QB ';
+				} else { //lbm
 					document.breakinfo.hasBreak.value = 'yes';
 					return '&#8208;<br/>QB';
 				}
@@ -234,7 +264,10 @@
 				if (document.breakinfo.hasBreak.value == 'yes') {
 					return '&#8208;<br/>QB';
 				} else {
-					return '<br/>QB';
+					if (lbposition() == 'lb1')
+						return ' <br/>QB';
+					else //lb2
+						return '<br/>QB ';
 				}
 			}
 		}
@@ -257,6 +290,8 @@
 			document.getElementById('pb_type').style.backgroundColor = "white";
 			document.breakinfo.fibre_type.disabled = false;
 			document.getElementById('fibre_type').style.backgroundColor = "white";
+			document.breakinfo.pb_hyphen.disabled = false;
+			document.getElementById('pb_hyphen').style.backgroundColor = "white";
 			document.breakinfo.running_title.disabled = false;
 			document.getElementById('running_title').style.backgroundColor = "white";
 			document.breakinfo.page_number.disabled = false;
@@ -279,6 +314,8 @@
 			document.getElementById('pb_type').style.backgroundColor = "#CCCCCC";
 			document.breakinfo.fibre_type.disabled = true;
 			document.getElementById('fibre_type').style.backgroundColor = "#CCCCCC";
+			document.breakinfo.pb_hyphen.disabled = true;
+			document.getElementById('pb_hyphen').style.backgroundColor = "#CCCCCC";
 			document.breakinfo.running_title.disabled = true;
 			document.getElementById('running_title').style.backgroundColor = "#CCCCCC";
 			document.breakinfo.page_number.disabled = true;
@@ -305,7 +342,7 @@
 		}
 	}
 	
-	function setstatus_pb_type () {
+	/*function setstatus_pb_type () {
 		if (document.breakinfo.pb_type.options[0].selected == true) { //empty
 			document.breakinfo.number.value = qsParm['page'];
 		} else { //recto/verso
@@ -315,6 +352,13 @@
 	
 	function setstatus_break() {
 		checkstatus_break();
+	}*/
+	
+	function checkstatus_hyphen() {
+		if (document.breakinfo.pb_hyphen.checked)
+			document.breakinfo.hasBreak.value = "yes";
+		else
+			document.breakinfo.hasBreak.value = "no";
 	}
 	
 	function testNumber() {
@@ -339,8 +383,10 @@
 		var rng = ed.selection.getRng(true);
 		var startNode = rng.startContainer;
 		var startText = startNode.data ? startNode.data : startNode.innerText;
-		if ((rng.startOffset == _getNextEnd(startText,rng.startOffset)) || (startText.substr(rng.startOffset-1, 1) == " "))
-			return 'lb';
+		if (rng.startOffset == _getNextEnd(startText,rng.startOffset))
+			return 'lb1';
+		else if (startText.substr(rng.startOffset-1, 1) == " ")
+			return 'lb2';
 		return 'lbm';
 	}
 	

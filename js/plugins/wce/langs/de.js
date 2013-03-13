@@ -45,6 +45,7 @@ tinyMCE.addI18n('de.wce',{
 	fibre_type : "Faserverlauf des Papyrus",
 	pb_page : "Seite",
 	pb_folio: "Folio",
+	pb_hyphen : "Vorherige Seite endet mit einer Worttrennung",
 	text : "Text oder Zahl (wie auf der Seite vermerkt)",
 	covered : "Anzahl der überdeckten Zeilen",
 	number_attribute : 'Zahl (wie für das XML-Attribut "n" benutzt)',

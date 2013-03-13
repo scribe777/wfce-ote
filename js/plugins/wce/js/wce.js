@@ -238,13 +238,18 @@ function writeWceNodeInfo(val) {
 		}
 
 		if (new_content == null) {
-			if (wce_type === 'brea' || wce_type === 'paratext') // do not write original_text for breaks and paratext
+			if (wce_type === 'brea') {
+				if (val.indexOf(' ') == 0) // val starts with space; additional space has to added to output (scenario lb1)
+					new_content = ' <span wce="' + newWceAttr + '"' + wceClass + '>' + selected_content.trim() + '</span>';
+				else if (val.indexOf(' ') > 0) //lb2
+					new_content = '<span wce="' + newWceAttr + '"' + wceClass + '>' + selected_content.trim() + '</span> ';
+				else //lbm
+					new_content = '<span wce="' + newWceAttr + '"' + wceClass + '>' + selected_content + '</span>';
+			} else if (wce_type === 'paratext') // do not write original_text for breaks and paratext
 				new_content = '<span wce="' + newWceAttr + '"' + wceClass + '>' + selected_content + '</span>';
 			else
 				new_content = '<span wce="' + newWceAttr + '"' + wceClass + original_text + '>' + selected_content + '</span>';
 		}
-		//if (wce_type == 'brea') //only for lb
-		//	new_content += ' ';
 		ed.selection.setContent(new_content);
 		
 		if (wce_type == 'brea') {
@@ -254,7 +259,10 @@ function writeWceNodeInfo(val) {
 				ed.execCommand('setCounter', 'gb', document.getElementById('number').value);
 				ed.execCommand('mceAdd_brea', 'pb', 0);
 				ed.execCommand('mceAdd_brea', 'cb', '1');
-				ed.execCommand('mceAdd_brea', 'lb', '1');
+				if (val.indexOf(' ') > -1)
+					ed.execCommand('mceAdd_brea', 'lb2', '1');
+				else
+					ed.execCommand('mceAdd_brea', 'lb', '1');
 				break;
 			case 'pb':
 				if (document.getElementById('pb_type').value == "r")
@@ -265,11 +273,17 @@ function writeWceNodeInfo(val) {
 					new_pbcnt = document.getElementById('number').value;
 				ed.execCommand('setCounter', 'pb', new_pbcnt);
 				ed.execCommand('mceAdd_brea', 'cb', '1');
-				ed.execCommand('mceAdd_brea', 'lb', '1');
+				if (val.indexOf(' ') > -1)
+					ed.execCommand('mceAdd_brea', 'lb2', '1');
+				else
+					ed.execCommand('mceAdd_brea', 'lb', '1');
 				break;
 			case 'cb':
 				ed.execCommand('setCounter', 'cb', document.getElementById('number').value);
-				ed.execCommand('mceAdd_brea', 'lb', '1');
+				if (val.indexOf(' ') > -1)
+					ed.execCommand('mceAdd_brea', 'lb2', '1');
+				else
+					ed.execCommand('mceAdd_brea', 'lb', '1');
 				break;
 			default: // LB
 				ed.execCommand('setCounter', 'lb', document.getElementById('number').value);
