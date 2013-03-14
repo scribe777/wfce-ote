@@ -96,7 +96,8 @@ function getHtmlByTei(inputString) {
 
 		switch (teiNodeName) {
 		case 'w':
-			return $htmlParent;// w
+			return Tei2Html_w($htmlParent, $teiNode);
+			//return $htmlParent;// w
 
 		case 'ex':
 			return Tei2Html_ex($htmlParent, $teiNode);// ex
@@ -224,6 +225,26 @@ function getHtmlByTei(inputString) {
 		nodeAddText($htmlParent, textValue);
 	};
 
+	/*
+	 * **** <w>
+	 */
+	var Tei2Html_w = function($htmlParent, $teiNode) {
+		if ($teiNode.hasAttributes && $teiNode.getAttribute("part") == "I") {
+			nodeAddText($htmlParent,$teiNode.firstChild.nodeValue); //add word part to HTML
+			$teiNode.removeChild($teiNode.firstChild); //remove word part from XML
+			
+			var $newNode = $newDoc.createElement('span'); // add line break for "page end"
+			$newNode.setAttribute("class", "brea");
+			$newNode.setAttribute("wce","__t=brea&__n=&hasBreak=yes&break_type=lb&number=&pb_type=&fibre_type=&page_number=&running_title=&facs=&lb_alignment=");
+			nodeAddText($newNode, '\u2010');
+			$br = $newDoc.createElement('br');
+			$newNode.appendChild($br);
+			nodeAddText($newNode, '\u21B5');
+			$htmlParent.appendChild($newNode);
+		}
+		return $htmlParent;
+	}
+	
 	/*
 	 * **** <ex>
 	 */
@@ -1529,6 +1550,9 @@ function getTeiByHtml(inputString, args) {
 			$newNode.setAttribute('n', arr['number']);
 		} else if (break_type) {
 			// pb, cb, lb
+			if (break_type == 'lb' && !$htmlNode.nextSibling) { //if this is the last element on a page, then it is only a marker
+				return;
+			}
 			$newNode = $newDoc.createElement(break_type);
 			switch (break_type) {
 			case 'lb':
@@ -1882,6 +1906,14 @@ function getTeiByHtml(inputString, args) {
 			// before create <w>,analyze the elements of the previousSibling
 			var $w = createNewWElement();
 
+			// check if this is the first word on a page after a hyphenation
+			if ($teiParent.lastChild && $teiParent.lastChild.previousChild && $teiParent.lastChild.previousSibling.previousSibling && $teiParent.lastChild.previousSibling.previousSibling.getAttribute("break") == "no")
+				$w.setAttribute("part", "F");
+			// check if this is the last word on a page and hyphenated
+			else if ($htmlNode.parentNode.lastChild && $htmlNode.parentNode.lastChild.nodeType == 1 && 	!$htmlNode.nextSibling.nextSibling &&
+				$htmlNode.parentNode.lastChild.getAttribute("wce").indexOf("break_type=lb") > -1    && 
+				$htmlNode.parentNode.lastChild.getAttribute("wce").indexOf("hasBreak=yes") > -1     &&	i == arr.length-1) //only valid for _last_ word of the last line
+					$w.setAttribute("part", "I");
 			$teiParent.appendChild($w);
 			nodeAddText($w, str);
 

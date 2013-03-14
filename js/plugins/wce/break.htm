@@ -158,6 +158,7 @@
 		}
 		checkstatus_break();
 		checkstatus_position();
+		setstatus_hyphen();
 	}
 	
 	function qs() {
@@ -359,6 +360,13 @@
 			document.breakinfo.hasBreak.value = "yes";
 		else
 			document.breakinfo.hasBreak.value = "no";
+	}
+	
+	function setstatus_hyphen() {
+		if (document.breakinfo.break_type.options[2].selected == true && document.breakinfo.hasBreak.value == "yes")
+			document.breakinfo.pb_hyphen.checked = true;
+		else
+			document.breakinfo.pb_hyphen.checked = false;
 	}
 	
 	function testNumber() {
