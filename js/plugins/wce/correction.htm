@@ -159,7 +159,7 @@
 			force_p_newlines : false,
 			entity_encoding : "raw",
 			theme_advanced_path : false,  
- 			plugins : "wce,pagebreak,style,layer,safari,print,inlinepopups, paste", 
+ 			plugins : "wce,pagebreak,style,layer,safari,print,inlinepopups,paste", 
 
 			// Theme options
 			theme_advanced_buttons1 : "undo,redo,charmap,|,code,removeformat,|,print,contextmenu,paste,fullscreen,|,breaks,illegible,decoration,abbreviation,paratext,punctuation",
@@ -181,13 +181,12 @@
 	function init() { 
 		comboBindReturnEvent('insert'); 
 		wceInfoInit('corr'); 
-		if($.browser.safari){
+		if ($.browser.safari){
 			$('#content_fieldset').css('width',$('#mceActionPanel').width()-250);
 		}
 
-		
 		if (info_arr.length == 0) {
-			$('#firsthand_reading').html(selected_content); 
+			$('#firsthand_reading').html(selected_content);
 			$('#original_firsthand_reading').val(selected_content); //Save initial value for later use
 		} else {
 			$('#firsthand_reading').value = $('#original_firsthand_reading').val(); //Use old value
@@ -212,7 +211,7 @@
 		checkstatus_firsthand();
 		checkstatus_correction();
 		
-		document.getElementById('corrector_text_adaptive_selection').checked=false; //deactivat adaptive selection here by default
+		document.getElementById('corrector_text_adaptive_selection').checked=false; //deactivate adaptive selection here by default
 	}
 	
 	function testOther() {
@@ -344,6 +343,10 @@
 			item_counter++;
 			_id = 'c' + item_counter;
 			var first_val=$('#original_firsthand_reading').val();
+			if (first_val == '') {
+				document.readinginfo.blank_firsthand.checked = true;
+				document.readinginfo.blank_firsthand.disabled = true;
+			}
 			$('#corrector_text').val(first_val); 
 			corrector_text_editor.setContent(first_val);
 			info_arr[_id] = formSerialize(null, corrector_name);  

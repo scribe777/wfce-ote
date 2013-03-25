@@ -122,7 +122,7 @@ function writeWceNodeInfo(val) {
 		tinyMCEPopup.close();
 		return;
 	}
-
+	
 	if (add_new_wce_node) {
 		// default style
 		// var style = "border: 1px dotted #f00; margin:0px 1px 0px 1px ; padding:0;";

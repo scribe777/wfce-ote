@@ -162,6 +162,6 @@ tinyMCE.addI18n('de.wce',{
 	capitals_height : 'Höhe der Großbuchstaben',
 	verse_insert : 'Füge Versnummer ein: ',
 	verse_remove : 'Entferne folgende Verse: ',
-	inscriptio_insert : 'Füge inscriptio ein: ',
-	subscriptio_insert : 'Füge Subscriptio ein: '
+	inscriptio_insert : 'Füge Inscriptio ein',
+	subscriptio_insert : 'Füge Subscriptio ein'
 });

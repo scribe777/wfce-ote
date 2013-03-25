@@ -7,7 +7,7 @@
        url(fonts/GentiumPlus-R.ttf) format('opentype'), /* f¨¹r Safari */
 	   url(fonts/GentiumForSafari.svg#GentiumPlusRegular) format('svg'); 
 }
-body, td, pre {color:#000; font-size:24px; margin:8px; line-height:48px;font-family: GentiumPlus;}
+body, td, pre {color:#000; font-size:24px; margin:8px; line-height:48px; font-family: GentiumPlus;}
 body {background-color:#FFE6BB;}
 body.mceForceColors {background:#FFF; color:#000;}
 body.mceBrowserDefaults {background:transparent; color:inherit; font-size:inherit; font-family:inherit;}

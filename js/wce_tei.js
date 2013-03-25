@@ -3,13 +3,15 @@ function getHtmlByTei(inputString) {
 	var $newDoc, $newRoot, $newRoot;
 
 	var teiIndexData = {
-		'bookNumber' : '00',
-		'pageNumber' : 0,
+		'bookNumber' : '',
+		'pageNumber' : '',
 		'chapterNumber' : 0,
 		'verseNumber' : 0,
 		'wordNumber' : 0,
 		'columnNumber' : 0,
-		'witValue' : 0
+		'lineNumber' : 0,
+		'quireNumber' : 0,
+		'witValue' : ''
 	};
 	
 	var getHtmlString = function() {
@@ -561,6 +563,7 @@ function getHtmlByTei(inputString) {
 		case 'pb': // page break
 			//pb n="2rx" type="folio" facs="edfwe" xml:id="P2rx-0" break="no"/><fw type="runTitle"
 			var number = getWceAttributeByTei($teiNode, {'n' : 'n'});
+			teiIndexData['pageNumber'] = parseInt(n);
 			var pbtype = getWceAttributeByTei($teiNode, {'type' : 'p'});
 			if (pbtype == "page") {
 				if (number.match("[0-9]$")) { // ends with a digit => no fibre type
@@ -611,6 +614,12 @@ function getHtmlByTei(inputString) {
 			break;
 		default: //qb, cb and lb
 			wceAttr += getWceAttributeByTei($teiNode, {'n' : '&number='});
+			if (type === 'lb')
+				teiIndexData['wordNumber'] = parseInt(n);
+			else if (type === 'cb')
+				teiIndexData['columnNumber'] = parseInt(n);
+			else //qb
+				teiIndexData['quireNumber'] = parseInt(n);
 			wceAttr += '&lb_alignment=';
 			if ($teiNode.getAttribute('rend'))
 				wceAttr += $teiNode.getAttribute('rend');
@@ -1506,7 +1515,7 @@ function getTeiByHtml(inputString, args) {
 				$note.setAttribute('type', 'transcriber');
 				$note.setAttribute('n', rdgcount); //store information about corresponding reading in "n" attribute
 				var _line = '';// TODO line numbering
-				xml_id = 'P' + g_pageNumber + 'C' + g_columnNumber + 'L' + _line + '-' + g_witValue + '-1';
+				xml_id = 'P' + g_pageNumber + 'C' + g_columnNumber + 'L' + _line + '-' + g_witValue + '-1'; //TODO: reference can as well consist of BKV
 				$note.setAttribute('xml:id', xml_id);// TODO:
 				nodeAddText($note, editorial_note);
 				$app.parentNode.appendChild($note); //insert $note at the very end
@@ -1566,6 +1575,7 @@ function getTeiByHtml(inputString, args) {
 				var breaColumn = arr['number'];
 				$newNode.setAttribute('n', breaColumn);
 				xml_id = 'P' + g_pageNumber + 'C' + breaColumn + '-' + g_witValue;
+				g_columnNumber = breaColumn;
 				break;
 			case 'pb':
 				var breaPage;
@@ -1586,6 +1596,7 @@ function getTeiByHtml(inputString, args) {
 					$newNode.setAttribute('facs', decodeURIComponent(arr['facs']));
 				}
 				xml_id = 'P' + breaPage + '-' + g_witValue;
+				g_pageNumber = breaPage;
 				break;
 			}
 			$newNode.setAttribute("xml:id", xml_id);//IE gets confused here
@@ -1705,7 +1716,7 @@ function getTeiByHtml(inputString, args) {
 
 		/*
 		 * // TODO: // numbering var _xml_id = $value['B'] + $value['K'] + $value['V'] + '-' + g_Wit + '-1';
-		 * 
+		 *  Other references are possible
 		 */
 
 		if ($teiParent.nodeName == 'w') {

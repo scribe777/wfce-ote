@@ -1,4 +1,4 @@
-﻿﻿function setWceEditor(_id, rtl, finishCallback, lang) {
+﻿﻿function setWceEditor(_id, rtl, finishCallback, lang, getWitness, getBook) {
 	tinyMCE.baseURL = URI('js/').absoluteTo(gadgets.util.getUrlParameters()['url']);
 	tinyMCE.baseURI = new tinyMCE.util.URI(tinyMCE.baseURL);
 	tinyMCE.init({
@@ -42,8 +42,8 @@
 function wceReload() {
 	// for test
 	/*var testData = '<span class="chapter_number"> 1</span> <span class="verse_number"> 1</span> βιβλος <span class="corr" wce_orig="γενεσεως" wce="__t=corr&amp;__n=new corrector&amp;undefined=New&amp;original_firsthand_reading=%CE%B3%CE%B5%CE%BD%CE%B5%CF%83%CE%B5%CF%89%CF%82&amp;reading=corr&amp;corrector_name=corrector&amp;corrector_name_other=&amp;place_corr=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_other=0&amp;deletion=null&amp;editorial_note=&amp;corrector_text=%CE%B3%CE%B5%CE%BD%CE%B5%CF%83%CE%B5%CF%89%CF%82&amp;corrector_text_adaptive_selection=on&amp;corr_reset=Reset&amp;undefined=Reset&amp;insert=Insert&amp;cancel=Cancel@__t=corr&amp;__n=new corrector&amp;undefined=New&amp;original_firsthand_reading=%CE%B3%CE%B5%CE%BD%CE%B5%CF%83%CE%B5%CF%89%CF%82&amp;reading=corr&amp;corrector_name=corrector&amp;corrector_name_other=&amp;place_corr=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_other=0&amp;deletion=null&amp;editorial_note=&amp;corrector_text=%CE%B3%CE%B5%CE%BD%CE%B5%CF%83%CE%B5%CF%89%CF%82&amp;corrector_text_adaptive_selection=on&amp;corr_reset=Reset&amp;undefined=Reset&amp;insert=Insert&amp;cancel=Cancel@__t=corr&amp;__n=corrector&amp;undefined=New&amp;original_firsthand_reading=%CE%B3%CE%B5%CE%BD%CE%B5%CF%83%CE%B5%CF%89%CF%82&amp;reading=corr&amp;corrector_name=corrector&amp;corrector_name_other=&amp;place_corr=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_other=0&amp;deletion=null&amp;editorial_note=&amp;corrector_text=%CE%B3%CE%B5%CE%BD%CE%B5%CF%83%CE%B5%CF%89%CF%82&amp;corrector_text_adaptive_selection=on&amp;corr_reset=Reset&amp;undefined=Reset&amp;insert=Insert&amp;cancel=Cancel">γενεσεως</span> ιησου χριστου υιου δαυιδ υιου αβρααμ <span class="verse_number"> 2</span> αβρααμ εγεννησεν τον ισαακ ισαακ δε εγεννησεν τον ιακωβ ιακωβ δε εγεννησεν τον ιουδαν και τους αδελφους αυτου <span class="verse_number"> 3</span> ιουδας δε εγεννησεν τον φαρες και τον ζαρα εκ της θαμαρ φαρες δε εγεννησεν τον εσρωμ εσρωμ δε εγεννησεν τον αραμ <span class="verse_number"> 4</span> αραμ δε εγεννησεν τον αμιναδαβ αμιναδαβ δε εγεννησεν τον ναασσων ναασσων δε εγεννησεν τον σαλμων <span class="verse_number"> 5</span> σαλμων δε εγεννησεν τον βοες εκ της ραχαβ βοες δε εγεννησεν τον ιωβηδ εκ της ρουθ ιωβηδ δε εγεννησεν τον ιεσσαι <span class="verse_number"> 6</span> ιεσσαι δε εγεννησεν τον δαυιδ τον βασιλεα δαυιδ δε εγεννησεν τον σολομωνα εκ της του ουριου <span class="verse_number"> 7</span> σολομων δε εγεννησεν τον ροβοαμ ροβοαμ δε εγεννησεν τον αβια αβια δε εγεννησεν τον ασαφ <span class="verse_number"> 8</span> ασαφ δε εγεννησεν τον ιωσαφατ ιωσαφατ δε εγεννησεν τον ιωραμ ιωραμ δε εγεννησεν τον οζιαν <span class="verse_number"> 9</span> οζιας δε εγεννησεν τον ιωαθαμ ιωαθαμ δε εγεννησεν τον αχαζ αχαζ δε εγεννησεν τον εζεκιαν <span class="verse_number"> 10</span> εζεκιας δε εγεννησεν τον μανασση μανασσης δε εγεννησεν τον αμως αμως δε εγεννησεν τον ιωσιαν <span class="verse_number"> 11</span> ιωσιας δε εγεννησεν τον ιεχονιαν και τους αδελφους αυτου επι της μετοικεσιας βαβυλωνος <span class="verse_number"> 12</span> μετα δε την μετοικεσιαν βαβυλωνος ιεχονιας εγεννησεν τον σαλαθιηλ σαλαθιηλ δε εγεννησεν τον ζοροβαβελ';
-	 setData(testData);
-	 setTeiIndexData('04');*/
+	 setData(testData);*/
+	 //setTeiIndexData('','','','','','','','','Martin');
 }
 
 // get dirty-value of editor
@@ -59,6 +59,7 @@ function setEditorNotDirty(b) {
 // set editor html content
 function setData(msg) {
 	tinyMCE.activeEditor.setContent(msg);
+	
 }
 
 // get editor html content
@@ -74,7 +75,7 @@ function getData() {
 // @param {Number} wordNumber: word start number for <w>, default 0, only use the if htmlInput not start with chapter/verse;
 // @param {Number} columnNumber: column number, defualt 0
 // @param {Number} witValue: value for wit, defualt 0
-function setTeiIndexData(bookNumber, pageNumber, chapterNumber, verseNumber, wordNumber, columnNumber, witValue) {
+function setTeiIndexData(bookNumber, pageNumber, chapterNumber, verseNumber, wordNumber, columnNumber, lineNumber, quireNumber, witValue) {
 	var wid = getTeiIndexData();
 	if (bookNumber) {
 		wid['bookNumber'] = bookNumber;
@@ -93,6 +94,12 @@ function setTeiIndexData(bookNumber, pageNumber, chapterNumber, verseNumber, wor
 	}
 	if (columnNumber) {
 		wid['columnNumber'] = columnNumber;
+	}
+	if (lineNumber) {
+		wid['lineNumber'] = lineNumber;
+	}
+	if (quireNumber) {
+		wid['quireNumber'] = quireNumber;
 	}
 	if (witValue) {
 		wid['witValue'] = witValue;

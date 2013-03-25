@@ -7,8 +7,9 @@
  */
 
 (function() {
-	var qcnt = 1; // quire count
-	var pcnt = 1; // page count
+	//var qcnt = tinyMCE.activeEditor.teiIndexData['quireNumber']; // quire count
+	var qcnt = 9;
+	var pcnt = 9; // page count
 	var ccnt = 1; // column count
 	var lcnt = 1; // line count
 	var rectoverso = 'true'; // counting as r/v
@@ -17,7 +18,7 @@
 	tinymce.PluginManager.requireLangPack('wce');
 
 	/*
-	 * WCEObj hat variable and constants
+	 * WCEObj has variable and constants
 	 */
 	var WCEObj = {
 		/*
@@ -469,7 +470,8 @@
 			}
 
 			if (w.isc) {
-				w.not_C = true;
+				if (!WCEObj._canInsertCorrection(ed, rng))
+					w.not_C = true; //Corrections should also be possible for single positions (blank first hand reading)
 				w.not_A = true;
 
 				// move caret to EndOfPreviousSibling, mainly for IE:
@@ -580,6 +582,9 @@
 			if (_isNodeTypeOf(selectedNode, 'gap')) {
 				_setAllControls(ed, true);
 				w.not_D = false;
+				if (WCEObj._canInsertNote(ed, rng)) {
+					w.not_N = false;
+				}
 				w.type = 'gap';
 			} else if (_isNodeTypeOf(selectedNode, 'corr')) {
 				_setAllControls(ed, true);
@@ -592,6 +597,9 @@
 				_setAllControls(ed, true);
 				w.not_A = false;
 				w.not_C = false;// Must be activated sometime, but the complete mechanism of combining elements is still a bit buggy
+				if (WCEObj._canInsertNote(ed, rng)) {
+					w.not_N = false;
+				}
 				w.type = 'abbr';
 			} else if (_isNodeTypeOf(selectedNode, 'chapter_number')) {
 				_setAllControls(ed, true);
@@ -606,16 +614,28 @@
 			} else if (_isNodeTypeOf(selectedNode, 'unclear')) {
 				_setAllControls(ed, true);
 				w.not_D = false;
+				if (WCEObj._canInsertNote(ed, rng)) {
+					w.not_N = false;
+				}
 				w.type = 'unclear';
 			} else if (_isNodeTypeOf(selectedNode, 'spaces')) {
 				_setAllControls(ed, true);
 				w.not_O = false;
+				if (WCEObj._canInsertNote(ed, rng)) {
+					w.not_N = false;
+				}
 				w.type = 'spaces';
 			} else if (_isNodeTypeOf(selectedNode, 'formatting_capitals')) {
+				if (WCEObj._canInsertNote(ed, rng)) {
+					w.not_N = false;
+				}
 				w.type = 'formatting_capitals';
 			} else if (_isNodeTypeOf(selectedNode, 'paratext') || selectedNode.getAttribute('class') === 'commentary') { //special node for commentary note which is a paratextual element
 				_setAllControls(ed, true);
 				w.not_P = false;
+				if (WCEObj._canInsertNote(ed, rng)) {
+					w.not_N = false;
+				}
 				w.type = 'paratext';
 			} else if (_isNodeTypeOf(selectedNode, 'note')) {
 				_setAllControls(ed, true);
@@ -711,6 +731,20 @@
 			}
 			return false;
 		},
+		
+		/*
+		 * 
+		 */
+		_canInsertCorrection : function(ed, rng) {
+			var startText = rng.startContainer.nodeValue;
+			if (startText) {
+				var startOffset = rng.startOffset;
+				var indexOfEnd = WCEObj._getNextEnd(startText, startOffset);
+			}
+			if (rng.startOffset == indexOfEnd)
+				return true;
+			return false
+		},			
 
 		/*
 		 * @param string from attribut "wce" in <span> @return array
@@ -1919,7 +1953,7 @@
 					wceAttr = 'wce="__t=brea&amp;__n=&amp;hasBreak=no&amp;break_type=lb&amp;number=' + number 
 						+ '&amp;pb_type=&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment=&amp;insert=Insert&amp;cancel=Cancel" ';
 					
-					if (character == 'lb1') // add an extra space
+					if (character == 'lb1') // add an extra space at the beginning
 						ed.selection.setContent(' <span ' + wceAttr + wceClass + '>' + '<br/>&crarr;' + '</span>');
 					else //lb2
 						ed.selection.setContent('<span ' + wceAttr + wceClass + '>' + '<br/>&crarr;' + '</span> ');
@@ -2363,7 +2397,7 @@
 			
 			// add verse modify button
 			ed.addButton('versemodify', {
-				title : 'Modify verses', //TODO: SHortcut does not work (Ctrl+Alt+V)',
+				title : 'Modify verses (Ctrl+Alt+V)',
 				cmd : 'mceVerseModify',
 				image : url + '/img/button_V-new.png'
 			});
@@ -2444,9 +2478,10 @@
 					'verseNumber' : 0,
 					'wordNumber' : 0,
 					'columnNumber' : 0,
-					'witValue' : 0
+					'lineNumber' : 0,
+					'quireNumber' : 0,
+					'witValue' : '0'
 				}
-
 				var wcevar = ed.WCE_VAR;
 
 				ed.undoManager.onAdd.add(function(um, level) {
@@ -2551,13 +2586,26 @@
 
 				// wenn Caret in wce_corr
 				if (ed.selection.isCollapsed()) {
+					//Test for possible insertion of "blank first hand" correction
+					var sel = WCEObj._getSEL(ed);
+					var rng = sel.getRangeAt(0);
+					if (!WCEObj._canInsertCorrection(ed, rng)) {
+					/*var sel = WCEObj._getSEL(ed);
+					var startText = rng.startContainer.nodeValue;
+					if (startText) {
+						var startOffset = rng.startOffset;
+						var indexOfEnd = WCEObj._getNextEnd(startText, startOffset);
+					}
+					if (rng.startOffset != indexOfEnd) {*/
 					if (!wceNode) {
 						return;
 					}
 					if (!wceAttr || !wceAttr.match(/corr/)) {
 						return;
 					}
-					_add_new_wce_node = false;
+					}
+					//_add_new_wce_node = false;
+					_add_new_wce_node = true;
 				} else if (wceNode && wceAttr && wceAttr.match(/corr/)) {
 					_add_new_wce_node = false;
 				}
