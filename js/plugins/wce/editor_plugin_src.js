@@ -7,9 +7,8 @@
  */
 
 (function() {
-	//var qcnt = tinyMCE.activeEditor.teiIndexData['quireNumber']; // quire count
-	var qcnt = 9;
-	var pcnt = 9; // page count
+	var qcnt = 1; // quire count
+	var pcnt = 1; // page count
 	var ccnt = 1; // column count
 	var lcnt = 1; // line count
 	var rectoverso = 'true'; // counting as r/v
