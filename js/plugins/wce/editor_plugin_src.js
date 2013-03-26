@@ -740,7 +740,7 @@
 				var startOffset = rng.startOffset;
 				var indexOfEnd = WCEObj._getNextEnd(startText, startOffset);
 			}
-			if (rng.startOffset == indexOfEnd)
+			if (rng.startOffset == indexOfEnd && startText.charAt(indexOfEnd-1) == ' ')
 				return true;
 			return false
 		},			
