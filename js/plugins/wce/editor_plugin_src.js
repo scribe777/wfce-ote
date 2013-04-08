@@ -742,7 +742,7 @@
 			}
 			if (rng.startOffset == indexOfEnd && startText.charAt(indexOfEnd-1) == ' ')
 				return true;
-			return false
+			return false;
 		},			
 
 		/*
@@ -2472,7 +2472,7 @@
 				//
 				ed.teiIndexData = {
 					'bookNumber' : '00',
-					'pageNumber' : 0,
+					'pageNumber' : '0',
 					'chapterNumber' : 0,
 					'verseNumber' : 0,
 					'wordNumber' : 0,
@@ -2480,7 +2480,7 @@
 					'lineNumber' : 0,
 					'quireNumber' : 0,
 					'witValue' : '0'
-				}
+				};
 				var wcevar = ed.WCE_VAR;
 
 				ed.undoManager.onAdd.add(function(um, level) {
@@ -2596,12 +2596,12 @@
 						var indexOfEnd = WCEObj._getNextEnd(startText, startOffset);
 					}
 					if (rng.startOffset != indexOfEnd) {*/
-					if (!wceNode) {
-						return;
-					}
-					if (!wceAttr || !wceAttr.match(/corr/)) {
-						return;
-					}
+						if (!wceNode) {
+							return;
+						}
+						if (!wceAttr || !wceAttr.match(/corr/)) {
+							return;
+						}
 					}
 					//_add_new_wce_node = false;
 					_add_new_wce_node = true;

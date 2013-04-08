@@ -304,7 +304,7 @@ function getHtmlByTei(inputString) {
 				var indexB = nValue.indexOf('B');
 				if (indexB + 1 > -1 && indexK - 1 > 0) {
 					bookValue = nValue.substr(indexB + 1, indexK - 1);
-					teiIndexData['bookNumber'] = parseInt('bookValue');
+					teiIndexData['bookNumber'] = bookValue;
 				}
 				indexK++;
 				if (indexK > 0 && indexK < nValue.length) {
@@ -563,7 +563,8 @@ function getHtmlByTei(inputString) {
 		case 'pb': // page break
 			//pb n="2rx" type="folio" facs="edfwe" xml:id="P2rx-0" break="no"/><fw type="runTitle"
 			var number = getWceAttributeByTei($teiNode, {'n' : 'n'});
-			teiIndexData['pageNumber'] = parseInt(n);
+			if (number)
+				teiIndexData['pageNumber'] = number;
 			var pbtype = getWceAttributeByTei($teiNode, {'type' : 'p'});
 			if (pbtype == "page") {
 				if (number.match("[0-9]$")) { // ends with a digit => no fibre type
