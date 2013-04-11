@@ -27,6 +27,7 @@
 							<option value="euthaliana">{#wce.fw_euthaliana}</option>
 							<option value="gloss">{#wce.fw_gloss}</option>
 							<option value="stichoi">{#wce.fw_stichoi}</option>
+							<option value="other">{#wce.other}</option>
 					</select>
 					</td>
 				</tr>
@@ -51,13 +52,19 @@
 						for="paratext_position">{#wce.position}</label>
 					</td>
 					<td><select id="paratext_position" name="paratext_position" onchange="checkstatus_position()">
-							<option value="pagetop">{#wce.position_top}</option>
-							<option value="pagebottom">{#wce.position_bottom}</option>
-							<option value="pageleft">{#wce.position_left}</option>
-							<option value="pageright">{#wce.position_right}</option>
+							<option value="pagetop">{#wce.position_pagetop}</option>
+							<option value="pagebottom">{#wce.position_pagebottom}</option>
+							<option value="pageleft">{#wce.position_pageleft}</option>
+							<option value="pageright">{#wce.position_pageright}</option>
+							<option value="coltop">{#wce.position_coltop}</option>
+							<option value="colbottom">{#wce.position_colbottom}</option>
+							<option value="colleft">{#wce.position_colleft}</option>
+							<option value="colright">{#wce.position_colright}</option>
+							<option value="lineleft">{#wce.position_lineleft}</option>
+							<option value="lineright">{#wce.position_lineright}</option>
 							<option value="above">{#wce.position_above}</option>
 							<option value="below">{#wce.position_below}</option>
-							<option value="self">{#wce.position_thispoint}</option>
+							<option value="here">{#wce.position_thispoint}</option>
 							<option value="other">{#wce.other}</option>
 					</select>
 					</td>
@@ -104,7 +111,7 @@
 
 	function getParaTag() {
 		var v = $('#fw_type').val();
-		if (v=='chapTitle' || v =='lectTitle'|| v =='colophon'|| v =='quireSig'|| v =='euthaliana'|| v =='gloss')
+		if (v == 'chapTitle' || v == 'lectTitle' || v == 'colophon' || v == 'quireSig' || v == 'euthaliana' || v == 'gloss' || v == 'other')
 			return 'fw';
 		else if (v == 'commentary')
 			return '';
@@ -126,7 +133,7 @@
 			document.getElementById('text').style.backgroundColor = "#CCCCCC";
 			document.paratextinfo.paratext_position.disabled = true;
 			document.paratextinfo.paratext_alignment.disabled = true;
-		} else if (v == 'chapTitle' || v == 'lectTitle' || v == 'colophon' || v == 'euthaliana' || v == 'gloss') {
+		} else if (v == 'chapTitle' || v == 'lectTitle' || v == 'colophon' || v == 'euthaliana' || v == 'gloss' || v == 'other') {
 			//don't get a number, only text
 			document.paratextinfo.number.value = '';
 			document.paratextinfo.number.disabled = true;
@@ -159,7 +166,7 @@
 	}
 
 	function checkstatus_position() {
-		if (document.paratextinfo.paratext_position.options[7].selected == true) {
+		if (document.paratextinfo.paratext_position.options[13].selected == true) {
 			document.paratextinfo.paratext_position_other.disabled = false;
 			document.getElementById('paratext_position_other').style.backgroundColor = "white";
 		} else {
@@ -180,7 +187,7 @@
 	}
 	
 	function testOther() {
-		if (document.paratextinfo.paratext_position.options[7].selected == true && document.getElementById('paratext_position_other').value == '') 
+		if (document.paratextinfo.paratext_position.options[13].selected == true && document.getElementById('paratext_position_other').value == '') 
 			return false;
 	return true;
 	}

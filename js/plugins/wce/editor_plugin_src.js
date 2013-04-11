@@ -1045,6 +1045,8 @@
 						case 'stichoi':
 							info_text += 'Stichoi';
 							break;
+						default:
+							info_text += 'Other';
 						}
 						info_text += '</div>';
 						if (ar['fw_type'] != 'commentary') {

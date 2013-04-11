@@ -129,6 +129,7 @@ function setTEI(teiStringInput) {
 	if (teiIndexData) {
 		tinyMCE.activeEditor.teiIndexData = teiIndexData;
 	}
+	return 0;
 }
 
 function saveDataToDB() {
