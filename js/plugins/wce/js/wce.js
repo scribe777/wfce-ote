@@ -353,6 +353,12 @@ function writeWceNodeInfo(val) {
 				} else { // num or fw
 					wce_node.innerHTML = val;
 				}
+			} else if (wce_type == 'corr') {
+				if (document.getElementById('blank_firsthand').checked)
+					wce_node.innerHTML = 'T';
+				//else if (document.getElementById('blank_correction').value === 'on')
+				else
+					wce_node.innerHTML = document.getElementById('original_firsthand_reading').value;
 			} else if (wce_type == 'brea') {
 				// break type
 				wce_node.innerHTML = val;	
