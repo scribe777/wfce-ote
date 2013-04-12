@@ -1,4 +1,16 @@
 // setTEIXml
+window.onerror = Fehlerbehandlung;
+
+function Fehlerbehandlung (Nachricht, Datei, Zeile) {
+  Fehler = "Fehlermeldung:\n" + Nachricht + "\n" + Datei + "\n" + Zeile;
+  zeigeFehler();
+  return true;
+}
+
+function zeigeFehler () {
+  alert(Fehler);
+}
+
 function getHtmlByTei(inputString) {
 	var $newDoc, $newRoot, $newRoot;
 
@@ -614,13 +626,17 @@ function getHtmlByTei(inputString) {
 			}
 			break;
 		default: //qb, cb and lb
-			wceAttr += getWceAttributeByTei($teiNode, {'n' : '&number='});
+			wceAttr += '&number=';
+			if ($teiNode.getAttribute('n')) {
+				var n = parseInt($teiNode.getAttribute('n'));
+				wceAttr += n;
+			}
 			if (type === 'lb')
-				teiIndexData['wordNumber'] = parseInt(n);
+				teiIndexData['wordNumber'] = n;
 			else if (type === 'cb')
-				teiIndexData['columnNumber'] = parseInt(n);
+				teiIndexData['columnNumber'] = n;
 			else //qb
-				teiIndexData['quireNumber'] = parseInt(n);
+				teiIndexData['quireNumber'] = n;
 			wceAttr += '&lb_alignment=';
 			if ($teiNode.getAttribute('rend'))
 				wceAttr += $teiNode.getAttribute('rend');
@@ -1465,7 +1481,7 @@ function getTeiByHtml(inputString, args) {
 			if (corrector_name == 'other') {
 				corrector_name = arr['corrector_name_other'];
 			}
-			$rdg.setAttribute('hand', corrector_name);
+			$rdg.setAttribute('hand', decodeURIComponent(corrector_name));
 
 			// deletion
 			var deletion = decodeURIComponent(arr['deletion']);
@@ -1520,7 +1536,7 @@ function getTeiByHtml(inputString, args) {
 				var _line = '';// TODO line numbering
 				xml_id = 'P' + g_pageNumber + 'C' + g_columnNumber + 'L' + _line + '-' + g_witValue + '-1'; //TODO: reference can as well consist of BKV
 				$note.setAttribute('xml:id', xml_id);// TODO:
-				nodeAddText($note, editorial_note);
+				nodeAddText($note, decodeURIComponent(editorial_note));
 				$app.parentNode.appendChild($note); //insert $note at the very end
 			}
 		}

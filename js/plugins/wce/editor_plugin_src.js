@@ -2586,7 +2586,7 @@
 				}
 
 				// wenn Caret in wce_corr
-				if (ed.selection.isCollapsed()) {
+				if (ed.selection.isCollapsed() && !wceNode) { //make sure, that we are not inside an existing correction
 					//Test for possible insertion of "blank first hand" correction
 					var sel = WCEObj._getSEL(ed);
 					var rng = sel.getRangeAt(0);
