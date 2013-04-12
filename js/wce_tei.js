@@ -26,6 +26,9 @@ function getHtmlByTei(inputString) {
 		'witValue' : ''
 	};
 	
+	// As &om; can not be handled we go back to OMISSION
+	inputString = inputString.replace(/&om;/g, "OMISSION");
+	
 	var getHtmlString = function() {
 		var $oldDoc = loadXMLString(inputString);
 		var $oldRoot = $oldDoc.documentElement;
@@ -807,7 +810,7 @@ function getHtmlByTei(inputString) {
 	var Tei2Html_app = function($htmlParent, $teiNode) {
 		// <span class="corr" wce_orig="..."
 		var $newNode = $newDoc.createElement('span');
-		$newNode.setAttribute('class', 'corr');
+		//$newNode.setAttribute('class', 'corr');
 
 		// <rdg type="orig" hand="firsthand" />
 		// <rdg type="corr" hand="corrector1">
@@ -822,8 +825,12 @@ function getHtmlByTei(inputString) {
 			origText += collection[i].firstChild.nodeValue + ' '; // add text word for word
 		}
 		origText = origText.trim();
-		
-		$newNode.setAttribute('wce_orig', encodeURIComponent(origText));
+		if (origText === 'OMISSION')
+			$newNode.setAttribute('class', 'corr_blank_firsthand');
+		else {
+			$newNode.setAttribute('class', 'corr');
+			$newNode.setAttribute('wce_orig', encodeURIComponent(origText));
+		}
 		
 		for (var i = 1, l = rdgs.length; i < l; i++) { // [0] is always original => no extra output
 			$rdg = rdgs[i];
@@ -843,8 +850,11 @@ function getHtmlByTei(inputString) {
 			}
 
 			wceAttr += '&reading=' + typeValue;
-			wceAttr += '&original_firsthand_reading=' + encodeURIComponent(origText);
-			
+			if (origText != 'OMISSION')
+				wceAttr += '&original_firsthand_reading=' + encodeURIComponent(origText);
+			else
+				wceAttr += '&original_firsthand_reading=&blank_firsthand=on';
+						
 			if (deletionValue) {
 				// deletion="underline%2Cunderdot%2Cstrikethrough"
 				// &deletion_erased=0
@@ -877,7 +887,10 @@ function getHtmlByTei(inputString) {
 			corrector_text = xml2String($tempParent);
 			if (corrector_text && corrector_text.length > 7) {
 				corrector_text = corrector_text.substr(3, corrector_text.length - 8);
-				wceAttr += '&corrector_text=' + encodeURIComponent(corrector_text);
+				if (corrector_text == 'OMISSION') //blank correction
+					wceAttr += '&corrector_text=&blank_correction=on';
+				else
+					wceAttr += '&corrector_text=' + encodeURIComponent(corrector_text);
 			}
 			
 			wceAttr += '&editorial_note=';
@@ -904,7 +917,10 @@ function getHtmlByTei(inputString) {
 		}
 
 		if (origText != '') {
-			nodeAddText($newNode, origText);
+			if (origText === 'OMISSION')
+				nodeAddText($newNode, "T");
+			else 
+				nodeAddText($newNode, origText);
 		}
 		
 		if (wceAttr != '') {
@@ -1030,6 +1046,9 @@ function getTeiByHtml(inputString, args) {
 		str = str.replace(/<\/supplied><supplied/g, "</supplied></w><w><supplied");
 		str = str.replace(/<\/unclear><unclear/g, "</unclear></w><w><unclear");
 		str = str.replace(/<\/w><unclear/g, "</w><w><unclear");
+		
+		// There was no other way to insert &om;, so it is just replaced
+		str = str.replace(/OMISSION/g, "&om;");
 		return str;
 	};
 
@@ -1460,9 +1479,8 @@ function getTeiByHtml(inputString, args) {
 				var $orig = $newDoc.createElement('rdg');
 				$orig.setAttribute('type', 'orig');
 				$orig.setAttribute('hand', 'firsthand');
-				
 				if (arr['blank_firsthand'] === 'on') { //Blank first hand reading
-					var origText = 'ommission'; //TODO: This has to be &om;
+					var origText = 'OMISSION'; //this is later replaced by &om;
 					html2Tei_correctionAddW($orig, origText);
 				} else {
 					var origText = $htmlNode.getAttribute('wce_orig');
@@ -1492,7 +1510,7 @@ function getTeiByHtml(inputString, args) {
 			var place = arr['place_corr'];
 			var corrector_text = arr['corrector_text'];
 			if (arr['blank_correction'] == 'on') {
-				corrector_text = 'ommission'; //TODO: This should as well be &om;
+				corrector_text = 'OMISSION'; //this is later replaced by &om;
 			}
 			if (place === 'pageleft' || place === 'pageright' || place === 'pagetop' || place === 'pagebottom'
 				|| place === 'coltop' || place === 'colbottom' || place === 'colleft' || place === 'colright' 
@@ -1945,6 +1963,7 @@ function getTeiByHtml(inputString, args) {
 				$w.setAttribute("part", "F");
 			// check if this is the last word on a page and hyphenated
 			else if ($htmlNode.parentNode.lastChild && $htmlNode.parentNode.lastChild.nodeType == 1 && 	!$htmlNode.nextSibling.nextSibling &&
+				$htmlNode.parentNode.lastChild(getAttribute("wce")) && 
 				$htmlNode.parentNode.lastChild.getAttribute("wce").indexOf("break_type=lb") > -1    && 
 				$htmlNode.parentNode.lastChild.getAttribute("wce").indexOf("hasBreak=yes") > -1     &&	i == arr.length-1) //only valid for _last_ word of the last line
 					$w.setAttribute("part", "I");
