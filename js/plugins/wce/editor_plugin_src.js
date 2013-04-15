@@ -2244,8 +2244,11 @@
 			} else if (ek == 57 && e.shiftKey && e.altKey) { // For Mac OS X, Middledot
 				tinyMCE.activeEditor.execCommand('mceAdd_pc', '\u0387');
 				_stopEvent(ed, e);
-			} else if (ek == 57 && e.shiftKey) {
-				// Find corresponding ( and create substring
+			} else if (ek == 57 && e.shiftKey && !tinyMCE.isSafari) { // under safari there seems to be a bug
+				_stopEvent(ed, e);
+				// e.stopImmediatePropagation();
+				_wceAddNoDialog(ed, 'part_abbr', '');
+			} else if (ek == 48 && tinyMCE.isSafari) { //special handling for Safari due to a bug(?)
 				_stopEvent(ed, e);
 				// e.stopImmediatePropagation();
 				_wceAddNoDialog(ed, 'part_abbr', '');
