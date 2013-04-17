@@ -28,6 +28,8 @@ function getHtmlByTei(inputString) {
 	
 	// As &om; can not be handled we go back to OMISSION
 	inputString = inputString.replace(/&om;/g, "OMISSION");
+	inputString = inputString.replace(/<\/supplied><\/w><w><supplied.*?>/g, " ");
+		
 	
 	var getHtmlString = function() {
 		var $oldDoc = loadXMLString(inputString);
@@ -386,7 +388,7 @@ function getHtmlByTei(inputString) {
 			},
 			'extent' : '&extent=',
 			'source' : {
-				'0' : '@na27@transcriber@tr',
+				'0' : '@na27@na28@transcriber@tr',
 				'1' : '&supplied_source_other=&supplied_source=',
 				'2' : '&supplied_source=other&&supplied_source_other='
 			}
@@ -1046,7 +1048,7 @@ function getTeiByHtml(inputString, args) {
 		str = str.replace(/<\/supplied><supplied/g, "</supplied></w><w><supplied");
 		str = str.replace(/<\/unclear><unclear/g, "</unclear></w><w><unclear");
 		str = str.replace(/<\/w><unclear/g, "</w><w><unclear");
-		
+				
 		// There was no other way to insert &om;, so it is just replaced
 		str = str.replace(/OMISSION/g, "&om;");
 		return str;
