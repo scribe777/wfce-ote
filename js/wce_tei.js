@@ -2,7 +2,7 @@
 window.onerror = Fehlerbehandlung;
 
 function Fehlerbehandlung (Nachricht, Datei, Zeile) {
-  Fehler = "Fehlermeldung:\n" + Nachricht + "\n" + Datei + "\n" + Zeile;
+  Fehler = "Error:\n" + Nachricht + "\n" + Datei + "\n" + Zeile;
   zeigeFehler();
   return true;
 }
@@ -1043,7 +1043,7 @@ function getTeiByHtml(inputString, args) {
 		//  
 		// str = str.substring(6, str.length - 7);
 		// add an required header to get a valid XML
-		str = str.replace('<TEI>', '<TEI xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.tei-c.org/ns/1.0 http://urts173.uni-trier.de/~gany2d01/test/TEI-NTMSS.xsd" xmlns="http://www.tei-c.org/ns/1.0" ><teiHeader><fileDesc><titleStmt><title/> </titleStmt><publicationStmt><p/></publicationStmt><sourceDesc><msDesc><msIdentifier></msIdentifier></msDesc></sourceDesc></fileDesc></teiHeader><text><body>');
+		str = str.replace('<TEI>', '<?xml  version="1.0" encoding="utf-8"?><!DOCTYPE TEI [<!ENTITY om "">]><TEI xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.tei-c.org/ns/1.0 http://urts173.uni-trier.de/~gany2d01/test/TEI-NTMSS.xsd" xmlns="http://www.tei-c.org/ns/1.0" ><teiHeader><fileDesc><titleStmt><title/> </titleStmt><publicationStmt><p/></publicationStmt><sourceDesc><msDesc><msIdentifier></msIdentifier></msDesc></sourceDesc></fileDesc></teiHeader><text><body>');
 		str = str.replace("</TEI>", "</body></text></TEI>");
 		
 		// Now we do some "magic" regex substitution do get correct <w> elements
@@ -1170,12 +1170,18 @@ function getTeiByHtml(inputString, args) {
 				g_verseNumber = $.trim(g_verseNumber);
 				g_verseNode = $newDoc.createElement('ab');
 				g_verseNode.setAttribute('n', 'B' + g_bookNumber + 'K' + g_chapterNumber + 'V' + g_verseNumber);
-				g_chapterNode.appendChild(g_verseNode);
+				if (g_chapterNode)
+					g_chapterNode.appendChild(g_verseNode);
+				else
+					$newRoot.appendChild(g_verseNode);
 				g_currentParentNode = g_verseNode;
 				g_wordNumber = 0;
 			} else { //empty verse
 				g_verseNode = $newDoc.createElement('ab');
-				g_chapterNode.appendChild(g_verseNode);
+				if (g_chapterNode)
+					g_chapterNode.appendChild(g_verseNode);
+				else
+					$newRoot.appendChild(g_verseNode);
 				g_currentParentNode = g_verseNode;
 				g_wordNumber = 0;
 			}
