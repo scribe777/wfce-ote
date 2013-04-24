@@ -356,7 +356,6 @@ function writeWceNodeInfo(val) {
 			} else if (wce_type == 'corr') {
 				if (document.getElementById('blank_firsthand').checked)
 					wce_node.innerHTML = 'T';
-				//else if (document.getElementById('blank_correction').value === 'on')
 				else
 					wce_node.innerHTML = document.getElementById('original_firsthand_reading').value;
 			} else if (wce_type == 'brea') {
@@ -445,10 +444,12 @@ function formUnserialize(str) {
 		if ($('#' + k).attr('type') == 'checkbox') {
 			$('#' + k).attr('checked', true);
 		} else {
-			if(!v) continue; 
-			var dec_v=decodeURIComponent(v);  
+			if (!v) continue; 
+			var dec_v = decodeURIComponent(v);  
 			if (k == 'corrector_text' && corrector_text_editor) {
 				corrector_text_editor.setContent(dec_v);
+			} else if (k == 'marginals_text' && marginals_text_editor) {
+				marginals_text_editor.setContent(dec_v);
 			}
 			$('#' + k).val(dec_v); 
 		}
@@ -489,6 +490,8 @@ function formSerialize(f, wce_name) {
 
 		if (a.attr('id') == 'corrector_text') {
 			s += '&' + a.attr('id') + '=' + encodeURIComponent(corrector_text_editor.getContent());
+		} else if (a.attr('id') == 'marginals_text') {
+			s += '&' + a.attr('id') + '=' + encodeURIComponent(marginals_text_editor.getContent());
 		} else {
 			s += '&' + a.attr('id') + '=' + encodeURIComponent(a.val());
 		}

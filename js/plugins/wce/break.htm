@@ -71,7 +71,7 @@
 					</td>
 				</tr>
 								
-				<tr>
+				<!--<tr>
 					<td><label id="page_number_label" for="page_number">{#wce.fw_pagenumber}</label>
 					</td>
 					<td colspan="6"><input id="page_number" name="page_number" type="text" value=""
@@ -110,13 +110,15 @@
 						name="paratext_position_other" type="text" value="" size="20"
 						maxlength="" class="required number min1 mceFocus" />
 					</td>
-				</tr>
+				</tr>-->
 			</table>
 		</fieldset>
 		<div class="mceActionPanel">
 			<input type="button" id="insert" name="insert" value="{#insert}"
-				onclick="var cont = testNumber();var cont2 = testOther();
-				if (cont && cont2){writeWceNodeInfo(getBreakTag());}else{if (!cont){alert('{#wce.empty_number}');}else{alert('{#wce.empty_other}');}}" />
+				onclick="var cont = testNumber()
+				if (cont){writeWceNodeInfo(getBreakTag());}else{alert('{#wce.empty_number}');}" />
+				<!--onclick="var cont = testNumber();var cont2 = testOther();
+				if (cont && cont2){writeWceNodeInfo(getBreakTag());}else{if (!cont){alert('{#wce.empty_number}');}else{alert('{#wce.empty_other}');}}" />-->
 			<input type="button" id="cancel"  name="cancel" value="{#cancel}"
 				onclick="ed.execCommand('resetCounter');tinyMCEPopup.close();" />
 		</div>
@@ -299,12 +301,12 @@
 			document.getElementById('fibre_type').style.backgroundColor = "white";
 			document.breakinfo.pb_hyphen.disabled = false;
 			document.getElementById('pb_hyphen').style.backgroundColor = "white";
-			document.breakinfo.running_title.disabled = false;
-			document.getElementById('running_title').style.backgroundColor = "white";
-			document.breakinfo.page_number.disabled = false;
-			document.getElementById('page_number').style.backgroundColor = "white";
-			document.breakinfo.paratext_position.disabled = false;
-			document.getElementById('paratext_position').style.backgroundColor = "white";
+			//document.breakinfo.running_title.disabled = false;
+			//document.getElementById('running_title').style.backgroundColor = "white";
+			//document.breakinfo.page_number.disabled = false;
+			//document.getElementById('page_number').style.backgroundColor = "white";
+			//document.breakinfo.paratext_position.disabled = false;
+			//document.getElementById('paratext_position').style.backgroundColor = "white";
 			document.breakinfo.facs.disabled = false;
 			document.getElementById('facs').style.backgroundColor = "white";
 			if (qsParm['mode'] == 'new' && qsParm['rectoverso'] == 'true') { //only for new entries; old ones keep their counting
@@ -323,14 +325,14 @@
 			document.getElementById('fibre_type').style.backgroundColor = "#CCCCCC";
 			document.breakinfo.pb_hyphen.disabled = true;
 			document.getElementById('pb_hyphen').style.backgroundColor = "#CCCCCC";
-			document.breakinfo.running_title.disabled = true;
-			document.getElementById('running_title').style.backgroundColor = "#CCCCCC";
-			document.breakinfo.page_number.disabled = true;
-			document.getElementById('page_number').style.backgroundColor = "#CCCCCC";
-			document.breakinfo.paratext_position.disabled = true;
-			document.getElementById('paratext_position').style.backgroundColor = "#CCCCCC";
-			document.breakinfo.paratext_position_other.disabled = true;
-			document.getElementById('paratext_position_other').style.backgroundColor = "#CCCCCC";
+			//document.breakinfo.running_title.disabled = true;
+			//document.getElementById('running_title').style.backgroundColor = "#CCCCCC";
+			//document.breakinfo.page_number.disabled = true;
+			//document.getElementById('page_number').style.backgroundColor = "#CCCCCC";
+			//document.breakinfo.paratext_position.disabled = true;
+			//document.getElementById('paratext_position').style.backgroundColor = "#CCCCCC";
+			//document.breakinfo.paratext_position_other.disabled = true;
+			//document.getElementById('paratext_position_other').style.backgroundColor = "#CCCCCC";
 			document.breakinfo.facs.disabled = true;
 			document.getElementById('facs').style.backgroundColor = "#CCCCCC";
 		}
@@ -339,7 +341,7 @@
 		}	
 	}
 
-	function checkstatus_position() {
+	/*function checkstatus_position() {
 		if (document.breakinfo.paratext_position.options[13].selected == true) {
 			document.breakinfo.paratext_position_other.disabled = false;
 			document.getElementById('paratext_position_other').style.backgroundColor = "white";
@@ -347,7 +349,7 @@
 			document.breakinfo.paratext_position_other.disabled = true;
 			document.getElementById('paratext_position_other').style.backgroundColor = "#CCCCCC";
 		}
-	}
+	}*/
 	
 	/*function setstatus_pb_type () {
 		if (document.breakinfo.pb_type.options[0].selected == true) { //empty
@@ -381,11 +383,11 @@
 	return true;
 	}
 	
-	function testOther() {
+	/*function testOther() {
 		if (document.breakinfo.break_type.value == 'pb' && document.breakinfo.paratext_position.options[13].selected == true && document.getElementById('paratext_position_other').value == '') 
 			return false;
 	return true;
-	}
+	}*/
 	
 	function _getNextEnd(endText, startOffset) {
 		if (typeof endText == 'undefined')

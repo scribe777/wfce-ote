@@ -936,6 +936,7 @@
 							if (ar['fibre_type'])
 								info_text += ar['fibre_type'];
 							info_text += '</div>';
+							/*Don't need this anymore
 							if (ar['page_number']) {
 								info_text += '<div>' + 'Page number (as written): ' + ar['page_number'] + '</div>';
 							}
@@ -945,7 +946,7 @@
 									info_text += ar['paratext_position_other'] + ')' + '</div>';
 								else
 									info_text += ar['paratext_position'] + ')' + '</div>';
-							}
+							}*/
 							if (ar['facs']) {
 								info_text += '<div>' + 'URL to digital image: ' + ar['facs'] + '</div>';
 							}
@@ -1015,6 +1016,9 @@
 							if (ar['covered'])
 								info_text += '<div style="margin-top:5px">' + ar['covered'] + ' line(s) covered.';
 							break;
+						case 'runTitle':
+							info_text += 'Running title';
+							break;
 						case 'chapNum':
 							info_text += 'Chapter number';
 							break;
@@ -1045,12 +1049,15 @@
 						case 'stichoi':
 							info_text += 'Stichoi';
 							break;
+						case 'pageNum':
+							info_text += 'Page number';
+							break;
 						default:
 							info_text += 'Other';
 						}
 						info_text += '</div>';
 						if (ar['fw_type'] != 'commentary') {
-							info_text += '<div style="margin-top:10px">Value: ' + ar['text'] + '</div>';
+							info_text += '<div style="margin-top:10px">Value: ' + ar['marginals_text'] + '</div>';
 							if (ar['paratext_position'] == 'other') {
 								info_text += '<div style="margin-top:10px">Position: ' + ar['paratext_position_other'] + '</div>';
 							} else {

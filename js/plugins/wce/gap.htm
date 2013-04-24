@@ -157,10 +157,10 @@
 	}
 	
 	function setstatus_gapreason() {
-		if (document.gapinfo.gap_reason.value == "illegible")
-			document.gapinfo.gap_reason_dummy_illegible.checked = true;
-		else
+		if (document.gapinfo.gap_reason.value == "lacuna")
 			document.gapinfo.gap_reason_dummy_lacuna.checked = true;
+		else
+			document.gapinfo.gap_reason_dummy_illegible.checked = true;
 	}
 
 		

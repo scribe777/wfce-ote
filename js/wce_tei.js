@@ -111,8 +111,7 @@ function getHtmlByTei(inputString) {
 		var teiNodeName = $teiNode.nodeName;
 
 		// TODO: set wce_orig=""
-		// TODO: <fw> after <pb>: <pb n="2" type="page" xml:id="P2-?" /><fw type="runTitle">rrrr</fw>
-
+		
 		switch (teiNodeName) {
 		case 'w':
 			return Tei2Html_w($htmlParent, $teiNode);
@@ -254,7 +253,8 @@ function getHtmlByTei(inputString) {
 			
 			var $newNode = $newDoc.createElement('span'); // add line break for "page end"
 			$newNode.setAttribute("class", "brea");
-			$newNode.setAttribute("wce","__t=brea&__n=&hasBreak=yes&break_type=lb&number=&pb_type=&fibre_type=&page_number=&running_title=&facs=&lb_alignment=");
+			//$newNode.setAttribute("wce","__t=brea&__n=&hasBreak=yes&break_type=lb&number=&pb_type=&fibre_type=&page_number=&running_title=&facs=&lb_alignment=");
+			$newNode.setAttribute("wce","__t=brea&__n=&hasBreak=yes&break_type=lb&number=&pb_type=&fibre_type=&facs=&lb_alignment=");
 			nodeAddText($newNode, '\u2010');
 			$br = $newDoc.createElement('br');
 			$newNode.appendChild($br);
@@ -602,6 +602,7 @@ function getHtmlByTei(inputString) {
 				wceAttr += $teiNode.getAttribute('facs');
 			wceAttr += '&lb_alignment=';
 			
+			/*Don't need this anymore as "running title" and "page number" moved to marginalia
 			// Get infos about following <fw> elements
 			var $next = $teiNode.nextSibling;
 			
@@ -628,7 +629,7 @@ function getHtmlByTei(inputString) {
 			} else { // if there is no <seg> or <fw> break
 				wceAttr += '&running_title=&paratext_position=pagetop&paratext_position_other=&page_number=';
 				break;
-			}
+			}*/
 			break;
 		default: //qb, cb and lb
 			wceAttr += '&number=';
@@ -645,7 +646,8 @@ function getHtmlByTei(inputString) {
 			wceAttr += '&lb_alignment=';
 			if ($teiNode.getAttribute('rend'))
 				wceAttr += $teiNode.getAttribute('rend');
-			wceAttr += '&pb_type=&fibre_type=&facs=&page_number=&running_title=&paratext_position=pagetop&paratext_position_other=';
+			//wceAttr += '&pb_type=&fibre_type=&facs=&page_number=&running_title=&paratext_position=pagetop&paratext_position_other=';
+			wceAttr += '&pb_type=&fibre_type=&facs=';
 		}
 
 		if ($teiNode.getAttribute('break') != null) { // attribute break="no" exists
@@ -706,7 +708,7 @@ function getHtmlByTei(inputString) {
 		$newNode.setAttribute('class', 'paratext');
 
 		// set span attribute wce
-		var wceAttr = '__t=paratext&__n=&text=' + getDomNodeText($teiNode) + '';
+		var wceAttr = '__t=paratext&__n=&marginals_text=' + getDomNodeText($teiNode) + '';
 		
 		var mapping = {
 			'n' : '&edit_number=',
@@ -1650,6 +1652,7 @@ function getTeiByHtml(inputString, args) {
 			// for lb add newline
 			// $newNode.parentNode.insertBefore($newDoc.createTextNode("\n"), $newNode);
 		} else if (break_type == 'pb') {
+			/*Don't need this anymore as "running title" and "page number" moved to marginalia
 			var $secNewNode;
 			// for pb add fw elements
 			if (arr['running_title'] != '') {
@@ -1686,7 +1689,7 @@ function getTeiByHtml(inputString, args) {
 				$secNewNode.setAttribute('type', 'pageNum');
 				nodeAddText($secNewNode, arr['page_number']);
 				$newNode.parentNode.appendChild($secNewNode);
-			}
+			}*/
 		}
 		return {
 			0 : $newNode,
@@ -1827,9 +1830,9 @@ function getTeiByHtml(inputString, args) {
 
 		if (fwType == 'commentary') {
 			newNodeName = 'note';
-		} else if (fwType == 'pageNum' || fwType == 'chapNum' || fwType == 'AmmSec' || fwType == 'EusCan' || fwType == 'stichoi') {
+		} else if (fwType == 'chapNum' || fwType == 'AmmSec' || fwType == 'EusCan' || fwType == 'stichoi') {
 			newNodeName = 'num';
-		} else if (fwType == 'chapTitle' || fwType == 'lectTitle' || fwType == 'colophon' || fwType == 'quireSig' || fwType == 'euthaliana' || fwType == 'gloss' || fwType == 'other') {
+		} else if (fwType == 'runTitle' || fwType == 'chapTitle' || fwType == 'lectTitle' || fwType == 'colophon' || fwType == 'quireSig' || fwType == 'euthaliana' || fwType == 'gloss' || fwType == 'pageNum' || fwType == 'other') {
 			newNodeName = 'fw';
 		}
 
@@ -1843,7 +1846,7 @@ function getTeiByHtml(inputString, args) {
 		// n
 		// write attribute n only for certain values
 		var numberValue = arr['number'];
-		if (numberValue && (fwType == 'pageNum' || fwType == 'chapNum' || fwType == 'quireSig' || fwType == 'AmmSec' || fwType == 'EusCan' || fwType == 'stichoi')) {
+		if (numberValue && (fwType == 'chapNum' || fwType == 'quireSig' || fwType == 'AmmSec' || fwType == 'EusCan' || fwType == 'stichoi')) {
 			$paratext.setAttribute('n', numberValue);
 		}
 
@@ -1867,7 +1870,7 @@ function getTeiByHtml(inputString, args) {
 			nodeAddText($paratext, 'Untranscribed commentary text');
 			$teiParent.appendChild($paratext);
 		} else { // only if not commentary
-			nodeAddText($paratext, decodeURIComponent(arr['text']));
+			nodeAddText($paratext, decodeURIComponent(arr['marginals_text']));
 
 			if (placeValue === 'pageleft' || placeValue === 'pageright' || placeValue === 'pagetop' || placeValue === 'pagebottom' 
 				|| placeValue === 'coltop' || placeValue === 'colbottom' || placeValue === 'colleft' || placeValue === 'colright'
@@ -1965,7 +1968,7 @@ function getTeiByHtml(inputString, args) {
 				$w.setAttribute("part", "F");
 			// check if this is the last word on a page and hyphenated
 			else if ($htmlNode.parentNode.lastChild && $htmlNode.parentNode.lastChild.nodeType == 1 && 	!$htmlNode.nextSibling.nextSibling &&
-				$htmlNode.parentNode.lastChild(getAttribute("wce")) && 
+				$htmlNode.parentNode.lastChild.getAttribute("wce") && 
 				$htmlNode.parentNode.lastChild.getAttribute("wce").indexOf("break_type=lb") > -1    && 
 				$htmlNode.parentNode.lastChild.getAttribute("wce").indexOf("hasBreak=yes") > -1     &&	i == arr.length-1) //only valid for _last_ word of the last line
 					$w.setAttribute("part", "I");

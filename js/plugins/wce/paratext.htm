@@ -3,7 +3,9 @@
 <head>
 <title>{#wce.paratext_title}</title>
 <script type="text/javascript" src="../../tiny_mce_popup.js"></script>
+<script type="text/javascript" src="../../tiny_mce_src.js"></script>
 <script type="text/javascript" src="../../jquery.js"></script>
+<script type="text/javascript" src="../../rangy-core.js"></script>
 <script type="text/javascript" src="js/wce.js"></script>
 </head>
 
@@ -17,6 +19,7 @@
 					</td>
 					<td><select id="fw_type" name="fw_type" onchange="checkstatus_typ()">
 							<option value="commentary">{#wce.fw_commentary_text}</option>
+							<option value="runTitle">{#wce.fw_runningtitle}</option>
 							<option value="chapNum">{#wce.fw_chapter_number}</option>
 							<option value="chapTitle">{#wce.fw_chapter_title}</option>
 							<option value="lectTitle">{#wce.fw_lectionary_title}</option>
@@ -27,6 +30,7 @@
 							<option value="euthaliana">{#wce.fw_euthaliana}</option>
 							<option value="gloss">{#wce.fw_gloss}</option>
 							<option value="stichoi">{#wce.fw_stichoi}</option>
+							<option value="pageNum">{#wce.fw_pagenumber}</option>
 							<option value="other">{#wce.other}</option>
 					</select>
 					</td>
@@ -37,9 +41,10 @@
 						size="5" maxlength="" class="required number min1 mceFocus"/></td>
 				</tr>
 				<tr>
-					<td><label id="text_label" for="text">{#wce.text}</label></td>
-					<td colspan="2"><input id="text" name="text" type="text" value=""
-						size=45" maxlength="" class="required number min1 mceFocus" onchange="checkstatus_typ()" /></td>
+					<td><label id="marginals_text_label" for="marginals_text">{#wce.text}</label></td>
+					<!--<td colspan="2"><input id="text" name="text" type="text" value=""
+						size=45" maxlength="" class="required number min1 mceFocus" onchange="checkstatus_typ()" /></td>-->
+						<td colspan="2"><textarea WRAP="PHYSICAL" ROWS="4" style="width:100%" id="marginals_text" name="marginals_text"></textarea></td>
 				</tr>
 				<tr>
 					<td><label id="number_label" for="number">{#wce.number_attribute}</label></td>
@@ -96,10 +101,36 @@
 	</form>
 </body>
 <script type="text/javascript">
+	var marginals_text_editor;
+	
 	tinyMCEPopup.onInit.add(function(_ed){
 		ed=_ed;
 		setConstants(); 
-		init();
+		//init();
+		marginals_text_editor=new tinymce.Editor('marginals_text',{
+			mode : "textareas", 
+			theme : "advanced",
+			skin: "wce",
+			extended_valid_elements:'span[class|wce_orig|style|wce]',
+			forced_root_block : false,
+			force_br_newlines : true,
+			force_p_newlines : false,
+			entity_encoding : "raw",
+			theme_advanced_path : false,  
+			plugins : "wce,pagebreak,style,layer,safari,print,inlinepopups,paste", 
+			// Theme options
+			theme_advanced_buttons1 : "undo,redo,charmap,|,code,removeformat,|,print,contextmenu,paste,fullscreen,|,breaks,illegible,decoration,abbreviation,punctuation",
+			theme_advanced_buttons2 : "",
+			theme_advanced_toolbar_location : "top",
+			theme_advanced_toolbar_align : "left",
+			theme_advanced_statusbar_location : "bottom",
+			theme_advanced_resizing : false ,
+			setup : function(ed) {
+				//ed.onChange.add(saveCurrCorrector);
+			}
+		});  
+	 	marginals_text_editor.render(); 
+		marginals_text_editor.onInit.add(init); 
 	}); 
 	
 	function init() {
@@ -111,7 +142,7 @@
 
 	function getParaTag() {
 		var v = $('#fw_type').val();
-		if (v == 'chapTitle' || v == 'lectTitle' || v == 'colophon' || v == 'quireSig' || v == 'euthaliana' || v == 'gloss' || v == 'other')
+		if (v == 'runTitle' || 'chapTitle' || v == 'lectTitle' || v == 'colophon' || v == 'quireSig' || v == 'euthaliana' || v == 'gloss' || v == 'pageNum' || v == 'other')
 			return 'fw';
 		else if (v == 'commentary')
 			return '';
@@ -129,11 +160,13 @@
 			document.getElementById('edit_number').disabled = true;
 			document.paratextinfo.covered.disabled = false;
 			document.getElementById('covered').style.backgroundColor = "white";
-			document.paratextinfo.text.disabled = true;
-			document.getElementById('text').style.backgroundColor = "#CCCCCC";
+			//document.paratextinfo.text.disabled = true;
+			//document.getElementById('text').style.backgroundColor = "#CCCCCC";
+			$('#marginals_text').attr('disabled', true);
+			marginals_text_editor.hide();
 			document.paratextinfo.paratext_position.disabled = true;
 			document.paratextinfo.paratext_alignment.disabled = true;
-		} else if (v == 'chapTitle' || v == 'lectTitle' || v == 'colophon' || v == 'euthaliana' || v == 'gloss' || v == 'other') {
+		} else if (v == 'runTitle' || v == 'chapTitle' || v == 'lectTitle' || v == 'colophon' || v == 'euthaliana' || v == 'gloss' || v =='pageNum' || v == 'other') {
 			//don't get a number, only text
 			document.paratextinfo.number.value = '';
 			document.paratextinfo.number.disabled = true;
@@ -142,8 +175,10 @@
 			document.getElementById('edit_number').disabled = true;
 			document.paratextinfo.covered.disabled = true;
 			document.getElementById('covered').style.backgroundColor = "#CCCCCC";
-			document.paratextinfo.text.disabled = false;
-			document.getElementById('text').style.backgroundColor = "white";
+			//document.paratextinfo.text.disabled = false;
+			//document.getElementById('text').style.backgroundColor = "white";
+			$('#marginals_text').attr('disabled', false);
+			marginals_text_editor.show();
 			document.paratextinfo.paratext_position.disabled = false;
 			document.paratextinfo.paratext_alignment.disabled = false;
 		} else {
@@ -158,8 +193,10 @@
 			setnumber();
 			document.paratextinfo.covered.disabled = true;
 			document.getElementById('covered').style.backgroundColor = "#CCCCCC";
-			document.paratextinfo.text.disabled = false;
-			document.getElementById('text').style.backgroundColor = "white";
+			//document.paratextinfo.text.disabled = false;
+			//document.getElementById('text').style.backgroundColor = "white";
+			$('#marginals_text').attr('disabled', false);
+			marginals_text_editor.show();
 			document.paratextinfo.paratext_position.disabled = false;
 			document.paratextinfo.paratext_alignment.disabled = false;
 		}
@@ -199,7 +236,7 @@
 		var Zeichen_Wert = 0; /* Wert fuer Zeichen */
 		var Zeichen_Wert_alt = 1000; /* alter Wert fuer Zeichen */
 
-		var eing = document.paratextinfo.text.value.toUpperCase();
+		var eing = document.paratextinfo.marginals_text.value.toUpperCase();
 		Pruefen_roemZahl(eing, eing.length);
 
 		if (fehler == 0) {
