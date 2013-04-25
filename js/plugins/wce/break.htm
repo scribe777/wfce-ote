@@ -165,7 +165,7 @@
 			}
 		}
 		checkstatus_break();
-		checkstatus_position();
+		//checkstatus_position();
 		setstatus_hyphen();
 	}
 	
@@ -317,7 +317,7 @@
 					document.breakinfo.pb_type.options[1].selected = true;
 			} else 
 				document.breakinfo.number.value = qsParm['page'];
-			checkstatus_position();
+			//checkstatus_position();
 		} else {
 			document.breakinfo.pb_type.disabled = true;
 			document.getElementById('pb_type').style.backgroundColor = "#CCCCCC";

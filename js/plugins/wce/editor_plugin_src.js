@@ -463,7 +463,7 @@
 			w.isc = ed.selection.isCollapsed();
 
 			// delete in firefox can create empty element and startOffset==0
-			if (startContainer.nodeType == 1 && !tinyMCE.isIE && startContainer.childNodes.length == 0 && rng.startOffset == 0 && startContainer.nodeName.toLowerCase != 'body' && startContainer.nodeName.toLowerCase != 'html') {
+			if (startContainer.nodeType == 1 && !tinyMCE.isIE && startContainer.childNodes.length == 0 && rng.startOffset == 0 && startContainer.nodeName.toLowerCase() != 'body' && startContainer.nodeName.toLowerCase() != 'html') {
 				startContainer.parentNode.removeChild(startContainer);
 				return WCEObj._setWCEVariable(ed);
 			}
