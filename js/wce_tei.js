@@ -330,9 +330,18 @@ function getHtmlByTei(inputString) {
 					nodeAddText($newNode, nValue);
 				}
 			}
-			$htmlParent.appendChild($newNode);
-			nodeAddText($htmlParent, ' ');
 		}
+		else { //incipit or explicit
+			var $newNode = $newDoc.createElement('span');
+			$newNode.setAttribute('class', 'chapter_number');
+			$newNode.setAttribute('wce', '__t=chapter_number');
+			if ($teiNode.getAttribute("type") === "incipit")
+				nodeAddText($newNode, "Inscriptio");
+			else
+				nodeAddText($newNode, "Subscriptio");
+		}
+		$htmlParent.appendChild($newNode);
+		nodeAddText($htmlParent, ' ');
 		return $htmlParent;
 	}
 

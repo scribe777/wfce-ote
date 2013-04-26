@@ -101,42 +101,14 @@ var contentWithVerse;
 			var newVerseNr = $('#insertVerseNummer').val().trim();
 			newVerseNr = newVerseNr.replace(/\D/g,'');
 			if (newVerseNr != ''){
-				ed.selection.setContent('<span class="verse_number"> ' + newVerseNr + '</span> ');
+				ed.selection.setContent('<span class="verse_number" wce="__t=verse_number"> ' + newVerseNr + '</span> ');
 			}
 			return;
 		} else if ($('#insertInscriptioRadio').attr('checked')){
-			var node;
-			/*node = document.getElementsByTagName('span');
-			for (var i = node.length-1; i>=0; i--) {
-				if
-				node[i].innerHTML = 'hello world';
-			}*/
-			 var container = null;
-            if (window.getSelection) {  // all browsers, except IE before version 9
-                var selectionRange = window.getSelection ();
-                if (selectionRange.rangeCount > 0) {
-                    var range = selectionRange.getRangeAt (0);
-                    container = range.commonAncestorContainer;
-                }
-            } 
-            else {
-                if (document.selection) {        // Internet Explorer
-                    var textRange = document.selection.createRange ();
-                    container = textRange.parentElement ();
-                }
-            }
-
-            if (container) {
-                alert ("The name of the container node: " + container.nodeName);
-            }
-            else {
-                alert ("Container object for the selection is not available!");
-            }
-			//sometimes the insertion is not correctly set
-			ed.selection.setContent('<span class="chapter_number"> ' + 'Inscriptio ' + '</span><span class="verse_number"></span>PLACE THE INCIPIT HERE! <span class="chapter_number"></span>');
+			ed.selection.setContent('<span class="chapter_number" wce="__t=chapter_number"> ' + 'Inscriptio ' + '</span><span class="verse_number" wce="__t=verse_number"></span>PLACE THE INCIPIT HERE! ');
 			return;
 		} else if ($('#insertSubscriptioRadio').attr('checked')){
-			ed.selection.setContent('<span class="chapter_number"> ' + 'Subscriptio ' + '</span><span class="verse_number"></span>PLACE THE SUBSCRIPTIO HERE! ');
+			ed.selection.setContent('<span class="chapter_number" wce="__t=chapter_number"> ' + 'Subscriptio ' + '</span><span class="verse_number" wce="__t=verse_number"></span>PLACE THE SUBSCRIPTIO HERE! ');
 			return;
 		}
 		
@@ -192,6 +164,15 @@ var contentWithVerse;
 			}
 		} 
 		ed.setContent($(contentWithVerse).html());  
+	}
+	
+	function getCursorPositionInTextOf(element) {
+    var range = document.createRange(),
+        curRange = window.getSelection().getRangeAt(0);
+    range.setStart(element, 0);
+    range.setEnd(curRange.startContainer, curRange.startOffset);
+    //Measure the length of the text from the start of the given element to the start of the current range (position of the cursor)
+    return document.createElement("div").appendChild(range.cloneContents()).textContent.length;
 	}
 	
 	function delVerse(startNode,endNode){
