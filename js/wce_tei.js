@@ -694,7 +694,12 @@ function getHtmlByTei(inputString) {
 		case 'lb': // line break
 			$br = $newDoc.createElement('br');
 			$newNode.appendChild($br);
-			nodeAddText($newNode, '\u21B5');
+			if ($teiNode.getAttribute("rend") && $teiNode.getAttribute("rend") === "indent")
+				nodeAddText($newNode, '\u21B5\u2192');
+			else if ($teiNode.getAttribute("rend") && $teiNode.getAttribute("rend") === "hang")
+				nodeAddText($newNode, '\u21B5\u2190');
+			else
+				nodeAddText($newNode, '\u21B5');
 			break;
 		}
 		$htmlParent.appendChild($newNode);

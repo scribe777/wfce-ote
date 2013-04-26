@@ -70,55 +70,12 @@
 						size="50" maxlength="" class="required number min1 mceFocus" />
 					</td>
 				</tr>
-								
-				<!--<tr>
-					<td><label id="page_number_label" for="page_number">{#wce.fw_pagenumber}</label>
-					</td>
-					<td colspan="6"><input id="page_number" name="page_number" type="text" value=""
-						size="10" maxlength="" class="required number min1 mceFocus" />
-					</td>
-				</tr>
-				<tr>
-					<td><label id="running_title_label" for="running_title">{#wce.fw_runningtitle}</label>
-					</td>
-					<td colspan="6"><input id="running_title" name="running_title" type="text" value=""
-						size="50" maxlength="" class="required number min1 mceFocus" />
-					</td>
-				</tr>
-				<tr>
-					<td><label id="paratext_position_label"
-						for="paratext_position">{#wce.position}</label>
-					</td>
-					<td colspan="2"><select id="paratext_position" name="paratext_position" onchange="checkstatus_position()">
-							<option value="pagetop">{#wce.position_pagetop}</option>
-							<option value="pagebottom">{#wce.position_pagebottom}</option>
-							<option value="pageleft">{#wce.position_pageleft}</option>
-							<option value="pageright">{#wce.position_pageright}</option>
-							<option value="coltop">{#wce.position_coltop}</option>
-							<option value="colbottom">{#wce.position_colbottom}</option>
-							<option value="colleft">{#wce.position_colleft}</option>
-							<option value="colright">{#wce.position_colright}</option>
-							<option value="lineleft">{#wce.position_lineleft}</option>
-							<option value="lineright">{#wce.position_lineright}</option>
-							<option value="above">{#wce.position_above}</option>
-							<option value="below">{#wce.position_below}</option>
-							<option value="here">{#wce.position_thispoint}</option>
-							<option value="other">{#wce.other}</option>
-					</select>
-					</td>
-					<td colspan="4"><input id="paratext_position_other"
-						name="paratext_position_other" type="text" value="" size="20"
-						maxlength="" class="required number min1 mceFocus" />
-					</td>
-				</tr>-->
 			</table>
 		</fieldset>
 		<div class="mceActionPanel">
 			<input type="button" id="insert" name="insert" value="{#insert}"
-				onclick="var cont = testNumber()
+				onclick="var cont = testNumber();
 				if (cont){writeWceNodeInfo(getBreakTag());}else{alert('{#wce.empty_number}');}" />
-				<!--onclick="var cont = testNumber();var cont2 = testOther();
-				if (cont && cont2){writeWceNodeInfo(getBreakTag());}else{if (!cont){alert('{#wce.empty_number}');}else{alert('{#wce.empty_other}');}}" />-->
 			<input type="button" id="cancel"  name="cancel" value="{#cancel}"
 				onclick="ed.execCommand('resetCounter');tinyMCEPopup.close();" />
 		</div>
@@ -165,7 +122,6 @@
 			}
 		}
 		checkstatus_break();
-		//checkstatus_position();
 		setstatus_hyphen();
 	}
 	
@@ -184,26 +140,33 @@
 
 	function getBreakTag() {
 		var v = $('#break_type').val();
+		var indention;
+		if ($('#lb_alignment').val() === "indent")
+			indention = "&#8594;";
+		else if ($('#lb_alignment').val() === "hang")
+			indention = "&#8592;";
+		else
+			indention = "";
 		if (v == 'lb') {
 			if (qsParm['mode'] == 'new') { // new lb
 				if (lbposition() == 'lb1'){
 					document.breakinfo.hasBreak.value = 'no';
-					return ' <br/>&crarr;';
+					return ' <br/>&crarr;' + indention;
 				} else if (lbposition() == 'lb2') {
 					document.breakinfo.hasBreak.value = 'no';
-					return '<br/>&crarr; ';
+					return '<br/>&crarr;' + indention + ' ';
 				} else { //lbm
 					document.breakinfo.hasBreak.value = 'yes';
-					return '&#8208;<br/>&crarr;';
+					return '&#8208;<br/>&crarr;' + indention;
 				}
 			} else { // modifying existing one => keep setting
 				if (document.breakinfo.hasBreak.value == 'yes') {
-					return '&#8208;<br/>&crarr;';
+					return '&#8208;<br/>&crarr;' + indention;
 				} else {
 					if (lbposition() == 'lb1')
-						return ' <br/>&crarr;';
+						return ' <br/>&crarr;' + indention;
 					else //lb2
-						return '<br/>&crarr; ';
+						return '<br/>&crarr;' + indention;
 				}
 			}
 		}
@@ -301,12 +264,6 @@
 			document.getElementById('fibre_type').style.backgroundColor = "white";
 			document.breakinfo.pb_hyphen.disabled = false;
 			document.getElementById('pb_hyphen').style.backgroundColor = "white";
-			//document.breakinfo.running_title.disabled = false;
-			//document.getElementById('running_title').style.backgroundColor = "white";
-			//document.breakinfo.page_number.disabled = false;
-			//document.getElementById('page_number').style.backgroundColor = "white";
-			//document.breakinfo.paratext_position.disabled = false;
-			//document.getElementById('paratext_position').style.backgroundColor = "white";
 			document.breakinfo.facs.disabled = false;
 			document.getElementById('facs').style.backgroundColor = "white";
 			if (qsParm['mode'] == 'new' && qsParm['rectoverso'] == 'true') { //only for new entries; old ones keep their counting
@@ -317,7 +274,6 @@
 					document.breakinfo.pb_type.options[1].selected = true;
 			} else 
 				document.breakinfo.number.value = qsParm['page'];
-			//checkstatus_position();
 		} else {
 			document.breakinfo.pb_type.disabled = true;
 			document.getElementById('pb_type').style.backgroundColor = "#CCCCCC";
@@ -325,14 +281,6 @@
 			document.getElementById('fibre_type').style.backgroundColor = "#CCCCCC";
 			document.breakinfo.pb_hyphen.disabled = true;
 			document.getElementById('pb_hyphen').style.backgroundColor = "#CCCCCC";
-			//document.breakinfo.running_title.disabled = true;
-			//document.getElementById('running_title').style.backgroundColor = "#CCCCCC";
-			//document.breakinfo.page_number.disabled = true;
-			//document.getElementById('page_number').style.backgroundColor = "#CCCCCC";
-			//document.breakinfo.paratext_position.disabled = true;
-			//document.getElementById('paratext_position').style.backgroundColor = "#CCCCCC";
-			//document.breakinfo.paratext_position_other.disabled = true;
-			//document.getElementById('paratext_position_other').style.backgroundColor = "#CCCCCC";
 			document.breakinfo.facs.disabled = true;
 			document.getElementById('facs').style.backgroundColor = "#CCCCCC";
 		}
@@ -341,28 +289,6 @@
 		}	
 	}
 
-	/*function checkstatus_position() {
-		if (document.breakinfo.paratext_position.options[13].selected == true) {
-			document.breakinfo.paratext_position_other.disabled = false;
-			document.getElementById('paratext_position_other').style.backgroundColor = "white";
-		} else {
-			document.breakinfo.paratext_position_other.disabled = true;
-			document.getElementById('paratext_position_other').style.backgroundColor = "#CCCCCC";
-		}
-	}*/
-	
-	/*function setstatus_pb_type () {
-		if (document.breakinfo.pb_type.options[0].selected == true) { //empty
-			document.breakinfo.number.value = qsParm['page'];
-		} else { //recto/verso
-			document.breakinfo.number.value = Math.ceil(qsParm['page'] / 2);
-		}
-	}
-	
-	function setstatus_break() {
-		checkstatus_break();
-	}*/
-	
 	function checkstatus_hyphen() {
 		if (document.breakinfo.pb_hyphen.checked)
 			document.breakinfo.hasBreak.value = "yes";
@@ -382,12 +308,6 @@
 			return false;
 	return true;
 	}
-	
-	/*function testOther() {
-		if (document.breakinfo.break_type.value == 'pb' && document.breakinfo.paratext_position.options[13].selected == true && document.getElementById('paratext_position_other').value == '') 
-			return false;
-	return true;
-	}*/
 	
 	function _getNextEnd(endText, startOffset) {
 		if (typeof endText == 'undefined')
