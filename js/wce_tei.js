@@ -376,57 +376,64 @@ function getHtmlByTei(inputString) {
 	var Tei2Html_gap_supplied = function($htmlParent, $teiNode, teiNodeName) {
 		// <gap reason="lacuna" unit="char" />
 		$newNode = $newDoc.createElement('span');
-		$newNode.setAttribute('class', 'gap'); // for gap *and* supplied
+		if ($teiNode.getAttribute("reason") === 'absent') { // Ghost page
+			$newNode.setAttribute('class', 'ghostpage');
+			wceAttr='__t=gap&__n=&original_gap_text=&gap_reason=absent&unit=page&unit_other=&extent=1&supplied_source=na28&supplied_source_other=&insert=Insert&cancel=Cancel';
+			$newNode.setAttribute('wce', wceAttr);
+			nodeAddText($newNode, "Ghost page");
+		} else {
+			$newNode.setAttribute('class', 'gap'); // for gap *and* supplied
 
-		var wceAttr = '__t=gap&__n=&gap_reason_dummy_lacuna=lacuna&gap_reason_dummy_illegible=illegible';
-		var mapping = {
-			'reason' : '&gap_reason=',
-			'unit' : {
-				'0' : '@char@line@page@quire',
-				'1' : '&unit_other=&unit=',
-				'2' : '&unit=other&unit_other='
-			},
-			'extent' : '&extent=',
-			'source' : {
-				'0' : '@na27@na28@transcriber@tr',
-				'1' : '&supplied_source_other=&supplied_source=',
-				'2' : '&supplied_source=other&&supplied_source_other='
+			var wceAttr = '__t=gap&__n=&gap_reason_dummy_lacuna=lacuna&gap_reason_dummy_illegible=illegible';
+			var mapping = {
+				'reason' : '&gap_reason=',
+				'unit' : {
+					'0' : '@char@line@page@quire',
+					'1' : '&unit_other=&unit=',
+					'2' : '&unit=other&unit_other='
+				},
+				'extent' : '&extent=',
+				'source' : {
+					'0' : '@na27@na28@transcriber@tr',
+					'1' : '&supplied_source_other=&supplied_source=',
+					'2' : '&supplied_source=other&&supplied_source_other='
+				}
+			};
+			wceAttr += getWceAttributeByTei($teiNode, mapping);
+			if (teiNodeName == 'supplied') {
+				wceAttr += '&mark_as_supplied=supplied';
+				$newNode.setAttribute('wce_orig', $teiNode.firstChild.nodeValue); // get the content and save it as original
 			}
-		};
-		wceAttr += getWceAttributeByTei($teiNode, mapping);
-		if (teiNodeName == 'supplied') {
-			wceAttr += '&mark_as_supplied=supplied';
-			$newNode.setAttribute('wce_orig', $teiNode.firstChild.nodeValue); // get the content and save it as original
-		}
-				
-		$newNode.setAttribute('wce', wceAttr);
+					
+			$newNode.setAttribute('wce', wceAttr);
 
-		if (teiNodeName == 'supplied') { // supplied
-			nodeAddText($newNode, '[' + $teiNode.firstChild.nodeValue + ']');
-		} else { // gap
-			gap_text = '';
-			if (wceAttr.indexOf('unit=char') > -1) {
-				nodeAddText($newNode, '[' + $teiNode.getAttribute('extent') + ']');
-			} else if (wceAttr.indexOf('unit=line') > -1) {
-				// TODO: numbering
-				for ( var i = 0; i < $teiNode.getAttribute('extent'); i++) {
-					gap_text += '<br/>&crarr;[...]';
+			if (teiNodeName == 'supplied') { // supplied
+				nodeAddText($newNode, '[' + $teiNode.firstChild.nodeValue + ']');
+			} else { // gap
+				gap_text = '';
+				if (wceAttr.indexOf('unit=char') > -1) {
+					nodeAddText($newNode, '[' + $teiNode.getAttribute('extent') + ']');
+				} else if (wceAttr.indexOf('unit=line') > -1) {
+					// TODO: numbering
+					for ( var i = 0; i < $teiNode.getAttribute('extent'); i++) {
+						gap_text += '<br/>&crarr;[...]';
+					}
+					nodeAddText($newNode, gap_text);
+				} else if (wceAttr.indexOf('unit=page') > -1) {
+					// TODO: numbering
+					for ( var i = 0; i < $teiNode.getAttribute('extent'); i++) {
+						gap_text += '<br/>PB<br/>[...]';
+					}
+					nodeAddText($newNode, gap_text);
+				} else if (wceAttr.indexOf('unit=quire') > -1) {
+					// TODO: numbering
+					for ( var i = 0; i < $teiNode.getAttribute('extent'); i++) {
+						gap_text += '<br/>QB<br/>[...]';
+					}
+					nodeAddText($newNode, gap_text);
+				} else {
+					nodeAddText($newNode, '[...]');
 				}
-				nodeAddText($newNode, gap_text);
-			} else if (wceAttr.indexOf('unit=page') > -1) {
-				// TODO: numbering
-				for ( var i = 0; i < $teiNode.getAttribute('extent'); i++) {
-					gap_text += '<br/>PB<br/>[...]';
-				}
-				nodeAddText($newNode, gap_text);
-			} else if (wceAttr.indexOf('unit=quire') > -1) {
-				// TODO: numbering
-				for ( var i = 0; i < $teiNode.getAttribute('extent'); i++) {
-					gap_text += '<br/>QB<br/>[...]';
-				}
-				nodeAddText($newNode, gap_text);
-			} else {
-				nodeAddText($newNode, '[...]');
 			}
 		}
 		$htmlParent.appendChild($newNode);
@@ -1240,23 +1247,27 @@ function getTeiByHtml(inputString, args) {
 		// gap
 		if (wceType == 'gap') {
 			var text = getDomNodeText($htmlNode).split(" "); // split up content at word boundaries
-			if (text.length > 1) {
-				var $parent = $htmlNode.parentNode;
-				$htmlNode.removeChild($htmlNode.firstChild); // remove text from node
-				for (var i = text.length-1; i > 0; i--) { // clone node and modify content; descending to get the correct order in the XML
-					$addNode = $htmlNode.cloneNode(true);
-					nodeAddText($addNode, text[i].replace(/[\[\]]/g,"")); // replace brackets
-					$parent.insertBefore($addNode, $htmlNode.nextSibling);
+			if (text[0] === "Ghost") // Ghostpage
+				return html2Tei_gap(arr, $teiParent, $htmlNode, true); //do not add <w> around <gap>
+			else {
+				if (text.length > 1) {
+					var $parent = $htmlNode.parentNode;
+					$htmlNode.removeChild($htmlNode.firstChild); // remove text from node
+					for (var i = text.length-1; i > 0; i--) { // clone node and modify content; descending to get the correct order in the XML
+						$addNode = $htmlNode.cloneNode(true);
+						nodeAddText($addNode, text[i].replace(/[\[\]]/g,"")); // replace brackets
+						$parent.insertBefore($addNode, $htmlNode.nextSibling);
+					}
+					// Information about first one (i=0) are put into old htmlNode
+					nodeAddText($htmlNode, text[0].replace("[","")); //remove "["
+					return html2Tei_gap(arr, $teiParent, $htmlNode, stopAddW); // get result from first part and return to main routine
 				}
-				// Information about first one (i=0) are put into old htmlNode
-				nodeAddText($htmlNode, text[0].replace("[","")); //remove "["
-				return html2Tei_gap(arr, $teiParent, $htmlNode, stopAddW); // get result from first part and return to main routine
-			}
-			else { //no word boundaries
-				//if ($htmlNode.nextSibling.nodeName == 'gap')//gap node from the middle of a sequence
-				//	return html2Tei_gap(arr, $teiParent, $htmlNode, false);
-				//else // isolated gap or last one in a sequence
-				return html2Tei_gap(arr, $teiParent, $htmlNode, stopAddW);
+				else { //no word boundaries
+					//if ($htmlNode.nextSibling.nodeName == 'gap')//gap node from the middle of a sequence
+					//	return html2Tei_gap(arr, $teiParent, $htmlNode, false);
+					//else // isolated gap or last one in a sequence
+					return html2Tei_gap(arr, $teiParent, $htmlNode, stopAddW);
+				}
 			}
 		}
 
@@ -1406,6 +1417,8 @@ function getTeiByHtml(inputString, args) {
 	var html2Tei_gap = function(arr, $teiParent, $htmlNode, stopAddW) {
 		// wce_gap <gap OR <supplied source="STRING" _type_STRING type="STRING" _reason_STRING reason="STRING" _hand_STRING hand="STRING" _unit_STRING_extent_STRING unit="STRING" extent="STRING" />
 		var $newNode;
+		//if ($htmlNode.getAttribute("class") === "ghostpage") 
+		//	alert ("HURRA");
 		if (arr['mark_as_supplied'] == 'supplied') {
 			// <supplied>
 			$newNode = $newDoc.createElement('supplied');

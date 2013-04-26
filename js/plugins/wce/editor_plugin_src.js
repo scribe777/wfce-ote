@@ -2099,7 +2099,7 @@
 				// Ghost page
 				// style = 'style="border: 1px dotted #f00; margin:0px; padding:0; color:#666"';
 				wceClass = ' class="ghostpage"';
-				wceAttr = 'wce="__t=gap&amp;__n=&amp;original_gap_text=&amp;gap_reason=absent&amp;unit=page&amp;unit_other=&amp;extent=1&amp;supplied_source=na27&amp;supplied_source_other=&amp;insert=Insert&amp;cancel=Cancel" ';
+				wceAttr = 'wce="__t=gap&amp;__n=&amp;original_gap_text=&amp;gap_reason=absent&amp;unit=page&amp;unit_other=&amp;extent=1&amp;supplied_source=na28&amp;supplied_source_other=&amp;insert=Insert&amp;cancel=Cancel" ';
 				ed.selection.setContent('<span ' + wceAttr + wceClass + '>Ghost page</span>');
 				break;
 			default:
