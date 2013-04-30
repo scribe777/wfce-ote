@@ -513,7 +513,6 @@ function getHtmlByTei(inputString) {
 		// <abbr type="nomSac"> <hi rend="ol">aaa</hi> </abbr>
 		// <span class="abbr_add_overline"
 		// wce_orig="aaa" wce="__t=abbr&amp;__n=&amp;original_abbr_text=&amp;abbr_type=nomSac&amp;abbr_type_other=&amp;add_overline=overline">aaa</span>
-		// TODO wce_orig: is that really needed?
 		var cList = $teiNode.childNodes;
 		var className = teiNodeName;
 
@@ -538,10 +537,14 @@ function getHtmlByTei(inputString) {
 		}
 
 		$newNode.setAttribute('class', className);
-
+		
+		var newNodeText = getDomNodeText($teiNode);
+		if (newNodeText)
+			$newNode.setAttribute('wce_orig', encodeURIComponent(newNodeText));
+		
 		wceAttr += getWceAttributeByTei($teiNode, mapping);
 		$newNode.setAttribute('wce', wceAttr);
-		var newNodeText = getDomNodeText($teiNode);
+		
 		if (newNodeText) {
 			nodeAddText($newNode, newNodeText);
 		}

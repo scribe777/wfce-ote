@@ -2176,6 +2176,8 @@
 				} else if (ek == 46 && wcevar.isCollapsedAtNodeEnd && !wcevar.isNextElemBE) {
 				
 				} else {
+					//if (wcevar.type === "unclear" || wcevar.type === "gap")
+					ed.execCommand('wceDelNode');
 					return _stopEvent(ed, e);
 				}
 			}
@@ -2544,6 +2546,8 @@
 					ed.selection.select(wceNode);
 					var wceAttr = wceNode.getAttribute('wce');
 					var originalText = decodeURIComponent(wceNode.getAttribute('wce_orig'));
+					if (wceNode.getAttribute('class') === 'abbr' || wceNode.getAttribute('class') === 'abbr_add_overline') //Fix for abbreviations; should become deprecated soon
+						originalText = wceNode.firstChild.nodeValue;
 					
 					/*
 					 * // if tag to remove var node_to_remove = [ 'paratext', 'note', 'gap', 'brea' ]; var to_remove = false; for ( var i = 0; i < node_to_remove.length; i++) { if (wceAttr.indexOf(ed.wceTypeParamInClass + '=' + node_to_remove[i]) > -1) { to_remove = true; break; } }
@@ -2554,7 +2558,7 @@
 					if (wceNode.getAttribute('class') === 'commentary') // cursor is inside [comm]
 						wceNode.parentNode.parentNode.removeChild(wceNode.parentNode);
 					else
-						wceNode.parentNode.removeChild(wceNode);
+						wceNode.parentNode.removeChild(wceNode); //TODO: This causes problems under Safari and IE(?)
 
 					if ((originalText) && originalText != 'null') //TODO: I am not sure why we still need the string 'null' (but it works)
 						ed.selection.setContent(originalText);

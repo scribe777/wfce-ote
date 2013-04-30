@@ -15,14 +15,13 @@
 		name="readinginfo" style="margin: 0; padding: 0">
 		<fieldset style="width: 150px; float: left; height: 475px">
 			<legend>{#wce.reading_list}</legend>
-			<div style="height: 445px; overflow: auto">
+			<div style="text-align: left">
+				<input type="button" onclick="if (testOther()){addCorrector(); selectCorrItem();}else{alert('{#wce.empty_other}');}"
+					value="{#wce.New}" />
+			</div><div style="height: 445px; overflow: auto">
 				<ul id="correction_ul"
 					style="list-style-position: inside; list-style-type: none; margin: 0px; padding: 10px">
 				</ul>
-			</div>
-			<div style="text-align: right">
-				<input type="button" onclick="if (testOther()){addCorrector(); selectCorrItem();}else{alert('{#wce.empty_other}');}"
-					value="{#wce.New}" />
 			</div>
 		</fieldset>
 		<input type="hidden" id="original_firsthand_reading" name="original_firsthand_reading" />
@@ -191,22 +190,23 @@
 			$('#content_fieldset').css('width',$('#mceActionPanel').width()-250);
 		}
 
-		if (info_arr.length == 0) {
+		for ( var p in info_arr) {
+			addCorrector(p);
+		}
+		
+		if (item_counter == -1) { //no corrector name given yet
 			$('#firsthand_reading').html(selected_content);
 			$('#original_firsthand_reading').val(selected_content); //Save initial value for later use
+			addCorrector();
 		} else {
 			$('#firsthand_reading').value = $('#original_firsthand_reading').val(); //Use old value
 		}
 		
-		for ( var p in info_arr) {
-			addCorrector(p);
-		}
-				
 		selectCorrItem(); 
 
-		if ($('#correction_ul > li').length < 1) {
+		/*if ($('#correction_ul > li').length < 1) {
 			$('#content_fieldset').attr('disabled', true);   
-		} 
+		}*/
 
 		$(':input').change(function() {
 			saveCurrCorrector();
@@ -371,7 +371,7 @@
 				'<li id="' + _id + '" ><img title="Delete" onclick="delCorrector(\'' + _id + '\');" src="img/del.gif" style="cursor:pointer; width:10px; height:10px; margin-right:10px" border="1"  /> <a href="javascript:void(0)" style="text-decoration:none" title="' + _id
 						+ '" onclick="selectCorrItem(\'' + _id + '\');">' + corrector_name + '</a></li>');
 
-		$('#content_fieldset').attr('disabled', false);
+		//$('#content_fieldset').attr('disabled', false);
  		checkstatus_firsthand();
 		checkstatus_correction();
 	}
