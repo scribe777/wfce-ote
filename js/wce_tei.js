@@ -330,14 +330,13 @@ function getHtmlByTei(inputString) {
 					nodeAddText($newNode, nValue);
 				}
 			}
-		}
-		else { //incipit or explicit
+		} else { //incipit or explicit
 			var $newNode = $newDoc.createElement('span');
 			$newNode.setAttribute('class', 'chapter_number');
 			$newNode.setAttribute('wce', '__t=chapter_number');
 			if ($teiNode.getAttribute("type") === "incipit")
 				nodeAddText($newNode, "Inscriptio");
-			else
+			else if ($teiNode.getAttribute("type") === "explicit")
 				nodeAddText($newNode, "Subscriptio");
 		}
 		$htmlParent.appendChild($newNode);
@@ -362,6 +361,9 @@ function getHtmlByTei(inputString) {
 				nodeAddText($newNode, nValue);
 			}
 		}
+		var partValue = $teiNode.getAttribute('part');
+		if (partValue && partValue === 'F') // <ab part="F">
+			nodeAddText($newNode, ' Cont.');
 		$htmlParent.appendChild($newNode);
 		nodeAddText($htmlParent, ' ');
 		return $htmlParent;
@@ -1009,6 +1011,10 @@ function getTeiByHtml(inputString, args) {
 	var $newDoc;
 	var $newRoot;
 	var g_currentParentNode;
+	
+	var found_ab = false;
+	var final_w_found = false;
+	var final_w_set = false;
 
 	/*
 	 * Main Method <br /> return String of TEI-Format XML
@@ -1190,10 +1196,31 @@ function getTeiByHtml(inputString, args) {
 		if (wceAttrValue != null && wceAttrValue.match(/verse_number/)) {
 			var textNode = $htmlNode.firstChild;
 			if (textNode) {
-				g_verseNumber = textNode.nodeValue;
-				g_verseNumber = $.trim(g_verseNumber);
-				g_verseNode = $newDoc.createElement('ab');
-				g_verseNode.setAttribute('n', 'B' + g_bookNumber + 'K' + g_chapterNumber + 'V' + g_verseNumber);
+				if ($.trim(textNode.nodeValue) === "Cont.") { // special kind of verse
+					found_ab = true;
+					g_verseNode = $newDoc.createElement('ab');
+					g_verseNode.setAttribute('part', 'F');
+					/*if (g_chapterNode)
+						g_chapterNode.appendChild(g_verseNode);
+					else
+						$newRoot.appendChild(g_verseNode);
+					g_currentParentNode = g_verseNode;*/
+					// test, if last page ended with an hyphenation	
+					if (!final_w_found && $teiParent.lastChild && $teiParent.lastChild.previousSibling && $teiParent.lastChild.previousSibling.previousSibling &&
+						$teiParent.lastChild.previousSibling.previousSibling.nodeName === 'pb' && $teiParent.lastChild.previousSibling.previousSibling.getAttribute("break") === "no")
+						final_w_found = true;
+				} else {
+					g_verseNumber = textNode.nodeValue;
+					g_verseNumber = $.trim(g_verseNumber);
+					g_verseNode = $newDoc.createElement('ab');
+					g_verseNode.setAttribute('n', 'B' + g_bookNumber + 'K' + g_chapterNumber + 'V' + g_verseNumber);
+					/*if (g_chapterNode)
+						g_chapterNode.appendChild(g_verseNode);
+					else
+						$newRoot.appendChild(g_verseNode);
+					g_currentParentNode = g_verseNode;
+					g_wordNumber = 0;*/
+				}
 				if (g_chapterNode)
 					g_chapterNode.appendChild(g_verseNode);
 				else
@@ -1256,7 +1283,7 @@ function getTeiByHtml(inputString, args) {
 
 		wceType = arr['__t'];
 
-		// formating
+		// formatting
 		if (wceType.match(/formatting/)) {
 			return html2Tei_formating(arr, $teiParent, $htmlNode, stopAddW);
 		}
@@ -1434,8 +1461,7 @@ function getTeiByHtml(inputString, args) {
 	var html2Tei_gap = function(arr, $teiParent, $htmlNode, stopAddW) {
 		// wce_gap <gap OR <supplied source="STRING" _type_STRING type="STRING" _reason_STRING reason="STRING" _hand_STRING hand="STRING" _unit_STRING_extent_STRING unit="STRING" extent="STRING" />
 		var $newNode;
-		//if ($htmlNode.getAttribute("class") === "ghostpage") 
-		//	alert ("HURRA");
+		
 		if (arr['mark_as_supplied'] == 'supplied') {
 			// <supplied>
 			$newNode = $newDoc.createElement('supplied');
@@ -1688,6 +1714,8 @@ function getTeiByHtml(inputString, args) {
 			// for lb add newline
 			// $newNode.parentNode.insertBefore($newDoc.createTextNode("\n"), $newNode);
 		} else if (break_type == 'pb') {
+			found_ab = false;
+			final_w_set = false;
 			/*Don't need this anymore as "running title" and "page number" moved to marginalia
 			var $secNewNode;
 			// for pb add fw elements
@@ -1967,7 +1995,7 @@ function getTeiByHtml(inputString, args) {
 	 */
 	var html2Tei_TEXT = function($teiParent, $htmlNode, stopAddW) {
 		var teiParentNodeName = $teiParent.nodeName;
-
+		
 		// text to ignore
 		// text of unclear setup by html2Tei_unclear
 		var nodeTextToIgnore = new Array('gap', 'app', 'gb', 'lb', 'cb', 'pb', 'abbr', 'unclear', 'ex', 'note');
@@ -1990,6 +2018,13 @@ function getTeiByHtml(inputString, args) {
 		// Text node is followed by a normal node
 		var endIsSpace = endHasSpace(text);
 		var arr = text.split(' ');
+		
+		if (!found_ab && $teiParent.lastChild && $teiParent.lastChild.previousSibling && $teiParent.lastChild.previousSibling.previousSibling && $teiParent.lastChild.previousSibling.previousSibling.nodeName === 'pb') {
+			var $ab = $newDoc.createElement('ab');
+			$ab.setAttribute("part", "F");
+			found_ab = true;
+		}
+		
 		for ( var i = 0, l = arr.length; i < l; i++) {
 			var str = arr[i];
 			if (!str || str == '') {
@@ -1998,18 +2033,31 @@ function getTeiByHtml(inputString, args) {
 
 			// before create <w>,analyze the elements of the previousSibling
 			var $w = createNewWElement();
-
-			// check if this is the first word on a page after a hyphenation
-			if ($teiParent.lastChild && $teiParent.lastChild.previousChild && $teiParent.lastChild.previousSibling.previousSibling && $teiParent.lastChild.previousSibling.previousSibling.getAttribute("break") == "no")
-				$w.setAttribute("part", "F");
+			
+			// we hit a text and check if there is an element at the third-last position in the tree with break="no"
+			if ((!final_w_set && $teiParent.lastChild && $teiParent.lastChild.previousSibling && $teiParent.lastChild.previousSibling.previousSibling &&
+				$teiParent.lastChild.previousSibling.previousSibling.nodeName === 'pb' && $teiParent.lastChild.previousSibling.previousSibling.getAttribute("break") === "no") || (final_w_found)) {// &&	
+				// check if first string is the first word on a page after a hyphenation
+					$w.setAttribute("part", "F");
+					final_w_set = true;
+			}
 			// check if this is the last word on a page and hyphenated
-			else if ($htmlNode.parentNode.lastChild && $htmlNode.parentNode.lastChild.nodeType == 1 && 	!$htmlNode.nextSibling.nextSibling &&
-				$htmlNode.parentNode.lastChild.getAttribute("wce") && 
-				$htmlNode.parentNode.lastChild.getAttribute("wce").indexOf("break_type=lb") > -1    && 
-				$htmlNode.parentNode.lastChild.getAttribute("wce").indexOf("hasBreak=yes") > -1     &&	i == arr.length-1) //only valid for _last_ word of the last line
-					$w.setAttribute("part", "I");
-			$teiParent.appendChild($w);
+			else if ($htmlNode.parentNode.lastChild && $htmlNode.parentNode.lastChild.nodeType == 1 && !$htmlNode.nextSibling.nextSibling &&
+					$htmlNode.parentNode.lastChild.getAttribute("wce") && 
+					$htmlNode.parentNode.lastChild.getAttribute("wce").indexOf("break_type=lb") > -1    && 
+					$htmlNode.parentNode.lastChild.getAttribute("wce").indexOf("hasBreak=yes") > -1     &&	i == arr.length-1) //only valid for _last_ word of the last line
+						$w.setAttribute("part", "I");
+			
 			nodeAddText($w, str);
+			if (found_ab) {
+				if ($ab) { // verse has just been added
+					$ab.appendChild($w);
+					$teiParent.appendChild($ab);
+				} else { // verse existed before
+					$teiParent.appendChild($w);
+				}
+			} else
+				$teiParent.appendChild($w);
 
 			// If it is the last element, and there are no spaces
 			// To find the back of all connected elements, combined, and delete these elements
