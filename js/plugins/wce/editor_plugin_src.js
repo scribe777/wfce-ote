@@ -2175,11 +2175,12 @@
 					}
 				} else if (ek == 46 && wcevar.isCollapsedAtNodeEnd && !wcevar.isNextElemBE) {
 				
-				} else {
+				} else if (ek == 46) {
 					//if (wcevar.type === "unclear" || wcevar.type === "gap")
 					ed.execCommand('wceDelNode');
 					return _stopEvent(ed, e);
-				}
+				} else
+					return _stopEvent(ed, e);
 			}
 
 			// key "entf"
