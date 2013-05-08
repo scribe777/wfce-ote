@@ -2459,7 +2459,7 @@
 			
 			ed.addCommand('mceVersion', function() {
 				var http=new XMLHttpRequest();
-				http.open('HEAD','http://ntvmr.uni-muenster.de/community/modules/transedit/version.txt',false);
+				http.open('HEAD','version.txt',false);
 				http.send(null);
 				if (http.status!=200) return undefined;
 				var wort = http.getResponseHeader('Last-modified');
