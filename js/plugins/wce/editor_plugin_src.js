@@ -2162,6 +2162,12 @@
 				}
 			}
 
+			if (ek == 65 && e.altKey && e.ctrlKey)
+				;
+				
+			if (ek == 86 && e.altKey && e.ctrlKey)
+				;
+			
 			// TODO: if no short_cut B, C ,Z ,Y .....
 			if (wcevar.isInBE && !e.ctrlKey) {
 				// keydown for insert letter

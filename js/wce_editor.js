@@ -21,7 +21,7 @@
 		/*
 		 * plugins : "wce,pagebreak,style,layer,advhr,advimage,emotions,iespell,inlinepopups,safari,preview,media,searchreplace,print,contextmenu,paste,directionality,fullscreen,noneditable,visualchars,nonbreaking,xhtmlxtras,template,wordcount,advlist,autosave",
 		 */
-		plugins : "wce,pagebreak,style,save,layer,safari,print,inlinepopups,contextmenu,paste,fullscreen,wordcount,autosave",
+		plugins : "wce,pagebreak,style,save,layer,safari,print,inlinepopups,contextmenu,fullscreen,wordcount,autosave",
 
 		init_instance_callback : "wceReload",
 
