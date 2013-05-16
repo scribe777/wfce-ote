@@ -361,9 +361,10 @@ function getHtmlByTei(inputString) {
 				nodeAddText($newNode, nValue);
 			}
 		}
-		/*var partValue = $teiNode.getAttribute('part');
+		//TODO: This could be removed
+		var partValue = $teiNode.getAttribute('part');
 		if (partValue && partValue === 'F') // <ab part="F">
-			nodeAddText($newNode, ' Cont.');*/
+			nodeAddText($newNode, ' Cont.');
 		$htmlParent.appendChild($newNode);
 		nodeAddText($htmlParent, ' ');
 		return $htmlParent;
@@ -1014,7 +1015,7 @@ function getTeiByHtml(inputString, args) {
 	var $newRoot;
 	var g_currentParentNode;
 	
-	//var found_ab = false;
+	var found_ab = false;
 	var final_w_found = false;
 	var final_w_set = false;
 
@@ -1199,9 +1200,9 @@ function getTeiByHtml(inputString, args) {
 			var textNode = $htmlNode.firstChild;
 			if (textNode) {
 				if ($.trim(textNode.nodeValue) === "Cont.") { // special kind of verse
-					//found_ab = true;
-					//g_verseNode = $newDoc.createElement('ab');
-					//g_verseNode.setAttribute('part', 'F');
+					found_ab = true;
+					g_verseNode = $newDoc.createElement('ab');
+					g_verseNode.setAttribute('part', 'F');
 					/*if (g_chapterNode)
 						g_chapterNode.appendChild(g_verseNode);
 					else
@@ -1653,7 +1654,7 @@ function getTeiByHtml(inputString, args) {
 	// break_type= lb / cb /qb / pb number= pb_type= running_title= lb_alignment, Page (Collate |P 121|): <pb n="121" type="page" xml:id="P121-wit" /> Folio (Collate |F 3v|): <pb n="3v" type="folio" xml:id="P3v-wit" /> Column (Collate |C 2|): <cb n="2" xml:id="P3vC2-wit" />
 	// Line (Collate |L 37|): <lb n="37" xml:id="P3vC2L37-wit" />
 	var html2Tei_break = function(arr, $teiParent, $htmlNode, stopAddW) { 
-		if(!stopAddW) return;//ueberfluessige <lb> in correction <app> vermeiden
+		//if(!stopAddW) return;//ueberfluessige <lb> in correction <app> vermeiden
 		
 		var xml_id;
 		var breakNodeText = getDomNodeText($htmlNode);
@@ -1721,7 +1722,7 @@ function getTeiByHtml(inputString, args) {
 			// for lb add newline
 			// $newNode.parentNode.insertBefore($newDoc.createTextNode("\n"), $newNode);
 		} else if (break_type == 'pb') {
-			//found_ab = false;
+			found_ab = false;
 			final_w_set = false;
 			/*Don't need this anymore as "running title" and "page number" moved to marginalia
 			var $secNewNode;
@@ -2026,11 +2027,12 @@ function getTeiByHtml(inputString, args) {
 		var endIsSpace = endHasSpace(text);
 		var arr = text.split(' ');
 		
-		/*if (!found_ab && $teiParent.lastChild && $teiParent.lastChild.previousSibling && $teiParent.lastChild.previousSibling.previousSibling && $teiParent.lastChild.previousSibling.previousSibling.nodeName === 'pb') {
+		//TODO: This could be removed
+		if (!found_ab && $teiParent.lastChild && $teiParent.lastChild.previousSibling && $teiParent.lastChild.previousSibling.previousSibling && $teiParent.lastChild.previousSibling.previousSibling.nodeName === 'pb') {
 			var $ab = $newDoc.createElement('ab');
 			$ab.setAttribute("part", "F");
 			found_ab = true;
-		}*/
+		}
 		
 		for ( var i = 0, l = arr.length; i < l; i++) {
 			var str = arr[i];
@@ -2042,8 +2044,8 @@ function getTeiByHtml(inputString, args) {
 			var $w = createNewWElement();
 			
 			// we hit a text and check if there is an element at the third-last position in the tree with break="no"
-			if ((!final_w_set && $teiParent.lastChild && $teiParent.lastChild.previousSibling && $teiParent.lastChild.previousSibling.previousSibling &&
-				$teiParent.lastChild.previousSibling.previousSibling.nodeName === 'pb' && $teiParent.lastChild.previousSibling.previousSibling.getAttribute("break") === "no") || (final_w_found)) {// &&	
+			if (!final_w_set && (($teiParent.lastChild && $teiParent.lastChild.previousSibling && $teiParent.lastChild.previousSibling.previousSibling &&
+				$teiParent.lastChild.previousSibling.previousSibling.nodeName === 'pb' && $teiParent.lastChild.previousSibling.previousSibling.getAttribute("break") === "no") || (final_w_found))) {// &&	
 				// check if first string is the first word on a page after a hyphenation
 					$w.setAttribute("part", "F");
 					final_w_set = true;
@@ -2056,16 +2058,16 @@ function getTeiByHtml(inputString, args) {
 						$w.setAttribute("part", "I");
 			
 			nodeAddText($w, str);
-			/*if (found_ab) {
+			// TODO: This could be removed
+			if (found_ab) {
 				if ($ab) { // verse has just been added
 					$ab.appendChild($w);
 					$teiParent.appendChild($ab);
 				} else { // verse existed before
 					$teiParent.appendChild($w);
 				}
-			} else*/
-			
-			$teiParent.appendChild($w);
+			} else
+				$teiParent.appendChild($w);
 
 			// If it is the last element, and there are no spaces
 			// To find the back of all connected elements, combined, and delete these elements

@@ -937,14 +937,14 @@
 							}
 							break;
 						case 'pb':
-							if (!ar['pb_ghostpage'])
+							if (!ar['pb_ghostpage']) {
 								info_text = '<div>' + 'Page number (in sequence): ' + ar['number'];
-							else 
+								if (ar['pb_type'])
+									info_text += ar['pb_type'];
+								if (ar['fibre_type'])
+									info_text += ar['fibre_type'];
+							} else 
 								info_text = '<div>' + 'No number given';
-							if (ar['pb_type'])
-								info_text += ar['pb_type'];
-							if (ar['fibre_type'])
-								info_text += ar['fibre_type'];
 							info_text += '</div>';
 							if (ar['facs']) {
 								info_text += '<div>' + 'URL to digital image: ' + ar['facs'] + '</div>';
