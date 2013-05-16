@@ -51,6 +51,11 @@
 					
 				</tr>
 				<tr>
+				<td colspan="5"><input type="checkbox" name="pb_ghostpage"
+						id="pb_ghostpage" onchange="checkstatus_ghostpage()">{#wce.pb_ghostpage}</input>
+				</td>
+				</tr>
+				<tr>
 					<td><label id="lb_alignment_label" for="lb_alignment">{#wce.alignment}</label>
 					</td>
 					<td colspan="2"><select id="lb_alignment" name="lb_alignment">
@@ -123,6 +128,7 @@
 		}
 		checkstatus_break();
 		setstatus_hyphen();
+		//checkstatus_ghostpage();
 	}
 	
 	function qs() {
@@ -264,6 +270,8 @@
 			document.getElementById('fibre_type').style.backgroundColor = "white";
 			document.breakinfo.pb_hyphen.disabled = false;
 			document.getElementById('pb_hyphen').style.backgroundColor = "white";
+			document.breakinfo.pb_ghostpage.disabled = false;
+			document.getElementById('pb_ghostpage').style.backgroundColor = "white";
 			document.breakinfo.facs.disabled = false;
 			document.getElementById('facs').style.backgroundColor = "white";
 			if (qsParm['mode'] == 'new' && qsParm['rectoverso'] == 'true') { //only for new entries; old ones keep their counting
@@ -281,6 +289,9 @@
 			document.getElementById('fibre_type').style.backgroundColor = "#CCCCCC";
 			document.breakinfo.pb_hyphen.disabled = true;
 			document.getElementById('pb_hyphen').style.backgroundColor = "#CCCCCC";
+			document.breakinfo.pb_ghostpage.disabled = true;
+			document.breakinfo.pb_ghostpage.checked = false;
+			document.getElementById('pb_ghostpage').style.backgroundColor = "#CCCCCC";
 			document.breakinfo.facs.disabled = true;
 			document.getElementById('facs').style.backgroundColor = "#CCCCCC";
 		}
@@ -296,6 +307,16 @@
 			document.breakinfo.hasBreak.value = "no";
 	}
 	
+	function checkstatus_ghostpage() {
+		if (document.breakinfo.pb_ghostpage.checked) {
+			document.breakinfo.number.disabled = true;
+			document.getElementById('number').style.backgroundColor = "#CCCCCC";
+		} else {
+			document.breakinfo.number.disabled = false;
+			document.getElementById('number').style.backgroundColor = "white";
+		}
+	}
+	
 	function setstatus_hyphen() {
 		if (document.breakinfo.break_type.options[2].selected == true && document.breakinfo.hasBreak.value == "yes")
 			document.breakinfo.pb_hyphen.checked = true;
@@ -304,7 +325,7 @@
 	}
 	
 	function testNumber() {
-		if (document.getElementById('number').value == '') 
+		if (document.getElementById('number').value == '' && !document.breakinfo.pb_ghostpage.checked) 
 			return false;
 	return true;
 	}

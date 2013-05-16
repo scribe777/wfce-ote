@@ -361,9 +361,9 @@ function getHtmlByTei(inputString) {
 				nodeAddText($newNode, nValue);
 			}
 		}
-		var partValue = $teiNode.getAttribute('part');
+		/*var partValue = $teiNode.getAttribute('part');
 		if (partValue && partValue === 'F') // <ab part="F">
-			nodeAddText($newNode, ' Cont.');
+			nodeAddText($newNode, ' Cont.');*/
 		$htmlParent.appendChild($newNode);
 		nodeAddText($htmlParent, ' ');
 		return $htmlParent;
@@ -603,6 +603,8 @@ function getHtmlByTei(inputString) {
 			var number = getWceAttributeByTei($teiNode, {'n' : 'n'});
 			if (number)
 				teiIndexData['pageNumber'] = number;
+			else
+				wceAttr += '&pb_ghostpage=on';
 			var pbtype = getWceAttributeByTei($teiNode, {'type' : 'p'});
 			if (pbtype == "page") {
 				if (number.match("[0-9]$")) { // ends with a digit => no fibre type
@@ -1012,7 +1014,7 @@ function getTeiByHtml(inputString, args) {
 	var $newRoot;
 	var g_currentParentNode;
 	
-	var found_ab = false;
+	//var found_ab = false;
 	var final_w_found = false;
 	var final_w_set = false;
 
@@ -1197,9 +1199,9 @@ function getTeiByHtml(inputString, args) {
 			var textNode = $htmlNode.firstChild;
 			if (textNode) {
 				if ($.trim(textNode.nodeValue) === "Cont.") { // special kind of verse
-					found_ab = true;
-					g_verseNode = $newDoc.createElement('ab');
-					g_verseNode.setAttribute('part', 'F');
+					//found_ab = true;
+					//g_verseNode = $newDoc.createElement('ab');
+					//g_verseNode.setAttribute('part', 'F');
 					/*if (g_chapterNode)
 						g_chapterNode.appendChild(g_verseNode);
 					else
@@ -1681,18 +1683,20 @@ function getTeiByHtml(inputString, args) {
 				g_columnNumber = breaColumn;
 				break;
 			case 'pb':
-				var breaPage;
+				var breaPage='';
 				// Set page number and decide which type (folio|page)
-				if (arr['pb_type'] != '') {
-					// folio
-					breaPage = arr['number'] + arr['pb_type'] + arr['fibre_type'];
-					$newNode.setAttribute('n', breaPage);
-					$newNode.setAttribute('type', 'folio');
-				} else {
-					// page
-					breaPage = arr['number'] + arr['fibre_type'];
-					$newNode.setAttribute('n', breaPage);
-					$newNode.setAttribute('type', 'page');
+				if (!arr['pb_ghostpage']) {
+					if (arr['pb_type'] != '') {
+						// folio
+						breaPage = arr['number'] + arr['pb_type'] + arr['fibre_type'];
+						$newNode.setAttribute('n', breaPage);
+						$newNode.setAttribute('type', 'folio');
+					} else {
+						// page
+						breaPage = arr['number'] + arr['fibre_type'];
+						$newNode.setAttribute('n', breaPage);
+						$newNode.setAttribute('type', 'page');
+					}
 				}
 				if (arr['facs'] != '') {
 					// use URL for facs attribute
@@ -1702,7 +1706,8 @@ function getTeiByHtml(inputString, args) {
 				g_pageNumber = breaPage;
 				break;
 			}
-			$newNode.setAttribute("xml:id", xml_id);//IE gets confused here
+			if (!arr['pb_ghostpage']) // write id only if not ghost page
+				$newNode.setAttribute("xml:id", xml_id);//IE gets confused here
 			if (arr['hasBreak'] === 'yes') {
 				$newNode.setAttribute('break', 'no');
 			}
@@ -1714,7 +1719,7 @@ function getTeiByHtml(inputString, args) {
 			// for lb add newline
 			// $newNode.parentNode.insertBefore($newDoc.createTextNode("\n"), $newNode);
 		} else if (break_type == 'pb') {
-			found_ab = false;
+			//found_ab = false;
 			final_w_set = false;
 			/*Don't need this anymore as "running title" and "page number" moved to marginalia
 			var $secNewNode;
@@ -2019,11 +2024,11 @@ function getTeiByHtml(inputString, args) {
 		var endIsSpace = endHasSpace(text);
 		var arr = text.split(' ');
 		
-		if (!found_ab && $teiParent.lastChild && $teiParent.lastChild.previousSibling && $teiParent.lastChild.previousSibling.previousSibling && $teiParent.lastChild.previousSibling.previousSibling.nodeName === 'pb') {
+		/*if (!found_ab && $teiParent.lastChild && $teiParent.lastChild.previousSibling && $teiParent.lastChild.previousSibling.previousSibling && $teiParent.lastChild.previousSibling.previousSibling.nodeName === 'pb') {
 			var $ab = $newDoc.createElement('ab');
 			$ab.setAttribute("part", "F");
 			found_ab = true;
-		}
+		}*/
 		
 		for ( var i = 0, l = arr.length; i < l; i++) {
 			var str = arr[i];
@@ -2049,15 +2054,16 @@ function getTeiByHtml(inputString, args) {
 						$w.setAttribute("part", "I");
 			
 			nodeAddText($w, str);
-			if (found_ab) {
+			/*if (found_ab) {
 				if ($ab) { // verse has just been added
 					$ab.appendChild($w);
 					$teiParent.appendChild($ab);
 				} else { // verse existed before
 					$teiParent.appendChild($w);
 				}
-			} else
-				$teiParent.appendChild($w);
+			} else*/
+			
+			$teiParent.appendChild($w);
 
 			// If it is the last element, and there are no spaces
 			// To find the back of all connected elements, combined, and delete these elements

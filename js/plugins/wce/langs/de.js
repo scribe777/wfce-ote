@@ -46,6 +46,7 @@ tinyMCE.addI18n('de.wce',{
 	pb_page : "Seite",
 	pb_folio: "Folio",
 	pb_hyphen : "Vorherige Seite endet mit einer Worttrennung",
+	pb_ghostpage : "Keine Nummerierung (z.B. wegen fehlender Seite)",
 	text : "Text oder Zahl (wie auf der Seite vermerkt)",
 	covered : "Anzahl der überdeckten Zeilen",
 	number_attribute : 'Zahl (wie für das XML-Attribut "n" benutzt)',

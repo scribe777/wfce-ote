@@ -930,23 +930,15 @@
 							}
 							break;
 						case 'pb':
-							info_text = '<div>' + 'Page number (in sequence): ' + ar['number'];
+							if (!ar['pb_ghostpage'])
+								info_text = '<div>' + 'Page number (in sequence): ' + ar['number'];
+							else 
+								info_text = '<div>' + 'No number given';
 							if (ar['pb_type'])
 								info_text += ar['pb_type'];
 							if (ar['fibre_type'])
 								info_text += ar['fibre_type'];
 							info_text += '</div>';
-							/*Don't need this anymore
-							if (ar['page_number']) {
-								info_text += '<div>' + 'Page number (as written): ' + ar['page_number'] + '</div>';
-							}
-							if (ar['running_title']) {
-								info_text += '<div>' + 'Running title: ' + ar['running_title'] + ' (';
-								if (ar['paratext_position'] == 'other')
-									info_text += ar['paratext_position_other'] + ')' + '</div>';
-								else
-									info_text += ar['paratext_position'] + ')' + '</div>';
-							}*/
 							if (ar['facs']) {
 								info_text += '<div>' + 'URL to digital image: ' + ar['facs'] + '</div>';
 							}
