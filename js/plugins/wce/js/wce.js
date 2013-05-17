@@ -52,7 +52,7 @@ function setConstants() {
 	
 	//Bugfix Fehler #646 Impossible combination: Deficiency + Corrections
 	//for other combination can use this
-	if(wceObj._isSelectedWholeNode(ed, ed.selection.getRng(true)) && wceObj._isNodeTypeOf(wce_node, 'gap')){
+	if(wce_node && wceObj._isSelectedWholeNode(ed, ed.selection.getRng(true)) && wceObj._isNodeTypeOf(wce_node, 'gap')){
 		var wce_node_parent=wce_node.parentNode;
 		if(wce_node_parent && wceObj._isNodeTypeOf(wce_node_parent, 'corr')){
 			 ed.selection.select(wce_node_parent);
