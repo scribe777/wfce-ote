@@ -591,6 +591,11 @@
 				if (WCEObj._canInsertNote(ed, rng)) {
 					w.not_N = false;
 				}
+				//fuer Fehler #646: It isn¡ät possible to use the "corrections" menu if a whole word is highlighted as "gap" or as "uncertain letters".
+				////erlaubt correction, wenn ganz gap auswaehlt ist,				
+				if(!w.isc && WCEObj._isSelectedWholeNode(ed, rng)){
+					w.not_C = false;
+				}						
 				w.type = 'gap';
 			} else if (_isNodeTypeOf(selectedNode, 'corr')) {
 				_setAllControls(ed, true);
@@ -648,6 +653,14 @@
 				w.not_N = false;
 				w.type = 'note';
 			}
+		},
+		
+		_isSelectedWholeNode : function( ed, rng){
+			var startContainer=rng.startContainer;
+			if(startContainer!=null && startContainer.nodeType==3 && rng.startOffset==0 && startContainer== rng.endContainer && rng.endOffset==startContainer.nodeValue.length){
+				return true;
+			}
+			return false;
 		},
 
 		// startCoantainer: if caret at end, move it to Beginn of nextSiling

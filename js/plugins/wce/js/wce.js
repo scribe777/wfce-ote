@@ -40,13 +40,33 @@ var name_in_uri;
 var wce_type;
 var wceObj;
 
+//for example: use the "corrections" menu if a whole word is highlighted as "gap" 
+var isCombination=false;
+
 function setConstants() {
-	selected_content = ed.selection.getContent();
 	wce_node = ed.execCommand('getWceNode', false);
 	add_new_wce_node = tinyMCEPopup.getWindowArg('add_new_wce_node');
 	wceObj = tinyMCEPopup.getWindowArg('wceobj');
 	type_in_uri = ed.wceTypeParamInClass;
 	name_in_uri = ed.wceNameParamInClass;
+	
+	//Bugfix Fehler #646 Impossible combination: Deficiency + Corrections
+	//for other combination can use this
+	if(wceObj._isSelectedWholeNode(ed, ed.selection.getRng(true)) && wceObj._isNodeTypeOf(wce_node, 'gap')){
+		var wce_node_parent=wce_node.parentNode;
+		if(wce_node_parent && wceObj._isNodeTypeOf(wce_node_parent, 'corr')){
+			 ed.selection.select(wce_node_parent);
+			 wce_node=wce_node_parent;
+			 add_new_wce_node=false;
+		}else{
+			isCombination=true;
+		}
+	}
+	if(isCombination){
+		selected_content=tinymce.DOM.getOuterHTML(ed.selection.getNode());
+	}else{
+		selected_content = ed.selection.getContent();
+	}	
 }
 
 /**
@@ -128,6 +148,10 @@ function writeWceNodeInfo(val) {
 		// var style = "border: 1px dotted #f00; margin:0px 1px 0px 1px ; padding:0;";
 		var wceClass;
 
+		if(isCombination){
+			$(wce_node).remove();
+
+		}
 		// new content
 		var new_content;
 		var original_text = ' wce_orig="' + encodeURIComponent(selected_content) + '" ';
