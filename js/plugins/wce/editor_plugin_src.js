@@ -2158,14 +2158,16 @@
 					_setWCEVariable(ed);
 					_redrawContols(ed);
 					wcevar.isRedrawn = true;
-					return _stopEvent(ed, e);
+					if ((wcevar.isCollapsedAtNodeEnd && wcevar.isNextElemBE) || (wcevar.isInBE)) { //allow deletion if no special element is concerned
+						return _stopEvent(ed, e);
+					}
 				}
 			}
 
-			if (ek == 65 && e.altKey && e.ctrlKey)
+			if (ek == 65 && e.altKey && e.ctrlKey) //Ctrl+Shift+A
 				;
 				
-			if (ek == 86 && e.altKey && e.ctrlKey)
+			if (ek == 86 && e.altKey && e.ctrlKey) //Ctrl+Shift+V
 				;
 			
 			// TODO: if no short_cut B, C ,Z ,Y .....
