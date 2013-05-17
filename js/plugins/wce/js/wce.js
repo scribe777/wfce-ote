@@ -218,7 +218,8 @@ function writeWceNodeInfo(val) {
 		case 'note':
 			wceClass = ' class="note"';
 			new_content = selected_content + '<span wce="' + newWceAttr + '"' + original_text + wceClass + '>Note</span>';  
-			//wceObj._insertSpace(ed, 32);
+			if (ed.WCE_VAR.isInBE)
+				wceObj._insertSpace(ed, 32);
 			break;
 
 		case 'abbr':
