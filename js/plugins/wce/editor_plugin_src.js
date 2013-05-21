@@ -591,8 +591,8 @@
 				if (WCEObj._canInsertNote(ed, rng)) {
 					w.not_N = false;
 				}
-				//fuer Fehler #646: It isn¡ät possible to use the "corrections" menu if a whole word is highlighted as "gap" or as "uncertain letters".
-				////erlaubt correction, wenn ganz gap auswaehlt ist,				
+				//Fix for #646: It isn't possible to use the "corrections" menu if a whole word is highlighted as "gap" or as "uncertain letters".
+				//This allows to select "C" if the complete gap is selected.
 				if(!w.isc && WCEObj._isSelectedWholeNode(ed, rng)){
 					w.not_C = false;
 				}						
@@ -627,6 +627,11 @@
 				w.not_D = false;
 				if (WCEObj._canInsertNote(ed, rng)) {
 					w.not_N = false;
+				}
+				//Fix for #646: It isn't possible to use the "corrections" menu if a whole word is highlighted as "gap" or as "uncertain letters".
+				//This allows to select "C" if the complete unclear text is selected.
+				if(!w.isc && WCEObj._isSelectedWholeNode(ed, rng)){
+					w.not_C = false;
 				}
 				w.type = 'unclear';
 			} else if (_isNodeTypeOf(selectedNode, 'spaces')) {
