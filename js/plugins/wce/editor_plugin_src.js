@@ -30,6 +30,9 @@
 
 			// blocked elements :If the Caret is inside, this will prohibit the key operation
 			w.blockedElements = new Array('gap', 'corr', 'chapter_number', 'verse_number', 'abbr', 'spaces', 'note', 'unclear', 'brea', 'paratext');
+			
+			//enable Correction a whole word is highlighte by... 
+			w.combinationWithCorrection=new Array('gap','unclear','abbr');
 
 			// not blocked elements
 			// w.normalElemente = new Array('unclear');
@@ -591,11 +594,6 @@
 				if (WCEObj._canInsertNote(ed, rng)) {
 					w.not_N = false;
 				}
-				//Fix for #646: It isn't possible to use the "corrections" menu if a whole word is highlighted as "gap" or as "uncertain letters".
-				//This allows to select "C" if the complete gap is selected.
-				if(!w.isc && WCEObj._isSelectedWholeNode(ed, rng)){
-					w.not_C = false;
-				}						
 				w.type = 'gap';
 			} else if (_isNodeTypeOf(selectedNode, 'corr')) {
 				_setAllControls(ed, true);
@@ -607,7 +605,6 @@
 			} else if (_isNodeTypeOf(selectedNode, 'abbr')) {
 				_setAllControls(ed, true);
 				w.not_A = false;
-				w.not_C = false;// Must be activated sometime, but the complete mechanism of combining elements is still a bit buggy
 				if (WCEObj._canInsertNote(ed, rng)) {
 					w.not_N = false;
 				}
@@ -627,12 +624,7 @@
 				w.not_D = false;
 				if (WCEObj._canInsertNote(ed, rng)) {
 					w.not_N = false;
-				}
-				//Fix for #646: It isn't possible to use the "corrections" menu if a whole word is highlighted as "gap" or as "uncertain letters".
-				//This allows to select "C" if the complete unclear text is selected.
-				if(!w.isc && WCEObj._isSelectedWholeNode(ed, rng)){
-					w.not_C = false;
-				}
+				}				
 				w.type = 'unclear';
 			} else if (_isNodeTypeOf(selectedNode, 'spaces')) {
 				_setAllControls(ed, true);
@@ -658,6 +650,28 @@
 				w.not_N = false;
 				w.type = 'note';
 			}
+	
+
+			//Fix ticket #646: enable combination with Correction if a whole word is highlighte
+			//Element defined by constant "ed.WCE_CON.combinationWithCorrection";
+			if(!w.isc && WCEObj._isSelectedWholeNode(ed, rng)){
+				if(WCEObj._canCombinationWithCorrection(ed, w.type)){
+					w.not_C = false;
+				}
+			}
+		},
+		
+		_canCombinationWithCorrection : function(ed,_type){
+			if(!_type) return false;
+			var _types=ed.WCE_CON.combinationWithCorrection;
+			if(_types){
+				for(var i=0, l=_types.length; i<l; i++){
+					if(_types[i]==_type){
+						return true;
+					}
+				}
+			}
+			return false;
 		},
 		
 		_isSelectedWholeNode : function( ed, rng){

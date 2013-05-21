@@ -52,7 +52,7 @@ function setConstants(_type) {
 	
 	//Bugfix Fehler #646 Impossible combination: Deficiency + Corrections
 	//for other combination can use this
-	if(wce_node && wceObj._isSelectedWholeNode(ed, ed.selection.getRng(true)) && wceObj._isNodeTypeOf(wce_node, 'gap')){
+	if(wce_node && wceObj._isSelectedWholeNode(ed, ed.selection.getRng(true)) && canCombination(wce_node,ed.WCE_CON.combinationWithCorrection) ){		
 		var wce_node_parent=wce_node.parentNode;
 		if(wce_node_parent && wceObj._isNodeTypeOf(wce_node_parent, 'corr')){
 			 ed.selection.select(wce_node_parent);
@@ -63,12 +63,22 @@ function setConstants(_type) {
 		}
 	}
 	if(isCombination){
-		selected_content=tinymce.DOM.getOuterHTML(ed.selection.getNode());
+		selected_content=tinymce.DOM.getOuterHTML(ed.selection.getNode()); 
 	}else{
 		selected_content = ed.selection.getContent();
 	}	
 }
 
+function canCombination(_node, _typeArray){
+	if(!_node || !_typeArray) return false;
+	var wceAttr = _node.getAttribute('wce');
+	for(var i=0, l=_typeArray.length; i<l; i++){
+		if (wceAttr && wceAttr.indexOf(type_in_uri+'='+_typeArray[i]) >-1) {
+			return true;
+		}
+	}
+	return false;
+}
 /**
  * 
  */
