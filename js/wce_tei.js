@@ -1101,6 +1101,11 @@ function getTeiByHtml(inputString, args) {
 			// Generate new tei node according to the html-textNode
 			html2Tei_TEXT($teiParent, $htmlNode, stopAddW);
 		} else if ($htmlNode.nodeType == 1) {
+			//alle Informationen fuer xml Export enthalten in Attribute. InnerHTML ist nur fuer HTML darstellung und nicht fuer xmlExport noetig.
+			if($htmlNode.getAttribute('class')=='corr'){
+				$($htmlNode).empty(); // remove all childNodes
+			}
+			
 			// Generate new tei-node according to the html-Node
 			// then add the childNode to the tei-node
 			var arr = getTeiNodeByHtmlNode($teiParent, $htmlNode, stopAddW);
@@ -1654,7 +1659,7 @@ function getTeiByHtml(inputString, args) {
 	// break_type= lb / cb /qb / pb number= pb_type= running_title= lb_alignment, Page (Collate |P 121|): <pb n="121" type="page" xml:id="P121-wit" /> Folio (Collate |F 3v|): <pb n="3v" type="folio" xml:id="P3v-wit" /> Column (Collate |C 2|): <cb n="2" xml:id="P3vC2-wit" />
 	// Line (Collate |L 37|): <lb n="37" xml:id="P3vC2L37-wit" />
 	var html2Tei_break = function(arr, $teiParent, $htmlNode, stopAddW) { 
-		if($teiParent.nodeName=='app') return; //ueberfluessige <lb> usw. in correction <app> vermeiden
+		//if($teiParent.nodeName=='app') return; //ueberfluessige <lb> usw. in correction <app> vermeiden
 		
 		var xml_id;
 		var breakNodeText = getDomNodeText($htmlNode);

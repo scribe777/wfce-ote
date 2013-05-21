@@ -43,7 +43,7 @@ var wceObj;
 //for example: use the "corrections" menu if a whole word is highlighted as "gap" 
 var isCombination=false;
 
-function setConstants() {
+function setConstants(_type) {
 	wce_node = ed.execCommand('getWceNode', false);
 	add_new_wce_node = tinyMCEPopup.getWindowArg('add_new_wce_node');
 	wceObj = tinyMCEPopup.getWindowArg('wceobj');
@@ -58,7 +58,7 @@ function setConstants() {
 			 ed.selection.select(wce_node_parent);
 			 wce_node=wce_node_parent;
 			 add_new_wce_node=false;
-		}else{
+		}else if(wce_node && !wceObj._isNodeTypeOf(wce_node, _type)){
 			isCombination=true;
 		}
 	}
@@ -76,7 +76,7 @@ function wceInfoInit(wp) {
 
 	wce_type = wp;
 
-	if (wce_node) {
+	if (wce_node && !isCombination) {
 		wce_node_text = $(wce_node).text();
 		var wceAttr = wce_node.getAttribute('wce');
 
