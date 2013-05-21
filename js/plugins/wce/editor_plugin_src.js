@@ -936,7 +936,7 @@
 							info_text = 'Nomen Sacrum';
 							break;
 						case 'num':
-							info_text = 'Numeral';
+							info_text = ed.getLang('wce.infotext_numeral');
 							break;
 						case 'other':
 							info_text = ar['abbr_type_other'];
@@ -944,49 +944,49 @@
 						}
 						break;
 					case 'part': // part_abbr
-						info_text = '<div>' + 'Editorial expansion' + '<div>';
+						info_text = '<div>' + ed.getLang('wce.infotext_editorial_expansion') + '<div>';
 						break;
 					case 'brea':
 						switch (ar['break_type']) {
 						case 'lb':
-							info_text = '<div>Number: ' + ar['number'] + '</div>';
+							info_text = '<div>' + ed.getLang('wce.infotext_number') + ': ' + ar['number'] + '</div>';
 							if (ar['lb_alignment']) {
-								info_text += '<div>Alignment: ' + ar['lb_alignment'];
+								info_text += '<div>' + ed.getLang('wce.infotext_alignment') + ': ' + ar['lb_alignment'];
 							}
 							break;
 						case 'pb':
 							if (!ar['pb_ghostpage']) {
-								info_text = '<div>' + 'Page number (in sequence): ' + ar['number'];
+								info_text = '<div>' + ed.getLang('wce.infotext_page_number_sequence') + ': ' + ar['number'];
 								if (ar['pb_type'])
 									info_text += ar['pb_type'];
 								if (ar['fibre_type'])
 									info_text += ar['fibre_type'];
 							} else 
-								info_text = '<div>' + 'No number given';
+								info_text = '<div>' + ed.getLang('wce.infotext_no_number');
 							info_text += '</div>';
 							if (ar['facs']) {
-								info_text += '<div>' + 'URL to digital image: ' + ar['facs'] + '</div>';
+								info_text += '<div>' + ed.getLang('wce.infotext_url') + ': ' + ar['facs'] + '</div>';
 							}
 							break;
 						default:
-							info_text = '<div>Number: ' + ar['number'] + '</div>';
+							info_text = '<div>' + ed.getLang('wce.infotext_number') + ': ' + ar['number'] + '</div>';
 						}
 						break;
 					case 'note':
 						info_text = '<div>';
 						switch (ar['note_type']) {
 						case 'editorial':
-							info_text += 'Editorial Note</div>';
+							info_text += ed.getLang('wce.infotext_editorial_note') + '</div>';
 							break;
 						case 'transcriberquery':
-							info_text += 'Transcriber query</div>';
+							info_text += ed.getLang('wce.infotext_transcriber_query') + '</div>';
 							break;
 						case 'canonRef':
-							info_text += 'Canon reference</div>';
+							info_text += ed.getLang('wce.infotext_canon_reference') + '</div>';
 							break;
 						case 'changeOfHand':
-							info_text += 'Change of Hand</div>';
-							info_text += '<div>New hand: ' + ar['newHand'] + '</div>';
+							info_text += ed.getLang('wce.infotext_change_of_hand') + '</div>';
+							info_text += '<div>' + ed.getLang('wce.infotext_new_hand') + ': ' + ar['newHand'] + '</div>';
 							break;
 						default: // other
 							info_text += ar['note_type_other'] + '</div>';
@@ -1000,112 +1000,112 @@
 						corr_str += '<div style="margin-top:15px">';
 						switch (ar['reading']) {
 						case 'corr':
-							corr_str += 'Correction';
+							corr_str += ed.getLang('wce.correction');
 							break;
 						case 'comm':
-							corr_str += 'Commentary reading';
+							corr_str += ed.getLang('wce.commentary');
 							break;
 						case 'alt':
-							corr_str += 'Alternative reading';
+							corr_str += ed.getLang('wce.alternative');
 							break;
 						}
 						corr_str += '</div>';
-						corr_str += '<div style="margin-top:5px">' + ar[ed.wceNameParamInClass] + ': ';
+						corr_str += '<div style="margin-top:5px">' + ar[ed.wceNameParamInClass] + ': '; //TODO: "corrector" should read "Korrekteur" in German
 						if (ar['blank_correction'] == 'on')
-							corr_str += 'deleted' + '</div>';
+							corr_str += ed.getLang('wce.infotext_deleted') + '</div>';
 						else
 							corr_str += ar['corrector_text'] + '</div>';
 
 						var deletionText = ar['deletion'].replace(/\,/g, ', ');
 						if (deletionText && deletionText != 'null') {
 							// information on deletion
-							corr_str += '<div style="margin-top:5px">' + 'Method(s) of deletion: ' + deletionText + '</div>';
+							corr_str += '<div style="margin-top:5px">' + ed.getLang('wce.infotext_method_of_deletion') + ': ' + deletionText + '</div>';
 						}
 						if (ar['editorial_note']) {
 							corr_str += '<div style="margin-top:5px">Note: ' + ar['editorial_note'] + '</div>';
 						}
 						break;
 					case 'paratext':
-						info_text = '<div>' + 'Paratext type: ';
+						info_text = '<div>' + ed.getLang('wce.infotext_paratext_type') + ': ';
 						switch (ar['fw_type']) {
 						case 'commentary':
-							info_text = '<div>' + 'This is untranscribed commentary text' + '</div>';
+							info_text = '<div>' + ed.getLang('wce.infotext_untranscribed_text') + '</div>';
 							if (ar['covered'])
-								info_text += '<div style="margin-top:5px">' + ar['covered'] + ' line(s) covered.';
+								info_text += '<div style="margin-top:5px">' + ar['covered'] + ' ' + ed.getLang('wce.infotext_lines_covered') + '.';
 							break;
 						case 'runTitle':
-							info_text += 'Running title';
+							info_text += ed.getLang('wce.fw_running_title');
 							break;
 						case 'chapNum':
-							info_text += 'Chapter number';
+							info_text += ed.getLang('wce.fw_chapter_number');
 							break;
 						case 'chapTitle':
-							info_text += 'Chapter title';
+							info_text += ed.getLang('wce.fw_chapter_title');
 							break;
 						case 'colophon':
-							info_text += 'Colophon';
+							info_text += ed.getLang('wce.fw_colophon');
 							break;
 						case 'quireSig':
-							info_text += 'Quire signature';
+							info_text += ed.getLang('wce.fw_quiresignature');
 							break;
 						case 'AmmSec':
-							info_text += 'Ammonian section';
+							info_text += ed.getLang('wce.fw_ammonian');
 							break;
 						case 'EusCan':
-							info_text += 'Eusebian canon';
+							info_text += ed.getLang('wce.fw_eusebian');
 							break;
 						case 'euthaliana':
-							info_text += 'Euthaliana';
+							info_text += ed.getLang('wce.fw_euthaliana');
 							break;
 						case 'gloss':
-							info_text += 'Gloss';
+							info_text += ed.getLang('wce.fw_gloss');
 							break;
 						case 'lectTitle':
-							info_text += 'Lectionary title';
+							info_text += ed.getLang('wce.fw_lectionary_title');
 							break;
 						case 'stichoi':
-							info_text += 'Stichoi';
+							info_text += ed.getLang('wce.fw.stichoi');
 							break;
 						case 'pageNum':
-							info_text += 'Page number';
+							info_text += ed.getLang('wce.fw_pagenumber');
 							break;
 						default:
-							info_text += 'Other';
+							info_text += ed.getLang('wce.other');
 						}
 						info_text += '</div>';
 						if (ar['fw_type'] != 'commentary') {
-							info_text += '<div style="margin-top:10px">Value: ' + ar['marginals_text'] + '</div>';
+							info_text += '<div style="margin-top:10px">' + ed.getLang('wce.infotext_value') + ': ' + ar['marginals_text'] + '</div>';
 							if (ar['paratext_position'] == 'other') {
-								info_text += '<div style="margin-top:10px">Position: ' + ar['paratext_position_other'] + '</div>';
+								info_text += '<div style="margin-top:10px">' + ed.getLang('wce.infotext_position') + ': ' + ar['paratext_position_other'] + '</div>';
 							} else {
-								info_text += '<div style="margin-top:10px">Position: ' + ar['paratext_position'] + '</div>';
+								info_text += '<div style="margin-top:10px">' + ed.getLang('wce.infotext_position') + ': ' + ar['paratext_position'] + '</div>';
 							}
-							info_text += '<div style="margin-top:10px">Alignment: ' + ar['paratext_alignment'] + '</div>';
+							info_text += '<div style="margin-top:10px">' + ed.getLang('wce.infotext_alignment') + ': ' + ar['paratext_alignment'] + '</div>';
 						}
 						break;
 					case 'gap':
 						if (ar['unit'] == '' && ar['gap_reason'] == '') {
-							info_text = 'No information about the reason and extension of the gap available';
+							info_text = ed.getLang('wce.infotext_no_information_reason');
 							break;
 						}
-						info_text = '<div>' + 'Gap' + '</div><div style="margin-top:10px"> Reason: ';
+						info_text = '<div>' + ed.getLang('wce.gap') + '</div><div style="margin-top:10px"> ' + ed.getLang('wce.reason') + ': ';
 						if (ar['gap_reason'] == 'lacuna') {
-							info_text += 'Lacuna' + '</div>';
+							info_text += ed.getLang('wce.infotext_lacuna') + '</div>';
 						} else if (ar['gap_reason'] == 'illegible') {
-							info_text += 'Illegible text' + '</div>';
+							info_text += ed.getLang('wce.infotext_illegible') + '</div>';
 						} else {
-							info_text += 'Absent text' + '</div>';
+							info_text += ed.getLang('wce.infotext_absent_text') + '</div>';
 						}
 						if (ar['extent'] && ar['extent'] != null) {
-							info_text += '<div style="margin-top:10px">' + 'Extent: ' + ar['extent'] + ' ';
+							info_text += '<div style="margin-top:10px">' + ed.getLang('wce.extent') + ': ' + ar['extent'] + ' ';
 							if (ar['unit'] == 'other') {
 								info_text += ar['unit_other'] + '</div>';
 							} else {
-								info_text += ar['unit'] + '(s)</div>';
+								info_text += ar['unit'] + '(s)</div>'; //TODO: This is not good for German
 							}
 						}
 						if (ar['mark_as_supplied'] == 'supplied') {
-							info_text += '<div style="margin-top:10px">' + 'Supplied source: ';
+							info_text += '<div style="margin-top:10px">' + ed.getLang('wce.suppliedsource') + ': ';
 							if (ar['supplied_source'] == 'other') {
 								info_text += ar['supplied_source_other'] + '</div>';
 							} else {
@@ -1114,9 +1114,9 @@
 						}
 						break;
 					case 'unclear':
-						info_text = '<div>' + 'Uncertain letters' + '</div>';
+						info_text = '<div>' + ed.getLang('wce.menu_uncertain') + '</div>';
 						if (ar['unclear_text_reason'] != null) {
-							info_text += '<div>' + 'Reason: ';
+							info_text += '<div>' + ed.getLang('wce.reason') + ': ';
 							if (ar['unclear_text_reason'] == 'other') {
 								info_text += ar['unclear_text_reason_other'];
 							} else {
@@ -1126,29 +1126,29 @@
 						}
 						break;
 					case 'spaces':
-						info_text = '<div>' + 'Spaces</div><div style="margin-top:10px">Extent: ' + ar['sp_extent'] + ' ';
+						info_text = '<div>' + ed.getLang('wce.space') + '</div><div style="margin-top:10px">' + ed.getLang('wce.extent') + ': ' + ar['sp_extent'] + ' ';
 						if (ar['sp_unit'] == 'other') {
-							info_text += ar['sp_unit_other'] + '(s)' + '</div>';
+							info_text += ar['sp_unit_other'] + '(s)' + '</div>'; //TODO: Not good for German
 						} else {
-							info_text += ar['sp_unit'] + '(s)</div>';
+							info_text += ar['sp_unit'] + '(s)</div>'; //TODO: Not good for German
 						}
 						break;
 					case 'formatting':
 						if (ar['capitals_height'] != null) { // output only if capitals
-							info_text = '<div>' + 'Capitals' + '</div><div style="margin-top:10px">' + 'Height: ' + ar['capitals_height'] + '</div>';
+							info_text = '<div>' + ed.getLang('wce.menu_hl_capitals') + '</div><div style="margin-top:10px">' +  ed.getLang('wce.capitals_height') + ': ' + ar['capitals_height'] + '</div>';
 						} else { // all other formatting
 							if (ar['__t'] === 'formatting_displaced-above')
-								info_text = '<div>' + 'Displaced above' + '</div>';
+								info_text = '<div>' + ed.getLang('wce.infotext_dt_above') + '</div>';
 							else if (ar['__t'] === 'formatting_displaced-below')
-								info_text = '<div>' + 'Displaced below' + '</div>';
+								info_text = '<div>' + ed.getLang('wce.infotext_dt_below') + '</div>';
 							else if (ar['__t'] === 'formatting_displaced-other')
-								info_text = '<div>' + 'Displaced' + '</div>';
+								info_text = '<div>' + ed.getLang('wce.infotext_dt_other') + '</div>';
 							else
-								info_text = '<div>' + 'Highlighted text' + '</div>';
+								info_text = '<div>' + ed.getLang('wce.infotext_highlighted_text') + '</div>';
 						}
 						break;
 					case 'pc':
-						info_text = '<div>' + 'Punctuation mark' + '</div>';
+						info_text = '<div>' + ed.getLang('wce.infotext_punctuation_mark') + '</div>';
 						break;
 					default:
 						info_text = '';
@@ -1159,7 +1159,7 @@
 
 				if (corr_str != '') {
 					if ($(sele_node).html() == 'T') // Blank first hand reading
-						corr_str = '*: ' + 'Omission' + corr_str;
+						corr_str = '*: ' + ed.getLang('wce.infotext_omission') + corr_str;
 					else
 						corr_str = '*: ' + $(sele_node).html() + corr_str;
 				}
@@ -1207,7 +1207,7 @@
 			 */
 			case 'breaks':
 				var c = cm.createMenuButton('menu-break', {
-					title : 'Breaks (Ctrl+Alt+B)',
+					title : '{#wce.menu_break}' + ' (Ctrl+Alt+B)',
 					image : tinyMCE.baseURL + '/plugins/wce/img/button_B-new.png',
 					icons : false
 				});
@@ -1215,7 +1215,7 @@
 				c.onRenderMenu.add(function(c, m) {
 					var w = ed.WCE_VAR;
 					m.add({
-						title : 'add',
+						title : ed.getLang('wce.menu_add'),
 						id : 'menu-break-add',
 						onclick : function() {
 							ed.execCommand('mceAddBreak');
@@ -1223,7 +1223,7 @@
 					});
 
 					m.add({
-						title : 'edit',
+						title : ed.getLang('wce.menu_edit'),
 						id : 'menu-break-edit',
 						onclick : function() {
 							ed.execCommand('mceEditBreak');
@@ -1231,7 +1231,7 @@
 					});
 
 					m.add({
-						title : 'delete',
+						title : ed.getLang('wce.menu_delete'),
 						id : 'menu-break-delete',
 						onclick : function() {
 							ed.execCommand('wceDelNode');
@@ -1257,7 +1257,7 @@
 
 			case 'correction':
 				var c = cm.createButton('menu-correction', {
-					title : 'Corrections (Ctrl+Alt+C)',
+					title : '{#wce.menu_corrections}' +  ' (Ctrl+Alt+C)',
 					image : tinyMCE.baseURL + '/plugins/wce/img/button_C-new.png',
 					icons : false,
 					onclick : function() {
@@ -1269,7 +1269,7 @@
 
 			case 'illegible':
 				var c = cm.createMenuButton('menu-illegible', {
-					title : 'Deficiency',
+					title : '{#wce.menu_deficiency}',
 					image : tinyMCE.baseURL + '/plugins/wce/img/button_D-new.png',
 					icons : false
 				});
@@ -1279,12 +1279,12 @@
 					var w = ed.WCE_VAR;
 
 					sub = m.addMenu({
-						title : 'Uncertain Letters (Ctrl+Alt+U)',
+						title : ed.getLang('wce.menu_uncertain') + ' (Ctrl+Alt+U)',
 						id : 'menu-illegible-uncleartext'
 					});
 
 					sub.add({
-						title : 'add',
+						title : ed.getLang('wce.menu_add'),
 						id : 'menu-illegible-uncleartext-add',
 						onclick : function() {
 							ed.execCommand('mceAddUnclearText');
@@ -1292,7 +1292,7 @@
 					});
 
 					sub.add({
-						title : 'edit',
+						title : ed.getLang('wce.menu_edit'),
 						id : 'menu-illegible-uncleartext-edit',
 						onclick : function() {
 							ed.execCommand('mceEditUnclearText');
@@ -1300,7 +1300,7 @@
 					});
 
 					sub.add({
-						title : 'delete',
+						title : ed.getLang('wce.menu_delete'),
 						id : 'menu-illegible-uncleartext-delete',
 						onclick : function() {
 							ed.execCommand('wceDelNode');
@@ -1321,12 +1321,12 @@
 					});
 
 					sub = m.addMenu({
-						title : 'Gap (Ctrl+Alt+G)',
+						title : ed.getLang('wce.menu_gap') + ' (Ctrl+Alt+G)',
 						id : 'menu-illegible-lacuna'
 					});
 
 					sub.add({
-						title : 'add',
+						title : ed.getLang('wce.menu_add'),
 						id : 'menu-illegible-lacuna-add',
 						onclick : function() {
 							ed.execCommand('mceAddGap');
@@ -1334,7 +1334,7 @@
 					});
 
 					sub.add({
-						title : 'edit',
+						title : ed.getLang('wce.menu_edit'),
 						id : 'menu-illegible-lacuna-edit',
 						onclick : function() {
 							ed.execCommand('mceEditGap');
@@ -1342,7 +1342,7 @@
 					});
 
 					sub.add({
-						title : 'delete',
+						title : ed.getLang('wce.menu_delete'),
 						id : 'menu-illegible-lacuna-delete',
 						onclick : function() {
 							ed.execCommand('wceDelNode');
@@ -1363,7 +1363,7 @@
 					});
 
 					m.add({ // Ghost page
-						title : 'Ghost page',
+						title : ed.getLang('wce.menu_ghostpage'),
 						id : 'menu-illegible-ghostpage',
 						onclick : function() {
 							ed.execCommand('mceAddGhostPage');
@@ -1376,7 +1376,7 @@
 
 			case 'decoration':
 				var c = cm.createMenuButton('menu-decoration', {
-					title : 'Ornamentation',
+					title : '{#wce.menu_ornamentation}',
 					image : tinyMCE.baseURL + '/plugins/wce/img/button_O-new.png',
 					icons : false
 				});
@@ -1385,70 +1385,70 @@
 					var sub;
 					var w = ed.WCE_VAR;
 					sub = m.addMenu({
-						title : 'Highlight text',
+						title : ed.getLang('wce.menu_highlight_text'),
 						id : 'menu-decoration-highlight'
 					});
 
 					sub.add({
-						title : 'Rubrication',
+						title : ed.getLang('wce.menu_hl_rubrication'),
 						onclick : function() {
 							ed.execCommand('mceAdd_formatting', 'rubrication');
 						}
 					});
 
 					sub.add({
-						title : 'Gold',
+						title : ed.getLang('wce.menu_hl_gold'),
 						onclick : function() {
 							ed.execCommand('mceAdd_formatting', 'gold');
 						}
 					});
 
 					var sub2 = sub.addMenu({
-						title : 'Other colour'
+						title : ed.getLang('wce.menu_hl_other_color')
 					});
 
 					sub2.add({
-						title : 'Blue',
+						title : ed.getLang('wce.menu_hl_blue'),
 						onclick : function() {
 							ed.execCommand('mceAdd_formatting', 'blue');
 						}
 					});
 
 					sub2.add({
-						title : 'Green',
+						title : ed.getLang('wce.menu_hl_green'),
 						onclick : function() {
 							ed.execCommand('mceAdd_formatting', 'green');
 						}
 					});
 
 					sub2.add({
-						title : 'Yellow',
+						title : ed.getLang('wce.menu_hl_yellow'),
 						onclick : function() {
 							ed.execCommand('mceAdd_formatting', 'yellow');
 						}
 					});
 
 					sub2.add({
-						title : 'Other',
+						title : ed.getLang('wce.menu_hl_other'),
 						onclick : function() {
 							ed.execCommand('mceAdd_formatting', 'other');
 						}
 					});
 
 					sub.add({
-						title : 'Overline',
+						title : ed.getLang('wce.menu_hl_overline'),
 						onclick : function() {
 							ed.execCommand('mceAdd_formatting', 'overline');
 						}
 					});
 
 					sub2 = sub.addMenu({
-						title : 'Capitals',
+						title : ed.getLang('wce.menu_hl_capitals'),
 						id : 'menu-decoration-highlight-capitals'
 					});
 
 					sub2.add({
-						title : 'add',
+						title : ed.getLang('wce.menu_add'),
 						id : 'menu-decoration-highlight-capitals-add',
 						icons : false,
 						onclick : function() {
@@ -1457,7 +1457,7 @@
 					});
 
 					sub2.add({
-						title : 'edit',
+						title : ed.getLang('wce.menu_edit'),
 						id : 'menu-decoration-highlight-capitals-edit',
 						onclick : function() {
 							ed.execCommand('mceEditCapitals');
@@ -1465,7 +1465,7 @@
 					});
 
 					sub2.add({
-						title : 'delete',
+						title : ed.getLang('wce.menu_delete'),
 						id : 'menu-decoration-highlight-capitals-delete',
 						onclick : function() {
 							ed.execCommand('wceDelNode');
@@ -1486,26 +1486,26 @@
 					});
 					
 					sub = m.addMenu({
-						title : 'Displaced text',
+						title : ed.getLang('wce.menu_displaced_text'),
 						id : 'menu-decoration-displaced'
 					});
 					
 					sub.add({
-						title : 'Above',
+						title : ed.getLang('wce.menu_dt_above'),
 						onclick : function() {
 							ed.execCommand('mceAdd_formatting', 'displaced-above');
 						}
 					});
 
 					sub.add({
-						title : 'Below',
+						title : ed.getLang('wce.menu_dt_below'),
 						onclick : function() {
 							ed.execCommand('mceAdd_formatting', 'displaced-below');
 						}
 					});
 
 					sub.add({
-						title : 'Other',
+						title : ed.getLang('wce.menu_dt_other'),
 						onclick : function() {
 							ed.execCommand('mceAdd_formatting', 'displaced-other');
 						}
@@ -1513,7 +1513,7 @@
 
 
 					sub = m.addMenu({
-						title : 'Insert special characters'
+						title : ed.getLang('wce.menu_special_chars')
 					});
 
 					sub.add({
@@ -1545,7 +1545,7 @@
 					});
 
 					sub.add({
-						title : '\u03A1\u0336	(staurogram)',
+						title : '\u03A1\u0336    (staurogram)',
 						onclick : function() {
 							ed.execCommand('mceAdd_pc', '\u03A1\u0336');
 						}
@@ -1557,7 +1557,7 @@
 
 			case 'abbreviation':
 				var c = cm.createMenuButton('menu-abbreviation', {
-					title : 'Abbreviated text (Ctrl+Alt+A)',
+					title : '{#wce.menu_abbreviations}' + ' (Ctrl+Alt+A)',
 					image : tinyMCE.baseURL + '/plugins/wce/img/button_A-new.png',
 					icons : false
 				});
@@ -1565,7 +1565,7 @@
 				c.onRenderMenu.add(function(c, m) {
 					var w = ed.WCE_VAR;
 					m.add({
-						title : 'add',
+						title : ed.getLang('wce.menu_add'),
 						id : 'menu-abbreviation-add',
 						onclick : function() {
 							ed.execCommand('mceAddAbbr');
@@ -1573,7 +1573,7 @@
 					});
 
 					m.add({
-						title : 'edit',
+						title : ed.getLang('wce.menu_edit'),
 						id : 'menu-abbreviation-edit',
 						onclick : function() {
 							ed.execCommand('mceEditAbbr');
@@ -1581,7 +1581,7 @@
 					});
 
 					m.add({
-						title : 'delete',
+						title : ed.getLang('wce.menu_delete'),
 						id : 'menu-abbreviation-delete',
 						onclick : function() {
 							ed.execCommand('wceDelNode');
@@ -1606,7 +1606,7 @@
 
 			case 'paratext':
 				var c = cm.createMenuButton('menu-paratext', {
-					title : 'Marginalia (Ctrl+Alt+M)',
+					title : '{#wce.menu_marginalia}' + ' (Ctrl+Alt+M)',
 					image : tinyMCE.baseURL + '/plugins/wce/img/button_M-new.png',
 					icons : false
 				});
@@ -1614,7 +1614,7 @@
 				c.onRenderMenu.add(function(c, m) {
 					var w = ed.WCE_VAR;
 					m.add({
-						title : 'add',
+						title : ed.getLang('wce.menu_add'),
 						id : 'menu-paratext-add',
 						onclick : function() {
 							ed.execCommand('mceAddParatext');
@@ -1622,7 +1622,7 @@
 					});
 
 					m.add({
-						title : 'edit',
+						title : ed.getLang('wce.menu_edit'),
 						id : 'menu-paratext-edit',
 						onclick : function() {
 							ed.execCommand('mceEditParatext');
@@ -1630,7 +1630,7 @@
 					});
 
 					m.add({
-						title : 'delete',
+						title : ed.getLang('wce.menu_delete'),
 						id : 'menu-paratext-delete',
 						onclick : function() {
 							ed.execCommand('wceDelNode');
@@ -1655,7 +1655,7 @@
 
 			case 'note':
 				var c = cm.createMenuButton('menu-note', {
-					title : 'Note (Ctrl+Alt+N)',
+					title : '{#wce.menu_note}' + ' (Ctrl+Alt+N)',
 					image : tinyMCE.baseURL + '/plugins/wce/img/button_N-new.png',
 					icons : false
 				});
@@ -1663,7 +1663,7 @@
 				c.onRenderMenu.add(function(c, m) {
 					var w = ed.WCE_VAR;
 					m.add({
-						title : 'add',
+						title : ed.getLang('wce.menu_add'),
 						id : 'menu-note-add',
 						onclick : function() {
 							ed.execCommand('mceAddNote');
@@ -1671,7 +1671,7 @@
 					});
 
 					m.add({
-						title : 'edit',
+						title : ed.getLang('wce.menu_edit'),
 						id : 'menu-note-edit',
 						onclick : function() {
 							ed.execCommand('mceEditNote');
@@ -1679,7 +1679,7 @@
 					});
 
 					m.add({
-						title : 'delete',
+						title : ed.getLang('wce.menu_delete'),
 						id : 'menu-note-delete',
 						onclick : function() {
 							ed.execCommand('wceDelNode');
@@ -1704,7 +1704,7 @@
 
 			case 'punctuation':
 				var c = cm.createMenuButton('menu-punctuation', {
-					title : 'Punctuation',
+					title : '{#wce.menu_punctuation}',
 					image : tinyMCE.baseURL + '/plugins/wce/img/button_P-new.png',
 					icons : false
 				});
@@ -1713,7 +1713,7 @@
 					var sub;
 					var w = ed.WCE_VAR;
 					sub = m.addMenu({
-						title : 'Add punctuation'
+						title : ed.getLang('wce.menu_punctuation_add')
 					});
 
 					sub.add({
@@ -1789,12 +1789,12 @@
 					});
 
 					sub = m.addMenu({
-						title : 'Blank spaces',
+						title : ed.getLang('wce.menu_blank_spaces'),
 						id : 'menu-punctuation-blankspaces'
 					});
 
 					sub.add({
-						title : 'add',
+						title : ed.getLang('wce.menu_add'),
 						id : 'menu-punctuation-blankspaces-add',
 						icons : false,
 						onclick : function() {
@@ -1803,7 +1803,7 @@
 					});
 
 					sub.add({
-						title : 'edit',
+						title : ed.getLang('wce.menu_edit'),
 						id : 'menu-punctuation-blankspaces-edit',
 						onclick : function() {
 							ed.execCommand('mceEditSpaces');
@@ -1811,7 +1811,7 @@
 					});
 
 					sub.add({
-						title : 'delete',
+						title : ed.getLang('wce.menu_delete'),
 						id : 'menu-punctuation-blankspaces-delete',
 						onclick : function() {
 							ed.execCommand('wceDelNode');
@@ -2437,7 +2437,7 @@
 			
 			// add verse modify button
 			ed.addButton('versemodify', {
-				title : 'Modify verses (Ctrl+Alt+V)',
+				title : '{#wce.menu_verses}' + ' (Ctrl+Alt+V)',
 				cmd : 'mceVerseModify',
 				image : url + '/img/button_V-new.png'
 			});
