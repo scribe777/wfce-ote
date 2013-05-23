@@ -2447,11 +2447,14 @@
 			ed.onKeyUp.addToTop(function(ed, e) {
 				if(ed.hasTempText){ 
 					var dataList=ed.undoManager.data;
-					var l=dataList.length;
-					dataList[l-1]=null;
-					dataList.length=l-1; 
-					//dataList[l-1]=dataList[l-2];
-					ed.hasTempText=false; 
+					if(dataList){
+						var l=dataList.length; 
+						dataList[l-1]=null;
+						dataList.length=l-1; 
+						dataList[l-2].beforeBookmark=null;
+						//dataList[l-1]=dataList[l-2];
+						ed.hasTempText=false; 
+					}
 				} 
 				ed.keyDownDelCount = 0;
 
