@@ -193,6 +193,24 @@
 			}
 			return null;
 		},
+		
+		_isCusorAtBeginOfEditor : function (ed){
+			var rng = WCEObj._getRNG(ed);
+			if(rng.startOffset!=0) {
+				return null;
+			}
+			var startContainer=rng.startContainer;
+			var ancestor=WCEObj._getAncestorIfFirstChild(ed, startContainer);
+			var editorBody=ed.getBody();
+			
+			if(editorBody===ancestor){
+				return editorBody.firstChild;
+			}
+			if(ed.getBody().firstChild===ancestor){
+				return ancestor;
+			}
+			return null;
+		},
 
 		/*
 		 * return lastchild and is #text of a node. Reverse of _getAncestorIfFirstChild()
@@ -845,6 +863,43 @@
 				sel.addRange(rng1);
 			}
 	
+			if (ek == 32) {
+				ed.undoManager.add(); 
+				return true;
+			} 
+		
+			return false;
+		},
+		
+		/*
+		 * insert space at begin of the node
+		 */
+		_insertSpaceAtBegin : function(ed, node, ek) { 
+			ed.undoManager.add();
+			ed.hasTempText=true;
+			
+			var sel = WCEObj._getSEL(ed);
+			var rng = sel.getRangeAt(0);
+			var rng1 = rng.cloneRange(); 
+			
+			var newNode= document.createTextNode('\u00a0'); 
+			node.parentNode.insertBefore(newNode, node);	 
+	  
+			if (ek == 32) {
+				rng1.setStart(newNode, 1); 
+			}else{
+				rng1.setStart(newNode, 0);  
+			}
+			
+			rng1.setEnd(newNode, 1);
+			
+			if (sel.setSingleRange) {
+				sel.setSingleRange(rng1);
+			} else {
+				sel.removeAllRanges();
+				sel.addRange(rng1);
+			} 
+			
 			if (ek == 32) {
 				ed.undoManager.add(); 
 				return true;
@@ -2188,9 +2243,14 @@
 			if (ek == 17 || (ek > 32 && ek < 41)) {
 				return;
 			}
-
+			
 			var wcevar = ed.WCE_VAR;
 			var _stopEvent = WCEObj._stopEvent;
+			
+			//mousedown and keydown cannot at the same time
+			if(wcevar.isMouseDown){
+				return _stopEvent(ed, e);
+			}  
 			var _wceAdd = WCEObj._wceAdd;
 			var _wceAddNoDialog = WCEObj._wceAddNoDialog;
 			var _setWCEVariable = WCEObj._setWCEVariable;
@@ -2213,11 +2273,14 @@
 				}
 			}
 
-			if (ek == 65 && e.altKey && e.ctrlKey) //Ctrl+Shift+A
-				;
+			if (ek == 65 && e.altKey && e.ctrlKey) {
+				//Ctrl+Shift+A
+			}
+
 				
-			if (ek == 86 && e.altKey && e.ctrlKey) //Ctrl+Shift+V
-				;
+			if (ek == 86 && e.altKey && e.ctrlKey) {
+				//Ctrl+Shift+V
+			}
 			
 			// TODO: if no short_cut B, C ,Z ,Y .....
 			if (wcevar.isInBE && !e.ctrlKey) {
@@ -2236,6 +2299,20 @@
 					//if (wcevar.type === "unclear" || wcevar.type === "gap")
 					ed.execCommand('wceDelNode');
 					return _stopEvent(ed, e);
+				} else if (wcevar.isc) {
+					//Allow text input at begin of the editor #1362
+					var ancestor = WCEObj._isCusorAtBeginOfEditor(ed);
+					if (ancestor) {
+						var isSpaceKey = WCEObj._insertSpaceAtBegin(ed, ancestor, ek);
+						_setWCEVariable(ed);
+						_redrawContols(ed);
+						ed.WCE_VAR.isRedrawn = true;
+						if (isSpaceKey) {
+							return _stopEvent(ed, e);
+						}
+					} else {
+						return _stopEvent(ed, e);
+					}
 				} else
 					return _stopEvent(ed, e);
 			}
@@ -2409,6 +2486,13 @@
 
 			ed.onKeyDown.addToTop(WCEObj._setKeyDownEvent);
 			ed.onKeyPress.addToTop(WCEObj._setKeyPressEvent); //needed for Chrome (Linux) :-(
+			
+			ed.onMouseDown.addToTop(function(ed, e){
+				ed.WCE_VAR.isMouseDown=true;
+			});
+			ed.onMouseUp.addToTop(function(ed, e){
+				ed.WCE_VAR.isMouseDown=false;
+			});
 			
 			// class="__t=wce_type&__n=wce_name...."
 			ed.wceTypeParamInClass = '__t';
