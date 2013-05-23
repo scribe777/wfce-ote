@@ -28,6 +28,7 @@ function getHtmlByTei(inputString) {
 	
 	// As &om; can not be handled we go back to OMISSION
 	inputString = inputString.replace(/&om;/g, "OMISSION");
+	inputString = inputString.replace('\u00a0',' ');
 	inputString = inputString.replace(/<\/supplied><\/w><w><supplied.*?>/g, " ");
 		
 	
