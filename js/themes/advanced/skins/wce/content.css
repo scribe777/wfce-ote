@@ -3,9 +3,11 @@
     src: url(fonts/GentiumForIE.eot);
   	src: url(fonts/GentiumForIE.eot?#iefix) format('embedded-opentype'),
 	   local('GentiumPlus Regular'), local('Gentium Plus'),
-	   url(fonts/GentiumPlus-R.woff) format('woff'), /* f¨¹r alle anderen (bis auf Safari) */
-       url(fonts/GentiumPlus-R.ttf) format('opentype'), /* f¨¹r Safari */
-	   url(fonts/GentiumForSafari.svg#GentiumPlusRegular) format('svg'); 
+	   url(fonts/GentiumPlus-R.woff) format('woff'), /* for all other browsers (except for Safari) */
+       url(fonts/GentiumPlus-R.ttf) format('opentype'), /* for Safari */
+	   url(fonts/GentiumForSafari.svg#GentiumPlusRegular) format('svg');
+  font-family: Antinoou;
+	src: local('Antinoou');
 }
 body, td, pre {color:#000; font-size:24px; margin:8px; line-height:48px; font-family: GentiumPlus;}
 body {background-color:#FFE6BB;}

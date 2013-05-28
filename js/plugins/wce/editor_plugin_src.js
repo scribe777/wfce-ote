@@ -605,6 +605,7 @@
 			} else if (_isNodeTypeOf(selectedNode, 'abbr')) {
 				_setAllControls(ed, true);
 				w.not_A = false;
+				w.not_B = false; // Breaks are allowed inside abbreviations
 				if (WCEObj._canInsertNote(ed, rng)) {
 					w.not_N = false;
 				}
@@ -2219,6 +2220,8 @@
 					//if (wcevar.type === "unclear" || wcevar.type === "gap")
 					ed.execCommand('wceDelNode');
 					return _stopEvent(ed, e);
+				} else if (!ed.WCE_VAR.not_B && (ek == 13 || ek == 10)) {
+					;
 				} else
 					return _stopEvent(ed, e);
 			}

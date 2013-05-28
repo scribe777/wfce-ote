@@ -852,11 +852,37 @@ function getHtmlByTei(inputString) {
 		var wceAttr = '';
 		var origText = '';
 		var rdgAttr;
+		//var textNodes = [];
 		
 		var collection = rdgs[0].childNodes;
 		for (var i = 0, l = collection.length; i < l; i++) {
+			/*node = collection[i];
+			nodes = node.childNodes;
+			for (var j = 0, k = nodes.length; j < k; j++) {
+				nnode = nodes[j];
+				//alert(nnode.nodeName);
+				var text = '';
+				if (nnode.nodeType == 3) {
+					text = nnode.nodeValue;
+				} else if (nnode.nodeType == 1) {
+					if (nnode.nodeName === 'lb') {
+						//textNodes.push('lb');
+						var $test = $newDoc.createElement('test');
+						Tei2Html_break($test,nnode,'lb');
+						textNodes.push($test.textContent);
+						//textNodes.push($($test).html());//.replace(/span/g,"<"));//TODO MARTIN
+						//alert($test.innerHTML);
+					}
+					if (nnode.firstChild)
+						text = nnode.firstChild.nodeValue;
+				}
+				textNodes.push(text);
+			}
+			origText = textNodes.join(' ');*/
 			origText += collection[i].firstChild.nodeValue + ' '; // add text word for word
 		}
+	    
+			
 		origText = origText.trim();
 		if (origText === 'OMISSION')
 			$newNode.setAttribute('class', 'corr_blank_firsthand');
@@ -1660,8 +1686,7 @@ function getTeiByHtml(inputString, args) {
 	// Line (Collate |L 37|): <lb n="37" xml:id="P3vC2L37-wit" />
 	var html2Tei_break = function(arr, $teiParent, $htmlNode, stopAddW) { 
 		//if($teiParent.nodeName=='app') return; //ueberfluessige <lb> usw. in correction <app> vermeiden
-		
-		var xml_id;
+			var xml_id;
 		var breakNodeText = getDomNodeText($htmlNode);
 		var break_type = arr['break_type'];
 		var $newNode;

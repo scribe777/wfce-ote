@@ -16,7 +16,7 @@
 		execcommand_callback : 'wceExecCommandHandler',
 		save_onsavecallback : "saveDataToDB",
 		directionality : (rtl) ? "rtl" : "ltr",
-		language : (lang) ? lang : "en", 
+		language : (lang) ? lang : "en",
 		// invalid_elements:'p',
 		/*
 		 * plugins : "wce,pagebreak,style,layer,advhr,advimage,emotions,iespell,inlinepopups,safari,preview,media,searchreplace,print,contextmenu,paste,directionality,fullscreen,noneditable,visualchars,nonbreaking,xhtmlxtras,template,wordcount,advlist,autosave",
@@ -152,6 +152,11 @@ function saveDataToDB() {
 		if (gadgets.util.hasFeature('pubsub-2'))
 			gadgets.Hub.publish("interedition.transcription.saved", null);
 	});
+}
+
+function setPreferredFontFamily(fontFamily) {
+	//$(document).ready(function() {$(".mceContentBody").css("font-family", fontFamily);})
+	$(".mceContentBody").css("font-family", fontFamily);
 }
 
 function increaseLineHeight() {
