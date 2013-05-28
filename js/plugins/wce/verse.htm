@@ -1,23 +1,27 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" style="height:100%">
 <head>
-<title>Verse Modify</title>
+<title>{#wce.verses_title}</title>
 <script type="text/javascript" src="../../tiny_mce_popup.js"></script>
 <script type="text/javascript" src="js/wce.js"></script>
 <script type="text/javascript" src="../../jquery.js"></script>
 </head>
 <body id="table">
-	<form onsubmit="return false;" action="#" name="noteinfo">
-		<div id="insertVerseDiv">
-			<div>
+	<form onsubmit="return false;" action="#">
+		<div id="insertDiv">
+			<div id="insertVerseDiv">
 				<input type="radio" id="insertVerseRadio" name="versemodify" onclick="canInsertVerse();">{#wce.verse_insert}</input>
-				<input id="insertVerseNummer" type="text" />
+				<input id="insertVerseNumber" type="text" />
 			</div>
-			<div>
+			<div id="insertInscriptioDiv">
 				<input type="radio" id="insertInscriptioRadio" name="versemodify" onclick="canInsertInscriptio();">{#wce.inscriptio_insert}</input>
 			</div>
-			<div>
+			<div id="insertSubscriptioDiv">
 				<input type="radio" id="insertSubscriptioRadio" name="versemodify" onclick="canInsertSubscriptio();">{#wce.subscriptio_insert}</input>
+			</div>
+			<div id="insertChapterDiv">
+				<input type="radio" id="insertChapterRadio" name="versemodify" onclick="canInsertChapter();">{#wce.chapter_insert}</input>
+				<input id="insertChapterNumber" type="text" />
 			</div>
 		</div>
 		<div id="deleteVerseDiv" style="margin-top:10px">
@@ -26,9 +30,15 @@
 			</div>
 			<fieldset style="border:1px solid #ccc;width:auto; height:auto; overflow-y:auto" id="verseList"></fieldset>
 		</div>
+		<div id="deleteChapterDiv" style="margin-top:10px">
+			<div>
+				<input type="radio" id="deleteChapterRadio" onclick="canDeleteChapter();" name="versemodify"/>{#wce.chapter_remove}
+			</div>
+			<fieldset style="border:1px solid #ccc;width:auto; height:auto; overflow-y:auto" id="chapterList"></fieldset>
+		</div>
 		<div class="mceActionPanel" style="margin-bottom:10px">
 			<input type="button" id="ok" name="ok" value="OK"
-				onclick="updateVerse();tinyMCEPopup.close();" />
+				onclick="update();tinyMCEPopup.close();" />
 			<input type="button" name="cancel" value="{#cancel}"
 				onclick="tinyMCEPopup.close();" />
 		</div>
@@ -46,31 +56,57 @@ var contentWithVerse;
 	
 	function canInsertVerse(){
 		$('#insertVerseRadio').attr('checked','checked');
+		$('#insertVerseNumber').removeAttr('disabled');
+		$('#insertChapterNumber').attr('disabled','disabled');
 		$('#verseList').attr('disabled','disabled');
-		$('#insertVerseNummer').removeAttr('disabled'); 
+		$('#chapterList').attr('disabled','disabled');
 	}
 	
 	function canInsertInscriptio(){
 		$('#insertInscriptioRadio').attr('checked','checked');
+		$('#insertVerseNumber').attr('disabled','disabled');
+		$('#insertChapterNumber').attr('disabled','disabled');
 		$('#verseList').attr('disabled','disabled');
+		$('#chapterList').attr('disabled','disabled');
 	}
 	
 	function canInsertSubscriptio(){
 		$('#insertSubscriptioRadio').attr('checked','checked');
+		$('#insertVerseNumber').attr('disabled','disabled');
+		$('#insertChapterNumber').attr('disabled','disabled');
 		$('#verseList').attr('disabled','disabled');
+		$('#chapterList').attr('disabled','disabled');
+	}
+	
+	function canInsertChapter(){
+		$('#insertChapterRadio').attr('checked','checked');
+		$('#insertChapterNumber').removeAttr('disabled'); 
+		$('#insertVerseNumber').attr('disabled','disabled');
+		$('#verseList').attr('disabled','disabled');
+		$('#chapterList').attr('disabled','disabled');
 	}
 	
 	function canDeleteVerse(){
-		$('#insertVerseNummer').attr('disabled','disabled');
-		$('#insertVerseDiv').attr('disabled','disabled');
 		$('#deleteVerseRadio').attr('checked','checked');
 		$('#verseList').removeAttr('disabled');
+		$('#insertVerseNumber').attr('disabled','disabled');
+		$('#insertChapterNumber').attr('disabled','disabled');
+		$('#chapterList').attr('disabled','disabled');
+	}
+	
+	function canDeleteChapter(){
+		$('#deleteChapterRadio').attr('checked','checked');
+		$('#chapterList').removeAttr('disabled');
+		$('#insertVerseNumber').attr('disabled','disabled');
+		$('#insertChapterNumber').attr('disabled','disabled');
+		$('#verseList').attr('disabled','disabled');
 	}
 	
 	function init() {
 		canDeleteVerse();
 		contentWithVerse=$('<div/>').html(ed.getContent())[0]; //selects everything starting the complete chapter
-		$('#verseList').html(getVerseList(contentWithVerse)); 
+		$('#verseList').html(getVerseList(contentWithVerse));
+		$('#chapterList').html(getChapterList(contentWithVerse));
 	}
 	
 	function getVerseList(node){
@@ -96,9 +132,33 @@ var contentWithVerse;
 		return out;		
 	}
 	
-	function updateVerse(){ 
+	function getChapterList(node){
+		var out="";
+		if(!node || node.nodeType != 1){
+			return out;
+		}
+		
+		var list=node.childNodes;
+		for(var i=0,len=list.length; i<len; i++){
+			var n=list[i];
+			if(n.nodeType==1){
+				out+=getChapterList(n); 
+			}
+		}
+		
+		var className=node.className;
+		if(className && className.match(/chapter_number/)){
+			var v=$.trim(node.innerHTML);
+			if(v && v!='')
+				out+='<input type="checkbox" value="'+v+'">Chapter '+v+'</input><br />'; 
+		}	
+		return out;		
+	}
+	
+	
+	function update(){ 
 		if ($('#insertVerseRadio').attr('checked')){
-			var newVerseNr = $('#insertVerseNummer').val().trim();
+			var newVerseNr = $('#insertVerseNumber').val().trim();
 			newVerseNr = newVerseNr.replace(/\D/g,'');
 			if (newVerseNr != ''){
 				ed.selection.setContent('<span class="verse_number" wce="__t=verse_number"> ' + newVerseNr + '</span> ');
@@ -110,60 +170,68 @@ var contentWithVerse;
 		} else if ($('#insertSubscriptioRadio').attr('checked')){
 			ed.selection.setContent('<span class="chapter_number" wce="__t=chapter_number"> ' + 'Subscriptio ' + '</span><span class="verse_number" wce="__t=verse_number"></span>PLACE THE SUBSCRIPTIO HERE! ');
 			return;
-		}
-		
-		var verseList=$('#verseList').find('input:checkbox');
-		for (var i=0,len=verseList.length; i<len; i++){ 
-			var cb=verseList[i];
-			if ($(cb).attr('checked')){
-				var verseNr=$(cb).val();				
-				var startNode=null,endNode=null;
-				var spanList=$(contentWithVerse).find('span');
-				for (var j=0,len2=spanList.length; j<len2; j++){
-					var span=spanList[j];
-					var spanValue=$(span).html().trim();
-					if (!span.className){
-						continue;
-					}
-					if (span.className.toLowerCase()=='verse_number'){						
-						if (startNode){
-							endNode=span;
-							break;
-						} else if(spanValue==verseNr){
-							startNode=span; 
-						} 
-					}					
-				}
-				delVerse(startNode,endNode);
-				/*
-				if(startNode){ 
-					var startText=document.createTextNode('[@['); 
-					startNode.parentNode.insertBefore(startText,startNode);  
-				}
-				if(endNode){
-					var endText=document.createTextNode(']@]');  
-					endNode.parentNode.insertBefore(endText,endNode); 
-					
-				}
-				
-				var content=$(contentWithVerse).html();
-				var index1,index2;
-				if(startNode && endNode){ 
-					index1 = content.indexOf("[@[");
-					index2= content.indexOf("]@]");
-					var con=content.substring(0,index1);
-					con+=content.substring(index2+3);
-					content=con;
-				} 
-				else if(startNode){
-					index1 = content.indexOf("[@[");
-					content=content.substring(0,index1); 
-				}
-				contentWithVerse=$('<div/>').html(content)[0];
-				*/
+		} else if ($('#insertChapterRadio').attr('checked')){
+			var newChapterNr = $('#insertChapterNumber').val().trim();
+			newChapterNr = newChapterNr.replace(/\D/g,'');
+			if (newChapterNr != ''){
+				ed.selection.setContent('<span class="chapter_number" wce="__t=chapter_number"> ' + newChapterNr + '</span> ');
 			}
-		} 
-		ed.setContent($(contentWithVerse).html());  
+			return;
+		} else if ($('#deleteVerseRadio').attr('checked')){
+			var verseList=$('#verseList').find('input:checkbox');
+			for (var i=0,len=verseList.length; i<len; i++){ 
+				var cb=verseList[i];
+				if ($(cb).attr('checked')){
+					var verseNr=$(cb).val();				
+					var startNode=null,endNode=null;
+					var spanList=$(contentWithVerse).find('span');
+					for (var j=0,len2=spanList.length; j<len2; j++){
+						var span=spanList[j];
+						var spanValue=$(span).html().trim();
+						if (!span.className){
+							continue;
+						}
+						if (span.className.toLowerCase()=='verse_number'){						
+							if (startNode){
+								endNode=span;
+								break;
+							} else if(spanValue==verseNr){
+								startNode=span; 
+							} 
+						}
+					}
+					delVerse(startNode,endNode);
+				}
+			}	 
+		} else if ($('#deleteChapterRadio').attr('checked')){
+			var chapterList=$('#chapterList').find('input:checkbox');
+			for (var i=0,len=chapterList.length; i<len; i++){ 
+				var cb=chapterList[i];
+				if ($(cb).attr('checked')){
+					var chapterNr=$(cb).val();				
+					var startNode=null,endNode=null;
+					var spanList=$(contentWithVerse).find('span');
+					for (var j=0,len2=spanList.length; j<len2; j++){
+						var span=spanList[j];
+						var spanValue=$(span).html().trim();
+						if (!span.className){
+							continue;
+						}
+						if (span.className.toLowerCase()=='chapter_number'){						
+							/*if (startNode){
+								endNode=span;
+								break;
+							} else if(spanValue==chapterNr){
+								startNode=span; 
+							} */
+							$(span).remove();
+						}
+					}
+					//delChapter(startNode,endNode);
+				}
+			}	 
+		}
+		ed.setContent($(contentWithVerse).html());
 	}
 	
 	function getCursorPositionInTextOf(element) {
@@ -204,6 +272,35 @@ var contentWithVerse;
 		_delVerse(contentWithVerse);
 	}
 	
+	function delChapter(startNode,endNode){
+		var start;
+		var _delChapter=function(node){
+			if(node==startNode){
+				start=true;
+			} else if (node == endNode) {
+				start=false;
+				return true;
+			} else {
+				var temp=node.childNodes;
+				var list=new Array();
+				for(var i=0,len=temp.length;i<len;i++){
+					list[i]=temp[i];
+				}				
+				for(var i=0,len=list.length;i<len;i++){
+					var n=list[i];
+					if(_delChapter(n)){
+						return true;
+					}
+				}
+			}
+			if(start){				
+				$(node).remove();
+			}
+		}
+		
+		_delChapter(contentWithVerse);
+	}
+		
 	if (!tinyMCE.isIE) {
 		$(document).keydown(function(e) {
 			var evt = e || window.event

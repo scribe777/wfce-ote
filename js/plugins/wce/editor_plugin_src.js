@@ -2261,7 +2261,7 @@
 				return _stopEvent(ed, e);
 			}
 
-			// press and hold to delete char prohibited
+			// press and hold to delete char prohibited in some cases
 			if (!tinymce.isOpera && (ek == 46 || ek == 8)) {
 				ed.keyDownDelCount++;
 				if (ed.keyDownDelCount > 1) {
@@ -2274,12 +2274,11 @@
 				}
 			}
 
-			if (ek == 65 && e.altKey && e.ctrlKey) {
+			if (((tinymce.isMac && e.metaKey) || (e.ctrlKey)) && e.altKey && ek == 65) {
 				//Ctrl+Shift+A
 			}
-
 				
-			if (ek == 86 && e.altKey && e.ctrlKey) {
+			if (e.ctrlKey && e.altKey && ek == 86) {
 				//Ctrl+Shift+V
 			}
 			
@@ -2301,7 +2300,7 @@
 					ed.execCommand('wceDelNode');
 					return _stopEvent(ed, e);
 				} else if (!ed.WCE_VAR.not_B && (ek == 13 || ek == 10)) {
-					;
+					// Just a placeholder
 				} else if (wcevar.isc) {
 					//Allow text input at begin of the editor #1362
 					var ancestor = WCEObj._isCusorAtBeginOfEditor(ed);
@@ -2714,9 +2713,11 @@
 					 
 					if (wceNode.getAttribute('class') === 'commentary') // cursor is inside [comm]
 						wceNode.parentNode.parentNode.removeChild(wceNode.parentNode);
-					else
-						wceNode.parentNode.removeChild(wceNode); //TODO: This causes problems under Safari and IE(?)
-
+					else {
+						if (wceNode !== null)
+							//$(wceNode).remove();
+							wceNode.parentNode.removeChild(wceNode); //TODO: This causes problems under Safari and IE(?)
+					}
 					if ((originalText) && originalText != 'null') //TODO: I am not sure why we still need the string 'null' (but it works)
 						ed.selection.setContent(originalText);
 					
@@ -2950,7 +2951,7 @@
 			
 			// verse modify
 			ed.addCommand('mceVerseModify', function() {
-				_wceAdd(ed, url, '/verse.htm', 360, 750, 1, true);
+				_wceAdd(ed, url, '/verse.htm', 360, 1024, 1, true);
 
 			});
 			
