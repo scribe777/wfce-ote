@@ -193,6 +193,24 @@
 			}
 			return null;
 		},
+		
+		_isCusorAtBeginOfEditor : function (ed){
+			var rng = WCEObj._getRNG(ed);
+			if(rng.startOffset!=0) {
+				return null;
+			}
+			var startContainer=rng.startContainer;
+			var ancestor=WCEObj._getAncestorIfFirstChild(ed, startContainer);
+			var editorBody=ed.getBody();
+			
+			if(editorBody===ancestor){
+				return editorBody.firstChild;
+			}
+			if(ed.getBody().firstChild===ancestor){
+				return ancestor;
+			}
+			return null;
+		},
 
 		/*
 		 * return lastchild and is #text of a node. Reverse of _getAncestorIfFirstChild()
@@ -810,30 +828,84 @@
 		 */
 		_insertSpace : function(ed, ek) {
 			var w = ed.WCE_VAR;
-			var next = w.nextElem;
+			var next = w.nextElem;  
 
+			ed.undoManager.add();
+			ed.hasTempText=true;
+			
 			var sel = WCEObj._getSEL(ed);
 			var rng = sel.getRangeAt(0);
 			var rng1 = rng.cloneRange();
-			var newText = document.createTextNode(" ");
-			if (next) {
-				next.parentNode.insertBefore(newText, next);
-			} else {
-				ed.getBody().appendChild(newText);
+			
+			var newNodeText=' '; 
+			//if(tinyMCE.isGecko || tinyMCE.isIE || tinyMCE.isOpera){
+				newNodeText='\u00a0';
+			//}
+			
+			var newNode= document.createTextNode(newNodeText); 
+			if (next) { 
+				next.parentNode.insertBefore(newNode, next);
+			} else {	   
+				ed.getBody().appendChild(newNode); 
+			} 
+			
+			if (ek == 32) {
+				rng1.setStart(newNode, 1); 
+			}else{
+				rng1.setStart(newNode, 0); 
 			}
-			rng1.setStart(newText, 1);
-			rng1.setEnd(newText, 1);
-
+			
+			rng1.setEnd(newNode, 1);
+			
 			if (sel.setSingleRange) {
 				sel.setSingleRange(rng1);
 			} else {
 				sel.removeAllRanges();
 				sel.addRange(rng1);
 			}
-
+	
 			if (ek == 32) {
+				ed.undoManager.add(); 
 				return true;
+			} 
+		
+			return false;
+		},
+		
+		/*
+		 * insert space at begin of the node
+		 */
+		_insertSpaceAtBegin : function(ed, node, ek) { 
+			ed.undoManager.add();
+			ed.hasTempText=true;
+			
+			var sel = WCEObj._getSEL(ed);
+			var rng = sel.getRangeAt(0);
+			var rng1 = rng.cloneRange(); 
+			
+			var newNode= document.createTextNode('\u00a0'); 
+			node.parentNode.insertBefore(newNode, node);	 
+	  
+			if (ek == 32) {
+				rng1.setStart(newNode, 1); 
+			}else{
+				rng1.setStart(newNode, 0);  
 			}
+			
+			rng1.setEnd(newNode, 1);
+			
+			if (sel.setSingleRange) {
+				sel.setSingleRange(rng1);
+			} else {
+				sel.removeAllRanges();
+				sel.addRange(rng1);
+			} 
+			
+			if (ek == 32) {
+				ed.undoManager.add(); 
+				return true;
+			} 
+		
 			return false;
 		},
 
@@ -2172,9 +2244,14 @@
 			if (ek == 17 || (ek > 32 && ek < 41)) {
 				return;
 			}
-
+			
 			var wcevar = ed.WCE_VAR;
 			var _stopEvent = WCEObj._stopEvent;
+			
+			//mousedown and keydown cannot at the same time
+			if(wcevar.isMouseDown){
+				return _stopEvent(ed, e);
+			}  
 			var _wceAdd = WCEObj._wceAdd;
 			var _wceAddNoDialog = WCEObj._wceAddNoDialog;
 			var _setWCEVariable = WCEObj._setWCEVariable;
@@ -2197,11 +2274,14 @@
 				}
 			}
 
-			if (ek == 65 && e.altKey && e.ctrlKey) //Ctrl+Shift+A
-				;
+			if (ek == 65 && e.altKey && e.ctrlKey) {
+				//Ctrl+Shift+A
+			}
+
 				
-			if (ek == 86 && e.altKey && e.ctrlKey) //Ctrl+Shift+V
-				;
+			if (ek == 86 && e.altKey && e.ctrlKey) {
+				//Ctrl+Shift+V
+			}
 			
 			// TODO: if no short_cut B, C ,Z ,Y .....
 			if (wcevar.isInBE && !e.ctrlKey) {
@@ -2222,6 +2302,20 @@
 					return _stopEvent(ed, e);
 				} else if (!ed.WCE_VAR.not_B && (ek == 13 || ek == 10)) {
 					;
+				} else if (wcevar.isc) {
+					//Allow text input at begin of the editor #1362
+					var ancestor = WCEObj._isCusorAtBeginOfEditor(ed);
+					if (ancestor) {
+						var isSpaceKey = WCEObj._insertSpaceAtBegin(ed, ancestor, ek);
+						_setWCEVariable(ed);
+						_redrawContols(ed);
+						ed.WCE_VAR.isRedrawn = true;
+						if (isSpaceKey) {
+							return _stopEvent(ed, e);
+						}
+					} else {
+						return _stopEvent(ed, e);
+					}
 				} else
 					return _stopEvent(ed, e);
 			}
@@ -2346,14 +2440,25 @@
 			var _wceAddNoDialog = WCEObj._wceAddNoDialog;
 
 			ed.keyDownDelCount = 0;
-
+			
 			// setWCE_CONTROLS
 			ed.onNodeChange.add(function(ed, cm, n) {
 				WCEObj._setWCEVariable(ed);
 				WCEObj._redrawContols(ed);
-			});
+			}); 
 
 			ed.onKeyUp.addToTop(function(ed, e) {
+				if(ed.hasTempText){ 
+					var dataList=ed.undoManager.data;
+					if(dataList){
+						var l=dataList.length; 
+						dataList[l-1]=null;
+						dataList.length=l-1; 
+						dataList[l-2].beforeBookmark=null;
+						//dataList[l-1]=dataList[l-2];
+						ed.hasTempText=false; 
+					}
+				} 
 				ed.keyDownDelCount = 0;
 
 				// wenn redraw bei keyDown nicht gemacht
@@ -2387,6 +2492,13 @@
 
 			ed.onKeyDown.addToTop(WCEObj._setKeyDownEvent);
 			ed.onKeyPress.addToTop(WCEObj._setKeyPressEvent); //needed for Chrome (Linux) :-(
+			
+			ed.onMouseDown.addToTop(function(ed, e){
+				ed.WCE_VAR.isMouseDown=true;
+			});
+			ed.onMouseUp.addToTop(function(ed, e){
+				ed.WCE_VAR.isMouseDown=false;
+			});
 			
 			// class="__t=wce_type&__n=wce_name...."
 			ed.wceTypeParamInClass = '__t';
@@ -2527,6 +2639,7 @@
 			ed.onInit.add(function() {
 				WCEObj._initWCEConstants(ed);
 				WCEObj._initWCEVariable(ed);
+
 				//
 				ed.teiIndexData = {
 					'bookNumber' : '00',
