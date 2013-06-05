@@ -155,8 +155,7 @@ function saveDataToDB() {
 }
 
 function setPreferredFontFamily(fontFamily) {
-	//$(document).ready(function() {$(".mceContentBody").css("font-family", fontFamily);})
-	$(".mceContentBody").css("font-family", fontFamily);
+	$('#wce_editor_ifr').contents().find('#tinymce').css('font-family', fontFamily);
 }
 
 function increaseLineHeight() {
