@@ -1,6 +1,8 @@
 ﻿﻿function setWceEditor(_id, rtl, finishCallback, lang, getWitness, getBook, myBaseURL) {
+    if (typeof myBaseURL != "undefined") {
 	tinyMCE.baseURL = myBaseURL;
 	tinyMCE.baseURI = new tinyMCE.util.URI(tinyMCE.baseURL);
+    }
 	tinyMCE.init({
 		// General options
 		mode : "exact",
