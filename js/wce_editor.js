@@ -1,6 +1,6 @@
 ﻿﻿function setWceEditor(_id, rtl, finishCallback, lang, getWitness, getBook) {
-	tinyMCE.baseURL = URI('js/').absoluteTo(gadgets.util.getUrlParameters()['url']);
-	tinyMCE.baseURI = new tinyMCE.util.URI(tinyMCE.baseURL);
+	//tinyMCE.baseURL = URI('js/').absoluteTo(gadgets.util.getUrlParameters()['url']);
+	//tinyMCE.baseURI = new tinyMCE.util.URI(tinyMCE.baseURL);
 	tinyMCE.init({
 		// General options
 		mode : "exact",

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>TEI Editor</title>
+    <style type="text/css">
+      <!--
+          body {
+	  margin-left: auto;
+	  margin-right: auto;
+	  height: 98%;
+	  width: 90%;
+	  background-color: #11303d;
+	  font-family: Verdana, Arial, Helvetica, sans-serif;
+	  font-size: 14px;
+          }
+        -->
+    </style>
+  </head>
+  <body>
+    <form method="post" id="wce_form" action=".">
+      <div id="user_toolbar" ></div>
+      <div style="margin: 10px 0px 10px 0px">
+	<textarea id="wce_editor" rows="28" cols="80" style="width: 100%;">
+        </textarea>
+      </div>
+    </form>
+    <div id="propertydisplaybox"></div>
+    <script type="text/javascript" src="/sitedomain.js"></script>
+    <script type="text/javascript" src="../wfce-ote/js/jquery.js"></script>
+    <script type="text/javascript" src="../wfce-ote/js/tiny_mce_src.js"></script>
+    <script type="text/javascript" src="../wfce-ote/js/wce_editor.js"></script>
+    <script type="text/javascript" src="../wfce-ote/js/wce_tei.js"></script>
+    <script type="text/javascript" src="../wfce-ote/js/wce_callback.js"></script>
+    <script type="text/javascript" src="../wfce-ote/js/rangy-core.js"></script>
+    <script type="text/javascript" src="/magpy/js/mag.js"></script>
+    <script type="text/javascript" src="js/assignment.js"></script>
+    <script type="text/javascript">
+      setWceEditor('wce_editor');
+    </script>
+
+
+  </body>
+</html>
