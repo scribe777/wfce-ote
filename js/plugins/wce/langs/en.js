@@ -283,6 +283,6 @@ tinyMCE.addI18n('en.wce',{
 	infotext_dt_below : 'Displaced below',
 	infotext_dt_other : 'Displaced',
 	infotext_highlighted_text : 'Highlighted text',
-	infotext_puctuation_mark : 'Punctuation mark',
+	infotext_punctuation_mark : 'Punctuation mark',
 	infotext_omission : 'Omission'
 });

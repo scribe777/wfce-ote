@@ -230,6 +230,6 @@ tinyMCE.addI18n('de.wce',{
 	infotext_dt_below : 'Unter die Zeile verschobener Text',
 	infotext_dt_other : 'Verschobener Text',
 	infotext_highlighted_text : 'Hervorgehobener Text',
-	infotext_puctuation_mark : 'Satzzeichen',
+	infotext_punctuation_mark : 'Satzzeichen',
 	infotext_omission : 'Auslassung'
 });
