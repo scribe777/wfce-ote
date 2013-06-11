@@ -389,11 +389,11 @@ function getHtmlByTei(inputString) {
 	var Tei2Html_gap_supplied = function($htmlParent, $teiNode, teiNodeName) {
 		// <gap reason="lacuna" unit="char" />
 		$newNode = $newDoc.createElement('span');
-		if ($teiNode.getAttribute("reason") === 'absent') { // Ghost page
-			$newNode.setAttribute('class', 'ghostpage');
-			wceAttr='__t=gap&__n=&original_gap_text=&gap_reason=absent&unit=page&unit_other=&extent=1&supplied_source=na28&supplied_source_other=&insert=Insert&cancel=Cancel';
+		if ($teiNode.getAttribute("reason") === 'witnessEnd') { // Witness end
+			$newNode.setAttribute('class', 'witnessend');
+			wceAttr='__t=gap&__n=&original_gap_text=&gap_reason=witnessEnd&unit=&unit_other=&extent=&supplied_source=na28&supplied_source_other=&insert=Insert&cancel=Cancel';
 			$newNode.setAttribute('wce', wceAttr);
-			nodeAddText($newNode, "Ghost page");
+			nodeAddText($newNode, "Witness End");
 		} else {
 			$newNode.setAttribute('class', 'gap'); // for gap *and* supplied
 
@@ -401,18 +401,21 @@ function getHtmlByTei(inputString) {
 			var mapping = {
 				'reason' : '&gap_reason=',
 				'unit' : {
-					'0' : '@char@line@page@quire',
+					'0' : '@char@line@page@quire@book@chapter@verse',
 					'1' : '&unit_other=&unit=',
 					'2' : '&unit=other&unit_other='
 				},
 				'extent' : '&extent=',
 				'source' : {
-					'0' : '@na27@na28@transcriber@tr',
+					'0' : '@na28@transcriber@tr',
 					'1' : '&supplied_source_other=&supplied_source=',
 					'2' : '&supplied_source=other&&supplied_source_other='
 				}
 			};
 			wceAttr += getWceAttributeByTei($teiNode, mapping);
+			// In case there is no unit given, we have to fix that. Otherwise we'll get a lot of "undefined" values
+			if (!$newNode.getAttribute('unit'))
+				wceAttr += '&unit_other=&unit=';
 			if (teiNodeName == 'supplied') {
 				wceAttr += '&mark_as_supplied=supplied';
 				$newNode.setAttribute('wce_orig', $teiNode.firstChild.nodeValue); // get the content and save it as original
@@ -486,7 +489,10 @@ function getHtmlByTei(inputString) {
 		case 'cap':
 			className = 'formatting_capitals';
 			break;
-		case 'ol':
+		case 'ol': // for compatibility
+			className = 'formatting_overline';
+			break;
+		case 'overline': // recent option
 			className = 'formatting_overline';
 			break;
 		case 'displaced-above':
@@ -605,8 +611,8 @@ function getHtmlByTei(inputString) {
 			var number = getWceAttributeByTei($teiNode, {'n' : 'n'});
 			if (number)
 				teiIndexData['pageNumber'] = number;
-			else
-				wceAttr += '&pb_ghostpage=on';
+			//else
+				//wceAttr += '&pb_ghostpage=on';
 			var pbtype = getWceAttributeByTei($teiNode, {'type' : 'p'});
 			if (pbtype == "page") {
 				if (number.match("[0-9]$")) { // ends with a digit => no fibre type
@@ -626,35 +632,6 @@ function getHtmlByTei(inputString) {
 			if ($teiNode.getAttribute('facs'))
 				wceAttr += $teiNode.getAttribute('facs');
 			wceAttr += '&lb_alignment=';
-			
-			/*Don't need this anymore as "running title" and "page number" moved to marginalia
-			// Get infos about following <fw> elements
-			var $next = $teiNode.nextSibling;
-			
-			if ($next != null && $next.nodeName == 'seg') { // seg element following => running header
-				var rt = $next.firstChild.firstChild.nodeValue; // has to be a running title
-				var position = $next.getAttribute('subtype');
-				wceAttr += '&running_title=' + rt + '&paratext_position=';
-				if ($next.getAttribute('type') === 'margin' || $next.getAttribute('type') === 'line') //standard values
-					wceAttr += position + '&paratext_position_other=';
-				else //"other" value
-					wceAttr += 'other&paratext_position_other=' + $next.getAttribute('type');
-					
-				// Is there a pagenumber as well? <seg><fw>...</fw></seg><fw type="pagenum">...
-				wceAttr += '&page_number='
-				$nnext = $next.nextSibling;
-				if ($nnext != null && $nnext.nodeName == 'fw' && $nnext.getAttribute('type') == 'pageNum') { // page number
-					wceAttr += $nnext.firstChild.nodeValue;
-					$teiNode.parentNode.removeChild($nnext);
-				}
-				$teiNode.parentNode.removeChild($next);
-			} else if ($next != null && $next.nodeName == 'fw' && $next.getAttribute('type') == 'pageNum') { // fw element following => page number; no running header
-				wceAttr += '&running_title=&paratext_position=pagetop&paratext_position_other=&page_number=' + $next.firstChild.nodeValue; 
-				$teiNode.parentNode.removeChild($next);
-			} else { // if there is no <seg> or <fw> break
-				wceAttr += '&running_title=&paratext_position=pagetop&paratext_position_other=&page_number=';
-				break;
-			}*/
 			break;
 		default: //qb, cb and lb
 			wceAttr += '&number=';
@@ -787,8 +764,8 @@ function getHtmlByTei(inputString) {
 		if ($teiNode.getAttribute('type') === 'commentary') { // commentary text
 			$newNode.setAttribute('class', 'paratext');
 			var cl = 0; //default value for old documents
-			if ($teiNode.getAttribute('n')) 
-				cl = $teiNode.getAttribute('n');
+			if ($teiNode.getAttribute('rend')) 
+				cl = $teiNode.getAttribute('rend');
 			if (cl == 0)
 				cl = '';
 			var wceAttr = '__t=paratext&__n=&fw_type=commentary&covered=' + cl + '&text=&number=&edit_number=on&paratext_position=pagetop&paratext_position_other=&paratext_alignment=left';
@@ -823,7 +800,7 @@ function getHtmlByTei(inputString) {
 				var mapping = {
 					'xml:id' : null,
 					'type' : {
-						'0' : '@editorial@transcriberquery@canonRef',
+						'0' : '@editorial@local@canonRef',
 						'1' : '&note_type=',
 						'2' : '&note_type=other&note_type_other='
 					}
@@ -1060,27 +1037,12 @@ function getTeiByHtml(inputString, args) {
 		var $oldDoc = loadXMLString(inputString);
 
 		var $oldRoot = $oldDoc.documentElement;
-
+		
 		$newDoc = loadXMLString('<TEI></TEI>');
 
 		// <TEMP>
 		$newRoot = $newDoc.documentElement;
 		
-		/*if (g_chapterNumber) {
-			g_chapterNode = $newDoc.createElement('div');
-			g_chapterNode.setAttribute('type', 'chapter');
-			g_chapterNode.setAttribute('n', 'B' + g_bookNumber + 'K' + g_chapterNumber);
-			$newRoot.appendChild(g_chapterNode);
-			g_currentParentNode = g_chapterNode;
-		}
-
-		if (g_verseNumber) {
-			g_verseNode = $newDoc.createElement('ab');
-			g_verseNode.setAttribute('n', 'B' + g_bookNumber + 'K' + g_chapterNumber + 'V' + g_verseNumber);
-			g_chapterNode.appendChild(g_verseNode);
-			g_currentParentNode = g_verseNode;
-		}*/
-
 		if (!g_currentParentNode) {
 			g_currentParentNode = $newRoot;
 		}
@@ -1103,7 +1065,7 @@ function getTeiByHtml(inputString, args) {
 		//  
 		// str = str.substring(6, str.length - 7);
 		// add an required header to get a valid XML
-		str = str.replace('<TEI>', '<?xml  version="1.0" encoding="utf-8"?><!DOCTYPE TEI [<!ENTITY om "">]><TEI xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.tei-c.org/ns/1.0 http://urts173.uni-trier.de/~gany2d01/test/TEI-NTMSS.xsd" xmlns="http://www.tei-c.org/ns/1.0" ><teiHeader><fileDesc><titleStmt><title/> </titleStmt><publicationStmt><p/></publicationStmt><sourceDesc><msDesc><msIdentifier></msIdentifier></msDesc></sourceDesc></fileDesc></teiHeader><text><body>');
+		str = str.replace('<TEI>', '<?xml  version="1.0" encoding="utf-8"?><!DOCTYPE TEI [<!ENTITY om "">]><?xml-model href="TEI-NTMSS.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?><TEI xmlns="http://www.tei-c.org/ns/1.0" ><teiHeader><fileDesc><titleStmt><title/> </titleStmt><publicationStmt><p/></publicationStmt><sourceDesc><msDesc><msIdentifier></msIdentifier></msDesc></sourceDesc></fileDesc></teiHeader><text><body>');
 		str = str.replace("</TEI>", "</body></text></TEI>");
 		
 		// Now we do some "magic" regex substitution do get correct <w> elements
@@ -1120,6 +1082,7 @@ function getTeiByHtml(inputString, args) {
 	 * read all nodes of $node and change and add
 	 */
 	var readAllChildrenOfHtmlNode = function($teiParent, $htmlNode, stopAddW) {
+		//alert(xml2String($newRoot));
 		if (!$htmlNode) {
 			return;
 		}
@@ -1160,8 +1123,10 @@ function getTeiByHtml(inputString, args) {
 			// Check the next Element
 			if (!startCompressionWord) {
 				var $htmlNodeNext = $htmlNode.nextSibling;
+				//alert("Dieser Knoten: " + $htmlNode.nodeName + '; ' + 'Nächster Knoten: ' + $htmlNodeNext.nodeName + ' ' + $htmlNodeNext.nodeValue);
 				while ($htmlNodeNext) {
 					var oldNodeNextType = $htmlNodeNext.nodeType;
+					// get next sibling of next node
 					var $nnext = $htmlNodeNext.nextSibling;
 					if (oldNodeNextType == 3) {
 						var oldNodeNextText = $htmlNodeNext.nodeValue;
@@ -1177,12 +1142,13 @@ function getTeiByHtml(inputString, args) {
 							if (ind > 0) {
 								var subStr1 = oldNodeNextText.substr(0, ind);
 								var subStr2 = oldNodeNextText.substr(ind, oldNodeNextText.length);
+								// Add first word to actual node
 								nodeAddText($newParent.parentNode, subStr1);
+								// Add rest to next node
 								$htmlNodeNext.nodeValue = subStr2;
 							} else {
 								html2Tei_TEXT($newParent.parentNode, $htmlNodeNext, stopAddW);
 							}
-
 							startCompressionWord = false;
 						} else {
 							// start with space, stop
@@ -1199,9 +1165,12 @@ function getTeiByHtml(inputString, args) {
 						readAllChildrenOfHtmlNode($newParent.parentNode, $htmlNodeNext, stopAddW);
 						startCompressionWord = false;
 					}
-					$htmlNodeNext.parentNode.removeChild($htmlNodeNext);
+					// Remove $htmlNodeNext from tree; what happens to the rest words???
+					// TODO: Check, whether there is any reason for this line.
+					//$htmlNodeNext.parentNode.removeChild($htmlNodeNext);
 					if ($nnext) {
-						$htmlNodeNext = $nnext;
+						//TODO: Check, whether there is any reason for this line
+						//$htmlNodeNext = $nnext;
 						continue;
 					}
 					$htmlNodeNext = null;
@@ -1235,11 +1204,7 @@ function getTeiByHtml(inputString, args) {
 					found_ab = true;
 					g_verseNode = $newDoc.createElement('ab');
 					g_verseNode.setAttribute('part', 'F');
-					/*if (g_chapterNode)
-						g_chapterNode.appendChild(g_verseNode);
-					else
-						$newRoot.appendChild(g_verseNode);
-					g_currentParentNode = g_verseNode;*/
+					
 					// test, if last page ended with an hyphenation	
 					if (!final_w_found && $teiParent.lastChild && $teiParent.lastChild.previousSibling && $teiParent.lastChild.previousSibling.previousSibling &&
 						$teiParent.lastChild.previousSibling.previousSibling.nodeName === 'pb' && $teiParent.lastChild.previousSibling.previousSibling.getAttribute("break") === "no")
@@ -1249,12 +1214,6 @@ function getTeiByHtml(inputString, args) {
 					g_verseNumber = $.trim(g_verseNumber);
 					g_verseNode = $newDoc.createElement('ab');
 					g_verseNode.setAttribute('n', 'B' + g_bookNumber + 'K' + g_chapterNumber + 'V' + g_verseNumber);
-					/*if (g_chapterNode)
-						g_chapterNode.appendChild(g_verseNode);
-					else
-						$newRoot.appendChild(g_verseNode);
-					g_currentParentNode = g_verseNode;
-					g_wordNumber = 0;*/
 				}
 				if (g_chapterNode)
 					g_chapterNode.appendChild(g_verseNode);
@@ -1282,11 +1241,13 @@ function getTeiByHtml(inputString, args) {
 				if (g_chapterNumber != old_chapterNumber) { //ignore repeated chapter numbers
 					old_chapterNumber = g_chapterNumber;
 					g_chapterNode = $newDoc.createElement('div');
-					if (g_chapterNumber === 'Inscriptio')
+					if (g_chapterNumber === 'Inscriptio') {
 						g_chapterNode.setAttribute('type', 'incipit');
-					else if (g_chapterNumber === 'Subscriptio')
+						g_chapterNode.setAttribute('n', 'B' + g_bookNumber + 'incipit');
+					} else if (g_chapterNumber === 'Subscriptio') {
 						g_chapterNode.setAttribute('type', 'explicit');
-					else {
+						g_chapterNode.setAttribute('n', 'B' + g_bookNumber + 'explicit');
+					} else {
 						g_chapterNode.setAttribute('type', 'chapter');
 						g_chapterNode.setAttribute('n', 'B' + g_bookNumber + 'K' + g_chapterNumber);
 					}
@@ -1326,7 +1287,7 @@ function getTeiByHtml(inputString, args) {
 		// gap
 		if (wceType == 'gap') {
 			var text = getDomNodeText($htmlNode).split(" "); // split up content at word boundaries
-			if (text[0] === "Ghost") // Ghostpage
+			if (text[0] === "Witness") // Witness End
 				return html2Tei_gap(arr, $teiParent, $htmlNode, true); //do not add <w> around <gap>
 			else {
 				if (text.length > 1) {
@@ -1342,9 +1303,6 @@ function getTeiByHtml(inputString, args) {
 					return html2Tei_gap(arr, $teiParent, $htmlNode, stopAddW); // get result from first part and return to main routine
 				}
 				else { //no word boundaries
-					//if ($htmlNode.nextSibling.nodeName == 'gap')//gap node from the middle of a sequence
-					//	return html2Tei_gap(arr, $teiParent, $htmlNode, false);
-					//else // isolated gap or last one in a sequence
 					return html2Tei_gap(arr, $teiParent, $htmlNode, stopAddW);
 				}
 			}
@@ -1453,7 +1411,7 @@ function getTeiByHtml(inputString, args) {
 			formatting_height = arr['capitals_height'];
 			break;
 		case 'formatting_overline':
-			formatting_rend = 'ol';
+			formatting_rend = 'overline';
 			break;
 		case 'formatting_displaced-above':
 			formatting_rend = 'displaced-above';
@@ -1545,8 +1503,7 @@ function getTeiByHtml(inputString, args) {
 		} else {
 			$teiParent.appendChild($newNode);
 		}
-		//$teiParent.appendChild($newNode);
-
+		
 		return {
 			0 : $newNode,
 			1 : true
@@ -1686,8 +1643,7 @@ function getTeiByHtml(inputString, args) {
 	// break_type= lb / cb /qb / pb number= pb_type= running_title= lb_alignment, Page (Collate |P 121|): <pb n="121" type="page" xml:id="P121-wit" /> Folio (Collate |F 3v|): <pb n="3v" type="folio" xml:id="P3v-wit" /> Column (Collate |C 2|): <cb n="2" xml:id="P3vC2-wit" />
 	// Line (Collate |L 37|): <lb n="37" xml:id="P3vC2L37-wit" />
 	var html2Tei_break = function(arr, $teiParent, $htmlNode, stopAddW) { 
-		//if($teiParent.nodeName=='app') return; //ueberfluessige <lb> usw. in correction <app> vermeiden
-			var xml_id;
+		var xml_id;
 		var breakNodeText = getDomNodeText($htmlNode);
 		var break_type = arr['break_type'];
 		var $newNode;
@@ -1719,7 +1675,7 @@ function getTeiByHtml(inputString, args) {
 			case 'pb':
 				var breaPage='';
 				// Set page number and decide which type (folio|page)
-				if (!arr['pb_ghostpage']) {
+				//if (!arr['pb_ghostpage']) {
 					if (arr['pb_type'] != '') {
 						// folio
 						breaPage = arr['number'] + arr['pb_type'] + arr['fibre_type'];
@@ -1731,7 +1687,7 @@ function getTeiByHtml(inputString, args) {
 						$newNode.setAttribute('n', breaPage);
 						$newNode.setAttribute('type', 'page');
 					}
-				}
+				//}
 				if (arr['facs'] != '') {
 					// use URL for facs attribute
 					$newNode.setAttribute('facs', decodeURIComponent(arr['facs']));
@@ -1740,8 +1696,8 @@ function getTeiByHtml(inputString, args) {
 				g_pageNumber = breaPage;
 				break;
 			}
-			if (!arr['pb_ghostpage']) // write id only if not ghost page
-				$newNode.setAttribute("xml:id", xml_id);//IE gets confused here
+			//if (!arr['pb_ghostpage']) // write id only if not ghost page
+			$newNode.setAttribute("xml:id", xml_id);//IE gets confused here
 			if (arr['hasBreak'] === 'yes') {
 				$newNode.setAttribute('break', 'no');
 			}
@@ -1755,44 +1711,6 @@ function getTeiByHtml(inputString, args) {
 		} else if (break_type == 'pb') {
 			found_ab = false;
 			final_w_set = false;
-			/*Don't need this anymore as "running title" and "page number" moved to marginalia
-			var $secNewNode;
-			// for pb add fw elements
-			if (arr['running_title'] != '') {
-				$secNewNode = $newDoc.createElement('fw');
-				$secNewNode.setAttribute('type', 'runTitle');
-				nodeAddText($secNewNode, decodeURIComponent(arr['running_title']));
-				var placeValue = arr['paratext_position'];
-				if (placeValue == 'other') {
-					placeValue = arr['paratext_position_other'];
-				}
-				if (placeValue === 'pageleft' || placeValue === 'pageright' || placeValue === 'pagetop' || placeValue === 'pagebottom'
-					|| placeValue === 'coltop' || placeValue === 'colbottom' || placeValue === 'colleft' || placeValue === 'colright'
-					|| placeValue === 'lineleft' || placeValue === 'lineright') { //define <seg> element for marginal material
-					$seg = $newDoc.createElement('seg');
-					$seg.setAttribute('type', 'margin');
-					$seg.setAttribute('subtype', placeValue);
-					$seg.appendChild($secNewNode);
-					$newNode.parentNode.appendChild($seg);
-				} else if (placeValue === 'above' || placeValue === 'below' || placeValue === 'here') { // above, below, here
-					$seg = $newDoc.createElement('seg');
-					$seg.setAttribute('type', 'line');
-					$seg.setAttribute('subtype', placeValue);
-					$seg.appendChild($secNewNode);
-					$newNode.parentNode.appendChild($seg);
-				} else { //other position
-					$seg = $newDoc.createElement('seg');
-					$seg.setAttribute('type', placeValue);
-					$seg.appendChild($secNewNode);
-					$newNode.parentNode.appendChild($seg);
-				}
-			}
-			if (arr['page_number'] != '') {
-				$secNewNode = $newDoc.createElement('fw');
-				$secNewNode.setAttribute('type', 'pageNum');
-				nodeAddText($secNewNode, arr['page_number']);
-				$newNode.parentNode.appendChild($secNewNode);
-			}*/
 		}
 		return {
 			0 : $newNode,
@@ -1816,9 +1734,9 @@ function getTeiByHtml(inputString, args) {
 
 		var hText = getDomNodeText($htmlNode);
 		// if "overline"£¬add <hi>
-		if (arr['add_overline'] == 'overline') {
+		if (arr['add_overline'] === 'overline') {
 			var $hi = $newDoc.createElement('hi');
-			$hi.setAttribute('rend', 'ol');
+			$hi.setAttribute('rend', 'overline');
 
 			if (hText) {
 				nodeAddText($hi, hText);
@@ -1943,9 +1861,9 @@ function getTeiByHtml(inputString, args) {
 		$paratext.setAttribute('type', fwType);
 		if (fwType == 'commentary')
 			if (arr['covered'] != '' && arr['covered'] > 0) //Value of 0 handles as empty value
-				$paratext.setAttribute('n', arr['covered']);
+				$paratext.setAttribute('rend', arr['covered']);
 			else //no value for covered lines given
-				$paratext.setAttribute('n', '0');
+				$paratext.setAttribute('rend', '0');
 		// n
 		// write attribute n only for certain values
 		var numberValue = arr['number'];
@@ -2085,9 +2003,9 @@ function getTeiByHtml(inputString, args) {
 			else if ($htmlNode.parentNode.lastChild && $htmlNode.parentNode.lastChild.nodeType == 1 && !$htmlNode.nextSibling.nextSibling &&
 					$htmlNode.parentNode.lastChild.getAttribute("wce") && 
 					$htmlNode.parentNode.lastChild.getAttribute("wce").indexOf("break_type=lb") > -1    && 
-					$htmlNode.parentNode.lastChild.getAttribute("wce").indexOf("hasBreak=yes") > -1     &&	i == arr.length-1) //only valid for _last_ word of the last line
+					$htmlNode.parentNode.lastChild.getAttribute("wce").indexOf("hasBreak=yes") > -1     &&	i == arr.length-1) { //only valid for _last_ word of the last line
 						$w.setAttribute("part", "I");
-			
+			}
 			nodeAddText($w, str);
 			// TODO: This could be removed
 			if (found_ab) {

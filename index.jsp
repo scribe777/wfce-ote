@@ -483,7 +483,7 @@ function loaded() {
 	}
 	var preferredHeight = parseInt(prefs.getString('height'));
 	if (gadgets.util.hasFeature('dynamic-height')) gadgets.window.adjustHeight(preferredHeight);
-	setWceEditor('wce_editor');
+	setWceEditor('wce_editor','','','','','',URI('js/').absoluteTo(gadgets.util.getUrlParameters()['url']));
 	resizeWidth();
 	resizeHeight(115);
 }

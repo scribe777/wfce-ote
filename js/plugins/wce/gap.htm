@@ -42,6 +42,9 @@
 							<option value="line">{#wce.unit_line}</option>
 							<option value="page">{#wce.unit_page}</option>
 							<option value="quire">{#wce.unit_quire}</option>
+							<option value="book">{#wce.unit_book}</option>
+							<option value="chapter">{#wce.unit_chapter}</option>
+							<option value="verse">{#wce.unit_verse}</option>
 							<option value="other">{#wce.other}</option>
 					</select>
 					</td>
@@ -60,7 +63,7 @@
 				</tr>
 				<tr>
 					<td colspan="2"><input type="checkbox" name="mark_as_supplied"
-						id="mark_as_supplied" value="supplied" onclick="checkstatus_mark_as_supplied()">{#wce.mark_as_supplied}</input>
+						id="mark_as_supplied" value="supplied" onclick="checkstatus_mark_as_supplied()" checked="checked">{#wce.mark_as_supplied}</input>
 					</td>
 				</tr>
 				<tr>
@@ -107,43 +110,6 @@
 		checkstatus_mark_as_supplied();
 	}
 	
-	/*function noLacunaeDisable(b) {
-		var elms = $('#inputContainer select, #inputContainer input');
-		var elm;
-		for ( var i = 0; i < elms.length; i++) {
-			elm = elms[i];
-			if (elm.id == 'gap_type')
-				continue;
-			if (elm.id == 'unit') //Option for lacunae
-			{
-				$(elm).attr('disabled', false);
-				$(elm).css('background-color', '#fff');
-			} else {
-				$(elm).attr('disabled', b);
-				if (b)
-					$(elm).css('background-color', '#ccc');
-				else
-					$(elm).css('background-color', '#fff');
-			}
-		}
-		;
-
-		if (!b) {
-			checkstatus_gapreason();
-			//checkstatus_gaphand();
-			checkstatus_gapagent();
-			checkstatus_gapunit();
-		}
-	}
-
-	function checkstatus_gaptype() {
-		if (document.gapinfo.gap_type.options[2].selected == true) {
-			noLacunaeDisable(false);
-		} else {
-			noLacunaeDisable(true);
-		}
-	}
-*/
 	function checkstatus_gapreason() {
 		if (radioWert(document.gapinfo.gap_reason_dummy) == "lacuna")
 			document.gapinfo.gap_reason.value = "lacuna";
@@ -163,39 +129,8 @@
 			document.gapinfo.gap_reason_dummy_illegible.checked = true;
 	}
 
-		
-	/*function checkstatus_gapreason() {
-		if (document.gapinfo.gap_reason.options[5].selected == true) {
-			document.gapinfo.gap_reason_other.disabled = false;
-			document.getElementById('gap_reason_other').style.backgroundColor = "white";
-		} else {
-			document.gapinfo.gap_reason_other.disabled = true;
-			document.getElementById('gap_reason_other').style.backgroundColor = "#CCCCCC";
-		}
-	}*/
-/*
-	function checkstatus_gaphand() {
-		if (document.gapinfo.gaphand.options[6].selected == true) {
-			document.gapinfo.gaphand_other.disabled = false;
-			document.getElementById('gaphand_other').style.backgroundColor = "white";
-		} else {
-			document.gapinfo.gaphand_other.disabled = true;
-			document.getElementById('gaphand_other').style.backgroundColor = "#CCCCCC";
-		}
-	}
-
-	function checkstatus_gapagent() {
-		if (document.gapinfo.agent.options[3].selected == true) {
-			document.gapinfo.agent_other.disabled = false;
-			document.getElementById('agent_other').style.backgroundColor = "white";
-		} else {
-			document.gapinfo.agent_other.disabled = true;
-			document.getElementById('agent_other').style.backgroundColor = "#CCCCCC";
-		}
-	}*/
-
 	function checkstatus_gapunit() {
-		if (document.gapinfo.unit.options[5].selected == true) {
+		if (document.gapinfo.unit.options[8].selected == true) {
 			document.gapinfo.unit_other.disabled = false;
 			document.getElementById('unit_other').style.backgroundColor = "white";
 		} else {
@@ -210,7 +145,6 @@
 			document.gapinfo.extent.disabled = false;
 			document.getElementById('extent').style.backgroundColor = "white";
 		}
-
 	}
 
 	function checkstatus_mark_as_supplied() {
@@ -233,14 +167,10 @@
 		}
 	}
 
-	/*function setstatus_gap() {
-		checkstatus_gapunit();
-	}*/ 
-
 	function testOther() {
 		if (document.gapinfo.mark_as_supplied.checked && document.gapinfo.supplied_source.options[3].selected == true && document.getElementById('supplied_source_other').value == '' )
 		{ return false; }
-		if (document.gapinfo.unit.options[5].selected == true && document.getElementById('unit_other').value == '' )
+		if (document.gapinfo.unit.options[8].selected == true && document.getElementById('unit_other').value == '' )
 		{ return false; }
 		//if (document.gapinfo.gap_reason.options[5].selected == true && document.getElementById('gap_reason_other').value == '') 
 		//{ return false; }

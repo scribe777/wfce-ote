@@ -598,7 +598,7 @@
 					selectedNode = startNode;
 				}
 
-				if (WCEObj._selectionHasBlockElement(ed)) {
+				if (WCEObj._selectionHasBlockElement(ed)) { //TODO: If the selection contains only text and abbreviations, it should be removable
 					w.inputDisable = true;
 				}
 			}
@@ -1065,8 +1065,8 @@
 						case 'editorial':
 							info_text += ed.getLang('wce.infotext_editorial_note') + '</div>';
 							break;
-						case 'transcriberquery':
-							info_text += ed.getLang('wce.infotext_transcriber_query') + '</div>';
+						case 'local':
+							info_text += ed.getLang('wce.infotext_local_note') + '</div>';
 							break;
 						case 'canonRef':
 							info_text += ed.getLang('wce.infotext_canon_reference') + '</div>';
@@ -1449,11 +1449,18 @@
 						}
 					});
 
-					m.add({ // Ghost page
+					/*m.add({ // Ghost page
 						title : ed.getLang('wce.menu_ghostpage'),
 						id : 'menu-illegible-ghostpage',
 						onclick : function() {
 							ed.execCommand('mceAddGhostPage');
+						}
+					});*/
+					m.add({ // witness end
+						title : ed.getLang('wce.menu_witnessend'),
+						id : 'menu-illegible-witnessend',
+						onclick : function() {
+							ed.execCommand('mceAddWitnessend');
 						}
 					});
 				});
@@ -2200,12 +2207,17 @@
 				newContent += '<span wce="__t=unclear&amp;__n=&amp;original_text=' + word + '&amp;insert=Insert&amp;cancel=Cancel" ' + wceClass + '>' + unclear_text + '</span>';
 				ed.selection.setContent(newContent);
 				break;
-			case 'ghostpage':
+			/*case 'ghostpage':
 				// Ghost page
 				// style = 'style="border: 1px dotted #f00; margin:0px; padding:0; color:#666"';
 				wceClass = ' class="ghostpage"';
 				wceAttr = 'wce="__t=gap&amp;__n=&amp;original_gap_text=&amp;gap_reason=absent&amp;unit=page&amp;unit_other=&amp;extent=1&amp;supplied_source=na28&amp;supplied_source_other=&amp;insert=Insert&amp;cancel=Cancel" ';
 				ed.selection.setContent('<span ' + wceAttr + wceClass + '>Ghost page</span>');
+				break;*/
+			case 'witnessend':
+				wceClass = ' class="witnessend"';
+				wceAttr = 'wce="__t=gap&amp;__n=&amp;original_gap_text=&amp;gap_reason=witnessEnd&amp;unit=&amp;unit_other=&amp;extent=&amp;supplied_source=na28&amp;supplied_source_other=&amp;insert=Insert&amp;cancel=Cancel" ';
+				ed.selection.setContent('<span ' + wceAttr + wceClass + '>Witness End</span>');
 				break;
 			default:
 				wceClass = ' class="' + wceType + '"';
@@ -2237,9 +2249,9 @@
 			if (!e) {
 				var e = window.event;
 			}
-
+				
 			var ek = e.keyCode || e.charCode || 0;
-
+			
 			// allow all arrow key
 			if (ek == 17 || (ek > 32 && ek < 41)) {
 				return;
@@ -2294,7 +2306,6 @@
 						return _stopEvent(ed, e);
 					}
 				} else if (ek == 46 && wcevar.isCollapsedAtNodeEnd && !wcevar.isNextElemBE) {
-				
 				} else if (ek == 46) {
 					//if (wcevar.type === "unclear" || wcevar.type === "gap")
 					ed.execCommand('wceDelNode');
@@ -2553,6 +2564,9 @@
 					tinymce.DOM.add(row.parentNode, 'div', {
 						'style' : ''
 					}, '<input type="checkbox" id="' + id + '"> Adaptive selection</input>');
+					tinymce.DOM.add(row.parentNode, 'div', {
+						'style' : 'margin: 0 600px;'
+					}, 'Version: 2013-06-11');
 				}
 			});
 
@@ -2841,10 +2855,14 @@
 				}
 			});
 
-			ed.addCommand('mceAddGhostPage', function() {
+			/*ed.addCommand('mceAddGhostPage', function() {
 				_wceAddNoDialog(ed, 'ghostpage');
+			});*/
+			
+			ed.addCommand('mceAddWitnessend', function() {
+				_wceAddNoDialog(ed, 'witnessend');
 			});
-
+			
 			// Add note/*********/
 			ed.addCommand('mceAddNote', function() {
 				_wceAdd(ed, url, '/note.htm', 480, 380, 1, true);
