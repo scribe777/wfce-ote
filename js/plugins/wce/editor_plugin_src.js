@@ -2351,11 +2351,11 @@
 						var startOffset = rng.startOffset;
 						var indexOfEnd = WCEObj._getNextEnd(startText, startOffset);
 						// at the end of a word
-						if (indexOfEnd && indexOfEnd == startOffset) {
+						if (startText.substr(startOffset - 1, 1) == " ") { //return after space
+							_wceAddNoDialog(ed, 'brea', 'lb2', ++ed.WCE_CON.lcnt);
+						} else if (indexOfEnd && indexOfEnd == startOffset) {
 							//add an additional space
 							_wceAddNoDialog(ed, 'brea', 'lb1', ++ed.WCE_CON.lcnt);
-						} else if (startText.substr(startOffset - 1, 1) == " ") { //return after space
-							_wceAddNoDialog(ed, 'brea', 'lb2', ++ed.WCE_CON.lcnt);
 						} else { // return in the middle of a word
 							_wceAddNoDialog(ed, 'brea', 'lbm', ++ed.WCE_CON.lcnt);
 						}

@@ -346,10 +346,11 @@
 		var rng = ed.selection.getRng(true);
 		var startNode = rng.startContainer;
 		var startText = startNode.data ? startNode.data : startNode.innerText;
-		if (rng.startOffset == _getNextEnd(startText,rng.startOffset))
-			return 'lb1';
-		else if (startText.substr(rng.startOffset-1, 1) == " ")
+		alert(startText.substr(rng.startOffset-1, 1));
+		if (startText.substr(rng.startOffset-1, 1) == " ")
 			return 'lb2';
+		else if (rng.startOffset == _getNextEnd(startText,rng.startOffset))
+			return 'lb1';
 		return 'lbm';
 	}
 	

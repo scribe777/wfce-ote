@@ -1123,7 +1123,6 @@ function getTeiByHtml(inputString, args) {
 			// Check the next Element
 			if (!startCompressionWord) {
 				var $htmlNodeNext = $htmlNode.nextSibling;
-				//alert("Dieser Knoten: " + $htmlNode.nodeName + '; ' + 'Nächster Knoten: ' + $htmlNodeNext.nodeName + ' ' + $htmlNodeNext.nodeValue);
 				while ($htmlNodeNext) {
 					var oldNodeNextType = $htmlNodeNext.nodeType;
 					// get next sibling of next node
@@ -1166,11 +1165,14 @@ function getTeiByHtml(inputString, args) {
 						startCompressionWord = false;
 					}
 					// Remove $htmlNodeNext from tree; what happens to the rest words???
-					// TODO: Check, whether there is any reason for this line.
-					//$htmlNodeNext.parentNode.removeChild($htmlNodeNext);
+					// TODO: Check, whether there is any reason for this line; there is ... :-(
+					if (oldNodeNextType == 1) {
+						$htmlNodeNext.parentNode.removeChild($htmlNodeNext);
+					}
 					if ($nnext) {
-						//TODO: Check, whether there is any reason for this line
-						//$htmlNodeNext = $nnext;
+						//TODO: Check, whether there is any reason for this line; there is ... :-(
+						if (oldNodeNextType == 1)
+							$htmlNodeNext = $nnext;
 						continue;
 					}
 					$htmlNodeNext = null;
