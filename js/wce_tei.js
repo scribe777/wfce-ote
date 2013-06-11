@@ -946,9 +946,11 @@ function getHtmlByTei(inputString) {
 					wceAttr += $test.getAttribute('subtype'); //overwritten, above, below
 				} else if ($test.getAttribute('type') == 'margin') {
 					wceAttr += $test.getAttribute('subtype'); //pagetop, pagebottom, pageleft, pageright, coltop, colbottom, colleft, colright, lineleft, lineright
-				} else {
+				} else { /* if ($test.getAttribute('type') == 'elsewhere' ) {*/
 					wceAttr += 'elsewhere';
-				}
+				} /* else { //other
+					wceAttr += 'other&place_corr_other=' + $test.getAttribute('type');
+				}*/
 				$rdg.removeChild($test); //remove this child from the list
 			}
 		}

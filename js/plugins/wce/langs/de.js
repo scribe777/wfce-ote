@@ -55,7 +55,7 @@ tinyMCE.addI18n('de.wce',{
 	fw_commentary_text: "Kommentartext",
 	fw_pagenumber: "Seitenzahl (wie vermerkt)",
 	fw_quiresignature : "Lagenzählung",
-	fw_runningtitle : "Laufender Titel",
+	fw_running_title : "Laufender Titel",
 	fw_chapter_title : "Titel des Kapitels",
 	fw_chapter_number : "Kapitelnummer",
 	fw_lectionary_title : "Lektionsangabe",

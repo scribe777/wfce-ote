@@ -57,7 +57,7 @@ tinyMCE.addI18n('en.wce',{
 	fw_commentary_text: "Commentary text",
 	fw_pagenumber: "Page number (as written)",
 	fw_quiresignature : "Quire signature",
-	fw_runningtitle : "Running title",
+	fw_running_title : "Running title",
 	fw_chapter_title : "Chapter title",
 	fw_chapter_number : "Chapter number",
 	fw_lectionary_title : "Lectionary title",

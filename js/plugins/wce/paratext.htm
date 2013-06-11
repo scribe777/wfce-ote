@@ -37,7 +37,7 @@
 				</tr>
 				<tr>
 					<td><label id="covered_label" for="covered">{#wce.covered}</label></td>
-					<td colspan="2"><input id="covered" name="covered" type="number" value=""
+					<td><input id="covered" name="covered" type="number" value=""
 						size="5" maxlength="" class="required number min1 mceFocus"/></td>
 				</tr>
 				<tr>
@@ -48,7 +48,7 @@
 				</tr>
 				<tr>
 					<td><label id="number_label" for="number">{#wce.number_attribute}</label></td>
-					<td colspan="1"><input id="number" name="number" type="text" value=""
+					<td><input id="number" name="number" type="text" value=""
 						size=50" maxlength="" class="required number min1 mceFocus" /></td>
 					<td><input id="edit_number" name="edit_number" type="checkbox" onchange="checkstatus_number()" checked="checked">{#wce.number_calculate}</input></td>
 				</tr>
@@ -70,6 +70,7 @@
 							<option value="above">{#wce.position_above}</option>
 							<option value="below">{#wce.position_below}</option>
 							<option value="here">{#wce.position_thispoint}</option>
+							<option value="elsewhere">{#wce.position_elsewhere}</option>
 							<option value="other">{#wce.other}</option>
 					</select>
 					</td>
@@ -81,7 +82,7 @@
 				<tr>
 					<td><label id="paratext_alignment_label"
 						for="paratext_alignment">{#wce.alignment}</label></td>
-					<td colspan="2"><select id="paratext_alignment"
+					<td><select id="paratext_alignment"
 						name="paratext_alignment">
 							<option value="left">{#wce.alignment_l}</option>
 							<option value="center">{#wce.alignment_c}</option>
@@ -142,7 +143,7 @@
 
 	function getParaTag() {
 		var v = $('#fw_type').val();
-		if (v == 'runTitle' || 'chapTitle' || v == 'lectTitle' || v == 'colophon' || v == 'quireSig' || v == 'euthaliana' || v == 'gloss' || v == 'pageNum' || v == 'other')
+		if (v == 'runTitle' || 'chapTitle' || v == 'lectTitle' || v == 'colophon' || v == 'quireSig' || v == 'euthaliana' || v == 'gloss' || v == 'pageNum' || v == 'elsewhere' || v == 'other')
 			return 'fw';
 		else if (v == 'commentary')
 			return '';
@@ -166,7 +167,7 @@
 			marginals_text_editor.hide();
 			document.paratextinfo.paratext_position.disabled = true;
 			document.paratextinfo.paratext_alignment.disabled = true;
-		} else if (v == 'runTitle' || v == 'chapTitle' || v == 'lectTitle' || v == 'colophon' || v == 'euthaliana' || v == 'gloss' || v =='pageNum' || v == 'other') {
+		} else if (v == 'runTitle' || v == 'chapTitle' || v == 'lectTitle' || v == 'colophon' || v == 'euthaliana' || v == 'gloss' || v =='pageNum' || v == 'elsewhere' || v == 'other') {
 			//don't get a number, only text
 			document.paratextinfo.number.value = '';
 			document.paratextinfo.number.disabled = true;
@@ -203,7 +204,7 @@
 	}
 
 	function checkstatus_position() {
-		if (document.paratextinfo.paratext_position.options[13].selected == true) {
+		if (document.paratextinfo.paratext_position.options[14].selected == true) {
 			document.paratextinfo.paratext_position_other.disabled = false;
 			document.getElementById('paratext_position_other').style.backgroundColor = "white";
 		} else {
@@ -224,7 +225,7 @@
 	}
 	
 	function testOther() {
-		if (document.paratextinfo.paratext_position.options[13].selected == true && document.getElementById('paratext_position_other').value == '') 
+		if (document.paratextinfo.paratext_position.options[14].selected == true && document.getElementById('paratext_position_other').value == '') 
 			return false;
 	return true;
 	}
