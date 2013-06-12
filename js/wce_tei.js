@@ -719,11 +719,6 @@ function getHtmlByTei(inputString) {
 		
 		var mapping = {
 			'n' : '&edit_number=',
-			/*'place' : {
-				'0' : '@pagetop@pagebottom@pageleft@pageright@above@below@self',
-				'1' : '&paratext_position=',
-				'2' : '&paratext_position=other&paratext_position_other='
-			},*/
 			'rend' : '&paratext_alignment=',
 			'type' : '&fw_type='
 		};
@@ -826,7 +821,7 @@ function getHtmlByTei(inputString) {
 		// <rdg type="orig" hand="firsthand" />
 		// <rdg type="corr" hand="corrector1">
 		var rdgs = $teiNode.childNodes;
-		var $rdg, typeValue, handValue, deletionValue;
+		var $rdg, typeValue, handValue, deletionValue, partialValue;
 		var wceAttr = '';
 		var origText = '';
 		var rdgAttr;
@@ -874,7 +869,11 @@ function getHtmlByTei(inputString) {
 			typeValue = $rdg.getAttribute('type');
 			handValue = $rdg.getAttribute('hand');
 			deletionValue = $rdg.getAttribute('rend');
-
+			if ($rdg.getAttribute('part'))
+				partialValue = $rdg.getAttribute('part');
+			else
+				partialValue = '';
+			
 			if (i == 1)
 				wceAttr += '__t=corr';
 			else
@@ -915,6 +914,7 @@ function getHtmlByTei(inputString) {
 			} else { // no deletion given
 				wceAttr += '&deletion_erased=0&deletion_underline=0&deletion_underdot=0&deletion_strikethrough=0&deletion_vertical_line=0&deletion_other=0&deletion=null';
 			}
+			wceAttr += '&partial=' + partialValue;
 						
 			// &correction_text Contain:
 			// <note>nnn</note><w n="2">aaa</w><w n="3"> c<hi rend="gold">a</hi> b<hi rend="green">c</hi></w><w n="4">bbb</w>
@@ -943,14 +943,12 @@ function getHtmlByTei(inputString) {
 			var $test = $rdg.firstChild;
 			if ($test != null && $test.nodeName == 'seg') { //seg element ahead -> place of correction
 				if ($test.getAttribute('type') == 'line') {
-					wceAttr += $test.getAttribute('subtype'); //overwritten, above, below
+					wceAttr += $test.getAttribute('subtype'); //overwritten, above, below, here
 				} else if ($test.getAttribute('type') == 'margin') {
 					wceAttr += $test.getAttribute('subtype'); //pagetop, pagebottom, pageleft, pageright, coltop, colbottom, colleft, colright, lineleft, lineright
-				} else { /* if ($test.getAttribute('type') == 'elsewhere' ) {*/
-					wceAttr += 'elsewhere';
-				} /* else { //other
-					wceAttr += 'other&place_corr_other=' + $test.getAttribute('type');
-				}*/
+				} else { //type="other"
+					wceAttr += 'other&place_corr_other=' + $test.getAttribute('subtype');
+				}
 				$rdg.removeChild($test); //remove this child from the list
 			}
 		}
@@ -1030,10 +1028,7 @@ function getTeiByHtml(inputString, args) {
 	 * 
 	 */
 	var getTeiString = function() {
-		// alert(encodeURIComponent(' '));
 		inputString = inputString.replace(/>\s+</g, '> @@@ <');
-		// alert(inputString);
-
 		inputString = '<TEI>' + inputString + '</TEI>';
 
 		var $oldDoc = loadXMLString(inputString);
@@ -1065,9 +1060,8 @@ function getTeiByHtml(inputString, args) {
 			return '';
 
 		//  
-		// str = str.substring(6, str.length - 7);
 		// add an required header to get a valid XML
-		str = str.replace('<TEI>', '<?xml  version="1.0" encoding="utf-8"?><!DOCTYPE TEI [<!ENTITY om "">]><?xml-model href="TEI-NTMSS.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?><TEI xmlns="http://www.tei-c.org/ns/1.0" ><teiHeader><fileDesc><titleStmt><title/> </titleStmt><publicationStmt><p/></publicationStmt><sourceDesc><msDesc><msIdentifier></msIdentifier></msDesc></sourceDesc></fileDesc></teiHeader><text><body>');
+		str = str.replace('<TEI>', '<?xml  version="1.0" encoding="utf-8"?><!DOCTYPE TEI [<!ENTITY om "">]><?xml-model href="TEI-NTMSS.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?><TEI xmlns="http://www.tei-c.org/ns/1.0"><teiHeader><fileDesc><titleStmt><title/></titleStmt><publicationStmt><p/></publicationStmt><sourceDesc><msDesc><msIdentifier></msIdentifier></msDesc></sourceDesc></fileDesc></teiHeader><text><body>');
 		str = str.replace("</TEI>", "</body></text></TEI>");
 		
 		// Now we do some "magic" regex substitution do get correct <w> elements
@@ -1529,16 +1523,21 @@ function getTeiByHtml(inputString, args) {
 			var arr = infoArr[i];
 			g_wordNumber = startWordNumberInCorrection;
 
+			var partial = arr['partial'];
 			if (!$app) {
 				notecount = 0;
 				rdgcount = 0;
 				// new Element <app>
 				$app = $newDoc.createElement('app');
+				if (partial != '')
+					$app.setAttribute('part', partial);
 				$teiParent.appendChild($app);
 
 				// new Element <rdg> for original
 				// <rdg type="orig" hand="firsthand"><w n="17">¦Á¦Ó¦Å¦Í¦É¦Æ¦Å¦Ó¦Á¦É</w> <pc>?</pc></rdg>
 				var $orig = $newDoc.createElement('rdg');
+				if (partial != '')
+					$orig.setAttribute('part', partial);
 				$orig.setAttribute('type', 'orig');
 				$orig.setAttribute('hand', 'firsthand');
 				if (arr['blank_firsthand'] === 'on') { //Blank first hand reading
@@ -1556,6 +1555,8 @@ function getTeiByHtml(inputString, args) {
 			// new Element<rdg>,child of <app>($newNode)
 			rdgcount++;
 			var $rdg = $newDoc.createElement('rdg');
+			if (partial != '')
+				$rdg.setAttribute('part', partial);
 			$rdg.setAttribute('type', arr['reading']);
 			var corrector_name = arr['corrector_name'];
 			if (corrector_name == 'other') {
@@ -1584,7 +1585,7 @@ function getTeiByHtml(inputString, args) {
 					html2Tei_correctionAddW($seg, corrector_text);
 				}
 				$rdg.appendChild($seg);
-			} else if (place === 'overwritten' || place === 'above' || place === 'below') {
+			} else if (place === 'overwritten' || place === 'above' || place === 'below' || place === 'here') {
 				$seg = $newDoc.createElement('seg');
 				$seg.setAttribute('type', 'line');
 				$seg.setAttribute('subtype', place);
@@ -1592,9 +1593,10 @@ function getTeiByHtml(inputString, args) {
 					html2Tei_correctionAddW($seg, corrector_text);
 				}
 				$rdg.appendChild($seg);
-			} else if (place === 'elsewhere') {
+			} else if (place) { //other
 				$seg = $newDoc.createElement('seg');
-				$seg.setAttribute('type', 'elsewhere');
+				$seg.setAttribute('type', 'other');
+				$seg.setAttribute('subtype', arr['place_corr_other']);
 				if (corrector_text) { //add to <seg>
 					html2Tei_correctionAddW($seg, corrector_text);
 				}
@@ -1905,7 +1907,7 @@ function getTeiByHtml(inputString, args) {
 				$seg.setAttribute('subtype', placeValue);
 				$seg.appendChild($paratext);
 				$teiParent.appendChild($seg);
-			} else if (placeValue === 'above' || placeValue === 'below' || placeValue === 'here') {
+			} else if (placeValue === 'above' || placeValue === 'below' || placeValue === 'here' || placeValue === 'overwritten') {
 				$seg = $newDoc.createElement('seg');
 				$seg.setAttribute('type', 'line');
 				$seg.setAttribute('subtype', placeValue);

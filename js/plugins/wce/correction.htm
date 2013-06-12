@@ -73,11 +73,8 @@
 					<tr>
 						<td><label id="place_corr_label" for="place_corr">{#wce.corrector_place}</label>
 						</td>
-						<td colspan="2"><select id="place_corr" name="place_corr">
+						<td colspan="1"><select id="place_corr" name="place_corr" onchange="checkstatus_corr_position()">
 							<option value=""></option>
-							<option value="overwritten">{#wce.position_overwritten}</option>
-							<option value="above">{#wce.position_above}</option>
-							<option value="below">{#wce.position_below}</option>
 							<option value="pagetop">{#wce.position_pagetop}</option>
 							<option value="pagebottom">{#wce.position_pagebottom}</option>
 							<option value="pageleft">{#wce.position_pageleft}</option>
@@ -88,9 +85,16 @@
 							<option value="colright">{#wce.position_colright}</option>
 							<option value="lineleft">{#wce.position_lineleft}</option>
 							<option value="lineright">{#wce.position_lineright}</option>
-							<option value="elsewhere">{#wce.position_elsewhere}</option>
+							<option value="above">{#wce.position_above}</option>
+							<option value="below">{#wce.position_below}</option>
+							<option value="here">{#wce.position_thispoint}</option>
+							<option value="overwritten">{#wce.position_overwritten}</option>
+							<option value="other">{#wce.other}</option>
 						</select></td>
-					</tr>
+					<td><input id="place_corr_other"
+						name="place_corr_other" type="text" value="" size="20"
+						maxlength="" class="required number min1 mceFocus" />
+					</td></tr>
 					<tr>
 						<td><label id="deletion_label" for="deletion">{#wce.deletion}</label>
 						</td>
@@ -121,7 +125,18 @@
 						<td colspan="2"><textarea WRAP="PHYSICAL" ROWS="3" COLS="50"
 								id="editorial_note" name="editorial_note"></textarea>
 						</td>
-					</tr> 
+					</tr>
+					<tr>
+					<td><label id="partial_label" for="partial">{#wce.correction_partial}</label>
+						</td>
+						<td>
+						<select id="partial" name="partial">
+							<option value="">{#wce.corr_partial_complete}</option>
+							<option value="I">{#wce.corr_partial_beginning}</option>
+							<option value="F">{#wce.corr_partial_end}</option>
+						</select>
+						</td>
+					</tr>
 					<tr>
 						<td><label id="corrector_text_label" for="corrector_text">{#wce.corrector_text}</label>
 						</td>
@@ -204,26 +219,25 @@
 		
 		selectCorrItem(); 
 
-		/*if ($('#correction_ul > li').length < 1) {
-			$('#content_fieldset').attr('disabled', true);   
-		}*/
-
 		$(':input').change(function() {
 			saveCurrCorrector();
 		});
 	
- 		setstatus_deletion();  
+ 		setstatus_deletion();
+		checkstatus_corr_position();
 		checkstatus_hand(); 
 		checkstatus_firsthand();
 		checkstatus_correction();
 		
 		document.getElementById('corrector_text_adaptive_selection').checked=false; //deactivate adaptive selection here by default
+		corrector_text_editor.focus();
 	}
 	
 	function testOther() {
-		if (document.readinginfo.corrector_name.options[5].selected == true && document.getElementById('corrector_name_other').value == '') 
+		if ((document.readinginfo.corrector_name.options[5].selected == true && document.getElementById('corrector_name_other').value == '') ||
+			(document.readinginfo.place_corr.options[15].selected == true && document.getElementById('place_corr_other').value == '')) 
 			return false;
-	return true;
+		return true;
 	}
 	
 	function testOther_insert() {
@@ -265,6 +279,16 @@
 			}
 			$('#place_corr').attr('disabled', false);
 		} 
+	}
+	
+	function checkstatus_corr_position() {
+		if (document.readinginfo.place_corr.options[15].selected == true) {
+			document.readinginfo.place_corr_other.disabled = false;
+			document.getElementById('place_corr_other').style.backgroundColor = "white";
+		} else {
+			document.readinginfo.place_corr_other.disabled = true;
+			document.getElementById('place_corr_other').style.backgroundColor = "#CCCCCC";
+		}
 	}
 	
 	function checkstatus_deletion() {
@@ -374,6 +398,7 @@
 		//$('#content_fieldset').attr('disabled', false);
  		checkstatus_firsthand();
 		checkstatus_correction();
+		checkstatus_corr_position();
 	}
 
 	function delCorrector(_id) {

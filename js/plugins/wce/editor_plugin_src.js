@@ -1108,6 +1108,12 @@
 							// information on deletion
 							corr_str += '<div style="margin-top:5px">' + ed.getLang('wce.infotext_method_of_deletion') + ': ' + deletionText + '</div>';
 						}
+						
+						if (ar['place_corr'] === 'other') {
+							corr_str += '<div style="margin-top:10px">' + ed.getLang('wce.infotext_position') + ': ' + ar['place_corr_other'] + '</div>';
+						} else if (ar['place_corr'] != null) {
+							corr_str += '<div style="margin-top:10px">' + ed.getLang('wce.infotext_position') + ': ' + ar['place_corr'] + '</div>';
+						}
 						if (ar['editorial_note']) {
 							corr_str += '<div style="margin-top:5px">Note: ' + ar['editorial_note'] + '</div>';
 						}
@@ -2563,10 +2569,7 @@
 				if (row) {
 					tinymce.DOM.add(row.parentNode, 'div', {
 						'style' : ''
-					}, '<input type="checkbox" id="' + id + '"> Adaptive selection</input>');
-					tinymce.DOM.add(row.parentNode, 'div', {
-						'style' : 'margin: 0 600px;'
-					}, 'Version: 2013-06-11');
+					}, '<input type="checkbox" id="' + id + '"> Adaptive selection</input><span style="margin: 0 100px">Version: 2013-06-12');
 				}
 			});
 
@@ -2620,12 +2623,12 @@
 				image : url + '/img/de.png'
 			});
 			
-			ed.addButton('version', {
+			/*ed.addButton('version', {
 				title : "Information about the editor's version",
 				cmd : 'mceVersion',
-			});
+			});*/
 			
-			ed.addCommand('mceVersion', function() {
+			/*ed.addCommand('mceVersion', function() {
 				var http=new XMLHttpRequest();
 				http.open('HEAD','version.txt',false);
 				http.send(null);
@@ -2643,7 +2646,7 @@
 					datum = wort.substring(12,16) + "-" + monat + "-" + wort.substring(5,7) + " " + wort.substring(18);
 				}
 				alert('This version of the transcription editor was last modified on: ' + datum);
-			});
+			});*/
 			
 			/*
 			 * onInit
@@ -2779,13 +2782,6 @@
 					var sel = WCEObj._getSEL(ed);
 					var rng = sel.getRangeAt(0);
 					if (!WCEObj._canInsertCorrection(ed, rng)) {
-					/*var sel = WCEObj._getSEL(ed);
-					var startText = rng.startContainer.nodeValue;
-					if (startText) {
-						var startOffset = rng.startOffset;
-						var indexOfEnd = WCEObj._getNextEnd(startText, startOffset);
-					}
-					if (rng.startOffset != indexOfEnd) {*/
 						if (!wceNode) {
 							return;
 						}

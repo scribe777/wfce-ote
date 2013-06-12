@@ -211,23 +211,18 @@ var contentWithVerse;
 					var chapterNr=$(cb).val();				
 					var startNode=null,endNode=null;
 					var spanList=$(contentWithVerse).find('span');
+					// Loop through all <span> elements
 					for (var j=0,len2=spanList.length; j<len2; j++){
-						var span=spanList[j];
+						var span=spanList[j]; //actual <span>
 						var spanValue=$(span).html().trim();
 						if (!span.className){
 							continue;
 						}
 						if (span.className.toLowerCase()=='chapter_number'){						
-							/*if (startNode){
-								endNode=span;
-								break;
-							} else if(spanValue==chapterNr){
-								startNode=span; 
-							} */
-							$(span).remove();
+							if (spanValue == chapterNr)
+								$(span).remove();
 						}
 					}
-					//delChapter(startNode,endNode);
 				}
 			}	 
 		}

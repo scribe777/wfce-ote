@@ -14,6 +14,7 @@
 		force_br_newlines : true,
 		force_p_newlines : false,
 		entity_encoding : "raw",
+		//entities : "62,diple,8224,obelus",
 		theme_advanced_path : false,
 		execcommand_callback : 'wceExecCommandHandler',
 		save_onsavecallback : "saveDataToDB",

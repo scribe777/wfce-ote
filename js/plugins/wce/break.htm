@@ -346,7 +346,6 @@
 		var rng = ed.selection.getRng(true);
 		var startNode = rng.startContainer;
 		var startText = startNode.data ? startNode.data : startNode.innerText;
-		alert(startText.substr(rng.startOffset-1, 1));
 		if (startText.substr(rng.startOffset-1, 1) == " ")
 			return 'lb2';
 		else if (rng.startOffset == _getNextEnd(startText,rng.startOffset))
