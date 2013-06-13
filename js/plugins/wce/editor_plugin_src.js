@@ -1611,7 +1611,7 @@
 						}
 					});
 
-
+					/*
 					sub = m.addMenu({
 						title : ed.getLang('wce.menu_special_chars')
 					});
@@ -1649,7 +1649,7 @@
 						onclick : function() {
 							ed.execCommand('mceAdd_pc', '\u03A1\u0336');
 						}
-					});
+					});*/
 				});
 
 				// Return the new menu button instance
@@ -1885,6 +1885,41 @@
 						title : '; (semicolon)',
 						onclick : function() {
 							ed.execCommand('mceAdd_pc', '&semicolon;');
+						}
+					});
+					
+					sub.add({
+						title : '\u203B	(cross with dots)',
+						onclick : function() {
+							ed.execCommand('mceAdd_pc', '\u203B');
+						}
+					});
+
+					sub.add({
+						title : '\u003E (diple)',
+						onclick : function() {
+							ed.execCommand('mceAdd_pc', '\u003E');
+						}
+					});
+
+					sub.add({
+						title : '\u2020	(obelus)',
+						onclick : function() {
+							ed.execCommand('mceAdd_pc', '\u2020');
+						}
+					});
+
+					sub.add({
+						title : '\u00B6	(paragraphus)',
+						onclick : function() {
+							ed.execCommand('mceAdd_pc', '\u00B6');
+						}
+					});
+
+					sub.add({
+						title : '\u03A1\u0336    (staurogram)',
+						onclick : function() {
+							ed.execCommand('mceAdd_pc', '\u03A1\u0336');
 						}
 					});
 
