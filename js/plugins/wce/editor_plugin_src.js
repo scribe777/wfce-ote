@@ -7,12 +7,7 @@
  */
 
 (function() {
-	/*var qcnt = 1; // quire count
-	var pcnt = 1; // page count
-	var ccnt = 1; // column count
-	var lcnt = 1; // line count
-	var rectoverso = 'true'; // counting as r/v
-	*/
+	var wfce_editor = "2013-06-14";
 	
 	// Load plugin specific language pack
 	tinymce.PluginManager.requireLangPack('wce');
@@ -2604,7 +2599,7 @@
 				if (row) {
 					tinymce.DOM.add(row.parentNode, 'div', {
 						'style' : ''
-					}, '<input type="checkbox" id="' + id + '"> Adaptive selection</input><span style="margin: 0 100px">Version: 2013-06-12');
+					}, '<input type="checkbox" id="' + id + '"> Adaptive selection</input><span style="margin: 0 100px">Version: '+ wfce_editor);
 				}
 			});
 
