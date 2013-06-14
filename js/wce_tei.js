@@ -1831,16 +1831,12 @@ function getTeiByHtml(inputString, args) {
 			}
 		}
 
-		/*
-		 * // TODO: // numbering var _xml_id = $value['B'] + $value['K'] + $value['V'] + '-' + g_Wit + '-1';
-		 *  Other references are possible
-		 */
-
 		if ($teiParent.nodeName == 'w') {
 			$teiParent = $teiParent.parentNode;
 		}
-		var xml_id = '_TODO_';
-		$note.setAttribute('xml:id', xml_id);
+		// TODO: As long as there is no robust mechanism to set "-1", "-2", ... we have to "n" instead of "xml:id"
+		var xml_id = 'B' + g_bookNumber + 'K' + g_chapterNumber + 'V' + g_verseNumber + '-' + g_witValue;
+		$note.setAttribute('n', xml_id);
 		
 		// add <handshift/> if necessary
 		if (note_type_value === "changeOfHand") {
