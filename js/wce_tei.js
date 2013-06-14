@@ -365,14 +365,13 @@ function getHtmlByTei(inputString) {
 	var Tei2Html_ab = function($htmlParent, $teiNode) {
 		var $newNode = $newDoc.createElement('span');
 		$newNode.setAttribute('class', 'verse_number');
-		$newNode.setAttribute('wce', '__t=verse_number');
+		//$newNode.setAttribute('wce', '__t=verse_number');
 		var nValue = $teiNode.getAttribute('n');
 		if (nValue && nValue != '') {
 			var indexV = nValue.indexOf('V');
 			indexV++;
 			if (indexV > 0 && indexV < nValue.length) {
 				nValue = nValue.substr(indexV);
-				//teiIndexData['verseNumber'] = parseInt(nValue);
 				g_verseNumber = nValue;
 				nodeAddText($newNode, g_verseNumber);
 			}
@@ -381,6 +380,10 @@ function getHtmlByTei(inputString) {
 		var partValue = $teiNode.getAttribute('part');
 		if (partValue && partValue === 'F') // <ab part="F">
 			nodeAddText($newNode, ' Cont.');
+		if (partValue)
+			$newNode.setAttribute('wce', '__t=verse_number&partial=' + partValue);
+		else
+			$newNode.setAttribute('wce', '__t=verse_number');
 		$htmlParent.appendChild($newNode);
 		nodeAddText($htmlParent, ' ');
 		return $htmlParent;
@@ -1237,9 +1240,15 @@ function getTeiByHtml(inputString, args) {
 						final_w_found = true;
 				} else {
 					g_verseNumber = textNode.nodeValue;
+					var cont_index = g_verseNumber.indexOf('Cont.');
+					if (cont_index > -1)
+						g_verseNumber = g_verseNumber.substring(0, cont_index);
 					g_verseNumber = $.trim(g_verseNumber);
 					g_verseNode = $newDoc.createElement('ab');
 					g_verseNode.setAttribute('n', 'B' + g_bookNumber + 'K' + g_chapterNumber + 'V' + g_verseNumber);
+					var partial_index = $htmlNode.getAttribute('wce').indexOf('partial');
+					if (partial_index > -1) // node contains information about partial
+						g_verseNode.setAttribute('part', $htmlNode.getAttribute('wce').substring(partial_index+8, partial_index+9));
 				}
 				if (g_chapterNode)
 					g_chapterNode.appendChild(g_verseNode);

@@ -21,9 +21,6 @@
 		directionality : (rtl) ? "rtl" : "ltr",
 		language : (lang) ? lang : "en",
 		// invalid_elements:'p',
-		/*
-		 * plugins : "wce,pagebreak,style,layer,advhr,advimage,emotions,iespell,inlinepopups,safari,preview,media,searchreplace,print,contextmenu,paste,directionality,fullscreen,noneditable,visualchars,nonbreaking,xhtmlxtras,template,wordcount,advlist,autosave",
-		 */
 		plugins : "wce,pagebreak,style,save,layer,safari,print,inlinepopups,contextmenu,fullscreen,wordcount,autosave",
 
 		init_instance_callback : "wceReload",
@@ -36,6 +33,7 @@
 		theme_advanced_statusbar_location : "bottom",
 		theme_advanced_resizing : false,
 		oninit : function() {  // Once initialized, tell the editor to go fullscreen
+			addMenuItems(tinyMCE.activeEditor);
 			if (finishCallback) finishCallback();
 		}
 	});
@@ -152,6 +150,49 @@ function increaseLineHeight() {
 function decreaseLineHeight() {
 
 }
+
+function addMenuItems(ed) {
+	//var wceAttr = '';
+	ed.plugins.contextmenu.onContextMenu.add(function(th, menu, event) {
+        /*if ((el.nodeName == 'A' && !ed.dom.getAttrib(el, 'name')) || !col) {
+				m.addSeparator();
+				m.add({title : 'advanced.link_desc', icon : 'link', cmd : ed.plugins.advlink ? 'mceAdvLink' : 'mceLink', ui : true});
+				m.add({title : 'advanced.unlink_desc', icon : 'unlink', cmd : 'UnLink'});
+		*/
+		// added my options
+		if (ed.selection.getNode().getAttribute('wce') != null && ed.selection.getNode().getAttribute('wce').substring(4,16) == 'verse_number') {
+			//wceAttr = ed.selection.getNode().getAttribute('wce');
+			menu.addSeparator();
+			menu.add({
+				title : 'Partial (initial portion)', 
+				icon : 'option1', 
+				cmd : 'mce_partialI'
+			});
+			menu.add({
+				title : 'Partial (medial portion)', 
+				icon : 'option2', 
+				cmd : 'mce_partialM'
+			});
+			menu.add({
+				title : 'Partial (final portion)', 
+				icon : 'option3', 
+				cmd : 'mce_partialF'
+			});
+		}
+    });
+    
+    ed.addCommand('mce_partialI', function() {
+		ed.selection.getNode().setAttribute('wce', '__t=verse_number' + '&partial=I');
+    });
+    ed.addCommand('mce_partialM', function() {
+        ed.selection.getNode().setAttribute('wce', '__t=verse_number' + '&partial=M');
+    });
+	ed.addCommand('mce_partialF', function() {
+        ed.selection.getNode().setAttribute('wce', '__t=verse_number' + '&partial=F');
+    });
+}
+
+//function my_command() {alert (wceAttr + '&partial=F');}
 
 if ((typeof Range !== "undefined") && !Range.prototype.createContextualFragment) {
 	Range.prototype.createContextualFragment = function(html) {

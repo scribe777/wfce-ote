@@ -58,8 +58,14 @@ font[face=mceinline] {font-family:inherit !important}
 
 span.verse_number {
 	color:gray;
-/*	-moz-user-select: none;
-	hutia:expression(this.onselectstart=function(){return(false)});*/
+} 
+
+span.verse_number[wce="__t=verse_number&partial=I"] {
+	color:green;
+} 
+
+span.verse_number[wce="__t=verse_number&partial=F"] {
+	color:red;
 } 
  
 span.chapter_number{

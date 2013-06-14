@@ -136,7 +136,7 @@
 			m.add({title : 'advanced.copy_desc', icon : 'copy', cmd : 'Copy'}).setDisabled(col);
 			m.add({title : 'advanced.paste_desc', icon : 'paste', cmd : 'Paste'});
 
-			if ((el.nodeName == 'A' && !ed.dom.getAttrib(el, 'name')) || !col) {
+			/*if ((el.nodeName == 'A' && !ed.dom.getAttrib(el, 'name')) || !col) {
 				m.addSeparator();
 				m.add({title : 'advanced.link_desc', icon : 'link', cmd : ed.plugins.advlink ? 'mceAdvLink' : 'mceLink', ui : true});
 				m.add({title : 'advanced.unlink_desc', icon : 'unlink', cmd : 'UnLink'});
@@ -151,7 +151,7 @@
 			am.add({title : 'contextmenu.center', icon : 'justifycenter', cmd : 'JustifyCenter'});
 			am.add({title : 'contextmenu.right', icon : 'justifyright', cmd : 'JustifyRight'});
 			am.add({title : 'contextmenu.full', icon : 'justifyfull', cmd : 'JustifyFull'});
-
+			*/
 			t.onContextMenu.dispatch(t, m, el, col);
 
 			return m;
