@@ -1616,13 +1616,27 @@ function getTeiByHtml(inputString, args) {
 				corrector_text = 'OMISSION'; //this is later replaced by &om;
 			}
 			
-			//TODO: Implement a schema (if there is one) for the nValue
 			// Define value for "n" attribute. This depends on the type of marginal material
-			//var nValue;
 						
-			if (place === 'pageleft' || place === 'pageright' || place === 'pagetop' || place === 'pagebottom'
-				|| place === 'coltop' || place === 'colbottom' || place === 'colleft' || place === 'colright' 
-				|| place === 'lineleft' || place === 'lineright') { //define <seg> element for marginal material
+			if (place === 'pageleft' || place === 'pageright' || place === 'pagetop' || place === 'pagebottom') { //define <seg> element for marginal material
+				$seg = $newDoc.createElement('seg');
+				$seg.setAttribute('type', 'margin');
+				$seg.setAttribute('subtype', place);
+				$seg.setAttribute('n', '@' + 'P' + g_pageNumber + '-' + g_witValue);
+				if (corrector_text) { //add to <seg>
+					html2Tei_correctionAddW($seg, corrector_text);
+				}
+				$rdg.appendChild($seg);
+			} else if (place === 'coltop' || place === 'colbottom' || place === 'colleft' || place === 'colright') {
+				$seg = $newDoc.createElement('seg');
+				$seg.setAttribute('type', 'margin');
+				$seg.setAttribute('subtype', place);
+				$seg.setAttribute('n', '@' + 'P' + g_pageNumber + 'C' + g_columnNumber + '-' + g_witValue);
+				if (corrector_text) { //add to <seg>
+					html2Tei_correctionAddW($seg, corrector_text);
+				}
+				$rdg.appendChild($seg);
+			} else if (place === 'lineleft' || place === 'lineright') {
 				$seg = $newDoc.createElement('seg');
 				$seg.setAttribute('type', 'margin');
 				$seg.setAttribute('subtype', place);
@@ -1935,9 +1949,22 @@ function getTeiByHtml(inputString, args) {
 			$teiParent.appendChild($paratext);
 		} else { // only if not commentary
 			nodeAddText($paratext, decodeURIComponent(arr['marginals_text']));
-			if (placeValue === 'pageleft' || placeValue === 'pageright' || placeValue === 'pagetop' || placeValue === 'pagebottom' 
-				|| placeValue === 'coltop' || placeValue === 'colbottom' || placeValue === 'colleft' || placeValue === 'colright'
-				|| placeValue === 'lineleft' || placeValue === 'lineright') { //define <seg> element for marginal material
+			var $seg;
+			if (placeValue === 'pageleft' || placeValue === 'pageright' || placeValue === 'pagetop' || placeValue === 'pagebottom') { //define <seg> element for marginal material
+				$seg = $newDoc.createElement('seg');
+				$seg.setAttribute('type', 'margin');
+				$seg.setAttribute('subtype', placeValue);
+				$seg.setAttribute('n', '@' + 'P' + g_pageNumber + '-' + g_witValue);
+				$seg.appendChild($paratext);
+				$teiParent.appendChild($seg);
+			} else if (placeValue === 'coltop' || placeValue === 'colbottom' || placeValue === 'colleft' || placeValue === 'colright') {
+				$seg = $newDoc.createElement('seg');
+				$seg.setAttribute('type', 'margin');
+				$seg.setAttribute('subtype', placeValue);
+				$seg.setAttribute('n', '@' + 'P' + g_pageNumber + 'C' + g_columnNumber + '-' + g_witValue);
+				$seg.appendChild($paratext);
+				$teiParent.appendChild($seg);
+			} else if (placeValue === 'lineleft' || placeValue === 'lineright') {
 				$seg = $newDoc.createElement('seg');
 				$seg.setAttribute('type', 'margin');
 				$seg.setAttribute('subtype', placeValue);

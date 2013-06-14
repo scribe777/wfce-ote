@@ -24,7 +24,7 @@
 			var w = ed.WCE_CON;
 
 			// blocked elements :If the Caret is inside, this will prohibit the key operation
-			w.blockedElements = new Array('gap', 'corr', 'chapter_number', 'verse_number', 'abbr', 'spaces', 'note', 'unclear', 'brea', 'paratext');
+			w.blockedElements = new Array('gap', 'corr', 'chapter_number', 'book_number', 'verse_number', 'abbr', 'spaces', 'note', 'unclear', 'brea', 'paratext');
 			
 			//enable Correction a whole word is highlighte by... 
 			w.combinationWithCorrection=new Array('gap','unclear','abbr');
@@ -92,7 +92,7 @@
 			var nodeName = node.nodeName;
 			if (nodeName && nodeName.toLowerCase() == 'span') {
 				// TODO
-				if (typeName == 'verse_number' || typeName == 'chapter_number') {
+				if (typeName == 'verse_number' || typeName == 'chapter_number' || typeName == 'book_number') {
 					var className = node.className;
 					if (className) {
 						return className.indexOf(typeName) > -1;
@@ -623,6 +623,9 @@
 					w.not_N = false;
 				}
 				w.type = 'abbr';
+			} else if (_isNodeTypeOf(selectedNode, 'book_number')) {
+				_setAllControls(ed, true);
+				w.type = 'book_number';
 			} else if (_isNodeTypeOf(selectedNode, 'chapter_number')) {
 				_setAllControls(ed, true);
 				w.type = 'chapter_number';
@@ -2342,8 +2345,9 @@
 						return _stopEvent(ed, e);
 					}
 				} else if (ek == 46 && wcevar.isCollapsedAtNodeEnd && !wcevar.isNextElemBE) {
-				} else if (ek == 46) {
-					//if (wcevar.type === "unclear" || wcevar.type === "gap")
+				} else if (ek == 46 || ek == 8) {
+					if (wcevar.type === "chapter_number" || wcevar.type === 'book_number' || wcevar.type === 'verse_number')
+						return _stopEvent(ed, e);
 					ed.execCommand('wceDelNode');
 					return _stopEvent(ed, e);
 				} else if (!ed.WCE_VAR.not_B && (ek == 13 || ek == 10)) {
