@@ -2694,14 +2694,8 @@
 				//
 				ed.teiIndexData = {
 					'bookNumber' : '00',
-					'pageNumber' : '0',
-					'chapterNumber' : 0,
-					'verseNumber' : 0,
-					'wordNumber' : 0,
-					'columnNumber' : 0,
-					'lineNumber' : 0,
-					'quireNumber' : 0,
-					'witValue' : '0'
+					'witValue' : '0',
+					'manuscriptLang' : ''
 				};
 				var wcevar = ed.WCE_VAR;
 

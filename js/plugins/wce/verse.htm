@@ -23,6 +23,10 @@
 				<input type="radio" id="insertChapterRadio" name="versemodify" onclick="canInsertChapter();">{#wce.chapter_insert}</input>
 				<input id="insertChapterNumber" type="text" />
 			</div>
+			<div id="insertBookDiv">
+				<input type="radio" id="insertBookRadio" name="versemodify" onclick="canInsertBook();">{#wce.book_insert}</input>
+				<input id="insertBookNumber" type="text" />
+			</div>
 		</div>
 		<div id="deleteVerseDiv" style="margin-top:10px">
 			<div>
@@ -35,6 +39,12 @@
 				<input type="radio" id="deleteChapterRadio" onclick="canDeleteChapter();" name="versemodify"/>{#wce.chapter_remove}
 			</div>
 			<fieldset style="border:1px solid #ccc;width:auto; height:auto; overflow-y:auto" id="chapterList"></fieldset>
+		</div>
+		<div id="deleteBookDiv" style="margin-top:10px">
+			<div>
+				<input type="radio" id="deleteBookRadio" onclick="canDeleteBook();" name="versemodify"/>{#wce.book_remove}
+			</div>
+			<fieldset style="border:1px solid #ccc;width:auto; height:auto; overflow-y:auto" id="bookList"></fieldset>
 		</div>
 		<div class="mceActionPanel" style="margin-bottom:10px">
 			<input type="button" id="ok" name="ok" value="OK"
@@ -58,32 +68,50 @@ var contentWithVerse;
 		$('#insertVerseRadio').attr('checked','checked');
 		$('#insertVerseNumber').removeAttr('disabled');
 		$('#insertChapterNumber').attr('disabled','disabled');
+		$('#insertBookNumber').attr('disabled','disabled');
 		$('#verseList').attr('disabled','disabled');
 		$('#chapterList').attr('disabled','disabled');
+		$('#bookList').attr('disabled','disabled');
 	}
 	
 	function canInsertInscriptio(){
 		$('#insertInscriptioRadio').attr('checked','checked');
 		$('#insertVerseNumber').attr('disabled','disabled');
 		$('#insertChapterNumber').attr('disabled','disabled');
+		$('#insertBookNumber').attr('disabled','disabled');
 		$('#verseList').attr('disabled','disabled');
 		$('#chapterList').attr('disabled','disabled');
+		$('#bookList').attr('disabled','disabled');
 	}
 	
 	function canInsertSubscriptio(){
 		$('#insertSubscriptioRadio').attr('checked','checked');
 		$('#insertVerseNumber').attr('disabled','disabled');
 		$('#insertChapterNumber').attr('disabled','disabled');
+		$('#insertBookNumber').attr('disabled','disabled');
 		$('#verseList').attr('disabled','disabled');
 		$('#chapterList').attr('disabled','disabled');
+		$('#bookList').attr('disabled','disabled');
 	}
 	
+	function canInsertBook(){
+		$('#insertChapterBook').attr('checked','checked');
+		$('#insertBookNumber').removeAttr('disabled'); 
+		$('#insertChapterNumber').attr('disabled','disabled');
+		$('#insertVerseNumber').attr('disabled','disabled');
+		$('#verseList').attr('disabled','disabled');
+		$('#chapterList').attr('disabled','disabled');
+		$('#bookList').attr('disabled','disabled');
+	}
+		
 	function canInsertChapter(){
 		$('#insertChapterRadio').attr('checked','checked');
 		$('#insertChapterNumber').removeAttr('disabled'); 
 		$('#insertVerseNumber').attr('disabled','disabled');
+		$('#insertBookNumber').attr('disabled','disabled');
 		$('#verseList').attr('disabled','disabled');
 		$('#chapterList').attr('disabled','disabled');
+		$('#bookList').attr('disabled','disabled');
 	}
 	
 	function canDeleteVerse(){
@@ -91,7 +119,9 @@ var contentWithVerse;
 		$('#verseList').removeAttr('disabled');
 		$('#insertVerseNumber').attr('disabled','disabled');
 		$('#insertChapterNumber').attr('disabled','disabled');
+		$('#insertBookNumber').attr('disabled','disabled');
 		$('#chapterList').attr('disabled','disabled');
+		$('#bookList').attr('disabled','disabled');
 	}
 	
 	function canDeleteChapter(){
@@ -99,7 +129,19 @@ var contentWithVerse;
 		$('#chapterList').removeAttr('disabled');
 		$('#insertVerseNumber').attr('disabled','disabled');
 		$('#insertChapterNumber').attr('disabled','disabled');
+		$('#insertBookNumber').attr('disabled','disabled');
 		$('#verseList').attr('disabled','disabled');
+		$('#bookList').attr('disabled','disabled');
+	}
+	
+	function canDeleteBook(){
+		$('#deleteBookRadio').attr('checked','checked');
+		$('#bookList').removeAttr('disabled');
+		$('#insertVerseNumber').attr('disabled','disabled');
+		$('#insertChapterNumber').attr('disabled','disabled');
+		$('#inserBookNumber').attr('disabled','disabled');
+		$('#verseList').attr('disabled','disabled');
+		$('#chapterList').attr('disabled','disabled');
 	}
 	
 	function init() {
@@ -107,6 +149,7 @@ var contentWithVerse;
 		contentWithVerse=$('<div/>').html(ed.getContent())[0]; //selects everything starting the complete chapter
 		$('#verseList').html(getVerseList(contentWithVerse));
 		$('#chapterList').html(getChapterList(contentWithVerse));
+		$('#bookList').html(getBookList(contentWithVerse));
 	}
 	
 	function getVerseList(node){
@@ -155,7 +198,29 @@ var contentWithVerse;
 		return out;		
 	}
 	
-	
+	function getBookList(node){
+		var out="";
+		if(!node || node.nodeType != 1){
+			return out;
+		}
+		
+		var list=node.childNodes;
+		for(var i=0,len=list.length; i<len; i++){
+			var n=list[i];
+			if(n.nodeType==1){
+				out+=getBookList(n); 
+			}
+		}
+		
+		var className=node.className;
+		if(className && className.match(/book_number/)){
+			var v=$.trim(node.innerHTML);
+			if(v && v!='')
+				out+='<input type="checkbox" value="'+v+'">Book '+v+'</input><br />'; 
+		}	
+		return out;		
+	}
+		
 	function update(){ 
 		if ($('#insertVerseRadio').attr('checked')){
 			var newVerseNr = $('#insertVerseNumber').val().trim();
@@ -175,6 +240,13 @@ var contentWithVerse;
 			newChapterNr = newChapterNr.replace(/\D/g,'');
 			if (newChapterNr != ''){
 				ed.selection.setContent('<span class="chapter_number" wce="__t=chapter_number"> ' + newChapterNr + '</span> ');
+			}
+			return;
+		} else if ($('#insertBookRadio').attr('checked')){
+			var newBookNr = $('#insertBookNumber').val().trim();
+			newBookNr = newBookNr.replace(/\D/g,'');
+			if (newBookNr != ''){
+				ed.selection.setContent('<span class="book_number" wce="__t=book_number"> ' + newBookNr + '</span> ');
 			}
 			return;
 		} else if ($('#deleteVerseRadio').attr('checked')){
@@ -224,7 +296,29 @@ var contentWithVerse;
 						}
 					}
 				}
-			}	 
+			}
+		} else if ($('#deleteBookRadio').attr('checked')){
+			var bookList=$('#bookList').find('input:checkbox');
+			for (var i=0,len=bookList.length; i<len; i++){ 
+				var cb=bookList[i];
+				if ($(cb).attr('checked')){
+					var bookNr=$(cb).val();				
+					var startNode=null,endNode=null;
+					var spanList=$(contentWithVerse).find('span');
+					// Loop through all <span> elements
+					for (var j=0,len2=spanList.length; j<len2; j++){
+						var span=spanList[j]; //actual <span>
+						var spanValue=$(span).html().trim();
+						if (!span.className){
+							continue;
+						}
+						if (span.className.toLowerCase()=='book_number'){						
+							if (spanValue == bookNr)
+								$(span).remove();
+						}
+					}
+				}
+			}
 		}
 		ed.setContent($(contentWithVerse).html());
 	}
@@ -267,35 +361,6 @@ var contentWithVerse;
 		_delVerse(contentWithVerse);
 	}
 	
-	function delChapter(startNode,endNode){
-		var start;
-		var _delChapter=function(node){
-			if(node==startNode){
-				start=true;
-			} else if (node == endNode) {
-				start=false;
-				return true;
-			} else {
-				var temp=node.childNodes;
-				var list=new Array();
-				for(var i=0,len=temp.length;i<len;i++){
-					list[i]=temp[i];
-				}				
-				for(var i=0,len=list.length;i<len;i++){
-					var n=list[i];
-					if(_delChapter(n)){
-						return true;
-					}
-				}
-			}
-			if(start){				
-				$(node).remove();
-			}
-		}
-		
-		_delChapter(contentWithVerse);
-	}
-		
 	if (!tinyMCE.isIE) {
 		$(document).keydown(function(e) {
 			var evt = e || window.event

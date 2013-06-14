@@ -15,7 +15,7 @@ function getHtmlByTei(inputString) {
 	var $newDoc, $newRoot, $newRoot;
 
 	var teiIndexData = {
-		'bookNumber' : '',
+		/*'bookNumber' : '',
 		'pageNumber' : '',
 		'chapterNumber' : 0,
 		'verseNumber' : 0,
@@ -23,7 +23,10 @@ function getHtmlByTei(inputString) {
 		'columnNumber' : 0,
 		'lineNumber' : 0,
 		'quireNumber' : 0,
-		'witValue' : ''
+		'witValue' : ''*/
+		'bookNumber' : '',
+		'witValue' : '',
+		'manuscriptLang' : ''
 	};
 	
 	// As &om; can not be handled we go back to OMISSION
@@ -86,10 +89,11 @@ function getHtmlByTei(inputString) {
 			}
 
 			if ($teiNode.nodeName == 'w') {
-				var nValue = $teiNode.getAttribute('n');
+				// Word numbering is done outside the editor
+				/*var nValue = $teiNode.getAttribute('n');
 				if (nValue) {
 					teiIndexData['wordNumber'] = parseInt(nValue);
-				}
+				}*/
 
 				var $nextSibling = $teiNode.nextSibling;
 				if ($nextSibling && $nextSibling.nodeName == 'note') {
@@ -254,7 +258,6 @@ function getHtmlByTei(inputString) {
 			
 			var $newNode = $newDoc.createElement('span'); // add line break for "page end"
 			$newNode.setAttribute("class", "brea");
-			//$newNode.setAttribute("wce","__t=brea&__n=&hasBreak=yes&break_type=lb&number=&pb_type=&fibre_type=&page_number=&running_title=&facs=&lb_alignment=");
 			$newNode.setAttribute("wce","__t=brea&__n=&hasBreak=yes&break_type=lb&number=&pb_type=&fibre_type=&facs=&lb_alignment=");
 			nodeAddText($newNode, '\u2010');
 			$br = $newDoc.createElement('br');
@@ -312,23 +315,34 @@ function getHtmlByTei(inputString) {
 		if (!divType)
 			return $htmlParent;
 
-		if (divType == 'chapter') {
+		if (divType == 'book') {
+			var $newNode = $newDoc.createElement('span');
+			$newNode.setAttribute('class', 'book_number');
+			$newNode.setAttribute('wce', '__t=book_number');
+			$booknumber = $teiNode.getAttribute('n').substring(1); // get rid of the "B"
+			if ($booknumber.charAt(0) == '0')
+				$booknumber = $booknumber.substring(1); // get rid of "0"
+			nodeAddText($newNode, $booknumber);
+		} else if (divType == 'chapter') {
 			var $newNode = $newDoc.createElement('span');
 			$newNode.setAttribute('class', 'chapter_number');
 			$newNode.setAttribute('wce', '__t=chapter_number');
-			var nValue = $teiNode.getAttribute('n');
+			var nValue = $teiNode.getAttribute('n'); // BXXK(Y)Y
 			if (nValue && nValue != '') {
 				var indexK = nValue.indexOf('K');
 				var indexB = nValue.indexOf('B');
-				if (indexB + 1 > -1 && indexK - 1 > 0) {
-					bookValue = nValue.substr(indexB + 1, indexK - 1);
-					teiIndexData['bookNumber'] = bookValue;
+				if (indexB + 1 > -1 && indexK - 1 > 0) { //TODO: Do we need this, if the book number is passed to the editor at run-time? Maybe just a fallback?
+					bookValue = nValue.substr(indexB + 1, indexK - 1); // we store the book number as it is, maybe with leading "0"
+					//if (bookValue.length == 2 && bookValue.charAt(0) == '0' //if bookValue is a two-digit number and starts with "0"
+					//	bookValue = bookValue.substring(1);
+					g_bookNumber = bookValue;
 				}
 				indexK++;
 				if (indexK > 0 && indexK < nValue.length) {
 					nValue = nValue.substr(indexK);
-					teiIndexData['chapterNumber'] = parseInt(nValue);
-					nodeAddText($newNode, nValue);
+					//teiIndexData['chapterNumber'] = parseInt(nValue);
+					g_chapterNumber = nValue;
+					nodeAddText($newNode, g_chapterNumber);
 				}
 			}
 		} else { //incipit or explicit
@@ -358,8 +372,9 @@ function getHtmlByTei(inputString) {
 			indexV++;
 			if (indexV > 0 && indexV < nValue.length) {
 				nValue = nValue.substr(indexV);
-				teiIndexData['verseNumber'] = parseInt(nValue);
-				nodeAddText($newNode, nValue);
+				//teiIndexData['verseNumber'] = parseInt(nValue);
+				g_verseNumber = nValue;
+				nodeAddText($newNode, g_verseNumber);
 			}
 		}
 		//TODO: This could be removed
@@ -610,9 +625,8 @@ function getHtmlByTei(inputString) {
 			//pb n="2rx" type="folio" facs="edfwe" xml:id="P2rx-0" break="no"/><fw type="runTitle"
 			var number = getWceAttributeByTei($teiNode, {'n' : 'n'});
 			if (number)
-				teiIndexData['pageNumber'] = number;
-			//else
-				//wceAttr += '&pb_ghostpage=on';
+				//teiIndexData['pageNumber'] = number;
+				g_pageNumber = number;
 			var pbtype = getWceAttributeByTei($teiNode, {'type' : 'p'});
 			if (pbtype == "page") {
 				if (number.match("[0-9]$")) { // ends with a digit => no fibre type
@@ -640,15 +654,17 @@ function getHtmlByTei(inputString) {
 				wceAttr += n;
 			}
 			if (type === 'lb')
-				teiIndexData['wordNumber'] = n;
+				//teiIndexData['wordNumber'] = n;
+				g_lineNumber = n;
 			else if (type === 'cb')
-				teiIndexData['columnNumber'] = n;
+				//teiIndexData['columnNumber'] = n;
+				g_columnNumber = n;
 			else //qb
-				teiIndexData['quireNumber'] = n;
+				//teiIndexData['quireNumber'] = n;
+				g_quireNumber = n;
 			wceAttr += '&lb_alignment=';
 			if ($teiNode.getAttribute('rend'))
 				wceAttr += $teiNode.getAttribute('rend');
-			//wceAttr += '&pb_type=&fibre_type=&facs=&page_number=&running_title=&paratext_position=pagetop&paratext_position_other=';
 			wceAttr += '&pb_type=&fibre_type=&facs=';
 		}
 
@@ -731,8 +747,8 @@ function getHtmlByTei(inputString) {
 			wceAttr += '&paratext_position=';
 			if ($next.getAttribute('type') === 'margin' || $next.getAttribute('type') === 'line') //standard values
 				wceAttr += $next.getAttribute('subtype') + '&paratext_position_other=';
-			else //"other" value
-				wceAttr += 'other&paratext_position_other=' + $next.getAttribute('type');
+			else // type="other"
+				wceAttr += 'other&paratext_position_other=' + $next.getAttribute('subtype');
 		}	
 				
 		$newNode.setAttribute('wce', wceAttr);
@@ -995,14 +1011,18 @@ function getTeiByHtml(inputString, args) {
 
 	// arguments:
 	// g_bookNumber, g_pageNumber, g_chapterNumber, g_verseNumber, g_wordNumber, g_columnNumber, g_witValue,
+	//TODO: Check, if those values really have to be stored in an array. Aren't they just coming from the export routine directly (except for book, witness and manuscript language)
 	var g_bookNumber = args['bookNumber'];
-	var g_pageNumber = args['pageNumber'];
-	var g_chapterNumber = args['chapterNumber'];
-	var g_verseNumber = args['verseNumber'];
-	var g_wordNumber = args['wordNumber'];
-	var g_columnNumber = args['columnNumber'];
 	var g_witValue = args['witValue'];
-
+	var g_manuscriptLang = args['manuscriptLang'];
+	var g_quireNumber = '';
+	var g_pageNumber = '';
+	var g_columnNumber = '';
+	var g_chapterNumber = '';
+	var g_verseNumber = '';
+	var g_lineNumber = '';
+	var g_wordNumber = '';
+	
 	// node for te
 	var g_bookNode;
 	var g_chapterNode;
@@ -1062,6 +1082,8 @@ function getTeiByHtml(inputString, args) {
 		//  
 		// add an required header to get a valid XML
 		str = str.replace('<TEI>', '<?xml  version="1.0" encoding="utf-8"?><!DOCTYPE TEI [<!ENTITY om "">]><?xml-model href="TEI-NTMSS.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?><TEI xmlns="http://www.tei-c.org/ns/1.0"><teiHeader><fileDesc><titleStmt><title/></titleStmt><publicationStmt><p/></publicationStmt><sourceDesc><msDesc><msIdentifier></msIdentifier></msDesc></sourceDesc></fileDesc></teiHeader><text><body>');
+		if (g_manuscriptLang && g_manuscriptLang != '') // set manuscript language if there are information
+			str = str.replace("<text>", "<text xml:lang='" + g_manuscriptLang + "'>");
 		str = str.replace("</TEI>", "</body></text></TEI>");
 		
 		// Now we do some "magic" regex substitution do get correct <w> elements
@@ -1184,6 +1206,10 @@ function getTeiByHtml(inputString, args) {
 	var getTeiNodeByHtmlNode = function($teiParent, $htmlNode, stopAddW) {
 		var wceAttrValue, wceType, htmlNodeName, infoArr, arr;
 		
+		// If there is no special <div type="book"> element, the passed number from the Workspace is used.
+		// We check, if it is in the correct format.
+		if (g_bookNumber.length == 1) // add "0"
+			g_bookNumber = '0' + g_bookNumber;
 		wceAttrValue = $htmlNode.getAttribute('wce');
 		
 		if (!wceAttrValue) {
@@ -1191,6 +1217,8 @@ function getTeiByHtml(inputString, args) {
 				wceAttrValue = 'verse_number';
 			} else if ($htmlNode.getAttribute('class') == 'chapter_number') {
 				wceAttrValue = 'chapter_number';
+			} else if ($htmlNode.getAttribute('class') == 'book_number') {
+				wceAttrValue = 'book_number';
 			}
 		}
 
@@ -1236,7 +1264,7 @@ function getTeiByHtml(inputString, args) {
 			if (textNode) {
 				g_chapterNumber = textNode.nodeValue;
 				g_chapterNumber = $.trim(g_chapterNumber);
-				if (g_chapterNumber != old_chapterNumber) { //ignore repeated chapter numbers
+				if (g_chapterNumber != old_chapterNumber) { //ignore repeated chapter numbers; TODO: still needed?
 					old_chapterNumber = g_chapterNumber;
 					g_chapterNode = $newDoc.createElement('div');
 					if (g_chapterNumber === 'Inscriptio') {
@@ -1253,7 +1281,19 @@ function getTeiByHtml(inputString, args) {
 				}
 			}
 			return null;
-
+		} else if (wceAttrValue != null && wceAttrValue.match(/book_number/)) {
+			var textNode = $htmlNode.firstChild;
+			if (textNode) {
+				g_bookNumber = textNode.nodeValue;
+				g_bookNumber = $.trim(g_bookNumber);
+				g_bookNode = $newDoc.createElement('div');
+				g_bookNode.setAttribute('type', 'book');
+				if (g_bookNumber.length == 1) // add "0" if necessary
+					g_bookNumber = '0' + g_bookNumber;
+				g_bookNode.setAttribute('n', 'B' + g_bookNumber);
+				$newRoot.appendChild(g_bookNode);
+			}
+			return null;
 		} else {
 			htmlNodeName = $htmlNode.nodeName;
 		}
@@ -1575,12 +1615,18 @@ function getTeiByHtml(inputString, args) {
 			if (arr['blank_correction'] == 'on') {
 				corrector_text = 'OMISSION'; //this is later replaced by &om;
 			}
+			
+			//TODO: Implement a schema (if there is one) for the nValue
+			// Define value for "n" attribute. This depends on the type of marginal material
+			//var nValue;
+						
 			if (place === 'pageleft' || place === 'pageright' || place === 'pagetop' || place === 'pagebottom'
 				|| place === 'coltop' || place === 'colbottom' || place === 'colleft' || place === 'colright' 
 				|| place === 'lineleft' || place === 'lineright') { //define <seg> element for marginal material
 				$seg = $newDoc.createElement('seg');
 				$seg.setAttribute('type', 'margin');
 				$seg.setAttribute('subtype', place);
+				$seg.setAttribute('n', '@' + 'P' + g_pageNumber + 'C' + g_columnNumber + 'L' + g_lineNumber + '-' + g_witValue);
 				if (corrector_text) { //add to <seg>
 					html2Tei_correctionAddW($seg, corrector_text);
 				}
@@ -1589,6 +1635,7 @@ function getTeiByHtml(inputString, args) {
 				$seg = $newDoc.createElement('seg');
 				$seg.setAttribute('type', 'line');
 				$seg.setAttribute('subtype', place);
+				$seg.setAttribute('n', '@' + 'P' + g_pageNumber + 'C' + g_columnNumber + 'L' + g_lineNumber + '-' + g_witValue);
 				if (corrector_text) { //add to <seg>
 					html2Tei_correctionAddW($seg, corrector_text);
 				}
@@ -1597,6 +1644,7 @@ function getTeiByHtml(inputString, args) {
 				$seg = $newDoc.createElement('seg');
 				$seg.setAttribute('type', 'other');
 				$seg.setAttribute('subtype', arr['place_corr_other']);
+				$seg.setAttribute('n', '@' + 'P' + g_pageNumber + 'C' + g_columnNumber + 'L' + g_lineNumber + '-' + g_witValue);
 				if (corrector_text) { //add to <seg>
 					html2Tei_correctionAddW($seg, corrector_text);
 				}
@@ -1615,9 +1663,8 @@ function getTeiByHtml(inputString, args) {
 				var $note = $newDoc.createElement('note');
 				$note.setAttribute('type', 'transcriber');
 				$note.setAttribute('n', rdgcount); //store information about corresponding reading in "n" attribute
-				var _line = '';// TODO line numbering
-				xml_id = 'P' + g_pageNumber + 'C' + g_columnNumber + 'L' + _line + '-' + g_witValue + '-1'; //TODO: reference can as well consist of BKV
-				$note.setAttribute('xml:id', xml_id);// TODO:
+				xml_id = 'P' + g_pageNumber + 'C' + g_columnNumber + 'L' + g_lineNumber + '-' + g_witValue + '-1'; //TODO: reference can as well consist of BKV
+				$note.setAttribute('xml:id', xml_id);
 				nodeAddText($note, decodeURIComponent(editorial_note));
 				$app.parentNode.appendChild($note); //insert $note at the very end
 			}
@@ -1666,17 +1713,17 @@ function getTeiByHtml(inputString, args) {
 			$newNode = $newDoc.createElement(break_type);
 			switch (break_type) {
 			case 'lb':
-				$newNode.setAttribute('n', arr['number']);
+				g_lineNumber = arr['number'];
+				$newNode.setAttribute('n', g_lineNumber);
 				if (arr['lb_alignment'] != '') {
 					$newNode.setAttribute('rend', arr['lb_alignment']);
 				}
-				xml_id = 'P' + g_pageNumber + 'C' + g_columnNumber + 'L' + arr['number'] + '-' + g_witValue;
+				xml_id = 'P' + g_pageNumber + 'C' + g_columnNumber + 'L' + g_lineNumber + '-' + g_witValue;
 				break;
 			case 'cb':
-				var breaColumn = arr['number'];
-				$newNode.setAttribute('n', breaColumn);
-				xml_id = 'P' + g_pageNumber + 'C' + breaColumn + '-' + g_witValue;
-				g_columnNumber = breaColumn;
+				g_columnNumber = arr['number'];
+				$newNode.setAttribute('n', g_columnNumber);
+				xml_id = 'P' + g_pageNumber + 'C' + g_columnNumber + '-' + g_witValue;
 				break;
 			case 'pb':
 				var breaPage='';
@@ -1684,13 +1731,13 @@ function getTeiByHtml(inputString, args) {
 				//if (!arr['pb_ghostpage']) {
 					if (arr['pb_type'] != '') {
 						// folio
-						breaPage = arr['number'] + arr['pb_type'] + arr['fibre_type'];
-						$newNode.setAttribute('n', breaPage);
+						g_pageNumber = arr['number'] + arr['pb_type'] + arr['fibre_type'];
+						$newNode.setAttribute('n', g_pageNumber);
 						$newNode.setAttribute('type', 'folio');
 					} else {
 						// page
-						breaPage = arr['number'] + arr['fibre_type'];
-						$newNode.setAttribute('n', breaPage);
+						g_pageNumber = arr['number'] + arr['fibre_type'];
+						$newNode.setAttribute('n', g_pageNumber);
 						$newNode.setAttribute('type', 'page');
 					}
 				//}
@@ -1698,8 +1745,7 @@ function getTeiByHtml(inputString, args) {
 					// use URL for facs attribute
 					$newNode.setAttribute('facs', decodeURIComponent(arr['facs']));
 				}
-				xml_id = 'P' + breaPage + '-' + g_witValue;
-				g_pageNumber = breaPage;
+				xml_id = 'P' + g_pageNumber + '-' + g_witValue;
 				break;
 			}
 			//if (!arr['pb_ghostpage']) // write id only if not ghost page
@@ -1883,11 +1929,6 @@ function getTeiByHtml(inputString, args) {
 			placeValue = arr['paratext_position_other'];
 		}
 
-		/* place has been transfered to a <seg> element
-		if (fwType != 'commentary' && placeValue && placeValue != '') {
-			$paratext.setAttribute('place', placeValue);
-		}*/
-
 		var rendValue = arr['paratext_alignment'];
 		if (fwType != 'commentary' && rendValue && rendValue != '') {
 			$paratext.setAttribute('rend', rendValue);
@@ -1898,24 +1939,27 @@ function getTeiByHtml(inputString, args) {
 			$teiParent.appendChild($paratext);
 		} else { // only if not commentary
 			nodeAddText($paratext, decodeURIComponent(arr['marginals_text']));
-
 			if (placeValue === 'pageleft' || placeValue === 'pageright' || placeValue === 'pagetop' || placeValue === 'pagebottom' 
 				|| placeValue === 'coltop' || placeValue === 'colbottom' || placeValue === 'colleft' || placeValue === 'colright'
 				|| placeValue === 'lineleft' || placeValue === 'lineright') { //define <seg> element for marginal material
 				$seg = $newDoc.createElement('seg');
 				$seg.setAttribute('type', 'margin');
 				$seg.setAttribute('subtype', placeValue);
+				$seg.setAttribute('n', '@' + 'P' + g_pageNumber + 'C' + g_columnNumber + 'L' + g_lineNumber + '-' + g_witValue);
 				$seg.appendChild($paratext);
 				$teiParent.appendChild($seg);
 			} else if (placeValue === 'above' || placeValue === 'below' || placeValue === 'here' || placeValue === 'overwritten') {
 				$seg = $newDoc.createElement('seg');
 				$seg.setAttribute('type', 'line');
 				$seg.setAttribute('subtype', placeValue);
+				$seg.setAttribute('n', '@' + 'P' + g_pageNumber + 'C' + g_columnNumber + 'L' + g_lineNumber + '-' + g_witValue);
 				$seg.appendChild($paratext);
 				$teiParent.appendChild($seg);
 			} else { //"other"
 				$seg = $newDoc.createElement('seg');
-				$seg.setAttribute('type', placeValue);
+				$seg.setAttribute('type', 'other');
+				$seg.setAttribute('subtype', placeValue);
+				$seg.setAttribute('n', '@' + 'P' + g_pageNumber + 'C' + g_columnNumber + 'L' + g_lineNumber + '-' + g_witValue);
 				$seg.appendChild($paratext);
 				$teiParent.appendChild($seg);
 			}

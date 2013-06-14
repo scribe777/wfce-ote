@@ -78,34 +78,16 @@ function getData() {
 // @param {Number} wordNumber: word start number for <w>, default 0, only use the if htmlInput not start with chapter/verse;
 // @param {Number} columnNumber: column number, defualt 0
 // @param {Number} witValue: value for wit, defualt 0
-function setTeiIndexData(bookNumber, pageNumber, chapterNumber, verseNumber, wordNumber, columnNumber, lineNumber, quireNumber, witValue) {
+function setTeiIndexData(bookNumber, witValue, manuscriptLang) {
 	var wid = getTeiIndexData();
 	if (bookNumber) {
 		wid['bookNumber'] = bookNumber;
 	}
-	if (pageNumber) {
-		wid['pageNumber'] = pageNumber;
-	}
-	if (chapterNumber) {
-		wid['chapterNumber'] = chapterNumber;
-	}
-	if (verseNumber) {
-		wid['verseNumber'] = verseNumber;
-	}
-	if (wordNumber) {
-		wid['wordNumber'] = wordNumber;
-	}
-	if (columnNumber) {
-		wid['columnNumber'] = columnNumber;
-	}
-	if (lineNumber) {
-		wid['lineNumber'] = lineNumber;
-	}
-	if (quireNumber) {
-		wid['quireNumber'] = quireNumber;
-	}
 	if (witValue) {
 		wid['witValue'] = witValue;
+	}
+	if (manuscriptLang) {
+		wid['manuscriptLang'] = manuscriptLang;
 	}
 }
 

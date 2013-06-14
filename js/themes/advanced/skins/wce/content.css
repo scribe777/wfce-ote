@@ -62,11 +62,15 @@ span.verse_number {
 	hutia:expression(this.onselectstart=function(){return(false)});*/
 } 
  
- span.chapter_number{
+span.chapter_number{
 	color:dimgray;
 	font-size:36px;
 } 
 
+span.book_number{
+	color:darkviolet;
+	font-size:36px;
+} 
  
 span.pc, span.abbr, span.abbr_add_overline, span.part_abbr, span.supplied, span.spaces{
 	border: 1px  dotted #f00;  
