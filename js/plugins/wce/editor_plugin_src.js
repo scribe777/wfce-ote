@@ -2288,7 +2288,9 @@
 			if (!e) {
 				var e = window.event;
 			}
-				
+			
+			var language = window.navigator.userLanguage || window.navigator.language;
+			
 			var ek = e.keyCode || e.charCode || 0;
 			
 			// allow all arrow key
@@ -2300,7 +2302,7 @@
 			var _stopEvent = WCEObj._stopEvent;
 			
 			//mousedown and keydown cannot at the same time
-			if(wcevar.isMouseDown){
+			if (wcevar.isMouseDown){
 				return _stopEvent(ed, e);
 			}  
 			var _wceAdd = WCEObj._wceAdd;
@@ -2311,7 +2313,7 @@
 			if (wcevar.inputDisable && !e.ctrlKey) {
 				return _stopEvent(ed, e);
 			}
-
+			
 			// press and hold to delete char prohibited in some cases
 			if (!tinymce.isOpera && (ek == 46 || ek == 8)) {
 				ed.keyDownDelCount++;
@@ -2406,10 +2408,10 @@
 			
 			// Add <pc> for some special characters
 			// We need a lot of cases, because of different kyeboard layouts, different browsers and different platforms
-			if (ek == 59 && !e.shiftKey && !tinymce.isWebKit) { // ; en
+			if (ek == 59 && !e.shiftKey && language.substring(0,2) == "en" && !tinymce.isWebKit) { // ; en
 				tinyMCE.activeEditor.execCommand('mceAdd_pc', ';');
 				_stopEvent(ed, e);
-			} else if (ek == 188 && e.shiftKey) {
+			} else if (ek == 188 && e.shiftKey && language.substring(0,2) != "en") {
 				// ; dt < en
 				tinyMCE.activeEditor.execCommand('mceAdd_pc', ';');
 				_stopEvent(ed, e);
@@ -2417,7 +2419,7 @@
 				// ,
 				tinyMCE.activeEditor.execCommand('mceAdd_pc', ',');
 				_stopEvent(ed, e);
-			} else if (ek == 190 && e.shiftKey) {
+			} else if (ek == 190 && e.shiftKey && language.substring(0,2) != "en") {
 				// :
 				tinyMCE.activeEditor.execCommand('mceAdd_pc', ':');
 				_stopEvent(ed, e);
@@ -2428,11 +2430,11 @@
 			} else if (ek == 63 && e.shiftKey) { // for FF
 				tinyMCE.activeEditor.execCommand('mceAdd_pc', '?');
 				_stopEvent(ed, e);
-			} else if (ek == 191 && e.shiftKey) {
+			} else if (ek == 191 && e.shiftKey && language.substring(0,2) == "en") {
 				// ? en
 				tinyMCE.activeEditor.execCommand('mceAdd_pc', '?');
 				_stopEvent(ed, e);
-			} else if (ek == 219 && e.shiftKey) {
+			} else if (ek == 219 && e.shiftKey && language.substring(0,2) != "en") {
 				// ? dt
 				tinyMCE.activeEditor.execCommand('mceAdd_pc', '?');
 				_stopEvent(ed, e);
@@ -2441,11 +2443,11 @@
 			} else if (ek == 57 && e.shiftKey && e.altKey) { // For Mac OS X, Middledot
 				tinyMCE.activeEditor.execCommand('mceAdd_pc', '\u0387');
 				_stopEvent(ed, e);
-			} else if (ek == 57 && e.shiftKey && !tinyMCE.isSafari) { // under safari there seems to be a bug
+			} else if (ek == 57 && e.shiftKey && language.substring(0,2) != "en") { // special handling for English keyboards
 				_stopEvent(ed, e);
 				// e.stopImmediatePropagation();
 				_wceAddNoDialog(ed, 'part_abbr', '');
-			} else if (ek == 48 && tinyMCE.isSafari) { //special handling for Safari due to a bug(?)
+			} else if (ek == 48 && language.substring(0,2) == "en") { //special handling for English keyboard
 				_stopEvent(ed, e);
 				// e.stopImmediatePropagation();
 				_wceAddNoDialog(ed, 'part_abbr', '');
