@@ -365,7 +365,6 @@ function getHtmlByTei(inputString) {
 	var Tei2Html_ab = function($htmlParent, $teiNode) {
 		var $newNode = $newDoc.createElement('span');
 		$newNode.setAttribute('class', 'verse_number');
-		//$newNode.setAttribute('wce', '__t=verse_number');
 		var nValue = $teiNode.getAttribute('n');
 		if (nValue && nValue != '') {
 			var indexV = nValue.indexOf('V');
@@ -376,7 +375,6 @@ function getHtmlByTei(inputString) {
 				nodeAddText($newNode, g_verseNumber);
 			}
 		}
-		//TODO: This could be removed
 		var partValue = $teiNode.getAttribute('part');
 		if (partValue && partValue === 'F') // <ab part="F">
 			nodeAddText($newNode, ' Cont.');
@@ -1246,7 +1244,9 @@ function getTeiByHtml(inputString, args) {
 					g_verseNumber = $.trim(g_verseNumber);
 					g_verseNode = $newDoc.createElement('ab');
 					g_verseNode.setAttribute('n', 'B' + g_bookNumber + 'K' + g_chapterNumber + 'V' + g_verseNumber);
-					var partial_index = $htmlNode.getAttribute('wce').indexOf('partial');
+					var partial_index=-1; //just a workaround until Troy has fixed the append method
+					if ($htmlNode.getAttribute('wce'))
+						partial_index = $htmlNode.getAttribute('wce').indexOf('partial');
 					if (partial_index > -1) // node contains information about partial
 						g_verseNode.setAttribute('part', $htmlNode.getAttribute('wce').substring(partial_index+8, partial_index+9));
 				}
@@ -2058,7 +2058,7 @@ function getTeiByHtml(inputString, args) {
 		var endIsSpace = endHasSpace(text);
 		var arr = text.split(' ');
 		
-		//TODO: This could be removed
+		// TODO: Is this still necessary as the user can now (and has to) edit the verse number?
 		if (!found_ab && $teiParent.lastChild && $teiParent.lastChild.previousSibling && $teiParent.lastChild.previousSibling.previousSibling && $teiParent.lastChild.previousSibling.previousSibling.nodeName === 'pb') {
 			var $ab = $newDoc.createElement('ab');
 			$ab.setAttribute("part", "F");
@@ -2074,15 +2074,15 @@ function getTeiByHtml(inputString, args) {
 			// before create <w>,analyze the elements of the previousSibling
 			var $w = createNewWElement();
 			
+			// This is all buggy after the structure in the NTVMR was changed :-(
 			// we hit a text and check if there is an element at the third-last position in the tree with break="no"
-			if (!final_w_set && (($teiParent.lastChild && $teiParent.lastChild.previousSibling && $teiParent.lastChild.previousSibling.previousSibling &&
-				$teiParent.lastChild.previousSibling.previousSibling.nodeName === 'pb' && $teiParent.lastChild.previousSibling.previousSibling.getAttribute("break") === "no") || (final_w_found))) {// &&	
+			/*if (!final_w_set && (($teiParent.lastChild && $teiParent.lastChild.previousSibling && $teiParent.lastChild.previousSibling.previousSibling && $teiParent.lastChild.previousSibling.previousSibling.nodeName === 'pb' && $teiParent.lastChild.previousSibling.previousSibling.getAttribute("break") === "no") || (final_w_found))) {// &&	
 				// check if first string is the first word on a page after a hyphenation
 					$w.setAttribute("part", "F");
 					final_w_set = true;
-			}
+			}*/
 			// check if this is the last word on a page and hyphenated
-			else if ($htmlNode.parentNode.lastChild && $htmlNode.parentNode.lastChild.nodeType == 1 && !$htmlNode.nextSibling.nextSibling &&
+			if ($htmlNode.parentNode.lastChild && $htmlNode.parentNode.lastChild.nodeType == 1 && !$htmlNode.nextSibling.nextSibling &&
 					$htmlNode.parentNode.lastChild.getAttribute("wce") && 
 					$htmlNode.parentNode.lastChild.getAttribute("wce").indexOf("break_type=lb") > -1    && 
 					$htmlNode.parentNode.lastChild.getAttribute("wce").indexOf("hasBreak=yes") > -1     &&	i == arr.length-1) { //only valid for _last_ word of the last line

@@ -2445,11 +2445,9 @@
 				_stopEvent(ed, e);
 			} else if (ek == 57 && e.shiftKey && language.substring(0,2) != "en") { // special handling for English keyboards
 				_stopEvent(ed, e);
-				// e.stopImmediatePropagation();
 				_wceAddNoDialog(ed, 'part_abbr', '');
 			} else if (ek == 48 && language.substring(0,2) == "en") { //special handling for English keyboard
 				_stopEvent(ed, e);
-				// e.stopImmediatePropagation();
 				_wceAddNoDialog(ed, 'part_abbr', '');
 			}
 		},
@@ -2752,21 +2750,22 @@
 					if (wceNode.getAttribute('class') === 'abbr' || wceNode.getAttribute('class') === 'abbr_add_overline') //Fix for abbreviations; should become deprecated soon
 						originalText = wceNode.firstChild.nodeValue;
 					
-					/*
-					 * // if tag to remove var node_to_remove = [ 'paratext', 'note', 'gap', 'brea' ]; var to_remove = false; for ( var i = 0; i < node_to_remove.length; i++) { if (wceAttr.indexOf(ed.wceTypeParamInClass + '=' + node_to_remove[i]) > -1) { to_remove = true; break; } }
-					 * 
-					 * if (to_remove) { $(wceNode).remove(); } else if (typeof originalText != 'undefined') { ed.selection.setContent(originalText);alert(originalText); }
-					 */
-					 
 					if (wceNode.getAttribute('class') === 'commentary') // cursor is inside [comm]
 						wceNode.parentNode.parentNode.removeChild(wceNode.parentNode);
 					else {
-						if (wceNode !== null)
-							//$(wceNode).remove();
-							wceNode.parentNode.removeChild(wceNode); //TODO: This causes problems under Safari and IE(?)
+						if (wceNode !== null) {
+							// Node is replaced by marker (which is then replaced by original text)
+							ed.selection.setContent('<span id="_math_marker">&nbsp;</span>');
+							//wceNode.parentNode.removeChild(wceNode); // We don't need this any longer
+						}
 					}
-					if ((originalText) && originalText != 'null') //TODO: I am not sure why we still need the string 'null' (but it works)
-						ed.selection.setContent(originalText);
+					var marker = ed.dom.get('_math_marker');
+					ed.selection.select(marker, false);
+					if ((originalText) && originalText != 'null') {
+						ed.selection.setContent(originalText);//TODO: For Safari and IE that position after removing a node is set to the beginning of the textarea.
+					} else
+						ed.selection.setContent("");
+					ed.focus();
 					
 					ed.isNotDirty = 0;
 				}
