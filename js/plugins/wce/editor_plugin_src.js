@@ -1241,6 +1241,16 @@
 					case 'pc':
 						info_text = '<div>' + ed.getLang('wce.infotext_punctuation_mark') + '</div>';
 						break;
+					case 'verse':	
+						info_text = '<div>' + 'Vers';
+						if (ar['partial'] == 'I')
+							info_text += ' (initial portion)';
+						if (ar['partial'] == 'M')
+							info_text += ' (medial portion)';
+						if (ar['partial'] == 'F')
+							info_text += ' (final portion)';
+						info_text += '</div>';
+						break;
 					default:
 						info_text = '';
 						break;
