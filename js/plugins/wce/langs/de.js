@@ -236,5 +236,10 @@ tinyMCE.addI18n('de.wce',{
 	infotext_dt_other : 'Verschobener Text',
 	infotext_highlighted_text : 'Hervorgehobener Text',
 	infotext_punctuation_mark : 'Satzzeichen',
-	infotext_omission : 'Auslassung'
+	infotext_omission : 'Auslassung',
+	error_part_abbr : 'Fehlerhafte Klammerung oder ungültige Schachtelung!',
+	initial_portion : 'Anfangsteil',
+	medial_portion : 'Mittelteil',
+	final_portion : 'Endteil',
+	remove_partial : 'Lösche alle &quot;Part&quot;-Angaben'
 });

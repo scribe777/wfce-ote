@@ -7,7 +7,7 @@
  */
 
 (function() {
-	var wfce_editor = "2013-06-14";
+	var wfce_editor = "2013-06-19";
 	
 	// Load plugin specific language pack
 	tinymce.PluginManager.requireLangPack('wce');
@@ -1251,6 +1251,12 @@
 							info_text += ' (final portion)';
 						info_text += '</div>';
 						break;
+					case 'chapter':	
+						info_text = '<div>' + 'Chapter number' + '</div>';
+						break;
+					case 'book':
+						info_text = '<div>' + 'Book number' + '</div>';
+						break;
 					default:
 						info_text = '';
 						break;
@@ -2226,7 +2232,7 @@
 					wceAttr = 'wce="' + ed.wceTypeParamInClass + '=' + wceType + '" ';
 					ed.selection.setContent('<span ' + wceAttr + wceClass + '>' + part_abbr + '</span>');
 				} else {
-					alert("Error at part-worded abbreviation. Parentheses do not match or invalid nesting!");
+					alert(ed.getLang('wce.error_part_abbr'));
 				}
 				break;
 			/*

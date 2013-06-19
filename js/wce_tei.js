@@ -1040,8 +1040,8 @@ function getTeiByHtml(inputString, args) {
 	var $newRoot;
 	var g_currentParentNode;
 	
-	var found_ab = false;
-	var final_w_found = false;
+	//var found_ab = false;
+	//var final_w_found = false;
 	var final_w_set = false;
 
 	/*
@@ -1227,7 +1227,8 @@ function getTeiByHtml(inputString, args) {
 		if (wceAttrValue != null && wceAttrValue.match(/verse_number/)) {
 			var textNode = $htmlNode.firstChild;
 			if (textNode) {
-				if ($.trim(textNode.nodeValue) === "Cont.") { // special kind of verse
+				// TODO: This could maybe removed as the part handling has been changed.
+				/*if ($.trim(textNode.nodeValue) === "Cont.") { // special kind of verse TODO: Check, if still necessary
 					found_ab = true;
 					g_verseNode = $newDoc.createElement('ab');
 					g_verseNode.setAttribute('part', 'F');
@@ -1236,7 +1237,7 @@ function getTeiByHtml(inputString, args) {
 					if (!final_w_found && $teiParent.lastChild && $teiParent.lastChild.previousSibling && $teiParent.lastChild.previousSibling.previousSibling &&
 						$teiParent.lastChild.previousSibling.previousSibling.nodeName === 'pb' && $teiParent.lastChild.previousSibling.previousSibling.getAttribute("break") === "no")
 						final_w_found = true;
-				} else {
+				} else {*/
 					g_verseNumber = textNode.nodeValue;
 					var cont_index = g_verseNumber.indexOf('Cont.');
 					if (cont_index > -1)
@@ -1249,7 +1250,7 @@ function getTeiByHtml(inputString, args) {
 						partial_index = $htmlNode.getAttribute('wce').indexOf('partial');
 					if (partial_index > -1) // node contains information about partial
 						g_verseNode.setAttribute('part', $htmlNode.getAttribute('wce').substring(partial_index+8, partial_index+9));
-				}
+				//}
 				if (g_chapterNode)
 					g_chapterNode.appendChild(g_verseNode);
 				else
@@ -1286,7 +1287,10 @@ function getTeiByHtml(inputString, args) {
 						g_chapterNode.setAttribute('type', 'chapter');
 						g_chapterNode.setAttribute('n', 'B' + g_bookNumber + 'K' + g_chapterNumber);
 					}
-					$newRoot.appendChild(g_chapterNode);
+					if (g_bookNode)
+						g_bookNode.appendChild(g_chapterNode);
+					else
+						$newRoot.appendChild(g_chapterNode);
 				}
 			}
 			return null;
@@ -1784,7 +1788,7 @@ function getTeiByHtml(inputString, args) {
 			// for lb add newline
 			// $newNode.parentNode.insertBefore($newDoc.createTextNode("\n"), $newNode);
 		} else if (break_type == 'pb') {
-			found_ab = false;
+			//found_ab = false;
 			final_w_set = false;
 		}
 		return {
@@ -2045,6 +2049,7 @@ function getTeiByHtml(inputString, args) {
 		}
 
 		var text = $htmlNode.nodeValue;
+		
 		// The spaces between the elements
 		if ($.trim(text) == '@@@')
 			return;
@@ -2059,38 +2064,45 @@ function getTeiByHtml(inputString, args) {
 		var arr = text.split(' ');
 		
 		// TODO: Is this still necessary as the user can now (and has to) edit the verse number?
-		if (!found_ab && $teiParent.lastChild && $teiParent.lastChild.previousSibling && $teiParent.lastChild.previousSibling.previousSibling && $teiParent.lastChild.previousSibling.previousSibling.nodeName === 'pb') {
+		/*if (!found_ab && $teiParent.lastChild && $teiParent.lastChild.previousSibling && $teiParent.lastChild.previousSibling.previousSibling && $teiParent.lastChild.previousSibling.previousSibling.nodeName === 'pb') {
 			var $ab = $newDoc.createElement('ab');
 			$ab.setAttribute("part", "F");
 			found_ab = true;
-		}
+		}*/
 		
 		for ( var i = 0, l = arr.length; i < l; i++) {
 			var str = arr[i];
 			if (!str || str == '') {
 				continue;
 			}
-
+			
 			// before create <w>,analyze the elements of the previousSibling
 			var $w = createNewWElement();
 			
-			// This is all buggy after the structure in the NTVMR was changed :-(
 			// we hit a text and check if there is an element at the third-last position in the tree with break="no"
-			/*if (!final_w_set && (($teiParent.lastChild && $teiParent.lastChild.previousSibling && $teiParent.lastChild.previousSibling.previousSibling && $teiParent.lastChild.previousSibling.previousSibling.nodeName === 'pb' && $teiParent.lastChild.previousSibling.previousSibling.getAttribute("break") === "no") || (final_w_found))) {// &&	
-				// check if first string is the first word on a page after a hyphenation
+			if (!final_w_set && (($teiParent && $teiParent.parentNode && $teiParent.parentNode.parentNode
+				&& $teiParent.parentNode.parentNode.previousSibling && $teiParent.parentNode.parentNode.previousSibling.previousSibling 
+				&& $teiParent.parentNode.parentNode.previousSibling.previousSibling.previousSibling 
+				&& $teiParent.parentNode.parentNode.previousSibling.previousSibling.previousSibling.nodeName === 'pb' 
+				&& $teiParent.parentNode.parentNode.previousSibling.previousSibling.previousSibling.getAttribute("break") === "no"))) {
+				//|| (final_w_found))) { // check if first string is the first word on a page after a hyphenation; final_w_found not needed
 					$w.setAttribute("part", "F");
 					final_w_set = true;
-			}*/
-			// check if this is the last word on a page and hyphenated
-			if ($htmlNode.parentNode.lastChild && $htmlNode.parentNode.lastChild.nodeType == 1 && !$htmlNode.nextSibling.nextSibling &&
+					// set attribute for corresponding <ab>
+					$teiParent.setAttribute('part', 'F');
+			} // check if this is the last word on a page and hyphenated
+			  else if ($htmlNode.parentNode.lastChild && $htmlNode.parentNode.lastChild.nodeType == 1 && !$htmlNode.nextSibling.nextSibling &&
 					$htmlNode.parentNode.lastChild.getAttribute("wce") && 
 					$htmlNode.parentNode.lastChild.getAttribute("wce").indexOf("break_type=lb") > -1    && 
 					$htmlNode.parentNode.lastChild.getAttribute("wce").indexOf("hasBreak=yes") > -1     &&	i == arr.length-1) { //only valid for _last_ word of the last line
-						$w.setAttribute("part", "I");
+						$w.setAttribute("part", "I"); // set part attribute for <w>
+						if ($teiParent.nodeName == 'ab') // now set same attribute to parent <ab>; Check just for sure
+							$teiParent.setAttribute('part', 'I');
 			}
 			nodeAddText($w, str);
 			// TODO: This could be removed
-			if (found_ab) {
+			// If we agree on the structure B, K, V for each page, then this automatic identification of part="F" is of no use any longer
+			/*if (found_ab) {
 				if ($ab) { // verse has just been added
 					$ab.appendChild($w);
 					$teiParent.appendChild($ab);
@@ -2098,7 +2110,8 @@ function getTeiByHtml(inputString, args) {
 					$teiParent.appendChild($w);
 				}
 			} else
-				$teiParent.appendChild($w);
+				$teiParent.appendChild($w);*/
+			$teiParent.appendChild($w);
 
 			// If it is the last element, and there are no spaces
 			// To find the back of all connected elements, combined, and delete these elements

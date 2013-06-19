@@ -164,19 +164,24 @@ function addMenuItems(ed) {
 			//wceAttr = ed.selection.getNode().getAttribute('wce');
 			menu.addSeparator();
 			menu.add({
-				title : 'Partial (initial portion)', 
+				title : ed.getLang('wce.initial_portion'), 
 				icon : 'option1', 
 				cmd : 'mce_partialI'
 			});
 			menu.add({
-				title : 'Partial (medial portion)', 
+				title : ed.getLang('wce.medial_portion'), 
 				icon : 'option2', 
 				cmd : 'mce_partialM'
 			});
 			menu.add({
-				title : 'Partial (final portion)', 
+				title : ed.getLang('wce.final_portion'), 
 				icon : 'option3', 
 				cmd : 'mce_partialF'
+			});
+			menu.add({
+				title : ed.getLang('wce.remove_partial'), 
+				icon : 'option3', 
+				cmd : 'mce_partial_remove'
 			});
 		}
     });
@@ -189,6 +194,9 @@ function addMenuItems(ed) {
     });
 	ed.addCommand('mce_partialF', function() {
         ed.selection.getNode().setAttribute('wce', '__t=verse_number' + '&partial=F');
+    });
+	ed.addCommand('mce_partial_remove', function() {
+        ed.selection.getNode().setAttribute('wce', '__t=verse_number');
     });
 }
 
