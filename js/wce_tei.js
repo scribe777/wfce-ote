@@ -918,7 +918,7 @@ function getHtmlByTei(inputString) {
 				// &deletion_other=0
 				var deletionstr = '';
 				var deletionArr = new Array('erased', 'underline', 'underdot', 'strikethrough', 'vertical_line', 'other');
-				for ( var d = 0; d < deletionArr.length; d++) {
+				for (var d = 0; d < deletionArr.length; d++) {
 					var deletionItem = deletionArr[d];
 					if (deletionValue.indexOf(deletionItem) > -1) {
 						wceAttr += '&deletion_' + deletionItem + '=1';
@@ -1690,8 +1690,8 @@ function getTeiByHtml(inputString, args) {
 				var $note = $newDoc.createElement('note');
 				$note.setAttribute('type', 'transcriber');
 				$note.setAttribute('n', rdgcount); //store information about corresponding reading in "n" attribute
-				xml_id = 'P' + g_pageNumber + 'C' + g_columnNumber + 'L' + g_lineNumber + '-' + g_witValue + '-1'; //TODO: reference can as well consist of BKV
-				$note.setAttribute('xml:id', xml_id);
+				xml_id = 'P' + g_pageNumber + 'C' + g_columnNumber + 'L' + g_lineNumber + '-' + g_witValue; //TODO: References pointing to the same verse should be numbered -1, -2, ... (cf. p.9)
+				$note.setAttribute('xml:id', xml_id); //TODO: If ids are identical we have to use xml:id; "n" is used for getting the correct corresponding reading
 				nodeAddText($note, decodeURIComponent(editorial_note));
 				$app.parentNode.appendChild($note); //insert $note at the very end
 			}
