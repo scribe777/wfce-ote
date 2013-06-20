@@ -77,6 +77,11 @@ span.book_number{
 	color:darkviolet;
 	font-size:36px;
 } 
+
+span.format_start, span.format_end {
+	color:#d8d8d8;
+	background-color:#d8d8d8;
+}
  
 span.pc, span.abbr, span.abbr_add_overline, span.part_abbr, span.supplied, span.spaces{
 	border: 1px  dotted #f00;  

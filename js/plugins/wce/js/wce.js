@@ -26,67 +26,46 @@ var item_counter = -1;
 
 // current item ids
 var curr_item_id;
-
-// global counter for columns and lines
-// var column_count = 0;
-// var line_count;
-
-// name of item, saved in Attribute wce.
-// <span
-// wce="__t=corr&amp;__n=othername&amp;reading=corr&amp;blank_firsthand=blank
-// ......"> ....</span>
-var type_in_uri;
-var name_in_uri;
+ 
 var wce_type;
-var wceObj;
+var wceUtils;
 
-//for example: use the "corrections" menu if a whole word is highlighted as "gap" 
-var isCombination=false;
+//for example: use the "corrections" menu if a whole word is highlighted as "gap"
+var isCombination = false;
 
 function setConstants(_type) {
-	wce_node = ed.execCommand('getWceNode', false);
+	//wce_node = ed.execCommand('getWceNode', false);
+	wce_node = ed.WCE_VAR.selectedNode;
 	add_new_wce_node = tinyMCEPopup.getWindowArg('add_new_wce_node');
-	wceObj = tinyMCEPopup.getWindowArg('wceobj');
-	type_in_uri = ed.wceTypeParamInClass;
-	name_in_uri = ed.wceNameParamInClass;
-	
+	wceUtils = ed.WCEUtils;
+
 	//Bugfix Fehler #646 Impossible combination: Deficiency + Corrections
 	//for other combination can use this
-	if(wce_node && wceObj._isSelectedWholeNode(ed, ed.selection.getRng(true)) && canCombination(wce_node,ed.WCE_CON.combinationWithCorrection) ){		
-		var wce_node_parent=wce_node.parentNode;
-		if(wce_node_parent && wceObj._isNodeTypeOf(wce_node_parent, 'corr')){
-			 ed.selection.select(wce_node_parent);
-			 wce_node=wce_node_parent;
-			 add_new_wce_node=false;
-		}else if(wce_node && !wceObj._isNodeTypeOf(wce_node, _type)){
-			isCombination=true;
+	if (wce_node && ed.WCE_VAR.isSelWholeNode) {
+		var wce_node_parent = wce_node;
+		if (wce_node_parent) {
+			ed.selection.select(wce_node_parent);
+			wce_node = wce_node_parent;
+			add_new_wce_node = false;
+		} else if (wce_node && !wceUtils.isNodeTypeOf(wce_node, _type)) {
+			isCombination = true;
 		}
 	}
-	if(isCombination){
-		selected_content=tinymce.DOM.getOuterHTML(ed.selection.getNode()); 
-	}else{
+	if (isCombination) {
+		selected_content = tinymce.DOM.getOuterHTML(ed.selection.getNode());
+	} else {
 		selected_content = ed.selection.getContent();
-	}	
+	}
 }
 
-function canCombination(_node, _typeArray){
-	if(!_node || !_typeArray) return false;
-	var wceAttr = _node.getAttribute('wce');
-	for(var i=0, l=_typeArray.length; i<l; i++){
-		if (wceAttr && wceAttr.indexOf(type_in_uri+'='+_typeArray[i]) >-1) {
-			return true;
-		}
-	}
-	return false;
-}
 /**
- * 
+ *
  */
 function wceInfoInit(wp) {
 
 	wce_type = wp;
 
-	if (wce_node && !isCombination) {
+	if (wce_node) {
 		wce_node_text = $(wce_node).text();
 		var wceAttr = wce_node.getAttribute('wce');
 
@@ -94,9 +73,9 @@ function wceInfoInit(wp) {
 			var arr = wceAttr.split('@');
 			var al = arr.length;
 			var astr;
-			for ( var i = 0; i < al; i++) {
+			for (var i = 0; i < al; i++) {
 				astr = arr[i];
-				if (astr.indexOf(type_in_uri + '=' + wce_type) != 0) {
+				if (astr.indexOf('__t' + '=' + wce_type) != 0) {
 					other_info_str += '@' + astr;
 					continue;
 				}
@@ -104,7 +83,7 @@ function wceInfoInit(wp) {
 				info_arr['c' + item_counter] = arr[i];
 			}
 		}
-	} else if (typeof selected_content != 'undefined' && selected_content != null) {
+	} else if ( typeof selected_content != 'undefined' && selected_content != null) {
 		wce_node_text = selected_content.replace(/<\/?[^>]+>/gi, '');
 	}
 }
@@ -127,7 +106,7 @@ function readWceNodeInfo() {
  *            type of wce node
  */
 function writeWceNodeInfo(val) {
-	if (typeof wce_type == 'undefined') {
+	if ( typeof wce_type == 'undefined') {
 		alert('wce_type error');
 		return;
 	}
@@ -142,9 +121,9 @@ function writeWceNodeInfo(val) {
 
 	if (wce_node != null && newWceAttr == '') {
 		ed.execCommand('wceDelNode', false);
-		if (wceObj) {
-			wceObj._setWCEVariable(ed);
-			wceObj._redrawContols(ed);
+		if (wceUtils) {
+			wceUtils.setWCEVariable(ed);
+			wceUtils.redrawContols(ed);
 		}
 		tinyMCEPopup.close();
 		return;
@@ -152,13 +131,15 @@ function writeWceNodeInfo(val) {
 		tinyMCEPopup.close();
 		return;
 	}
-	
+
+	var startFormatHtml = ed.WCE_CON.startFormatHtml;
+	var endFormatHtml = ed.WCE_CON.endFormatHtml;
+
 	if (add_new_wce_node) {
 		// default style
-		// var style = "border: 1px dotted #f00; margin:0px 1px 0px 1px ; padding:0;";
-		var wceClass;
+		var wceClass = ' class="' + wce_type + '"';
 
-		if(isCombination){
+		if (isCombination) {
 			$(wce_node).remove();
 
 		}
@@ -167,187 +148,145 @@ function writeWceNodeInfo(val) {
 		var original_text = ' wce_orig="' + encodeURIComponent(selected_content) + '" ';
 
 		switch (wce_type) {
-		case 'gap':
-			var gap_text = "";
-			wceClass = ' class="gap"';
-			if (document.getElementById('mark_as_supplied').checked == true) { // supplied text
-				gap_text = '[' + selected_content + ']';
-			} else {
-				if (document.getElementById('unit').value == "char") {
-					gap_text += '[' + document.getElementById('extent').value + ']';
-				} else if (document.getElementById('unit').value == "line") {
-					for ( var i = 0; i < document.getElementById('extent').value; i++) {
-						gap_text += '<br/>&crarr;[...]';
-					}
-					ed.execCommand('addToCounter', 'lb', document.getElementById('extent').value);
-				} else if (document.getElementById('unit').value == "page") {
-					for ( var i = 0; i < document.getElementById('extent').value; i++) {
-						gap_text += '<br/>PB<br/>[...]';
-					}
-					ed.execCommand('addToCounter', 'pb', document.getElementById('extent').value);
-				} else if (document.getElementById('unit').value == "quire") {
-					for ( var i = 0; i < document.getElementById('extent').value; i++) {
-						gap_text += '<br/>QB<br/>[...]';
-					}
-					ed.execCommand('addToCounter', 'gb', document.getElementById('extent').value);
+			case 'gap':
+				var gap_text = "";
+				if (document.getElementById('mark_as_supplied').checked == true) {// supplied text
+					gap_text = '[' + selected_content + ']';
 				} else {
-					gap_text = '[...]';
-				}
-			}
-			selected_content = gap_text;
-			break;
-
-		case 'brea':
-			// style += 'color:#666';
-			wceClass = ' class="brea"';
-			selected_content = val;
-			break;
-
-		case 'corr':
-			wceClass = ' class="corr"';
-			// TODO: This just alters the selection to "T" which is not what we want. Instead the original first hand reading has to be saved.
-			if (document.getElementById('blank_firsthand').checked) {
-				selected_content = 'T';
-				wceClass = ' class="corr_blank_firsthand"';
-			}
-			break;
-
-		case 'unclear':
-			wceClass = ' class="unclear"';
-			var unclear_text = "";
-			for ( var i = 0; i < selected_content.length; i++) {
-				if (selected_content.charAt(i) == ' ') {
-					unclear_text += selected_content.charAt(i);
-				} else {
-					unclear_text += selected_content.charAt(i) + '&#x0323;';
-				}
-			}
-			selected_content = unclear_text;
-			break;
-
-		case 'note':
-			wceClass = ' class="note"';
-			new_content = selected_content + '<span wce="' + newWceAttr + '"' + original_text + wceClass + '>Note</span>';  
-			if (ed.WCE_VAR.isInBE)
-				wceObj._insertSpace(ed, 32);
-			break;
-
-		case 'abbr':
-			wceClass = ' class="abbr"';
-			if (document.getElementById('add_overline').checked == true) {
-				wceClass = ' class="abbr_add_overline"';
-			}
-			break;
-
-		case 'spaces':
-			// default
-			wceClass = ' class="spaces"';
-			selected_content = '&nbsp;';
-			break;
-
-		case 'paratext':
-			// default
-			wceClass = ' class="paratext"';
-			if (document.getElementById('fw_type').value == "commentary") {
-				selected_content = '';
-				var cl = document.getElementById('covered').value;
-				if (cl != '' && cl > 0) {
-					for (var i = 0; i < cl; i++) {
-						selected_content += '<br/>&crarr;[<span class="commentary" ' + 'wce="__t=paratext&__n=&fw_type=commentary&covered=' + cl + '">comm</span>]';
+					if (document.getElementById('unit').value == "char") {
+						gap_text += '[' + document.getElementById('extent').value + ']';
+					} else if (document.getElementById('unit').value == "line") {
+						for (var i = 0; i < document.getElementById('extent').value; i++) {
+							gap_text += '<br/>&crarr;[...]';
+						}
+						ed.execCommand('addToCounter', 'lb', document.getElementById('extent').value);
+					} else if (document.getElementById('unit').value == "page") {
+						for (var i = 0; i < document.getElementById('extent').value; i++) {
+							gap_text += '<br/>PB<br/>[...]';
+						}
+						ed.execCommand('addToCounter', 'pb', document.getElementById('extent').value);
+					} else if (document.getElementById('unit').value == "quire") {
+						for (var i = 0; i < document.getElementById('extent').value; i++) {
+							gap_text += '<br/>QB<br/>[...]';
+						}
+						ed.execCommand('addToCounter', 'gb', document.getElementById('extent').value);
+					} else {
+						gap_text = '[...]';
 					}
-					ed.execCommand('addToCounter', 'lb', document.getElementById('covered').value);
-				} else { // no value given for covered lines
-					selected_content += '[<span class="commentary" ' + 'wce="__t=paratext&__n=&fw_type=commentary&covered=">comm</span>]';
 				}
-			} else
-				selected_content = val;
-			break;
-			
-		case 'formatting_capitals': //only for formatting_capitals needed
-			wceClass = ' class="formatting_capitals"';
-			break;
-			
-		default:
-			break;
+				selected_content = gap_text;
+				break;
+
+			case 'brea':
+				if (break_type) {
+					new_content = wceUtils.getBreakHtml(ed, break_type, break_lbpos, break_indention, 'wce="' + newWceAttr + '"', break_gid);
+				} else {
+					new_content = 'Error:test';
+				}
+				break;
+
+			case 'corr':
+				// TODO: This just alters the selection to "T" which is not what we want. Instead the original first hand reading has to be saved.
+				if (document.getElementById('blank_firsthand').checked) {
+					selected_content = 'T';
+					wceClass = ' class="corr_blank_firsthand"';
+				}
+				break;
+
+			case 'unclear':
+				var unclear_text = "";
+				for (var i = 0; i < selected_content.length; i++) {
+					if (selected_content.charAt(i) == ' ') {
+						unclear_text += selected_content.charAt(i);
+					} else {
+						unclear_text += selected_content.charAt(i) + '&#x0323;';
+					}
+				}
+				selected_content = unclear_text;
+				break;
+
+			case 'note':
+				new_content = selected_content + '<span wce="' + newWceAttr + '"' + original_text + wceClass + '>' + startFormatHtml + 'Note' + endFormatHtml + '</span>';
+				if (ed.WCE_VAR.isInBE) {
+					// wceUtils.insertSpace(ed,32);
+					//move cursor outside of BE
+					wceUtils.insertSpace(ed);
+				}
+				break;
+
+			case 'abbr':
+				if (document.getElementById('add_overline').checked == true) {
+					wceClass = ' class="abbr_add_overline"';
+				}
+				break;
+
+			case 'spaces':
+				// default
+				selected_content = '&nbsp;';
+				break;
+
+			case 'paratext':
+				// default
+				if (document.getElementById('fw_type').value == "commentary") {
+					selected_content = '';
+					var cl = document.getElementById('covered').value;
+					if (cl != '' && cl > 0) {
+						for (var i = 0; i < cl; i++) {
+							selected_content += '<br/>&crarr;[<span class="commentary" ' + 'wce="__t=paratext&__n=&fw_type=commentary&covered=' + cl + '">comm</span>]';
+						}
+						ed.execCommand('addToCounter', 'lb', document.getElementById('covered').value);
+					} else {// no value given for covered lines
+						selected_content += '[<span class="commentary" ' + 'wce="__t=paratext&__n=&fw_type=commentary&covered=">comm</span>]';
+					}
+				} else
+					selected_content = val;
+
+				// write original_text for breaks and paratext
+				new_content = '<span wce="' + newWceAttr + '"' + wceClass + original_text+'>' + startFormatHtml + selected_content + endFormatHtml + '</span>';
+				break;
+
+			case 'formatting_capitals':
+				//only for formatting_capitals needed
+				wceClass = ' class="formatting_capitals"';
+				break;
+
+			default:
+				break;
 
 		}
 
-		if (new_content == null) {
-			if (wce_type === 'brea') {
-				if (val.indexOf(' ') == 0) // val starts with space; additional space has to added to output (scenario lb1)
-					new_content = ' <span wce="' + newWceAttr + '"' + wceClass + '>' + selected_content.trim() + '</span>';
-				else if (val.indexOf(' ') > 0) //lb2
-					new_content = '<span wce="' + newWceAttr + '"' + wceClass + '>' + selected_content.trim() + '</span> ';
-				else //lbm
-					new_content = '<span wce="' + newWceAttr + '"' + wceClass + '>' + selected_content + '</span>';
-			} else if (wce_type === 'paratext') // do not write original_text for breaks and paratext
-				new_content = '<span wce="' + newWceAttr + '"' + wceClass + '>' + selected_content + '</span>';
-			else
-				new_content = '<span wce="' + newWceAttr + '"' + wceClass + original_text + '>' + selected_content + '</span>';
+		//wenn new_content not defined, use default
+		if (!new_content) {
+			new_content = '<span wce="' + newWceAttr + '"' + wceClass + original_text + '>' + startFormatHtml + selected_content + endFormatHtml + '</span>';
 		}
+
 		ed.selection.setContent(new_content);
-		
-		if (wce_type == 'brea') {
-			var new_pbcnt = 0;
-			switch (document.getElementById('break_type').value) {
-			case 'gb':
-				ed.execCommand('setCounter', 'gb', document.getElementById('number').value);
-				ed.execCommand('mceAdd_brea', 'pb', 0);
-				ed.execCommand('mceAdd_brea', 'cb', '1');
-				if (val.indexOf(' ') > -1)
-					ed.execCommand('mceAdd_brea', 'lb2', '1');
-				else
-					ed.execCommand('mceAdd_brea', 'lb', '1');
-				break;
-			case 'pb':
-				if (document.getElementById('pb_type').value == "r")
-					new_pbcnt = 2 * parseInt(document.getElementById('number').value) - 1;
-				else if (document.getElementById('pb_type').value == "v")
-					new_pbcnt = 2 * parseInt(document.getElementById('number').value);
-				else
-					new_pbcnt = document.getElementById('number').value;
-				ed.execCommand('setCounter', 'pb', new_pbcnt);
-				ed.execCommand('mceAdd_brea', 'cb', '1');
-				if (val.indexOf(' ') > -1)
-					ed.execCommand('mceAdd_brea', 'lb2', '1');
-				else
-					ed.execCommand('mceAdd_brea', 'lb', '1');
-				break;
-			case 'cb':
-				ed.execCommand('setCounter', 'cb', document.getElementById('number').value);
-				if (val.indexOf(' ') > -1)
-					ed.execCommand('mceAdd_brea', 'lb2', '1');
-				else
-					ed.execCommand('mceAdd_brea', 'lb', '1');
-				break;
-			default: // LB
-				ed.execCommand('setCounter', 'lb', document.getElementById('number').value);
-			}
-		}
+
 		if (wce_type == 'gap') {
 			if (document.getElementById('unit').value == "line")
 				ed.execCommand('mceAdd_brea', 'lb', 0);
 			else if (document.getElementById('unit').value == "page")
 				ed.execCommand('mceAdd_brea', 'pb', 0);
 		}
-		
-		// var wceObj=new ed.plugins.wce.WCEObj();
-		if (wceObj) {
-			wceObj._setWCEVariable(ed);
-			wceObj._redrawContols(ed);
+
+		if (wceUtils) {
+			wceUtils.setWCEVariable(ed);
+			wceUtils.redrawContols(ed);
 		}
 
-	} else { //edit mode
+	} else {//edit mode
 		// update wce
 		if (wce_node != null) {
 			if (wce_type == 'paratext') {
-				if (document.getElementById('fw_type').value == 'commentary') { // commentary note
+				if (document.getElementById('fw_type').value == 'commentary') {// commentary note
 					var cl = document.getElementById('covered').value;
-					if (wce_node.getAttribute('class') === 'commentary') { //<span class=commentary>
-						wce_node_new = wce_node.parentNode.cloneNode(false); // copy without children
-						if (cl != '' && cl > 0) { //value of 0 same as empty field
+					if (wce_node.getAttribute('class') === 'commentary') {//<span class=commentary>
+						wce_node_new = wce_node.parentNode.cloneNode(false);
+						// copy without children
+						if (cl != '' && cl > 0) {//value of 0 same as empty field
 							wce_attr = '__t=paratext&__n=&fw_type=commentary&covered=' + cl;
-							wce_node_new.setAttribute('wce', wce_attr); //correct value for covered
+							wce_node_new.setAttribute('wce', wce_attr);
+							//correct value for covered
 							for (var i = 0; i < cl; i++) {
 								$br = document.createElement('br');
 								wce_node_new.appendChild($br);
@@ -361,9 +300,10 @@ function writeWceNodeInfo(val) {
 								wce_node_new.appendChild($span);
 								wce_node_new.appendChild(document.createTextNode(']'));
 							}
-						} else { // no value for covered lines was given
+						} else {// no value for covered lines was given
 							wce_attr = '__t=paratext&__n=&fw_type=commentary&covered=';
-							wce_node_new.setAttribute('wce', wce_attr); //correct value for covered
+							wce_node_new.setAttribute('wce', wce_attr);
+							//correct value for covered
 							$text = document.createTextNode('[');
 							wce_node_new.appendChild($text);
 							$span = document.createElement('span');
@@ -375,43 +315,49 @@ function writeWceNodeInfo(val) {
 							wce_node_new.appendChild(document.createTextNode(']'));
 						}
 						wce_node.parentNode.parentNode.replaceChild(wce_node_new, wce_node.parentNode);
-					} else { //<span class="paratext">
-						wce_node.removeChild(wce_node.firstChild); // remove old content
-					
-					var new_content = '';
-					for (var i = 0; i < document.getElementById('covered').value; i++) {
-						new_content += '<br/>&crarr;[<span class="commentary" ' + 'wce="__t=paratext&__n=&fw_type=commentary&covered=' + document.getElementById('covered').value + '">comm</span>]';
+					} else {//<span class="paratext">
+						wce_node.removeChild(wce_node.firstChild);
+						// remove old content
+
+						var new_content = '';
+						for (var i = 0; i < document.getElementById('covered').value; i++) {
+							new_content += '<br/>&crarr;[<span class="commentary" ' + 'wce="__t=paratext&__n=&fw_type=commentary&covered=' + document.getElementById('covered').value + '">comm</span>]';
+						}
+						wce_node.innerHTML = new_content;
 					}
-					wce_node.innerHTML = new_content;
-					}
-					ed.execCommand('addToCounter', 'lb', document.getElementById('covered').value); //TODO: old value has to be subtract first
-				} else { // num or fw
+					ed.execCommand('addToCounter', 'lb', document.getElementById('covered').value);
+					//TODO: old value has to be subtract first
+				} else {// num or fw
 					wce_node.innerHTML = val;
 				}
 			} else if (wce_type == 'corr') {
 				if (document.getElementById('blank_firsthand').checked)
-					wce_node.innerHTML = 'T';
+					wce_node.innerHTML = startFormatHtml + 'T' + endFormatHtml;
 				else
-					wce_node.innerHTML = document.getElementById('original_firsthand_reading').value;
+					wceUtils.setInnerHTML(ed, wce_node, $('#original_firsthand_reading').val());
 			} else if (wce_type == 'brea') {
 				// break type
-				wce_node.innerHTML = val;	
-			} else if (wce_type == 'abbr'){
+				ed.execCommand('wceDelNode', false);
+				add_new_wce_node = true;
+				writeWceNodeInfo();
+
+			} else if (wce_type == 'abbr') {
 				var abbrClass = 'abbr';
 				if (document.getElementById('add_overline').checked == true) {
 					abbrClass = 'abbr_add_overline';
-				} 
-				wce_node.className=abbrClass;
-			} else if (wce_type == 'gap') { // edit gap
-			// TODO: Additional break at the end is still missing.
-				if (document.getElementById('mark_as_supplied').checked == true) { // supplied text
+				}
+				wce_node.className = abbrClass;
+			} else if (wce_type == 'gap') {// edit gap
+				// TODO: Additional break at the end is still missing.
+				if (document.getElementById('mark_as_supplied').checked == true) {// supplied text
 					wce_node.textContent = '[' + wce_node.getAttribute('wce_orig') + ']';
 				} else {
-					wce_node.removeChild(wce_node.firstChild); // remove old content
+					wce_node.removeChild(wce_node.firstChild);
+					// remove old content
 					if (document.getElementById('unit').value == "char") {
 						wce_node.textContent = '[' + document.getElementById('extent').value + ']';
 					} else if (document.getElementById('unit').value == "line") {
-						for ( var i = 0; i < document.getElementById('extent').value; i++) { // generate new content
+						for (var i = 0; i < document.getElementById('extent').value; i++) {// generate new content
 							$br = document.createElement('br');
 							wce_node.appendChild($br);
 							$text = document.createTextNode('\u21B5[...]');
@@ -419,7 +365,7 @@ function writeWceNodeInfo(val) {
 						}
 						ed.execCommand('addToCounter', 'lb', document.getElementById('extent').value);
 					} else if (document.getElementById('unit').value == "page") {
-						for ( var i = 0; i < document.getElementById('extent').value; i++) {
+						for (var i = 0; i < document.getElementById('extent').value; i++) {
 							$br = document.createElement('br');
 							wce_node.appendChild($br);
 							$text = document.createTextNode('PB');
@@ -431,7 +377,7 @@ function writeWceNodeInfo(val) {
 						}
 						ed.execCommand('addToCounter', 'pb', document.getElementById('extent').value);
 					} else if (document.getElementById('unit').value == "quire") {
-						for ( var i = 0; i < document.getElementById('extent').value; i++) {
+						for (var i = 0; i < document.getElementById('extent').value; i++) {
 							$br = document.createElement('br');
 							wce_node.appendChild($br);
 							$text = document.createTextNode('QB');
@@ -457,7 +403,7 @@ function writeWceNodeInfo(val) {
 
 /**
  * form unserialize
- * 
+ *
  * @param {String}
  *            attribute wce value of wce-node /*
  */
@@ -469,8 +415,8 @@ function formUnserialize(str) {
 
 	var arr = str.split('&');
 	var kv, k, v;
- 
-	for ( var i = 2; i < arr.length; i++) {
+
+	for (var i = 2; i < arr.length; i++) {
 		kv = arr[i].split('=');
 		k = kv[0];
 		v = kv[1] == null ? '' : kv[1];
@@ -479,47 +425,48 @@ function formUnserialize(str) {
 		if ($('#' + k).attr('type') == 'checkbox') {
 			$('#' + k).attr('checked', true);
 		} else {
-			if (!v) continue; 
-			var dec_v = decodeURIComponent(v);  
+			if (!v)
+				continue;
+			var dec_v = decodeURIComponent(v);
 			if (k == 'corrector_text' && corrector_text_editor) {
 				corrector_text_editor.setContent(dec_v);
 			} else if (k == 'marginals_text' && marginals_text_editor) {
 				marginals_text_editor.setContent(dec_v);
 			}
-			$('#' + k).val(dec_v); 
+			$('#' + k).val(dec_v);
 		}
-	}  
+	}
 }
 
 /**
  * form serialize
- * 
+ *
  * @param {document-form}
  * @param {String}
  *            name of str, example: new corrector, firsthand, ....
- * 
+ *
  */
 function formSerialize(f, wce_name) {
 	if (f == null) {
 		f = document.forms[0];
 	}
 
-	if (typeof wce_name == 'undefined' || wce_name == null) {
+	if ( typeof wce_name == 'undefined' || wce_name == null) {
 		wce_name = '';
 	}
 
 	var arr = $(f).find(':input');
-	var s = type_in_uri + '=' + wce_type + '&' + name_in_uri + '=' + wce_name;
+	var s = '__t' + '=' + wce_type + '&' + '__n' + '=' + wce_name;
 	var a;
-	var a_type,a_id;
-	for ( var i = 0, l = arr.length; i < l; i++) {
+	var a_type, a_id;
+	for (var i = 0, l = arr.length; i < l; i++) {
 		a = $(arr[i]);
-		a_type=a.attr('type');
-		a_id=a.attr('id');
-		
-		if(!a_id || a_id=='undefined' || a_type=='reset')
+		a_type = a.attr('type');
+		a_id = a.attr('id');
+
+		if (!a_id || a_id == 'undefined' || a_type == 'reset' || a_id == 'insert' || a_id == 'cancel')
 			continue;
-			
+
 		if (a.attr('type') == 'checkbox' && !a.attr('checked'))
 			continue;
 
@@ -536,7 +483,7 @@ function formSerialize(f, wce_name) {
 
 function arrayToString(arr) {
 	var s = '';
-	for ( var p in arr) {
+	for (var p in arr) {
 		if (p == null || arr[p] == null || p == 'c-1')
 			continue;
 
@@ -594,22 +541,25 @@ function arrayToString(arr) {
 	window.XBTooltip = window.XBT = XBTooltip;
 })(this, this.document);
 
-
-function comboBindReturnEvent(id1){
-	var entryEvent=function(e){
+function comboBindReturnEvent(id1) {
+	var entryEvent = function(e) {
 		if (!e) {
 			var e = window.event;
 		}
-		var keyCode = e.keyCode ? e.keyCode : e.charCode ? e.charCode :	e.which;
+		var keyCode = e.keyCode ? e.keyCode : e.charCode ? e.charCode : e.which;
 		if (keyCode == 13) {
-			$('#'+id1).click();  
-		}   
-	};	
-	
+			$('#' + id1).click();
+		}
+	};
+
 	//test in firefox, safari, chrome
-	if(!tinyMCE.isIE && !tinyMCE.isOpera){   
-		$('#'+id1).focus(); 
-		$('select').keydown(function(e){entryEvent(e)}); 
-	 	$(':checkbox').click(function(e){$('#'+id1).focus()});
-	}  
+	if (!tinyMCE.isIE && !tinyMCE.isOpera) {
+		$('#' + id1).focus();
+		$('select').keydown(function(e) {
+			entryEvent(e)
+		});
+		$(':checkbox').click(function(e) {
+			$('#' + id1).focus()
+		});
+	}
 }

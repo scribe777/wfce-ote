@@ -1,366 +1,251 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<title>{#wce.break_title}</title>
-<script type="text/javascript" src="../../tiny_mce_popup.js"></script>
-<script type="text/javascript" src="../../jquery.js"></script>
-<script type="text/javascript" src="js/wce.js"></script>
-</head>
+    <head>
+        <title>{#wce.break_title}</title>
+        <script type="text/javascript" src="../../tiny_mce_popup.js"></script>
+        <script type="text/javascript" src="../../jquery.js"></script>
+        <script type="text/javascript" src="js/wce.js"></script>
+    </head>
 
-<body id="table" style="display: none">
-	<form onsubmit="return false;" action="#" name="breakinfo">
-		<input type="hidden" id="hasBreak" name="hasBreak" value="" />
-		<fieldset>
-			<legend>{#wce.break_data}</legend>
-			<table border="0" cellpadding="4" cellspacing="0" width="100%">
-				<tr>
-					<td><label id="break_type_label" for="break_type">{#wce.break_type}</label>
-					</td>
-					<td colspan="2"><select id="break_type" name="break_type"
-						onchange="checkstatus_break('new')">
-							<option value="lb">{#wce.linebreak}</option>
-							<option value="cb">{#wce.columnbreak}</option>
-							<option value="pb">{#wce.pagebreak}</option>
-							<option value="gb">{#wce.quire}</option>
-					</select></td>
-					<td colspan="5"><input type="checkbox" name="pb_hyphen"
-						id="pb_hyphen" >{#wce.pb_hyphen}</input>
-					</td>
-				</tr>
-				<tr>
-					<td><label id="number_label" for="number">{#wce.number}</label>
-					</td>
-					<td colspan="2"><input id="number" name="number" type="text" value=""
-						size="10" maxlength="" class="required number min1 mceFocus" />
-					</td>
-					<td><label id="pb_type_label" for="pb_type">{#wce.pb_position}</label>
-					</td>
-					<td><select id="pb_type" name="pb_type">
-							<option value=""></option>
-							<option value="r">{#wce.recto}</option>
-							<option value="v">{#wce.verso}</option>
-					</select>
-					</td>
-					<td width=10></td>
-					<td><label id="fibre_type_label" for="fibre_type">{#wce.fibre_type}</label>
-					</td>
-					<td><select id="fibre_type" name="fibre_type">
-							<option value=""></option>
-							<option value="x">{#wce.papyrus_fibre_h}</option>
-							<option value="y">{#wce.papyrus_fibre_v}</option>
-					
-				</tr>
-				<tr>
-				<td colspan="5"><input type="checkbox" name="pb_ghostpage"
-						id="pb_ghostpage" onchange="checkstatus_ghostpage()">{#wce.pb_ghostpage}</input>
-				</td>
-				</tr>
-				<tr>
-					<td><label id="lb_alignment_label" for="lb_alignment">{#wce.alignment}</label>
-					</td>
-					<td colspan="2"><select id="lb_alignment" name="lb_alignment">
-							<option value=""></option>
-							<option value="leftJust">{#wce.alignment_lj}</option>
-							<option value="centerJust">{#wce.alignment_cj}</option>
-							<option value="rightJust">{#wce.alignment_rj}</option>
-							<option value="indent">{#wce.alignment_indent}</option>
-							<option value="hang">{#wce.alignment_hanging}</option>
-					</select></td>
-				</tr>
-				
-				<tr>
-					<td><label id="facs_label" for="facs">{#wce.facs}</label>
-					</td>
-					<td colspan="6"><input id="facs" name="facs" type="text" value=""
-						size="50" maxlength="" class="required number min1 mceFocus" />
-					</td>
-				</tr>
-			</table>
-		</fieldset>
-		<div class="mceActionPanel">
-			<input type="button" id="insert" name="insert" value="{#insert}"
-				onclick="var cont = testNumber();
-				if (cont){writeWceNodeInfo(getBreakTag());}else{alert('{#wce.empty_number}');}" />
-			<input type="button" id="cancel"  name="cancel" value="{#cancel}"
-				onclick="ed.execCommand('resetCounter');tinyMCEPopup.close();" />
-		</div>
-	</form>
-</body>
-<script type="text/javascript">
-	var qsParm = new Array();
-		qsParm['mode'] = '';
-		qsParm['quire'] = 0;
-		qsParm['page'] = 0;
-		qsParm['column'] = 0;
-		qsParm['line'] = 0;
-		qsParm['rectoverso'] = '';
-		
-	tinyMCEPopup.onInit.add(function(_ed){
-		ed=_ed;
-		setConstants(); 
-		init();
-	});
-		
-	
-		
-	function init() {
-		comboBindReturnEvent('insert'); 
-		wceInfoInit('brea');
-		readWceNodeInfo();
-		qs();
-		if (qsParm['mode'] == 'new') { // first call, no former value
-			document.breakinfo.number.value=qsParm['line'];
-		} else { // edit mode => number not empty
-			switch (document.breakinfo.break_type.value) {
-				case 'gb':
-					qsParm['quire'] = document.breakinfo.number.value;
-					break;
-				case 'pb':
-					qsParm['page'] = document.breakinfo.number.value;
-					break;
-				case 'cb':
-					qsParm['column'] = document.breakinfo.number.value;
-					break;
-				case 'lb':
-					qsParm['line'] = document.breakinfo.number.value;
-					break;
-			}
-		}
-		checkstatus_break();
-		setstatus_hyphen();
-		checkstatus_ghostpage();
-	}
-	
-	function qs() {
-		var query = window.location.search.substring(1);
-		var parms = query.split('&');
-		for (var i=0; i<parms.length; i++) {
-			var pos = parms[i].indexOf('=');
-			if (pos > 0) {
-				var key = parms[i].substring(0,pos);
-				var val = parms[i].substring(pos+1);
-				qsParm[key] = val;
-			}
-		}
-	}
+    <body id="table" style="display: none">
+        <form onsubmit="return false;" action="#" name="breakinfo">
+            <input type="hidden" id="hasBreak" name="hasBreak" value="" />
+            <fieldset>
+                <legend>
+                    {#wce.break_data}
+                </legend>
+                <table border="0" cellpadding="4" cellspacing="0" width="100%">
+                    <tr>
+                        <td><label id="break_type_label" for="break_type">{#wce.break_type}</label></td>
+                        <td colspan="2">
+                        <select id="break_type" name="break_type"
+                        onchange="checkstatus_break('new')">
+                            <option value="lb">{#wce.linebreak}</option>
+                            <option value="cb">{#wce.columnbreak}</option>
+                            <option value="pb">{#wce.pagebreak}</option>
+                            <option value="gb">{#wce.quire}</option>
+                        </select></td>
+                        <td colspan="5">
+                        <input type="checkbox" name="pb_hyphen"
+                        id="pb_hyphen" >
+                        {#wce.pb_hyphen}</input> </td>
+                    </tr>
+                    <tr>
+                        <td><label id="number_label" for="number">{#wce.number}</label></td>
+                        <td colspan="2">
+                        <input id="number" name="number" type="text" value=""
+                        size="10" maxlength="" class="required number min1 mceFocus" />
+                        </td>
+                        <td><label id="pb_type_label" for="pb_type">{#wce.pb_position}</label></td>
+                        <td>
+                        <select id="pb_type" name="pb_type">
+                            <option value=""></option>
+                            <option value="r">{#wce.recto}</option>
+                            <option value="v">{#wce.verso}</option>
+                        </select></td>
+                        <td width=10></td>
+                        <td><label id="fibre_type_label" for="fibre_type">{#wce.fibre_type}</label></td>
+                        <td>
+                        <select id="fibre_type" name="fibre_type">
+                            <option value=""></option>
+                            <option value="x">{#wce.papyrus_fibre_h}</option>
+                            <option value="y">{#wce.papyrus_fibre_v}</option>
 
-	function getBreakTag() {
-		var v = $('#break_type').val();
-		var indention;
-		if ($('#lb_alignment').val() === "indent")
-			indention = "&#8594;";
-		else if ($('#lb_alignment').val() === "hang")
-			indention = "&#8592;";
-		else
-			indention = "";
-		if (v == 'lb') {
-			if (qsParm['mode'] == 'new') { // new lb
-				if (lbposition() == 'lb1'){
-					document.breakinfo.hasBreak.value = 'no';
-					return ' <br/>&crarr;' + indention;
-				} else if (lbposition() == 'lb2') {
-					document.breakinfo.hasBreak.value = 'no';
-					return '<br/>&crarr;' + indention + ' ';
-				} else { //lbm
-					document.breakinfo.hasBreak.value = 'yes';
-					return '&#8208;<br/>&crarr;' + indention;
-				}
-			} else { // modifying existing one => keep setting
-				if (document.breakinfo.hasBreak.value == 'yes') {
-					return '&#8208;<br/>&crarr;' + indention;
-				} else {
-					if (lbposition() == 'lb1')
-						return ' <br/>&crarr;' + indention;
-					else //lb2
-						return '<br/>&crarr;' + indention;
-				}
-			}
-		}
-		else if (v == 'cb') {
-			if (qsParm['mode'] == 'new') { // new cb
-				if (lbposition() == 'lb1'){
-					document.breakinfo.hasBreak.value = 'no';
-					return ' <br/>CB';
-				} else if (lbposition() == 'lb2') {
-					document.breakinfo.hasBreak.value = 'no';
-					return '<br/>CB ';
-				} else { //lbm
-					document.breakinfo.hasBreak.value = 'yes';
-					return '&#8208;<br/>CB';
-				}
-			} else { // modifying existing one => keep setting
-				if (document.breakinfo.hasBreak.value == 'yes') {
-					return '&#8208;<br/>CB';
-				} else {
-					if (lbposition() == 'lb1')
-						return ' <br/>CB';
-					else //lb2
-						return '<br/>CB ';
-				}
-			}
-		} else if (v == 'pb') {
-			if (qsParm['mode'] == 'new') { // new pb
-				if (lbposition() == 'lb1' || lbposition() == 'lb2') {
-					checkstatus_hyphen(); //get information about previous page; maybe there was a hyphenation
-					if (document.breakinfo.hasBreak.value == 'yes')
-						return '&#8208;<br/>PB';
-					else {
-						if (lbposition() == 'lb1')
-							return ' <br/>PB';
-						else //lb2
-							return '<br/>PB ';
-					}
-				} else { //lbm: page break with hyphenated word
-					document.breakinfo.hasBreak.value = 'yes';
-					document.breakinfo.pb_hyphen.checked = true; //set checkbox in dialogue
-					return '&#8208;<br/>PB';
-				}
-			} else { // modifying existing one => keep setting
-				checkstatus_hyphen(); //was this page break marked as "starts after hyphenated word"?
-				if (document.breakinfo.hasBreak.value == 'yes') {
-					return '&#8208;<br/>PB';
-				} else {
-					if (lbposition() == 'lb1')
-						return ' <br/>PB'; // do we need spaces here? ' <br/>PB'
-					else //lb2
-						return '<br/>PB ';
-				}
-			}
-		} else { // QB
-			if (qsParm['mode'] == 'new') { // new qb
-				if (lbposition() == 'lb1') {
-					document.breakinfo.hasBreak.value = 'no';
-					return ' <br/>QB';
-				} else if (lbposition() == 'lb2') {
-					document.breakinfo.hasBreak.value = 'no';
-					return '<br/>QB ';
-				} else { //lbm
-					document.breakinfo.hasBreak.value = 'yes';
-					return '&#8208;<br/>QB';
-				}
-			} else { // modifying existing one => keep setting
-				if (document.breakinfo.hasBreak.value == 'yes') {
-					return '&#8208;<br/>QB';
-				} else {
-					if (lbposition() == 'lb1')
-						return ' <br/>QB';
-					else //lb2
-						return '<br/>QB ';
-				}
-			}
-		}
-	}
-	
-	function checkstatus_break() {
-		if (document.breakinfo.break_type.options[0].selected == true) { //LB
-			document.breakinfo.lb_alignment.disabled = false;
-			document.getElementById('lb_alignment').style.backgroundColor = "white";
-			document.breakinfo.number.value = qsParm['line'];
-		} else {
-			document.breakinfo.lb_alignment.disabled = true;
-			document.getElementById('lb_alignment').style.backgroundColor = "#CCCCCC";
-		}
-		if (document.breakinfo.break_type.options[1].selected == true) { //CB
-			document.breakinfo.number.value = qsParm['column'];
-		}
-		if (document.breakinfo.break_type.options[2].selected == true) { //PB
-			document.breakinfo.pb_type.disabled = false;
-			document.getElementById('pb_type').style.backgroundColor = "white";
-			document.breakinfo.fibre_type.disabled = false;
-			document.getElementById('fibre_type').style.backgroundColor = "white";
-			document.breakinfo.pb_hyphen.disabled = false;
-			document.getElementById('pb_hyphen').style.backgroundColor = "white";
-			document.breakinfo.pb_ghostpage.disabled = false;
-			document.getElementById('pb_ghostpage').style.backgroundColor = "white";
-			document.breakinfo.facs.disabled = false;
-			document.getElementById('facs').style.backgroundColor = "white";
-			if (qsParm['mode'] == 'new' && qsParm['rectoverso'] == 'true') { //only for new entries; old ones keep their counting
-				document.breakinfo.number.value = Math.ceil(qsParm['page'] / 2);
-				if (qsParm['page'] % 2 == 0) // verso page
-					document.breakinfo.pb_type.options[2].selected = true;
-				else // recto page
-					document.breakinfo.pb_type.options[1].selected = true;
-			} else 
-				document.breakinfo.number.value = qsParm['page'];
-		} else {
-			document.breakinfo.pb_type.disabled = true;
-			document.getElementById('pb_type').style.backgroundColor = "#CCCCCC";
-			document.breakinfo.fibre_type.disabled = true;
-			document.getElementById('fibre_type').style.backgroundColor = "#CCCCCC";
-			document.breakinfo.pb_hyphen.disabled = true;
-			document.getElementById('pb_hyphen').style.backgroundColor = "#CCCCCC";
-			document.breakinfo.pb_ghostpage.disabled = true;
-			document.breakinfo.pb_ghostpage.checked = false;
-			document.getElementById('pb_ghostpage').style.backgroundColor = "#CCCCCC";
-			document.breakinfo.facs.disabled = true;
-			document.getElementById('facs').style.backgroundColor = "#CCCCCC";
-		}
-		if (document.breakinfo.break_type.options[3].selected == true) { //QB
-			document.breakinfo.number.value = qsParm['quire'];
-		}	
-	}
+                    </tr>
+                    <tr>
+                        <td colspan="5">
+                        <input type="checkbox" name="pb_ghostpage"
+                        id="pb_ghostpage" onchange="checkstatus_ghostpage()">
+                        {#wce.pb_ghostpage}</input> </td>
+                    </tr>
+                    <tr>
+                        <td><label id="lb_alignment_label" for="lb_alignment">{#wce.alignment}</label></td>
+                        <td colspan="2">
+                        <select id="lb_alignment" name="lb_alignment">
+                            <option value=""></option>
+                            <option value="leftJust">{#wce.alignment_lj}</option>
+                            <option value="centerJust">{#wce.alignment_cj}</option>
+                            <option value="rightJust">{#wce.alignment_rj}</option>
+                            <option value="indent">{#wce.alignment_indent}</option>
+                            <option value="hang">{#wce.alignment_hanging}</option>
+                        </select></td>
+                    </tr>
 
-	function checkstatus_hyphen() {
-		if (document.breakinfo.pb_hyphen.checked)
-			document.breakinfo.hasBreak.value = "yes";
-		else
-			document.breakinfo.hasBreak.value = "no";
-	}
-	
-	function checkstatus_ghostpage() {
-		if (document.breakinfo.pb_ghostpage.checked) {
-			document.breakinfo.number.disabled = true;
-			document.getElementById('number').style.backgroundColor = "#CCCCCC";
-		} else {
-			document.breakinfo.number.disabled = false;
-			document.getElementById('number').style.backgroundColor = "white";
-		}
-	}
-	
-	function setstatus_hyphen() {
-		if (document.breakinfo.break_type.options[2].selected == true && document.breakinfo.hasBreak.value == "yes")
-			document.breakinfo.pb_hyphen.checked = true;
-		else
-			document.breakinfo.pb_hyphen.checked = false;
-	}
-	
-	function testNumber() {
-		if (document.getElementById('number').value == '' && !document.breakinfo.pb_ghostpage.checked) 
-			return false;
-	return true;
-	}
-	
-	function _getNextEnd(endText, startOffset) {
-		if (typeof endText == 'undefined')
-			return startOffset;
+                    <tr>
+                        <td><label id="facs_label" for="facs">{#wce.facs}</label></td>
+                        <td colspan="6">
+                        <input id="facs" name="facs" type="text" value=""
+                        size="50" maxlength="" class="required number min1 mceFocus" />
+                        </td>
+                    </tr>
+                </table>
+            </fieldset>
+            <div class="mceActionPanel">
+                <input type="button" id="insert" name="insert" value="{#insert}"
+                onclick="var cont = testNumber();
+                if (cont){setBreakValue(); writeWceNodeInfo();}else{alert('{#wce.empty_number}');}" />
+                <input type="button" id="cancel"  name="cancel" value="{#cancel}"
+                onclick="ed.execCommand('resetCounter');tinyMCEPopup.close();" />
+            </div>
+        </form>
+    </body>
+    <script type="text/javascript">
+		var qsParm, break_type;
+		var break_indention;
+		//positon of cursor
+		var break_lbpos;
+		//break_gid:group id
+		var break_gid;
 
-		endText = endText.replace(/\xa0/gi, ' ');
-		startOffset = endText.indexOf(' ', startOffset);
-		if (startOffset < 0) {
-			startOffset = endText.length;
-		}
-		return startOffset;
-	}
-	
-	function lbposition() {
-		var rng = ed.selection.getRng(true);
-		var startNode = rng.startContainer;
-		var startText = startNode.data ? startNode.data : startNode.innerText;
-		if (startText.substr(rng.startOffset-1, 1) == " ")
-			return 'lb2';
-		else if (rng.startOffset == _getNextEnd(startText,rng.startOffset))
-			return 'lb1';
-		return 'lbm';
-	}
-	
-	if (!tinyMCE.isIE) {
-		$(document).keydown(function(e) {
-			var evt = e || window.event
-			if (evt.keyCode == 13 || evt.keyCode == 10) {
-				document.getElementById('insert').click();
-				return false;
-			}
+		tinyMCEPopup.onInit.add(function(_ed) {
+			ed = _ed;
+			setConstants();
+			init();
 		});
-	}
-</script>
+
+		function init() {
+			var v = ed.WCE_VAR;
+			qsParm = new Array();
+			qsParm['mode'] = add_new_wce_node ? 'new' : '';
+			qsParm['quire'] = v.qcnt;
+			qsParm['page'] = v.pcnt
+			qsParm['column'] = v.ccnt;
+			qsParm['line'] = v.lcnt;
+			qsParm['rectoverso'] = v.rectoverso;
+
+			comboBindReturnEvent('insert');
+			wceInfoInit('brea');
+			readWceNodeInfo();
+			//qs();
+			if (qsParm['mode'] == 'new') {// first call, no former value
+				document.breakinfo.number.value = qsParm['line'];
+			} else {// edit mode => number not empty
+				switch (document.breakinfo.break_type.value) {
+					case 'gb':
+						qsParm['quire'] = document.breakinfo.number.value;
+						break;
+					case 'pb':
+						qsParm['page'] = document.breakinfo.number.value;
+						break;
+					case 'cb':
+						qsParm['column'] = document.breakinfo.number.value;
+						break;
+					case 'lb':
+						qsParm['line'] = document.breakinfo.number.value;
+						break;
+				}
+			}
+			checkstatus_break();
+			setstatus_hyphen();
+			checkstatus_ghostpage();
+		}
+
+		function setBreakValue() {
+			break_type = $('#break_type').val();
+
+			if ($('#lb_alignment').val() === "indent")
+				break_indention = "&#8594;";
+			else if ($('#lb_alignment').val() === "hang")
+				break_indention = "&#8592;";
+			else
+				break_indention = "";
+
+			break_lbpos = wceUtils.moveLbposition(ed);
+			if (break_lbpos == 'lbm') {//lbm
+				document.breakinfo.hasBreak.value = 'yes';
+			} else {
+				document.breakinfo.hasBreak.value = 'no';
+			}
+
+		}
+
+		function checkstatus_break() {
+			if (document.breakinfo.break_type.options[0].selected == true) {//LB
+				document.breakinfo.lb_alignment.disabled = false;
+				document.getElementById('lb_alignment').style.backgroundColor = "white";
+				document.breakinfo.number.value = qsParm['line'];
+			} else {
+				document.breakinfo.lb_alignment.disabled = true;
+				document.getElementById('lb_alignment').style.backgroundColor = "#CCCCCC";
+			}
+			if (document.breakinfo.break_type.options[1].selected == true) {//CB
+				document.breakinfo.number.value = qsParm['column'];
+			}
+			if (document.breakinfo.break_type.options[2].selected == true) {//PB
+				document.breakinfo.pb_type.disabled = false;
+				document.getElementById('pb_type').style.backgroundColor = "white";
+				document.breakinfo.fibre_type.disabled = false;
+				document.getElementById('fibre_type').style.backgroundColor = "white";
+				document.breakinfo.pb_hyphen.disabled = false;
+				document.getElementById('pb_hyphen').style.backgroundColor = "white";
+				document.breakinfo.pb_ghostpage.disabled = false;
+				document.getElementById('pb_ghostpage').style.backgroundColor = "white";
+				document.breakinfo.facs.disabled = false;
+				document.getElementById('facs').style.backgroundColor = "white";
+				if (qsParm['mode'] == 'new' && qsParm['rectoverso'] == 'true') {//only for new entries; old ones keep their counting
+					document.breakinfo.number.value = Math.ceil(qsParm['page'] / 2);
+					if (qsParm['page'] % 2 == 0)// verso page
+						document.breakinfo.pb_type.options[2].selected = true;
+					else// recto page
+						document.breakinfo.pb_type.options[1].selected = true;
+				} else
+					document.breakinfo.number.value = qsParm['page'];
+			} else {
+				document.breakinfo.pb_type.disabled = true;
+				document.getElementById('pb_type').style.backgroundColor = "#CCCCCC";
+				document.breakinfo.fibre_type.disabled = true;
+				document.getElementById('fibre_type').style.backgroundColor = "#CCCCCC";
+				document.breakinfo.pb_hyphen.disabled = true;
+				document.getElementById('pb_hyphen').style.backgroundColor = "#CCCCCC";
+				document.breakinfo.pb_ghostpage.disabled = true;
+				document.breakinfo.pb_ghostpage.checked = false;
+				document.getElementById('pb_ghostpage').style.backgroundColor = "#CCCCCC";
+				document.breakinfo.facs.disabled = true;
+				document.getElementById('facs').style.backgroundColor = "#CCCCCC";
+			}
+			if (document.breakinfo.break_type.options[3].selected == true) {//QB
+				document.breakinfo.number.value = qsParm['quire'];
+			}
+		}
+
+		function checkstatus_hyphen() {
+			if (document.breakinfo.pb_hyphen.checked)
+				document.breakinfo.hasBreak.value = "yes";
+			else
+				document.breakinfo.hasBreak.value = "no";
+		}
+
+		function checkstatus_ghostpage() {
+			if (document.breakinfo.pb_ghostpage.checked) {
+				document.breakinfo.number.disabled = true;
+				document.getElementById('number').style.backgroundColor = "#CCCCCC";
+			} else {
+				document.breakinfo.number.disabled = false;
+				document.getElementById('number').style.backgroundColor = "white";
+			}
+		}
+
+		function setstatus_hyphen() {
+			if (document.breakinfo.break_type.options[2].selected == true && document.breakinfo.hasBreak.value == "yes")
+				document.breakinfo.pb_hyphen.checked = true;
+			else
+				document.breakinfo.pb_hyphen.checked = false;
+		}
+
+		function testNumber() {
+			if (document.getElementById('number').value == '' && !document.breakinfo.pb_ghostpage.checked)
+				return false;
+			return true;
+		}
+
+		if (!tinyMCE.isIE) {
+			$(document).keydown(function(e) {
+				var evt = e || window.event
+				if (evt.keyCode == 13 || evt.keyCode == 10) {
+					document.getElementById('insert').click();
+					return false;
+				}
+			});
+		}
+    </script>
 </html>
