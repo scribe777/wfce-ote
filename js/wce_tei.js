@@ -765,9 +765,8 @@ function getHtmlByTei(inputString) {
 	var Tei2Html_note = function($htmlParent, $teiNode) {
 		// <note type="$ note_type" n="$newHand" xml:id="_TODO_" > $note_text </note>
 		// First check, if it is a editorial note to a correction
-		// TODO: Check condition: transcriber vs. transcriberquery
 		// *Only* return for editorial notes
-		if ($teiNode.getAttribute('type') === 'transcriber' && $teiNode.previousSibling != null && $teiNode.previousSibling.nodeName == 'app') { //<app>...</app><note type="transcriber">...</note>
+		if ($teiNode.getAttribute('type') === 'local' && $teiNode.parentNode != null && $teiNode.parentNode.nodeName == 'rdg') { //<app>...</app><note type="local">...</note>
 			return null;
 		}
 		
@@ -948,12 +947,12 @@ function getHtmlByTei(inputString) {
 			}
 			
 			wceAttr += '&editorial_note=';
-			var $test = $teiNode.nextSibling; // this is the only candidate for a match
-			if ($test != null && $test.nodeName == 'note' && $test.getAttribute('type') == 'transcriber') { //editorial note ahead
-				if ($test.getAttribute('n') == i) { // note belongs to actual rdg-element
-					wceAttr += $teiNode.nextSibling.firstChild.nodeValue; //set the correct attribute value
-					$teiNode.parentNode.removeChild($test); //remove this note from the list
-				}
+			var $test = $rdg.lastChild; // this is the only candidate for a match
+			if ($test != null && $test.nodeName == 'note' && $test.getAttribute('type') == 'local') { //editorial note ahead
+				//if ($test.getAttribute('n') == i) { // note belongs to actual rdg-element
+				wceAttr += encodeURIComponent($test.firstChild.nodeValue); //set the correct attribute value
+				$rdg.removeChild($test); //remove this note from the list
+				//}
 			}
 			
 			wceAttr += '&place_corr=';
@@ -1681,20 +1680,20 @@ function getTeiByHtml(inputString, args) {
 					html2Tei_correctionAddW($rdg, corrector_text);
 				}
 			}			
-			$app.appendChild($rdg);
 			
 			// editorial_note
 			var editorial_note = arr['editorial_note'];
 			if (editorial_note != '') {
-				notecount++;
+				//notecount++;
 				var $note = $newDoc.createElement('note');
-				$note.setAttribute('type', 'transcriber');
-				$note.setAttribute('n', rdgcount); //store information about corresponding reading in "n" attribute
+				$note.setAttribute('type', 'local');
+				//$note.setAttribute('n', rdgcount); //store information about corresponding reading in "n" attribute
 				xml_id = 'P' + g_pageNumber + 'C' + g_columnNumber + 'L' + g_lineNumber + '-' + g_witValue; //TODO: References pointing to the same verse should be numbered -1, -2, ... (cf. p.9)
-				$note.setAttribute('xml:id', xml_id); //TODO: If ids are identical we have to use xml:id; "n" is used for getting the correct corresponding reading
+				$note.setAttribute('n', xml_id); //TODO: If ids are identical we have to use xml:id; "n" is used for getting the correct corresponding reading
 				nodeAddText($note, decodeURIComponent(editorial_note));
-				$app.parentNode.appendChild($note); //insert $note at the very end
+				$rdg.appendChild($note); //insert $note at the end of the current reading
 			}
+			$app.appendChild($rdg);
 		}
 		return {
 			0 : $app,
