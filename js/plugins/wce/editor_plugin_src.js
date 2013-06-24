@@ -2021,6 +2021,7 @@
 			var doWithoutDialog = WCEUtils.doWithoutDialog;
 			var setWCEVariable = WCEUtils.setWCEVariable;
 			var redrawContols = WCEUtils.redrawContols;
+			var doInsertSpace = false;
 
 			if (wcevar.inputDisable && !e.ctrlKey) {
 				return stopEvent(ed, e);
@@ -2057,6 +2058,7 @@
 					}
 					//nur wenn cursor am Ende von formatEnd
 					var isSpaceKey = WCEUtils.insertSpace(ed, ek);
+					doInsertSpace = true;
 					setWCEVariable(ed);
 					redrawContols(ed);
 					ed.WCE_VAR.isRedrawn = true;
@@ -2106,10 +2108,10 @@
 			if (ek == 13 || ek == 10) {
 				if (e.shiftKey) {
 					// Shift+Enter -> break dialogue
-					if (wcevar.type != 'break') {
+					if (wcevar.type != 'break' && !wcevar.not_B) {
 						ed.execCommand('mceAddBreak');
 					}
-				} else {
+				} else if (wcevar.isc || doInsertSpace) {
 					doWithoutDialog(ed, 'brea');
 				}
 				return stopEvent(ed, e);
