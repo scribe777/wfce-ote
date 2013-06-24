@@ -3033,7 +3033,7 @@
 			ed.onInit.add(function() {
 				WCEUtils.initWCEConstants(ed);
 				WCEUtils.initWCEVariable(ed);
-				WCEUtils.setBreakCounter(ed, content);
+				WCEUtils.setBreakCounter(ed);
 				
 				ed.onSetContent.add(function(content) {
 					//run it only at first time of ed.setContent(...)
