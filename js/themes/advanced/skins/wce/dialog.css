@@ -1,12 +1,10 @@
 @font-face{
   font-family: GentiumPlus;
-    src: url(fonts/GentiumForIE.eot);
-  	src: url(fonts/GentiumForIE.eot?#iefix) format('embedded-opentype'),
-	   local('GentiumPlus Regular'), local('Gentium Plus'),
-	   url(fonts/GentiumPlus-R.woff) format('woff'), /* für alle anderen (bis auf Safari) */
-       url(fonts/GentiumPlus-R.ttf) format('opentype'), /* für Safari */
-	   url(fonts/GentiumForSafari.svg#GentiumPlusRegular) format('svg'); 
-}
+    src: url(fonts/GentiumPlus-R.woff) format('woff'); /* should work for all recent browsers */
+  font-family: GentiumPlus;
+    src: url(fonts/GentiumPlus-I.woff) format('woff');	
+	font-style: italic;
+} 
 
 /* Generic */
 body {

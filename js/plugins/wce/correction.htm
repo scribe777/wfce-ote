@@ -1,482 +1,482 @@
 ﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<title>{#wce.reading_title}</title>
-<script type="text/javascript" src="../../tiny_mce_popup.js"></script>
-<script type="text/javascript" src="../../tiny_mce_src.js"></script>
-<script type="text/javascript" src="../../jquery.js"></script>
-<script type="text/javascript" src="../../rangy-core.js"></script>
-<script type="text/javascript" src="js/wce.js"></script>
+    <head>
+        <title>{#wce.reading_title}</title>
+        <script type="text/javascript" src="../../tiny_mce_popup.js"></script>
+        <script type="text/javascript" src="../../tiny_mce_src.js"></script>
+        <script type="text/javascript" src="../../jquery.js"></script>
+        <script type="text/javascript" src="../../rangy-core.js"></script>
+        <script type="text/javascript" src="js/wce.js"></script>
 
-</head>
+    </head>
 
-<body id="table" style="display: none">
-	<form onsubmit="insertTable();return false;" action="#"
-		name="readinginfo" style="margin: 0; padding: 0">
-		<fieldset style="width: 150px; float: left; height: 475px">
-			<legend>{#wce.reading_list}</legend>
-			<div style="text-align: left">
-				<input type="button" onclick="if (testOther()){addCorrector(); selectCorrItem();}else{alert('{#wce.empty_other}');}"
-					value="{#wce.New}" />
-			</div><div style="height: 445px; overflow: auto">
-				<ul id="correction_ul"
-					style="list-style-position: inside; list-style-type: none; margin: 0px; padding: 10px">
-				</ul>
-			</div>
-		</fieldset>
-		<input type="hidden" id="original_firsthand_reading" name="original_firsthand_reading" />
-		<fieldset id="content_fieldset"
-			style="margin-left: 170px; height: 475px; width: auto">
-			<legend>{#wce.reading_data}</legend>
-			<div style="height: 445px; overflow: auto">
-				<table border="0" cellpadding="4" cellspacing="0" width="100%">
-					<tr>
-						<td><label id="reading_label" for="reading">{#wce.reading_type}</label>
-						</td>
-						<td colspan="2"><select id="reading" name="reading">
-								<option value="corr">{#wce.correction}</option>
-								<option value="comm">{#wce.commentary}</option>
-								<option value="alt">{#wce.alternative}</option>
-						</select></td>
-					</tr>
-					<tr>
-						<td><label id="firsthand_label" name="firsthand_label" for="firsthand_reading">
-							{#wce.firsthand_reading}</label></td>
-						<td colspan="1"><label id="firsthand_reading" name="firsthand_reading"
-							style="color: green" ></label></td>
-						<td><input type="checkbox" name="blank_firsthand"
-							id="blank_firsthand" onclick="checkstatus_firsthand()">{#wce.blank_firsthand}
-						</td>
-					</tr>
-					<tr>
-						<td><label id="corrector_name_label" for="corrector_name">{#wce.corrector_name}</label>
-						</td>
-						<td><select id="corrector_name" name="corrector_name"
-							onclick="saveCurrCorrector(true);" onchange="checkstatus_hand()">
-								<option value="corrector">{#wce.corrector}</option>
-								<option value="firsthand">{#wce.firsthand}</option>
-								<option value="corrector1">{#wce.corrector}1</option>
-								<option value="corrector2">{#wce.corrector}2</option>
-								<option value="corrector3">{#wce.corrector}3</option>
-								<option value="other">{#wce.other}</option>
-						</select></td>
-						<td><input id="corrector_name_other" name="corrector_name_other"
-							onkeyup="saveCurrCorrector(true);" type="text" value="" size="30" />
-						</td>
-					</tr>
-					<tr>
-						<td><input type="checkbox" name="blank_correction"
-							id="blank_correction" 
-							onclick="checkstatus_correction()">{#wce.blank_correction}
-						</td>
-					</tr>
-					<tr>
-						<td><label id="place_corr_label" for="place_corr">{#wce.corrector_place}</label>
-						</td>
-						<td colspan="1"><select id="place_corr" name="place_corr" onchange="checkstatus_corr_position()">
-							<option value=""></option>
-							<option value="pagetop">{#wce.position_pagetop}</option>
-							<option value="pagebottom">{#wce.position_pagebottom}</option>
-							<option value="pageleft">{#wce.position_pageleft}</option>
-							<option value="pageright">{#wce.position_pageright}</option>
-							<option value="coltop">{#wce.position_coltop}</option>
-							<option value="colbottom">{#wce.position_colbottom}</option>
-							<option value="colleft">{#wce.position_colleft}</option>
-							<option value="colright">{#wce.position_colright}</option>
-							<option value="lineleft">{#wce.position_lineleft}</option>
-							<option value="lineright">{#wce.position_lineright}</option>
-							<option value="above">{#wce.position_above}</option>
-							<option value="below">{#wce.position_below}</option>
-							<option value="here">{#wce.position_thispoint}</option>
-							<option value="overwritten">{#wce.position_overwritten}</option>
-							<option value="other">{#wce.other}</option>
-						</select></td>
-					<td><input id="place_corr_other"
-						name="place_corr_other" type="text" value="" size="20"
-						maxlength="" class="required number min1 mceFocus" />
-					</td></tr>
-					<tr>
-						<td><label id="deletion_label" for="deletion">{#wce.deletion}</label>
-						</td>
-						<td colspan="2">
-						<input type="hidden" id="deletion_erased" name="deletion_erased" value="" />
-						<input type="hidden" id="deletion_underline" name="deletion_underline" value="" />
-						<input type="hidden" id="deletion_underdot" name="deletion_underdot" value="" />
-						<input type="hidden" id="deletion_strikethrough" name="deletion_strikethrough" value="" />
-						<input type="hidden" id="deletion_vertical_line" name="deletion_vertical_line" value="" />
-						<input type="hidden" id="deletion_other" name="deletion_other" value="" />
-						
-						<select id="deletion" size="6" multiple="multiple" onchange="checkstatus_deletion()" onmouseover="XBT(this, {id:'corr_deletion'})">
-								<option value="erased">{#wce.del_erased}</option>
-								<option value="underline">{#wce.del_underline}</option>
-								<option value="underdot">{#wce.del_underdot}</option>
-								<option value="strikethrough">{#wce.del_striketrough}</option>
-								<option value="vertical_line">{#wce.del_vertical_line}</option>
-								<option value="other">{#wce.other}</option>
-						</select>
-						</td>
-					</tr>
-					<div id="corr_deletion" class="xbtooltip">
-						{#wce.tt_corr_deletion}
-					</div>
-					<tr>
-						<td><label id="editorial_note_label" for="editorial_note">{#wce.editorial_note}</label>
-						</td>
-						<td colspan="2"><textarea WRAP="PHYSICAL" ROWS="3" COLS="50"
-								id="editorial_note" name="editorial_note"></textarea>
-						</td>
-					</tr>
-					<tr>
-					<td><label id="partial_label" for="partial">{#wce.correction_partial}</label>
-						</td>
-						<td>
-						<select id="partial" name="partial">
-							<option value="">{#wce.corr_partial_complete}</option>
-							<option value="I">{#wce.corr_partial_beginning}</option>
-							<option value="F">{#wce.corr_partial_end}</option>
-						</select>
-						</td>
-					</tr>
-					<tr>
-						<td><label id="corrector_text_label" for="corrector_text">{#wce.corrector_text}</label>
-						</td>
-					</tr>
-					<tr>
-						<td colspan="3"><textarea WRAP="PHYSICAL" ROWS="4" style="width:100%" id="corrector_text" name="corrector_text"></textarea>
-						</td>
-					</tr>
-				</table>
-			</div>
-			<div style="height: 20px;">
-				<input type="reset" id="corr_reset" style="display: none"
-					value="Reset" /> <input type="button"
-					onclick="$('#corr_reset').click();saveCurrCorrector();"
-					value="Reset" />
-			</div>
+    <body id="table" style="display: none">
+        <form onsubmit="insertTable();return false;" action="#"
+        name="readinginfo" style="margin: 0; padding: 0">
+            <fieldset style="width: 150px; float: left; height: 475px">
+                <legend>
+                    {#wce.reading_list}
+                </legend>
+                <div style="text-align: left">
+                    <input type="button" onclick="if (testOther()){addCorrector(); selectCorrItem();}else{alert('{#wce.empty_other}');}"
+                    value="{#wce.New}" />
+                </div>
+                <div style="height: 445px; overflow: auto">
+                    <ul id="correction_ul"
+                    style="list-style-position: inside; list-style-type: none; margin: 0px; padding: 10px"></ul>
+                </div>
+            </fieldset>
+            <input type="hidden" id="original_firsthand_reading" name="original_firsthand_reading" />
+            <fieldset id="content_fieldset"
+            style="margin-left: 170px; height: 475px; width: auto">
+                <legend>
+                    {#wce.reading_data}
+                </legend>
+                <div style="height: 445px; overflow: auto">
+                    <table border="0" cellpadding="4" cellspacing="0" width="100%">
+                        <tr>
+                            <td><label id="reading_label" for="reading">{#wce.reading_type}</label></td>
+                            <td colspan="2">
+                            <select id="reading" name="reading">
+                                <option value="corr">{#wce.correction}</option>
+                                <option value="comm">{#wce.commentary}</option>
+                                <option value="alt">{#wce.alternative}</option>
+                            </select></td>
+                        </tr>
+                        <tr>
+                            <td><label id="firsthand_label" name="firsthand_label" for="firsthand_reading"> {#wce.firsthand_reading}</label></td>
+                            <td colspan="1"><label id="firsthand_reading" name="firsthand_reading"
+                            style="color: green" ></label></td>
+                            <td>
+                            <input type="checkbox" name="blank_firsthand"
+                            id="blank_firsthand" onclick="checkstatus_firsthand()">
+                            {#wce.blank_firsthand} </td>
+                        </tr>
+                        <tr>
+                            <td><label id="corrector_name_label" for="corrector_name">{#wce.corrector_name}</label></td>
+                            <td>
+                            <select id="corrector_name" name="corrector_name"
+                            onclick="saveCurrCorrector(true);" onchange="checkstatus_hand()">
+                                <option value="corrector">{#wce.corrector}</option>
+                                <option value="firsthand">{#wce.firsthand}</option>
+                                <option value="corrector1">{#wce.corrector}1</option>
+                                <option value="corrector2">{#wce.corrector}2</option>
+                                <option value="corrector3">{#wce.corrector}3</option>
+                                <option value="other">{#wce.other}</option>
+                            </select></td>
+                            <td>
+                            <input id="corrector_name_other" name="corrector_name_other"
+                            onkeyup="saveCurrCorrector(true);" type="text" value="" size="30" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                            <input type="checkbox" name="blank_correction"
+                            id="blank_correction"
+                            onclick="checkstatus_correction()">
+                            {#wce.blank_correction} </td>
+                        </tr>
+                        <tr>
+                            <td><label id="place_corr_label" for="place_corr">{#wce.corrector_place}</label></td>
+                            <td colspan="1">
+                            <select id="place_corr" name="place_corr" onchange="checkstatus_corr_position()">
+                                <option value=""></option>
+                                <option value="pagetop">{#wce.position_pagetop}</option>
+                                <option value="pagebottom">{#wce.position_pagebottom}</option>
+                                <option value="pageleft">{#wce.position_pageleft}</option>
+                                <option value="pageright">{#wce.position_pageright}</option>
+                                <option value="coltop">{#wce.position_coltop}</option>
+                                <option value="colbottom">{#wce.position_colbottom}</option>
+                                <option value="colleft">{#wce.position_colleft}</option>
+                                <option value="colright">{#wce.position_colright}</option>
+                                <option value="lineleft">{#wce.position_lineleft}</option>
+                                <option value="lineright">{#wce.position_lineright}</option>
+                                <option value="above">{#wce.position_above}</option>
+                                <option value="below">{#wce.position_below}</option>
+                                <option value="here">{#wce.position_thispoint}</option>
+                                <option value="overwritten">{#wce.position_overwritten}</option>
+                                <option value="other">{#wce.other}</option>
+                            </select></td>
+                            <td>
+                            <input id="place_corr_other"
+                            name="place_corr_other" type="text" value="" size="20"
+                            maxlength="" class="required number min1 mceFocus" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><label id="deletion_label" for="deletion">{#wce.deletion}</label></td>
+                            <td colspan="2">
+                            <input type="hidden" id="deletion_erased" name="deletion_erased" value="" />
+                            <input type="hidden" id="deletion_underline" name="deletion_underline" value="" />
+                            <input type="hidden" id="deletion_underdot" name="deletion_underdot" value="" />
+                            <input type="hidden" id="deletion_strikethrough" name="deletion_strikethrough" value="" />
+                            <input type="hidden" id="deletion_vertical_line" name="deletion_vertical_line" value="" />
+                            <input type="hidden" id="deletion_other" name="deletion_other" value="" />
+                            <select id="deletion" size="6" multiple="multiple" onchange="checkstatus_deletion()" onmouseover="XBT(this, {id:'corr_deletion'})">
+                                <option value="erased">{#wce.del_erased}</option>
+                                <option value="underline">{#wce.del_underline}</option>
+                                <option value="underdot">{#wce.del_underdot}</option>
+                                <option value="strikethrough">{#wce.del_striketrough}</option>
+                                <option value="vertical_line">{#wce.del_vertical_line}</option>
+                                <option value="other">{#wce.other}</option>
+                            </select></td>
+                        </tr>
+                        <div id="corr_deletion" class="xbtooltip">
+                            {#wce.tt_corr_deletion}
+                        </div>
+                        <tr>
+                            <td><label id="editorial_note_label" for="editorial_note">{#wce.editorial_note}</label></td>
+                            <td colspan="2">                            <textarea WRAP="PHYSICAL" ROWS="3" COLS="50"
+								id="editorial_note" name="editorial_note"></textarea></td>
+                        </tr>
+                        <tr>
+                            <td><label id="partial_label" for="partial">{#wce.correction_partial}</label></td>
+                            <td>
+                            <select id="partial" name="partial">
+                                <option value="">{#wce.corr_partial_complete}</option>
+                                <option value="I">{#wce.corr_partial_beginning}</option>
+                                <option value="F">{#wce.corr_partial_end}</option>
+                            </select></td>
+                        </tr>
+                        <tr>
+                            <td><label id="corrector_text_label" for="corrector_text">{#wce.corrector_text}</label></td>
+                        </tr>
+                        <tr>
+                            <td colspan="3">                            <textarea WRAP="PHYSICAL" ROWS="4" style="width:100%" id="corrector_text" name="corrector_text"></textarea></td>
+                        </tr>
+                    </table>
+                </div>
+                <div style="height: 20px;">
+                    <input type="reset" id="corr_reset" style="display: none"
+                    value="Reset" />
+                    <input type="button"
+                    onclick="$('#corr_reset').click();saveCurrCorrector();"
+                    value="Reset" />
+                </div>
 
-		</fieldset>
-		<div class="mceActionPanel" id="mceActionPanel">
-			<input type="button" id="insert" name="insert" value="{#insert}"
-				onclick="if (testOther_insert()){saveCurrCorrector(); writeWceNodeInfo();}else{alert('{#wce.empty_other}');}" />
-			<input type="button" id="cancel" name="cancel" value="{#cancel}"
-				onclick="tinyMCEPopup.close();" />
-		</div> 
-	</form>
-</body>
-<script type="text/javascript">
-	//corrector_text as a tinymce-editor
-	var corrector_text_editor;
-	tinyMCEPopup.onInit.add(function(_ed){ 
-		ed=_ed;
-		setConstants(); 
-		corrector_text_editor=new tinymce.Editor('corrector_text',{
-			mode : "textareas", 
-			theme : "advanced",
-			skin: "wce",
-			extended_valid_elements:'span[class|wce_orig|style|wce]',
-			forced_root_block : false,
-			force_br_newlines : true,
-			force_p_newlines : false,
-			entity_encoding : "raw",
-			theme_advanced_path : false,  
- 			plugins : "wce,pagebreak,style,layer,safari,print,inlinepopups,paste", 
+            </fieldset>
+            <div class="mceActionPanel" id="mceActionPanel">
+                <input type="button" id="insert" name="insert" value="{#insert}"
+                onclick="if (testOther_insert()){saveCurrCorrector(); writeWceNodeInfo();}else{alert('{#wce.empty_other}');}" />
+                <input type="button" id="cancel" name="cancel" value="{#cancel}"
+                onclick="tinyMCEPopup.close();" />
+            </div>
+        </form>
+    </body>
+    <script type="text/javascript">
+		//corrector_text as a tinymce-editor
+		var corrector_text_editor;
+		tinyMCEPopup.onInit.add(function(_ed) {
+			ed = _ed;
+			setConstants();
+			corrector_text_editor = new tinymce.Editor('corrector_text', {
+				mode : "textareas",
+				theme : "advanced",
+				skin : "wce",
+				extended_valid_elements : 'span[class|wce_orig|style|wce|gid]',
+				forced_root_block : false,
+				force_br_newlines : true,
+				force_p_newlines : false,
+				entity_encoding : "raw",
+				theme_advanced_path : false,
+				plugins : "wce,pagebreak,style,layer,safari,print,inlinepopups,paste",
 
-			// Theme options
-			theme_advanced_buttons1 : "undo,redo,charmap,|,code,removeformat,|,print,contextmenu,paste,fullscreen,|,breaks,illegible,decoration,abbreviation,paratext,punctuation",
-			theme_advanced_buttons2 : "",
-			theme_advanced_toolbar_location : "top",
-			theme_advanced_toolbar_align : "left",
-			theme_advanced_statusbar_location : "bottom",
-			theme_advanced_resizing : false ,
-			setup : function(ed) {
-				ed.onChange.add(saveCurrCorrector);
+				// Theme options
+				theme_advanced_buttons1 : "undo,redo,charmap,|,code,removeformat,|,print,contextmenu,paste,fullscreen,|,breaks,illegible,decoration,abbreviation,paratext,punctuation",
+				theme_advanced_buttons2 : "",
+				theme_advanced_toolbar_location : "top",
+				theme_advanced_toolbar_align : "left",
+				theme_advanced_statusbar_location : "bottom",
+				theme_advanced_resizing : false,
+				setup : function(ed) {
+					ed.onChange.add(saveCurrCorrector);
+				}
+			});
+			corrector_text_editor.render();
+			corrector_text_editor.onInit.add(init);
+		});
+
+		function init() {
+			comboBindReturnEvent('insert');
+			wceInfoInit('corr');
+			if ($.browser.safari) {
+				$('#content_fieldset').css('width', $('#mceActionPanel').width() - 250);
 			}
 
-		});  
-	 	corrector_text_editor.render(); 
-		corrector_text_editor.onInit.add(init); 
-	});
-	
-	
-	function init() { 
-		comboBindReturnEvent('insert'); 
-		wceInfoInit('corr'); 
-		if ($.browser.safari){
-			$('#content_fieldset').css('width',$('#mceActionPanel').width()-250);
+			for (var p in info_arr) {
+				addCorrector(p);
+			}
+
+			if (item_counter == -1) {//no corrector name given yet
+				$('#firsthand_reading').html(selected_content);
+				$('#original_firsthand_reading').val(selected_content);
+				//Save initial value for later use
+				addCorrector();
+			} else {
+				$('#firsthand_reading').value = $('#original_firsthand_reading').val();
+				//Use old value
+			}
+
+			selectCorrItem();
+
+			$(':input').change(function() {
+				saveCurrCorrector();
+			});
+
+			setstatus_deletion();
+			checkstatus_corr_position();
+			checkstatus_hand();
+			checkstatus_firsthand();
+			checkstatus_correction();
+
+			document.getElementById('corrector_text_adaptive_selection').checked = false;
+			//deactivate adaptive selection here by default
+			corrector_text_editor.focus();
 		}
 
 		for (var p in info_arr) {
-			addCorrector(p);
+		function testOther() {
+			if ((document.readinginfo.corrector_name.options[5].selected == true && document.getElementById('corrector_name_other').value == '') || (document.readinginfo.place_corr.options[15].selected == true && document.getElementById('place_corr_other').value == ''))
+				return false;
+			return true;
 		}
-		
-		if (item_counter == -1) { //no corrector name given yet
-			$('#firsthand_reading').html(selected_content);
-			$('#original_firsthand_reading').val(selected_content); //Save initial value for later use
-			addCorrector();
-		} else {
-			$('#firsthand_reading').value = $('#original_firsthand_reading').val(); //Use old value
-		}
-		
-		selectCorrItem(); 
 
-		$(':input').change(function() {
-			saveCurrCorrector();
-		});
-	
- 		setstatus_deletion();
-		checkstatus_corr_position();
-		checkstatus_hand(); 
-		checkstatus_firsthand();
-		checkstatus_correction();
-		
-		document.getElementById('corrector_text_adaptive_selection').checked=false; //deactivate adaptive selection here by default
-		corrector_text_editor.focus();
-	}
-	
-	function testOther() {
-		if ((document.readinginfo.corrector_name.options[5].selected == true && document.getElementById('corrector_name_other').value == '') ||
-			(document.readinginfo.place_corr.options[15].selected == true && document.getElementById('place_corr_other').value == '')) 
-			return false;
-		return true;
-	}
-	
-	function testOther_insert() {
-		if (!testOther() || item_counter == -1) // no corrections given
-			return false;
-		return true;
-	}
-	
-	function checkstatus_hand() {
-		if ($('#corrector_name').val() == 'other') {
-			$('#corrector_name_other').attr('disabled', false);
-			$('#corrector_name_other').css('background', '#fff');
-		} else {
-			$('#corrector_name_other').attr('disabled', true);
-			$('#corrector_name_other').css('background', '#ccc');
+		function testOther_insert() {
+			if (!testOther() || item_counter == -1)// no corrections given
+				return false;
+			return true;
 		}
-	}
 
-	function checkstatus_firsthand() {
-		if (document.readinginfo.blank_firsthand.checked == true) {
-			$('#firsthand_reading').css('color', 'lightgray');
-		} else {
-			$('#firsthand_reading').css('color', 'green');
+		function checkstatus_hand() {
+			if ($('#corrector_name').val() == 'other') {
+				$('#corrector_name_other').attr('disabled', false);
+				$('#corrector_name_other').css('background', '#fff');
+			} else {
+				$('#corrector_name_other').attr('disabled', true);
+				$('#corrector_name_other').css('background', '#ccc');
+			}
 		}
-	}
 
-	function checkstatus_correction() {
-		if (document.readinginfo.blank_correction.checked == true) { 
-			$('#corrector_text').attr('disabled', true);
-			corrector_text_editor.hide();
-			$('#place_corr').attr('disabled', true);
-		} else { 
-			if(!$('#content_fieldset').attr('disabled')){
-				$('#corrector_text').attr('disabled', false);
-				corrector_text_editor.show();
-			}else {
+		function checkstatus_firsthand() {
+			if (document.readinginfo.blank_firsthand.checked == true) {
+				$('#firsthand_reading').css('color', 'lightgray');
+			} else {
+				$('#firsthand_reading').css('color', 'green');
+			}
+		}
+
+		function checkstatus_correction() {
+			if (document.readinginfo.blank_correction.checked == true) {
 				$('#corrector_text').attr('disabled', true);
 				corrector_text_editor.hide();
-			}
-			$('#place_corr').attr('disabled', false);
-		} 
-	}
-	
-	function checkstatus_corr_position() {
-		if (document.readinginfo.place_corr.options[15].selected == true) {
-			document.readinginfo.place_corr_other.disabled = false;
-			document.getElementById('place_corr_other').style.backgroundColor = "white";
-		} else {
-			document.readinginfo.place_corr_other.disabled = true;
-			document.getElementById('place_corr_other').style.backgroundColor = "#CCCCCC";
-		}
-	}
-	
-	function checkstatus_deletion() {
-		if (document.readinginfo.deletion.options[0].selected == true) {
-			document.getElementById('deletion_erased').value = 1;
-		} else {
-			document.getElementById('deletion_erased').value = 0;
-		}
-		if (document.readinginfo.deletion.options[1].selected == true) {
-			document.getElementById('deletion_underline').value = 1
-		} else {
-			document.getElementById('deletion_underline').value = 0;
-		}
-		if (document.readinginfo.deletion.options[2].selected == true) {
-			document.getElementById('deletion_underdot').value = 1
-		} else {
-			document.getElementById('deletion_underdot').value = 0;
-		}
-		if (document.readinginfo.deletion.options[3].selected == true) {
-			document.getElementById('deletion_strikethrough').value = 1
-		} else {
-			document.getElementById('deletion_strikethrough').value = 0;
-		}
-		if (document.readinginfo.deletion.options[4].selected == true) {
-			document.getElementById('deletion_vertical_line').value = 1
-		} else {
-			document.getElementById('deletion_vertical_line').value = 0;
-		}
-		if (document.readinginfo.deletion.options[5].selected == true) {
-			document.getElementById('deletion_other').value = 1
-		} else {
-			document.getElementById('deletion_other').value = 0;
-		}
-	}
-	
-	function setstatus_deletion() {
-		if (document.getElementById('deletion_erased').value == 1) {
-			document.readinginfo.deletion.options[0].selected = true;
-		} else {
-			document.readinginfo.deletion.options[0].selected = false;
-		}
-		if (document.getElementById('deletion_underline').value == 1) {
-			document.readinginfo.deletion.options[1].selected = true;
-		} else {
-			document.readinginfo.deletion.options[1].selected = false;
-		}
-		if (document.getElementById('deletion_underdot').value == 1) {
-			document.readinginfo.deletion.options[2].selected = true;
-		} else {
-			document.readinginfo.deletion.options[2].selected = false;
-		}
-		if (document.getElementById('deletion_strikethrough').value == 1) {
-			document.readinginfo.deletion.options[3].selected = true;
-		} else {
-			document.readinginfo.deletion.options[3].selected = false;
-		}
-		if (document.getElementById('deletion_vertical_line').value == 1) {
-			document.readinginfo.deletion.options[4].selected = true;
-		} else {
-			document.readinginfo.deletion.options[4].selected = false;
-		}
-		if (document.getElementById('deletion_other').value == 1) {
-			document.readinginfo.deletion.options[5].selected = true;
-		} else {
-			document.readinginfo.deletion.options[5].selected = false;
-		}
-	}
-	/*
-	 * //add new <li> to <ul> /@param class_item: one item from class_name_arr
-	 */
-	function addCorrector(_id, corrector_name) { 
-		// default name of new corrector
-		if (corrector_name == null) {
-			corrector_name = 'new corrector';
-		} 
-
-		$('#corr_reset').click();
-		checkstatus_deletion();
-		
-		// new corrector
-		if (_id == null) {
-			item_counter++;
-			_id = 'c' + item_counter;
-			var first_val=$('#original_firsthand_reading').val();
-			if (first_val == '') {
-				document.readinginfo.blank_firsthand.checked = true;
-				document.readinginfo.blank_firsthand.disabled = true;
-			}
-			$('#corrector_text').val(first_val); 
-			corrector_text_editor.setContent(first_val);
-			info_arr[_id] = formSerialize(null, corrector_name);  
-			corrector_name = corrector_name = $('#corrector_name').val();
-		} else {
-			if (typeof info_arr[_id] != 'undefined' && info_arr[_id] != '') {
-				var param_arr = info_arr[_id].split('&');
-				corrector_name = param_arr[1];
-				if (typeof corrector_name != 'undefined') {
-					corrector_name = corrector_name.replace(name_in_uri + '=', '');
-				}
-			}
-		}
-
-		$('#correction_ul').append(
-				'<li id="' + _id + '" ><img title="Delete" onclick="delCorrector(\'' + _id + '\');" src="img/del.gif" style="cursor:pointer; width:10px; height:10px; margin-right:10px" border="1"  /> <a href="javascript:void(0)" style="text-decoration:none" title="' + _id
-						+ '" onclick="selectCorrItem(\'' + _id + '\');">' + corrector_name + '</a></li>');
-
-		//$('#content_fieldset').attr('disabled', false);
- 		checkstatus_firsthand();
-		checkstatus_correction();
-		checkstatus_corr_position();
-	}
-
-	function delCorrector(_id) {
-		$('#' + _id).remove();
-
-		var li_length = $('#correction_ul > li').length;
-
-		if (li_length < 1) {
-			$('#content_fieldset').attr('disabled', true); 
-			curr_item_id = null;
-		} else {
-			var last_id = $('#correction_ul > li:eq(' + (li_length - 1) + ')').attr('id');
-			if (last_id != null) {
-				selectCorrItem(last_id);
+				$('#place_corr').attr('disabled', true);
 			} else {
-				curr_item_id = null;
+				if (!$('#content_fieldset').attr('disabled')) {
+					$('#corrector_text').attr('disabled', false);
+					corrector_text_editor.show();
+				} else {
+					$('#corrector_text').attr('disabled', true);
+					corrector_text_editor.hide();
+				}
+				$('#place_corr').attr('disabled', false);
 			}
 		}
-		info_arr[_id] = null;
-	}
 
-	function saveCurrCorrector(b) { 
-		if (curr_item_id == null)
-			return;
+		function checkstatus_corr_position() {
+			if (document.readinginfo.place_corr.options[15].selected == true) {
+				document.readinginfo.place_corr_other.disabled = false;
+				document.getElementById('place_corr_other').style.backgroundColor = "white";
+			} else {
+				document.readinginfo.place_corr_other.disabled = true;
+				document.getElementById('place_corr_other').style.backgroundColor = "#CCCCCC";
+			}
+		}
 
-		var corrector_name;
-		if (b) {
-			corrector_name = $('#corrector_name').val();
-			if (corrector_name == 'other') {
-				corrector_name = $('#corrector_name_other').val();
-				if (corrector_name == '') {
-					corrector_name = 'Other';
+		function checkstatus_deletion() {
+			if (document.readinginfo.deletion.options[0].selected == true) {
+				document.getElementById('deletion_erased').value = 1;
+			} else {
+				document.getElementById('deletion_erased').value = 0;
+			}
+			if (document.readinginfo.deletion.options[1].selected == true) {
+				document.getElementById('deletion_underline').value = 1
+			} else {
+				document.getElementById('deletion_underline').value = 0;
+			}
+			if (document.readinginfo.deletion.options[2].selected == true) {
+				document.getElementById('deletion_underdot').value = 1
+			} else {
+				document.getElementById('deletion_underdot').value = 0;
+			}
+			if (document.readinginfo.deletion.options[3].selected == true) {
+				document.getElementById('deletion_strikethrough').value = 1
+			} else {
+				document.getElementById('deletion_strikethrough').value = 0;
+			}
+			if (document.readinginfo.deletion.options[4].selected == true) {
+				document.getElementById('deletion_vertical_line').value = 1
+			} else {
+				document.getElementById('deletion_vertical_line').value = 0;
+			}
+			if (document.readinginfo.deletion.options[5].selected == true) {
+				document.getElementById('deletion_other').value = 1
+			} else {
+				document.getElementById('deletion_other').value = 0;
+			}
+		}
+
+		function setstatus_deletion() {
+			if (document.getElementById('deletion_erased').value == 1) {
+				document.readinginfo.deletion.options[0].selected = true;
+			} else {
+				document.readinginfo.deletion.options[0].selected = false;
+			}
+			if (document.getElementById('deletion_underline').value == 1) {
+				document.readinginfo.deletion.options[1].selected = true;
+			} else {
+				document.readinginfo.deletion.options[1].selected = false;
+			}
+			if (document.getElementById('deletion_underdot').value == 1) {
+				document.readinginfo.deletion.options[2].selected = true;
+			} else {
+				document.readinginfo.deletion.options[2].selected = false;
+			}
+			if (document.getElementById('deletion_strikethrough').value == 1) {
+				document.readinginfo.deletion.options[3].selected = true;
+			} else {
+				document.readinginfo.deletion.options[3].selected = false;
+			}
+			if (document.getElementById('deletion_vertical_line').value == 1) {
+				document.readinginfo.deletion.options[4].selected = true;
+			} else {
+				document.readinginfo.deletion.options[4].selected = false;
+			}
+			if (document.getElementById('deletion_other').value == 1) {
+				document.readinginfo.deletion.options[5].selected = true;
+			} else {
+				document.readinginfo.deletion.options[5].selected = false;
+			}
+		}
+
+		/*
+		 * //add new <li> to <ul> /@param class_item: one item from class_name_arr
+		 */
+		function addCorrector(_id, corrector_name) {
+			// default name of new corrector
+			if (corrector_name == null) {
+				corrector_name = 'new corrector';
+			}
+
+			$('#corr_reset').click();
+			checkstatus_deletion();
+
+			// new corrector
+			if (_id == null) {
+				item_counter++;
+				_id = 'c' + item_counter;
+				var first_val = $('#original_firsthand_reading').val();
+				if (first_val == '') {
+					document.readinginfo.blank_firsthand.checked = true;
+					document.readinginfo.blank_firsthand.disabled = true;
+				}
+				$('#corrector_text').val(first_val);
+				corrector_text_editor.setContent(first_val);
+				info_arr[_id] = formSerialize(null, corrector_name);
+				corrector_name = corrector_name = $('#corrector_name').val();
+			} else {
+				if ( typeof info_arr[_id] != 'undefined' && info_arr[_id] != '') {
+					var param_arr = info_arr[_id].split('&');
+					corrector_name = param_arr[1];
+					if ( typeof corrector_name != 'undefined') {
+						corrector_name = corrector_name.replace('__n=', '');
+					}
 				}
 			}
-		} else {
-			corrector_name = $('#' + curr_item_id + ' a').eq(0).html();
+
+			$('#correction_ul').append('<li id="' + _id + '" ><img title="Delete" onclick="delCorrector(\'' + _id + '\');" src="img/del.gif" style="cursor:pointer; width:10px; height:10px; margin-right:10px" border="1"  /> <a href="javascript:void(0)" style="text-decoration:none" title="' + _id + '" onclick="selectCorrItem(\'' + _id + '\');">' + corrector_name + '</a></li>');
+
+			//$('#content_fieldset').attr('disabled', false);
+			checkstatus_firsthand();
+			checkstatus_correction();
+			checkstatus_corr_position();
 		}
 
-		info_arr[curr_item_id] = formSerialize(null, corrector_name);
-		$('#' + curr_item_id + ' a').html(corrector_name);
+		function delCorrector(_id) {
+			$('#' + _id).remove();
 
-	}
+			var li_length = $('#correction_ul > li').length;
 
-	function selectCorrItem(_id) {
-		$('#corr_reset').click();
-
-		if (_id == null) {
-			_id = 'c' + item_counter;
-		} 
-		curr_item_id = _id;
-		$('#correction_ul > li > a').css({
-			'color' : '#000',
-			'text-decoration' : 'none'
-		});
-		$('#' + _id + '   a').css({
-			'color' : 'blue',
-			'text-decoration' : 'underline'
-		});
-		var str = info_arr[_id];
-		if (str == null) {
-			$('#corr_reset').click();
-		} else {
-			formUnserialize(str);
-		} 
-		checkstatus_hand();
-		checkstatus_correction();
-		setstatus_deletion();
-	}
-	
-	if (!tinyMCE.isIE) {
-		$(document).keydown(function(e) {
-			var evt = e || window.event
-			if ((evt.keyCode == 13 || evt.keyCode == 10) && !evt.shiftKey) {
-				document.getElementById('insert').click();
-				return false;
+			if (li_length < 1) {
+				$('#content_fieldset').attr('disabled', true);
+				curr_item_id = null;
+			} else {
+				var last_id = $('#correction_ul > li:eq(' + (li_length - 1) + ')').attr('id');
+				if (last_id != null) {
+					selectCorrItem(last_id);
+				} else {
+					curr_item_id = null;
+				}
 			}
-		});
-	}
-</script>
+			info_arr[_id] = null;
+		}
+
+		function saveCurrCorrector(b) {
+			if (curr_item_id == null)
+				return;
+
+			var corrector_name;
+			if (b) {
+				corrector_name = $('#corrector_name').val();
+				if (corrector_name == 'other') {
+					corrector_name = $('#corrector_name_other').val();
+					if (corrector_name == '') {
+						corrector_name = 'Other';
+					}
+				}
+			} else {
+				corrector_name = $('#' + curr_item_id + ' a').eq(0).html();
+			}
+
+			info_arr[curr_item_id] = formSerialize(null, corrector_name);
+			$('#' + curr_item_id + ' a').html(corrector_name);
+
+		}
+
+		function selectCorrItem(_id) {
+			$('#corr_reset').click();
+
+			if (_id == null) {
+				_id = 'c' + item_counter;
+			}
+			curr_item_id = _id;
+			$('#correction_ul > li > a').css({
+				'color' : '#000',
+				'text-decoration' : 'none'
+			});
+			$('#' + _id + '   a').css({
+				'color' : 'blue',
+				'text-decoration' : 'underline'
+			});
+			var str = info_arr[_id];
+			if (str == null) {
+				$('#corr_reset').click();
+			} else {
+				formUnserialize(str);
+			}
+			checkstatus_hand();
+			checkstatus_correction();
+			setstatus_deletion();
+		}
+
+		if (!tinyMCE.isIE) {
+			$(document).keydown(function(e) {
+				var evt = e || window.event
+				if ((evt.keyCode == 13 || evt.keyCode == 10) && !evt.shiftKey) {
+					document.getElementById('insert').click();
+					return false;
+				}
+			});
+		}
+    </script>
 
 </html>

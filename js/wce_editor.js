@@ -1,15 +1,15 @@
-﻿﻿function setWceEditor(_id, rtl, finishCallback, lang, getWitness, getBook, myBaseURL) {
-    if (typeof myBaseURL != "undefined") {
+﻿function setWceEditor(_id, rtl, finishCallback, lang, getWitness, getBook, myBaseURL) {
+	if ( typeof myBaseURL != "undefined") {
 		tinyMCE.baseURL = myBaseURL;
 		tinyMCE.baseURI = new tinyMCE.util.URI(tinyMCE.baseURL);
-    }
+	}
 	tinyMCE.init({
 		// General options
 		mode : "exact",
 		elements : _id,
 		theme : "advanced",
 		skin : "wce",
-		extended_valid_elements : 'span[class|wce_orig|style|wce|gid|sf|ef]',
+		extended_valid_elements : 'span[class|wce_orig|style|wce|gid]',
 		forced_root_block : false,
 		force_br_newlines : true,
 		force_p_newlines : false,
@@ -32,9 +32,10 @@
 		theme_advanced_toolbar_align : "left",
 		theme_advanced_statusbar_location : "bottom",
 		theme_advanced_resizing : false,
-		oninit : function() {  // Once initialized, tell the editor to go fullscreen
+		oninit : function() {// Once initialized, tell the editor to go fullscreen
 			addMenuItems(tinyMCE.activeEditor);
-			if (finishCallback) finishCallback();
+			if (finishCallback)
+				finishCallback();
 		}
 	});
 }
@@ -42,9 +43,11 @@
 // wenn brower reload, set editor blank
 function wceReload() {
 	// for test
-	/*var testData = '<span class="chapter_number"> 1</span> <span class="verse_number"> 1</span> βιβλος <span class="corr" wce_orig="γενεσεως" wce="__t=corr&amp;__n=new corrector&amp;undefined=New&amp;original_firsthand_reading=%CE%B3%CE%B5%CE%BD%CE%B5%CF%83%CE%B5%CF%89%CF%82&amp;reading=corr&amp;corrector_name=corrector&amp;corrector_name_other=&amp;place_corr=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_other=0&amp;deletion=null&amp;editorial_note=&amp;corrector_text=%CE%B3%CE%B5%CE%BD%CE%B5%CF%83%CE%B5%CF%89%CF%82&amp;corrector_text_adaptive_selection=on&amp;corr_reset=Reset&amp;undefined=Reset&amp;insert=Insert&amp;cancel=Cancel@__t=corr&amp;__n=new corrector&amp;undefined=New&amp;original_firsthand_reading=%CE%B3%CE%B5%CE%BD%CE%B5%CF%83%CE%B5%CF%89%CF%82&amp;reading=corr&amp;corrector_name=corrector&amp;corrector_name_other=&amp;place_corr=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_other=0&amp;deletion=null&amp;editorial_note=&amp;corrector_text=%CE%B3%CE%B5%CE%BD%CE%B5%CF%83%CE%B5%CF%89%CF%82&amp;corrector_text_adaptive_selection=on&amp;corr_reset=Reset&amp;undefined=Reset&amp;insert=Insert&amp;cancel=Cancel@__t=corr&amp;__n=corrector&amp;undefined=New&amp;original_firsthand_reading=%CE%B3%CE%B5%CE%BD%CE%B5%CF%83%CE%B5%CF%89%CF%82&amp;reading=corr&amp;corrector_name=corrector&amp;corrector_name_other=&amp;place_corr=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_other=0&amp;deletion=null&amp;editorial_note=&amp;corrector_text=%CE%B3%CE%B5%CE%BD%CE%B5%CF%83%CE%B5%CF%89%CF%82&amp;corrector_text_adaptive_selection=on&amp;corr_reset=Reset&amp;undefined=Reset&amp;insert=Insert&amp;cancel=Cancel">γενεσεως</span> ιησου χριστου υιου δαυιδ υιου αβρααμ <span class="verse_number"> 2</span> αβρααμ εγεννησεν τον ισαακ ισαακ δε εγεννησεν τον ιακωβ ιακωβ δε εγεννησεν τον ιουδαν και τους αδελφους αυτου <span class="verse_number"> 3</span> ιουδας δε εγεννησεν τον φαρες και τον ζαρα εκ της θαμαρ φαρες δε εγεννησεν τον εσρωμ εσρωμ δε εγεννησεν τον αραμ <span class="verse_number"> 4</span> αραμ δε εγεννησεν τον αμιναδαβ αμιναδαβ δε εγεννησεν τον ναασσων ναασσων δε εγεννησεν τον σαλμων <span class="verse_number"> 5</span> σαλμων δε εγεννησεν τον βοες εκ της ραχαβ βοες δε εγεννησεν τον ιωβηδ εκ της ρουθ ιωβηδ δε εγεννησεν τον ιεσσαι <span class="verse_number"> 6</span> ιεσσαι δε εγεννησεν τον δαυιδ τον βασιλεα δαυιδ δε εγεννησεν τον σολομωνα εκ της του ουριου <span class="verse_number"> 7</span> σολομων δε εγεννησεν τον ροβοαμ ροβοαμ δε εγεννησεν τον αβια αβια δε εγεννησεν τον ασαφ <span class="verse_number"> 8</span> ασαφ δε εγεννησεν τον ιωσαφατ ιωσαφατ δε εγεννησεν τον ιωραμ ιωραμ δε εγεννησεν τον οζιαν <span class="verse_number"> 9</span> οζιας δε εγεννησεν τον ιωαθαμ ιωαθαμ δε εγεννησεν τον αχαζ αχαζ δε εγεννησεν τον εζεκιαν <span class="verse_number"> 10</span> εζεκιας δε εγεννησεν τον μανασση μανασσης δε εγεννησεν τον αμως αμως δε εγεννησεν τον ιωσιαν <span class="verse_number"> 11</span> ιωσιας δε εγεννησεν τον ιεχονιαν και τους αδελφους αυτου επι της μετοικεσιας βαβυλωνος <span class="verse_number"> 12</span> μετα δε την μετοικεσιαν βαβυλωνος ιεχονιας εγεννησεν τον σαλαθιηλ σαλαθιηλ δε εγεννησεν τον ζοροβαβελ';
-	 setData(testData);*/
-	 //setTeiIndexData('','','','','','','','','Martin');
+	/*var testData = '<span class="chapter_number"> 1</span> <span class="verse_number"> 1</span> βιβλο? <span class="corr" wce_orig="γενεσεω?" wce="__t=corr&amp;__n=new corrector&amp;undefined=New&amp;original_firsthand_reading=%CE%B3%CE%B5%CE%BD%CE%B5%CF%83%CE%B5%CF%89%CF%82&amp;reading=corr&amp;corrector_name=corrector&amp;corrector_name_other=&amp;place_corr=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_other=0&amp;deletion=null&amp;editorial_note=&amp;corrector_text=%CE%B3%CE%B5%CE%BD%CE%B5%CF%83%CE%B5%CF%89%CF%82&amp;corrector_text_adaptive_selection=on&amp;corr_reset=Reset&amp;undefined=Reset&amp;insert=Insert&amp;cancel=Cancel@__t=corr&amp;__n=new corrector&amp;undefined=New&amp;original_firsthand_reading=%CE%B3%CE%B5%CE%BD%CE%B5%CF%83%CE%B5%CF%89%CF%82&amp;reading=corr&amp;corrector_name=corrector&amp;corrector_name_other=&amp;place_corr=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_other=0&amp;deletion=null&amp;editorial_note=&amp;corrector_text=%CE%B3%CE%B5%CE%BD%CE%B5%CF%83%CE%B5%CF%89%CF%82&amp;corrector_text_adaptive_selection=on&amp;corr_reset=Reset&amp;undefined=Reset&amp;insert=Insert&amp;cancel=Cancel@__t=corr&amp;__n=corrector&amp;undefined=New&amp;original_firsthand_reading=%CE%B3%CE%B5%CE%BD%CE%B5%CF%83%CE%B5%CF%89%CF%82&amp;reading=corr&amp;corrector_name=corrector&amp;corrector_name_other=&amp;place_corr=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_other=0&amp;deletion=null&amp;editorial_note=&amp;corrector_text=%CE%B3%CE%B5%CE%BD%CE%B5%CF%83%CE%B5%CF%89%CF%82&amp;corrector_text_adaptive_selection=on&amp;corr_reset=Reset&amp;undefined=Reset&amp;insert=Insert&amp;cancel=Cancel">γενεσεω?</span> ιησου χριστου υιου δαυιδ υιου αβρααμ <span class="verse_number"> 2</span> αβρααμ εγεννησεν τον ισαακ ισαακ δε εγεννησεν τον ιακωβ ιακωβ δε εγεννησεν τον ιουδαν και του? αδελφου? αυτου <span class="verse_number"> 3</span> ιουδα? δε εγεννησεν τον φαρε? και τον ζαρα εκ τη? θαμαρ φαρε? δε εγεννησεν τον εσρωμ εσρωμ δε εγεννησεν τον αραμ <span class="verse_number"> 4</span> αραμ δε εγεννησεν τον αμιναδαβ αμιναδαβ δε εγεννησεν τον ναασσων ναασσων δε εγεννησεν τον σαλμων <span class="verse_number"> 5</span> σαλμων δε εγεννησεν τον βοε? εκ τη? ραχαβ βοε? δε εγεννησεν τον ιωβηδ εκ τη? ρουθ ιωβηδ δε εγεννησεν τον ιεσσαι <span class="verse_number"> 6</span> ιεσσαι δε εγεννησεν τον δαυιδ τον βασιλεα δαυιδ δε εγεννησεν τον σολομωνα εκ τη? του ουριου <span class="verse_number"> 7</span> σολομων δε εγεννησεν τον ροβοαμ ροβοαμ δε εγεννησεν τον αβια αβια δε εγεννησεν τον ασαφ <span class="verse_number"> 8</span> ασαφ δε εγεννησεν τον ιωσαφατ ιωσαφατ δε εγεννησεν τον ιωραμ ιωραμ δε εγεννησεν τον οζιαν <span class="verse_number"> 9</span> οζια? δε εγεννησεν τον ιωαθαμ ιωαθαμ δε εγεννησεν τον αχαζ αχαζ δε εγεννησεν τον εζεκιαν <span class="verse_number"> 10</span> εζεκια? δε εγεννησεν τον μανασση μανασση? δε εγεννησεν τον αμω? αμω? δε εγεννησεν τον ιωσιαν <span class="verse_number"> 11</span> ιωσια? δε εγεννησεν τον ιεχονιαν και του? αδελφου? αυτου επι τη? μετοικεσια? βαβυλωνο? <span class="verse_number"> 12</span> μετα δε την μετοικεσιαν βαβυλωνο? ιεχονια? εγεννησεν τον σαλαθιηλ σαλαθιηλ δε εγεννησεν τον ζοροβαβελ';
+	*/
+	testData='aaaa        bbb cccc';
+	setData(testData);
+	//setTeiIndexData('','','','','','','','','Martin');
 }
 
 // get dirty-value of editor
@@ -60,7 +63,7 @@ function setEditorNotDirty(b) {
 // set editor html content
 function setData(msg) {
 	tinyMCE.activeEditor.setContent(msg);
-	
+
 }
 
 // get editor html content
@@ -154,55 +157,55 @@ function decreaseLineHeight() {
 function addMenuItems(ed) {
 	//var wceAttr = '';
 	ed.plugins.contextmenu.onContextMenu.add(function(th, menu, event) {
-        /*if ((el.nodeName == 'A' && !ed.dom.getAttrib(el, 'name')) || !col) {
-				m.addSeparator();
-				m.add({title : 'advanced.link_desc', icon : 'link', cmd : ed.plugins.advlink ? 'mceAdvLink' : 'mceLink', ui : true});
-				m.add({title : 'advanced.unlink_desc', icon : 'unlink', cmd : 'UnLink'});
+		/*if ((el.nodeName == 'A' && !ed.dom.getAttrib(el, 'name')) || !col) {
+		m.addSeparator();
+		m.add({title : 'advanced.link_desc', icon : 'link', cmd : ed.plugins.advlink ? 'mceAdvLink' : 'mceLink', ui : true});
+		m.add({title : 'advanced.unlink_desc', icon : 'unlink', cmd : 'UnLink'});
 		*/
 		// added my options
-		if (ed.selection.getNode().getAttribute('wce') != null && ed.selection.getNode().getAttribute('wce').substring(4,16) == 'verse_number') {
+		if (ed.selection.getNode().getAttribute('wce') != null && ed.selection.getNode().getAttribute('wce').substring(4, 16) == 'verse_number') {
 			//wceAttr = ed.selection.getNode().getAttribute('wce');
 			menu.addSeparator();
 			menu.add({
-				title : ed.getLang('wce.initial_portion'), 
-				icon : 'option1', 
+				title : ed.getLang('wce.initial_portion'),
+				icon : 'option1',
 				cmd : 'mce_partialI'
 			});
 			menu.add({
-				title : ed.getLang('wce.medial_portion'), 
-				icon : 'option2', 
+				title : ed.getLang('wce.medial_portion'),
+				icon : 'option2',
 				cmd : 'mce_partialM'
 			});
 			menu.add({
-				title : ed.getLang('wce.final_portion'), 
-				icon : 'option3', 
+				title : ed.getLang('wce.final_portion'),
+				icon : 'option3',
 				cmd : 'mce_partialF'
 			});
 			menu.add({
-				title : ed.getLang('wce.remove_partial'), 
-				icon : 'option3', 
+				title : ed.getLang('wce.remove_partial'),
+				icon : 'option3',
 				cmd : 'mce_partial_remove'
 			});
 		}
-    });
-    
-    ed.addCommand('mce_partialI', function() {
+	});
+
+	ed.addCommand('mce_partialI', function() {
 		ed.selection.getNode().setAttribute('wce', '__t=verse_number' + '&partial=I');
-    });
-    ed.addCommand('mce_partialM', function() {
-        ed.selection.getNode().setAttribute('wce', '__t=verse_number' + '&partial=M');
-    });
+	});
+	ed.addCommand('mce_partialM', function() {
+		ed.selection.getNode().setAttribute('wce', '__t=verse_number' + '&partial=M');
+	});
 	ed.addCommand('mce_partialF', function() {
-        ed.selection.getNode().setAttribute('wce', '__t=verse_number' + '&partial=F');
-    });
+		ed.selection.getNode().setAttribute('wce', '__t=verse_number' + '&partial=F');
+	});
 	ed.addCommand('mce_partial_remove', function() {
-        ed.selection.getNode().setAttribute('wce', '__t=verse_number');
-    });
+		ed.selection.getNode().setAttribute('wce', '__t=verse_number');
+	});
 }
 
 //function my_command() {alert (wceAttr + '&partial=F');}
 
-if ((typeof Range !== "undefined") && !Range.prototype.createContextualFragment) {
+if (( typeof Range !== "undefined") && !Range.prototype.createContextualFragment) {
 	Range.prototype.createContextualFragment = function(html) {
 		var frag = document.createDocumentFragment(), div = document.createElement("div");
 		frag.appendChild(div);

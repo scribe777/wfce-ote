@@ -3033,14 +3033,15 @@
 			ed.onInit.add(function() {
 				WCEUtils.initWCEConstants(ed);
 				WCEUtils.initWCEVariable(ed);
-
+				WCEUtils.setBreakCounter(ed, content);
+				
 				ed.onSetContent.add(function(content) {
 					//run it only at first time of ed.setContent(...)
 					if (!ed.isCounterInited) {
 						ed.isCounterInited = WCEUtils.setBreakCounter(ed, content);
 					}
 				});
-
+ 
 				//
 				ed.teiIndexData = {
 					'bookNumber' : '00',
@@ -3354,10 +3355,13 @@
 				doWithoutDialog(ed, 'abbr', c);
 			});
 
-			/*
-			 ed.addCommand('mceAdd_brea', function(c, number) {
-			 doWithoutDialog(ed, 'brea', c, number);
-			 });*/
+			ed.addCommand('mceAdd_brea', function(c, number) {
+				var v = ed.WCE_VAR;
+				if (number) {
+					ed.execCommand('setCounter', c, number);
+				}
+				ed.selection.setContent(WCEUtils.getBreakHtml(ed, c));
+			});
 
 			ed.addCommand('mceAdd_pc', function(c) {
 				doWithoutDialog(ed, 'pc', c);
@@ -3386,39 +3390,42 @@
 
 			ed.addCommand('setCounter', function(bt, n) {
 				// First reset counters
-				var c = ed.WCE_CON;
+				var c = ed.WCE_VAR;
+				/*
 				c.qcnt--;
 				c.pcnt--;
 				c.ccnt--;
 				c.lcnt--;
+				*/
 				// set only the one correct counter
 				switch (bt) {
 					case 'gb':
-						c.qcnt = n;
+						c.qcnt = n - 1;
 						break;
 					case 'pb':
-						c.pcnt = n;
+						c.pcnt = n - 1;
 						break;
 					case 'cb':
-						c.ccnt = n;
+						c.ccnt = n - 1;
 						break;
 					case 'lb':
-						c.lcnt = n;
+						c.lcnt = n - 1;
 						break;
 				}
 			});
 
-			ed.addCommand('resetCounter', function() {
-				// reset counter values when pressing "Cancel" at the break dialog
-				var c = ed.WCE_CON;
-				c.qcnt--;
-				c.pcnt--;
-				c.ccnt--;
-				c.lcnt--;
-			});
+			/*
+			 ed.addCommand('resetCounter', function() {
+			 // reset counter values when pressing "Cancel" at the break dialog
+			 var c = ed.WCE_VAR;
+			 c.qcnt--;
+			 c.pcnt--;
+			 c.ccnt--;
+			 c.lcnt--;
+			 });*/
 
 			ed.addCommand('addToCounter', function(bt, n) {
-				var c = ed.WCE_CON;
+				var c = ed.WCE_VAR;
 				switch (bt) {
 					case 'gb':
 						c.qcnt = parseInt(c.qcnt) + parseInt(n);
