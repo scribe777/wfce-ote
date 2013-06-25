@@ -3143,6 +3143,13 @@
 				WCEUtils.initWCEVariable(ed);
 				WCEUtils.setBreakCounter(ed);
 
+				//disable drag/drop
+				ed.dom.bind(ed.getBody(), ['dragend', 'dragover', 'draggesture', 'dragdrop', 'drop', 'drag'], function(e) {
+					e.preventDefault();
+					e.stopPropagation();
+					return false;
+				});
+
 				ed.onSetContent.add(function(_content) {
 					//run it only at first time of ed.setContent(...)
 					if (!ed.isCounterInited) {
