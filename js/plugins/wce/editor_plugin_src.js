@@ -7,7 +7,7 @@
  */
 
 (function() {
-	var wfce_editor = "2013-06-24";
+	var wfce_editor = "2013-06-19";
 
 	// Load plugin specific language pack
 	tinymce.PluginManager.requireLangPack('wce');
@@ -383,39 +383,133 @@
 		/*
 		 * when caret after a space, move it to front of the space
 		 */
-		moveLbposition : function(ed) {
+		modifyBreakPosition : function(ed) {
 			//TODO: muss noch getestet werden, da zwei textnode hintereinander stehen k?nnen
 
 			var rng = WCEUtils.getRNG(ed);
-			var startContainer = rng.startContainer;
-			var startText = startContainer.nodeValue;
+			var startNode = rng.startContainer;
+			if (startNode.nodeType != 3) {
+				return;
+			}
 
-			if (startText) {
-				var startOffset = rng.startOffset;
-				var indexOfEnd = WCEUtils.getNextEnd(startText, startOffset);
-				// at the end of a word
-				var _nextSibling = startContainer.nextSibling;
-				var atWordMiddle;
-				if (_nextSibling && _nextSibling.nodeType == 3 && _nextSibling.nodeValue.indexOf(0) != ' ') {
-					atWordMiddle = true;
+			var startText = startNode.nodeValue;
+			if (!startText) {
+				return;
+			}
+
+			var startOffset = rng.startOffset;
+			var preNode = startNode.previousSibling;
+			var preNodeText;
+
+			var newStartText = startText;
+			var newStartOffset = startOffset;
+			var newStartNode = startNode;
+
+			var c0, c1;
+
+			var testPreChar, textNextChar;
+			if (startOffset == 0) {
+				/***
+				 *** in the middle of a word
+				 ***/
+				//is preNode textNode and Endletter a space?
+				if (preNode && preNode.nodeType == 3) {
+					preText = preNode.nodeValue;
+					c0 = preText.charAt(preText.length);
+					if (c0 != ' ' && c0 != '\xa0') {
+						testPreChar = true;
+					}
 				}
 
-				if (indexOfEnd && indexOfEnd == startOffset && !atWordMiddle) {
-					/*neuen Text in textNode eingeben kann das textNode zerschneiden und andere neue textNode erzeugen.
-					 alle textNode gehoeren eigentliche zu einem Text
-					 add an additional space*/
-					return '';
+				c1 = startText.charAt(0);
+				if (c1 != ' ' && c1 != '\xa0') {
+					textNextChar = true;
+				}
+				if (testPreChar && textNextChar) {
+					return 'lbm';
+				}
 
-				} else if (startOffset > 0 && startText.substr(startOffset - 1, 1) == ' ') {
-					//return after space
-					rng.setEnd(startContainer, startOffset - 1);
-					WCEUtils.setRNG(ed, rng);
-					return '';
-				} else {// return in the middle of a word
+			} else if (startOffset == startText.length) {
+
+			} else {
+				c0 = startText.charAt(startOffset - 1);
+				c1 = startText.charAt(startOffset);
+				if (c0 != ' ' && c0 != '\xa0' && c1 != ' ' && c1 != '\xa0') {
 					return 'lbm';
 				}
 			}
 
+			/***
+			 *** at beginn or end of a word
+			 ***/
+			//caret go to last no-space-letter
+			var c;
+			for (var i = startOffset; i > 0; i--) {
+				c = newStartText.charAt(i - 1);
+				if (c != ' ' && c != '\xa0') {
+					break;
+				}
+				newStartOffset = i - 1;
+				if (newStartOffset == 0) {
+					if (preNode && preNode.nodeType == 3) {
+						preNodeText = preNode.nodeValue;
+						if ($.trim(preNodeText) == '') {
+							var _preNode = preNode.previousSibling;
+							$(preNode).remove();
+							preNode = _preNode;
+						}
+						if (!preNode || preNode.nodeType != 3) {
+							break;
+						}
+						newStartOffset = preNodeText.length;
+						i = newStartOffset;
+						newStartNode = preNode;
+						newStartText = preNodeText;
+						preNode = preNode.previousSibling;
+
+						continue;
+					} else {
+						break;
+					}
+				}
+			}
+
+			//remove spaces after newStartOffset and add a space
+			var newStartText = newStartNode.nodeValue;
+			var text1 = newStartText.substring(0, newStartOffset);
+			text2 = newStartText.substring(newStartOffset);
+			if (text2) {
+				text2 = text2.replace(/^\s+/, '');
+				newStartNode.nodeValue = text1 + ' ' + text2;
+			} else {
+				newStartNode.nodeValue = newStartText + ' ';
+			}
+
+			//if caret at end of word, test next text-node
+			if (newStartNode.nodeValue.length == newStartOffset + 1) {
+				var nextNode = newStartNode.nextSibling, nextNodeText;
+				while (nextNode) {
+					if (nextNode.nodeType == 3) {
+						nextNodeText = nextNode.nodeValue;
+						if ($.trim(nextNodeText) == '') {
+							var _nextNode = nextNode.nextSibling;
+							$(nextNode).remove();
+							nextNode = _nextNode;
+							continue;
+						} else {
+							nextNode.nodeValue = nextNodeText.replace(/\s+$/, '');
+							break;
+						}
+					} else {
+						break;
+					}
+				}
+			}
+
+			rng.setStart(newStartNode, newStartOffset);
+			rng.setEnd(newStartNode, newStartOffset);
+			WCEUtils.setRNG(ed, rng);
+			return '';
 		},
 
 		/*
@@ -423,7 +517,6 @@
 		 */
 		counterCalc : function(str, i) {
 			var n = parseInt(str);
-
 			return n + i + '';
 		},
 
@@ -435,7 +528,7 @@
 		getBreakHtml : function(ed, bType, lbpos, indention, attr, _id) {
 			var _this = WCEUtils.getBreakHtml;
 
-			lbpos = lbpos ? lbpos : WCEUtils.moveLbposition(ed);
+			lbpos = lbpos ? lbpos : WCEUtils.modifyBreakPosition(ed);
 			var gid = _id ? _id : WCEUtils.getRandomID(ed, 'b');
 
 			var wceClass = 'class="brea" gid="' + gid + '"', wceAttr;
@@ -460,8 +553,13 @@
 			} else if (bType == 'cb') {
 				// column break
 				v.ccnt = WCEUtils.counterCalc(v.ccnt, 1);
-				wceAttr = attr ? attr : 'wce="__t=brea&amp;__n=&amp;break_type=cb&amp;number=' + v.ccnt + '&amp;pb_type=&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment="';
-				str = '<br />CB';
+				if (lbpos == 'lbm') {
+					wceAttr = attr ? attr : 'wce="__t=brea&amp;__n=&amp;hasBreak=yes&amp;break_type=cb&amp;number=' + v.ccnt + '&amp;pb_type=&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment="';
+					str = '&#8208;<br />CB';
+				} else {
+					wceAttr = attr ? attr : 'wce="__t=brea&amp;__n=&amp;break_type=cb&amp;number=' + v.ccnt + '&amp;pb_type=&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment="';
+					str = '<br />CB';
+				}
 			} else if (bType == 'pb') {
 				// page break
 				var new_number, number;
@@ -479,14 +577,24 @@
 						new_pb_type = "r";
 					}
 				}
-				wceAttr = attr ? attr : 'wce="__t=brea&amp;__n=&amp;break_type=pb&amp;number=' + new_number + '&amp;pb_type=' + new_pb_type + '&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment=' + '"';
-				str = '<br />PB';
+				if (lbpos == 'lbm') {
+					wceAttr = attr ? attr : 'wce="__t=brea&amp;__n=&amp;hasBreak=yes&amp;break_type=pb&amp;number=' + new_number + '&amp;pb_type=' + new_pb_type + '&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment=' + '"';
+					str = '&#8208;<br />PB';
+				} else {
+					wceAttr = attr ? attr : 'wce="__t=brea&amp;__n=&amp;break_type=pb&amp;number=' + new_number + '&amp;pb_type=' + new_pb_type + '&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment=' + '"';
+					str = '<br />PB';
+				}
 			} else {
 				// quire break
 				bType = 'qb';
 				v.qcnt = WCEUtils.counterCalc(v.qcnt, 1);
-				wceAttr = attr ? attr : 'wce="__t=brea&amp;__n=&amp;break_type=gb&amp;number=' + v.qcnt + '&amp;pb_type=&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment=' + '"';
-				str = '<br />QB';
+				if (lbpos == 'lbm') {
+					wceAttr = attr ? attr : 'wce="__t=brea&amp;__n=&amp;hasBreak=yes&amp;break_type=gb&amp;number=' + v.qcnt + '&amp;pb_type=&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment=' + '"';
+					str = '&#8208;<br />QB';
+				} else {
+					wceAttr = attr ? attr : 'wce="__t=brea&amp;__n=&amp;break_type=gb&amp;number=' + v.qcnt + '&amp;pb_type=&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment=' + '"';
+					str = '<br />QB';
+				}
 			}
 
 			var out = '<span ' + wceAttr + wceClass + '>' + ed.WCE_CON.startFormatHtml + str + ed.WCE_CON.endFormatHtml + '</span>';
@@ -494,14 +602,14 @@
 			if (bType == 'qb') {
 				//cb,pb und lb unter qb sind eine Grupe, die alle haben gleich Attribute von qb
 				//also z.B. hier lb editieren wird popup von qb angezeigt
-				out = out + _this(ed, 'pb', lbpos, indention, attr, gid);
+				out = out + _this(ed, 'pb', 'ignore', indention, attr, gid);
 				v.pcnt = 0;
 
 			} else if (bType == 'pb') {
-				out = out + _this(ed, 'cb', lbpos, indention, attr, gid);
+				out = out + _this(ed, 'cb', 'ignore', indention, attr, gid);
 				v.ccnt = 0;
 			} else if (bType == 'cb') {
-				out = out + _this(ed, 'lb', lbpos, indention, attr, gid);
+				out = out + _this(ed, 'lb', 'ignore', indention, attr, gid);
 				v.lcnt = 0;
 			}
 			return out;
@@ -1215,7 +1323,6 @@
 
 			return false;
 		},
-
 		setInfoBoxOffset : function(ed, node) {
 			var el = ed.getContentAreaContainer();
 			var _x = 0;
@@ -1620,7 +1727,6 @@
 			else
 				ed.isNotDirty = 1;
 		},
-
 		getNextEnd : function(endText, startOffset) {
 			if (!endText) {
 				return startOffset;
@@ -1915,6 +2021,7 @@
 			var doWithoutDialog = WCEUtils.doWithoutDialog;
 			var setWCEVariable = WCEUtils.setWCEVariable;
 			var redrawContols = WCEUtils.redrawContols;
+			var doInsertSpace = false;
 
 			if (wcevar.inputDisable && !e.ctrlKey) {
 				return stopEvent(ed, e);
@@ -1951,6 +2058,7 @@
 					}
 					//nur wenn cursor am Ende von formatEnd
 					var isSpaceKey = WCEUtils.insertSpace(ed, ek);
+					doInsertSpace = true;
 					setWCEVariable(ed);
 					redrawContols(ed);
 					ed.WCE_VAR.isRedrawn = true;
@@ -2000,10 +2108,10 @@
 			if (ek == 13 || ek == 10) {
 				if (e.shiftKey) {
 					// Shift+Enter -> break dialogue
-					if (wcevar.type != 'break') {
+					if (wcevar.type != 'break' && !wcevar.not_B) {
 						ed.execCommand('mceAddBreak');
 					}
-				} else {
+				} else if (wcevar.isc || doInsertSpace) {
 					doWithoutDialog(ed, 'brea');
 				}
 				return stopEvent(ed, e);
@@ -3034,14 +3142,21 @@
 				WCEUtils.initWCEConstants(ed);
 				WCEUtils.initWCEVariable(ed);
 				WCEUtils.setBreakCounter(ed);
-				
-				ed.onSetContent.add(function(content) {
+
+				//disable drag/drop
+				ed.dom.bind(ed.getBody(), ['dragend', 'dragover', 'draggesture', 'dragdrop', 'drop', 'drag'], function(e) {
+					e.preventDefault();
+					e.stopPropagation();
+					return false;
+				});
+
+				ed.onSetContent.add(function(_content) {
 					//run it only at first time of ed.setContent(...)
 					if (!ed.isCounterInited) {
-						ed.isCounterInited = WCEUtils.setBreakCounter(ed, content);
+						ed.isCounterInited = WCEUtils.setBreakCounter(ed, _content);
 					}
 				});
- 
+
 				//
 				ed.teiIndexData = {
 					'bookNumber' : '00',

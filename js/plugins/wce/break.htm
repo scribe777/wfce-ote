@@ -150,7 +150,7 @@
 			else
 				break_indention = "";
 
-			break_lbpos = wceUtils.moveLbposition(ed);
+			break_lbpos = wceUtils.modifyBreakPosition(ed);
 			if (break_lbpos == 'lbm') {//lbm
 				document.breakinfo.hasBreak.value = 'yes';
 			} else {
