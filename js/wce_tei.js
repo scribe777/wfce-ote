@@ -60,6 +60,29 @@ function getHtmlByTei(inputString) {
 		return str;
 	};
 
+	/**
+	 * add format_start format end into wce element
+	 */
+	var addFormatElement = function($node) {
+		if (!$node)
+			return;
+
+		$firstChild = $node.firstChild;
+		if (!$firstChild)
+			return;
+
+		var $start = $newDoc.createElement('span');
+		$start.setAttribute('class', 'format_start');
+		nodeAddText($start, '\u2039');
+
+		$node.insertBefore($start, $firstChild);
+
+		var $end = $newDoc.createElement('span');
+		$end.setAttribute('class', 'format_end');
+		nodeAddText($end, '\u203a');
+		$node.appendChild($end);
+	};
+
 	/*
 	 * read all nodes of $node and change and add
 	 */
@@ -296,6 +319,7 @@ function getHtmlByTei(inputString) {
 		var $newNode = $newDoc.createElement('span');
 		$newNode.setAttribute('class', 'part_abbr');
 		$newNode.setAttribute('wce', '__t=part_abbr');
+		addFormatElement($newNode);
 		$htmlParent.appendChild($newNode);
 		return $newNode;
 	};
@@ -322,7 +346,7 @@ function getHtmlByTei(inputString) {
 			wceAttr += getWceAttributeByTei($teiNode, mapping);
 		}
 		$newNode.setAttribute('wce', wceAttr);
-
+		addFormatElement($newNode);
 		$htmlParent.appendChild($newNode);
 		return $newNode;
 	};
@@ -379,6 +403,7 @@ function getHtmlByTei(inputString) {
 			else if ($teiNode.getAttribute("type") === "explicit")
 				nodeAddText($newNode, "Subscriptio");
 		}
+		addFormatElement($newNode);
 		$htmlParent.appendChild($newNode);
 		nodeAddText($htmlParent, ' ');
 		return $htmlParent;
@@ -406,6 +431,7 @@ function getHtmlByTei(inputString) {
 			$newNode.setAttribute('wce', '__t=verse_number&partial=' + partValue);
 		else
 			$newNode.setAttribute('wce', '__t=verse_number');
+		addFormatElement($newNode);
 		$htmlParent.appendChild($newNode);
 		nodeAddText($htmlParent, ' ');
 		return $htmlParent;
@@ -418,6 +444,7 @@ function getHtmlByTei(inputString) {
 		var $newNode = $newDoc.createElement('span');
 		$newNode.setAttribute('class', 'pc');
 		$newNode.setAttribute('wce', '__t=pc');
+		addFormatElement($newNode);
 		$htmlParent.appendChild($newNode);
 		nodeAddText($htmlParent, ' ');
 		return $newNode;
@@ -494,6 +521,7 @@ function getHtmlByTei(inputString) {
 				}
 			}
 		}
+		addFormatElement($newNode);
 		$htmlParent.appendChild($newNode);
 		return null;
 	};
@@ -554,6 +582,7 @@ function getHtmlByTei(inputString) {
 
 		$newNode.setAttribute('class', className);
 		$newNode.setAttribute('wce', '__t=' + className);
+		addFormatElement($newNode);
 		$htmlParent.appendChild($newNode);
 		return $newNode;
 	};
@@ -602,6 +631,7 @@ function getHtmlByTei(inputString) {
 		if (newNodeText) {
 			nodeAddText($newNode, newNodeText);
 		}
+		addFormatElement($newNode);
 		$htmlParent.appendChild($newNode);
 		return null;
 	};
@@ -626,6 +656,7 @@ function getHtmlByTei(inputString) {
 		wceAttr += getWceAttributeByTei($teiNode, mapping);
 		$newNode.setAttribute('wce', wceAttr);
 		nodeAddText($newNode, ' ');
+		addFormatElement($newNode);
 		$htmlParent.appendChild($newNode);
 
 		return null;
@@ -742,6 +773,7 @@ function getHtmlByTei(inputString) {
 					nodeAddText($newNode, '\u21B5');
 				break;
 		}
+		addFormatElement($newNode);
 		$htmlParent.appendChild($newNode);
 
 		if ($teiNode.nextSibling && $teiNode.nextSibling.nodeName === 'w')// add space only if new word follows
@@ -792,6 +824,7 @@ function getHtmlByTei(inputString) {
 		$newNode.setAttribute('wce', wceAttr);
 		nodeAddText($newNode, teiNodeName);
 
+		addFormatElement($newNode);
 		$htmlParent.appendChild($newNode);
 		return null;
 	};
@@ -859,6 +892,7 @@ function getHtmlByTei(inputString) {
 			$newNode.setAttribute('wce', wceAttr);
 			nodeAddText($newNode, 'Note');
 		}
+		addFormatElement($newNode);
 		$htmlParent.appendChild($newNode);
 		nodeAddText($htmlParent, ' ');
 		return null;
@@ -1026,6 +1060,7 @@ function getHtmlByTei(inputString) {
 			$newNode.setAttribute('wce', wceAttr);
 		}
 
+		addFormatElement($newNode);
 		$htmlParent.appendChild($newNode);
 		if ($teiNode.nextSibling && $teiNode.nextSibling.nodeName === 'w')// add space only if new word follows
 			nodeAddText($htmlParent, ' ');

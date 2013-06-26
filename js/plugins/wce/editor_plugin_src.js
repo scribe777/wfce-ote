@@ -241,7 +241,7 @@
 
 		getRandomID : function(ed, c) {
 			while (true) {
-				var id = c + new Date().getTime();
+				var id = c + new Date().getTime()+'_'+Math.round(Math.random()*1000);
 				if (!$(ed.getBody()).find('span[gid="+' + id + '"]').get(0)) {
 					return id;
 				}
