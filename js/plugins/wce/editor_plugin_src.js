@@ -3238,7 +3238,7 @@
 					 originalText = wceNode.firstChild.nodeValue;
 					 }*/
 
-					if (wceClass == 'brea') {
+					if (wceClass == 'brea') { //TODO: We need a marker here similar to the one for deleting non-breaks. Otherwise there are problems under Safari!
 						gid = wceNode.getAttribute('gid');
 						var groupToDel = $(ed.getBody()).find('span[gid="' + gid + '"]');
 						if (groupToDel) {
@@ -3246,19 +3246,16 @@
 								$(groupToDel[i]).remove();
 							}
 						}
-
 					} else {
 						if (wceNode !== null) {
-							// Node is replaced by marker (which is then replaced by original text)
+							// Node is replaced by marker (which is then replaced by original text) => solution for problems with removing nodes under Safari (#1398)
 							ed.selection.setContent('<span id="_math_marker">&nbsp;</span>');
-							//wceNode.parentNode.removeChild(wceNode); // We don't need this any longer
 						}
 					}
 					var marker = ed.dom.get('_math_marker');
 					ed.selection.select(marker, false);
 					if ((originalText) && originalText != 'null') {
 						ed.selection.setContent(originalText);
-						//TODO: For Safari and IE that position after removing a node is set to the beginning of the textarea.
 					} else
 						ed.selection.setContent("");
 					ed.focus();

@@ -241,5 +241,7 @@ tinyMCE.addI18n('de.wce',{
 	initial_portion : 'Anfangsteil',
 	medial_portion : 'Mittelteil',
 	final_portion : 'Endteil',
-	remove_partial : 'Lösche alle &quot;Part&quot;-Angaben'
+	remove_partial : 'Lösche alle &quot;Part&quot;-Angaben',
+	previous_hyphenation : 'Vorherige Seite endet mit einer Worttrennung',
+	no_previous_hyphenation : 'Vorherige Seite endet mit einem vollständigen Wort',
 });

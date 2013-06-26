@@ -294,5 +294,7 @@ tinyMCE.addI18n('en.wce',{
 	initial_portion : 'Partial (initial portion)',
 	medial_portion : 'Partial (medial portion)',
 	final_portion : 'Partial (final portion)',
-	remove_partial : 'Remove partial information'
+	remove_partial : 'Remove partial information',
+	previous_hyphenation : 'Previous page ends with an hyphenated word',
+	no_previous_hyphenation : 'Previous page ends with a complete word',
 });

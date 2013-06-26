@@ -156,36 +156,50 @@ function decreaseLineHeight() {
 
 function addMenuItems(ed) {
 	//var wceAttr = '';
+	var isPreviousActive = false;
+	var b = false;
 	ed.plugins.contextmenu.onContextMenu.add(function(th, menu, event) {
-		/*if ((el.nodeName == 'A' && !ed.dom.getAttrib(el, 'name')) || !col) {
-		m.addSeparator();
-		m.add({title : 'advanced.link_desc', icon : 'link', cmd : ed.plugins.advlink ? 'mceAdvLink' : 'mceLink', ui : true});
-		m.add({title : 'advanced.unlink_desc', icon : 'unlink', cmd : 'UnLink'});
-		*/
 		// added my options
 		if (ed.selection.getNode().getAttribute('wce') != null && ed.selection.getNode().getAttribute('wce').substring(4, 16) == 'verse_number') {
 			//wceAttr = ed.selection.getNode().getAttribute('wce');
 			menu.addSeparator();
 			menu.add({
 				title : ed.getLang('wce.initial_portion'),
-				icon : 'option1',
+				icon : '',
 				cmd : 'mce_partialI'
 			});
 			menu.add({
 				title : ed.getLang('wce.medial_portion'),
-				icon : 'option2',
+				icon : '',
 				cmd : 'mce_partialM'
 			});
 			menu.add({
 				title : ed.getLang('wce.final_portion'),
-				icon : 'option3',
+				icon : '',
 				cmd : 'mce_partialF'
 			});
 			menu.add({
 				title : ed.getLang('wce.remove_partial'),
-				icon : 'option3',
+				icon : '',
 				cmd : 'mce_partial_remove'
 			});
+		} else if (ed.selection.getNode().getAttribute('wce') != null && ed.selection.getNode().getAttribute('wce').indexOf('break_type=pb') > -1 
+			&& ed.selection.getNode().textContent.indexOf('PB') > -1) {
+			isPreviousActive = (ed.selection.getNode().getAttribute('wce').indexOf('hasBreak=yes') > -1);
+			menu.add({
+				title : ed.getLang('wce.previous_hyphenation'),
+				icon : '',
+				onclick : function() {
+					ed.execCommand('mce_previous_hyphenation', true);
+					}
+			}).setDisabled(isPreviousActive);
+			menu.add({
+				title : ed.getLang('wce.no_previous_hyphenation'),
+				icon : '',
+				onclick : function() {
+					ed.execCommand('mce_previous_hyphenation', false);
+					}
+			}).setDisabled(!isPreviousActive);
 		}
 	});
 
@@ -201,9 +215,17 @@ function addMenuItems(ed) {
 	ed.addCommand('mce_partial_remove', function() {
 		ed.selection.getNode().setAttribute('wce', '__t=verse_number');
 	});
+	ed.addCommand('mce_previous_hyphenation', function(b) {
+		var oldwce = ed.selection.getNode().getAttribute('wce');
+		if (b == true) {
+			ed.selection.getNode().setAttribute('wce', oldwce.replace("hasBreak=no", "hasBreak=yes"));
+			ed.selection.getNode().innerHTML = ed.WCE_CON.startFormatHtml + '&#8208;<br />PB' + ed.WCE_CON.endFormatHtml;
+		} else {
+			ed.selection.getNode().setAttribute('wce', oldwce.replace("hasBreak=yes", "hasBreak=no"));
+			ed.selection.getNode().innerHTML = ed.WCE_CON.startFormatHtml + '<br />PB' + ed.WCE_CON.endFormatHtml;
+		}
+	});
 }
-
-//function my_command() {alert (wceAttr + '&partial=F');}
 
 if (( typeof Range !== "undefined") && !Range.prototype.createContextualFragment) {
 	Range.prototype.createContextualFragment = function(html) {

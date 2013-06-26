@@ -340,7 +340,6 @@ function writeWceNodeInfo(val) {
 				ed.execCommand('wceDelNode', false);
 				add_new_wce_node = true;
 				writeWceNodeInfo();
-
 			} else if (wce_type == 'abbr') {
 				var abbrClass = 'abbr';
 				if (document.getElementById('add_overline').checked == true) {
