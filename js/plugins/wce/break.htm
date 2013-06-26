@@ -150,11 +150,19 @@
 			else
 				break_indention = "";
 
-			break_lbpos = wceUtils.modifyBreakPosition(ed);
-			if (break_lbpos == 'lbm') {//lbm
-				document.breakinfo.hasBreak.value = 'yes';
+			if (!add_new_wce_node) {
+				if ($('#hasBreak').val() == 'yes')
+					break_lbpos = 'lbm';
+				else
+					break_lbpos = '';
+
 			} else {
-				document.breakinfo.hasBreak.value = 'no';
+				break_lbpos = wceUtils.modifyBreakPosition(ed);
+				if (break_lbpos == 'lbm') {//lbm
+					document.breakinfo.hasBreak.value = 'yes';
+				} else {
+					document.breakinfo.hasBreak.value = 'no';
+				}
 			}
 
 		}
