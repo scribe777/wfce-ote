@@ -1166,7 +1166,7 @@ function getTeiByHtml(inputString, args) {
 		// add an required header to get a valid XML
 		str = str.replace('<TEI>', '<?xml  version="1.0" encoding="utf-8"?><!DOCTYPE TEI [<!ENTITY om "">]><?xml-model href="TEI-NTMSS.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?><TEI xmlns="http://www.tei-c.org/ns/1.0"><teiHeader><fileDesc><titleStmt><title/></titleStmt><publicationStmt><p/></publicationStmt><sourceDesc><msDesc><msIdentifier></msIdentifier></msDesc></sourceDesc></fileDesc></teiHeader><text><body>');
 		if (g_manuscriptLang && g_manuscriptLang != '')// set manuscript language if there are information
-			str = str.replace("<text>", "<text xml:lang='" + g_manuscriptLang + "'>");
+			str = str.replace("<text>", '<text xml:lang="' + g_manuscriptLang + '">');
 		str = str.replace("</TEI>", "</body></text></TEI>");
 
 		// Now we do some "magic" regex substitution do get correct <w> elements
