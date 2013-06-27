@@ -61,7 +61,7 @@
 		/*
 		 *
 		 */
-		setBreakCounter : function(ed, content) {
+		setBreakCounterByContent : function(ed, content) {
 			var v = ed.WCE_VAR;
 			if (!v)
 				return false;
@@ -72,13 +72,13 @@
 			//each Editor hat its own variable
 			if (!content) {
 				// quire count
-				v.qcnt = 1;
+				v.qcnt = 0;
 				// page count
-				v.pcnt = 1;
+				v.pcnt = 0;
 				// column count
-				v.ccnt = 1;
+				v.ccnt = 0;
 				// line count
-				v.lcnt = 1;
+				v.lcnt = 0;
 				// counting as r/v
 				v.rectoverso = 'true';
 			} else {
@@ -86,6 +86,51 @@
 				//TODO:
 			}
 			return true;
+		},
+
+		/**
+		 * compare current value and n, use large number
+		 */
+		updateBreakCounter : function(ed, bt, n) {
+			// First reset counters
+			var c = ed.WCE_VAR;
+
+			// set only the one correct counter
+			switch (bt) {
+				case 'gb':
+					c.qcnt = n >= c.qcnt ? n : c.qcnt;
+					break;
+				case 'pb':
+					c.pcnt = n >= c.pcnt ? n : c.pcnt;
+					break;
+				case 'cb':
+					c.ccnt = n >= c.ccnt ? n : c.ccnt;
+					break;
+				case 'lb':
+					c.lcnt = n >= c.lcnt ? n : c.lcnt;
+					break;
+			}
+		},
+
+		/*
+		 *
+		 */
+		addToCounter : function(ed, bt, n) {
+			var c = ed.WCE_VAR;
+			switch (bt) {
+				case 'gb':
+					c.qcnt = parseInt(c.qcnt) + parseInt(n);
+					break;
+				case 'pb':
+					c.pcnt = parseInt(c.pcnt) + parseInt(n);
+					break;
+				case 'cb':
+					c.ccnt = parseInt(c.ccnt) + parseInt(n);
+					break;
+				case 'lb':
+					c.lcnt = parseInt(c.lcnt) + parseInt(n);
+					break;
+			}
 		},
 
 		/*
@@ -241,10 +286,14 @@
 
 		getRandomID : function(ed, c) {
 			while (true) {
-				var id = c + new Date().getTime() + '_' + Math.round(Math.random() * 1000);
-				if (!$(ed.getBody()).find('span[gid="+' + id + '"]').get(0)) {
+				var id = c + new Date().getTime() + '' + Math.round(Math.random() * 1000);
+				if (!ed.dom.get(id)) {
 					return id;
 				}
+				/*
+				 if (!$(ed.getBody()).find('span[gid="+' + id + '"]').get(0)) {
+				 return id;
+				 }*/
 			}
 		},
 		/*
@@ -517,7 +566,7 @@
 		 */
 		counterCalc : function(str, i) {
 			var n = parseInt(str);
-			return n + i + '';
+			return n + i;
 		},
 
 		/*
@@ -529,11 +578,12 @@
 			var _this = WCEUtils.getBreakHtml;
 
 			lbpos = lbpos ? lbpos : WCEUtils.modifyBreakPosition(ed);
-			var gid = _id ? _id : WCEUtils.getRandomID(ed, 'b');
 
-			var wceClass = 'class="brea" gid="' + gid + '"', wceAttr;
+			var wceClass = 'class="brea"', wceAttr;
+
+			//how many member hat a group
+			var groupCount;
 			var str = '';
-
 			var v = ed.WCE_VAR;
 			var out = '';
 
@@ -552,6 +602,7 @@
 				}
 			} else if (bType == 'cb') {
 				// column break
+				groupCount = 2;
 				v.ccnt = WCEUtils.counterCalc(v.ccnt, 1);
 				if (lbpos == 'lbm') {
 					wceAttr = attr ? attr : 'wce="__t=brea&amp;__n=&amp;hasBreak=yes&amp;break_type=cb&amp;number=' + v.ccnt + '&amp;pb_type=&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment="';
@@ -562,6 +613,7 @@
 				}
 			} else if (bType == 'pb') {
 				// page break
+				groupCount = 3;
 				var new_number, number;
 				var new_pb_type = "";
 				v.pcnt = WCEUtils.counterCalc(v.pcnt, 1);
@@ -587,6 +639,7 @@
 			} else {
 				// quire break
 				bType = 'qb';
+				groupCount = 4;
 				v.qcnt = WCEUtils.counterCalc(v.qcnt, 1);
 				if (lbpos == 'lbm') {
 					wceAttr = attr ? attr : 'wce="__t=brea&amp;__n=&amp;hasBreak=yes&amp;break_type=gb&amp;number=' + v.qcnt + '&amp;pb_type=&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment=' + '"';
@@ -597,20 +650,33 @@
 				}
 			}
 
-			var out = '<span ' + wceAttr + wceClass + '>' + ed.WCE_CON.startFormatHtml + str + ed.WCE_CON.endFormatHtml + '</span>';
+			//a group hat same baseID, but each element hat different id,
+			//id= bType+baseID
+			var wceID, baseID;
+			if (bType == 'lb' && !_id) {
+				wceID = '';
+			} else {
+				baseID = _id ? _id : WCEUtils.getRandomID(ed, '');
+				if (groupCount && !_id) {
+					baseID = '_' + groupCount + '_' + baseID;
+				}
+				wceID = 'id="' + bType + baseID + '"';
+			}
+
+			var out = '<span ' + wceAttr + wceClass + wceID + '>' + ed.WCE_CON.startFormatHtml + str + ed.WCE_CON.endFormatHtml + '</span>';
 
 			if (bType == 'qb') {
 				//cb,pb und lb unter qb sind eine Grupe, die alle haben gleich Attribute von qb
 				//also z.B. hier lb editieren wird popup von qb angezeigt
-				out = out + _this(ed, 'pb', 'ignore', indention, attr, gid);
-				v.pcnt = 0;
+				out = out + _this(ed, 'pb', 'ignore', indention, null, baseID);
+				v.pcnt = 1;
 
 			} else if (bType == 'pb') {
-				out = out + _this(ed, 'cb', 'ignore', indention, attr, gid);
-				v.ccnt = 0;
+				out = out + _this(ed, 'cb', 'ignore', indention, null, baseID);
+				v.ccnt = 1;
 			} else if (bType == 'cb') {
-				out = out + _this(ed, 'lb', 'ignore', indention, attr, gid);
-				v.lcnt = 0;
+				out = out + _this(ed, 'lb', 'ignore', indention, null, baseID);
+				v.lcnt = 1;
 			}
 			return out;
 		},
@@ -3167,7 +3233,7 @@
 			ed.onInit.add(function() {
 				WCEUtils.initWCEConstants(ed);
 				WCEUtils.initWCEVariable(ed);
-				WCEUtils.setBreakCounter(ed);
+				WCEUtils.setBreakCounterByContent(ed);
 
 				//disable drag/drop
 				ed.dom.bind(ed.getBody(), ['dragend', 'dragover', 'draggesture', 'dragdrop', 'drop', 'drag'], function(e) {
@@ -3179,7 +3245,7 @@
 				ed.onSetContent.add(function(_content) {
 					//run it only at first time of ed.setContent(...)
 					if (!ed.isCounterInited) {
-						ed.isCounterInited = WCEUtils.setBreakCounter(ed, _content);
+						ed.isCounterInited = WCEUtils.setBreakCounterByContent(ed, _content);
 					}
 				});
 
@@ -3247,7 +3313,6 @@
 			ed.addCommand('wceDelNode', function() {
 				var wceNode = ed.execCommand('getWceNode');
 				var wceClass;
-				var gid;
 				if (wceNode) {
 					//verse chapter
 					wceClass = wceNode.getAttribute('class');
@@ -3265,12 +3330,26 @@
 					 }*/
 
 					if (wceClass == 'brea') {//TODO: We need a marker here similar to the one for deleting non-breaks. Otherwise there are problems under Safari!
-						gid = wceNode.getAttribute('gid');
-						var groupToDel = $(ed.getBody()).find('span[gid="' + gid + '"]');
-						if (groupToDel) {
-							for (var i = 0, l = groupToDel.length; i < l; i++) {
-								$(groupToDel[i]).remove();
-								//ed.selection.setContent('<span id="_math_marker">&nbsp;</span>');
+						var bID = wceNode.getAttribute('id');
+						if (!bID) {
+							$(wceNode).remove();
+						} else {
+							//delete group
+							var bArr = bID.split('_');
+							// for example: qb_4_6413132132121
+							//break type
+							var bt = bArr[0];
+							//group count
+							var bc = bArr[1];
+							//id index
+							var bb = bArr[2];
+							if (bb && bc && bt) {
+								var arr = new Array('lb', 'cb', 'pb', 'qb');
+								var arrItem;
+								for (var i = parseInt(bc) - 1; i > -1; i--) {
+									arrItem = arr[i];
+									$(ed.dom.get(arrItem + '_' + bc + '_' + bb)).remove();
+								}
 							}
 						}
 					} else {
@@ -3495,7 +3574,7 @@
 			ed.addCommand('mceAdd_brea', function(c, number) {
 				var v = ed.WCE_VAR;
 				if (number) {
-					ed.execCommand('setCounter', c, number);
+					WCEUtils.updateBreakCounter(ed, c, number);
 				}
 				ed.selection.setContent(WCEUtils.getBreakHtml(ed, c));
 			});
@@ -3523,60 +3602,6 @@
 
 			ed.addCommand('mceVerseModify_Shortcut', function() {
 				ed.execCommand('mceVerseModify');
-			});
-
-			ed.addCommand('setCounter', function(bt, n) {
-				// First reset counters
-				var c = ed.WCE_VAR;
-				/*
-				c.qcnt--;
-				c.pcnt--;
-				c.ccnt--;
-				c.lcnt--;
-				*/
-				// set only the one correct counter
-				switch (bt) {
-					case 'gb':
-						c.qcnt = n - 1;
-						break;
-					case 'pb':
-						c.pcnt = n - 1;
-						break;
-					case 'cb':
-						c.ccnt = n - 1;
-						break;
-					case 'lb':
-						c.lcnt = n - 1;
-						break;
-				}
-			});
-
-			/*
-			 ed.addCommand('resetCounter', function() {
-			 // reset counter values when pressing "Cancel" at the break dialog
-			 var c = ed.WCE_VAR;
-			 c.qcnt--;
-			 c.pcnt--;
-			 c.ccnt--;
-			 c.lcnt--;
-			 });*/
-
-			ed.addCommand('addToCounter', function(bt, n) {
-				var c = ed.WCE_VAR;
-				switch (bt) {
-					case 'gb':
-						c.qcnt = parseInt(c.qcnt) + parseInt(n);
-						break;
-					case 'pb':
-						c.pcnt = parseInt(c.pcnt) + parseInt(n);
-						break;
-					case 'cb':
-						c.ccnt = parseInt(c.ccnt) + parseInt(n);
-						break;
-					case 'lb':
-						c.lcnt = parseInt(c.lcnt) + parseInt(n);
-						break;
-				}
 			});
 
 			ed.addCommand('printData', function() {// Problem in IE

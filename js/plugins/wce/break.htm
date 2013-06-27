@@ -85,17 +85,15 @@
                 onclick="var cont = testNumber();
                 if (cont){setBreakValue(); writeWceNodeInfo();}else{alert('{#wce.empty_number}');}" />
                 <input type="button" id="cancel"  name="cancel" value="{#cancel}"
-                onclick="ed.execCommand('resetCounter');tinyMCEPopup.close();" />
+                onclick="tinyMCEPopup.close();" />
             </div>
         </form>
     </body>
     <script type="text/javascript">
-		var qsParm, break_type;
+		var qsParm, old_break_type, break_type;
 		var break_indention;
 		//positon of cursor
 		var break_lbpos;
-		//break_gid:group id
-		var break_gid;
 
 		tinyMCEPopup.onInit.add(function(_ed) {
 			ed = _ed;
@@ -107,20 +105,21 @@
 			var v = ed.WCE_VAR;
 			qsParm = new Array();
 			qsParm['mode'] = add_new_wce_node ? 'new' : '';
-			qsParm['quire'] = v.qcnt;
-			qsParm['page'] = v.pcnt
-			qsParm['column'] = v.ccnt;
-			qsParm['line'] = v.lcnt;
+			qsParm['quire'] = parseInt(v.qcnt) + 1;
+			qsParm['page'] = parseInt(v.pcnt) + 1
+			qsParm['column'] = parseInt(v.ccnt) + 1;
+			qsParm['line'] = parseInt(v.lcnt) + 1;
 			qsParm['rectoverso'] = v.rectoverso;
 
 			comboBindReturnEvent('insert');
 			wceInfoInit('brea');
 			readWceNodeInfo();
+			old_break_type = document.breakinfo.break_type.value;
 			//qs();
 			if (qsParm['mode'] == 'new') {// first call, no former value
 				document.breakinfo.number.value = qsParm['line'];
 			} else {// edit mode => number not empty
-				switch (document.breakinfo.break_type.value) {
+				switch (old_break_type) {
 					case 'gb':
 						qsParm['quire'] = document.breakinfo.number.value;
 						break;
@@ -151,7 +150,8 @@
 				break_indention = "";
 
 			if (!add_new_wce_node) {
-				checkstatus_hyphen(); // set hasBreak attribute
+				// set hasBreak attribute
+				checkstatus_hyphen();
 				if ($('#hasBreak').val() == 'yes')
 					break_lbpos = 'lbm';
 				else
@@ -214,6 +214,21 @@
 			}
 			if (document.breakinfo.break_type.options[3].selected == true) {//QB
 				document.breakinfo.number.value = qsParm['quire'];
+			}
+
+			//only enable edit highest-node of a break-group
+			if (wce_node && wce_node.className == 'brea') {
+				var bID = wce_node.getAttribute('id');
+				if (bID) {
+					var bArr = bID.split('_');
+					var bt = bArr[0], bc = bArr[1];
+					if (bt && bc) {
+						var bcInt = parseInt(bc);
+						if ((bt == 'pb' && bcInt > 3) || (bt == 'cb' && bcInt > 2) || (bt == 'lb' && bcInt > 1)) {
+							$('#break_type').attr('disabled', true);
+						}
+					}
+				}
 			}
 		}
 
