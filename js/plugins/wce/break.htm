@@ -94,8 +94,6 @@
 		var break_indention;
 		//positon of cursor
 		var break_lbpos;
-		//break_gid:group id
-		var break_gid;
 
 		tinyMCEPopup.onInit.add(function(_ed) {
 			ed = _ed;
@@ -151,7 +149,8 @@
 				break_indention = "";
 
 			if (!add_new_wce_node) {
-				checkstatus_hyphen(); // set hasBreak attribute
+				// set hasBreak attribute
+				checkstatus_hyphen();
 				if ($('#hasBreak').val() == 'yes')
 					break_lbpos = 'lbm';
 				else
@@ -214,6 +213,21 @@
 			}
 			if (document.breakinfo.break_type.options[3].selected == true) {//QB
 				document.breakinfo.number.value = qsParm['quire'];
+			}
+
+			//only enable edit highest-node of a break-group
+			if (wce_node && wce_node.className == 'brea') {
+				var bID = wce_node.getAttribute('id');
+				if (bID) {
+					var bArr = bID.split('_');
+					var bt = bArr[0], bc = bArr[1];
+					if (bt && bc) {
+						var bcInt = parseInt(bc);
+						if ((bt == 'pb' && bcInt > 3) || (bt == 'cb' && bcInt > 2) || (bt == 'lb' && bcInt > 1)) {
+							$('#break_type').attr('disabled', true);
+						}
+					}
+				}
 			}
 		}
 

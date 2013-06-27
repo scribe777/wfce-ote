@@ -241,10 +241,14 @@
 
 		getRandomID : function(ed, c) {
 			while (true) {
-				var id = c + new Date().getTime() + '_' + Math.round(Math.random() * 1000);
-				if (!$(ed.getBody()).find('span[gid="+' + id + '"]').get(0)) {
+				var id = c + new Date().getTime() + '' + Math.round(Math.random() * 1000);
+				if (!ed.dom.get(id)) {
 					return id;
 				}
+				/*
+				 if (!$(ed.getBody()).find('span[gid="+' + id + '"]').get(0)) {
+				 return id;
+				 }*/
 			}
 		},
 		/*
@@ -529,11 +533,12 @@
 			var _this = WCEUtils.getBreakHtml;
 
 			lbpos = lbpos ? lbpos : WCEUtils.modifyBreakPosition(ed);
-			var gid = _id ? _id : WCEUtils.getRandomID(ed, 'b');
 
-			var wceClass = 'class="brea" gid="' + gid + '"', wceAttr;
+			var wceClass = 'class="brea"', wceAttr;
+
+			//how many member hat a group
+			var groupCount;
 			var str = '';
-
 			var v = ed.WCE_VAR;
 			var out = '';
 
@@ -552,6 +557,7 @@
 				}
 			} else if (bType == 'cb') {
 				// column break
+				groupCount = 2;
 				v.ccnt = WCEUtils.counterCalc(v.ccnt, 1);
 				if (lbpos == 'lbm') {
 					wceAttr = attr ? attr : 'wce="__t=brea&amp;__n=&amp;hasBreak=yes&amp;break_type=cb&amp;number=' + v.ccnt + '&amp;pb_type=&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment="';
@@ -562,6 +568,7 @@
 				}
 			} else if (bType == 'pb') {
 				// page break
+				groupCount = 3;
 				var new_number, number;
 				var new_pb_type = "";
 				v.pcnt = WCEUtils.counterCalc(v.pcnt, 1);
@@ -587,6 +594,7 @@
 			} else {
 				// quire break
 				bType = 'qb';
+				groupCount = 4;
 				v.qcnt = WCEUtils.counterCalc(v.qcnt, 1);
 				if (lbpos == 'lbm') {
 					wceAttr = attr ? attr : 'wce="__t=brea&amp;__n=&amp;hasBreak=yes&amp;break_type=gb&amp;number=' + v.qcnt + '&amp;pb_type=&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment=' + '"';
@@ -597,19 +605,32 @@
 				}
 			}
 
-			var out = '<span ' + wceAttr + wceClass + '>' + ed.WCE_CON.startFormatHtml + str + ed.WCE_CON.endFormatHtml + '</span>';
+			//a group hat same baseID, but each element hat different id,
+			//id= bType+baseID
+			var wceID, baseID;
+			if (bType == 'lb' && !_id) {
+				wceID = '';
+			} else {
+				baseID = _id ? _id : WCEUtils.getRandomID(ed, '');
+				if (groupCount && !_id) {
+					baseID = '_' + groupCount + '_' + baseID;
+				}
+				wceID = 'id="' + bType + baseID + '"';
+			}
+
+			var out = '<span ' + wceAttr + wceClass + wceID + '>' + ed.WCE_CON.startFormatHtml + str + ed.WCE_CON.endFormatHtml + '</span>';
 
 			if (bType == 'qb') {
 				//cb,pb und lb unter qb sind eine Grupe, die alle haben gleich Attribute von qb
 				//also z.B. hier lb editieren wird popup von qb angezeigt
-				out = out + _this(ed, 'pb', 'ignore', indention, attr, gid);
+				out = out + _this(ed, 'pb', 'ignore', indention, null, baseID);
 				v.pcnt = 0;
 
 			} else if (bType == 'pb') {
-				out = out + _this(ed, 'cb', 'ignore', indention, attr, gid);
+				out = out + _this(ed, 'cb', 'ignore', indention, null, baseID);
 				v.ccnt = 0;
 			} else if (bType == 'cb') {
-				out = out + _this(ed, 'lb', 'ignore', indention, attr, gid);
+				out = out + _this(ed, 'lb', 'ignore', indention, null, baseID);
 				v.lcnt = 0;
 			}
 			return out;
@@ -3247,7 +3268,6 @@
 			ed.addCommand('wceDelNode', function() {
 				var wceNode = ed.execCommand('getWceNode');
 				var wceClass;
-				var gid;
 				if (wceNode) {
 					//verse chapter
 					wceClass = wceNode.getAttribute('class');
@@ -3265,12 +3285,26 @@
 					 }*/
 
 					if (wceClass == 'brea') {//TODO: We need a marker here similar to the one for deleting non-breaks. Otherwise there are problems under Safari!
-						gid = wceNode.getAttribute('gid');
-						var groupToDel = $(ed.getBody()).find('span[gid="' + gid + '"]');
-						if (groupToDel) {
-							for (var i = 0, l = groupToDel.length; i < l; i++) {
-								$(groupToDel[i]).remove();
-								//ed.selection.setContent('<span id="_math_marker">&nbsp;</span>');
+						var bID = wceNode.getAttribute('id');
+						if (!bID) {
+							$(wceNode).remove();
+						} else {
+							//delete group
+							var bArr = bID.split('_');
+							// for example: qb_4_6413132132121
+							//break type
+							var bt = bArr[0];
+							//group count
+							var bc = bArr[1];
+							//id index
+							var bb = bArr[2];
+							if (bb && bc && bt) {
+								var arr = new Array('lb', 'cb', 'pb', 'qb');
+								var arrItem;
+								for (var i = parseInt(bc) - 1; i > -1; i--) {
+									arrItem = arr[i];
+									$(ed.dom.get(arrItem + '_' + bc + '_' + bb)).remove();
+								}
 							}
 						}
 					} else {

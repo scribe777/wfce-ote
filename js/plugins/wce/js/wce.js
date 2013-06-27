@@ -26,7 +26,7 @@ var item_counter = -1;
 
 // current item ids
 var curr_item_id;
- 
+
 var wce_type;
 var wceUtils;
 
@@ -179,7 +179,7 @@ function writeWceNodeInfo(val) {
 
 			case 'brea':
 				if (break_type) {
-					new_content = wceUtils.getBreakHtml(ed, break_type, break_lbpos, break_indention, 'wce="' + newWceAttr + '"', break_gid);
+					new_content = wceUtils.getBreakHtml(ed, break_type, break_lbpos, break_indention, 'wce="' + newWceAttr + '"', null);
 				} else {
 					new_content = 'Error:test';
 				}
@@ -241,7 +241,7 @@ function writeWceNodeInfo(val) {
 					selected_content = val;
 
 				// write original_text for breaks and paratext
-				new_content = '<span wce="' + newWceAttr + '"' + wceClass + original_text+'>' + startFormatHtml + selected_content + endFormatHtml + '</span>';
+				new_content = '<span wce="' + newWceAttr + '"' + wceClass + original_text + '>' + startFormatHtml + selected_content + endFormatHtml + '</span>';
 				break;
 
 			case 'formatting_capitals':

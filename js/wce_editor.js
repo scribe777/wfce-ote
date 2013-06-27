@@ -9,7 +9,7 @@
 		elements : _id,
 		theme : "advanced",
 		skin : "wce",
-		extended_valid_elements : 'span[class|wce_orig|style|wce|gid]',
+		extended_valid_elements : 'span[class|wce_orig|style|wce|id]',
 		forced_root_block : false,
 		force_br_newlines : true,
 		force_p_newlines : false,
