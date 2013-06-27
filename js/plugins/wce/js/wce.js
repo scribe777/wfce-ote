@@ -159,17 +159,17 @@ function writeWceNodeInfo(val) {
 						for (var i = 0; i < document.getElementById('extent').value; i++) {
 							gap_text += '<br/>&crarr;[...]';
 						}
-						ed.execCommand('addToCounter', 'lb', document.getElementById('extent').value);
+						wceUtils.addToCounter(ed,  'lb', document.getElementById('extent').value);
 					} else if (document.getElementById('unit').value == "page") {
 						for (var i = 0; i < document.getElementById('extent').value; i++) {
 							gap_text += '<br/>PB<br/>[...]';
 						}
-						ed.execCommand('addToCounter', 'pb', document.getElementById('extent').value);
+						wceUtils.addToCounter(ed, 'pb', document.getElementById('extent').value);
 					} else if (document.getElementById('unit').value == "quire") {
 						for (var i = 0; i < document.getElementById('extent').value; i++) {
 							gap_text += '<br/>QB<br/>[...]';
 						}
-						ed.execCommand('addToCounter', 'gb', document.getElementById('extent').value);
+						wceUtils.addToCounter(ed,  'gb', document.getElementById('extent').value);
 					} else {
 						gap_text = '[...]';
 					}
@@ -233,7 +233,7 @@ function writeWceNodeInfo(val) {
 						for (var i = 0; i < cl; i++) {
 							selected_content += '<br/>&crarr;[<span class="commentary" ' + 'wce="__t=paratext&__n=&fw_type=commentary&covered=' + cl + '">comm</span>]';
 						}
-						ed.execCommand('addToCounter', 'lb', document.getElementById('covered').value);
+						wceUtils.addToCounter(ed,  'lb', document.getElementById('covered').value);
 					} else {// no value given for covered lines
 						selected_content += '[<span class="commentary" ' + 'wce="__t=paratext&__n=&fw_type=commentary&covered=">comm</span>]';
 					}
@@ -325,8 +325,8 @@ function writeWceNodeInfo(val) {
 							new_content += '<br/>&crarr;[<span class="commentary" ' + 'wce="__t=paratext&__n=&fw_type=commentary&covered=' + document.getElementById('covered').value + '">comm</span>]';
 						}
 						wce_node.innerHTML = new_content;
-					}
-					ed.execCommand('addToCounter', 'lb', document.getElementById('covered').value);
+					} 
+					wceUtils.addToCounter(ed,'lb', document.getElementById('covered').value);
 					//TODO: old value has to be subtract first
 				} else {// num or fw
 					wce_node.innerHTML = val;
@@ -338,9 +338,16 @@ function writeWceNodeInfo(val) {
 					wceUtils.setInnerHTML(ed, wce_node, $('#original_firsthand_reading').val());
 			} else if (wce_type == 'brea') {
 				// break type
-				ed.execCommand('wceDelNode', false);
-				add_new_wce_node = true;
-				writeWceNodeInfo();
+				//change type
+				if (old_break_type != break_type) {
+					ed.execCommand('wceDelNode', false);
+					add_new_wce_node = true;
+					return writeWceNodeInfo();
+				} else {
+					//edit default
+					wceUtils.updateBreakCounter(ed, break_type, document.breakinfo.number.value);
+				}
+
 			} else if (wce_type == 'abbr') {
 				var abbrClass = 'abbr';
 				if (document.getElementById('add_overline').checked == true) {
@@ -362,8 +369,8 @@ function writeWceNodeInfo(val) {
 							wce_node.appendChild($br);
 							$text = document.createTextNode('\u21B5[...]');
 							wce_node.appendChild($text);
-						}
-						ed.execCommand('addToCounter', 'lb', document.getElementById('extent').value);
+						} 
+						wceUtils.addToCounter(ed, 'lb', document.getElementById('extent').value);
 					} else if (document.getElementById('unit').value == "page") {
 						for (var i = 0; i < document.getElementById('extent').value; i++) {
 							$br = document.createElement('br');
@@ -375,7 +382,7 @@ function writeWceNodeInfo(val) {
 							$text = document.createTextNode('[...]');
 							wce_node.appendChild($text);
 						}
-						ed.execCommand('addToCounter', 'pb', document.getElementById('extent').value);
+						wceUtils.addToCounter(ed, 'pb', document.getElementById('extent').value); 
 					} else if (document.getElementById('unit').value == "quire") {
 						for (var i = 0; i < document.getElementById('extent').value; i++) {
 							$br = document.createElement('br');
@@ -387,7 +394,7 @@ function writeWceNodeInfo(val) {
 							$text = document.createTextNode('[...]');
 							wce_node.appendChild($text);
 						}
-						ed.execCommand('addToCounter', 'gb', document.getElementById('extent').value);
+						wceUtils.addToCounter(ed,  'gb', document.getElementById('extent').value);
 					} else {
 						wce_node.textContent = '[...]';
 					}

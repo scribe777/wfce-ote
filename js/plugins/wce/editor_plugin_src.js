@@ -61,7 +61,7 @@
 		/*
 		 *
 		 */
-		setBreakCounter : function(ed, content) {
+		setBreakCounterByContent : function(ed, content) {
 			var v = ed.WCE_VAR;
 			if (!v)
 				return false;
@@ -72,13 +72,13 @@
 			//each Editor hat its own variable
 			if (!content) {
 				// quire count
-				v.qcnt = 1;
+				v.qcnt = 0;
 				// page count
-				v.pcnt = 1;
+				v.pcnt = 0;
 				// column count
-				v.ccnt = 1;
+				v.ccnt = 0;
 				// line count
-				v.lcnt = 1;
+				v.lcnt = 0;
 				// counting as r/v
 				v.rectoverso = 'true';
 			} else {
@@ -86,6 +86,51 @@
 				//TODO:
 			}
 			return true;
+		},
+
+		/**
+		 * compare current value and n, use large number
+		 */
+		updateBreakCounter : function(ed, bt, n) {
+			// First reset counters
+			var c = ed.WCE_VAR;
+
+			// set only the one correct counter
+			switch (bt) {
+				case 'gb':
+					c.qcnt = n >= c.qcnt ? n : c.qcnt;
+					break;
+				case 'pb':
+					c.pcnt = n >= c.pcnt ? n : c.pcnt;
+					break;
+				case 'cb':
+					c.ccnt = n >= c.ccnt ? n : c.ccnt;
+					break;
+				case 'lb':
+					c.lcnt = n >= c.lcnt ? n : c.lcnt;
+					break;
+			}
+		},
+
+		/*
+		 *
+		 */
+		addToCounter : function(ed, bt, n) {
+			var c = ed.WCE_VAR;
+			switch (bt) {
+				case 'gb':
+					c.qcnt = parseInt(c.qcnt) + parseInt(n);
+					break;
+				case 'pb':
+					c.pcnt = parseInt(c.pcnt) + parseInt(n);
+					break;
+				case 'cb':
+					c.ccnt = parseInt(c.ccnt) + parseInt(n);
+					break;
+				case 'lb':
+					c.lcnt = parseInt(c.lcnt) + parseInt(n);
+					break;
+			}
 		},
 
 		/*
@@ -521,7 +566,7 @@
 		 */
 		counterCalc : function(str, i) {
 			var n = parseInt(str);
-			return n + i + '';
+			return n + i;
 		},
 
 		/*
@@ -624,14 +669,14 @@
 				//cb,pb und lb unter qb sind eine Grupe, die alle haben gleich Attribute von qb
 				//also z.B. hier lb editieren wird popup von qb angezeigt
 				out = out + _this(ed, 'pb', 'ignore', indention, null, baseID);
-				v.pcnt = 0;
+				v.pcnt = 1;
 
 			} else if (bType == 'pb') {
 				out = out + _this(ed, 'cb', 'ignore', indention, null, baseID);
-				v.ccnt = 0;
+				v.ccnt = 1;
 			} else if (bType == 'cb') {
 				out = out + _this(ed, 'lb', 'ignore', indention, null, baseID);
-				v.lcnt = 0;
+				v.lcnt = 1;
 			}
 			return out;
 		},
@@ -3188,7 +3233,7 @@
 			ed.onInit.add(function() {
 				WCEUtils.initWCEConstants(ed);
 				WCEUtils.initWCEVariable(ed);
-				WCEUtils.setBreakCounter(ed);
+				WCEUtils.setBreakCounterByContent(ed);
 
 				//disable drag/drop
 				ed.dom.bind(ed.getBody(), ['dragend', 'dragover', 'draggesture', 'dragdrop', 'drop', 'drag'], function(e) {
@@ -3200,7 +3245,7 @@
 				ed.onSetContent.add(function(_content) {
 					//run it only at first time of ed.setContent(...)
 					if (!ed.isCounterInited) {
-						ed.isCounterInited = WCEUtils.setBreakCounter(ed, _content);
+						ed.isCounterInited = WCEUtils.setBreakCounterByContent(ed, _content);
 					}
 				});
 
@@ -3529,7 +3574,7 @@
 			ed.addCommand('mceAdd_brea', function(c, number) {
 				var v = ed.WCE_VAR;
 				if (number) {
-					ed.execCommand('setCounter', c, number);
+					WCEUtils.updateBreakCounter(ed, c, number);
 				}
 				ed.selection.setContent(WCEUtils.getBreakHtml(ed, c));
 			});
@@ -3557,60 +3602,6 @@
 
 			ed.addCommand('mceVerseModify_Shortcut', function() {
 				ed.execCommand('mceVerseModify');
-			});
-
-			ed.addCommand('setCounter', function(bt, n) {
-				// First reset counters
-				var c = ed.WCE_VAR;
-				/*
-				c.qcnt--;
-				c.pcnt--;
-				c.ccnt--;
-				c.lcnt--;
-				*/
-				// set only the one correct counter
-				switch (bt) {
-					case 'gb':
-						c.qcnt = n - 1;
-						break;
-					case 'pb':
-						c.pcnt = n - 1;
-						break;
-					case 'cb':
-						c.ccnt = n - 1;
-						break;
-					case 'lb':
-						c.lcnt = n - 1;
-						break;
-				}
-			});
-
-			/*
-			 ed.addCommand('resetCounter', function() {
-			 // reset counter values when pressing "Cancel" at the break dialog
-			 var c = ed.WCE_VAR;
-			 c.qcnt--;
-			 c.pcnt--;
-			 c.ccnt--;
-			 c.lcnt--;
-			 });*/
-
-			ed.addCommand('addToCounter', function(bt, n) {
-				var c = ed.WCE_VAR;
-				switch (bt) {
-					case 'gb':
-						c.qcnt = parseInt(c.qcnt) + parseInt(n);
-						break;
-					case 'pb':
-						c.pcnt = parseInt(c.pcnt) + parseInt(n);
-						break;
-					case 'cb':
-						c.ccnt = parseInt(c.ccnt) + parseInt(n);
-						break;
-					case 'lb':
-						c.lcnt = parseInt(c.lcnt) + parseInt(n);
-						break;
-				}
 			});
 
 			ed.addCommand('printData', function() {// Problem in IE
