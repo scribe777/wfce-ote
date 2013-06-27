@@ -241,7 +241,7 @@
 
 		getRandomID : function(ed, c) {
 			while (true) {
-				var id = c + new Date().getTime()+'_'+Math.round(Math.random()*1000);
+				var id = c + new Date().getTime() + '_' + Math.round(Math.random() * 1000);
 				if (!$(ed.getBody()).find('span[gid="+' + id + '"]').get(0)) {
 					return id;
 				}
@@ -1012,9 +1012,14 @@
 					break;
 
 				case 'brea':
-					_disableAllControls(ed, true);
+					if (wholeSelect) {
+						//when only select CB, PB, QB inhibit input, but can edit
+						WCEUtils.inhibitInput(ed, selectedNode);
+					} else {
+						_disableAllControls(ed, true);
+						w.not_C = !wholeSelect;
+					}
 					w.not_B = false;
-					w.not_C = !wholeSelect;
 					break;
 
 				case 'unclear':
@@ -1043,6 +1048,13 @@
 					_disableAllControls(ed, true);
 					w.not_N = false;
 					break;
+
+				case 'format_end':
+					var pn = selectedNode.parentNode;
+					if (pn && WCEUtils.isNodeTypeOf(pn, 'brea')) {
+						WCEUtils.inhibitInput(ed, pn);
+					}
+					break;
 			}
 
 			/*
@@ -1056,20 +1068,34 @@
 		},
 
 		/*
-		 canCombinationWithCorrection : function(ed, _type) {
-		 if (!_type)
-		 return false;
-		 var _types = ed.WCE_CON.combinationWithCorrection;
-		 if (_types) {
-		 for (var i = 0, l = _types.length; i < l; i++) {
-		 if (_types[i] == _type) {
-		 return true;
-		 }
-		 }
-		 }
-		 return false;
-		 },
+		canCombinationWithCorrection : function(ed, _type) {
+		if (!_type)
+		return false;
+		var _types = ed.WCE_CON.combinationWithCorrection;
+		if (_types) {
+		for (var i = 0, l = _types.length; i < l; i++) {
+		if (_types[i] == _type) {
+		return true;
+		}
+		}
+		}
+		return false;
+		},
+		*/
+
+		/**
+		 *
 		 */
+		inhibitInput : function(ed, node) {
+			var attr = node.getAttribute('wce');
+			if (attr) {
+				//when caret at end of CB, PB and QB (or only select them), inhibit input
+				if (attr.match(/break_type=cb/) || attr.match(/break_type=pb/) || attr.match(/break_type=qb/)) {
+					WCEUtils.disableAllControls(ed, true);
+					ed.WCE_VAR.inputDisable = true;
+				}
+			}
+		},
 
 		/*
 		 * start at startFormat element and end at endFormat element
@@ -3238,7 +3264,7 @@
 					 originalText = wceNode.firstChild.nodeValue;
 					 }*/
 
-					if (wceClass == 'brea') { //TODO: We need a marker here similar to the one for deleting non-breaks. Otherwise there are problems under Safari!
+					if (wceClass == 'brea') {//TODO: We need a marker here similar to the one for deleting non-breaks. Otherwise there are problems under Safari!
 						gid = wceNode.getAttribute('gid');
 						var groupToDel = $(ed.getBody()).find('span[gid="' + gid + '"]');
 						if (groupToDel) {
