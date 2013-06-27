@@ -1,5 +1,5 @@
-﻿function setWceEditor(_id, rtl, finishCallback, lang, getWitness, getBook, myBaseURL) {
-	if ( typeof myBaseURL != "undefined") {
+﻿function setWceEditor(_id, rtl, finishCallback, lang, getWitness, getBook, myBaseURL, getManuscriptLang) {
+	if (typeof myBaseURL != "undefined" && myBaseURL !== '') {
 		tinyMCE.baseURL = myBaseURL;
 		tinyMCE.baseURI = new tinyMCE.util.URI(tinyMCE.baseURL);
 	}
@@ -20,6 +20,10 @@
 		save_onsavecallback : "saveDataToDB",
 		directionality : (rtl) ? "rtl" : "ltr",
 		language : (lang) ? lang : "en",
+		book : (getBook) ? getBook : "",
+		witness : (getWitness) ? getWitness : "",
+		manuscriptLang : (getManuscriptLang) ? getManuscriptLang : "",
+		
 		// invalid_elements:'p',
 		plugins : "wce,pagebreak,style,save,layer,safari,print,inlinepopups,contextmenu,fullscreen,wordcount,autosave",
 
@@ -47,7 +51,7 @@ function wceReload() {
 	*/
 	testData='aaaa        bbb cccc';
 	setData(testData);
-	//setTeiIndexData('','','','','','','','','Martin');
+	setTeiIndexData(tinymce.get(tinyMCE.activeEditor.id).settings.book, tinymce.get(tinyMCE.activeEditor.id).settings.witness, tinymce.get(tinyMCE.activeEditor.id).settings.manuscriptLang);
 }
 
 // get dirty-value of editor

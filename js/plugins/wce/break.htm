@@ -9,7 +9,7 @@
 
     <body id="table" style="display: none">
         <form onsubmit="return false;" action="#" name="breakinfo">
-            <input type="hidden" id="hasBreak" name="hasBreak" value="" />
+            <input type="hidden" id="hasBreak" name="hasBreak" value="no" />
             <fieldset>
                 <legend>
                     {#wce.break_data}
@@ -25,10 +25,10 @@
                             <option value="pb">{#wce.pagebreak}</option>
                             <option value="gb">{#wce.quire}</option>
                         </select></td>
-                        <td colspan="5">
+                        <!--<td colspan="5">
                         <input type="checkbox" name="pb_hyphen"
                         id="pb_hyphen" >
-                        {#wce.pb_hyphen}</input> </td>
+                        {#wce.pb_hyphen}</input> </td>-->
                     </tr>
                     <tr>
                         <td><label id="number_label" for="number">{#wce.number}</label></td>
@@ -135,7 +135,7 @@
 				}
 			}
 			checkstatus_break();
-			setstatus_hyphen();
+			//setstatus_hyphen();
 			checkstatus_ghostpage();
 		}
 
@@ -149,7 +149,9 @@
 			else
 				break_indention = "";
 
-			if (!add_new_wce_node) {
+			break_lbpos = wceUtils.modifyBreakPosition(ed);
+			
+			/*if (!add_new_wce_node) {
 				// set hasBreak attribute
 				checkstatus_hyphen();
 				if ($('#hasBreak').val() == 'yes')
@@ -164,7 +166,7 @@
 				} else {
 					document.breakinfo.hasBreak.value = 'no';
 				}
-			}
+			}*/
 
 		}
 
@@ -185,8 +187,8 @@
 				document.getElementById('pb_type').style.backgroundColor = "white";
 				document.breakinfo.fibre_type.disabled = false;
 				document.getElementById('fibre_type').style.backgroundColor = "white";
-				document.breakinfo.pb_hyphen.disabled = false;
-				document.getElementById('pb_hyphen').style.backgroundColor = "white";
+				//document.breakinfo.pb_hyphen.disabled = false;
+				//document.getElementById('pb_hyphen').style.backgroundColor = "white";
 				document.breakinfo.pb_ghostpage.disabled = false;
 				document.getElementById('pb_ghostpage').style.backgroundColor = "white";
 				document.breakinfo.facs.disabled = false;
@@ -204,8 +206,8 @@
 				document.getElementById('pb_type').style.backgroundColor = "#CCCCCC";
 				document.breakinfo.fibre_type.disabled = true;
 				document.getElementById('fibre_type').style.backgroundColor = "#CCCCCC";
-				document.breakinfo.pb_hyphen.disabled = true;
-				document.getElementById('pb_hyphen').style.backgroundColor = "#CCCCCC";
+				//document.breakinfo.pb_hyphen.disabled = true;
+				//document.getElementById('pb_hyphen').style.backgroundColor = "#CCCCCC";
 				document.breakinfo.pb_ghostpage.disabled = true;
 				document.breakinfo.pb_ghostpage.checked = false;
 				document.getElementById('pb_ghostpage').style.backgroundColor = "#CCCCCC";
@@ -232,12 +234,12 @@
 			}
 		}
 
-		function checkstatus_hyphen() {
+		/*function checkstatus_hyphen() {
 			if (document.breakinfo.pb_hyphen.checked)
 				document.breakinfo.hasBreak.value = "yes";
 			else
 				document.breakinfo.hasBreak.value = "no";
-		}
+		}*/
 
 		function checkstatus_ghostpage() {
 			if (document.breakinfo.pb_ghostpage.checked) {
@@ -249,12 +251,12 @@
 			}
 		}
 
-		function setstatus_hyphen() {
+		/*function setstatus_hyphen() {
 			if (document.breakinfo.break_type.options[2].selected == true && document.breakinfo.hasBreak.value == "yes")
 				document.breakinfo.pb_hyphen.checked = true;
 			else
 				document.breakinfo.pb_hyphen.checked = false;
-		}
+		}*/
 
 		function testNumber() {
 			if (document.getElementById('number').value == '' && !document.breakinfo.pb_ghostpage.checked)
