@@ -7,7 +7,7 @@
  */
 
 (function() {
-	var wfce_editor = "2013-06-19";
+	var wfce_editor = "2013-06-27";
 
 	// Load plugin specific language pack
 	tinymce.PluginManager.requireLangPack('wce');
@@ -3244,6 +3244,7 @@
 						if (groupToDel) {
 							for (var i = 0, l = groupToDel.length; i < l; i++) {
 								$(groupToDel[i]).remove();
+								//ed.selection.setContent('<span id="_math_marker">&nbsp;</span>');
 							}
 						}
 					} else {
@@ -3252,8 +3253,6 @@
 							ed.selection.setContent('<span id="_math_marker">&nbsp;</span>');
 						}
 					}
-					var marker = ed.dom.get('_math_marker');
-					ed.selection.select(marker, false);
 					if ((originalText) && originalText != 'null') {
 						ed.selection.setContent(originalText);
 					} else

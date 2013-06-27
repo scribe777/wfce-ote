@@ -186,7 +186,6 @@ function writeWceNodeInfo(val) {
 				break;
 
 			case 'corr':
-				// TODO: This just alters the selection to "T" which is not what we want. Instead the original first hand reading has to be saved.
 				if (document.getElementById('blank_firsthand').checked) {
 					selected_content = 'T';
 					wceClass = ' class="corr_blank_firsthand"';
@@ -260,6 +259,8 @@ function writeWceNodeInfo(val) {
 			new_content = '<span wce="' + newWceAttr + '"' + wceClass + original_text + '>' + startFormatHtml + selected_content + endFormatHtml + '</span>';
 		}
 
+		//var marker = ed.dom.get('_math_marker'); //Could maybe used for better removing under Safari
+		//ed.selection.select(marker, false);
 		ed.selection.setContent(new_content);
 
 		if (wce_type == 'gap') {

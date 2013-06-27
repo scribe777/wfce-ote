@@ -151,6 +151,7 @@
 				break_indention = "";
 
 			if (!add_new_wce_node) {
+				checkstatus_hyphen(); // set hasBreak attribute
 				if ($('#hasBreak').val() == 'yes')
 					break_lbpos = 'lbm';
 				else
