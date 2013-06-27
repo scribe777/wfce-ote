@@ -262,12 +262,15 @@ function writeWceNodeInfo(val) {
 		//var marker = ed.dom.get('_math_marker'); //Could maybe used for better removing under Safari
 		//ed.selection.select(marker, false);
 
+		//Fixed: if the selection range is collapsed and caret at end of a element,
+		//then, if add a new element by menu,
+		//the new element will appear in the inside of current element and not after the element.
 		var wcevar = ed.WCE_VAR;
 		if (wcevar.isc && wcevar.isInBE && wcevar.isCollapsedAtNodeEnd && (wcevar.type == ed.WCE_CON.formatEnd || wcevar.type == 'chapter_number' || wcevar.type === 'book_number' || wcevar.type == 'verse_number')) {
 			var selNode = wcevar.selectedNode;
 			if (wcevar.type == ed.WCE_CON.formatEnd) {
 				$(new_content).insertAfter(selNode.parentNode);
-				//I do not know why after insert, a space will be generated after char '>',
+				//do not know why after insert, a space will be generated after char '>',
 				//Therefore format_end need to be reset
 				selNode.innerHTML = '&rsaquo;';
 			} else {

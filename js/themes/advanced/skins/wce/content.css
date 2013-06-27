@@ -84,8 +84,8 @@ span.format_start, span.format_end {
 }
  
 span.pc, span.abbr, span.abbr_add_overline, span.part_abbr, span.supplied, span.spaces{
-	border: 1px  dotted #f00;  
-	margin:0px; 
+	border: 1px dotted #f00;  
+	margin:0px 0px 0px 1px; 
 	padding:0 
 }
 
@@ -95,34 +95,34 @@ span.abbr_add_overline{
 
 span.brea{
 	border: 1px  dotted #f00;  
-	margin:0px; 
+	margin:0px 0px 0px 1px; 
 	padding:0; 
 	color:#666 
 }
 
 span.unclear{
 	border: 1px dotted #f00; 
-	margin: 0px 1px 0px 1px; 
+	margin:0px 0px 0px 1px; 
 	padding: 0 
 }
 
 span.witnessend{
 	border: 1px  dotted #f00;  
-	margin:0px; 
+	margin:0px 0px 0px 1px; 
 	padding:0; 
 	color:#666
 }
 
 span.gap{
 	border: 1px  dotted #f00; 
-	margin:0px 1px 0px 1px ; 
+	margin:0px 0px 0px 1px; 
 	padding:0;
 	color:red
 }
 
 span.corr, span.corr_blank_firsthand{
 	border: 1px  dotted #f00; 
-	margin:0px 1px 0px 1px ; 
+	margin:0px 0px 0px 1px; 
 	padding:0;
 	color: blue;
 }
@@ -134,7 +134,7 @@ span.corr_blank_firsthand{
 
 span.note{
 	border: 1px  dotted #f00; 
-	margin:0px 1px 0px 1px ; 
+	margin:0px 0px 0px 1px;  
 	padding:0;
 	vertical-align:super; 
 	color:blue; 
@@ -143,7 +143,7 @@ span.note{
 }
 span.paratext{
 	border: 1px  dotted #f00; 
-	margin: 0px 1px 0px 1px; 
+	margin:0px 0px 0px 1px; 
 	padding: 0;
 	color:#666
 }
@@ -157,7 +157,7 @@ span.formatting_rubrication,span.formatting_gold,span.formatting_blue,span.forma
 span.formatting_other, span.formatting_overline, span.formatting_capitals, span.formatting_displaced-above, span.formatting_displaced-below,
 span.formatting_displaced-other {
 	border: 1px  dotted #f00;  
-	margin: 0px; 
+	margin:0px 0px 0px 1px; 
 	padding:0
 }
 span.formatting_rubrication{
