@@ -3334,7 +3334,6 @@
 					if (wceClass == 'brea') {
 						//We need a marker here similar to the one for deleting non-breaks. Otherwise there are problems under Safari!
 						//Fixed:  we do not use function remove
-						//ed.selection.setContent('<span id="_marker">&nbsp;</span>'); //Does not work yet
 						var bID = wceNode.getAttribute('id');
 						if (!bID) {
 							ed.selection.select(wceNode);
@@ -3370,8 +3369,9 @@
 					 }
 					 }*/
 
-					if ((originalText) && originalText != 'null') {
+					if ((originalText) && originalText != 'null')
 						ed.selection.setContent(originalText);
+					else
 						ed.selection.setContent("");
 					ed.focus();
 
