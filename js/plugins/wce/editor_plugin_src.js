@@ -2125,12 +2125,19 @@
 				}
 			}
 
-			if (((tinymce.isMac && e.metaKey) || (e.ctrlKey)) && e.altKey && ek == 65) {
-				//Ctrl+Shift+A
+			if ((tinymce.isMac && e.metaKey) && e.altKey && ek == 65) { //Ctrl+Shift+A
+				ed.execCommand('mceAddAbbr_Shortcut');
+				return stopEvent(ed, e);
+			}
+			
+			if ((tinymce.isMac && e.metaKey) && e.altKey && ek == 78) { //Ctrl+Shift+N
+				ed.execCommand('mceAddNote_Shortcut');
+				return stopEvent(ed, e);
 			}
 
-			if (e.ctrlKey && e.altKey && ek == 86) {
-				//Ctrl+Shift+V
+			if ((tinymce.isMac && e.metaKey) && e.altKey && ek == 86) { //Ctrl+Shift+V
+				ed.execCommand('mceVerseModify_Shortcut');
+				return stopEvent(ed, e);
 			}
 
 			// TODO: if no short_cut B, C ,Z ,Y .....
