@@ -47,8 +47,8 @@
 		</fieldset>
 		<div class="mceActionPanel">
 			<input type="button" id="insert" name="insert" value="{#insert}"
-				onclick="cont = testOther();
-						if (cont){writeWceNodeInfo();}else{alert('{#wce.empty_other}');}"/>
+				onclick="cont = testOther();cont2 = testText();
+						if (cont&&cont2){writeWceNodeInfo();} else{ if(!cont){ alert('{#wce.empty_other}');} else{ alert('{#wce.empty_text}');}}"/>
 			<input type="button" id="cancel" name="cancel" value="{#cancel}"
 				onclick="tinyMCEPopup.close();" />
 		</div>
@@ -96,6 +96,11 @@
 			return false;
 	return true;
 	}
+	
+	function testText() {
+		return (document.noteinfo.note_text.value !== '')
+	}
+	
 
 	if (!tinyMCE.isIE) {
 		$(document).keydown(function(e) {

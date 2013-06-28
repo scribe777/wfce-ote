@@ -164,6 +164,7 @@ tinyMCE.addI18n('de.wce',{
 	reading_list : "Liste der Korrekturen",
 	empty_other : "Bitte füllen Sie alle Pflichfelder sowie alle &quot;other&quot;-Felder aus",
 	empty_number : "Bitte geben Sie eine Zahl ein (wird als Attribut &quot;n&quot; verwendet)",
+	empty_text : "Bitte geben Sie einen Text ein.",
 	save : 'Die Änderungen sind noch nicht gespeichert worden. Klicken Sie "OK" um sie zu speichern, oder "Cancel" um die Änderungen zu verwerfen',
 	capitals_data: 'Informationen über die Großbuchstaben',
 	capitals_height : 'Höhe der Großbuchstaben',
