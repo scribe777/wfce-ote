@@ -342,12 +342,12 @@ function writeWceNodeInfo(val) {
 						for (var i = 0; i < document.getElementById('covered').value; i++) {
 							new_content += '<br/>&crarr;[<span class="commentary" ' + 'wce="__t=paratext&__n=&fw_type=commentary&covered=' + document.getElementById('covered').value + '">comm</span>]';
 						}
-						wce_node.innerHTML = new_content;
+						wce_node.innerHTML = startFormatHtml + new_content + endFormatHtml;
 					}
 					wceUtils.addToCounter(ed, 'lb', document.getElementById('covered').value);
 					//TODO: old value has to be subtract first
 				} else {// num or fw
-					wce_node.innerHTML = val;
+					wce_node.innerHTML = startFormatHtml + val + endFormatHtml;
 				}
 			} else if (wce_type == 'corr') {
 				if (document.getElementById('blank_firsthand').checked)
