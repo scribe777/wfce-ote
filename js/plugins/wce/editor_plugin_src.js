@@ -7,7 +7,7 @@
  */
 
 (function() {
-	var wfce_editor = "2013-06-27";
+	var wfce_editor = "2013-06-28";
 
 	// Load plugin specific language pack
 	tinymce.PluginManager.requireLangPack('wce');
@@ -2049,17 +2049,10 @@
 					newContent += '<span wce="__t=unclear&amp;__n=&amp;original_text=' + word + '" ' + wceClass + '>' + startFormatHtml + unclear_text + endFormatHtml + '</span>';
 					ed.selection.setContent(newContent);
 					break;
-				/*case 'ghostpage':
-				 // Ghost page
-				 // style = 'style="border: 1px dotted #f00; margin:0px; padding:0; color:#666"';
-				 wceClass = ' class="ghostpage"';
-				 wceAttr = 'wce="__t=gap&amp;__n=&amp;original_gap_text=&amp;gap_reason=absent&amp;unit=page&amp;unit_other=&amp;extent=1&amp;supplied_source=na28&amp;supplied_source_other=&amp;insert=Insert&amp;cancel=Cancel" ';
-				 ed.selection.setContent('<span ' + wceAttr + wceClass + '>Ghost page</span>');
-				 break;*/
 				case 'witnessend':
 					wceClass = ' class="witnessend"';
 					wceAttr = 'wce="__t=gap&amp;__n=&amp;original_gap_text=&amp;gap_reason=witnessEnd&amp;unit=&amp;unit_other=&amp;extent=&amp;supplied_source=na28&amp;supplied_source_other=&amp;insert=Insert&amp;cancel=Cancel" ';
-					ed.selection.setContent('<span ' + wceAttr + wceClass + '>Witness End</span>');
+					ed.selection.setContent('<span ' + wceAttr + wceClass + '>' + startFormatHtml + 'Witness End' + endFormatHtml + '</span>');
 					break;
 				default:
 					wceClass = ' class="' + wceType + '"';
@@ -3356,11 +3349,11 @@
 					} else {
 						if (wceNode !== null) {
 							// Node is replaced by marker (which is then replaced by original text) => solution for problems with removing nodes under Safari (#1398)
-							ed.selection.setContent('<span id="_marker">&nbsp;</span>');
+							//ed.selection.setContent('<span id="_marker">&nbsp;</span>');
 						}
 					}
-					var marker = ed.dom.get('_marker');
-					ed.selection.select(marker, false);
+					//var marker = ed.dom.get('_marker');
+					//ed.selection.select(marker, false);
 					if ((originalText) && originalText != 'null') {
 						ed.selection.setContent(originalText);
 					} else //if (wceClass !== "brea") //for breaks we still need something special for editing
@@ -3487,7 +3480,7 @@
 			 });*/
 
 			ed.addCommand('mceAddWitnessend', function() {
-				doWithDialog(ed, 'witnessend');
+				doWithoutDialog(ed, 'witnessend');
 			});
 
 			// Add note/*********/

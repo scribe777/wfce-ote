@@ -90,7 +90,6 @@ function getHtmlByTei(inputString) {
 		if (!$teiNode) {
 			return;
 		}
-
 		if ($teiNode.nodeType == 3) {
 			Tei2Html_TEXT($htmlParent, $teiNode);
 		} else if ($teiNode.nodeType == 1) {
@@ -98,6 +97,8 @@ function getHtmlByTei(inputString) {
 
 			// stop to read $teiNode
 			if (!$newParent) {
+				if ($teiNode.nodeName == 'gap') // make sure that gap is followed by a space
+					nodeAddText($htmlParent, ' ');
 				return;
 			}
 
@@ -110,14 +111,8 @@ function getHtmlByTei(inputString) {
 					readAllChildrenOfTeiNode($newParent, $c);
 				}
 			}
-
-			if ($teiNode.nodeName == 'w') {
-				// Word numbering is done outside the editor
-				/*var nValue = $teiNode.getAttribute('n');
-				 if (nValue) {
-				 teiIndexData['wordNumber'] = parseInt(nValue);
-				 }*/
-
+			if ($teiNode.nodeName == 'w' || $teiNode.nodeName == 'gap') {
+				// Please note: Word numbering is done outside the editor
 				var $nextSibling = $teiNode.nextSibling;
 				if ($nextSibling && $nextSibling.nodeName == 'note') {
 					return;
@@ -143,7 +138,7 @@ function getHtmlByTei(inputString) {
 		switch (teiNodeName) {
 			case 'w':
 				return Tei2Html_w($htmlParent, $teiNode);
-			//return $htmlParent;// w
+			// w
 
 			case 'ex':
 				return Tei2Html_ex($htmlParent, $teiNode);
@@ -1467,7 +1462,10 @@ function getTeiByHtml(inputString, args) {
 					return html2Tei_gap(arr, $teiParent, $htmlNode, stopAddW);
 					// get result from first part and return to main routine
 				} else {//no word boundaries
-					return html2Tei_gap(arr, $teiParent, $htmlNode, stopAddW);
+					if($htmlNode.getAttribute('wce').indexOf("mark_as_supplied=supplied") > -1) // supplied text => surrounding <w>
+						return html2Tei_gap(arr, $teiParent, $htmlNode, stopAddW);
+					else // gap => no surrounding <w>
+						return html2Tei_gap(arr, $teiParent, $htmlNode, true);
 				}
 			}
 		}
@@ -2191,13 +2189,6 @@ function getTeiByHtml(inputString, args) {
 		var endIsSpace = endHasSpace(text);
 		var arr = text.split(' ');
 
-		// TODO: Is this still necessary as the user can now (and has to) edit the verse number?
-		/*if (!found_ab && $teiParent.lastChild && $teiParent.lastChild.previousSibling && $teiParent.lastChild.previousSibling.previousSibling && $teiParent.lastChild.previousSibling.previousSibling.nodeName === 'pb') {
-		 var $ab = $newDoc.createElement('ab');
-		 $ab.setAttribute("part", "F");
-		 found_ab = true;
-		 }*/
-
 		for (var i = 0, l = arr.length; i < l; i++) {
 			var str = arr[i];
 			if (!str || str == '') {
@@ -2209,7 +2200,7 @@ function getTeiByHtml(inputString, args) {
 
 			// we hit a text and check if there is an element at the third-last position in the tree with break="no"
 			if (!final_w_set && (($teiParent && $teiParent.parentNode && $teiParent.parentNode.parentNode && $teiParent.parentNode.parentNode.previousSibling && $teiParent.parentNode.parentNode.previousSibling.previousSibling && $teiParent.parentNode.parentNode.previousSibling.previousSibling.previousSibling && $teiParent.parentNode.parentNode.previousSibling.previousSibling.previousSibling.nodeName === 'pb' && $teiParent.parentNode.parentNode.previousSibling.previousSibling.previousSibling.getAttribute("break") === "no"))) {
-				//|| (final_w_found))) { // check if first string is the first word on a page after a hyphenation; final_w_found not needed
+				// check if first string is the first word on a page after a hyphenation; final_w_found not needed
 				$w.setAttribute("part", "F");
 				final_w_set = true;
 				// set attribute for corresponding <ab>
@@ -2221,18 +2212,7 @@ function getTeiByHtml(inputString, args) {
 				if ($teiParent.nodeName == 'ab')// now set same attribute to parent <ab>; Check just for sure
 					$teiParent.setAttribute('part', 'I');
 			}
-			nodeAddText($w, str);
-			// TODO: This could be removed
-			// If we agree on the structure B, K, V for each page, then this automatic identification of part="F" is of no use any longer
-			/*if (found_ab) {
-			 if ($ab) { // verse has just been added
-			 $ab.appendChild($w);
-			 $teiParent.appendChild($ab);
-			 } else { // verse existed before
-			 $teiParent.appendChild($w);
-			 }
-			 } else
-			 $teiParent.appendChild($w);*/
+			nodeAddText($w, str.trim()); //trim to avoid spurious blanks
 			$teiParent.appendChild($w);
 
 			// If it is the last element, and there are no spaces
