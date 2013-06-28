@@ -3330,6 +3330,7 @@
 					 }*/
 
 					if (wceClass == 'brea') {//TODO: We need a marker here similar to the one for deleting non-breaks. Otherwise there are problems under Safari!
+						//ed.selection.setContent('<span id="_marker">&nbsp;</span>'); //Does not work yet
 						var bID = wceNode.getAttribute('id');
 						if (!bID) {
 							$(wceNode).remove();
@@ -3355,12 +3356,14 @@
 					} else {
 						if (wceNode !== null) {
 							// Node is replaced by marker (which is then replaced by original text) => solution for problems with removing nodes under Safari (#1398)
-							ed.selection.setContent('<span id="_math_marker">&nbsp;</span>');
+							ed.selection.setContent('<span id="_marker">&nbsp;</span>');
 						}
 					}
+					var marker = ed.dom.get('_marker');
+					ed.selection.select(marker, false);
 					if ((originalText) && originalText != 'null') {
 						ed.selection.setContent(originalText);
-					} else
+					} else //if (wceClass !== "brea") //for breaks we still need something special for editing
 						ed.selection.setContent("");
 					ed.focus();
 

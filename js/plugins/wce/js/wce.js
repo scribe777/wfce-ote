@@ -254,12 +254,12 @@ function writeWceNodeInfo(val) {
 
 		}
 
-		//wenn new_content not defined, use default
+		//if new_content is not defined, use default
 		if (!new_content) {
 			new_content = '<span wce="' + newWceAttr + '"' + wceClass + original_text + '>' + startFormatHtml + selected_content + endFormatHtml + '</span>';
 		}
 
-		//var marker = ed.dom.get('_math_marker'); //Could maybe used for better removing under Safari
+		//var marker = ed.dom.get('_marker'); //Does not work; intended for editing breaks
 		//ed.selection.select(marker, false);
 		ed.selection.setContent(new_content);
 
