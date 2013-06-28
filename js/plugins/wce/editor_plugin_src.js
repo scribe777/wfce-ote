@@ -1992,7 +1992,8 @@
 				case 'abbr':
 					// style = 'style="border: 1px dotted #f00; margin:0px; padding:0;"';
 					wceClass = ' class="abbr"';
-					wceOrig = ' wce_orig="' + character + '"';
+					wceOrig = ' wce_orig="' + encodeURIComponent(character);
+					+'"';
 					wceAttr = '"wce=__t=abbr&amp;__n=&amp;original_abbr_text=&amp;abbr_type=nomSac&amp;abbr_type_other=&amp;add_overline="';
 					ed.selection.setContent('<span ' + wceAttr + wceOrig + wceClass + '>' + startFormatHtml + character + endFormatHtml + '</span> ');
 					break;
@@ -2061,10 +2062,11 @@
 					wceAttr = 'wce="__t=gap&amp;__n=&amp;original_gap_text=&amp;gap_reason=witnessEnd&amp;unit=&amp;unit_other=&amp;extent=&amp;supplied_source=na28&amp;supplied_source_other=&amp;insert=Insert&amp;cancel=Cancel" ';
 					ed.selection.setContent('<span ' + wceAttr + wceClass + '>Witness End</span>');
 					break;
+
 				default:
 					wceClass = ' class="' + wceType + '"';
 					wceAttr = 'wce="' + '__t' + '=' + wceType + '" ';
-					wceOrig = ' wce_orig="' + content + '"';
+					wceOrig = ' wce_orig="' + encodeURIComponent(content) + '"';
 					ed.selection.setContent('<span ' + wceAttr + wceClass + ' ' + wceOrig + '>' + startFormatHtml + content + endFormatHtml + '</span>');
 			}
 		},
