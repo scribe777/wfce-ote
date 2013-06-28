@@ -1992,7 +1992,8 @@
 				case 'abbr':
 					// style = 'style="border: 1px dotted #f00; margin:0px; padding:0;"';
 					wceClass = ' class="abbr"';
-					wceOrig = ' wce_orig="' + character + '"';
+					wceOrig = ' wce_orig="' + encodeURIComponent(character);
+					+'"';
 					wceAttr = '"wce=__t=abbr&amp;__n=&amp;original_abbr_text=&amp;abbr_type=nomSac&amp;abbr_type_other=&amp;add_overline="';
 					ed.selection.setContent('<span ' + wceAttr + wceOrig + wceClass + '>' + startFormatHtml + character + endFormatHtml + '</span> ');
 					break;
@@ -2054,10 +2055,11 @@
 					wceAttr = 'wce="__t=gap&amp;__n=&amp;original_gap_text=&amp;gap_reason=witnessEnd&amp;unit=&amp;unit_other=&amp;extent=&amp;supplied_source=na28&amp;supplied_source_other=&amp;insert=Insert&amp;cancel=Cancel" ';
 					ed.selection.setContent('<span ' + wceAttr + wceClass + '>' + startFormatHtml + 'Witness End' + endFormatHtml + '</span>');
 					break;
+
 				default:
 					wceClass = ' class="' + wceType + '"';
 					wceAttr = 'wce="' + '__t' + '=' + wceType + '" ';
-					wceOrig = ' wce_orig="' + content + '"';
+					wceOrig = ' wce_orig="' + encodeURIComponent(content) + '"';
 					ed.selection.setContent('<span ' + wceAttr + wceClass + ' ' + wceOrig + '>' + startFormatHtml + content + endFormatHtml + '</span>');
 			}
 		},
@@ -3329,11 +3331,15 @@
 					 originalText = wceNode.firstChild.nodeValue;
 					 }*/
 
-					if (wceClass == 'brea') {//TODO: We need a marker here similar to the one for deleting non-breaks. Otherwise there are problems under Safari!
+					if (wceClass == 'brea') {
+						//We need a marker here similar to the one for deleting non-breaks. Otherwise there are problems under Safari!
+						//Fixed:  we do not use function remove
 						//ed.selection.setContent('<span id="_marker">&nbsp;</span>'); //Does not work yet
 						var bID = wceNode.getAttribute('id');
 						if (!bID) {
-							$(wceNode).remove();
+							ed.selection.select(wceNode);
+							ed.selection.setContent("");
+							//$(wceNode).remove();
 						} else {
 							//delete group
 							var bArr = bID.split('_');
@@ -3349,21 +3355,23 @@
 								var arrItem;
 								for (var i = parseInt(bc) - 1; i > -1; i--) {
 									arrItem = arr[i];
-									$(ed.dom.get(arrItem + '_' + bc + '_' + bb)).remove();
+									ed.selection.select(ed.dom.get(arrItem + '_' + bc + '_' + bb));
+									ed.selection.setContent("");
+									//$(ed.dom.get(arrItem + '_' + bc + '_' + bb)).remove();
 								}
 							}
 						}
-					} else {
-						if (wceNode !== null) {
-							// Node is replaced by marker (which is then replaced by original text) => solution for problems with removing nodes under Safari (#1398)
-							//ed.selection.setContent('<span id="_marker">&nbsp;</span>');
-						}
 					}
-					//var marker = ed.dom.get('_marker');
-					//ed.selection.select(marker, false);
+
+					/* else {
+					 if (wceNode !== null) {
+					 // Node is replaced by marker (which is then replaced by original text) => solution for problems with removing nodes under Safari (#1398)
+					 ed.selection.setContent('<span id="_math_marker">&nbsp;</span>');
+					 }
+					 }*/
+
 					if ((originalText) && originalText != 'null') {
 						ed.selection.setContent(originalText);
-					} else //if (wceClass !== "brea") //for breaks we still need something special for editing
 						ed.selection.setContent("");
 					ed.focus();
 
