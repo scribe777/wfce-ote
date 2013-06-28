@@ -3329,10 +3329,14 @@
 					 originalText = wceNode.firstChild.nodeValue;
 					 }*/
 
-					if (wceClass == 'brea') {//TODO: We need a marker here similar to the one for deleting non-breaks. Otherwise there are problems under Safari!
+					if (wceClass == 'brea') {
+						//We need a marker here similar to the one for deleting non-breaks. Otherwise there are problems under Safari!
+						//Fixed:  we do not use function remove
 						var bID = wceNode.getAttribute('id');
 						if (!bID) {
-							$(wceNode).remove();
+							ed.selection.select(wceNode);
+							ed.selection.setContent("");
+							//$(wceNode).remove();
 						} else {
 							//delete group
 							var bArr = bID.split('_');
@@ -3348,16 +3352,21 @@
 								var arrItem;
 								for (var i = parseInt(bc) - 1; i > -1; i--) {
 									arrItem = arr[i];
-									$(ed.dom.get(arrItem + '_' + bc + '_' + bb)).remove();
+									ed.selection.select(ed.dom.get(arrItem + '_' + bc + '_' + bb));
+									ed.selection.setContent("");
+									//$(ed.dom.get(arrItem + '_' + bc + '_' + bb)).remove();
 								}
 							}
 						}
-					} else {
-						if (wceNode !== null) {
-							// Node is replaced by marker (which is then replaced by original text) => solution for problems with removing nodes under Safari (#1398)
-							ed.selection.setContent('<span id="_math_marker">&nbsp;</span>');
-						}
 					}
+
+					/* else {
+					 if (wceNode !== null) {
+					 // Node is replaced by marker (which is then replaced by original text) => solution for problems with removing nodes under Safari (#1398)
+					 ed.selection.setContent('<span id="_math_marker">&nbsp;</span>');
+					 }
+					 }*/
+
 					if ((originalText) && originalText != 'null') {
 						ed.selection.setContent(originalText);
 					} else
