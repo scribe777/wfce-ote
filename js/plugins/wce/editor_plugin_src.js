@@ -3,11 +3,13 @@
  *
  * Copyright 2009, Moxiecode Systems AB Released under LGPL License.
  *
- * License: http://tinymce.moxiecode.com/license Contributing: http://tinymce.moxiecode.com/contributing
- */
+ * License: http://tinymce.moxiecode.com/license Contributing: http://tinymce.moxieco
+de.com/contributing
+*/
+
 
 (function() {
-	var wfce_editor = "2013-06-28";
+	var wfce_editor = "2013-07-08";
 
 	// Load plugin specific language pack
 	tinymce.PluginManager.requireLangPack('wce');
@@ -26,8 +28,11 @@
 			//extra elements for each wce Format.
 			c.formatStart = 'format_start';
 			c.formatEnd = 'format_end';
-			c.startFormatHtml = '<span class="format_start">&lsaquo;</span>';
-			c.endFormatHtml = '<span class="format_end">&rsaquo;</span>';
+			c.startFormatHtml = '<span class="format_start">' + '\u2039' + '</span>';
+			//c.endFormatHtml = '<span class="format_end">&rsaquo;</span>';
+
+			c.endFormatHtml = '<span class="format_end">' + '\u203a' + '</span>';
+			//c.endFormatHtml = '<span class="format_end">&rsaquo;</span>';
 
 			//blocked elements :If the Caret is inside, this will prohibit the key operation
 			c.blockedElements = new Array('gap', 'corr', 'book_number', 'chapter_number', 'verse_number', 'abbr', 'spaces', 'note', 'unclear', 'brea', 'paratext', 'pc');
@@ -1021,7 +1026,8 @@
 			//select whole format?
 			var wholeSelect = w.isc ? false : WCEUtils.isSelectedWholeNode(rng);
 			if (wholeSelect) {
-				selectedNode = ed.selection.getNode();
+				selectedNode = rng.startContainer.parentNode.parentNode;
+				//selectedNode = ed.selection.getNode();
 			}
 
 			//set other variable
@@ -1977,8 +1983,11 @@
 		},
 
 		doWithoutDialog : function(ed, wceType, character, number) {
+			var selNode = ed.WCE_VAR.selectedNode;
+			if (selNode && ed.WCE_VAR.isSelWholeNode) {
+				ed.selection.select(selNode);
+			}
 			var content = ed.selection.getContent();
-			// var style = 'style="border: 1px dotted #f00; margin:0px; padding:0;"';
 			var wceClass, wceAttr, wceOrig;
 			var startFormatHtml = ed.WCE_CON.startFormatHtml;
 			var endFormatHtml = ed.WCE_CON.endFormatHtml;
@@ -2050,10 +2059,17 @@
 					newContent += '<span wce="__t=unclear&amp;__n=&amp;original_text=' + word + '" ' + wceClass + '>' + startFormatHtml + unclear_text + endFormatHtml + '</span>';
 					ed.selection.setContent(newContent);
 					break;
+				/*case 'ghostpage':
+				 // Ghost page
+				 // style = 'style="border: 1px dotted #f00; margin:0px; padding:0; color:#666"';
+				 wceClass = ' class="ghostpage"';
+				 wceAttr = 'wce="__t=gap&amp;__n=&amp;original_gap_text=&amp;gap_reason=absent&amp;unit=page&amp;unit_other=&amp;extent=1&amp;supplied_source=na28&amp;supplied_source_other=&amp;insert=Insert&amp;cancel=Cancel" ';
+				 ed.selection.setContent('<span ' + wceAttr + wceClass + '>Ghost page</span>');
+				 break;*/
 				case 'witnessend':
 					wceClass = ' class="witnessend"';
 					wceAttr = 'wce="__t=gap&amp;__n=&amp;original_gap_text=&amp;gap_reason=witnessEnd&amp;unit=&amp;unit_other=&amp;extent=&amp;supplied_source=na28&amp;supplied_source_other=&amp;insert=Insert&amp;cancel=Cancel" ';
-					ed.selection.setContent('<span ' + wceAttr + wceClass + '>' + startFormatHtml + 'Witness End' + endFormatHtml + '</span>');
+					ed.selection.setContent('<span ' + wceAttr + wceClass + '>Witness End</span>');
 					break;
 
 				default:
@@ -2127,19 +2143,12 @@
 				}
 			}
 
-			if ((tinymce.isMac && e.metaKey) && e.altKey && ek == 65) { //Ctrl+Shift+A
-				ed.execCommand('mceAddAbbr_Shortcut');
-				return stopEvent(ed, e);
-			}
-			
-			if ((tinymce.isMac && e.metaKey) && e.altKey && ek == 78) { //Ctrl+Shift+N
-				ed.execCommand('mceAddNote_Shortcut');
-				return stopEvent(ed, e);
+			if (((tinymce.isMac && e.metaKey) || (e.ctrlKey)) && e.altKey && ek == 65) {
+				//Ctrl+Shift+A
 			}
 
-			if ((tinymce.isMac && e.metaKey) && e.altKey && ek == 86) { //Ctrl+Shift+V
-				ed.execCommand('mceVerseModify_Shortcut');
-				return stopEvent(ed, e);
+			if (e.ctrlKey && e.altKey && ek == 86) {
+				//Ctrl+Shift+V
 			}
 
 			// TODO: if no short_cut B, C ,Z ,Y .....
@@ -3369,9 +3378,9 @@
 					 }
 					 }*/
 
-					if ((originalText) && originalText != 'null')
+					if ((originalText) && originalText != 'null') {
 						ed.selection.setContent(originalText);
-					else
+					} else
 						ed.selection.setContent("");
 					ed.focus();
 
@@ -3495,7 +3504,7 @@
 			 });*/
 
 			ed.addCommand('mceAddWitnessend', function() {
-				doWithoutDialog(ed, 'witnessend');
+				doWithDialog(ed, 'witnessend');
 			});
 
 			// Add note/*********/

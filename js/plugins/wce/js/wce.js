@@ -42,20 +42,9 @@ function setConstants(_type) {
 	//Bugfix Fehler #646 Impossible combination: Deficiency + Corrections
 	//for other combination can use this
 	if (wce_node && ed.WCE_VAR.isSelWholeNode) {
-		var wce_node_parent = wce_node;
-		if (wce_node_parent) {
-			ed.selection.select(wce_node_parent);
-			wce_node = wce_node_parent;
-			add_new_wce_node = false;
-		} else if (wce_node && !wceUtils.isNodeTypeOf(wce_node, _type)) {
-			isCombination = true;
-		}
+		ed.selection.select(wce_node);
 	}
-	if (isCombination) {
-		selected_content = tinymce.DOM.getOuterHTML(ed.selection.getNode());
-	} else {
-		selected_content = ed.selection.getContent();
-	}
+	selected_content = ed.selection.getContent();
 }
 
 /**
@@ -139,10 +128,10 @@ function writeWceNodeInfo(val) {
 		// default style
 		var wceClass = ' class="' + wce_type + '"';
 
-		if (isCombination) {
-			$(wce_node).remove();
+		/*	if (isCombination) {
+		$(wce_node).remove();
+		}*/
 
-		}
 		// new content
 		var new_content;
 		var original_text = ' wce_orig="' + encodeURIComponent(selected_content) + '" ';

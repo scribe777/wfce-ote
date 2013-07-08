@@ -66,6 +66,12 @@ function getHtmlByTei(inputString) {
 	var addFormatElement = function($node) {
 		if (!$node)
 			return;
+		if ($node.nodeType == 1) {
+			var cn = $node.getAttribute('class');
+			if (cn && (cn == 'verse_number' || cn == 'chapter_number' || cn == 'book_number')) {
+				return;
+			}
+		}
 
 		$firstChild = $node.firstChild;
 		if (!$firstChild)
@@ -675,6 +681,19 @@ function getHtmlByTei(inputString) {
 		// For all types of breaks
 		var wceAttr = '__t=brea&__n=&break_type=' + type + '';
 
+		//test, if the textNode before break with endspace, if yes, delete
+		/*$preNode = $teiNode.previousSibling;
+		 if ($preNode && $preNode.nodeType == 1 && $preNode.nodeName == 'w') {
+		 $preNode = $preNode.firstChild;
+		 if ($preNode && $preNode.nodeType == 3) {
+		 $preText = $preNode.nodeValue;
+		 if ($preText && endHasSpace($preText)) {
+		 $preText = $preText.replace(/\s+$/, '');
+		 $preNode.nodeValue = $preText;
+		 }
+		 }
+		 }*/
+
 		switch (type) {
 			case 'pb':
 				// page break
@@ -729,8 +748,11 @@ function getHtmlByTei(inputString) {
 				wceAttr += '&pb_type=&fibre_type=&facs=';
 		}
 
-		if ($teiNode.getAttribute('break') != null) {// attribute break="no" exists
+		var hasBreak = false;
+		var breakValue = $teiNode.getAttribute('break');
+		if (breakValue && breakValue == 'yes') {// attribute break="no" exists
 			wceAttr += '&hasBreak=yes';
+			hasBreak = true;
 			nodeAddText($newNode, '\u002D');
 		} else {
 			wceAttr += '&hasBreak=no';
@@ -766,13 +788,28 @@ function getHtmlByTei(inputString) {
 					nodeAddText($newNode, '\u21B5\u2190');
 				else
 					nodeAddText($newNode, '\u21B5');
+
+				//
+				//test, if the textnode after lb hat a space, if not, add a space
+
+				if (!hasBreak) {
+					var $nextNode = $teiNode.nextSibling;
+					if ($nextNode && $nextNode.nodeType == 3) {
+						var nextText = $nextNode.nodeValue;
+						if (nextText && !startHasSpace(nextText)) {
+							$nextNode.nodeValue = ' ' + nextText;
+						}
+					}
+				}
 				break;
 		}
 		addFormatElement($newNode);
 		$htmlParent.appendChild($newNode);
 
-		if ($teiNode.nextSibling && $teiNode.nextSibling.nodeName === 'w')// add space only if new word follows
+		if ($teiNode.nextSibling && $teiNode.nextSibling.nodeName === 'w') {
+			// add space only if new word follows
 			nodeAddText($htmlParent, ' ');
+		}
 		return null;
 	};
 
@@ -1132,7 +1169,6 @@ function getTeiByHtml(inputString, args) {
 		var $oldRoot = $oldDoc.documentElement;
 		//remove elements format_start /format_end
 		removeFormatNode($oldRoot);
-
 		$newDoc = loadXMLString('<TEI></TEI>');
 
 		// <TEMP>
@@ -1292,9 +1328,10 @@ function getTeiByHtml(inputString, args) {
 					}
 					if ($nnext) {
 						//TODO: Check, whether there is any reason for this line; there is ... :-(
-						if (oldNodeNextType == 1)
+						if (oldNodeNextType == 1) {
 							$htmlNodeNext = $nnext;
-						continue;
+							continue;
+						}
 					}
 					$htmlNodeNext = null;
 				}
@@ -1311,8 +1348,9 @@ function getTeiByHtml(inputString, args) {
 
 		// If there is no special <div type="book"> element, the passed number from the Workspace is used.
 		// We check, if it is in the correct format.
-		if (g_bookNumber.length == 1)// add "0"
+		if (g_bookNumber.length == 1) {// add "0"
 			g_bookNumber = '0' + g_bookNumber;
+		}
 		wceAttrValue = $htmlNode.getAttribute('wce');
 
 		if (!wceAttrValue) {
@@ -1903,7 +1941,8 @@ function getTeiByHtml(inputString, args) {
 			$newNode.setAttribute("xml:id", xml_id);
 			//IE gets confused here
 			if (arr['hasBreak'] === 'yes') {
-				$newNode.setAttribute('break', 'no');
+				$newNode.setAttribute('break', 'yes');
+				//$newNode.setAttribute('break', 'no'); //verstehen ich nicht, warum mit "no" 08-07-2013
 			}
 		}
 		$teiParent.appendChild($newNode);
@@ -1916,6 +1955,8 @@ function getTeiByHtml(inputString, args) {
 			//found_ab = false;
 			final_w_set = false;
 		}
+
+		return null;
 		return {
 			0 : $newNode,
 			1 : true
@@ -2301,24 +2342,6 @@ function getTeiByHtml(inputString, args) {
 	};
 
 	/*
-	 * Is the string begins with a space
-	 */
-	var startHasSpace = function(str) {
-		if (str.match(/^\s+/)) {
-			return true;
-		}
-	};
-
-	/*
-	 * Is the string end with a space
-	 */
-	var endHasSpace = function(str) {
-		if (str.match(/\s+$/)) {
-			return true;
-		}
-	};
-
-	/*
 	 *
 	 */
 	var getType = function($htmlNode) {
@@ -2370,6 +2393,24 @@ function getTeiByHtml(inputString, args) {
 
 	return getTeiString();
 
+};
+
+/*
+ * Is the string begins with a space
+ */
+var startHasSpace = function(str) {
+	if (str.match(/^\s+/)) {
+		return true;
+	}
+};
+
+/*
+ * Is the string end with a space
+ */
+var endHasSpace = function(str) {
+	if (str.match(/\s+$/)) {
+		return true;
+	}
 };
 
 /*
