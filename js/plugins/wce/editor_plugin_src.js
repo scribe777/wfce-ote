@@ -4,12 +4,11 @@
  * Copyright 2009, Moxiecode Systems AB Released under LGPL License.
  *
  * License: http://tinymce.moxiecode.com/license Contributing: http://tinymce.moxieco
-de.com/contributing
-*/
-
+ de.com/contributing
+ */
 
 (function() {
-	var wfce_editor = "2013-07-08";
+	var wfce_editor = "2013-07-19";
 
 	// Load plugin specific language pack
 	tinymce.PluginManager.requireLangPack('wce');
@@ -162,7 +161,7 @@ de.com/contributing
 			v.isc = true;
 
 			// is Caret at end of node?
-			v.isCollapsedAtNodeEnd = false;
+			v.isCaretAtNodeEnd = false;
 
 			// Caret in which wce type
 			v.type = null;
@@ -193,8 +192,11 @@ de.com/contributing
 			WCEUtils.disableAllControls(ed, false);
 
 			//Cursor at begin of formatStart i.e. range startOffset==0
-			v.isCollapsedAtBeginOfFormatStart = false;
-
+			v.isCaretAtFormatStart = false;
+			v.isCaretAtFormatEnd = false;
+			v.selectedStartNode = null;
+			v.selectedEndNode = null;
+			v.rng = null;
 		},
 
 		/*
@@ -889,6 +891,7 @@ de.com/contributing
 			var _isWceBE = WCEUtils.isWceBE;
 			var selectedNode;
 			var startContainer = rng.startContainer;
+			var endContainer;
 			w.isc = ed.selection.isCollapsed();
 
 			// delete in firefox can create empty element and startOffset==0
@@ -915,18 +918,16 @@ de.com/contributing
 					//wenn neuen Text in textNode hinzugefuegt, wird neue textNode erstellt.
 					if (startText) {
 						if (selectedNode.className == ed.WCE_CON.formatEnd) {
-							w.isCollapsedAtNodeEnd = true;
+							w.isCaretAtNodeEnd = true;
 							w.type = ed.WCE_CON.formatEnd;
 						} else if (selectedNode.className == ed.WCE_CON.formatStart) {
 							selectedNode = selectedNode.parentNode;
 							w.type = ed.WCE_CON.formatStart;
-							if (rng.startOffset == 0) {
-								w.isCollapsedAtBeginOfFormatStart = true;
-							}
+
 						} else if (startText.length == rng.endOffset && (!startContainer.nextSibling || (startContainer.nextSibling && startContainer.nextSibling.nodeType != 3))) {
 							//mehrere txtNode koenen hintereinander stehen
 							//wenn startConatiner.nextSibling ein textNode ist ,dann ist nicht "at node Ende"
-							w.isCollapsedAtNodeEnd = true;
+							w.isCaretAtNodeEnd = true;
 						}
 					}
 				} else {
@@ -964,7 +965,7 @@ de.com/contributing
 				// w.inputDisable
 				// find startNode,endNode
 				var startNode, endNode, selectedNodeStart, selectedNodeEnd;
-				var endContainer = rng.endContainer;
+				endContainer = rng.endContainer;
 
 				startContainer = rng.startContainer;
 				if (startContainer.parentNode === endContainer.parentNode) {
@@ -1021,6 +1022,18 @@ de.com/contributing
 					//TODO: If the selection contains only text and abbreviations, it should be removable
 					w.inputDisable = true;
 				}
+
+			}
+
+			startContainer = rng.startContainer;
+			if (startContainer && startContainer.parentNode.className == ed.WCE_CON.formatStart && rng.startOffset == 0) {
+				w.isCaretAtFormatStart = true;
+				w.selectedStartNode = startContainer.parentNode.parentNode;
+			}
+			endContainer = rng.endContainer;
+			if (endContainer && endContainer.parentNode.className == ed.WCE_CON.formatEnd && rng.endOffset == 1) {
+				w.isCaretAtFormatEnd = true;
+				w.selectedEndNode = endContainer.parentNode.parentNode;
 			}
 
 			//select whole format?
@@ -2137,7 +2150,7 @@ de.com/contributing
 					setWCEVariable(ed);
 					redrawContols(ed);
 					wcevar.isRedrawn = true;
-					if ((wcevar.isCollapsedAtNodeEnd && wcevar.isNextElemBE) || (wcevar.isInBE)) {//allow deletion if no special element is concerned
+					if ((wcevar.isCaretAtNodeEnd && wcevar.isNextElemBE) || (wcevar.isInBE)) {//allow deletion if no special element is concerned
 						return stopEvent(ed, e);
 					}
 				}
@@ -2154,7 +2167,7 @@ de.com/contributing
 			// TODO: if no short_cut B, C ,Z ,Y .....
 			if (wcevar.isInBE && !e.ctrlKey) {
 				// keydown for insert letter
-				if (wcevar.isCollapsedAtNodeEnd && ek != 8 && ek != 46 && (wcevar.type == ed.WCE_CON.formatEnd || wcevar.type == 'chapter_number' || wcevar.type === 'book_number' || wcevar.type == 'verse_number')) {
+				if (wcevar.isCaretAtNodeEnd && ek != 8 && ek != 46 && (wcevar.type == ed.WCE_CON.formatEnd || wcevar.type == 'chapter_number' || wcevar.type === 'book_number' || wcevar.type == 'verse_number')) {
 					//wenn selectednode in andere BlockElement
 					if (WCEUtils.isWceBE(ed, wcevar.selectedNode.parentNode.parentNode)) {
 						return stopEvent(ed, e);
@@ -2172,12 +2185,12 @@ de.com/contributing
 					//[comm] italic need a tag
 					ed.execCommand('wceDelNode');
 					return stopEvent(ed, e);
-				} else if (ek == 46 && wcevar.isCollapsedAtNodeEnd && !wcevar.isNextElemBE) {
+				} else if (ek == 46 && wcevar.isCaretAtNodeEnd && !wcevar.isNextElemBE) {
 
-				} else if (ek == 46 && wcevar.isCollapsedAtNodeEnd && wcevar.isNextElemBE && wcevar.nextElem.className != 'commentary') {
+				} else if (ek == 46 && wcevar.isCaretAtNodeEnd && wcevar.isNextElemBE && wcevar.nextElem.className != 'commentary') {
 					//caret at middle of two elements
 					return stopEvent(ed, e);
-				} else if ((ek == 46 && !wcevar.isCollapsedAtBeginOfFormatStart) || (ek == 8 && wcevar.type != ed.WCE_CON.formatEnd && !wcevar.isCollapsedAtBeginOfFormatStart)) {
+				} else if ((ek == 46 && !wcevar.isCaretAtFormatStart) || (ek == 8 && wcevar.type != ed.WCE_CON.formatEnd && !wcevar.isCaretAtFormatStart)) {
 					ed.execCommand('wceDelNode');
 					return stopEvent(ed, e);
 				} else if (wcevar.isc) {
@@ -2199,7 +2212,7 @@ de.com/contributing
 			}
 
 			// key "entf"
-			if (ek == 46 && wcevar.isCollapsedAtNodeEnd) {
+			if (ek == 46 && wcevar.isCaretAtNodeEnd) {
 				if (wcevar.isNextElemBE) {
 					return stopEvent(ed, e);
 				}
@@ -3257,6 +3270,20 @@ de.com/contributing
 					//run it only at first time of ed.setContent(...)
 					if (!ed.isCounterInited) {
 						ed.isCounterInited = WCEUtils.setBreakCounterByContent(ed, _content);
+					}
+				});
+
+				ed.selection.onSetContent.addToTop(function(_content) {
+					var v = ed.WCE_VAR;
+					if (v.isc) {
+						return;
+					}
+					//if select an element tinyMCE selection.setContent replace only innerHTML of the element and tag remain.
+					//Fixed: tag muss be remove.
+					if (v.isCaretAtFormatStart && !v.isCaretAtFormatEnd) {
+						$(v.selectedStartNode).remove();
+					} else if (!v.isCaretAtFormatStart && v.isCaretAtFormatEnd) {
+						$(v.selectedEndNode).remove();
 					}
 				});
 
