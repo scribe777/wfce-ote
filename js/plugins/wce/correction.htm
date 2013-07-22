@@ -26,13 +26,13 @@
                     style="list-style-position: inside; list-style-type: none; margin: 0px; padding: 10px"></ul>
                 </div>
             </fieldset>
-            <input type="hidden" id="original_firsthand_reading" name="original_firsthand_reading" />
             <fieldset id="content_fieldset"
             style="margin-left: 170px; height: 475px; width: auto">
                 <legend>
                     {#wce.reading_data}
                 </legend>
-                <div style="height: 445px; overflow: auto">
+                <input type="hidden" id="original_firsthand_reading" name="original_firsthand_reading"/>
+				<div style="height: 445px; overflow: auto">
                     <table border="0" cellpadding="4" cellspacing="0" width="100%">
                         <tr>
                             <td><label id="reading_label" for="reading">{#wce.reading_type}</label></td>
@@ -45,8 +45,9 @@
                         </tr>
                         <tr>
                             <td><label id="firsthand_label" name="firsthand_label" for="firsthand_reading"> {#wce.firsthand_reading}</label></td>
-                            <td colspan="1"><label id="firsthand_reading" name="firsthand_reading"
-                            style="color: green" ></label></td>
+                            <td colspan="1">
+								<label id="firsthand_reading" name="firsthand_reading" style="color: green"></label>
+							</td>
                             <td>
                             <input type="checkbox" name="blank_firsthand"
                             id="blank_firsthand" onclick="checkstatus_firsthand()">
@@ -126,8 +127,9 @@
                         </div>
                         <tr>
                             <td><label id="editorial_note_label" for="editorial_note">{#wce.editorial_note}</label></td>
-                            <td colspan="2">                            <textarea WRAP="PHYSICAL" ROWS="3" COLS="50"
-								id="editorial_note" name="editorial_note"></textarea></td>
+                            <td colspan="2">
+								<textarea WRAP="PHYSICAL" ROWS="3" COLS="50" id="editorial_note" name="editorial_note"></textarea>
+							</td>
                         </tr>
                         <tr>
                             <td><label id="partial_label" for="partial">{#wce.correction_partial}</label></td>
@@ -142,7 +144,9 @@
                             <td><label id="corrector_text_label" for="corrector_text">{#wce.corrector_text}</label></td>
                         </tr>
                         <tr>
-                            <td colspan="3">                            <textarea WRAP="PHYSICAL" ROWS="4" style="width:100%" id="corrector_text" name="corrector_text"></textarea></td>
+                            <td colspan="3">
+								<textarea WRAP="PHYSICAL" ROWS="4" style="width:100%" id="corrector_text" name="corrector_text"></textarea>
+							</td>
                         </tr>
                     </table>
                 </div>
@@ -209,15 +213,15 @@
 
 			if (item_counter == -1) {//no corrector name given yet
 				$('#firsthand_reading').html(selected_content);
-				$('#original_firsthand_reading').val(selected_content);
-				//Save initial value for later use
+				$('#original_firsthand_reading').val(selected_content); //Save initial value for later use
 				addCorrector();
-			} else {
-				$('#firsthand_reading').value = $('#original_firsthand_reading').val();
-				//Use old value
 			}
-
+			
 			selectCorrItem();
+			
+			if (item_counter > -1) {//Use old value; needs this position, because otherwise the correct value is not available
+				$('#firsthand_reading').html($('#original_firsthand_reading').val());
+			}
 
 			$(':input').change(function() {
 				saveCurrCorrector();

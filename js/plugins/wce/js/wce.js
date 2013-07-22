@@ -143,7 +143,10 @@ function writeWceNodeInfo(val) {
 					gap_text = '[' + selected_content + ']';
 				} else {
 					if (document.getElementById('unit').value == "char") {
-						gap_text += '[' + document.getElementById('extent').value + ']';
+						if (document.getElementById('extent').value != '')
+							gap_text += '[' + document.getElementById('extent').value + ']';
+						else
+							gap_text += '[...]';
 					} else if (document.getElementById('unit').value == "line") {
 						for (var i = 0; i < document.getElementById('extent').value; i++) {
 							gap_text += '<br/>&crarr;[...]';
@@ -369,7 +372,10 @@ function writeWceNodeInfo(val) {
 					wce_node.removeChild(wce_node.firstChild);
 					// remove old content
 					if (document.getElementById('unit').value == "char") {
-						wce_node.textContent = '[' + document.getElementById('extent').value + ']';
+						if (document.getElementById('extent').value != '')
+							wce_node.textContent = '[' + document.getElementById('extent').value + ']';
+						else
+							wce_node.textContent = '[...]';
 					} else if (document.getElementById('unit').value == "line") {
 						for (var i = 0; i < document.getElementById('extent').value; i++) {// generate new content
 							$br = document.createElement('br');

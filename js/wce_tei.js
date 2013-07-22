@@ -498,25 +498,36 @@ function getHtmlByTei(inputString) {
 			} else {// gap
 				gap_text = '';
 				if (wceAttr.indexOf('unit=char') > -1) {
-					nodeAddText($newNode, '[' + $teiNode.getAttribute('extent') + ']');
+					if ($teiNode.getAttribute('extent'))
+						nodeAddText($newNode, '[' + $teiNode.getAttribute('extent') + ']');
+					else
+						nodeAddText($newNode, '[...]');
 				} else if (wceAttr.indexOf('unit=line') > -1) {
 					// TODO: numbering
 					for (var i = 0; i < $teiNode.getAttribute('extent'); i++) {
-						gap_text += '<br/>&crarr;[...]';
+						$br = $newDoc.createElement('br');
+						$newNode.appendChild($br);
+						nodeAddText($newNode, '\u21B5[...]');
 					}
-					nodeAddText($newNode, gap_text);
 				} else if (wceAttr.indexOf('unit=page') > -1) {
 					// TODO: numbering
 					for (var i = 0; i < $teiNode.getAttribute('extent'); i++) {
-						gap_text += '<br/>PB<br/>[...]';
+						$br = $newDoc.createElement('br');
+						$newNode.appendChild($br);
+						nodeAddText($newNode, 'PB');
+						$br = $newDoc.createElement('br');
+						$newNode.appendChild($br);
+						nodeAddText($newNode, '[...]');
 					}
-					nodeAddText($newNode, gap_text);
 				} else if (wceAttr.indexOf('unit=quire') > -1) {
 					// TODO: numbering
 					for (var i = 0; i < $teiNode.getAttribute('extent'); i++) {
-						gap_text += '<br/>QB<br/>[...]';
+						$br = $newDoc.createElement('br');
+						$newNode.appendChild($br);
+						nodeAddText($newNode, 'QB');
+						$newNode.appendChild($br);
+						nodeAddText($newNode, '[...]');
 					}
-					nodeAddText($newNode, gap_text);
 				} else {
 					nodeAddText($newNode, '[...]');
 				}
@@ -750,7 +761,7 @@ function getHtmlByTei(inputString) {
 
 		var hasBreak = false;
 		var breakValue = $teiNode.getAttribute('break');
-		if (breakValue && breakValue == 'yes') {// attribute break="no" exists
+		if (breakValue && breakValue == 'no') {// attribute break="no" exists
 			wceAttr += '&hasBreak=yes';
 			hasBreak = true;
 			nodeAddText($newNode, '\u002D');
@@ -1937,12 +1948,9 @@ function getTeiByHtml(inputString, args) {
 					xml_id = 'P' + g_pageNumber + '-' + g_witValue;
 					break;
 			}
-			//if (!arr['pb_ghostpage']) // write id only if not ghost page
-			$newNode.setAttribute("xml:id", xml_id);
-			//IE gets confused here
+			$newNode.setAttribute("xml:id", xml_id); //IE gets confused here
 			if (arr['hasBreak'] === 'yes') {
-				$newNode.setAttribute('break', 'yes');
-				//$newNode.setAttribute('break', 'no'); //verstehen ich nicht, warum mit "no" 08-07-2013
+				$newNode.setAttribute('break', 'no'); //This has to be "no" due to the TEI standard
 			}
 		}
 		$teiParent.appendChild($newNode);

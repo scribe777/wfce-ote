@@ -150,7 +150,11 @@
 				break_indention = "";
 
 			break_lbpos = wceUtils.modifyBreakPosition(ed);
-			
+			if (break_lbpos == 'lbm') {//lbm
+				document.breakinfo.hasBreak.value = 'yes';
+			} else {
+				document.breakinfo.hasBreak.value = 'no';
+			}
 			/*if (!add_new_wce_node) {
 				// set hasBreak attribute
 				checkstatus_hyphen();

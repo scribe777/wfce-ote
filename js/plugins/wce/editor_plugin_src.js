@@ -8,7 +8,7 @@
  */
 
 (function() {
-	var wfce_editor = "2013-07-19";
+	var wfce_editor = "2013-07-22";
 
 	// Load plugin specific language pack
 	tinymce.PluginManager.requireLangPack('wce');
@@ -2072,17 +2072,10 @@
 					newContent += '<span wce="__t=unclear&amp;__n=&amp;original_text=' + word + '" ' + wceClass + '>' + startFormatHtml + unclear_text + endFormatHtml + '</span>';
 					ed.selection.setContent(newContent);
 					break;
-				/*case 'ghostpage':
-				 // Ghost page
-				 // style = 'style="border: 1px dotted #f00; margin:0px; padding:0; color:#666"';
-				 wceClass = ' class="ghostpage"';
-				 wceAttr = 'wce="__t=gap&amp;__n=&amp;original_gap_text=&amp;gap_reason=absent&amp;unit=page&amp;unit_other=&amp;extent=1&amp;supplied_source=na28&amp;supplied_source_other=&amp;insert=Insert&amp;cancel=Cancel" ';
-				 ed.selection.setContent('<span ' + wceAttr + wceClass + '>Ghost page</span>');
-				 break;*/
 				case 'witnessend':
 					wceClass = ' class="witnessend"';
 					wceAttr = 'wce="__t=gap&amp;__n=&amp;original_gap_text=&amp;gap_reason=witnessEnd&amp;unit=&amp;unit_other=&amp;extent=&amp;supplied_source=na28&amp;supplied_source_other=&amp;insert=Insert&amp;cancel=Cancel" ';
-					ed.selection.setContent('<span ' + wceAttr + wceClass + '>Witness End</span>');
+					ed.selection.setContent('<span ' + wceAttr + wceClass + '>' + startFormatHtml + 'Witness End' + endFormatHtml + '</span>');
 					break;
 
 				default:
@@ -3531,7 +3524,7 @@
 			 });*/
 
 			ed.addCommand('mceAddWitnessend', function() {
-				doWithDialog(ed, 'witnessend');
+				doWithoutDialog(ed, 'witnessend');
 			});
 
 			// Add note/*********/
