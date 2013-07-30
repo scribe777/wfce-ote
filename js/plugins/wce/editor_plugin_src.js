@@ -8,7 +8,7 @@
  */
 
 (function() {
-	var wfce_editor = "2013-07-26";
+	var wfce_editor = "2013-07-30";
 
 	// Load plugin specific language pack
 	tinymce.PluginManager.requireLangPack('wce');
@@ -905,6 +905,7 @@
 					w.not_C = true;
 				//Corrections should also be possible for single positions (blank first hand reading)
 				w.not_A = true;
+				w.not_O = true;
 
 				// move caret to EndOfPreviousSibling, mainly for IE:
 				if (rng.startOffset == 0) {
@@ -1653,6 +1654,9 @@
 									info_text = '<div>' + ed.getLang('wce.infotext_untranscribed_text') + '</div>';
 									if (ar['covered'])
 										info_text += '<div style="margin-top:5px">' + ar['covered'] + ' ' + ed.getLang('wce.infotext_lines_covered') + '.';
+									break;
+								case 'ews':
+									info_text += ed.getLang('wce.fw_ews');
 									break;
 								case 'runTitle':
 									info_text += ed.getLang('wce.fw_running_title');
@@ -2992,7 +2996,7 @@
 						});
 
 						sub = m.addMenu({
-							title : ed.getLang('wce.menu_blank_spaces'),
+							title : ed.getLang('wce.menu_blank_spaces') + ' (Ctrl+Alt+S)',
 							id : 'menu-punctuation-blankspaces'
 						});
 
@@ -3308,6 +3312,7 @@
 				ed.addShortcut('ctrl+alt+g', 'Add gap', 'mceAddGap_Shortcut');
 				ed.addShortcut('ctrl+alt+a', 'Add abbreviation', 'mceAddAbbr_Shortcut');
 				ed.addShortcut('ctrl+alt+m', 'Add marginalia', 'mceAddParatext_Shortcut');
+				ed.addShortcut('ctrl+alt+s', 'Add blank spaces', 'mceAddSpaces_Shortcut');
 				ed.addShortcut('ctrl+alt+n', 'Add note', 'mceAddNote_Shortcut');
 				ed.addShortcut('ctrl+alt+v', 'Modify verses', 'mceVerseModify_Shortcut');
 				// ed.addShortcut('ctrl+p', 'Add punctuation', 'mceAddNote_Shortcut');
@@ -3578,7 +3583,20 @@
 			ed.addCommand('mceEditSpaces', function() {
 				doWithDialog(ed, url, '/spaces.htm', 480, 320, 1, false);
 			});
+			
+			ed.addCommand('mceAddSpaces_Shortcut', function() {
+				var w = ed.WCE_VAR;
+				if (w.not_S) {
+					return;
+				}
 
+				if (w.type == 'spaces') {
+					ed.execCommand('mceEditSpaces');
+				} else {
+					ed.execCommand('mceAddSpaces');
+				}
+			});
+			
 			// Add paratext/*********/
 			ed.addCommand('mceAddParatext', function() {
 				doWithDialog(ed, url, '/paratext.htm', 640, 480, 1, true);
@@ -3600,6 +3618,8 @@
 					ed.execCommand('mceAddParatext');
 				}
 			});
+			
+			
 
 			/*
 			 * ed.addCommand('mceAddPunctuation_Shortcut', function() { if (wcevar.not_PC) { return; }

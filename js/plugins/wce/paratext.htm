@@ -19,6 +19,7 @@
 					</td>
 					<td><select id="fw_type" name="fw_type" onchange="checkstatus_typ()">
 							<option value="commentary">{#wce.fw_commentary_text}</option>
+							<option value="ews">{#wce.fw_ews}</option>
 							<option value="runTitle">{#wce.fw_running_title}</option>
 							<option value="chapNum">{#wce.fw_chapter_number}</option>
 							<option value="chapTitle">{#wce.fw_chapter_title}</option>
@@ -165,6 +166,20 @@
 			//document.getElementById('text').style.backgroundColor = "#CCCCCC";
 			$('#marginals_text').attr('disabled', true);
 			marginals_text_editor.hide();
+			document.paratextinfo.paratext_position.disabled = true;
+			document.paratextinfo.paratext_alignment.disabled = true;
+		} else if (v == 'ews') {
+			document.paratextinfo.number.value = '';
+			document.paratextinfo.number.disabled = true;
+			document.getElementById('number').style.backgroundColor = "#CCCCCC";
+			document.paratextinfo.edit_number.checked = "checked";
+			document.getElementById('edit_number').disabled = true;
+			document.paratextinfo.covered.disabled = true;
+			document.getElementById('covered').style.backgroundColor = "#CCCCCC";
+			//document.paratextinfo.text.disabled = true;
+			//document.getElementById('text').style.backgroundColor = "#CCCCCC";
+			$('#marginals_text').attr('disabled', true);
+			marginals_text_editor.show();
 			document.paratextinfo.paratext_position.disabled = true;
 			document.paratextinfo.paratext_alignment.disabled = true;
 		} else if (v == 'runTitle' || v == 'chapTitle' || v == 'lectTitle' || v == 'colophon' || v == 'euthaliana' || v == 'gloss' || v =='pageNum' || v == 'elsewhere' || v == 'other') {

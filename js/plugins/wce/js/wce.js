@@ -229,6 +229,8 @@ function writeWceNodeInfo(val) {
 					} else {// no value given for covered lines
 						selected_content += '[<span class="commentary" ' + 'wce="__t=paratext&__n=&fw_type=commentary&covered=">comm</span>]';
 					}
+				} else if (document.getElementById('fw_type').value == "ews") {
+					selected_content = '[<span class="ews">ews</span>]';
 				} else
 					selected_content = val;
 

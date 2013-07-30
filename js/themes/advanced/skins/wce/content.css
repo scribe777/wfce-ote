@@ -152,6 +152,10 @@ span.commentary{
 	font-style: italic;
 }
 
+span.ews{
+	font-style: italic;
+}
+
 /*start: formatting group*/
 span.formatting_rubrication,span.formatting_gold,span.formatting_blue,span.formatting_green,span.formatting_yellow,
 span.formatting_other, span.formatting_overline, span.formatting_capitals, span.formatting_displaced-above, span.formatting_displaced-below,

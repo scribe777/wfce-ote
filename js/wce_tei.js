@@ -138,7 +138,6 @@ function getHtmlByTei(inputString) {
 	 */
 	var getHtmlNodeByTeiNode = function($htmlParent, $teiNode) {
 		var teiNodeName = $teiNode.nodeName;
-
 		// TODO: set wce_orig=""
 
 		switch (teiNodeName) {
@@ -877,12 +876,15 @@ function getHtmlByTei(inputString) {
 	 */
 	var Tei2Html_note = function($htmlParent, $teiNode) {
 		// <note type="$ note_type" n="$newHand" xml:id="_TODO_" > $note_text </note>
+		
+		/* Due to the removal of the editorial notes at the correction menu we don't need this anymore.
 		// First check, if it is a editorial note to a correction
 		// *Only* return for editorial notes
 		if ($teiNode.getAttribute('type') === 'local' && $teiNode.parentNode != null && $teiNode.parentNode.nodeName == 'rdg') {//<app>...</app><note type="local">...</note>
 			return null;
 		}
-
+		*/
+		
 		var $newNode = $newDoc.createElement('span');
 
 		if ($teiNode.getAttribute('type') === 'commentary') {// commentary text
@@ -915,6 +917,17 @@ function getHtmlByTei(inputString) {
 				$newNode.appendChild($span);
 				nodeAddText($newNode, ']');
 			}
+		} else if ($teiNode.getAttribute('subtype') === 'ews') {
+			$newNode.setAttribute('class', 'paratext');
+			var wceAttr = '__t=paratext&__n=&marginals_text=' + getDomNodeText($teiNode) + '&fw_type=ews&covered=&text=&number=&edit_number=on&paratext_position=pagetop&paratext_position_other=&paratext_alignment=left';
+			$newNode.setAttribute('wce', wceAttr);
+			nodeAddText($newNode, '[');
+			$span = $newDoc.createElement('span');
+			$span.setAttribute('class', 'ews');
+			nodeAddText($span, 'ews');
+			$newNode.appendChild($span);
+			nodeAddText($newNode, ']');
+			$teiNode.parentNode.removeChild($teiNode.nextSibling);
 		} else {
 			$newNode.setAttribute('class', 'note');
 
@@ -960,11 +973,12 @@ function getHtmlByTei(inputString) {
 
 		var collection = rdgs[0].childNodes;
 		for (var i = 0, l = collection.length; i < l; i++) {
-			/*node = collection[i];
+			 /*node = collection[i];
 			 nodes = node.childNodes;
 			 for (var j = 0, k = nodes.length; j < k; j++) {
 			 nnode = nodes[j];
-			 //alert(nnode.nodeName);
+			 alert(nnode.nodeName);
+			 }
 			 var text = '';
 			 if (nnode.nodeType == 3) {
 			 text = nnode.nodeValue;
@@ -1063,6 +1077,7 @@ function getHtmlByTei(inputString) {
 					wceAttr += '&corrector_text=' + encodeURIComponent(corrector_text);
 			}
 
+			/* We don't need this any longer as the editorial notes were removed from the correction dialogue
 			wceAttr += '&editorial_note=';
 			var $test = $rdg.lastChild;
 			// this is the only candidate for a match
@@ -1074,6 +1089,7 @@ function getHtmlByTei(inputString) {
 				//remove this note from the list
 				//}
 			}
+			*/
 
 			wceAttr += '&place_corr=';
 			var $test = $rdg.firstChild;
@@ -1356,7 +1372,7 @@ function getTeiByHtml(inputString, args) {
 	 */
 	var getTeiNodeByHtmlNode = function($teiParent, $htmlNode, stopAddW) {
 		var wceAttrValue, wceType, htmlNodeName, infoArr, arr;
-
+		
 		// If there is no special <div type="book"> element, the passed number from the Workspace is used.
 		// We check, if it is in the correct format.
 		if (g_bookNumber.length == 1) {// add "0"
@@ -1742,8 +1758,10 @@ function getTeiByHtml(inputString, args) {
 
 		for (var i = 0, l = infoArr.length; i < l; i++) {
 			var arr = infoArr[i];
+			if (arr['__t'] !== 'corr') // make sure, we are really dealing with a correction (problems existed with abbr + corr)
+				continue;
 			g_wordNumber = startWordNumberInCorrection;
-
+			
 			var partial = arr['partial'];
 			if (!$app) {
 				notecount = 0;
@@ -1852,6 +1870,7 @@ function getTeiByHtml(inputString, args) {
 				}
 			}
 
+			/* Due to the removal of editorial notes at the correction menu we do not need this any longer.
 			// editorial_note
 			var editorial_note = arr['editorial_note'];
 			if (editorial_note != '') {
@@ -1867,6 +1886,7 @@ function getTeiByHtml(inputString, args) {
 				$rdg.appendChild($note);
 				//insert $note at the end of the current reading
 			}
+			*/
 			$app.appendChild($rdg);
 		}
 		return {
@@ -1985,18 +2005,41 @@ function getTeiByHtml(inputString, args) {
 				$abbr.setAttribute('type', abbr_type);
 		}
 
-		var hText = getDomNodeText($htmlNode);
+		var hText = getDomNodeText($htmlNode); //TODO: we need a more complex method here to get nested elements as well
+		
+		if (hText && hText.indexOf('\u2039') == 0) // if marker is still active (e.g. at combinations)
+			hText = hText.substring(1, hText.length-1);
+		
+		/*var $innerNode = $newDoc.createDocumentFragment();
+		var childList = $htmlNode.childNodes;
+			for (var i = 0, l = childList.length; i < l; i++) {
+				if (childList[i].nodeType == 3) // TextNode
+					nodeAddText($innerNode, childList[i].nodeValue);
+				else { // element node
+					//removeFormatNode(childList[i]);
+					//readAllChildrenOfHtmlNode($innerNode, childList[i], true);
+					nodeAddText($innerNode, "TEST");
+					//alert($htmlNode.lastChild.nodeValue);
+					//$htmlNode.parentNode.removeChild($htmlNode);
+					//$innerNode.appendChild(arr[0]);
+				}
+			}*/
+		
 		// if "overline"��add <hi>
 		if (arr['add_overline'] === 'overline') {
 			var $hi = $newDoc.createElement('hi');
 			$hi.setAttribute('rend', 'overline');
-
+			//html2Tei_TEXT($hi, $htmlNode, false);
+			//if ($innerNode)
+			//	$hi.appendChild($innerNode);
 			if (hText) {
 				nodeAddText($hi, hText);
 			}
 			$abbr.appendChild($hi);
 		} else {
 			nodeAddText($abbr, hText);
+			//$abbr.appendChild($innerNode);
+			//html2Tei_TEXT($abbr, $htmlNode, false);
 		}
 
 		if (!stopAddW) {
@@ -2100,7 +2143,7 @@ function getTeiByHtml(inputString, args) {
 	var html2Tei_paratext = function(arr, $teiParent, $htmlNode, stopAddW) {
 		var newNodeName, fwType = arr['fw_type'];
 
-		if (fwType == 'commentary') {
+		if (fwType == 'commentary' || fwType == 'ews') {
 			newNodeName = 'note';
 		} else if (fwType == 'chapNum' || fwType == 'AmmSec' || fwType == 'EusCan' || fwType == 'stichoi') {
 			newNodeName = 'num';
@@ -2110,11 +2153,12 @@ function getTeiByHtml(inputString, args) {
 
 		var $paratext = $newDoc.createElement(newNodeName);
 		$paratext.setAttribute('type', fwType);
-		if (fwType == 'commentary')
+		if (fwType == 'commentary') {
 			if (arr['covered'] != '' && arr['covered'] > 0)//Value of 0 handles as empty value
 				$paratext.setAttribute('rend', arr['covered']);
-			else//no value for covered lines given
+			else //no value for covered lines given
 				$paratext.setAttribute('rend', '0');
+		}
 		// n
 		// write attribute n only for certain values
 		var numberValue = arr['number'];
@@ -2129,14 +2173,23 @@ function getTeiByHtml(inputString, args) {
 		}
 
 		var rendValue = arr['paratext_alignment'];
-		if (fwType != 'commentary' && rendValue && rendValue != '') {
+		if (fwType != 'commentary' && fwType != 'ews' && rendValue && rendValue != '') {
 			$paratext.setAttribute('rend', rendValue);
 		}
 
 		if (fwType == 'commentary') {
 			nodeAddText($paratext, 'Untranscribed commentary text');
 			$teiParent.appendChild($paratext);
-		} else {// only if not commentary
+		} else if (fwType == 'ews') {
+			$paratext.setAttribute('type', 'editorial')
+			$paratext.setAttribute('subtype', 'ews')
+			nodeAddText($paratext, decodeURIComponent(arr['marginals_text']));
+			$teiParent.appendChild($paratext);
+			var $gap = $newDoc.createElement('gap');
+			$gap.setAttribute('unit', 'verse');
+			$gap.setAttribute('extent', 'rest');
+			$teiParent.appendChild($gap);
+		} else {// only if not commentary nor ews
 			nodeAddText($paratext, decodeURIComponent(arr['marginals_text']));
 			var $seg;
 			if (placeValue === 'pageleft' || placeValue === 'pageright' || placeValue === 'pagetop' || placeValue === 'pagebottom') {//define <seg> element for marginal material
