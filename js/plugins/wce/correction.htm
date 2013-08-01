@@ -32,6 +32,7 @@
                     {#wce.reading_data}
                 </legend>
                 <input type="hidden" id="original_firsthand_reading" name="original_firsthand_reading"/>
+				<input type="hidden" id="common_firsthand_partial" name="common_firsthand_partial"/>
 				<div style="height: 445px; overflow: auto">
                     <table border="0" cellpadding="4" cellspacing="0" width="100%">
                         <tr>
@@ -126,6 +127,15 @@
                             {#wce.tt_corr_deletion}
                         </div>
                         <tr>
+                            <td><label id="firsthand_partial_label" for="firsthand_partial">{#wce.firsthand_partial}</label></td>
+                            <td>
+                            <select id="firsthand_partial" name="firsthand_partial" onchange="$('#common_firsthand_partial').val($('#firsthand_partial').val());">
+                                <option value="">{#wce.corr_partial_complete}</option>
+                                <option value="I">{#wce.corr_partial_beginning}</option>
+                                <option value="F">{#wce.corr_partial_end}</option>
+                            </select></td>
+                        </tr>
+                        <tr>
                             <td><label id="partial_label" for="partial">{#wce.correction_partial}</label></td>
                             <td>
                             <select id="partial" name="partial">
@@ -216,7 +226,7 @@
 			if (item_counter > -1) {//Use old value; needs this position, because otherwise the correct value is not available
 				$('#firsthand_reading').html($('#original_firsthand_reading').val());
 			}
-
+			
 			$(':input').change(function() {
 				saveCurrCorrector();
 			});
@@ -376,6 +386,7 @@
 					document.readinginfo.blank_firsthand.checked = true;
 					document.readinginfo.blank_firsthand.disabled = true;
 				}
+				
 				$('#corrector_text').val(first_val);
 				corrector_text_editor.setContent(first_val);
 				info_arr[_id] = formSerialize(null, corrector_name);
@@ -396,6 +407,7 @@
 			checkstatus_firsthand();
 			checkstatus_correction();
 			checkstatus_corr_position();
+			document.readinginfo.firsthand_partial.value=document.readinginfo.common_firsthand_partial.value;
 		}
 
 		function delCorrector(_id) {
@@ -463,6 +475,7 @@
 			checkstatus_hand();
 			checkstatus_correction();
 			setstatus_deletion();
+			$('#firsthand_partial').val($('#common_firsthand_partial').val());
 		}
 
 		if (!tinyMCE.isIE) {

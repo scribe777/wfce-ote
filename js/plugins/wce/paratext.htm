@@ -17,7 +17,7 @@
 				<tr>
 					<td><label id="fw_label" for="fw_type">{#wce.paratext}</label>
 					</td>
-					<td><select id="fw_type" name="fw_type" onchange="checkstatus_typ()">
+					<td colspan="3"><select id="fw_type" name="fw_type" onchange="checkstatus_typ()">
 							<option value="commentary">{#wce.fw_commentary_text}</option>
 							<option value="ews">{#wce.fw_ews}</option>
 							<option value="runTitle">{#wce.fw_running_title}</option>
@@ -35,21 +35,35 @@
 							<option value="other">{#wce.other}</option>
 					</select>
 					</td>
+					<td><input id="fw_type_other"
+						name="fw_type_other" type="text" value="" size="20"
+						maxlength="" class="required number min1 mceFocus" />
+					</td>
 				</tr>
 				<tr>
 					<td><label id="covered_label" for="covered">{#wce.covered}</label></td>
 					<td><input id="covered" name="covered" type="number" value=""
 						size="5" maxlength="" class="required number min1 mceFocus"/></td>
+					<td align="right"><label id="paratext_lectionary_notation_label"
+						for="paratext_lectionary_notation">{#wce.lectionary_notation}</label></td>
+					<td><select id="paratext_lectionary_notation"
+						name="paratext_lectionary_notation">
+							<option value=""></option>
+							<option value="Arche">Arche</option>
+							<option value="Telos">Telos</option>
+					</select>
+					</td>
+				</tr>
 				</tr>
 				<tr>
 					<td><label id="marginals_text_label" for="marginals_text">{#wce.text}</label></td>
 					<!--<td colspan="2"><input id="text" name="text" type="text" value=""
 						size=45" maxlength="" class="required number min1 mceFocus" onchange="checkstatus_typ()" /></td>-->
-						<td colspan="2"><textarea WRAP="PHYSICAL" ROWS="4" style="width:100%" id="marginals_text" name="marginals_text"></textarea></td>
+						<td colspan="4"><textarea WRAP="PHYSICAL" ROWS="4" style="width:100%" id="marginals_text" name="marginals_text"></textarea></td>
 				</tr>
 				<tr>
 					<td><label id="number_label" for="number">{#wce.number_attribute}</label></td>
-					<td><input id="number" name="number" type="text" value=""
+					<td colspan="3"><input id="number" name="number" type="text" value=""
 						size=50" maxlength="" class="required number min1 mceFocus" /></td>
 					<td><input id="edit_number" name="edit_number" type="checkbox" onchange="checkstatus_number()" checked="checked">{#wce.number_calculate}</input></td>
 				</tr>
@@ -58,6 +72,7 @@
 						for="paratext_position">{#wce.position}</label>
 					</td>
 					<td><select id="paratext_position" name="paratext_position" onchange="checkstatus_position()">
+							<option value=""></option>
 							<option value="pagetop">{#wce.position_pagetop}</option>
 							<option value="pagebottom">{#wce.position_pagebottom}</option>
 							<option value="pageleft">{#wce.position_pageleft}</option>
@@ -83,8 +98,9 @@
 				<tr>
 					<td><label id="paratext_alignment_label"
 						for="paratext_alignment">{#wce.alignment}</label></td>
-					<td><select id="paratext_alignment"
+					<td colspan="2"><select id="paratext_alignment"
 						name="paratext_alignment">
+							<option value=""></option>
 							<option value="left">{#wce.alignment_l}</option>
 							<option value="center">{#wce.alignment_c}</option>
 							<option value="right">{#wce.alignment_r}</option>
@@ -154,6 +170,14 @@
 
 	function checkstatus_typ() {
 		var v = $('#fw_type').val();
+		if (v == 'other') {
+			document.paratextinfo.fw_type_other.disabled = false;
+			document.getElementById('fw_type_other').style.backgroundColor = "white";
+		} else {
+			document.paratextinfo.fw_type_other.disabled = true;
+			document.getElementById('fw_type_other').style.backgroundColor = "#CCCCCC";
+		}
+		
 		if (v == 'commentary') {
 			document.paratextinfo.number.value = '';
 			document.paratextinfo.number.disabled = true;
@@ -162,6 +186,7 @@
 			document.getElementById('edit_number').disabled = true;
 			document.paratextinfo.covered.disabled = false;
 			document.getElementById('covered').style.backgroundColor = "white";
+			document.paratextinfo.paratext_lectionary_notation.disabled = true;
 			//document.paratextinfo.text.disabled = true;
 			//document.getElementById('text').style.backgroundColor = "#CCCCCC";
 			$('#marginals_text').attr('disabled', true);
@@ -176,13 +201,29 @@
 			document.getElementById('edit_number').disabled = true;
 			document.paratextinfo.covered.disabled = true;
 			document.getElementById('covered').style.backgroundColor = "#CCCCCC";
+			document.paratextinfo.paratext_lectionary_notation.disabled = true;
 			//document.paratextinfo.text.disabled = true;
 			//document.getElementById('text').style.backgroundColor = "#CCCCCC";
 			$('#marginals_text').attr('disabled', true);
 			marginals_text_editor.show();
 			document.paratextinfo.paratext_position.disabled = true;
 			document.paratextinfo.paratext_alignment.disabled = true;
-		} else if (v == 'runTitle' || v == 'chapTitle' || v == 'lectTitle' || v == 'colophon' || v == 'euthaliana' || v == 'gloss' || v =='pageNum' || v == 'elsewhere' || v == 'other') {
+		} else if (v == 'lectTitle') {
+			document.paratextinfo.number.value = '';
+			document.paratextinfo.number.disabled = true;
+			document.getElementById('number').style.backgroundColor = "#CCCCCC";
+			document.paratextinfo.edit_number.checked = "checked";
+			document.getElementById('edit_number').disabled = true;
+			document.paratextinfo.covered.disabled = true;
+			document.getElementById('covered').style.backgroundColor = "#CCCCCC";
+			document.paratextinfo.paratext_lectionary_notation.disabled = false;
+			//document.paratextinfo.text.disabled = false;
+			//document.getElementById('text').style.backgroundColor = "white";
+			$('#marginals_text').attr('disabled', false);
+			marginals_text_editor.show();
+			document.paratextinfo.paratext_position.disabled = false;
+			document.paratextinfo.paratext_alignment.disabled = false;
+		} else if (v == 'runTitle' || v == 'chapTitle' || v == 'colophon' || v == 'euthaliana' || v == 'gloss' || v =='pageNum' || v == 'elsewhere' || v == 'other') {
 			//don't get a number, only text
 			document.paratextinfo.number.value = '';
 			document.paratextinfo.number.disabled = true;
@@ -191,6 +232,7 @@
 			document.getElementById('edit_number').disabled = true;
 			document.paratextinfo.covered.disabled = true;
 			document.getElementById('covered').style.backgroundColor = "#CCCCCC";
+			document.paratextinfo.paratext_lectionary_notation.disabled = true;
 			//document.paratextinfo.text.disabled = false;
 			//document.getElementById('text').style.backgroundColor = "white";
 			$('#marginals_text').attr('disabled', false);
@@ -219,7 +261,7 @@
 	}
 
 	function checkstatus_position() {
-		if (document.paratextinfo.paratext_position.options[14].selected == true) {
+		if (document.paratextinfo.paratext_position.options[15].selected == true) {
 			document.paratextinfo.paratext_position_other.disabled = false;
 			document.getElementById('paratext_position_other').style.backgroundColor = "white";
 		} else {
@@ -240,7 +282,8 @@
 	}
 	
 	function testOther() {
-		if (document.paratextinfo.paratext_position.options[14].selected == true && document.getElementById('paratext_position_other').value == '') 
+		if ((document.paratextinfo.paratext_position.options[15].selected == true && document.getElementById('paratext_position_other').value == '')
+			|| (document.paratextinfo.fw_type.options[14].selected == true && document.getElementById('fw_type_other').value == '')) 
 			return false;
 	return true;
 	}

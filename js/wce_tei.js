@@ -848,7 +848,11 @@ function getHtmlByTei(inputString) {
 		var mapping = {
 			'n' : '&edit_number=',
 			'rend' : '&paratext_alignment=',
-			'type' : '&fw_type='
+			'type' : {
+						'0' : '@commentary@ews@runTitle@chapNum@chapTitle@lectTitle@colophon@quireSig@AmmSec@EusCan@euthaliana@gloss@stichoi@pageNum',
+						'1' : '&fw_type=',
+						'2' : '&fw_type=other&fw_type_other='
+					}
 		};
 
 		wceAttr += getWceAttributeByTei($teiNode, mapping);
@@ -1762,21 +1766,22 @@ function getTeiByHtml(inputString, args) {
 				continue;
 			g_wordNumber = startWordNumberInCorrection;
 			
+			var firsthand_partial = arr['firsthand_partial'];
 			var partial = arr['partial'];
 			if (!$app) {
 				notecount = 0;
 				rdgcount = 0;
 				// new Element <app>
 				$app = $newDoc.createElement('app');
-				if (partial != '')
-					$app.setAttribute('part', partial);
+				if (firsthand_partial != '')
+					$app.setAttribute('part', firsthand_partial);
 				$teiParent.appendChild($app);
 
 				// new Element <rdg> for original
 				// <rdg type="orig" hand="firsthand"><w n="17">���ӦŦͦɦƦŦӦ���</w> <pc>?</pc></rdg>
 				var $orig = $newDoc.createElement('rdg');
-				if (partial != '')
-					$orig.setAttribute('part', partial);
+				if (firsthand_partial != '')
+					$orig.setAttribute('part', firsthand_partial);
 				$orig.setAttribute('type', 'orig');
 				$orig.setAttribute('hand', 'firsthand');
 				if (arr['blank_firsthand'] === 'on') {//Blank first hand reading
@@ -2152,6 +2157,7 @@ function getTeiByHtml(inputString, args) {
 		}
 
 		var $paratext = $newDoc.createElement(newNodeName);
+		fwType = (fwType == 'other') ? arr['fw_type_other'] : fwType;
 		$paratext.setAttribute('type', fwType);
 		if (fwType == 'commentary') {
 			if (arr['covered'] != '' && arr['covered'] > 0)//Value of 0 handles as empty value
@@ -2192,7 +2198,9 @@ function getTeiByHtml(inputString, args) {
 		} else {// only if not commentary nor ews
 			nodeAddText($paratext, decodeURIComponent(arr['marginals_text']));
 			var $seg;
-			if (placeValue === 'pageleft' || placeValue === 'pageright' || placeValue === 'pagetop' || placeValue === 'pagebottom') {//define <seg> element for marginal material
+			if (placeValue === '') {
+				$teiParent.appendChild($paratext);
+			} else if (placeValue === 'pageleft' || placeValue === 'pageright' || placeValue === 'pagetop' || placeValue === 'pagebottom') {//define <seg> element for marginal material
 				$seg = $newDoc.createElement('seg');
 				$seg.setAttribute('type', 'margin');
 				$seg.setAttribute('subtype', placeValue);
@@ -2220,7 +2228,7 @@ function getTeiByHtml(inputString, args) {
 				$seg.setAttribute('n', '@' + 'P' + g_pageNumber + 'C' + g_columnNumber + 'L' + g_lineNumber + '-' + g_witValue);
 				$seg.appendChild($paratext);
 				$teiParent.appendChild($seg);
-			} else {//"other"
+			} else { // other
 				$seg = $newDoc.createElement('seg');
 				$seg.setAttribute('type', 'other');
 				$seg.setAttribute('subtype', placeValue);

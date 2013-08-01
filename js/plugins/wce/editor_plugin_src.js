@@ -8,7 +8,7 @@
  */
 
 (function() {
-	var wfce_editor = "2013-07-30";
+	var wfce_editor = "2013-08-01";
 
 	// Load plugin specific language pack
 	tinymce.PluginManager.requireLangPack('wce');
@@ -600,12 +600,12 @@
 					v.lcnt = WCEUtils.counterCalc(v.lcnt, 1);
 					// set new wceAttr with hasBreak=yes
 					wceAttr = attr ? attr : 'wce="__t=brea&amp;__n=&amp;hasBreak=yes&amp;break_type=lb&amp;number=' + v.lcnt + '&amp;pb_type=&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment="';
-					str = '&#8208;<br/ >&crarr;';
+					str = '&#8208;<br/ >'+indention+'&crarr;';
 				} else {
 					// line break at the end of a word
 					v.lcnt = WCEUtils.counterCalc(v.lcnt, 1);
 					wceAttr = attr ? attr : 'wce="__t=brea&amp;__n=&amp;hasBreak=no&amp;break_type=lb&amp;number=' + v.lcnt + '&amp;pb_type=&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment=" ';
-					str = '<br/ >&crarr;';
+					str = '<br/ >'+indention+'&crarr;';
 				}
 			} else if (bType == 'cb') {
 				// column break
@@ -1570,14 +1570,11 @@
 									}
 									break;
 								case 'pb':
-									if (!ar['pb_ghostpage']) {
-										info_text = '<div>' + ed.getLang('wce.infotext_page_number_sequence') + ': ' + ar['number'];
-										if (ar['pb_type'])
-											info_text += ar['pb_type'];
-										if (ar['fibre_type'])
-											info_text += ar['fibre_type'];
-									} else
-										info_text = '<div>' + ed.getLang('wce.infotext_no_number');
+									info_text = '<div>' + ed.getLang('wce.infotext_page_number_sequence') + ': ' + ar['number'];
+									if (ar['pb_type'])
+										info_text += ar['pb_type'];
+									if (ar['fibre_type'])
+										info_text += (ar['fibre_type'] === 'x') ? "\u2192" : "\u2191";
 									info_text += '</div>';
 									if (ar['facs']) {
 										info_text += '<div>' + ed.getLang('wce.infotext_url') + ': ' + ar['facs'] + '</div>';
@@ -1695,7 +1692,7 @@
 									info_text += ed.getLang('wce.fw_pagenumber');
 									break;
 								default:
-									info_text += ed.getLang('wce.other');
+									info_text += ar['fw_type_other'];
 							}
 							info_text += '</div>';
 							if (ar['fw_type'] != 'commentary') {
@@ -1802,7 +1799,7 @@
 				}
 
 				if (corr_str != '') {
-					if ($(sele_node).html() == 'T')// Blank first hand reading
+					if (ar['blank_firsthand'] == 'on')// Blank first hand reading
 						corr_str = '*: ' + ed.getLang('wce.infotext_omission') + corr_str;
 					else
 						corr_str = '*: ' + $(sele_node).html() + corr_str;
@@ -3599,11 +3596,11 @@
 			
 			// Add paratext/*********/
 			ed.addCommand('mceAddParatext', function() {
-				doWithDialog(ed, url, '/paratext.htm', 640, 480, 1, true);
+				doWithDialog(ed, url, '/paratext.htm', 900, 480, 1, true);
 			});
 			// Edit paratext
 			ed.addCommand('mceEditParatext', function() {
-				doWithDialog(ed, url, '/paratext.htm', 640, 480, 1, false);
+				doWithDialog(ed, url, '/paratext.htm', 900, 480, 1, false);
 			});
 
 			ed.addCommand('mceAddParatext_Shortcut', function() {
