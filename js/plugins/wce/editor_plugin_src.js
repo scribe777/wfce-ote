@@ -593,6 +593,7 @@
 			var str = '';
 			var v = ed.WCE_VAR;
 			var out = '';
+			var indention = (indention) ? indention : "";
 
 			if (bType == 'lb') {
 				if (lbpos == 'lbm') {
