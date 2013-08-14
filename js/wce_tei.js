@@ -1872,7 +1872,7 @@ function getTeiByHtml(inputString, args) {
 				$rdg.appendChild($seg);
 			} else {//non-marginal material
 				if (corrector_text) {//add to <rdg>
-					if (corrector_text === 'OMISSION')
+					if (corrector_text === 'OMISSION') //we don't want <w> around here
 						nodeAddText($rdg, corrector_text);
 					else
 						html2Tei_correctionAddW($rdg, corrector_text);

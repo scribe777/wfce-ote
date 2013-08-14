@@ -8,7 +8,7 @@
  */
 
 (function() {
-	var wfce_editor = "2013-08-13";
+	var wfce_editor = "2013-08-14";
 
 	// Load plugin specific language pack
 	tinymce.PluginManager.requireLangPack('wce');
@@ -902,7 +902,9 @@
 			}
 
 			if (w.isc) {
-				if (!WCEUtils.canInsertCorrection(ed, rng))
+				if (WCEUtils.canInsertCorrection(ed, rng))
+					w.not_C = false;
+				else
 					w.not_C = true;
 				//Corrections should also be possible for single positions (blank first hand reading)
 				w.not_A = true;
@@ -1325,8 +1327,8 @@
 				var startOffset = rng.startOffset;
 				var indexOfEnd = WCEUtils.getNextEnd(startText, startOffset);
 			}
-
-			if (rng.startOffset == indexOfEnd && startText.charAt(indexOfEnd - 1) == ' ')
+			
+			if (rng.startOffset == indexOfEnd && startText.charAt(indexOfEnd - 1).trim() == '')
 				return true;
 			return false;
 		},

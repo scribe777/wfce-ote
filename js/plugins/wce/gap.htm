@@ -146,7 +146,8 @@
 			document.getElementById('extent').style.backgroundColor = "white";
 		}
 		
-		if (document.gapinfo.unit.options[2].selected == true) {// line
+		if (document.gapinfo.unit.options[1].selected == true 
+			|| document.gapinfo.unit.options[2].selected == true) {// char or line
 			document.gapinfo.mark_as_supplied.checked = false;
 			document.gapinfo.mark_as_supplied.disabled = false;
 			document.gapinfo.supplied_source.disabled = false;
