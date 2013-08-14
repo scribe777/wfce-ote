@@ -31,7 +31,7 @@ function getHtmlByTei(inputString) {
 	};
 
 	// As &om; can not be handled we go back to OMISSION
-	inputString = inputString.replace(/&om;/g, "OMISSION");
+	inputString = inputString.replace(/&om;/g, "<w>OMISSION</w>");//Trick to solve problem without <w>...</w>
 	inputString = inputString.replace('\u00a0', ' ');
 	inputString = inputString.replace(/<\/supplied><\/w><w><supplied.*?>/g, " ");
 
@@ -1269,7 +1269,7 @@ function getTeiByHtml(inputString, args) {
 	 * read all nodes of $node and change and add
 	 */
 	var readAllChildrenOfHtmlNode = function($teiParent, $htmlNode, stopAddW) {
-		//alert(xml2String($newRoot));
+		//alert($htmlNode.nodeValue);
 		if (!$htmlNode) {
 			return;
 		}
@@ -1786,8 +1786,9 @@ function getTeiByHtml(inputString, args) {
 				$orig.setAttribute('hand', 'firsthand');
 				if (arr['blank_firsthand'] === 'on') {//Blank first hand reading
 					var origText = 'OMISSION';
-					//this is later replaced by &om;
-					html2Tei_correctionAddW($orig, origText);
+					//this is later replaced by &om; DO NOT ADD <w> HERE
+					nodeAddText($orig, origText);
+					//html2Tei_correctionAddW($orig, origText);
 				} else {
 					var origText = $htmlNode.getAttribute('wce_orig');
 					if (origText) {
@@ -1871,7 +1872,10 @@ function getTeiByHtml(inputString, args) {
 				$rdg.appendChild($seg);
 			} else {//non-marginal material
 				if (corrector_text) {//add to <rdg>
-					html2Tei_correctionAddW($rdg, corrector_text);
+					if (corrector_text === 'OMISSION')
+						nodeAddText($rdg, corrector_text);
+					else
+						html2Tei_correctionAddW($rdg, corrector_text);
 				}
 			}
 

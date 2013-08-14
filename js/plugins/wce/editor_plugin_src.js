@@ -8,7 +8,7 @@
  */
 
 (function() {
-	var wfce_editor = "2013-08-01";
+	var wfce_editor = "2013-08-13";
 
 	// Load plugin specific language pack
 	tinymce.PluginManager.requireLangPack('wce');
@@ -1541,10 +1541,33 @@
 				var k, v, kv, kv_ar;
 				for (var i = 0; i < info_arr.length; i++) {
 					ar = WCEUtils.stringToArray(info_arr[i]);
+					
 					var type_name = ar['__t'];
 					type_name = type_name.split('_');
-
-					switch (type_name[0]) {
+					
+					var switchvar = type_name[0];
+					
+					/*
+					// We test if there is a correction on an abbreviation. If so, we have to use the correction for the mouse over
+					*/
+					if (switchvar === 'abbr') {
+						if (i == 0 && sele_node.parentNode && sele_node.parentNode.getAttribute('class') === 'corr') { //check parent
+							wceAttr = sele_node.parentNode.getAttribute('wce');
+							info_arr = wceAttr.split('@');
+							ar = WCEUtils.stringToArray(info_arr[0]);
+						}
+						else if (i == 1) { // check ancestor
+							ar = WCEUtils.stringToArray(info_arr[0]);
+							if (ar['__t'] === 'corr') {
+								switchvar = 'corr';
+								type_name = 'corr';
+								corr_str = '';
+							} else
+								ar = WCEUtils.stringToArray(info_arr[i]);
+						}
+					}
+					
+					switch (switchvar) {
 						case 'abbr':
 							switch (ar['abbr_type']) {
 								case 'nomSac':
@@ -1796,7 +1819,6 @@
 							info_text = '';
 							break;
 					}
-
 				}
 
 				if (corr_str != '') {
