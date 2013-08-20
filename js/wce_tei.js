@@ -100,7 +100,7 @@ function getHtmlByTei(inputString) {
 			Tei2Html_TEXT($htmlParent, $teiNode);
 		} else if ($teiNode.nodeType == 1) {
 			var $newParent = getHtmlNodeByTeiNode($htmlParent, $teiNode);
-
+			
 			// stop to read $teiNode
 			if (!$newParent) {
 				if ($teiNode.nodeName == 'gap') // make sure that gap is followed by a space
@@ -118,7 +118,7 @@ function getHtmlByTei(inputString) {
 				}
 			}
 			if ($teiNode.nodeName == 'w' || $teiNode.nodeName == 'gap') {
-				// Please note: Word numbering is done outside the editor
+				// Please note: There is *no* word numbering
 				var $nextSibling = $teiNode.nextSibling;
 				if ($nextSibling && $nextSibling.nodeName == 'note') {
 					return;
@@ -607,7 +607,7 @@ function getHtmlByTei(inputString) {
 		// <abbr type="nomSac"> <hi rend="ol">aaa</hi> </abbr>
 		// <span class="abbr_add_overline"
 		// wce_orig="aaa" wce="__t=abbr&amp;__n=&amp;original_abbr_text=&amp;abbr_type=nomSac&amp;abbr_type_other=&amp;add_overline=overline">aaa</span>
-		var cList = $teiNode.childNodes;
+		//var cList = $teiNode.childNodes;
 		var className = teiNodeName;
 
 		var overlineCheckboxValue = '';
@@ -621,28 +621,57 @@ function getHtmlByTei(inputString) {
 			}
 		};
 
-		for (var i = 0, l = cList.length; i < l; i++) {
+		// Check if first child of <abbr> is an overline highlighting
+		if ($teiNode.firstChild.nodeName == 'hi' && $teiNode.firstChild.getAttribute("rend") == "overline") { 
+			className = 'abbr_add_overline';
+			wceAttr += '&add_overline=overline'
+			var cList = $teiNode.firstChild.childNodes;
+			var startlist = 0;
+		} else {
+			var cList = $teiNode.childNodes;
+			var startlist = 1;
+		}
+			
+		
+		/*for (var i = 0, l = cList.length; i < l; i++) {
 			var c = cList[i];
 			if (c.nodeName == 'hi') {
 				className = 'abbr_add_overline';
 				wceAttr += '&add_overline=overline'
 				break;
 			}
-		}
+		}*/
 
 		$newNode.setAttribute('class', className);
 
-		var newNodeText = getDomNodeText($teiNode);
-		if (newNodeText)
-			$newNode.setAttribute('wce_orig', encodeURIComponent(newNodeText));
+		//var newNodeText = getDomNodeText($teiNode); //TODO: We need a more complex routine
+		
+		//if (newNodeText)
+		//	$newNode.setAttribute('wce_orig', encodeURIComponent(newNodeText));
 
 		wceAttr += getWceAttributeByTei($teiNode, mapping);
 		$newNode.setAttribute('wce', wceAttr);
 
-		if (newNodeText) {
-			nodeAddText($newNode, newNodeText);
+		//if (newNodeText) {
+		//	nodeAddText($newNode, newNodeText);
+		//}
+		//addFormatElement($newNode);
+		
+		var $innerNode = $newDoc.createDocumentFragment();
+		for (var i = startlist, l = cList.length; i < l; i++) {
+			var c = cList[i];
+			if (c.nodeType == 3)
+				nodeAddText($innerNode, c.nodeValue);
+			else 
+				readAllChildrenOfTeiNode($innerNode, c);
 		}
+				
+		if ($innerNode) {
+			$newNode.appendChild($innerNode);
+		}
+		
 		addFormatElement($newNode);
+		
 		$htmlParent.appendChild($newNode);
 		return null;
 	};
@@ -1186,6 +1215,8 @@ function getTeiByHtml(inputString, args) {
 	//var found_ab = false;
 	//var final_w_found = false;
 	var final_w_set = false;
+	
+	var nodec = 0;
 
 	/*
 	 * Main Method <br /> return String of TEI-Format XML
@@ -1269,7 +1300,8 @@ function getTeiByHtml(inputString, args) {
 	 * read all nodes of $node and change and add
 	 */
 	var readAllChildrenOfHtmlNode = function($teiParent, $htmlNode, stopAddW) {
-		//alert($htmlNode.nodeValue);
+		//nodec++;
+		//alert(nodec + ' ' + $htmlNode.nodeValue);
 		if (!$htmlNode) {
 			return;
 		}
@@ -1304,7 +1336,10 @@ function getTeiByHtml(inputString, args) {
 				if (!$c) {
 					continue;
 				} else {
-					readAllChildrenOfHtmlNode($newParent, $c, stopAddW);
+					// For <span class="abbr..."> we use a special treatment (see HTML2TEI_abbr);
+					// TODO: Think about a general solution
+					if ($htmlNode.getAttribute('class').indexOf('abbr') == -1)
+						readAllChildrenOfHtmlNode($newParent, $c, stopAddW);
 				}
 			}
 
@@ -1334,7 +1369,8 @@ function getTeiByHtml(inputString, args) {
 								// Add rest to next node
 								$htmlNodeNext.nodeValue = subStr2;
 							} else {
-								html2Tei_TEXT($newParent.parentNode, $htmlNodeNext, stopAddW);
+								if ($htmlNodeNext != $htmlNodeNext.parentNode.lastChild) //avoid doubleing last part of word
+									html2Tei_TEXT($newParent.parentNode, $htmlNodeNext, stopAddW);
 							}
 							startCompressionWord = false;
 						} else {
@@ -2014,40 +2050,41 @@ function getTeiByHtml(inputString, args) {
 				$abbr.setAttribute('type', abbr_type);
 		}
 
-		var hText = getDomNodeText($htmlNode); //TODO: we need a more complex method here to get nested elements as well
+		//var hText = getDomNodeText($htmlNode); //TODO: we need a more complex method here to get nested elements as well
 		
-		if (hText && hText.indexOf('\u2039') == 0) // if marker is still active (e.g. at combinations)
-			hText = hText.substring(1, hText.length-1);
+		//if (hText && hText.indexOf('\u2039') == 0) // if marker is still active (e.g. at combinations)
+		//	hText = hText.substring(1, hText.length-1);
 		
-		/*var $innerNode = $newDoc.createDocumentFragment();
+		var $innerNode = $newDoc.createDocumentFragment();
 		var childList = $htmlNode.childNodes;
-			for (var i = 0, l = childList.length; i < l; i++) {
+			for (var i = 0, l = childList.length; i < l; i++) { // iterate through children of abbr
 				if (childList[i].nodeType == 3) // TextNode
 					nodeAddText($innerNode, childList[i].nodeValue);
 				else { // element node
 					//removeFormatNode(childList[i]);
-					//readAllChildrenOfHtmlNode($innerNode, childList[i], true);
-					nodeAddText($innerNode, "TEST");
+					readAllChildrenOfHtmlNode($innerNode, childList[i], true);
+					//nodeAddText($innerNode, "TEST");
 					//alert($htmlNode.lastChild.nodeValue);
 					//$htmlNode.parentNode.removeChild($htmlNode);
 					//$innerNode.appendChild(arr[0]);
+					//alert($htmlNode.getAttribute("class"));
 				}
-			}*/
+			}
 		
 		// if "overline"��add <hi>
 		if (arr['add_overline'] === 'overline') {
 			var $hi = $newDoc.createElement('hi');
 			$hi.setAttribute('rend', 'overline');
 			//html2Tei_TEXT($hi, $htmlNode, false);
-			//if ($innerNode)
-			//	$hi.appendChild($innerNode);
-			if (hText) {
-				nodeAddText($hi, hText);
-			}
+			if ($innerNode)
+				$hi.appendChild($innerNode);
+			//if (hText) {
+			//	nodeAddText($hi, hText);
+			//}
 			$abbr.appendChild($hi);
 		} else {
-			nodeAddText($abbr, hText);
-			//$abbr.appendChild($innerNode);
+			//nodeAddText($abbr, hText);
+			$abbr.appendChild($innerNode);
 			//html2Tei_TEXT($abbr, $htmlNode, false);
 		}
 
@@ -2278,7 +2315,6 @@ function getTeiByHtml(inputString, args) {
 	 */
 	var html2Tei_TEXT = function($teiParent, $htmlNode, stopAddW) {
 		var teiParentNodeName = $teiParent.nodeName;
-
 		// text to ignore
 		// text of unclear setup by html2Tei_unclear
 		var nodeTextToIgnore = new Array('gap', 'app', 'gb', 'lb', 'cb', 'pb', 'abbr', 'unclear', 'ex', 'note');
