@@ -8,7 +8,7 @@
  */
 
 (function() {
-	var wfce_editor = "2013-08-14";
+	var wfce_editor = "2013-08-23";
 
 	// Load plugin specific language pack
 	tinymce.PluginManager.requireLangPack('wce');
@@ -36,7 +36,7 @@
 			//blocked elements :If the Caret is inside, this will prohibit the key operation
 			c.blockedElements = new Array('gap', 'corr', 'book_number', 'chapter_number', 'verse_number', 'abbr', 'spaces', 'note', 'unclear', 'brea', 'paratext', 'pc');
 
-			//enable Correction a whole word is highlighte by...
+			//enable Correction a whole word is highlighted by...
 			c.combinationWithCorrection = new Array('gap', 'unclear', 'abbr');
 
 			// not blocked elements
@@ -1826,8 +1826,13 @@
 				if (corr_str != '') {
 					if (ar['blank_firsthand'] == 'on')// Blank first hand reading
 						corr_str = '*: ' + ed.getLang('wce.infotext_omission') + corr_str;
-					else
+					else {
+						var fs = new RegExp(ed.WCE_CON.startFormatHtml, 'g');
+						var fe = new RegExp(ed.WCE_CON.endFormatHtml, 'g');
+						//var out = $(sele_node).html().replace(fs, "").replace(fe, "");
 						corr_str = '*: ' + $(sele_node).html() + corr_str;
+						corr_str = corr_str.replace(fs, "").replace(fe, "");
+					}
 				}
 
 				if (type_name == 'corr') {
