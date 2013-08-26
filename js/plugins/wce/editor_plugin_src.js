@@ -115,6 +115,13 @@
 					break;
 			}
 		},
+		
+		/*
+		 * 
+		 */
+		updateBreakIndention : function(ed,node, indent){
+			WCEUtils.setInnerHTML(ed, node, indent);
+		},
 
 		/*
 		 *
@@ -581,7 +588,7 @@
 		 * @attr : attribute from dialog-form of break.htm
 		 * @_id: group id for beak
 		 */
-		getBreakHtml : function(ed, bType, lbpos, indention, attr, _id) {
+		getBreakHtml : function(ed, bType, lbpos, indention, attr, _id, getOnlyIndention) {
 			var _this = WCEUtils.getBreakHtml;
 
 			lbpos = lbpos ? lbpos : WCEUtils.modifyBreakPosition(ed);
@@ -607,6 +614,9 @@
 					v.lcnt = WCEUtils.counterCalc(v.lcnt, 1);
 					wceAttr = attr ? attr : 'wce="__t=brea&amp;__n=&amp;hasBreak=no&amp;break_type=lb&amp;number=' + v.lcnt + '&amp;pb_type=&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment=" ';
 					str = '<br/ >'+indention+'&crarr;';
+				}
+				if(getOnlyIndention){
+					return str;
 				}
 			} else if (bType == 'cb') {
 				// column break
