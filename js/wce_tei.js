@@ -104,7 +104,8 @@ function getHtmlByTei(inputString) {
 
 			// stop to read $teiNode
 			if (!$newParent) {
-				if ($teiNode.nodeName == 'gap')// make sure that gap is followed by a space
+				// make sure that a *single* gap is followed by a space
+				if ($teiNode.nodeName == 'gap' && $teiNode.nextSibling && $teiNode.nextSibling.nodeValue == null)
 					nodeAddText($htmlParent, ' ');
 				return;
 			}
@@ -130,7 +131,7 @@ function getHtmlByTei(inputString) {
 			}
 			
 			
-			if ($teiNode.nodeName == 'w' || $teiNode.nodeName == 'gap') {
+			if ($teiNode.nodeName == 'w'  ){ //}|| $teiNode.nodeName == 'gap') { //TODO: check
 				// Please note: There is *no* word numbering
 				var $nextSibling = $teiNode.nextSibling;
 				if ($nextSibling && $nextSibling.nodeName == 'note') {
@@ -1371,7 +1372,7 @@ function getTeiByHtml(inputString, args) {
 				} else {
 					// For <span class="abbr..."> we use a special treatment (see HTML2TEI_abbr);
 					// TODO: Think about a general solution
-					if ($htmlNode.getAttribute('class').indexOf('abbr') == -1)
+					if ($htmlNode.getAttribute('class').indexOf('abbr') == -1) 
 						readAllChildrenOfHtmlNode($newParent, $c, stopAddW);
 				}
 			}
@@ -1602,8 +1603,12 @@ function getTeiByHtml(inputString, args) {
 				} else {//no word boundaries
 					if ($htmlNode.getAttribute('wce').indexOf("mark_as_supplied=supplied") > -1)// supplied text => surrounding <w>
 						return html2Tei_gap(arr, $teiParent, $htmlNode, stopAddW);
-					else// gap => no surrounding <w>
-						return html2Tei_gap(arr, $teiParent, $htmlNode, true);
+					else { // gap; check, whether this is a single gap or part of a word
+						if ($htmlNode.nextSibling && $htmlNode.nextSibling.nodeValue.indexOf(' ') == 0) //=> no surrounding <w> needed
+							return html2Tei_gap(arr, $teiParent, $htmlNode, true);
+						else
+							return html2Tei_gap(arr, $teiParent, $htmlNode, stopAddW);
+					}
 				}
 			}
 		}
@@ -1796,9 +1801,10 @@ function getTeiByHtml(inputString, args) {
 			// add text
 			var newNodeText = getDomNodeText($htmlNode);
 			if (newNodeText) {
+				removeFormatNode($htmlNode);
 				$htmlNode.removeChild($htmlNode.firstChild);
-				newNodeText = newNodeText.replace(/[\[\]]/g, "");
-				//get rid of brackets [...]
+				newNodeText = newNodeText.replace(/[‹›\[\]]/g, "");
+				//get rid of brackets [...]  and format markers ‹...›
 				nodeAddText($newNode, newNodeText);
 			}
 		}
