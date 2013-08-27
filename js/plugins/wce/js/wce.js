@@ -359,7 +359,7 @@ function writeWceNodeInfo(val) {
 					//edit default
 					if(break_type=='lb'){
 						break_indention = wceUtils.getBreakHtml(ed, break_type, break_lbpos, break_indention, null, null, true);
-						wceUtils.updateBreakIndention(ed, wce_node,break_indention);
+						wceUtils.setInnerHTML(ed, wce_node, break_indention); 
 					}
 					wceUtils.updateBreakCounter(ed, break_type, document.breakinfo.number.value);
 				}
