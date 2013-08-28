@@ -2202,6 +2202,8 @@
 					}
 					if (e.altKey) //Otherwise "alt" inserts a space
 						return stopEvent(ed, e);
+					if (tinymce.isMac && e.metaKey) //Otherwise "apple" key inserts a space
+						return stopEvent(ed, e);
 					//nur wenn cursor am Ende von formatEnd
 					var isSpaceKey = WCEUtils.insertSpace(ed, ek);
 					doInsertSpace = true;
