@@ -8,7 +8,7 @@
  */
 
 (function() {
-	var wfce_editor = "2013-08-26";
+	var wfce_editor = "2013-08-28";
 
 	// Load plugin specific language pack
 	tinymce.PluginManager.requireLangPack('wce');
@@ -2200,6 +2200,8 @@
 					if (WCEUtils.isWceBE(ed, wcevar.selectedNode.parentNode.parentNode)) {
 						return stopEvent(ed, e);
 					}
+					if (e.altKey) //Otherwise "alt" inserts a space
+						return stopEvent(ed, e);
 					//nur wenn cursor am Ende von formatEnd
 					var isSpaceKey = WCEUtils.insertSpace(ed, ek);
 					doInsertSpace = true;
