@@ -124,14 +124,12 @@ function getHtmlByTei(inputString) {
 				}
 			} 
 			
-			//if($newParent && $newParent.nodeName.toLowerCase()=='span' && !$newParent.outerHTML.match('\u2039')	){				
-			//}			
 			if(needAddFormat){
 				addFormatElement($newParent);
 			}
 			
 			
-			if ($teiNode.nodeName == 'w'  ){ //}|| $teiNode.nodeName == 'gap') { //TODO: check
+			if ($teiNode.nodeName == 'w' ) { //}|| $teiNode.nodeName == 'gap') { //TODO: check
 				// Please note: There is *no* word numbering
 				var $nextSibling = $teiNode.nextSibling;
 				if ($nextSibling && $nextSibling.nodeName == 'note') {
@@ -282,7 +280,7 @@ function getHtmlByTei(inputString) {
 	var Tei2Html_TEXT = function($htmlParent, $teiNode) {
 		var textValue = $teiNode.nodeValue;
 		var oldNodeParentName = $teiNode.parentNode.nodeName;
-
+		
 		if (oldNodeParentName == 'ex') {
 			// ex
 			textValue = '(' + textValue + ')';
@@ -298,7 +296,8 @@ function getHtmlByTei(inputString) {
 				}
 			}
 			textValue = unclear_text;
-		} else { textValue;
+		} else {
+			textValue;
 		}
 
 		nodeAddText($htmlParent, textValue);
@@ -470,7 +469,7 @@ function getHtmlByTei(inputString) {
 	 */
 	var Tei2Html_gap_supplied = function($htmlParent, $teiNode, teiNodeName) {
 		// <gap reason="lacuna" unit="char" />
-		$newNode = $newDoc.createElement('span');
+		var $newNode = $newDoc.createElement('span');
 		if ($teiNode.getAttribute("reason") === 'witnessEnd') {// Witness end
 			$newNode.setAttribute('class', 'witnessend');
 			wceAttr = '__t=gap&__n=&original_gap_text=&gap_reason=witnessEnd&unit=&unit_other=&extent=&supplied_source=na28&supplied_source_other=&insert=Insert&cancel=Cancel';
@@ -510,6 +509,7 @@ function getHtmlByTei(inputString) {
 			if (teiNodeName == 'supplied') {// supplied
 				nodeAddText($newNode, '[' + $teiNode.firstChild.nodeValue + ']');
 			} else {// gap
+				//if ($htmlParent.nodeName !== 't'){
 				gap_text = '';
 				if (wceAttr.indexOf('unit=char') > -1) {
 					if ($teiNode.getAttribute('extent'))
@@ -546,6 +546,7 @@ function getHtmlByTei(inputString) {
 					nodeAddText($newNode, '[...]');
 				}
 			}
+			//}
 		}
 		addFormatElement($newNode);
 		$htmlParent.appendChild($newNode);
@@ -625,8 +626,8 @@ function getHtmlByTei(inputString) {
 		//var cList = $teiNode.childNodes;
 		var className = teiNodeName;
 
-		var overlineCheckboxValue = '';
-
+		//var overlineCheckboxValue = '';
+		var startlist,cList;
 		var wceAttr = '__t=abbr&__n=&original_abbr_text=';
 		var mapping = {
 			'type' : {
@@ -636,56 +637,37 @@ function getHtmlByTei(inputString) {
 			}
 		};
 
-		// Check if first child of <abbr> is an overline highlighting
+		// Check if first child of <abbr> is an overline highlighting (=> nomen sacrum)
 		if ($teiNode.firstChild.nodeName == 'hi' && $teiNode.firstChild.getAttribute("rend") == "overline") {
 			className = 'abbr_add_overline';
-			wceAttr += '&add_overline=overline'
-			var cList = $teiNode.firstChild.childNodes;
-			var startlist = 0;
+			wceAttr += '&add_overline=overline';
+			cList = $teiNode.firstChild.childNodes;
+			startlist = 0;
 		} else {
-			var cList = $teiNode.childNodes;
-			var startlist = 1;
+			cList = $teiNode.childNodes;
+			startlist = 1;
 		}
 
-		/*for (var i = 0, l = cList.length; i < l; i++) {
-		 var c = cList[i];
-		 if (c.nodeName == 'hi') {
-		 className = 'abbr_add_overline';
-		 wceAttr += '&add_overline=overline'
-		 break;
-		 }
-		 }*/
-
 		$newNode.setAttribute('class', className);
-
-		//var newNodeText = getDomNodeText($teiNode); //TODO: We need a more complex routine
-
-		//if (newNodeText)
-		//	$newNode.setAttribute('wce_orig', encodeURIComponent(newNodeText));
 
 		wceAttr += getWceAttributeByTei($teiNode, mapping);
 		$newNode.setAttribute('wce', wceAttr);
 
-		//if (newNodeText) {
-		//	nodeAddText($newNode, newNodeText);
-		//}
-		//addFormatElement($newNode);
-
-		var $innerNode = $newDoc.createDocumentFragment();
+		var $tempParent = $newDoc.createElement('t');
 		for (var i = startlist, l = cList.length; i < l; i++) {
 			var c = cList[i];
 			if (c.nodeType == 3)
-				nodeAddText($innerNode, c.nodeValue);
+				nodeAddText($tempParent, c.nodeValue);
 			else
-				readAllChildrenOfTeiNode($innerNode, c);
+				readAllChildrenOfTeiNode($tempParent, c);
 		}
 
-		if ($innerNode) {
-			$newNode.appendChild($innerNode);
+		if ($tempParent) {
+			$newNode.appendChild($tempParent);
 		}
-
+		
 		addFormatElement($newNode);
-
+		
 		$htmlParent.appendChild($newNode);
 		return null;
 	};
@@ -924,14 +906,6 @@ function getHtmlByTei(inputString) {
 	var Tei2Html_note = function($htmlParent, $teiNode) {
 		// <note type="$ note_type" n="$newHand" xml:id="_TODO_" > $note_text </note>
 
-		/* Due to the removal of the editorial notes at the correction menu we don't need this anymore.
-		 // First check, if it is a editorial note to a correction
-		 // *Only* return for editorial notes
-		 if ($teiNode.getAttribute('type') === 'local' && $teiNode.parentNode != null && $teiNode.parentNode.nodeName == 'rdg') {//<app>...</app><note type="local">...</note>
-		 return null;
-		 }
-		 */
-
 		var $newNode = $newDoc.createElement('span');
 
 		if ($teiNode.getAttribute('type') === 'commentary') {// commentary text
@@ -997,7 +971,10 @@ function getHtmlByTei(inputString) {
 		}
 		addFormatElement($newNode);
 		$htmlParent.appendChild($newNode);
-		nodeAddText($htmlParent, ' ');
+		// Do not add a space if there is a break after the note
+		if ($teiNode.nextSibling.nodeName !== 'lb' && $teiNode.nextSibling.nodeName !== 'cb' 
+			&& $teiNode.nextSibling.nodeName !== 'pb' && $teiNode.nextSibling.nodeName !== 'gb')
+			nodeAddText($htmlParent, ' ');
 		return null;
 	};
 
@@ -2055,10 +2032,10 @@ function getTeiByHtml(inputString, args) {
 			$newNode.setAttribute("xml:id", xml_id);
 			//IE gets confused here
 			if (arr['hasBreak'] === 'yes') {
-				$newNode.setAttribute('break', 'no');
-				//This has to be "no" due to the TEI standard
+				$newNode.setAttribute('break', 'no'); //This has to be "no" due to the TEI standard
 			}
 		}
+		
 		$teiParent.appendChild($newNode);
 		// TODO
 		if (break_type == 'lb') {
@@ -2162,9 +2139,6 @@ function getTeiByHtml(inputString, args) {
 			}
 		}
 
-		if ($teiParent.nodeName == 'w') {
-			$teiParent = $teiParent.parentNode;
-		}
 		// TODO: As long as there is no robust mechanism to set "-1", "-2", ... we have to "n" instead of "xml:id"
 		var xml_id = 'B' + g_bookNumber + 'K' + g_chapterNumber + 'V' + g_verseNumber + '-' + g_witValue;
 		$note.setAttribute('n', xml_id);
@@ -2175,11 +2149,20 @@ function getTeiByHtml(inputString, args) {
 			$secNewNode.setAttribute('n', decodeURIComponent(arr['newHand']));
 			$note.appendChild($secNewNode);
 		}
-
-		nodeAddText($note, decodeURIComponent(arr['note_text']));
-		// add text to node
-		$teiParent.appendChild($note);
-		//add node to tree
+		
+		nodeAddText($note, decodeURIComponent(arr['note_text'])); // add text to node
+		
+		// Note has to be moved after the current word; Caveat: If there is a break following the note, a special treatement has to be applied
+		if ($teiParent.nodeName == 'w') {
+			$teiParent = $teiParent.parentNode;
+			if ($htmlNode.nextSibling.getAttribute("class") == 'brea') { // break following the note => insert space (don't forget to reverse that at import
+				var $tempNode = $newDoc.createTextNode(" ");
+				$htmlNode.parentNode.insertBefore($tempNode, $htmlNode.nextSibling);
+			}	
+		}
+		
+		
+		$teiParent.appendChild($note); //add node to tree
 
 		return {
 			0 : $note,

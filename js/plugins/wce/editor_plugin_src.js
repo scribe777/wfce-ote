@@ -8,7 +8,7 @@
  */
 
 (function() {
-	var wfce_editor = "2013-08-28";
+	var wfce_editor = "2013-08-30";
 
 	// Load plugin specific language pack
 	tinymce.PluginManager.requireLangPack('wce');
@@ -1654,12 +1654,12 @@
 							}
 							corr_str += '</div>';
 							corr_str += '<div style="margin-top:5px">' + ar['__n'] + ': ';
-							//TODO: "corrector" should read "Korrekteur" in German
 							if (ar['blank_correction'] == 'on')
 								corr_str += ed.getLang('wce.infotext_deleted') + '</div>';
 							else
-								corr_str += ar['corrector_text'] + '</div>';
-
+								corr_str += ar['corrector_text'].replace(/<span class="abbr_add_overline"/g, 
+										'<span class="abbr_add_overline" style="text-decoration:overline"') + '</div>';
+							
 							var deletionText = ar['deletion'].replace(/\,/g, ', ');
 							if (deletionText && deletionText != 'null') {
 								// information on deletion
@@ -1833,7 +1833,6 @@
 					else {
 						var fs = new RegExp(ed.WCE_CON.startFormatHtml, 'g');
 						var fe = new RegExp(ed.WCE_CON.endFormatHtml, 'g');
-						//var out = $(sele_node).html().replace(fs, "").replace(fe, "");
 						corr_str = '*: ' + $(sele_node).html() + corr_str;
 						corr_str = corr_str.replace(fs, "").replace(fe, "");
 					}
@@ -3196,6 +3195,7 @@
 				'top' : 0,
 				'left' : 0
 			});
+			
 			$(document.body).append(infoBox);
 
 			// add adaptive selection checkbox
@@ -3352,8 +3352,8 @@
 				ed.addShortcut('ctrl+alt+v', 'Modify verses', 'mceVerseModify_Shortcut');
 				// ed.addShortcut('ctrl+p', 'Add punctuation', 'mceAddNote_Shortcut');
 
-				tinymce.dom.Event.add(ed.getDoc(), 'mousemove', function(e) {
-					WCEUtils.showWceInfo(ed, e);
+				tinymce.dom.Event.add(ed.getDoc(), 'mouseover', function(e) {
+					WCEUtils.showWceInfo(ed, e)
 				});
 			});
 
@@ -3395,11 +3395,7 @@
 
 					var wceAttr = wceNode.getAttribute('wce');
 					var originalText = decodeURIComponent(wceNode.getAttribute('wce_orig'));
-					/*
-					 if (wceClass === 'abbr' || wceClass === 'abbr_add_overline') {//Fix for abbreviations; should become deprecated soon
-					 originalText = wceNode.firstChild.nodeValue;
-					 }*/
-
+					
 					if (wceClass == 'brea') {
 						//We need a marker here similar to the one for deleting non-breaks. Otherwise there are problems under Safari!
 						//Fixed:  we do not use function remove
