@@ -639,7 +639,8 @@ function getHtmlByTei(inputString) {
 
 		// Check if first child of <abbr> is an overline highlighting (=> nomen sacrum)
 		if ($teiNode.firstChild && $teiNode.firstChild.nodeName == 'hi' 
-			&& $teiNode.firstChild.getAttribute("rend") == "overline") {
+			&& ($teiNode.firstChild.getAttribute("rend") == "overline" 
+			|| $teiNode.firstChild.getAttribute("rend") == "ol")) {
 			className = 'abbr_add_overline';
 			wceAttr += '&add_overline=overline';
 			cList = $teiNode.firstChild.childNodes;
