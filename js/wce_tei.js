@@ -1495,7 +1495,7 @@ function getTeiByHtml(inputString, args) {
 			if (textNode) {
 				g_chapterNumber = textNode.nodeValue;
 				g_chapterNumber = $.trim(g_chapterNumber);
-				if (g_chapterNumber != old_chapterNumber) {//ignore repeated chapter numbers; TODO: still needed?
+				//if (g_chapterNumber != old_chapterNumber) {//ignore repeated chapter numbers; TODO: still needed?
 					old_chapterNumber = g_chapterNumber;
 					g_chapterNode = $newDoc.createElement('div');
 					if (g_chapterNumber === 'Inscriptio') {
@@ -1512,7 +1512,7 @@ function getTeiByHtml(inputString, args) {
 						g_bookNode.appendChild(g_chapterNode);
 					else
 						$newRoot.appendChild(g_chapterNode);
-				}
+			//	}
 			}
 			return null;
 		} else if (wceAttrValue != null && wceAttrValue.match(/book_number/)) {

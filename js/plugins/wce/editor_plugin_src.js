@@ -1095,7 +1095,11 @@
 						w.not_D = false;
 					}
 					break;
-
+				
+				case 'book_number':
+					_disableAllControls(ed, true);
+					break;
+					
 				case 'chapter_number':
 					_disableAllControls(ed, true);
 					break;
@@ -3387,7 +3391,7 @@
 				if (wceNode) {
 					//verse chapter
 					wceClass = wceNode.getAttribute('class');
-					if (wceClass === 'verse_number' || wceClass == 'chapter_number') {
+					if (wceClass === 'verse_number' || wceClass == 'chapter_number' || wceClass == 'book_number') {
 						return;
 					}
 
