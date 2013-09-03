@@ -107,6 +107,7 @@ function writeWceNodeInfo(val) {
 
 	var newWceAttr = arrayToString(info_arr);
 	newWceAttr += other_info_str;
+	var wceID = '';
 
 	if (wce_node != null && newWceAttr == '') {
 		ed.execCommand('wceDelNode', false);
@@ -139,33 +140,44 @@ function writeWceNodeInfo(val) {
 		switch (wce_type) {
 			case 'gap':
 				var gap_text = "";
+				var gap_unit;
+				var gap_extent;
+				var gap_id;
 				if (document.getElementById('mark_as_supplied').checked == true) {// supplied text
 					gap_text = '[' + selected_content + ']';
 				} else {
-					if (document.getElementById('unit').value == "char") {
-						if (document.getElementById('extent').value != '')
-							gap_text += '[' + document.getElementById('extent').value + ']';
+					gap_unit = document.getElementById('unit').value;
+					gap_extent = document.getElementById('extent').value;
+					if (gap_unit == "char") {
+						if (gap_extent != '')
+							gap_text += '[' + gap_extent + ']';
 						else
 							gap_text += '[...]';
-					} else if (document.getElementById('unit').value == "line") {
-						for (var i = 0; i < document.getElementById('extent').value; i++) {
+					} else if (gap_unit == "line") {
+						for (var i = 0; i < gap_extent; i++) {
 							gap_text += '<br/>&crarr;[...]';
 						}
-						wceUtils.addToCounter(ed, 'lb', document.getElementById('extent').value);
-					} else if (document.getElementById('unit').value == "page") {
-						for (var i = 0; i < document.getElementById('extent').value; i++) {
+						gap_id = '_2_' + wceUtils.getRandomID(ed, '');
+						wceUtils.addToCounter(ed, 'lb', gap_extent);
+					} else if (gap_unit == "page") {
+						for (var i = 0; i < gap_extent; i++) {
 							gap_text += '<br/>PB<br/>[...]';
 						}
-						wceUtils.addToCounter(ed, 'pb', document.getElementById('extent').value);
-					} else if (document.getElementById('unit').value == "quire") {
-						for (var i = 0; i < document.getElementById('extent').value; i++) {
+						gap_id = '_4_' + wceUtils.getRandomID(ed, '');
+						wceUtils.addToCounter(ed, 'pb', gap_extent);
+					} else if (gap_unit == "quire") {
+						for (var i = 0; i < gap_extent; i++) {
 							gap_text += '<br/>QB<br/>[...]';
 						}
-						wceUtils.addToCounter(ed, 'gb', document.getElementById('extent').value);
+						wceUtils.addToCounter(ed, 'gb', gap_extent);
 					} else {
 						gap_text = '[...]';
 					}
 				}
+				if (gap_id) {
+					wceID = 'id="gap' + gap_id + '" ';
+				}
+
 				selected_content = gap_text;
 				break;
 
@@ -250,7 +262,7 @@ function writeWceNodeInfo(val) {
 
 		//if new_content is not defined, use default
 		if (!new_content) {
-			new_content = '<span wce="' + newWceAttr + '"' + wceClass + original_text + '>' + startFormatHtml + selected_content + endFormatHtml + '</span>';
+			new_content = '<span wce="' + newWceAttr + '"' + wceID + wceClass + original_text + '>' + startFormatHtml + selected_content + endFormatHtml + '</span>';
 		}
 
 		//var marker = ed.dom.get('_marker'); //Does not work; intended for editing breaks
@@ -276,10 +288,18 @@ function writeWceNodeInfo(val) {
 		}
 
 		if (wce_type == 'gap') {
-			if (document.getElementById('unit').value == "line")
-				ed.execCommand('mceAdd_brea', 'lb', 0);
-			else if (document.getElementById('unit').value == "page")
-				ed.execCommand('mceAdd_brea', 'pb', 0);
+			if (gap_unit == "line") {
+				wceUtils.updateBreakCounter(ed, 'lb', 0);
+				ed.selection.setContent(wceUtils.getBreakHtml(ed, 'lb', null, null, null, gap_id));
+			} else if (gap_unit == "page") {
+				wceUtils.updateBreakCounter(ed, 'pb', 0);
+				ed.selection.setContent(wceUtils.getBreakHtml(ed, 'pb', null, null, null, gap_id));
+			}
+
+			/*if (document.getElementById('unit').value == "line")
+			 ed.execCommand('mceAdd_brea', 'lb', 0);
+			 else if (document.getElementById('unit').value == "page")
+			 ed.execCommand('mceAdd_brea', 'pb', 0);*/
 		}
 
 		if (wceUtils) {
@@ -357,9 +377,9 @@ function writeWceNodeInfo(val) {
 					return writeWceNodeInfo();
 				} else {
 					//edit default
-					if(break_type=='lb'){
+					if (break_type == 'lb') {
 						break_indention = wceUtils.getBreakHtml(ed, break_type, break_lbpos, break_indention, null, null, true);
-						wceUtils.setInnerHTML(ed, wce_node, break_indention); 
+						wceUtils.setInnerHTML(ed, wce_node, break_indention);
 					}
 					wceUtils.updateBreakCounter(ed, break_type, document.breakinfo.number.value);
 				}
@@ -371,6 +391,10 @@ function writeWceNodeInfo(val) {
 				}
 				wce_node.className = abbrClass;
 			} else if (wce_type == 'gap') {// edit gap
+				ed.execCommand('wceDelNode', false);
+				add_new_wce_node = true;
+				return writeWceNodeInfo();
+
 				// TODO: Additional break at the end is still missing.
 				if (document.getElementById('mark_as_supplied').checked == true) {// supplied text
 					wce_node.textContent = '[' + wce_node.getAttribute('wce_orig') + ']';

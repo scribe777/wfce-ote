@@ -3400,7 +3400,7 @@
 					var wceAttr = wceNode.getAttribute('wce');
 					var originalText = decodeURIComponent(wceNode.getAttribute('wce_orig'));
 					
-					if (wceClass == 'brea') {
+					if (wceClass == 'brea' || wceClass=='gap') {
 						//We need a marker here similar to the one for deleting non-breaks. Otherwise there are problems under Safari!
 						//Fixed:  we do not use function remove
 						var bID = wceNode.getAttribute('id');
@@ -3419,7 +3419,7 @@
 							//id index
 							var bb = bArr[2];
 							if (bb && bc && bt) {
-								var arr = new Array('lb', 'cb', 'pb', 'qb');
+								var arr = new Array('gap','lb', 'cb', 'pb', 'qb');
 								var arrItem;
 								for (var i = parseInt(bc) - 1; i > -1; i--) {
 									arrItem = arr[i];
@@ -3666,7 +3666,7 @@
 				doWithoutDialog(ed, 'abbr', c);
 			});
 
-			ed.addCommand('mceAdd_brea', function(c, number) {
+			ed.addCommand('mceAdd_brea', function(c, number, _id) {
 				var v = ed.WCE_VAR;
 				if (number) {
 					WCEUtils.updateBreakCounter(ed, c, number);
