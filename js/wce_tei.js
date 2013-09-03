@@ -1580,11 +1580,14 @@ function getTeiByHtml(inputString, args) {
 					return html2Tei_gap(arr, $teiParent, $htmlNode, stopAddW);
 					// get result from first part and return to main routine
 				} else {//no word boundaries
-					if ($htmlNode.getAttribute('wce').indexOf("mark_as_supplied=supplied") > -1)// supplied text => surrounding <w>
+					if ($htmlNode.getAttribute('wce').indexOf("mark_as_supplied=supplied") > -1){// supplied text => surrounding <w>
 						return html2Tei_gap(arr, $teiParent, $htmlNode, stopAddW);
+					}
 					else { // gap; check, whether this is a single gap or part of a word
-						if ($htmlNode.nextSibling && $htmlNode.nextSibling.nodeValue.indexOf(' ') == 0) //=> no surrounding <w> needed
+						var _nextSibling=$htmlNode.nextSibling;						
+						if (_nextSibling && _nextSibling.nodeType==3 && _nextSibling.nodeValue && _nextSibling.nodeValue.indexOf(' ') == 0) {//=> no surrounding <w> needed
 							return html2Tei_gap(arr, $teiParent, $htmlNode, true);
+						}
 						else
 							return html2Tei_gap(arr, $teiParent, $htmlNode, stopAddW);
 					}
