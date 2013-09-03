@@ -8,7 +8,7 @@
  */
 
 (function() {
-	var wfce_editor = "2013-09-02";
+	var wfce_editor = "2013-09-03";
 
 	// Load plugin specific language pack
 	tinymce.PluginManager.requireLangPack('wce');
@@ -2190,7 +2190,7 @@
 			if (e.ctrlKey && e.altKey && ek == 86) {
 				//Ctrl+Shift+V
 			}
-
+			
 			// TODO: if no short_cut B, C ,Z ,Y .....
 			if (wcevar.isInBE && !e.ctrlKey) {
 				// keydown for insert letter

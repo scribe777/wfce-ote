@@ -2157,13 +2157,13 @@ function getTeiByHtml(inputString, args) {
 		// Note has to be moved after the current word; Caveat: If there is a break following the note, a special treatement has to be applied
 		if ($teiParent.nodeName == 'w') {
 			$teiParent = $teiParent.parentNode;
-			if ($htmlNode.nextSibling.getAttribute("class") == 'brea') { // break following the note => insert space (don't forget to reverse that at import
+			if ($htmlNode.nextSibling && $htmlNode.nextSibling.nodeType == 1
+				&& $htmlNode.nextSibling.getAttribute("class") == 'brea') { // break following the note => insert space (don't forget to reverse that at import
 				var $tempNode = $newDoc.createTextNode(" ");
 				$htmlNode.parentNode.insertBefore($tempNode, $htmlNode.nextSibling);
 			}	
 		}
-		
-		
+				
 		$teiParent.appendChild($note); //add node to tree
 
 		return {
