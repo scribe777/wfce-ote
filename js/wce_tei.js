@@ -991,7 +991,7 @@ function getHtmlByTei(inputString) {
 		// <rdg type="orig" hand="firsthand" />
 		// <rdg type="corr" hand="corrector1">
 		var rdgs = $teiNode.childNodes;
-		var $rdg, typeValue, handValue, deletionValue, partialValue;
+		var $rdg, typeValue, handValue, deletionValue, partialValue, firsthandPartialValue;
 		var wceAttr = '';
 		var origText = '';
 		var rdgAttr;
@@ -1000,34 +1000,6 @@ function getHtmlByTei(inputString) {
 
 		var collection = rdgs[0].childNodes;
 		for (var i = 0, l = collection.length; i < l; i++) {
-			/*node = collection[i];
-			nodes = node.childNodes;
-			for (var j = 0, k = nodes.length; j < k; j++) {
-			nnode = nodes[j];
-			alert(nnode.nodeName);
-			}
-			var text = '';
-			if (nnode.nodeType == 3) {
-			text = nnode.nodeValue;
-			} else if (nnode.nodeType == 1) {
-			if (nnode.nodeName === 'lb') {
-			//textNodes.push('lb');
-			var $test = $newDoc.createElement('test');
-			Tei2Html_break($test,nnode,'lb');
-			textNodes.push($test.textContent);
-			//textNodes.push($($test).html());//.replace(/span/g,"<"));//TODO MARTIN
-			//alert($test.innerHTML);
-			}
-			if (nnode.firstChild)
-			text = nnode.firstChild.nodeValue;
-			}
-			textNodes.push(text);
-			}
-			origText = textNodes.join(' ');*/
-
-			//origText += collection[i].firstChild.nodeValue + ' ';
-			// add text word for word
-
 			readAllChildrenOfTeiNode($origRdg, collection[i]); 
 		}
 		
@@ -1059,9 +1031,10 @@ function getHtmlByTei(inputString) {
 			else
 				partialValue = '';
 
-			if (i == 1)
+			if (i == 1) {
 				wceAttr += '__t=corr';
-			else
+				firsthandPartialValue = partialValue;
+			} else
 				wceAttr += '@__t=corr';
 
 			if ('@corrector@firsthand@corrector1@corrector2@corrector3'.indexOf(handValue) > -1) {
@@ -1076,6 +1049,7 @@ function getHtmlByTei(inputString) {
 			else
 				wceAttr += '&original_firsthand_reading=&blank_firsthand=on';
 
+			wceAttr += '&common_firsthand_partial=';
 			if (deletionValue) {
 				// deletion="underline%2Cunderdot%2Cstrikethrough"
 				// &deletion_erased=0
@@ -1100,7 +1074,7 @@ function getHtmlByTei(inputString) {
 			} else {// no deletion given
 				wceAttr += '&deletion_erased=0&deletion_underline=0&deletion_underdot=0&deletion_strikethrough=0&deletion_vertical_line=0&deletion_other=0&deletion=null';
 			}
-			wceAttr += '&partial=' + partialValue;
+			wceAttr += '&firsthand_partial=' + firsthandPartialValue + '&partial=' + partialValue;
 
 			// &correction_text Contain:
 			// <note>nnn</note><w n="2">aaa</w><w n="3"> c<hi rend="gold">a</hi> b<hi rend="green">c</hi></w><w n="4">bbb</w>
