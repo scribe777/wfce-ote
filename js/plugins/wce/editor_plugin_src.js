@@ -2196,7 +2196,7 @@
 			}
 			
 			// TODO: if no short_cut B, C ,Z ,Y .....
-			if (wcevar.isInBE && !e.ctrlKey) {
+			if (wcevar.isInBE && ((!tinymce.isMac && !e.ctrlKey) || (tinymce.isMac && !e.metaKey))) {
 				// keydown for insert letter
 				if (wcevar.isCaretAtNodeEnd && ek != 8 && ek != 46 && (wcevar.type == ed.WCE_CON.formatEnd || wcevar.type == 'chapter_number' || wcevar.type === 'book_number' || wcevar.type == 'verse_number')) {
 					//wenn selectednode in andere BlockElement
