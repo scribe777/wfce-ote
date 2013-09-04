@@ -8,7 +8,7 @@
  */
 
 (function() {
-	var wfce_editor = "2013-09-03";
+	var wfce_editor = "2013-09-04";
 
 	// Load plugin specific language pack
 	tinymce.PluginManager.requireLangPack('wce');
@@ -2129,18 +2129,6 @@
 			evs.prevent(e);
 			evs.stop(e);
 			return false;
-
-			// if (e.stopPropagation) {
-			// e.stopPropagation();
-			// } else if (window.event) {
-			// window.event.cancelBubble = true;
-			// }
-			// if (e.preventDefault) {
-			// e.preventDefault();
-			// }
-			//
-			// e.returnValue = false;
-			// return false;
 		},
 
 		setKeyDownEvent : function(ed, e) {
@@ -2170,7 +2158,7 @@
 			var redrawContols = WCEUtils.redrawContols;
 			var doInsertSpace = false;
 
-			if (wcevar.inputDisable && !e.ctrlKey) {
+			if (wcevar.inputDisable && ((!tinymce.isMac && !e.ctrlKey) || (tinymce.isMac && !e.metaKey))) {
 				return stopEvent(ed, e);
 			}
 
@@ -2191,7 +2179,7 @@
 				//Ctrl+Shift+A
 			}
 
-			if (e.ctrlKey && e.altKey && ek == 86) {
+			if (((tinymce.isMac && e.metaKey) || (e.ctrlKey)) && e.altKey && ek == 86) {
 				//Ctrl+Shift+V
 			}
 			
@@ -2239,6 +2227,8 @@
 						if (isSpaceKey) {
 							return stopEvent(ed, e);
 						}
+					} else if (ek == 13 || ek == 10) { // do not return if "enter" is pressed
+						;
 					} else {
 						return stopEvent(ed, e);
 					}
@@ -2255,7 +2245,7 @@
 					return stopEvent(ed, e);
 				}
 			}
-
+				
 			if (ek == 13 || ek == 10) {
 				if (e.shiftKey) {
 					// Shift+Enter -> break dialogue
