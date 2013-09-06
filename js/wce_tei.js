@@ -1036,8 +1036,11 @@ function getHtmlByTei(inputString) {
 		if(oLast && oLast.nodeType==3 && oLast.nodeValue==' '){
 			$origRdg.removeChild(oLast);
 		}
-		
-		origText += $origRdg.innerHTML + ' ';
+		var _oText=xml2String($origRdg);
+		if(_oText && _oText.length>6){
+			_oText=_oText.substring(3,_oText.length-4); 
+			origText += _oText;
+		}		
 		origText = origText.trim();
 
 		if (origText === 'OMISSION')
@@ -1152,10 +1155,10 @@ function getHtmlByTei(inputString) {
 		if (origText != '') {
 			if (origText === 'OMISSION')
 				nodeAddText($newNode, "T");
-			else { 
-				while($origRdg.hasChildNodes()){
-					$newNode.appendChild($origRdg.firstChild);
-				}
+			else {  
+			 	while($origRdg.hasChildNodes()){
+				 $newNode.appendChild($origRdg.firstChild);
+			 	}
 			}
 		}
 
