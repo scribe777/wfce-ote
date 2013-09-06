@@ -8,7 +8,7 @@
  */
 
 (function() {
-	var wfce_editor = "2013-09-04";
+	var wfce_editor = "2013-09-06";
 
 	// Load plugin specific language pack
 	tinymce.PluginManager.requireLangPack('wce');
@@ -906,11 +906,11 @@
 			}
 
 			if (w.isc) {
+				//Corrections should also be possible for single positions (blank first hand reading)
 				if (WCEUtils.canInsertCorrection(ed, rng))
 					w.not_C = false;
 				else
 					w.not_C = true;
-				//Corrections should also be possible for single positions (blank first hand reading)
 				w.not_A = true;
 				w.not_O = true;
 
@@ -955,7 +955,7 @@
 				// if text is selected
 				w.not_B = true;
 				w.not_N = true;
-
+					
 				var adaptiveCheckbox = tinymce.DOM.get(ed.id + '_adaptive_selection');
 				if (adaptiveCheckbox && adaptiveCheckbox.checked) {
 					w.doAdaptivSel = true;
@@ -1081,6 +1081,7 @@
 				case 'corr':
 					_disableAllControls(ed, true);
 					w.not_C = false;
+					//w.not_O = false; //does not solve the request, that users want to add ornamentation *after* having corrected the first hand reading
 					break;
 
 				case 'abbr':
@@ -2135,7 +2136,7 @@
 			if (!e) {
 				var e = window.event;
 			}
-
+			
 			var language = window.navigator.userLanguage || window.navigator.language;
 
 			var ek = e.keyCode || e.charCode || 0;
@@ -2158,7 +2159,7 @@
 			var redrawContols = WCEUtils.redrawContols;
 			var doInsertSpace = false;
 
-			if (wcevar.inputDisable && ((!tinymce.isMac && !e.ctrlKey) || (tinymce.isMac && !e.metaKey))) {
+			if (wcevar.inputDisable && (!e.ctrlKey || (tinymce.isMac && !e.metaKey))) {
 				return stopEvent(ed, e);
 			}
 
@@ -2176,6 +2177,8 @@
 			}
 
 			if (((tinymce.isMac && e.metaKey) || (e.ctrlKey)) && e.altKey && ek == 65) {
+				ed.execCommand('mceAddAbbr_Shortcut');
+				return stopEvent(ed, e);
 				//Ctrl+Shift+A
 			}
 
@@ -2191,9 +2194,8 @@
 					if (WCEUtils.isWceBE(ed, wcevar.selectedNode.parentNode.parentNode)) {
 						return stopEvent(ed, e);
 					}
-					if (e.altKey) //Otherwise "alt" inserts a space
-						return stopEvent(ed, e);
-					if (tinymce.isMac && e.metaKey) //Otherwise "apple" key inserts a space
+					// we have to check for some special keys and skip them, one could maybe ask for a range of a-z
+					if (e.altKey || ek == 16 || ek == 17 || ek == 20 || ek == 27 )
 						return stopEvent(ed, e);
 					//nur wenn cursor am Ende von formatEnd
 					var isSpaceKey = WCEUtils.insertSpace(ed, ek);
@@ -3250,31 +3252,6 @@
 				cmd : 'mceReload("de")',
 				image : url + '/img/de.png'
 			});
-
-			/*ed.addButton('version', {
-			 title : "Information about the editor's version",
-			 cmd : 'mceVersion',
-			 });*/
-
-			/*ed.addCommand('mceVersion', function() {
-			 var http=new XMLHttpRequest();
-			 http.open('HEAD','version.txt',false);
-			 http.send(null);
-			 if (http.status!=200) return undefined;
-			 var wort = http.getResponseHeader('Last-modified');
-			 if(wort.length == 19)
-			 datum = wort.substring(11,15) + "-" + wort.substring(7,10) + "-" + wort.substring(5,7) + " " + wort.substring(16);
-			 if (wort.length == 29) {
-			 if (wort.search("Jan") != -1)monat = "01"; if(wort.search("Feb") != -1)monat = "02";
-			 if (wort.search("Mar") != -1)monat = "03"; if(wort.search("Apr") != -1)monat = "04";
-			 if (wort.search("May") != -1)monat = "05"; if(wort.search("Jun") != -1)monat = "06";
-			 if (wort.search("Jul") != -1)monat = "07"; if(wort.search("Aug") != -1)monat = "08";
-			 if (wort.search("Sep") != -1)monat = "09"; if(wort.search("Oct") != -1)monat = "10";
-			 if (wort.search("Nov") != -1)monat = "11"; if(wort.search("Dec") != -1)monat = "12";
-			 datum = wort.substring(12,16) + "-" + monat + "-" + wort.substring(5,7) + " " + wort.substring(18);
-			 }
-			 alert('This version of the transcription editor was last modified on: ' + datum);
-			 });*/
 
 			/*
 			 * onInit
