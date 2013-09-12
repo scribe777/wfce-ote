@@ -654,7 +654,7 @@ function getHtmlByTei(inputString) {
 
 		wceAttr += getWceAttributeByTei($teiNode, mapping);
 		$newNode.setAttribute('wce', wceAttr);
-
+		
 		var $tempParent = $newDoc.createElement('t');
 		for (var i = startlist, l = cList.length; i < l; i++) {
 			var c = cList[i];
@@ -665,8 +665,11 @@ function getHtmlByTei(inputString) {
 		}
 
 		if ($tempParent) {
-			$newNode.appendChild($tempParent);
-		}
+			//$newNode.appendChild($tempParent); 
+			while($tempParent.hasChildNodes()){
+			  $newNode.appendChild($tempParent.firstChild);
+			}
+		} 
 		
 		addFormatElement($newNode);
 		
@@ -1012,7 +1015,7 @@ function getHtmlByTei(inputString) {
 		if(_oText && _oText.length>6){
 			_oText=_oText.substring(3,_oText.length-4); 
 			origText += _oText;
-		}		
+		}		 
 		origText = origText.trim();
 
 		if (origText === 'OMISSION')
