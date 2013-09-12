@@ -2017,7 +2017,26 @@ function getTeiByHtml(inputString, args) {
 				$newNode.setAttribute('break', 'no'); //This has to be "no" due to the TEI standard
 			}
 		}
-		
+		// Move the break one level up, if at the end of an not hyphenated word #1714
+		if ($teiParent.nodeName == 'w' && !$newNode.getAttribute('break')) { //Complete word
+			switch ($newNode.nodeName) {
+				case 'lb':
+					if ($teiParent.lastChild.nodeName != 'cb') // no cb above lb
+						$teiParent = $teiParent.parentNode;
+					break;
+				case 'cb':
+					if ($teiParent.lastChild.nodeName != 'pb') // no pb above cb
+						$teiParent = $teiParent.parentNode;
+					break;
+				case 'pb':
+					if ($teiParent.lastChild.nodeName != 'gb') // no gb above pb
+						$teiParent = $teiParent.parentNode;
+					break;
+				case 'gb':
+					$teiParent = $teiParent.parentNode;
+					break;
+			}
+		}
 		$teiParent.appendChild($newNode);
 		// TODO
 		if (break_type == 'lb') {
@@ -2029,7 +2048,7 @@ function getTeiByHtml(inputString, args) {
 			final_w_set = false;
 		}
 
-		return null;
+		return null; //TODO: IS THIS CORRECT?
 		return {
 			0 : $newNode,
 			1 : true
