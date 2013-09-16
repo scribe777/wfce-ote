@@ -44,8 +44,8 @@ function getHtmlByTei(inputString) {
 		$newRoot = $newDoc.documentElement;
 
 		var childList = $oldRoot.childNodes;
-		for (var i = 0, l = childList.length; i < l; i++) {
-			var $c = childList[i];
+		for (var i = 0, $c, l = childList.length; i < l; i++) {
+			$c = childList[i];
 			if (!$c) {
 				continue;
 			} else {
@@ -115,8 +115,8 @@ function getHtmlByTei(inputString) {
 			} 
 
 			var childList = $teiNode.childNodes;
-			for (var i = 0, l = childList.length; i < l; i++) {
-				var $c = childList[i];
+			for (var i = 0, $c, l = childList.length; i < l; i++) {
+				$c = childList[i];
 				if (!$c) {
 					continue;
 				} else { 
@@ -250,12 +250,12 @@ function getHtmlByTei(inputString) {
 	var getWceAttributeByTei = function($teiNode, mapping) {
 		var wceAttr = '';
 
-		var attribute, attrName, attrValue, obj;
-		for (var i = 0, l = $teiNode.attributes.length; i < l; i++) {
+		var attribute, attrName, attrValue;
+		for (var i = 0, obj, l = $teiNode.attributes.length; i < l; i++) {
 			attribute = $teiNode.attributes[i];
 			attrName = attribute.nodeName;
 			attrValue = attribute.nodeValue;
-			var obj = mapping[attrName];
+			obj = mapping[attrName];
 			if (!obj) {
 				continue;
 			}
@@ -287,8 +287,8 @@ function getHtmlByTei(inputString) {
 		} else if (oldNodeParentName == 'unclear') {
 			// unclear
 			var unclear_text = "";
-			for (var i = 0, l = textValue.length; i < l; i++) {
-				var ch = textValue.charAt(i);
+			for (var i = 0, ch, l = textValue.length; i < l; i++) {
+				ch = textValue.charAt(i);
 				if (ch == ' ') {
 					unclear_text += ch;
 				} else {
@@ -655,9 +655,12 @@ function getHtmlByTei(inputString) {
 		wceAttr += getWceAttributeByTei($teiNode, mapping);
 		$newNode.setAttribute('wce', wceAttr);
 		
-		var $tempParent = $newDoc.createElement('t');
-		for (var i = startlist, l = cList.length; i < l; i++) {
-			var c = cList[i];
+		var $tempParent = $newDoc.createElement('t'); 
+		for (var i = startlist, c, l = cList.length; i < l; i++) {
+			c = cList[i];
+			if(!c){
+				break;
+			}
 			if (c.nodeType == 3)
 				nodeAddText($tempParent, c.nodeValue);
 			else
@@ -1001,8 +1004,12 @@ function getHtmlByTei(inputString) {
 		var $origRdg = $newDoc.createElement('t');
 		//var textNodes = [];
 
-		var collection = rdgs[0].childNodes;
-		for (var i = 0, l = collection.length; i < l; i++) {
+		var collection = rdgs[0].childNodes; 
+		for (var i = 0, cl, l = collection.length; i < l; i++) {
+			cl=collection[i];
+			if(!cl){
+				break;
+			}
 			readAllChildrenOfTeiNode($origRdg, collection[i]); 
 		}
 		
@@ -1029,6 +1036,9 @@ function getHtmlByTei(inputString) {
 
 		for (var i = 1, l = rdgs.length; i < l; i++) {// [0] is always original => no extra output
 			$rdg = rdgs[i];
+			if(!$rdg){
+				break;
+			}
 			typeValue = $rdg.getAttribute('type');
 			handValue = $rdg.getAttribute('hand');
 			deletionValue = $rdg.getAttribute('rend');
@@ -1234,8 +1244,8 @@ function getTeiByHtml(inputString, args) {
 		}
 
 		var childList = $oldRoot.childNodes;
-		for (var i = 0, l = childList.length; i < l; i++) {
-			var $c = childList[i];
+		for (var i = 0, $c, l = childList.length; i < l; i++) {
+			$c = childList[i];
 			if (!$c) {
 				continue;
 			} else {
@@ -1279,8 +1289,8 @@ function getTeiByHtml(inputString, args) {
 		}
 
 		var childList = $r.childNodes;
-		for (var i = 0, l = childList.length; i < l; i++) {
-			var $c = childList[i];
+		for (var i = 0, l = childList.length, $c; i < l; i++) {
+			$c = childList[i];
 			if (!$c) {
 				continue;
 			} else {
@@ -1324,8 +1334,8 @@ function getTeiByHtml(inputString, args) {
 
 			//
 			var childList = $htmlNode.childNodes;
-			for (var i = 0, l = childList.length; i < l; i++) {
-				var $c = childList[i];
+			for (var i = 0, $c, l = childList.length; i < l; i++) {
+				$c = childList[i];
 				if (!$c) {
 					continue;
 				} else {
@@ -1362,8 +1372,9 @@ function getTeiByHtml(inputString, args) {
 								// Add rest to next node
 								$htmlNodeNext.nodeValue = subStr2;
 							} else {
-								if ($htmlNodeNext != $htmlNodeNext.parentNode.lastChild)//avoid doubleing last part of word
+								//if ($htmlNodeNext != $htmlNodeNext.parentNode.lastChild)//avoid doubleing last part of word
 									html2Tei_TEXT($newParent.parentNode, $htmlNodeNext, stopAddW);
+									$htmlNodeNext.parentNode.removeChild($htmlNodeNext);
 							}
 							startCompressionWord = false;
 						} else {
@@ -1380,18 +1391,19 @@ function getTeiByHtml(inputString, args) {
 						startCompressionWord = true;
 						readAllChildrenOfHtmlNode($newParent.parentNode, $htmlNodeNext, stopAddW);
 						startCompressionWord = false;
+						$htmlNodeNext.parentNode.removeChild($htmlNodeNext);//See below
 					}
 					// Remove $htmlNodeNext from tree; what happens to the rest words???
 					// TODO: Check, whether there is any reason for this line; there is ... :-(
-					if (oldNodeNextType == 1) {
-						$htmlNodeNext.parentNode.removeChild($htmlNodeNext);
-					}
+					// if (oldNodeNextType == 1) { //
+						// $htmlNodeNext.parentNode.removeChild($htmlNodeNext);//See above
+					// }
 					if ($nnext) {
 						//TODO: Check, whether there is any reason for this line; there is ... :-(
-						if (oldNodeNextType == 1) {
+						//if (oldNodeNextType == 1) {//you are right, i think there is no reason (YG)
 							$htmlNodeNext = $nnext;
 							continue;
-						}
+						//}
 					}
 					$htmlNodeNext = null;
 				}
@@ -1797,8 +1809,8 @@ function getTeiByHtml(inputString, args) {
 		//to determine the correct position of the <note> insertion
 		var rdgcount;
 
-		for (var i = 0, l = infoArr.length; i < l; i++) {
-			var arr = infoArr[i];
+		for (var i = 0, arr, l = infoArr.length; i < l; i++) {
+			arr = infoArr[i];
 			if (arr['__t'] !== 'corr')// make sure, we are really dealing with a correction (problems existed with abbr + corr)
 				continue;
 			g_wordNumber = startWordNumberInCorrection;
@@ -1946,8 +1958,8 @@ function getTeiByHtml(inputString, args) {
 		var $corrXMLDoc = loadXMLString('<TEMP>' + text + '</TEMP>');
 		var $corrRoot = $corrXMLDoc.documentElement;
 		var childList = $corrRoot.childNodes;
-		for (var x = 0, y = childList.length; x < y; x++) {
-			var $c = childList[x];
+		for (var x = 0, $c, y = childList.length; x < y; x++) {
+			$c = childList[x];
 			if (!$c) {
 				continue;
 			} else {
@@ -2059,13 +2071,17 @@ function getTeiByHtml(inputString, args) {
 		//	hText = hText.substring(1, hText.length-1);
 
 		var $innerNode = $newDoc.createDocumentFragment();
-		var childList = $htmlNode.childNodes;
-		for (var i = 0, l = childList.length; i < l; i++) {// iterate through children of abbr
-			if (childList[i].nodeType == 3)// TextNode
-				nodeAddText($innerNode, childList[i].nodeValue);
-			else {// element node
-				//removeFormatNode(childList[i]);
-				readAllChildrenOfHtmlNode($innerNode, childList[i], true);
+		var childList = $htmlNode.childNodes; 
+		for (var i = 0, c, l = childList.length; i < l; i++) {// iterate through children of abbr
+			c=childList[i];
+			if(!c){
+				break;
+			}
+			if (c.nodeType == 3){// TextNode
+				nodeAddText($innerNode, c.nodeValue);
+			}
+			else {// element node 
+				readAllChildrenOfHtmlNode($innerNode, c, true);
 				//nodeAddText($innerNode, "TEST");
 				//alert($htmlNode.lastChild.nodeValue);
 				//$htmlNode.parentNode.removeChild($htmlNode);
@@ -2348,8 +2364,8 @@ function getTeiByHtml(inputString, args) {
 		var endIsSpace = endHasSpace(text);
 		var arr = text.split(' ');
 
-		for (var i = 0, l = arr.length; i < l; i++) {
-			var str = arr[i];
+		for (var i = 0, str, l = arr.length; i < l; i++) {
+			str = arr[i];
 			if (!str || str == '') {
 				continue;
 			}
