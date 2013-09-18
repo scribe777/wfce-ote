@@ -44,15 +44,6 @@
 					<td><label id="covered_label" for="covered">{#wce.covered}</label></td>
 					<td><input id="covered" name="covered" type="number" value=""
 						size="5" maxlength="" class="required number min1 mceFocus"/></td>
-					<td align="right"><label id="paratext_lectionary_notation_label"
-						for="paratext_lectionary_notation">{#wce.lectionary_notation}</label></td>
-					<td><select id="paratext_lectionary_notation"
-						name="paratext_lectionary_notation">
-							<option value=""></option>
-							<option value="Arche">Arche</option>
-							<option value="Telos">Telos</option>
-					</select>
-					</td>
 				</tr>
 				</tr>
 				<tr>
@@ -186,9 +177,6 @@
 			document.getElementById('edit_number').disabled = true;
 			document.paratextinfo.covered.disabled = false;
 			document.getElementById('covered').style.backgroundColor = "white";
-			document.paratextinfo.paratext_lectionary_notation.disabled = true;
-			//document.paratextinfo.text.disabled = true;
-			//document.getElementById('text').style.backgroundColor = "#CCCCCC";
 			$('#marginals_text').attr('disabled', true);
 			marginals_text_editor.hide();
 			document.paratextinfo.paratext_position.disabled = true;
@@ -201,29 +189,11 @@
 			document.getElementById('edit_number').disabled = true;
 			document.paratextinfo.covered.disabled = true;
 			document.getElementById('covered').style.backgroundColor = "#CCCCCC";
-			document.paratextinfo.paratext_lectionary_notation.disabled = true;
-			//document.paratextinfo.text.disabled = true;
-			//document.getElementById('text').style.backgroundColor = "#CCCCCC";
 			$('#marginals_text').attr('disabled', true);
 			marginals_text_editor.show();
 			document.paratextinfo.paratext_position.disabled = true;
 			document.paratextinfo.paratext_alignment.disabled = true;
-		} else if (v == 'lectTitle') {
-			document.paratextinfo.number.value = '';
-			document.paratextinfo.number.disabled = true;
-			document.getElementById('number').style.backgroundColor = "#CCCCCC";
-			document.paratextinfo.edit_number.checked = "checked";
-			document.getElementById('edit_number').disabled = true;
-			document.paratextinfo.covered.disabled = true;
-			document.getElementById('covered').style.backgroundColor = "#CCCCCC";
-			document.paratextinfo.paratext_lectionary_notation.disabled = false;
-			//document.paratextinfo.text.disabled = false;
-			//document.getElementById('text').style.backgroundColor = "white";
-			$('#marginals_text').attr('disabled', false);
-			marginals_text_editor.show();
-			document.paratextinfo.paratext_position.disabled = false;
-			document.paratextinfo.paratext_alignment.disabled = false;
-		} else if (v == 'runTitle' || v == 'chapTitle' || v == 'colophon' || v == 'euthaliana' || v == 'gloss' || v =='pageNum' || v == 'elsewhere' || v == 'other') {
+		} else if (v == 'runTitle' || v == 'chapTitle' || v == 'lectTitle' || v == 'colophon' || v == 'euthaliana' || v == 'gloss' || v =='pageNum' || v == 'elsewhere' || v == 'other') {
 			//don't get a number, only text
 			document.paratextinfo.number.value = '';
 			document.paratextinfo.number.disabled = true;
@@ -232,9 +202,6 @@
 			document.getElementById('edit_number').disabled = true;
 			document.paratextinfo.covered.disabled = true;
 			document.getElementById('covered').style.backgroundColor = "#CCCCCC";
-			document.paratextinfo.paratext_lectionary_notation.disabled = true;
-			//document.paratextinfo.text.disabled = false;
-			//document.getElementById('text').style.backgroundColor = "white";
 			$('#marginals_text').attr('disabled', false);
 			marginals_text_editor.show();
 			document.paratextinfo.paratext_position.disabled = false;
@@ -251,8 +218,6 @@
 			setnumber();
 			document.paratextinfo.covered.disabled = true;
 			document.getElementById('covered').style.backgroundColor = "#CCCCCC";
-			//document.paratextinfo.text.disabled = false;
-			//document.getElementById('text').style.backgroundColor = "white";
 			$('#marginals_text').attr('disabled', false);
 			marginals_text_editor.show();
 			document.paratextinfo.paratext_position.disabled = false;

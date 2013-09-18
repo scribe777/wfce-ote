@@ -8,7 +8,7 @@
  */
 
 (function() {
-	var wfce_editor = "2013-09-06";
+	var wfce_editor = "2013-09-18";
 
 	// Load plugin specific language pack
 	tinymce.PluginManager.requireLangPack('wce');
@@ -613,6 +613,7 @@
 				// column break
 				groupCount = 2;
 				v.ccnt = WCEUtils.counterCalc(v.ccnt, 1);
+				v.lcnt = 0;
 				if (lbpos == 'lbm') {
 					wceAttr = attr ? attr : 'wce="__t=brea&amp;__n=&amp;hasBreak=yes&amp;break_type=cb&amp;number=' + v.ccnt + '&amp;pb_type=&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment="';
 					str = '&#8208;<br />CB';
@@ -626,6 +627,8 @@
 				var new_number, number;
 				var new_pb_type = "";
 				v.pcnt = WCEUtils.counterCalc(v.pcnt, 1);
+				v.ccnt = 0;
+				v.lcnt = 0;
 				number = v.pcnt;
 				new_number = number;
 				if (v.rectoverso === 'true') {
@@ -650,6 +653,9 @@
 				bType = 'qb';
 				groupCount = 4;
 				v.qcnt = WCEUtils.counterCalc(v.qcnt, 1);
+				v.pcnt = 0;
+				v.ccnt = 0;
+				v.lcnt = 0;
 				if (lbpos == 'lbm') {
 					wceAttr = attr ? attr : 'wce="__t=brea&amp;__n=&amp;hasBreak=yes&amp;break_type=gb&amp;number=' + v.qcnt + '&amp;pb_type=&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment=' + '"';
 					str = '&#8208;<br />QB';
@@ -2521,13 +2527,6 @@
 							items['menu-illegible-lacuna-delete'].setDisabled(!b);
 						});
 
-						/*m.add({ // Ghost page
-						 title : ed.getLang('wce.menu_ghostpage'),
-						 id : 'menu-illegible-ghostpage',
-						 onclick : function() {
-						 ed.execCommand('mceAddGhostPage');
-						 }
-						 });*/
 						m.add({// witness end
 							title : ed.getLang('wce.menu_witnessend'),
 							id : 'menu-illegible-witnessend',
@@ -3541,10 +3540,6 @@
 					ed.execCommand('mceAddUnclearText');
 				}
 			});
-
-			/*ed.addCommand('mceAddGhostPage', function() {
-			 _wceAddNoDialog(ed, 'ghostpage');
-			 });*/
 
 			ed.addCommand('mceAddWitnessend', function() {
 				doWithoutDialog(ed, 'witnessend');
