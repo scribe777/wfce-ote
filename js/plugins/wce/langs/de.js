@@ -167,6 +167,7 @@ tinyMCE.addI18n('de.wce',{
 	spaces_data : "Informationen über die Leerstellen",
 	reading_list : "Liste der Korrekturen",
 	empty_other : "Bitte füllen Sie alle Pflichfelder sowie alle &quot;other&quot;-Felder aus",
+	empty_extent : "Bitte füllen Sie &quot;extent&quot;-Felder aus",
 	empty_number : "Bitte geben Sie eine Zahl ein (wird als Attribut &quot;n&quot; verwendet)",
 	empty_text : "Bitte geben Sie einen Text ein.",
 	save : 'Die Änderungen sind noch nicht gespeichert worden. Klicken Sie "OK" um sie zu speichern, oder "Cancel" um die Änderungen zu verwerfen',

@@ -1,205 +1,251 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<title>{#wce.gap_title}</title>
-<script type="text/javascript" src="../../tiny_mce_popup.js"></script>
-<script type="text/javascript" src="../../jquery.js"></script>
-<script type="text/javascript" src="js/wce.js"></script>
-</head>
+    <head>
+        <title>{#wce.gap_title}</title>
+        <script type="text/javascript" src="../../tiny_mce_popup.js"></script>
+        <script type="text/javascript" src="../../jquery.js"></script>
+        <script type="text/javascript" src="js/wce.js"></script>
+    </head>
 
-<body id="table" style="display: none">
-	<form onsubmit="return false;" action="#" name="gapinfo">
-		<input type="hidden" id="original_gap_text" name="original_gap_text"
-			value="" />
-		<fieldset id="inputContainer">
-			<legend>{#wce.gap_data}</legend>
-			<table border="0" cellpadding="4" cellspacing="0" width="100%">
-				<tr>
-					<td><label id="gap_reason_dummy_label" for="gap_reason_dummy">{#wce.reason}</label></td>
-					<td><input type="radio" id="gap_reason_dummy_lacuna" name="gap_reason_dummy" value="lacuna" onchange="checkstatus_gapreason()">{#wce.lacuna}</td>
-					<td><input type="radio" id="gap_reason_dummy_illegible" name="gap_reason_dummy" value="illegible" onchange="checkstatus_gapreason()">{#wce.illegible_text}</td>
-					<td><input id="gap_reason" name="gap_reason" value="" type="hidden" /></td>
-				</tr>
-			</table>
-			<table border="0" cellpadding="4" cellspacing="0" width="100%">				
-				<!--<tr>
-					<td><label id="gap_reason_label" for="gap_reason">{#wce.reason}</label>
-					</td>
-					<td><select id="gap_reason" name="gap_reason"
-						onchange="checkstatus_gapreason()">
-							<option value=""></option>
-							<option value="hole">{#wce.hole}</option>
-						</select>
-					</td>
-					</tr>-->
-				<tr>
-					<td><label id="unit_label" for="unit">{#wce.unit}</label>
-					</td>
-					<td><select id="unit" name="unit"
-						onchange="checkstatus_gapunit()">
-							<option value=""></option>
-							<option value="char">{#wce.unit_char}</option>
-							<option value="line">{#wce.unit_line}</option>
-							<option value="page">{#wce.unit_page}</option>
-							<option value="quire">{#wce.unit_quire}</option>
-							<option value="book">{#wce.unit_book}</option>
-							<option value="chapter">{#wce.unit_chapter}</option>
-							<option value="verse">{#wce.unit_verse}</option>
-							<option value="other">{#wce.other}</option>
-					</select>
-					</td>
-					<td><input id="unit_other" name="unit_other" type="text"
-						value="" size="50" maxlength=""
-						class="required number min1 mceFocus" />
-					</td>
-				</tr>
-				<tr>
-					<td><label id="extent_label" for="extent">{#wce.extent}</label>
-					</td>
-					<td colspan="2"><input id="extent" name="extent" type="text"
-						value="" size="10" maxlength=""
-						class="required number min1 mceFocus" />
-					</td>
-				</tr>
-				<tr>
-					<td colspan="2"><input type="checkbox" name="mark_as_supplied"
-						id="mark_as_supplied" value="supplied" onclick="checkstatus_mark_as_supplied()" checked="checked">{#wce.mark_as_supplied}</input>
-					</td>
-				</tr>
-				<tr>
-					<td><label id="supplied_source_label" for="supplied_source">{#wce.supplied_source}</label>
-					</td>
-					<td><select id="supplied_source" name="supplied_source"
-						onclick="checkstatus_supplied_source()">
-							<option value="na28">{#wce.na27}</option>
-							<option value="transcriber">{#wce.transcriber}</option>
-							<option value="tr">{#wce.TR}</option>
-							<option value="other">{#wce.other}</option>
-					</select></td>
-					<td><input id="supplied_source_other"
-						name="supplied_source_other" type="text" value="" size="30"
-						maxlength="" class="required number min1 mceFocus" /></td>
-				</tr>
-			</table>
-		</fieldset>
-		</div>
-		<div class="mceActionPanel">
-			<input type="button" id="insert" name="insert" value="{#insert}"
-				onclick="cont = testOther();
-						if (cont){writeWceNodeInfo();}else{alert('{#wce.empty_other}');}" />
-			<input type="button" id="cancel" name="cancel" value="{#cancel}"
-				onclick="tinyMCEPopup.close();" />
-		</div>
-	</form>
-</body>
-<script type="text/javascript"> 
-	tinyMCEPopup.onInit.add(function(_ed){
-		ed=_ed;
-		setConstants(); 
-		init();
-	});
-		
-	function init() {
-		comboBindReturnEvent('insert'); 
-		wceInfoInit('gap');
-		readWceNodeInfo();
-		setstatus_gapreason();
-		checkstatus_gapreason();
-		checkstatus_gapunit();
-		checkstatus_supplied_source();
-		checkstatus_mark_as_supplied();
-	}
-	
-	function checkstatus_gapreason() {
-		if (radioWert(document.gapinfo.gap_reason_dummy) == "lacuna")
-			document.gapinfo.gap_reason.value = "lacuna";
-		else
-			document.gapinfo.gap_reason.value = "illegible";
-	}
+    <body id="table" style="display: none">
+        <form onsubmit="return false;" action="#" name="gapinfo">
+            <input type="hidden" id="original_gap_text" name="original_gap_text"
+            value="" />
+            <fieldset id="inputContainer">
+                <legend>
+                    {#wce.gap_data}
+                </legend>
+                <table border="0" cellpadding="4" cellspacing="0" width="100%">
+                    <tr>
+                        <td><label id="gap_reason_dummy_label" for="gap_reason_dummy">{#wce.reason}</label></td>
+                        <td>
+                        <input type="radio" id="gap_reason_dummy_lacuna" name="gap_reason_dummy" value="lacuna" onchange="checkstatus_gapreason()">
+                        {#wce.lacuna}</td>
+                        <td>
+                        <input type="radio" id="gap_reason_dummy_illegible" name="gap_reason_dummy" value="illegible" onchange="checkstatus_gapreason()">
+                        {#wce.illegible_text}</td>
+                        <td>
+                        <input id="gap_reason" name="gap_reason" value="" type="hidden" />
+                        </td>
+                    </tr>
+                </table>
+                <table border="0" cellpadding="4" cellspacing="0" width="100%">
+                    <!--<tr>
+                    <td><label id="gap_reason_label" for="gap_reason">{#wce.reason}</label>
+                    </td>
+                    <td><select id="gap_reason" name="gap_reason"
+                    onchange="checkstatus_gapreason()">
+                    <option value=""></option>
+                    <option value="hole">{#wce.hole}</option>
+                    </select>
+                    </td>
+                    </tr>-->
+                    <tr>
+                        <td><label id="unit_label" for="unit">{#wce.unit}</label></td>
+                        <td>
+                        <select id="unit" name="unit"
+                        onchange="checkstatus_gapunit()">
+                            <option value=""></option>
+                            <option value="char">{#wce.unit_char}</option>
+                            <option value="line">{#wce.unit_line}</option>
+                            <option value="page">{#wce.unit_page}</option>
+                            <option value="quire">{#wce.unit_quire}</option>
+                            <option value="book">{#wce.unit_book}</option>
+                            <option value="chapter">{#wce.unit_chapter}</option>
+                            <option value="verse">{#wce.unit_verse}</option>
+                            <option value="other">{#wce.other}</option>
+                        </select></td>
+                        <td>
+                        <input id="unit_other" name="unit_other" type="text"
+                        value="" size="50" maxlength=""
+                        class="required number min1 mceFocus" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label id="extent_label" for="extent">{#wce.extent}</label></td>
+                        <td colspan="2">
+                        <input id="extent" name="extent" type="text"
+                        value="" size="10" maxlength=""
+                        class="required number min1 mceFocus" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                        <input type="checkbox" name="mark_as_supplied"
+                        id="mark_as_supplied" value="supplied" onclick="checkstatus_mark_as_supplied()" checked="checked" />
+                        {#wce.mark_as_supplied} </td>
+                    </tr>
+                    <tr>
+                        <td><label id="supplied_source_label" for="supplied_source">{#wce.supplied_source}</label></td>
+                        <td>
+                        <select id="supplied_source" name="supplied_source"
+                        onclick="checkstatus_supplied_source()">
+                            <option value="na28">{#wce.na27}</option>
+                            <option value="transcriber">{#wce.transcriber}</option>
+                            <option value="tr">{#wce.TR}</option>
+                            <option value="other">{#wce.other}</option>
+                        </select></td>
+                        <td>
+                        <input id="supplied_source_other"
+                        name="supplied_source_other" type="text" value="" size="30"
+                        maxlength="" class="required number min1 mceFocus" />
+                        </td>
+                    </tr>
+                </table>
+            </fieldset>
+            <div class="mceActionPanel">
+                <input type="button" id="insert" name="insert" value="{#insert}"
+                onclick="var cont=testInput(); if(cont=='0'){writeWceNodeInfo()} else if(cont==1){alert('{#wce.empty_other}')}else if(cont==2){alert('{#wce.empty_extent}');}" />
+                <input type="button" id="cancel" name="cancel" value="{#cancel}"
+                onclick="tinyMCEPopup.close();" />
+            </div>
+        </form>
+    </body>
+    <script type="text/javascript">
+		tinyMCEPopup.onInit.add(function(_ed) {
+			ed = _ed;
+			setConstants();
+			init();
+		});
 
-	function radioWert(rObj) {
-		for (var i=0; i<rObj.length; i++) if (rObj[i].checked) return rObj[i].value;
-			return false;
-	}
-	
-	function setstatus_gapreason() {
-		if (document.gapinfo.gap_reason.value == "lacuna")
-			document.gapinfo.gap_reason_dummy_lacuna.checked = true;
-		else
-			document.gapinfo.gap_reason_dummy_illegible.checked = true;
-	}
+		function init() {
+			comboBindReturnEvent('insert');
+			wceInfoInit('gap');
+			readWceNodeInfo();
 
-	function checkstatus_gapunit() {
-		if (document.gapinfo.unit.options[8].selected == true) {
-			document.gapinfo.unit_other.disabled = false;
-			document.getElementById('unit_other').style.backgroundColor = "white";
-		} else {
-			document.gapinfo.unit_other.disabled = true;
-			document.getElementById('unit_other').style.backgroundColor = "#CCCCCC";
-		}
-
-		if (document.gapinfo.unit.options[0].selected == true) {
-			document.gapinfo.extent.disabled = true;
-			document.getElementById('extent').style.backgroundColor = "#CCCCCC";
-		} else {
-			document.gapinfo.extent.disabled = false;
-			document.getElementById('extent').style.backgroundColor = "white";
-		}
-		
-		if (document.gapinfo.unit.options[1].selected == true 
-			|| document.gapinfo.unit.options[2].selected == true) {// char or line
-			document.gapinfo.mark_as_supplied.checked = false;
-			document.gapinfo.mark_as_supplied.disabled = false;
-			document.gapinfo.supplied_source.disabled = false;
-		} else if (document.gapinfo.unit.options[3].selected == true
-			|| document.gapinfo.unit.options[4].selected == true) { //page or quire
-			document.gapinfo.mark_as_supplied.checked = false;
-			document.gapinfo.mark_as_supplied.disabled = true;
-			document.gapinfo.supplied_source.disabled = true;
-		} else {
-			document.gapinfo.mark_as_supplied.disabled = false;
-			document.gapinfo.supplied_source.disabled = false;
-		}
-	}
-
-	function checkstatus_mark_as_supplied() {
-		if (document.gapinfo.mark_as_supplied.checked) {
-			document.gapinfo.supplied_source.disabled = false;
+			setstatus_gapreason();
+			checkstatus_gapreason();
+			checkstatus_gapunit();
 			checkstatus_supplied_source();
-		} else {
-			document.gapinfo.supplied_source.disabled = true;
-			document.gapinfo.supplied_source_other.disabled = true;
+			checkstatus_mark_as_supplied();
+			if (ed.WCE_VAR.isc) {
+				$('#mark_as_supplied').attr({
+					"checked" : false,
+					"disabled" : true
+				});
+			}
 		}
-	}
 
-	function checkstatus_supplied_source() {
-		if (document.gapinfo.supplied_source.options[3].selected == true) {
-			document.gapinfo.supplied_source_other.disabled = false;
-			document.getElementById('supplied_source_other').style.backgroundColor = "white";
-		} else {
-			document.gapinfo.supplied_source_other.disabled = true;
-			document.getElementById('supplied_source_other').style.backgroundColor = "#CCCCCC";
+		function testInput() {
+			var cont = testOther();
+			if (!cont) {
+				return 1;
+			}
+			cont = testUnit();
+			if (!cont) {
+				return 2;
+			}
+			return 0;
 		}
-	}
 
-	function testOther() {
-		if (document.gapinfo.mark_as_supplied.checked && document.gapinfo.supplied_source.options[3].selected == true && document.getElementById('supplied_source_other').value == '' )
-		{ return false; }
-		if (document.gapinfo.unit.options[8].selected == true && document.getElementById('unit_other').value == '' )
-		{ return false; }
-		//if (document.gapinfo.gap_reason.options[5].selected == true && document.getElementById('gap_reason_other').value == '') 
-		//{ return false; }
-	return true;
-	}
-	
-	if (!tinyMCE.isIE) {
-		$(document).keydown(function(e) {
-			var evt = e || window.event
-			if (evt.keyCode == 13 || evt.keyCode == 10) {
-				document.getElementById('insert').click();
+		function checkstatus_gapreason() {
+			if (radioWert(document.gapinfo.gap_reason_dummy) == "lacuna")
+				document.gapinfo.gap_reason.value = "lacuna";
+			else
+				document.gapinfo.gap_reason.value = "illegible";
+		}
+
+		function radioWert(rObj) {
+			for (var i = 0; i < rObj.length; i++)
+				if (rObj[i].checked)
+					return rObj[i].value;
+			return false;
+		}
+
+		function setstatus_gapreason() {
+			if (document.gapinfo.gap_reason.value == "lacuna")
+				document.gapinfo.gap_reason_dummy_lacuna.checked = true;
+			else
+				document.gapinfo.gap_reason_dummy_illegible.checked = true;
+		}
+
+		function checkstatus_gapunit() {
+			if (document.gapinfo.unit.options[8].selected == true) {
+				document.gapinfo.unit_other.disabled = false;
+				document.getElementById('unit_other').style.backgroundColor = "white";
+			} else {
+				document.gapinfo.unit_other.disabled = true;
+				document.getElementById('unit_other').style.backgroundColor = "#CCCCCC";
+			}
+
+			if (document.gapinfo.unit.options[0].selected == true) {
+				document.gapinfo.extent.disabled = true;
+				document.getElementById('extent').style.backgroundColor = "#CCCCCC";
+			} else {
+				document.gapinfo.extent.disabled = false;
+				document.getElementById('extent').style.backgroundColor = "white";
+			}
+
+			if (!ed.WCE_VAR.isc) {
+				if (document.gapinfo.unit.options[1].selected == true || document.gapinfo.unit.options[2].selected == true) {// char or line
+					document.gapinfo.mark_as_supplied.checked = false;
+					document.gapinfo.mark_as_supplied.disabled = false;
+					document.gapinfo.supplied_source.disabled = false;
+				} else if (document.gapinfo.unit.options[3].selected == true || document.gapinfo.unit.options[4].selected == true) {//page or quire
+					document.gapinfo.mark_as_supplied.checked = false;
+					document.gapinfo.mark_as_supplied.disabled = true;
+					document.gapinfo.supplied_source.disabled = true;
+				} else {
+					document.gapinfo.mark_as_supplied.disabled = false;
+					document.gapinfo.supplied_source.disabled = false;
+				}
+			}
+		}
+
+		function checkstatus_mark_as_supplied() {
+			if (document.gapinfo.mark_as_supplied.checked) {
+				document.gapinfo.supplied_source.disabled = false;
+				checkstatus_supplied_source();
+			} else {
+				document.gapinfo.supplied_source.disabled = true;
+				document.gapinfo.supplied_source_other.disabled = true;
+			}
+		}
+
+		function checkstatus_supplied_source() {
+			if (ed.WCE_VAR.isc) {
+				document.gapinfo.supplied_source.disabled = true;
+				document.gapinfo.supplied_source_other.disabled = true;
+				document.getElementById('supplied_source_other').style.backgroundColor = "#CCCCCC";
+				return;
+			}
+			if (document.gapinfo.supplied_source.options[3].selected == true) {
+				document.gapinfo.supplied_source_other.disabled = false;
+				document.getElementById('supplied_source_other').style.backgroundColor = "white";
+			} else {
+				document.gapinfo.supplied_source_other.disabled = true;
+				document.getElementById('supplied_source_other').style.backgroundColor = "#CCCCCC";
+			}
+		}
+
+		function testOther() {
+
+			if (document.gapinfo.mark_as_supplied.checked && document.gapinfo.supplied_source.options[3].selected == true && document.getElementById('supplied_source_other').value == '') {
 				return false;
 			}
-		});
-	}
-</script>
+			if (document.gapinfo.unit.options[8].selected == true && document.getElementById('unit_other').value == '') {
+				return false;
+			}
+			//if (document.gapinfo.gap_reason.options[5].selected == true && document.getElementById('gap_reason_other').value == '')
+			//{ return false; }
+			return true;
+		}
+
+		function testUnit() {
+			if ($('#unit').val() != '' && $.trim($('#extent').val()) == '') {
+				return false;
+			}
+			return true;
+		}
+
+		if (!tinyMCE.isIE) {
+			$(document).keydown(function(e) {
+				var evt = e || window.event
+				if (evt.keyCode == 13 || evt.keyCode == 10) {
+					document.getElementById('insert').click();
+					return false;
+				}
+			});
+		}
+    </script>
 </html>
