@@ -220,6 +220,7 @@ tinyMCE.addI18n('en.wce',{
 	meta_tab_general : "Misc",
 	meta_general : "Misc settings",
 	empty_other : "Please enter text for all required and all &quot;other&quot; fields",
+	empty_extent : "Please enter text for &quot;extent&quot; fields",
 	empty_number : "Please enter a number (used as attribute &quot;n&quot;)",
 	empty_text : "Please enter a text",
 	save : 'Your changes have not been saved yet.\nClick "OK" to save them or "Cancel" to discard changes.',
