@@ -35,10 +35,7 @@
 
 			//blocked elements :If the Caret is inside, this will prohibit the key operation
 			c.blockedElements = new Array('gap', 'corr', 'book_number', 'chapter_number', 'verse_number', 'abbr', 'spaces', 'note', 'unclear', 'brea', 'paratext', 'pc');
-
-			//enable Correction a whole word is highlighted by...
-			c.combinationWithCorrection = new Array('gap', 'unclear', 'abbr');
-
+ 	 
 			// not blocked elements
 			// c.normalElemente = new Array('unclear');
 
@@ -955,6 +952,7 @@
 				// if text is selected
 				w.not_B = true;
 				w.not_N = true;
+				w.not_C = true;
 					
 				var adaptiveCheckbox = tinymce.DOM.get(ed.id + '_adaptive_selection');
 				if (adaptiveCheckbox && adaptiveCheckbox.checked) {
@@ -986,7 +984,7 @@
 						selectedNodeStart = startContainer.parentNode;
 						if (rng.startOffset == 0) {
 							startNode = WCEUtils.getAncestorIfFirstChild(ed, startContainer);
-							if (startNode)
+							if (startNode && startNode.nodeName.toLowerCase()!='body')
 								startNode = startNode.parentNode;
 						} else {
 							startNode = startContainer.parentNode;
@@ -1000,7 +998,7 @@
 						var endText = endContainer.nodeValue;
 						if (endText && rng.endOffset == endText.length) {
 							endNode = WCEUtils.getAncestorIfLastChild(ed, endContainer);
-							if (endNode) {
+							if (endNode & endNode.nodeName.toLowerCase()!='body') {
 								endNode = endNode.parentNode;
 							}
 						} else {
@@ -1050,6 +1048,7 @@
 				selectedNode = rng.startContainer.parentNode.parentNode;
 				//selectedNode = ed.selection.getNode();
 			}
+			var canMakeCorrection=WCEUtils.canMakeCorrection(rng,ed);
 
 			//set other variable
 			w.isInBE = _isWceBE(ed, selectedNode);
@@ -1151,36 +1150,19 @@
 					var pn = selectedNode.parentNode;
 					if (pn && WCEUtils.isNodeTypeOf(pn, 'brea')) {
 						WCEUtils.inhibitInput(ed, pn);
-					}
+					} 
 					break;
+					
+				default: 
+					break;			
+			};
+			 
+			if(w.not_C && canMakeCorrection){
+				w.not_C=false;
 			}
-
-			/*
-			 //Fix ticket #646: enable combination with Correction if a whole word is highlighte
-			 //Element defined by constant "ed.WCE_CON.combinationWithCorrection";
-			 if (w.isSelWholeNode) {
-			 if (WCEUtils.canCombinationWithCorrection(ed, w.type)) {
-			 w.not_C = false;
-			 }
-			 }*/
 		},
 
-		/*
-		canCombinationWithCorrection : function(ed, _type) {
-		if (!_type)
-		return false;
-		var _types = ed.WCE_CON.combinationWithCorrection;
-		if (_types) {
-		for (var i = 0, l = _types.length; i < l; i++) {
-		if (_types[i] == _type) {
-		return true;
-		}
-		}
-		}
-		return false;
-		},
-		*/
-
+		 
 		/**
 		 *
 		 */
@@ -1206,6 +1188,40 @@
 				var sfParent = sf.parentNode;
 				var efParent = ef.parentNode;
 				if (sfParent && efParent && sfParent.parentNode === efParent.parentNode && sf.nodeValue.charCodeAt(0) == 8249 && ef.nodeValue.charCodeAt(0) == 8250) {
+					return true;
+				}
+			}
+			return false;
+		},
+		
+		
+		canMakeCorrection :function (rng, ed){
+			var sc = rng.startContainer;
+			var ec = rng.endContainer;
+			var w=ed.WCE_VAR;
+
+			if (sc && ed && sc.nodeType == 3 && ec.nodeValue.length>0) {
+				var scParent = sc.parentNode;
+				if(w.isCaretAtFormatStart){
+					scParent=scParent.parentNode.parentNode;
+				}
+			 
+				var ecParent = ec.parentNode;
+				if(w.isCaretAtFormatEnd){
+					ecParent=ecParent.parentNode.parentNode;
+				}
+				
+				if (scParent && ecParent && scParent.parentNode == ecParent.parentNode ) {
+					var startOffset=rng.startOffset;
+					var endOffset=rng.endOffset;		
+					var a=sc.nodeValue.charAt(startOffset-1);			
+					var b=ec.nodeValue.charAt(endOffset);
+					if(startOffset>0 && a!=' '){
+						return false;
+					}
+					if(endOffset<ec.nodeValue.length && b!=' '){
+						return false;
+					} 
 					return true;
 				}
 			}
