@@ -598,7 +598,7 @@ var charmap_latin = [
 	['&slur;',      '&#865;', true, 'Slur']
 ];
 
-tinyMCEPopup.onInit.add(function() {
+tinyMCEPopup.onInit.add(function() { 
 	cmap = checkstatus_charmap();
 	tinyMCEPopup.dom.setHTML('charmapView', renderCharMapHTML(cmap));
 });
@@ -662,13 +662,21 @@ function previewChar(codeA, codeB, codeN) {
 }
 
 function checkstatus_charmap() {
-	if (document.getElementById("charmap_g").checked == true) {
-		return charmap_greek;
-	}
-	else if (document.getElementById("charmap_l").checked == true) {
-		return charmap_latin;
-	}
-	else {
-		return charmap_greek.concat(charmap_latin);
-	}
+	var a=getCharmapType();
+	if(a=='charmap=charmap_g'){
+		return	charmap_greek;
+	}else if(a=='charmap=charmap_l'){
+		return	charmap_latin;
+	}  
+	return charmap_greek.concat(charmap_latin);
+	
+	//if (document.getElementById("charmap_g").checked == true) {
+	//	return charmap_greek;
+	//}
+	//else if (document.getElementById("charmap_l").checked == true) {
+	//	return charmap_latin;
+	//}
+	//else {
+		//return charmap_greek.concat(charmap_latin);
+	//}
 }
