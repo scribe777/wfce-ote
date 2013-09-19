@@ -31,14 +31,31 @@ function getHtmlByTei(inputString) {
 	};
 
 	// As &om; can not be handled we go back to OMISSION
-	inputString = inputString.replace(/&om;/g, "<w>OMISSION</w>");
+	inputString = inputString.replace(/&om;/g, "<w>OMISSION</w>"); inputString+="<ddd>aaaa</dd>";
 	//Trick to solve problem without <w>...</w>
 	inputString = inputString.replace('\u00a0', ' ');
 	inputString = inputString.replace(/<\/supplied><\/w><w><supplied.*?>/g, " ");
 
 	var getHtmlString = function() {
 		var $oldDoc = loadXMLString(inputString);
+		if(!$oldDoc){
+		 	return '';
+		}
 		var $oldRoot = $oldDoc.documentElement;
+		if($oldRoot){
+			var first=$oldRoot.firstChild;
+			var error;
+			if(first.nodeType==3 && $oldRoot.nodeName && $oldRoot.nodeName.match(/parsererror/i)){
+				error=first.textContent;
+			}else if(first.nodeName && first.nodeName.match(/parsererror/i)){
+				error=first.textContent; 
+			}
+			
+			if(error){
+				Fehlerbehandlung(' XML parser '+ error);
+				return '';
+			}
+		}
 
 		$newDoc = loadXMLString("<TEMP></TEMP>");
 		$newRoot = $newDoc.documentElement;
@@ -2574,7 +2591,11 @@ function loadXMLString(txt) {
 	var xmlDoc;
 	if (window.DOMParser) {
 		var parser = new DOMParser();
-		xmlDoc = parser.parseFromString(txt, "text/xml");
+	 	try{
+			xmlDoc = parser.parseFromString(txt, "text/xml");
+		}catch(err){
+		 	Fehlerbehandlung("XML error\n"+err);
+		}
 	} else {
 		// Internet Explorer
 		xmlDoc = new ActiveXObject("Microsoft.XMLDOM");
