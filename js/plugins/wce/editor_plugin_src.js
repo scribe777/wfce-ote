@@ -1004,7 +1004,7 @@
 						var endText = endContainer.nodeValue;
 						if (endText && rng.endOffset == endText.length) {
 							endNode = WCEUtils.getAncestorIfLastChild(ed, endContainer);
-							if (endNode & endNode.nodeName.toLowerCase()!='body') {
+							if (endNode && endNode.nodeName.toLowerCase()!='body') {
 								endNode = endNode.parentNode;
 							}
 						} else {
