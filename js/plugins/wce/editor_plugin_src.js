@@ -3402,11 +3402,13 @@
 							var bb = bArr[2];
 							if (bb && bc && bt) {
 								var arr = new Array('gap','lb', 'cb', 'pb', 'qb');
-								var arrItem;
-								for (var i = parseInt(bc) - 1; i > -1; i--) {
-									arrItem = arr[i];
-									ed.selection.select(ed.dom.get(arrItem + '_' + bc + '_' + bb));
-									ed.selection.setContent("");
+								//for (var i = parseInt(bc) - 1; i > -1; i--) {
+								for(var i=0,elem,l=arr.length; i<l; i++){
+									elem=ed.dom.get(arr[i] + '_' + bc + '_' + bb);
+									if(elem){									
+										ed.selection.select(elem);
+										ed.selection.setContent("");
+									}
 									//$(ed.dom.get(arrItem + '_' + bc + '_' + bb)).remove();
 								}
 							}
