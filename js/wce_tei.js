@@ -31,7 +31,7 @@ function getHtmlByTei(inputString) {
 	};
 
 	// As &om; can not be handled we go back to OMISSION
-	inputString = inputString.replace(/&om;/g, "<w>OMISSION</w>"); inputString+="<ddd>aaaa</dd>";
+	inputString = inputString.replace(/&om;/g, "<w>OMISSION</w>");
 	//Trick to solve problem without <w>...</w>
 	inputString = inputString.replace('\u00a0', ' ');
 	inputString = inputString.replace(/<\/supplied><\/w><w><supplied.*?>/g, " ");
@@ -39,7 +39,7 @@ function getHtmlByTei(inputString) {
 	var getHtmlString = function() {
 		var $oldDoc = loadXMLString(inputString);
 		if(!$oldDoc){
-		 	return '';
+		 	//return '';
 		}
 		var $oldRoot = $oldDoc.documentElement;
 		if($oldRoot){
@@ -53,7 +53,7 @@ function getHtmlByTei(inputString) {
 			
 			if(error){
 				Fehlerbehandlung(' XML parser '+ error);
-				return '';
+				//return '';
 			}
 		}
 
