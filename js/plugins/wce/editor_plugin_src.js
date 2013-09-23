@@ -1074,7 +1074,11 @@
 			if (w.type && w.type != "formatting_capitals" && w.type.match(/formatting/)) {
 				w.type = 'formatting';
 			}
-
+			
+			if(canMakeCorrection){
+				w.not_C=false;
+			}
+			
 			switch (w.type) {
 				case 'gap':
 					_disableAllControls(ed, true);
@@ -1162,10 +1166,7 @@
 				default: 
 					break;			
 			};
-			 
-			if(w.not_C && canMakeCorrection){
-				w.not_C=false;
-			}
+			  
 		},
 
 		 
