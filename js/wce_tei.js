@@ -513,7 +513,7 @@ function getHtmlByTei(inputString) {
 			};
 			wceAttr += getWceAttributeByTei($teiNode, mapping);
 			// In case there is no unit given, we have to fix that. Otherwise we'll get a lot of "undefined" values
-			if (!$newNode.getAttribute('unit'))
+			if (!$teiNode.getAttribute('unit'))
 				wceAttr += '&unit_other=&unit=';
 			if (teiNodeName == 'supplied') {
 				wceAttr += '&mark_as_supplied=supplied';
