@@ -95,7 +95,7 @@
             </fieldset>
             <div class="mceActionPanel">
                 <input type="button" id="insert" name="insert" value="{#insert}"
-                onclick="var cont=testInput(); if(cont=='0'){writeWceNodeInfo()} else if(cont==1){alert('{#wce.empty_other}')}else if(cont==2){alert('{#wce.empty_extent}');}" />
+                onclick="var cont=testInput(); if(cont=='0'){writeWceNodeInfo()} else if(cont=='1'){alert('{#wce.empty_other}')}else if(cont=='2'){alert('{#wce.empty_extent}');}" />
                 <input type="button" id="cancel" name="cancel" value="{#cancel}"
                 onclick="tinyMCEPopup.close();" />
             </div>
@@ -118,7 +118,7 @@
 			checkstatus_gapunit();
 			checkstatus_supplied_source();
 			checkstatus_mark_as_supplied();
-			if (ed.WCE_VAR.isc) {
+			if (ed.WCE_VAR.isc && (!ed.WCE_VAR.type || (ed.WCE_VAR.type && !ed.WCE_VAR.type == 'gap'))) { // make it work in "edit" mode
 				$('#mark_as_supplied').attr({
 					"checked" : false,
 					"disabled" : true
