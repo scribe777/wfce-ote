@@ -1828,8 +1828,10 @@ function getTeiByHtml(inputString, args) {
 
 		for (var i = 0, arr, l = infoArr.length; i < l; i++) {
 			arr = infoArr[i];
-			if (arr['__t'] !== 'corr')// make sure, we are really dealing with a correction (problems existed with abbr + corr)
+			if (arr['__t'] !== 'corr'){
+				// make sure, we are really dealing with a correction (problems existed with abbr + corr)
 				continue;
+			}
 			g_wordNumber = startWordNumberInCorrection;
 
 			var firsthand_partial = arr['firsthand_partial'];
@@ -1938,8 +1940,9 @@ function getTeiByHtml(inputString, args) {
 				$rdg.appendChild($seg);
 			} else {//non-marginal material
 				if (corrector_text) {//add to <rdg>
-					if (corrector_text === 'OMISSION')//we don't want <w> around here
+					if (corrector_text === 'OMISSION'){//we don't want <w> around here
 						nodeAddText($rdg, corrector_text);
+					}
 					else
 						html2Tei_correctionAddW($rdg, corrector_text);
 				}

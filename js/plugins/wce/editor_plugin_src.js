@@ -1077,7 +1077,9 @@
 			
 			if(canMakeCorrection){
 				w.not_C=false;
-			}
+			} 
+			
+			w.not_P = !w.isc; 
 			
 			switch (w.type) {
 				case 'gap':
