@@ -122,12 +122,12 @@ function getHtmlByTei(inputString) {
 			// stop to read $teiNode
 			if (!$newParent) {
 				// make sure that a *single* gap is followed by a space
-				if ($teiNode.nodeName == 'gap' && $teiNode.nextSibling && $teiNode.nextSibling.nodeValue == null)
+				if ($teiNode.nodeName == 'gap' && $teiNode.nextSibling && $teiNode.nextSibling.nodeName !== 'unclear' && $teiNode.nextSibling.nodeValue == null)
 					nodeAddText($htmlParent, ' ');
 				return;
 			}
 			
-			if($newParent && $newParent.nodeName.toLowerCase()=='span' && !$newParent.firstChild){
+			if ($newParent && $newParent.nodeName.toLowerCase() == 'span' && !$newParent.firstChild){
 				var needAddFormat=true;
 			} 
 
