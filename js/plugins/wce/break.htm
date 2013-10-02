@@ -25,10 +25,6 @@
                             <option value="pb">{#wce.pagebreak}</option>
                             <option value="gb">{#wce.quire}</option>
                         </select></td>
-                        <!--<td colspan="5">
-                        <input type="checkbox" name="pb_hyphen"
-                        id="pb_hyphen" >
-                        {#wce.pb_hyphen}</input> </td>-->
                     </tr>
                     <tr>
                         <td><label id="number_label" for="number">{#wce.number}</label></td>
@@ -204,11 +200,6 @@
 				document.getElementById('pb_type').style.backgroundColor = "#CCCCCC";
 				document.breakinfo.fibre_type.disabled = true;
 				document.getElementById('fibre_type').style.backgroundColor = "#CCCCCC";
-				//document.breakinfo.pb_hyphen.disabled = true;
-				//document.getElementById('pb_hyphen').style.backgroundColor = "#CCCCCC";
-				//document.breakinfo.pb_ghostpage.disabled = true;
-				//document.breakinfo.pb_ghostpage.checked = false;
-				//document.getElementById('pb_ghostpage').style.backgroundColor = "#CCCCCC";
 				document.breakinfo.facs.disabled = true;
 				document.getElementById('facs').style.backgroundColor = "#CCCCCC";
 			}
@@ -231,30 +222,6 @@
 				}
 			}
 		}
-
-		/*function checkstatus_hyphen() {
-			if (document.breakinfo.pb_hyphen.checked)
-				document.breakinfo.hasBreak.value = "yes";
-			else
-				document.breakinfo.hasBreak.value = "no";
-		}*/
-
-		/*function checkstatus_ghostpage() {
-			if (document.breakinfo.pb_ghostpage.checked) {
-				document.breakinfo.number.disabled = true;
-				document.getElementById('number').style.backgroundColor = "#CCCCCC";
-			} else {
-				document.breakinfo.number.disabled = false;
-				document.getElementById('number').style.backgroundColor = "white";
-			}
-		}*/
-
-		/*function setstatus_hyphen() {
-			if (document.breakinfo.break_type.options[2].selected == true && document.breakinfo.hasBreak.value == "yes")
-				document.breakinfo.pb_hyphen.checked = true;
-			else
-				document.breakinfo.pb_hyphen.checked = false;
-		}*/
 
 		function testNumber() {
 			if (document.getElementById('number').value == '') // && !document.breakinfo.pb_ghostpage.checked)

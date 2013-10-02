@@ -758,29 +758,29 @@ function getHtmlByTei(inputString) {
 			case 'pb':
 				// page break
 				//pb n="2rx" type="folio" facs="edfwe" xml:id="P2rx-0" break="no"/><fw type="runTitle"
-				var number = getWceAttributeByTei($teiNode, {
-					'n' : 'n'
-				});
-				if (number)
-					//teiIndexData['pageNumber'] = number;
-					g_pageNumber = number;
-				var pbtype = getWceAttributeByTei($teiNode, {
-					'type' : 'p'
-				});
+				var number = $teiNode.getAttribute('n');
+				alert(number);
+				if (number) {
+					number = removeArrows(number); // Replace arrows for fibre type by "x" and "y" resp. => use for "xml:id"
+				}
+				alert(number);
+				var pbtype = $teiNode.getAttribute('type');
+				if (pbtype) {
 				if (pbtype == "page") {
 					if (number.match("[0-9]$")) {// ends with a digit => no fibre type
-						wceAttr += '&number=' + number + '&pb_type=&fibre_type=';
+						wceAttr += '&number=' + number + '&fibre_type=';
 					} else {
-						wceAttr += '&number=' + number.substring(1, number.length - 1) + '&fibre_type=' + number.substring(number.length - 1);
+						wceAttr += '&number=' + number.substring(0, number.length - 1) + '&fibre_type=' + number.substring(number.length - 1);
 					}
+					wceAttr += '&pbtype=' + pbtype;
 				} else {//folio
 					if (number.match("[rv]$")) {// ends with r|v => no fibre type
-						wceAttr += '&number=' + number.substring(1, number.length - 1) + '&pb_type=' + number.substring(number.length - 1) + '&fibre_type=';
+						wceAttr += '&number=' + number.substring(0, number.length - 1) + '&pb_type=' + number.substring(number.length - 1) + '&fibre_type=';
 					} else {
-						wceAttr += '&number=' + number.substring(1, number.length - 2) + '&pb_type=' + number.substring(number.length - 2, number.length - 1) + '&fibre_type=' + number.substring(number.length - 1);
+						wceAttr += '&number=' + number.substring(0, number.length - 2) + '&pb_type=' + number.substring(number.length - 2, number.length - 1) + '&fibre_type=' + number.substring(number.length - 1);
 					}
 				}
-
+				}
 				wceAttr += '&facs=';
 				if ($teiNode.getAttribute('facs'))
 					wceAttr += $teiNode.getAttribute('facs');
@@ -1210,6 +1210,7 @@ function getTeiByHtml(inputString, args) {
 	var g_manuscriptLang = args['manuscriptLang'];
 	var g_quireNumber = '';
 	var g_pageNumber = '';
+	var g_pageNumber_id = '';
 	var g_columnNumber = '';
 	var g_chapterNumber = '';
 	var g_verseNumber = '';
@@ -2013,25 +2014,28 @@ function getTeiByHtml(inputString, args) {
 					if (arr['lb_alignment'] != '') {
 						$newNode.setAttribute('rend', arr['lb_alignment']);
 					}
-					xml_id = 'P' + g_pageNumber + 'C' + g_columnNumber + 'L' + g_lineNumber + '-' + g_witValue;
+					xml_id = 'P' + g_pageNumber_id + 'C' + g_columnNumber + 'L' + g_lineNumber + '-' + g_witValue;
 					break;
 				case 'cb':
 					g_columnNumber = arr['number'];
 					$newNode.setAttribute('n', g_columnNumber);
-					xml_id = 'P' + g_pageNumber + 'C' + g_columnNumber + '-' + g_witValue;
+					xml_id = 'P' + g_pageNumber_id + 'C' + g_columnNumber + '-' + g_witValue;
 					break;
 				case 'pb':
 					var breaPage = '';
 					// Set page number and decide which type (folio|page)
-					//if (!arr['pb_ghostpage']) {
 					if (arr['pb_type'] != '') {
 						// folio
 						g_pageNumber = arr['number'] + arr['pb_type'] + arr['fibre_type'];
+						g_pageNumber = addArrows(g_pageNumber);
+						g_pageNumber_id = removeArrows(g_PageNumber);
 						$newNode.setAttribute('n', g_pageNumber);
 						$newNode.setAttribute('type', 'folio');
 					} else {
 						// page
 						g_pageNumber = arr['number'] + arr['fibre_type'];
+						g_pageNumber = addArrows(g_pageNumber);
+						g_pageNumber_id = removeArrows(g_PageNumber);
 						$newNode.setAttribute('n', g_pageNumber);
 						$newNode.setAttribute('type', 'page');
 					}
@@ -2040,7 +2044,7 @@ function getTeiByHtml(inputString, args) {
 						// use URL for facs attribute
 						$newNode.setAttribute('facs', decodeURIComponent(arr['facs']));
 					}
-					xml_id = 'P' + g_pageNumber + '-' + g_witValue;
+					xml_id = 'P' + g_pageNumber_id + '-' + g_witValue;
 					break;
 			}
 			$newNode.setAttribute("xml:id", xml_id);
@@ -2659,6 +2663,25 @@ function nodeAddText($node, str) {
 		$node.appendChild($node.ownerDocument.createTextNode(str));
 	}
 };
+
+function addArrows(str) {
+	var out = str;
+	if (str.indexOf("x") == str.length-1)
+		out = str.substring(0, str.length-1)+"→"
+	else if (str.indexOf("y") == str.length-1)
+		out = str.substring(0, str.length-1)+"↑"
+	return out;
+};
+
+function removeArrows(str) {
+	var out = str;
+	if (str.indexOf("→") == str.length-1)
+		out = str.substring(0, str.length-1) + "x"
+	else if (str.indexOf("↑") == str.length-1)
+		out = str.substring(0, str.length-1) + "y"
+	return out;
+};
+
 
 /*
  * trim a string (cf. http://blog.stevenlevithan.com/archives/faster-trim-javascript)

@@ -8,7 +8,7 @@
  */
 
 (function() {
-	var wfce_editor = "2013-09-23";
+	var wfce_editor = "2013-10-02";
 
 	// Load plugin specific language pack
 	tinymce.PluginManager.requireLangPack('wce');
@@ -1139,6 +1139,7 @@
 					_disableAllControls(ed, true);
 					w.not_O = false;
 					w.not_C = !wholeSelect;
+					w.not_D = !wholeSelect;
 					break;
 
 				case 'formatting_capitals':
@@ -1834,7 +1835,7 @@
 							info_text = '<div>' + ed.getLang('wce.infotext_punctuation_mark') + '</div>';
 							break;
 						case 'verse':
-							info_text = '<div>' + 'Vers';
+							info_text = '<div>' + 'Verse';
 							if (ar['partial'] == 'I')
 								info_text += ' (initial portion)';
 							if (ar['partial'] == 'M')
