@@ -893,7 +893,28 @@ function getHtmlByTei(inputString) {
 		$newNode.setAttribute('class', 'paratext');
 
 		// set span attribute wce
-		var wceAttr = '__t=paratext&__n=&marginals_text=' + getDomNodeText($teiNode) + '';
+	//	var wceAttr = '__t=paratext&__n=&marginals_text=' + getDomNodeText($teiNode) + '';
+	
+		var wceAttr = '__t=paratext&__n='; //marginals_text is content of editor in editor, 	 
+		var cs = $teiNode.childNodes;
+		var marginals_text=""
+		for (var i = 0, c, l = cs.length; i < l; i++) {
+			c = cs[i];
+			if(!c){
+				break;
+			}
+			
+			var $tempParent = $newDoc.createElement('t');
+			// <t>...</t> 
+			readAllChildrenOfTeiNode($tempParent, c); 
+			var tempText= xml2String($tempParent);//TODO: create a function for this.  for tei element "app" too
+			if (tempText && tempText.length > 7) {
+				tempText = tempText.substr(3, tempText.length - 7);
+				marginals_text+=tempText;
+			}
+			
+		}
+		wceAttr += '&marginals_text=' + encodeURIComponent(marginals_text);
 
 		var mapping = {
 			'n' : '&edit_number=',
@@ -1974,6 +1995,7 @@ function getTeiByHtml(inputString, args) {
 		}
 	};
 
+	//text from editor in editor
 	var html2Tei_correctionAddW = function($newNode, text) {
 		text = decodeURIComponent(text);
 		var $corrXMLDoc = loadXMLString('<TEMP>' + text + '</TEMP>');
@@ -1985,6 +2007,21 @@ function getTeiByHtml(inputString, args) {
 				continue;
 			} else {
 				readAllChildrenOfHtmlNode($newNode, $c, false);
+			}
+		}
+	};
+	//text from editor in editor
+	var html2Tei_paratextAddChildren = function($newNode, text) {
+		text = decodeURIComponent(text);
+		var $corrXMLDoc = loadXMLString('<TEMP>' + text + '</TEMP>');
+		var $corrRoot = $corrXMLDoc.documentElement;
+		var childList = $corrRoot.childNodes;
+		for (var x = 0, $c, y = childList.length; x < y; x++) {
+			$c = childList[x];
+			if (!$c) {
+				continue;
+			} else {
+				readAllChildrenOfHtmlNode($newNode, $c, true);
 			}
 		}
 	};
@@ -2305,7 +2342,8 @@ function getTeiByHtml(inputString, args) {
 			$gap.setAttribute('extent', 'rest');
 			$teiParent.appendChild($gap);
 		} else {// only if not commentary nor ews
-			nodeAddText($paratext, decodeURIComponent(arr['marginals_text']));
+			html2Tei_paratextAddChildren($paratext, arr['marginals_text']);			
+			//nodeAddText($paratext, decodeURIComponent(arr['marginals_text']));
 			var $seg;
 			if (placeValue === '') {
 				$teiParent.appendChild($paratext);
