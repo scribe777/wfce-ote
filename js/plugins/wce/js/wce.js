@@ -311,6 +311,10 @@ function writeWceNodeInfo(val) {
 		// update wce
 		if (wce_node != null) {
 			if (wce_type == 'paratext') {
+				ed.execCommand('wceDelNode', false);
+				add_new_wce_node = true;
+				return writeWceNodeInfo(val);
+				/*	
 				if (document.getElementById('fw_type').value == 'commentary') {// commentary note
 					var cl = document.getElementById('covered').value;
 					if (wce_node.getAttribute('class') === 'commentary') {//<span class=commentary>
@@ -362,7 +366,7 @@ function writeWceNodeInfo(val) {
 					//TODO: old value has to be subtract first
 				} else {// num or fw
 					wce_node.innerHTML = startFormatHtml + val + endFormatHtml;
-				}
+				}*/
 			} else if (wce_type == 'corr') {
 				if (document.getElementById('blank_firsthand').checked)
 					wce_node.innerHTML = startFormatHtml + 'T' + endFormatHtml;
@@ -372,7 +376,7 @@ function writeWceNodeInfo(val) {
 				// break type
 				//change type
 				if (old_break_type != break_type) {
-					ed.execCommand('wceDelNode', false);
+					ed.execCommand('wceDelNode', false);return;
 					add_new_wce_node = true;
 					return writeWceNodeInfo();
 				} else {
@@ -394,7 +398,7 @@ function writeWceNodeInfo(val) {
 				ed.execCommand('wceDelNode', false);
 				add_new_wce_node = true;
 				return writeWceNodeInfo();
-
+				/*
 				// TODO: Additional break at the end is still missing.
 				if (document.getElementById('mark_as_supplied').checked == true) {// supplied text
 					wce_node.textContent = '[' + wce_node.getAttribute('wce_orig') + ']';
@@ -441,7 +445,7 @@ function writeWceNodeInfo(val) {
 					} else {
 						wce_node.textContent = '[...]';
 					}
-				}
+				}*/
 			}
 			wce_node.setAttribute('wce', newWceAttr);
 		}

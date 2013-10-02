@@ -1061,7 +1061,7 @@
 			w.isSelWholeNode = wholeSelect;
 			w.selectedNode = selectedNode;
 
-			if (selectedNode.getAttribute('class') === 'commentary') {
+			if (selectedNode.getAttribute('class') === 'commentary'  || selectedNode.getAttribute('class') === 'ews') {
 				w.type = 'paratext';
 			} else {
 				w.type = WCEUtils.getNodeTypeName(selectedNode);
@@ -2231,13 +2231,13 @@
 					if (isSpaceKey) {
 						return stopEvent(ed, e);
 					}
-				} else if (ek == 46 && wcevar.selectedNode && wcevar.selectedNode.className == 'commentary') {
+				} else if (ek == 46 && wcevar.selectedNode && (wcevar.selectedNode.className == 'commentary') || wcevar.selectedNode.className == 'ews') {
 					//[comm] italic need a tag
 					ed.execCommand('wceDelNode');
 					return stopEvent(ed, e);
 				} else if (ek == 46 && wcevar.isCaretAtNodeEnd && !wcevar.isNextElemBE) {
 
-				} else if (ek == 46 && wcevar.isCaretAtNodeEnd && wcevar.isNextElemBE && wcevar.nextElem.className != 'commentary') {
+				} else if (ek == 46 && wcevar.isCaretAtNodeEnd && wcevar.isNextElemBE && wcevar.nextElem.className != 'commentary' && wcevar.nextElem.className != 'ews') {
 					//caret at middle of two elements
 					return stopEvent(ed, e);
 				} else if ((ek == 46 && !wcevar.isCaretAtFormatStart) || (ek == 8 && wcevar.type != ed.WCE_CON.formatEnd && !wcevar.isCaretAtFormatStart)) {
@@ -3357,7 +3357,7 @@
 					if (cn == ed.WCE_CON.formatStart || sn.className == ed.WCE_CON.formatEnd) {
 						return sn.parentNode;
 					}
-					if (cn == 'commentary') {
+					if (cn == 'commentary' || cn=='ews') {
 						return sn.parentNode;
 					}
 				}
@@ -3425,10 +3425,14 @@
 					 }
 					 }*/
 
-					if ((originalText) && originalText != 'null') {
+					if (originalText && originalText != 'null') {
 						ed.selection.setContent(originalText);
-					} else
+					} else{
+						if(wceNode){
+							ed.selection.select(wceNode);
+						}
 						ed.selection.setContent("");
+					}
 					ed.focus();
 
 					ed.isNotDirty = 0;
