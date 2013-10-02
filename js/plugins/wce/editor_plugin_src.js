@@ -3453,7 +3453,7 @@
 				if (w.not_B) {
 					return;
 				}
-				if (w.type == 'break') {
+				if (w.type == 'brea') {
 					ed.execCommand('mceEditBreak');
 				} else {
 					ed.execCommand('mceAddBreak');

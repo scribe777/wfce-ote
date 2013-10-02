@@ -143,15 +143,15 @@
 			else
 				break_indention = "";
 
-			break_lbpos = wceUtils.modifyBreakPosition(ed);
+			/*break_lbpos = wceUtils.modifyBreakPosition(ed);
 			if (break_lbpos == 'lbm') {//lbm
 				document.breakinfo.hasBreak.value = 'yes';
 			} else {
 				document.breakinfo.hasBreak.value = 'no';
-			}
-			/*if (!add_new_wce_node) {
+			}*/
+			if (!add_new_wce_node) {
 				// set hasBreak attribute
-				checkstatus_hyphen();
+				// checkstatus_hyphen();
 				if ($('#hasBreak').val() == 'yes')
 					break_lbpos = 'lbm';
 				else
@@ -164,7 +164,7 @@
 				} else {
 					document.breakinfo.hasBreak.value = 'no';
 				}
-			}*/
+			}
 
 		}
 
