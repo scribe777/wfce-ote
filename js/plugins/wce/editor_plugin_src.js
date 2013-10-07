@@ -8,7 +8,7 @@
  */
 
 (function() {
-	var wfce_editor = "2013-10-02";
+	var wfce_editor = "2013-10-07";
 
 	// Load plugin specific language pack
 	tinymce.PluginManager.requireLangPack('wce');
@@ -1751,6 +1751,9 @@
 									break;
 								case 'pageNum':
 									info_text += ed.getLang('wce.fw_pagenumber');
+									break;
+								case 'isolated':
+									info_text += ed.getLang('wce.fw_isolated');
 									break;
 								default:
 									info_text += ar['fw_type_other'];

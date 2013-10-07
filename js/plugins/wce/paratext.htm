@@ -32,6 +32,7 @@
 							<option value="gloss">{#wce.fw_gloss}</option>
 							<option value="stichoi">{#wce.fw_stichoi}</option>
 							<option value="pageNum">{#wce.fw_pagenumber}</option>
+							<option value="isolated">{#wce.fw_isolated}</option>
 							<option value="other">{#wce.other}</option>
 					</select>
 					</td>
@@ -48,9 +49,7 @@
 				</tr>
 				<tr>
 					<td><label id="marginals_text_label" for="marginals_text">{#wce.text}</label></td>
-					<!--<td colspan="2"><input id="text" name="text" type="text" value=""
-						size=45" maxlength="" class="required number min1 mceFocus" onchange="checkstatus_typ()" /></td>-->
-						<td colspan="4"><textarea WRAP="PHYSICAL" ROWS="4" style="width:100%" id="marginals_text" name="marginals_text"></textarea></td>
+					<td colspan="4"><textarea WRAP="PHYSICAL" ROWS="4" style="width:100%" id="marginals_text" name="marginals_text"></textarea></td>
 				</tr>
 				<tr>
 					<td><label id="number_label" for="number">{#wce.number_attribute}</label></td>
@@ -102,8 +101,8 @@
 		</fieldset>
 		<div class="mceActionPanel">
 			<input type="button"  id="insert" name="insert" value="{#insert}"
-				onclick="cont = testOther();
-						if (cont){writeWceNodeInfo(getParaTag());}else{alert('{#wce.empty_other}');}" />
+				onclick="cont = testInput();
+						if (cont=='0'){writeWceNodeInfo(getParaTag());}else{if(cont=='1'){alert('{#wce.empty_other}');}else{alert('{#wce.empty_margin}');}}" />
 			<input type="button" id="cancel" name="cancel" value="{#cancel}"
 				onclick="tinyMCEPopup.close();" />
 		</div>
@@ -151,7 +150,9 @@
 
 	function getParaTag() {
 		var v = $('#fw_type').val();
-		if (v == 'runTitle' || 'chapTitle' || v == 'lectTitle' || v == 'colophon' || v == 'quireSig' || v == 'euthaliana' || v == 'gloss' || v == 'pageNum' || v == 'elsewhere' || v == 'other')
+		if (v == 'runTitle' || 'chapTitle' || v == 'lectTitle' || v == 'colophon' || v == 'quireSig' 
+			|| v == 'euthaliana' || v == 'gloss' || v == 'pageNum' || v == 'elsewhere' 
+			|| v == 'isolated' || v == 'other')
 			return 'fw';
 		else if (v == 'commentary')
 			return '';
@@ -193,7 +194,21 @@
 			marginals_text_editor.show();
 			document.paratextinfo.paratext_position.disabled = true;
 			document.paratextinfo.paratext_alignment.disabled = true;
-		} else if (v == 'runTitle' || v == 'chapTitle' || v == 'lectTitle' || v == 'colophon' || v == 'euthaliana' || v == 'gloss' || v =='pageNum' || v == 'elsewhere' || v == 'other') {
+		} else if (v == 'isolated') {
+			document.paratextinfo.number.value = '';
+			document.paratextinfo.number.disabled = true;
+			document.getElementById('number').style.backgroundColor = "#CCCCCC";
+			document.paratextinfo.edit_number.checked = "checked";
+			document.getElementById('edit_number').disabled = true;
+			document.paratextinfo.covered.disabled = true;
+			document.getElementById('covered').style.backgroundColor = "#CCCCCC";
+			$('#marginals_text').attr('disabled', false);
+			marginals_text_editor.show();
+			document.paratextinfo.paratext_position.disabled = false;
+			document.paratextinfo.paratext_alignment.disabled = false;
+		} else if (v == 'runTitle' || v == 'chapTitle' || v == 'lectTitle' || v == 'colophon' 
+			|| v == 'euthaliana' || v == 'gloss' || v =='pageNum' || v == 'elsewhere' 
+			|| v == 'other') {
 			//don't get a number, only text
 			document.paratextinfo.number.value = '';
 			document.paratextinfo.number.disabled = true;
@@ -248,9 +263,27 @@
 	
 	function testOther() {
 		if ((document.paratextinfo.paratext_position.options[15].selected == true && document.getElementById('paratext_position_other').value == '')
-			|| (document.paratextinfo.fw_type.options[14].selected == true && document.getElementById('fw_type_other').value == '')) 
+			|| (document.paratextinfo.fw_type.options[15].selected == true && document.getElementById('fw_type_other').value == '')) 
 			return false;
-	return true;
+		return true;
+	}
+	
+	function testIsolated() {
+		if (document.paratextinfo.fw_type.options[14].selected == true && document.paratextinfo.paratext_position.options[0].selected == true)
+			return false;
+		return true;
+	}
+	
+	function testInput() {
+		var cont = testOther();
+		if (!cont) {
+			return 1;
+		}
+		cont = testIsolated();
+		if (!cont) {
+			return 2;
+		}
+		return 0;
 	}
 
 	function setnumber() {
