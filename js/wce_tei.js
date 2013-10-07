@@ -203,7 +203,7 @@ function getHtmlByTei(inputString) {
 			// paratext
 
 			case 'num':
-				return Tei2Html_paratext($htmlParent, $teiNode, teiNodeName);
+				return Tei2Html_paratext($htmlParent, $teiNode, 'fw');
 			// paratext
 
 			case 'fw':
