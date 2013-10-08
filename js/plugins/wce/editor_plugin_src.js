@@ -8,7 +8,7 @@
  */
 
 (function() {
-	var wfce_editor = "2013-10-07";
+	var wfce_editor = "2013-10-08";
 
 	// Load plugin specific language pack
 	tinymce.PluginManager.requireLangPack('wce');
@@ -77,9 +77,9 @@
 				// page count
 				v.pcnt = 0;
 				// column count
-				v.ccnt = 0;
+				v.ccnt = 1; //Because of the predefined part from the NTVMR
 				// line count
-				v.lcnt = 0;
+				v.lcnt = 1; //Because of the predefined part from the NTVMR
 				// counting as r/v
 				v.rectoverso = 'true';
 			} else {

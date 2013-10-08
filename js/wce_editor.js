@@ -54,7 +54,8 @@ function wceReload() {
 	setData(testData);
 	*/
 	setTeiIndexData(tinymce.get(tinyMCE.activeEditor.id).settings.book, tinymce.get(tinyMCE.activeEditor.id).settings.witness, tinymce.get(tinyMCE.activeEditor.id).settings.manuscriptLang);
-}
+//setTEI('<?xml version="1.0" encoding="utf-8"?> <!DOCTYPE TEI [<!ENTITY om "">]> <?xml-model href="TEI-NTMSS.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?> <TEI xmlns="http://www.tei-c.org/ns/1.0"> <teiHeader> <fileDesc> <titleStmt> <title/> </titleStmt> <publicationStmt> <publisher/> </publicationStmt> <sourceDesc> <msDesc> <msIdentifier> </msIdentifier> </msDesc> </sourceDesc> </fileDesc> </teiHeader> <text> <body> <w> <gap reason="lacuna"/><unclear>Te</unclear>s<supplied source="na28" reason="illegible">t</supplied> </w> </body> </text> </TEI>');
+	}
 
 // get dirty-value of editor
 function isEditorDirty() {
@@ -121,6 +122,7 @@ function setTEI(teiStringInput) {
 	if (teiIndexData) {
 		tinyMCE.activeEditor.teiIndexData = teiIndexData;
 	}
+	resetCounter(); //for resetting the counter each time this method is called
 	return 0;
 }
 
@@ -158,6 +160,23 @@ function increaseLineHeight() {
 
 function decreaseLineHeight() {
 
+}
+
+function resetCounter() {
+	var v = tinyMCE.activeEditor.WCE_VAR;
+	if (!v)
+		return false;
+	// quire count
+	v.qcnt = 0;
+	// page count
+	v.pcnt = 0;
+	// column count
+	v.ccnt = 1; //Because of the predefined part from the NTVMR
+	// line count
+	v.lcnt = 1; //Because of the predefined part from the NTVMR
+	// counting as r/v
+	v.rectoverso = 'true';
+	return true;
 }
 
 function addMenuItems(ed) {
