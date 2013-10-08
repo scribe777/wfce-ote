@@ -935,8 +935,9 @@ function getHtmlByTei(inputString) {
 				wceAttr += $next.getAttribute('subtype') + '&paratext_position_other=';
 			else // type="other"
 				wceAttr += 'other&paratext_position_other=' + $next.getAttribute('subtype');
+		} else {
+			wceAttr += '&paratext_position=&paratext_position_other=';
 		}
-
 		$newNode.setAttribute('wce', wceAttr);
 		nodeAddText($newNode, teiNodeName);
 

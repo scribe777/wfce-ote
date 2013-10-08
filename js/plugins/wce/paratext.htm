@@ -134,7 +134,7 @@
 			theme_advanced_statusbar_location : "bottom",
 			theme_advanced_resizing : false ,
 			setup : function(ed) {
-				//ed.onChange.add(saveCurrCorrector);
+				//ed.onChange.add(ed.save());
 			}
 		});  
 	 	marginals_text_editor.render(); 
@@ -169,7 +169,7 @@
 			document.paratextinfo.fw_type_other.disabled = true;
 			document.getElementById('fw_type_other').style.backgroundColor = "#CCCCCC";
 		}
-		
+		marginals_text_editor.save();
 		if (v == 'commentary') {
 			document.paratextinfo.number.value = '';
 			document.paratextinfo.number.disabled = true;
@@ -207,8 +207,7 @@
 			document.paratextinfo.paratext_position.disabled = false;
 			document.paratextinfo.paratext_alignment.disabled = false;
 		} else if (v == 'runTitle' || v == 'chapTitle' || v == 'lectTitle' || v == 'colophon' 
-			|| v == 'euthaliana' || v == 'gloss' || v =='pageNum' || v == 'elsewhere' 
-			|| v == 'other') {
+			|| v == 'euthaliana' || v == 'gloss' || v =='pageNum' || v == 'other') {
 			//don't get a number, only text
 			document.paratextinfo.number.value = '';
 			document.paratextinfo.number.disabled = true;
@@ -223,14 +222,15 @@
 			document.paratextinfo.paratext_alignment.disabled = false;
 		} else {
 			document.getElementById('edit_number').disabled = false;
-			if (document.paratextinfo.edit_number.selected == true) {
+			checkstatus_number();
+			/*if (document.paratextinfo.edit_number.checked == true) {
 				document.paratextinfo.number.disabled = true;
 				document.getElementById('number').style.backgroundColor = "#CCCCCC";
 			} else {
 				document.paratextinfo.number.disabled = false;
 				document.getElementById('number').style.backgroundColor = "white";
 			}
-			setnumber();
+			setnumber();*/
 			document.paratextinfo.covered.disabled = true;
 			document.getElementById('covered').style.backgroundColor = "#CCCCCC";
 			$('#marginals_text').attr('disabled', false);
@@ -324,8 +324,8 @@
 			}
 
 			document.paratextinfo.number.value = dezimalz;
-			document.paratextinfo.number.disabled = true;
-			document.getElementById('number').style.backgroundColor = "#CCCCCC";
+			//document.paratextinfo.number.disabled = true;
+			//document.getElementById('number').style.backgroundColor = "#CCCCCC";
 
 		} else {
 			document.paratextinfo.number.value = '';
