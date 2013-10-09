@@ -8,7 +8,7 @@
  */
 
 (function() {
-	var wfce_editor = "2013-10-08";
+	var wfce_editor = "2013-10-09";
 
 	// Load plugin specific language pack
 	tinymce.PluginManager.requireLangPack('wce');
@@ -1210,7 +1210,7 @@
 			var ec = rng.endContainer;
 			var w=ed.WCE_VAR;
 
-			if (sc && ed && sc.nodeType == 3 && ec.nodeValue.length>0) {
+			if (sc && ec && sc.nodeType == 3 && ec.nodeValue.length>0) {
 				var scParent = sc.parentNode;
 				if(w.isCaretAtFormatStart){
 					scParent=scParent.parentNode.parentNode;

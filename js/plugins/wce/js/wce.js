@@ -197,15 +197,17 @@ function writeWceNodeInfo(val) {
 				break;
 
 			case 'unclear':
-				var unclear_text = "";
-				for (var i = 0; i < selected_content.length; i++) {
-					if (selected_content.charAt(i) == ' ') {
-						unclear_text += selected_content.charAt(i);
-					} else {
-						unclear_text += selected_content.charAt(i) + '&#x0323;';
+				if (selected_content.indexOf('span class="spaces"') == -1) { // take care of spaces element
+					var unclear_text = "";
+					for (var i = 0; i < selected_content.length; i++) {
+						if (selected_content.charAt(i) == ' ') {
+							unclear_text += selected_content.charAt(i);
+						} else {
+							unclear_text += selected_content.charAt(i) + '&#x0323;';
+						}
 					}
+					selected_content = unclear_text;
 				}
-				selected_content = unclear_text;
 				break;
 
 			case 'note':
@@ -225,7 +227,8 @@ function writeWceNodeInfo(val) {
 
 			case 'spaces':
 				// default
-				selected_content = '&nbsp;';
+				//selected_content = '&nbsp;';
+				new_content = '<span wce="' + newWceAttr + '"' + wceClass + '>' + startFormatHtml + 'sp' + endFormatHtml + '</span>';
 				break;
 
 			case 'paratext':

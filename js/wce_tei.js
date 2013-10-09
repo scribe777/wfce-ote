@@ -364,7 +364,8 @@ function getHtmlByTei(inputString) {
 		$newNode.setAttribute('class', 'unclear');
 		var wceAttr = '__t=unclear&__n=';
 
-		$newNode.setAttribute('wce_orig', $teiNode.firstChild.nodeValue);
+		$newNode.setAttribute('wce_orig', $teiNode.firstChild.nodeValue ? $teiNode.firstChild.nodeValue : '');
+		
 
 		if (!$teiNode.getAttribute('reason')) {// no reason given
 			wceAttr += '&unclear_text_reason=&unclear_text_reason_other=';
@@ -718,7 +719,7 @@ function getHtmlByTei(inputString) {
 		};
 		wceAttr += getWceAttributeByTei($teiNode, mapping);
 		$newNode.setAttribute('wce', wceAttr);
-		nodeAddText($newNode, ' ');
+		nodeAddText($newNode, 'sp');
 		addFormatElement($newNode);
 		$htmlParent.appendChild($newNode);
 
@@ -1663,10 +1664,12 @@ function getTeiByHtml(inputString, args) {
 
 		// unclear
 		if (wceType == 'unclear') {
-			var text = getDomNodeText($htmlNode).split(" ");
 			// split up content at word boundaries
+			var text = getDomNodeText($htmlNode).split(" ");
+			if (text == '\u2039sp\u203a') // take care of spaces element
+				return html2Tei_unclear(arr, $teiParent, $htmlNode, stopAddW);
+			// split up original text attribute
 			var orig_text = $htmlNode.getAttribute('wce_orig').split("%20");
-			//split up original text attribute
 			if (text.length > 1) {
 				var $parent = $htmlNode.parentNode;
 				$htmlNode.removeChild($htmlNode.firstChild);
@@ -2435,7 +2438,8 @@ function getTeiByHtml(inputString, args) {
 			$unclear.setAttribute('reason', decodeURIComponent(reasonValue));
 		}
 		if ($htmlNode.getAttribute('wce_orig')) {
-			nodeAddText($unclear, decodeURIComponent($htmlNode.getAttribute('wce_orig')));
+			if (decodeURIComponent($htmlNode.getAttribute('wce_orig')).indexOf('<span class="spaces"') != 0) // take care of spaces element
+				nodeAddText($unclear, decodeURIComponent($htmlNode.getAttribute('wce_orig')));
 		}
 
 		if (!stopAddW) {
@@ -2451,6 +2455,7 @@ function getTeiByHtml(inputString, args) {
 			1 : true
 		}
 	}
+	
 	/*
 	 * change text to TEI Node. Determine if the text with other nodes belonging to a word
 	 */
