@@ -42,7 +42,7 @@ function getHtmlByTei(inputString) {
 		 	//return '';
 		}
 		var $oldRoot = $oldDoc.documentElement;
-		if($oldRoot){
+		if ($oldRoot && $oldRoot.firstChild){ 
 			var first=$oldRoot.firstChild;
 			var error;
 			if(first.nodeType==3 && $oldRoot.nodeName && $oldRoot.nodeName.match(/parsererror/i)){
