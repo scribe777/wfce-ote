@@ -762,11 +762,9 @@ function getHtmlByTei(inputString) {
 				// page break
 				//pb n="2rx" type="folio" facs="edfwe" xml:id="P2rx-0" break="no"/><fw type="runTitle"
 				var number = $teiNode.getAttribute('n');
-				alert(number);
 				if (number) {
 					number = removeArrows(number); // Replace arrows for fibre type by "x" and "y" resp. => use for "xml:id"
 				}
-				alert(number);
 				var pbtype = $teiNode.getAttribute('type');
 				if (pbtype) {
 				if (pbtype == "page") {
@@ -2071,14 +2069,14 @@ function getTeiByHtml(inputString, args) {
 						// folio
 						g_pageNumber = arr['number'] + arr['pb_type'] + arr['fibre_type'];
 						g_pageNumber = addArrows(g_pageNumber);
-						g_pageNumber_id = removeArrows(g_PageNumber);
+						g_pageNumber_id = removeArrows(g_pageNumber);
 						$newNode.setAttribute('n', g_pageNumber);
 						$newNode.setAttribute('type', 'folio');
 					} else {
 						// page
 						g_pageNumber = arr['number'] + arr['fibre_type'];
 						g_pageNumber = addArrows(g_pageNumber);
-						g_pageNumber_id = removeArrows(g_PageNumber);
+						g_pageNumber_id = removeArrows(g_pageNumber);
 						$newNode.setAttribute('n', g_pageNumber);
 						$newNode.setAttribute('type', 'page');
 					}
