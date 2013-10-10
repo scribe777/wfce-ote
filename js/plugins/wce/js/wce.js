@@ -314,7 +314,7 @@ function writeWceNodeInfo(val) {
 		// update wce
 		if (wce_node != null) {
 			if (wce_type == 'paratext') {
-				ed.execCommand('wceDelNode', false);
+				selected_content=ed.execCommand('wceDelNode', false, true);
 				add_new_wce_node = true;
 				return writeWceNodeInfo(val);
 				/*	
@@ -379,9 +379,9 @@ function writeWceNodeInfo(val) {
 				// break type
 				//change type
 				if (old_break_type != break_type) {
-					ed.execCommand('wceDelNode', false);return;
+					selected_content=ed.execCommand('wceDelNode', false, true);return;
 					add_new_wce_node = true;
-					return writeWceNodeInfo();
+					return writeWceNodeInfo(val);
 				} else {
 					//edit default
 					if (break_type == 'lb') {
@@ -398,9 +398,9 @@ function writeWceNodeInfo(val) {
 				}
 				wce_node.className = abbrClass;
 			} else if (wce_type == 'gap') {// edit gap
-				ed.execCommand('wceDelNode', false);
+				selected_content=ed.execCommand('wceDelNode', false, true);
 				add_new_wce_node = true;
-				return writeWceNodeInfo();
+				return writeWceNodeInfo(val);
 				/*
 				// TODO: Additional break at the end is still missing.
 				if (document.getElementById('mark_as_supplied').checked == true) {// supplied text

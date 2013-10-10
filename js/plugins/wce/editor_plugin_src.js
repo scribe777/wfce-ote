@@ -3374,7 +3374,7 @@
 			});
 
 			// delete nodeName
-			ed.addCommand('wceDelNode', function() {
+			ed.addCommand('wceDelNode', function(arg0, notAddOriginal) {
 				var wceNode = ed.execCommand('getWceNode');
 				var wceClass;
 				if (wceNode) {
@@ -3430,7 +3430,13 @@
 					 }*/
 
 					if (originalText && originalText != 'null') {
-						ed.selection.setContent(originalText);
+						if(notAddOriginal){ 
+						}else{
+							 ed.selection.setContent(originalText);
+						}
+						ed.focus(); 
+						ed.isNotDirty = 0;
+						return originalText;
 					} else{
 						if(wceNode){
 							ed.selection.select(wceNode);
