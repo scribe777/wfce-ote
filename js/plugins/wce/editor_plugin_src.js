@@ -439,7 +439,6 @@
 		 */
 		modifyBreakPosition : function(ed) {
 			//TODO: muss noch getestet werden, da zwei textnode hintereinander stehen k?nnen
-
 			var rng = WCEUtils.getRNG(ed);
 			var startNode = rng.startContainer;
 			if (startNode.nodeType != 3) {
@@ -488,7 +487,7 @@
 			} else {
 				c0 = startText.charAt(startOffset - 1);
 				c1 = startText.charAt(startOffset);
-				if (c0 != ' ' && c0 != '\xa0' && c1 != ' ' && c1 != '\xa0') {
+				if (c0 != ' ' && c0 != '\xa0' && c1 != ' ' && c1 != '\xa0' && c0 != '\u21B5') { // added last condition for #1616
 					return 'lbm';
 				}
 			}
