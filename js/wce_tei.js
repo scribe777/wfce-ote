@@ -1589,6 +1589,8 @@ function getTeiByHtml(inputString, args) {
 		// gap
 		if (wceType == 'gap') {
 			var text = getDomNodeText($htmlNode).split(" ");
+			if (text == '') // fix for #1796
+				return;
 			// split up content at word boundaries
 			if (text[0] === "Witness")// Witness End
 				return html2Tei_gap(arr, $teiParent, $htmlNode, true);
