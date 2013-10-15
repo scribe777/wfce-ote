@@ -30,7 +30,7 @@
 		init_instance_callback : "wceReload",
 
 		// Theme options
-		theme_advanced_buttons1 : "undo,redo,charmap,|,code,removeformat,|,save,print,contextmenu,cut,copy,paste,fullscreen,|,breaks,correction,illegible,decoration,abbreviation,paratext,note,punctuation,versemodify,|,showTeiByHtml,showHtmlByTei,|,version",
+		theme_advanced_buttons1 : "undo,redo,charmap,|,code,|,save,print,contextmenu,cut,copy,paste,fullscreen,|,breaks,correction,illegible,decoration,abbreviation,paratext,note,punctuation,versemodify,|,showTeiByHtml,showHtmlByTei,|,version",
 		theme_advanced_buttons2 : "",
 		theme_advanced_toolbar_location : "top",
 		theme_advanced_toolbar_align : "left",
@@ -53,8 +53,11 @@ function wceReload() {
 	testData='abc def';
 	setData(testData);
 	*/
-	setTeiIndexData(tinymce.get(tinyMCE.activeEditor.id).settings.book, tinymce.get(tinyMCE.activeEditor.id).settings.witness, tinymce.get(tinyMCE.activeEditor.id).settings.manuscriptLang);
-//setTEI('<?xml version="1.0" encoding="utf-8"?> <!DOCTYPE TEI [<!ENTITY om "">]> <?xml-model href="TEI-NTMSS.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?> <TEI xmlns="http://www.tei-c.org/ns/1.0"> <teiHeader> <fileDesc> <titleStmt> <title/> </titleStmt> <publicationStmt> <publisher/> </publicationStmt> <sourceDesc> <msDesc> <msIdentifier> </msIdentifier> </msDesc> </sourceDesc> </fileDesc> </teiHeader> <text> <body> <w> <gap reason="lacuna"/><unclear>Te</unclear>s<supplied source="na28" reason="illegible">t</supplied> </w> </body> </text> </TEI>');
+	//setTeiIndexData(tinymce.get(tinyMCE.activeEditor.id).settings.book, tinymce.get(tinyMCE.activeEditor.id).settings.witness, tinymce.get(tinyMCE.activeEditor.id).settings.manuscriptLang);
+//setTEI('<?xml version="1.0" encoding="utf-8"?> <!DOCTYPE TEI [<!ENTITY om "">]> <?xml-model href="TEI-NTMSS.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?> <TEI xmlns="http://www.tei-c.org/ns/1.0"> <teiHeader> <fileDesc> <titleStmt> <title/> </titleStmt> <publicationStmt> <publisher/> </publicationStmt> <sourceDesc> <msDesc> <msIdentifier> </msIdentifier> </msDesc> </sourceDesc> </fileDesc> </teiHeader> <text> <body><ab n="B04K21V18"><gap extent="rest" unit="verse" reason="lacuna/illegible"/><gap extent="16" unit="char" reason="lacuna/illegible"/><w><gap extent="part" unit="word" reason="lacuna/illegible"/><unclear>νε</unclear>ι<supplied reason="lacuna/illegible">ς</supplied></w><lb xml:id="P1xC1L2-P109" n="2"/><w><supplied reason="lacuna/illegible">τας</supplied></w><w><supplied reason="lacuna/illegible">χειρας</supplied></w><w><supplied reason="lacuna/illegible"                   >σου</supplied></w><w><unclear>κ</unclear>αι</w><w>αλλοι</w><lb xml:id="P1xC1L3-P109" n="3"/><w><gap extent="12" unit="char" reason="lacuna/illegible"                                />ουσι<unclear>ν</unclear></w><w><unclear>σε</unclear></w><lb xml:id="P1xC1L4-P109" n="4"/><w><supplied reason="lacuna/illegible">οπου</supplied></w><w><supplied reason="lacuna/illegible"  >ου</supplied></w><w><supplied reason="lacuna/illegible">θελεις</supplied></w></ab></body> </text> </TEI>');
+	//setTeiIndexData(getWitness(), getBook(), getManuscriptLang());
+	//setTEI('<?xml version="1.0" encoding="utf-8"?> <!DOCTYPE TEI [<!ENTITY om "">]> <?xml-model href="TEI-NTMSS.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?> <TEI xmlns="http://www.tei-c.org/ns/1.0"> <teiHeader> <fileDesc> <titleStmt> <title/> </titleStmt> <publicationStmt> <publisher/> </publicationStmt> <sourceDesc> <msDesc> <msIdentifier> </msIdentifier> </msDesc> </sourceDesc> </fileDesc> </teiHeader> <text> <body><ab><w>ευαγγελ<supplied reason="lacuna/illegible">ιον</supplied></w><lb                          xml:id="P1yC1L4-P2" n="4"/></ab><ab n="B04K12V12"><seg subtype="lineleft" type="margin"                       ><pc>†</pc></seg><w>τη</w><w>επαυριον</w><w>οχλος</w><w><unclear>π</unclear><supplied reason="lacuna/illegible">ολυς</supplied></w><w><supplied                            reason="lacuna/illegible">ο</supplied></w><w><supplied reason="lacuna/illegible">ελθων</supplied></w><w><supplied                            reason="lacuna/illegible">εις</supplied></w><w><supplied reason="lacuna/illegible">την</supplied></w><lb xml:id="P1yC1L5-P2"                        n="5"/><w>εορτην</w><w>ακουσαν<unclear>τ</unclear><supplied reason="lacuna/illegible">ες</supplied></w><w><supplied                            reason="lacuna/illegible">οτι</supplied></w><w><supplied reason="lacuna/illegible">ερχεται</supplied></w><w><supplied                            reason="lacuna/illegible">ο</supplied></w><w><abbr type="nomSac"><supplied reason="lacuna/illegible"><hi rend="overline">ις</hi></supplied></abbr></w><lb xml:id="P1yC1L6-P2" n="6"   /><w>εις</w><w>ϊερου<supplied reason="lacuna/illegible">σαλ</supplied><unclear>ημ</unclear></w></ab><ab n="B04K12V13"><w><unclear>ε</unclear><supplied reason="lacuna/illegible"       >λαβον</supplied></w><w><supplied reason="lacuna/illegible">τα</supplied></w><w><supplied reason="lacuna/illegible">βαια</supplied></w><w><supplied reason="lacuna/illegible"                 >των</supplied></w><lb xml:id="P1yC1L7-P2" n="7"/><w>φοινικων</w><w>κ<supplied reason="lacuna/illegible">αι</supplied></w><w><supplied reason="lacuna/illegible"                       >εξηλθον</supplied></w><w><supplied reason="lacuna/illegible">εις</supplied></w><w><supplied reason="lacuna/illegible">υπαντησιν</supplied></w><w><supplied reason="lacuna/illegible"      >αυτω</supplied></w><lb xml:id="P1yC1L8-P2" n="8"/><w><supplied reason="lacuna/illegible">κα</supplied>ι</w><w>εκραυ<supplied                      reason="lacuna/illegible">γαζον</supplied></w><w><supplied reason="lacuna/illegible">ωσαννα</supplied></w><w><supplied                            reason="lacuna/illegible">ευλογημενος</supplied></w><lb xml:id="P1yC1L9-P2" n="9"/><w><supplied reason="lacuna/illegible">ο</supplied></w><w>ερχομε<supplied reason="lacuna/illegible"       >νος</supplied></w><w><supplied reason="lacuna/illegible">εν</supplied></w><w><supplied reason="lacuna/illegible">ονοματι</supplied></w><w><abbr type="nomSac"><supplied               reason="lacuna/illegible"><hi rend="overline">κυ</hi></supplied></abbr></w><w><supplied reason="lacuna/illegible">ο</supplied></w><w><supplied reason="lacuna/illegible"            >βασιλευς</supplied></w><lb xml:id="P1yC1L10-P2" n="10"/><w><supplied reason="lacuna/illegible">τ</supplied>ου</w><w><abbr type="nomSac"><hi                                rend="overline">ϊηλ</hi></abbr></w></ab></body></text></TEI>');
+	
 	}
 
 // get dirty-value of editor
@@ -70,7 +73,6 @@ function setEditorNotDirty(b) {
 // set editor html content
 function setData(msg) {
 	tinyMCE.activeEditor.setContent(msg);
-
 }
 
 // get editor html content
@@ -105,6 +107,9 @@ function getTeiIndexData() {
 
 // get TEI String from editor html content
 function getTEI() {
+	teiIndexData[0] = tinymce.get(tinyMCE.activeEditor.id).settings.book;
+	teiIndexData[1] = tinymce.get(tinyMCE.activeEditor.id).settings.witness;
+	teiIndexData[2] = tinymce.get(tinyMCE.activeEditor.id).settings.manuscriptLang;
 	return getTeiByHtml(getData(), getTeiIndexData());
 }
 
@@ -118,10 +123,10 @@ function setTEI(teiStringInput) {
 		if (htmlContent)
 			setData(htmlContent);
 	}
-	var teiIndexData = result['teiIndexData'];
+	/*var teiIndexData = result['teiIndexData'];
 	if (teiIndexData) {
 		tinyMCE.activeEditor.teiIndexData = teiIndexData;
-	}
+	}*/
 	resetCounter(); //for resetting the counter each time this method is called
 	return 0;
 }
@@ -260,3 +265,17 @@ if (( typeof Range !== "undefined") && !Range.prototype.createContextualFragment
 		return frag;
 	};
 }
+/*
+function getWitness() {
+	return 'witnessPlaceholder';
+}
+
+
+function getBook() {
+	return 'bookPlaceholder';
+}
+
+function getManuscriptLang() {
+	return 'whatever';
+}
+*/

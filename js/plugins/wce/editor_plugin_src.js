@@ -8,7 +8,7 @@
  */
 
 (function() {
-	var wfce_editor = "2013-10-11";
+	var wfce_editor = "2013-10-15";
 
 	// Load plugin specific language pack
 	tinymce.PluginManager.requireLangPack('wce');
@@ -1084,7 +1084,8 @@
 				case 'gap':
 					_disableAllControls(ed, true);
 					w.not_D = false;
-					//when select whone gap, can add corr.
+					w.not_O = !wholeSelect;
+					//when select whole gap, can add corr.
 					w.not_C = !wholeSelect;
 					break;
 
@@ -2282,7 +2283,7 @@
 					if (wcevar.type != 'break' && !wcevar.not_B) {
 						ed.execCommand('mceAddBreak');
 					}
-				} else if (wcevar.isc || doInsertSpace) {
+				} else if ((wcevar.isc && !wcevar.not_B) || doInsertSpace) {
 					doWithoutDialog(ed, 'brea');
 				}
 				return stopEvent(ed, e);

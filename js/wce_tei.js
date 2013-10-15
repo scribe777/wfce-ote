@@ -15,20 +15,11 @@ function getHtmlByTei(inputString) {
 	var $newDoc, $newRoot, $newRoot;
 	var $formatStart, $formatEnd;
 
-	var teiIndexData = {
-		/*'bookNumber' : '',
-		 'pageNumber' : '',
-		 'chapterNumber' : 0,
-		 'verseNumber' : 0,
-		 'wordNumber' : 0,
-		 'columnNumber' : 0,
-		 'lineNumber' : 0,
-		 'quireNumber' : 0,
-		 'witValue' : ''*/
+	/*var teiIndexData = {
 		'bookNumber' : '',
 		'witValue' : '',
 		'manuscriptLang' : ''
-	};
+	};*/
 
 	// As &om; can not be handled we go back to OMISSION
 	inputString = inputString.replace(/&om;/g, "<w>OMISSION</w>");
@@ -423,7 +414,6 @@ function getHtmlByTei(inputString) {
 				indexK++;
 				if (indexK > 0 && indexK < nValue.length) {
 					nValue = nValue.substr(indexK);
-					//teiIndexData['chapterNumber'] = parseInt(nValue);
 					g_chapterNumber = nValue;
 					nodeAddText($newNode, g_chapterNumber);
 				}
@@ -795,13 +785,10 @@ function getHtmlByTei(inputString) {
 					wceAttr += n;
 				}
 				if (type === 'lb')
-					//teiIndexData['wordNumber'] = n;
 					g_lineNumber = n;
 				else if (type === 'cb')
-					//teiIndexData['columnNumber'] = n;
 					g_columnNumber = n;
-				else//qb
-					//teiIndexData['quireNumber'] = n;
+				else //qb
 					g_quireNumber = n;
 				wceAttr += '&lb_alignment=';
 				if ($teiNode.getAttribute('rend'))
@@ -1201,7 +1188,7 @@ function getHtmlByTei(inputString) {
 	
 	return {
 		'htmlString' : getHtmlString(),
-		'teiIndexData' : teiIndexData,
+		//'teiIndexData' : teiIndexData,
 	}
 }
 
@@ -1225,9 +1212,9 @@ function getTeiByHtml(inputString, args) {
 	// arguments:
 	// g_bookNumber, g_pageNumber, g_chapterNumber, g_verseNumber, g_wordNumber, g_columnNumber, g_witValue,
 	//TODO: Check, if those values really have to be stored in an array. Aren't they just coming from the export routine directly (except for book, witness and manuscript language)
-	var g_bookNumber = args['bookNumber'];
-	var g_witValue = args['witValue'];
-	var g_manuscriptLang = args['manuscriptLang'];
+	var g_bookNumber = tinymce.get(tinyMCE.activeEditor.id).settings.book;//args['bookNumber'];
+	var g_witValue = tinymce.get(tinyMCE.activeEditor.id).settings.witness;//args['witValue'];
+	var g_manuscriptLang = tinymce.get(tinyMCE.activeEditor.id).settings.manuscriptLang;//args['manuscriptLang'];
 	var g_quireNumber = '';
 	var g_pageNumber = '';
 	var g_pageNumber_id = '';
@@ -1346,7 +1333,10 @@ function getTeiByHtml(inputString, args) {
 		if (!$htmlNode) {
 			return;
 		}
-
+		/*if ($htmlNode.nodeType == 3)
+			alert($htmlNode.nodeName + ' ' +$htmlNode.nodeValue);
+		else
+			alert($htmlNode.nodeName + ' ' +$htmlNode.nodeValue + ' ' + $htmlNode.getAttribute("class"));*/
 		if ($htmlNode.nodeType == 3) {
 			// Generate new tei node according to the html-textNode
 			html2Tei_TEXT($teiParent, $htmlNode, stopAddW);
@@ -1410,7 +1400,7 @@ function getTeiByHtml(inputString, args) {
 								// Add rest to next node
 								$htmlNodeNext.nodeValue = subStr2;
 							} else {
-								//if ($htmlNodeNext != $htmlNodeNext.parentNode.lastChild)//avoid doubleing last part of word
+								//if ($htmlNodeNext != $htmlNodeNext.parentNode.lastChild)//avoid doubling last part of word
 									html2Tei_TEXT($newParent.parentNode, $htmlNodeNext, stopAddW);
 									$htmlNodeNext.parentNode.removeChild($htmlNodeNext);
 							}
@@ -1437,11 +1427,14 @@ function getTeiByHtml(inputString, args) {
 						// $htmlNodeNext.parentNode.removeChild($htmlNodeNext);//See above
 					// }
 					if ($nnext) {
-						//TODO: Check, whether there is any reason for this line; there is ... :-(
-						//if (oldNodeNextType == 1) {//you are right, i think there is no reason (YG)
+						/* The following condition is REALLY important.
+						// Otherwise pieces of text (substr2) will be added as firstChild to a node (e.g. a linebreak) 
+						//and thus end up after this break in the export
+						*/
+						if (oldNodeNextType == 1) { 
 							$htmlNodeNext = $nnext;
 							continue;
-						//}
+						}
 					}
 					$htmlNodeNext = null;
 				}
@@ -2471,7 +2464,7 @@ function getTeiByHtml(inputString, args) {
 		}
 
 		var text = $htmlNode.nodeValue;
-
+		
 		// The spaces between the elements
 		if ($.trim(text) == '@@@')
 			return;
@@ -2502,7 +2495,7 @@ function getTeiByHtml(inputString, args) {
 				// set attribute for corresponding <ab>
 				$teiParent.setAttribute('part', 'F');
 			}// check if this is the last word on a page and hyphenated
-			else if ($htmlNode.parentNode.lastChild && $htmlNode.parentNode.lastChild.nodeType == 1 && !$htmlNode.nextSibling.nextSibling && $htmlNode.parentNode.lastChild.getAttribute("wce") && $htmlNode.parentNode.lastChild.getAttribute("wce").indexOf("break_type=lb") > -1 && $htmlNode.parentNode.lastChild.getAttribute("wce").indexOf("hasBreak=yes") > -1 && i == arr.length - 1) {//only valid for _last_ word of the last line
+			else if ($htmlNode.parentNode.lastChild && $htmlNode.parentNode.lastChild.nodeType == 1 && !$htmlNode.nextSibling.nextSibling && $htmlNode.parentNode.lastChild.getAttribute("wce") && $htmlNode.parentNode.lastChild.getAttribute("wce").indexOf("break_type=lb") > -1 && $htmlNode.parentNode.lastChild.getAttribute("wce").indexOf("hasBreak=yes") > -1 && i == arr.length - 1) { //only valid for _last_ word of the last line
 				$w.setAttribute("part", "I");
 				// set part attribute for <w>
 				if ($teiParent.nodeName == 'ab')// now set same attribute to parent <ab>; Check just for sure
