@@ -107,9 +107,9 @@ function getTeiIndexData() {
 
 // get TEI String from editor html content
 function getTEI() {
-	teiIndexData[0] = tinymce.get(tinyMCE.activeEditor.id).settings.book;
-	teiIndexData[1] = tinymce.get(tinyMCE.activeEditor.id).settings.witness;
-	teiIndexData[2] = tinymce.get(tinyMCE.activeEditor.id).settings.manuscriptLang;
+	//teiIndexData[0] = tinymce.get(tinyMCE.activeEditor.id).settings.book;
+	//teiIndexData[1] = tinymce.get(tinyMCE.activeEditor.id).settings.witness;
+	//teiIndexData[2] = tinymce.get(tinyMCE.activeEditor.id).settings.manuscriptLang;
 	return getTeiByHtml(getData(), getTeiIndexData());
 }
 
