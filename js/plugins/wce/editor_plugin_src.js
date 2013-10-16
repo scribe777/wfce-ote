@@ -8,7 +8,7 @@
  */
 
 (function() {
-	var wfce_editor = "2013-10-15";
+	var wfce_editor = "2013-10-16";
 
 	// Load plugin specific language pack
 	tinymce.PluginManager.requireLangPack('wce');

@@ -111,11 +111,11 @@
 <script type="text/javascript">
 	var marginals_text_editor;
 	
-	tinyMCEPopup.onInit.add(function(_ed){
+	tinyMCEPopup.onInit.add(function(_ed) {
 		ed=_ed;
 		setConstants(); 
-		//init();
-		marginals_text_editor=new tinymce.Editor('marginals_text',{
+		var timeout;
+		marginals_text_editor = new tinymce.Editor('marginals_text',{
 			mode : "textareas", 
 			theme : "advanced",
 			skin: "wce",
@@ -134,7 +134,25 @@
 			theme_advanced_statusbar_location : "bottom",
 			theme_advanced_resizing : false ,
 			setup : function(ed) {
-				//ed.onChange.add(ed.save());
+				ed.onChange.add(function() {
+					marginals_text_editor.save();
+					checkstatus_number();
+				});
+				ed.onKeyDown.add(function(ed) {
+					var v = $('#fw_type').val();
+					if (v == 'runTitle' || v == 'chapTitle' || v == 'lectTitle' || v == 'colophon' 
+						|| v == 'euthaliana' || v == 'gloss' || v =='pageNum' || v == 'isolated'
+						|| v == 'commentary' || v == 'ews' || v == 'other') {
+						return;
+					}
+					if (timeout) {
+						clearTimeout(timeout);
+					}
+					timeout = setTimeout(function() {
+						timeout = null;
+						marginals_text_editor.save();
+						checkstatus_number(); }, 1000);
+				});
 			}
 		});  
 	 	marginals_text_editor.render(); 
@@ -151,8 +169,7 @@
 	function getParaTag() {
 		var v = $('#fw_type').val();
 		if (v == 'runTitle' || 'chapTitle' || v == 'lectTitle' || v == 'colophon' || v == 'quireSig' 
-			|| v == 'euthaliana' || v == 'gloss' || v == 'pageNum' || v == 'elsewhere' 
-			|| v == 'isolated' || v == 'other')
+			|| v == 'euthaliana' || v == 'gloss' || v == 'pageNum' || v == 'isolated' || v == 'other')
 			return 'fw';
 		else if (v == 'commentary')
 			return '';
@@ -297,7 +314,6 @@
 		Pruefen_roemZahl(eing, eing.length);
 
 		if (fehler == 0) {
-
 			for (var i = 0; i < eing.length; i++) {
 				Zeichen = eing.charAt(i);
 				if (Zeichen == "I")
