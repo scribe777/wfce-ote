@@ -15,11 +15,11 @@ function getHtmlByTei(inputString) {
 	var $newDoc, $newRoot, $newRoot;
 	var $formatStart, $formatEnd;
 
-	/*var teiIndexData = {
+	var teiIndexData = {
 		'bookNumber' : '',
 		'witValue' : '',
 		'manuscriptLang' : ''
-	};*/
+	};
 
 	// As &om; can not be handled we go back to OMISSION
 	inputString = inputString.replace(/&om;/g, "<w>OMISSION</w>");
@@ -1188,7 +1188,7 @@ function getHtmlByTei(inputString) {
 	
 	return {
 		'htmlString' : getHtmlString(),
-		//'teiIndexData' : teiIndexData,
+		'teiIndexData' : teiIndexData,
 	}
 }
 
@@ -1212,9 +1212,9 @@ function getTeiByHtml(inputString, args) {
 	// arguments:
 	// g_bookNumber, g_pageNumber, g_chapterNumber, g_verseNumber, g_wordNumber, g_columnNumber, g_witValue,
 	//TODO: Check, if those values really have to be stored in an array. Aren't they just coming from the export routine directly (except for book, witness and manuscript language)
-	var g_bookNumber = tinymce.get(tinyMCE.activeEditor.id).settings.book;//args['bookNumber'];
-	var g_witValue = tinymce.get(tinyMCE.activeEditor.id).settings.witness;//args['witValue'];
-	var g_manuscriptLang = tinymce.get(tinyMCE.activeEditor.id).settings.manuscriptLang;//args['manuscriptLang'];
+	var g_bookNumber = args['bookNumber'];//tinymce.get(tinyMCE.activeEditor.id).settings.book;
+	var g_witValue = args['witValue']; //tinymce.get(tinyMCE.activeEditor.id).settings.witness;
+	var g_manuscriptLang = args['manuscriptLang']; //tinymce.get(tinyMCE.activeEditor.id).settings.manuscriptLang;
 	var g_quireNumber = '';
 	var g_pageNumber = '';
 	var g_pageNumber_id = '';
