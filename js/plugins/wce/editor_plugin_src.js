@@ -8,7 +8,7 @@
  */
 
 (function() {
-	var wfce_editor = "2013-10-16";
+	var wfce_editor = "2013-10-17";
 
 	// Load plugin specific language pack
 	tinymce.PluginManager.requireLangPack('wce');
@@ -1099,6 +1099,7 @@
 					_disableAllControls(ed, true);
 					w.not_A = false;
 					w.not_C = !wholeSelect;
+					w.not_D = !wholeSelect;
 					if (!wholeSelect) {
 						//abbreviations+line break [+ Highlight text]...
 						//abbreviations+highlight text ...

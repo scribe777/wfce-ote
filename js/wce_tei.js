@@ -516,9 +516,29 @@ function getHtmlByTei(inputString) {
 
 			$newNode.setAttribute('wce', wceAttr);
 
-			if (teiNodeName == 'supplied') {// supplied
-				nodeAddText($newNode, '[' + $teiNode.firstChild.nodeValue + ']');
-			} else {// gap
+			if (teiNodeName == 'supplied') {// supplied MS
+				//nodeAddText($newNode, '[' + $teiNode.firstChild.nodeValue + ']');
+				var $tempParent = $newDoc.createElement('t'); 
+				var cList = $teiNode.childNodes;
+				for (var i = 0, c, l = cList.length; i < l; i++) {
+					c = cList[i];
+					if (!c) {
+						break;
+					}
+					if (c.nodeType == 3)
+						nodeAddText($tempParent, c.nodeValue);
+					else
+						readAllChildrenOfTeiNode($tempParent, c);
+				}
+
+				if ($tempParent) {
+					nodeAddText($newNode, '[');
+					while($tempParent.hasChildNodes()){
+						$newNode.appendChild($tempParent.firstChild);
+					}
+					nodeAddText($newNode, ']');
+				}
+			} else { // gap
 				//if ($htmlParent.nodeName !== 't'){
 				gap_text = '';
 				if (wceAttr.indexOf('unit=char') > -1) {
@@ -668,7 +688,7 @@ function getHtmlByTei(inputString) {
 		var $tempParent = $newDoc.createElement('t'); 
 		for (var i = startlist, c, l = cList.length; i < l; i++) {
 			c = cList[i];
-			if(!c){
+			if (!c) {
 				break;
 			}
 			if (c.nodeType == 3)
@@ -678,7 +698,6 @@ function getHtmlByTei(inputString) {
 		}
 
 		if ($tempParent) {
-			//$newNode.appendChild($tempParent); 
 			while($tempParent.hasChildNodes()){
 			  $newNode.appendChild($tempParent.firstChild);
 			}
@@ -1369,7 +1388,8 @@ function getTeiByHtml(inputString, args) {
 				} else {
 					// For <span class="abbr..."> we use a special treatment (see HTML2TEI_abbr);
 					// TODO: Think about a general solution
-					if ($htmlNode.getAttribute('class').indexOf('abbr') == -1) 
+					if ($htmlNode.getAttribute('class').indexOf('abbr') == -1
+						&& $htmlNode.getAttribute('wce').indexOf("mark_as_supplied=supplied") == -1) 
 						readAllChildrenOfHtmlNode($newParent, $c, stopAddW);
 				}
 			}
@@ -1612,8 +1632,7 @@ function getTeiByHtml(inputString, args) {
 						var _nextSibling=$htmlNode.nextSibling;						
 						if (_nextSibling && _nextSibling.nodeType==3 && _nextSibling.nodeValue && _nextSibling.nodeValue.indexOf(' ') == 0) {//=> no surrounding <w> needed
 							return html2Tei_gap(arr, $teiParent, $htmlNode, true);
-						}
-						else
+						} else
 							return html2Tei_gap(arr, $teiParent, $htmlNode, stopAddW);
 					}
 				}
@@ -1808,14 +1827,41 @@ function getTeiByHtml(inputString, args) {
 
 		if ($newNode.nodeName === 'supplied') {
 			// add text
-			var newNodeText = getDomNodeText($htmlNode);
+			var $innerNode = $newDoc.createDocumentFragment();
+			var childList = $htmlNode.childNodes; 
+			for (var i = 0, c, l = childList.length; i < l; i++) {// iterate through children of abbr
+				c=childList[i];
+				if (!c) {
+					break;
+				}
+				if (c.nodeType == 3){ // TextNode
+					nodeAddText($innerNode, c.nodeValue);
+				}
+				else { // element node 
+					readAllChildrenOfHtmlNode($innerNode, c, true);
+				}
+			}
+			
+			
+			$innerNode.firstChild.nodeValue=$innerNode.firstChild.nodeValue.replace(/[\[\]]/g, "");
+			$innerNode.lastChild.nodeValue=$innerNode.lastChild.nodeValue.replace(/[\[\]]/g, "");
+			$newNode.appendChild($innerNode); //MS
+			
+			/*var newNodeText = getDomNodeText($htmlNode);
 			if (newNodeText) {
 				removeFormatNode($htmlNode);
 				$htmlNode.removeChild($htmlNode.firstChild);
+				/*
+				 If the text starts with "[", an abbreviation is inside. 
+				 This means, that there is an extra "]" after the <abbr>, which has to be removed as well.
+				
+				if (newNodeText.indexOf("[") == 0)
+					$htmlNode.removeChild($htmlNode.lastChild);
+				
 				newNodeText = newNodeText.replace(/[‹›\[\]]/g, "");
 				//get rid of brackets [...]  and format markers ‹...›
 				nodeAddText($newNode, newNodeText);
-			}
+			}*/
 		}
 
 		if (!stopAddW) {
@@ -2150,7 +2196,7 @@ function getTeiByHtml(inputString, args) {
 		var childList = $htmlNode.childNodes; 
 		for (var i = 0, c, l = childList.length; i < l; i++) {// iterate through children of abbr
 			c=childList[i];
-			if(!c){
+			if (!c) {
 				break;
 			}
 			if (c.nodeType == 3){// TextNode
