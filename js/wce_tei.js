@@ -1023,7 +1023,7 @@ function getHtmlByTei(inputString) {
 		addFormatElement($newNode);
 		$htmlParent.appendChild($newNode);
 		// Do not add a space if there is a break after the note
-		if ($teiNode.nextSibling.nodeName !== 'lb' && $teiNode.nextSibling.nodeName !== 'cb' 
+		if ($teiNode.nextSibling && $teiNode.nextSibling.nodeName !== 'lb' && $teiNode.nextSibling.nodeName !== 'cb' 
 			&& $teiNode.nextSibling.nodeName !== 'pb' && $teiNode.nextSibling.nodeName !== 'gb')
 			nodeAddText($htmlParent, ' ');
 		return null;
@@ -2801,18 +2801,3 @@ function removeArrows(str) {
 		out = str.substring(0, str.length-1) + "y"
 	return out;
 };
-
-
-/*
- * trim a string (cf. http://blog.stevenlevithan.com/archives/faster-trim-javascript)
- */
-/*function trim (str) {
- str = str.replace(/^\s+/, '');
- for (var i = str.length - 1; i >= 0; i--) {
- if (/\S/.test(str.charAt(i))) {
- str = str.substring(0, i + 1);
- break;
- }
- }
- return str;
- }*/
