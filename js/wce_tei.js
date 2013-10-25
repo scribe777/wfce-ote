@@ -74,7 +74,7 @@ function getHtmlByTei(inputString) {
 
 		$newDoc = loadXMLString("<TEMP></TEMP>");
 		$newRoot = $newDoc.documentElement;
-		
+		 
 		initTeiInput($oldRoot);
 		
 		var childList = $oldRoot.childNodes;
@@ -120,8 +120,9 @@ function getHtmlByTei(inputString) {
 			while(nextW){				
 				var firstChildOfNextW=nextW.firstChild;
 				if(compareNodes(lastChild, firstChildOfNextW)){
-					startNode=nextW.previousSibling;
-					toAppend.push(nextW);
+					if(!startNode){
+						startNode=nextW.previousSibling;
+					}toAppend.push(nextW);
 					nextW=nextW.nextSibling;
 				}else{
 					break;
@@ -185,13 +186,13 @@ function getHtmlByTei(inputString) {
 				 
 			}
 			Tei2Html_mergeOtherNodes(startNode);
-			var wParent=getWParent(startNode);
-			if(wParent){
-				Tei2Html_mergeWNode(wParent.previousSibling);
-			}
+			//var wParent=getWParent(startNode);
+			//if(wParent){ 
+			//	Tei2Html_mergeWNode(wParent.previousSibling);
+			//}
 		}
 	};	
-	
+	/*
 	var getWParent = function ($node){
 		var p=$node.parentNode;	
 		while(p){
@@ -202,7 +203,7 @@ function getHtmlByTei(inputString) {
 		}
 		return null;
 	};
-	
+	*/
 	 
 	/**
 	 * add format_start format end into wce element
