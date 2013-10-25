@@ -29,7 +29,7 @@ function getHtmlByTei(inputString) {
 	inputString = inputString.replace('\u00a0', ' ');
 	//inputString = inputString.replace(/<\/supplied><\/w><w><supplied.*?>/g, " ");
 	//inputString = inputString.replace(/<\/hi><\/w><w><hi.*?>/g, " ");
-	//TODO:24.10.2013 YG:funktioniert nicht wenn mehrere verschaltet sind z.B:
+	//24.10.2013 YG:funktioniert nicht wenn mehrere verschaltet sind z.B:
 	//nicht nur <hi>, sondern <abbr type="nomSac"> muessen auch zusammengezogen werden
 	/*<w>
 		q
