@@ -197,7 +197,8 @@ function writeWceNodeInfo(val) {
 				break;
 
 			case 'unclear':
-				if (selected_content.indexOf('span class="spaces"') == -1) { // take care of spaces element
+				//if (selected_content.indexOf('span class="spaces"') == -1) { // take care of spaces element
+				if (selected_content.indexOf('<span') == -1) { // take care of spaces element
 					var unclear_text = "";
 					for (var i = 0; i < selected_content.length; i++) {
 						if (selected_content.charAt(i) == ' ') {
@@ -379,7 +380,7 @@ function writeWceNodeInfo(val) {
 				// break type
 				//change type
 				if (old_break_type != break_type) {
-					selected_content=ed.execCommand('wceDelNode', false, true);return;
+					selected_content=ed.execCommand('wceDelNode', false, true);
 					add_new_wce_node = true;
 					return writeWceNodeInfo(val);
 				} else {

@@ -3389,7 +3389,7 @@
 
 					var wceAttr = wceNode.getAttribute('wce');
 					var originalText = decodeURIComponent(wceNode.getAttribute('wce_orig'));
-					
+					var isDel;
 					if (wceClass == 'brea' || wceClass=='gap') {
 						//We need a marker here similar to the one for deleting non-breaks. Otherwise there are problems under Safari!
 						//Fixed:  we do not use function remove
@@ -3421,6 +3421,7 @@
 								}
 							}
 						}
+						isDel=true;
 					}
 
 					/* else {
@@ -3438,7 +3439,7 @@
 						ed.focus(); 
 						ed.isNotDirty = 0;
 						return originalText;
-					} else{
+					} else if(!isDel){
 						if(wceNode){
 							ed.selection.select(wceNode);
 						}
