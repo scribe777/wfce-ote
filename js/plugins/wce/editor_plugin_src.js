@@ -1173,6 +1173,19 @@
 			  
 		},
 
+		/*
+		 * 
+		 */
+		hasWceParentNode: function (node){
+			var p=node.parentNode;
+			while(p){
+				if(p.nodeName.toLowerCase()=='span'){
+					return true;
+				}
+				p=p.parentNode;
+			}
+			return false;
+		},
 		 
 		/**
 		 *
@@ -2044,6 +2057,28 @@
 				_node = _child;
 			}
 			return _node;
+		},
+		
+		getTextWithoutFormat : function(_node){ 
+			if (_node.nodeType != 1 && _node.nodeType != 11)
+				return;
+	
+			var className = _node.getAttribute('class');
+			if (className && (className == 'format_start' || className == 'format_end'	)) {
+				_node.parentNode.removeChild(_node);
+				return;
+			}
+	
+			var childList = _node.childNodes;
+			for (var i = 0, l = childList.length, c; i < l; i++) {
+				c = childList[i];
+				if (!c) {
+					continue;
+				} else {
+					WCEUtils.getTextWithoutFormat(c);
+				}
+			}  
+			return $(_node).html();
 		},
 
 		doWithDialog : function(ed, url, htm, w, h, inline, add_new_wce_node) {
@@ -3379,6 +3414,10 @@
 				var wceNode = ed.execCommand('getWceNode');
 				var wceClass;
 				if (wceNode) {
+					if(WCEUtils.hasWceParentNode(wceNode)){	
+						alert("The node has a parent node and can not be removed. The Format of parent node must first be removed.");//TODO: 				
+						return;
+					}
 					//verse chapter
 					wceClass = wceNode.getAttribute('class');
 					if (wceClass === 'verse_number' || wceClass == 'chapter_number' || wceClass == 'book_number') {
@@ -3389,6 +3428,10 @@
 
 					var wceAttr = wceNode.getAttribute('wce');
 					var originalText = decodeURIComponent(wceNode.getAttribute('wce_orig'));
+					
+					//TODO: after import some node have no wce_orig, we can set wce_orig at import, or don't use 'wce_orig'?
+					// originalText=WCEUtils.getTextWithoutFormat(wceNode);
+					
 					var isDel;
 					if (wceClass == 'brea' || wceClass=='gap') {
 						//We need a marker here similar to the one for deleting non-breaks. Otherwise there are problems under Safari!

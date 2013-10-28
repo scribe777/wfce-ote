@@ -108,7 +108,7 @@ function getHtmlByTei(inputString) {
 		Tei2Html_mergeWNode($parent); 
 	};
 	
-	var Tei2Html_mergeWNode = function ($node){ 
+	var Tei2Html_mergeWNode = function ($node){
 		if(!$node || $node.nodeType==3 || $node.nodeName!='w'){
 			return;
 		}
@@ -179,11 +179,14 @@ function getHtmlByTei(inputString) {
 		if(startNode){
 			for(var i=0, a, l=toAppend.length; i<l; i++){
 				a=toAppend[i];
-				while(a.firstChild){
-					startNode.appendChild(a.firstChild);
+				if(a.nodeName=='tempspace'){
+					startNode.appendChild(a);
+				}else{
+					while(a.firstChild){
+						startNode.appendChild(a.firstChild);
+					}
+					a.parentNode.removeChild(a);
 				}
-				a.parentNode.removeChild(a);
-				 
 			}
 			Tei2Html_mergeOtherNodes(startNode);
 			//var wParent=getWParent(startNode);
@@ -507,7 +510,13 @@ function getHtmlByTei(inputString) {
 			wceAttr += getWceAttributeByTei($teiNode, mapping);
 		}
 		$newNode.setAttribute('wce', wceAttr);
-		addFormatElement($newNode);
+		addFormatElement($newNode); 
+		
+		//add wce_orig 28.10.2013 YG
+		var s=getOriginalTextByTeiNode($teiNode);
+		s=s.replace(/\%CC\%A3/g,'');
+		$newNode.setAttribute('wce_orig',s);
+		
 		$htmlParent.appendChild($newNode);
 		return $newNode;
 	};
@@ -714,7 +723,10 @@ function getHtmlByTei(inputString) {
 			}
 			//}
 		}
+		
 		addFormatElement($newNode);
+		//var s=getOriginalTextByTeiNode($teiNode); alert(s);
+		//$newNode.setAttribute('wce_orig', s);//TODO: test wce_orig
 		$htmlParent.appendChild($newNode);
 		return null;
 	};
@@ -775,6 +787,7 @@ function getHtmlByTei(inputString) {
 
 		$newNode.setAttribute('class', className);
 		$newNode.setAttribute('wce', '__t=' + className);
+		$newNode.setAttribute('wce_orig', getOriginalTextByTeiNode($teiNode));
 		addFormatElement($newNode);
 		$htmlParent.appendChild($newNode);
 		return $newNode;
@@ -784,7 +797,7 @@ function getHtmlByTei(inputString) {
 	 * <abbr> /
 	 */
 	var Tei2Html_abbr = function($htmlParent, $teiNode, teiNodeName) {
-		$newNode = $newDoc.createElement('span');
+		var $newNode = $newDoc.createElement('span');
 
 		// <abbr type="nomSac"> <hi rend="ol">aaa</hi> </abbr>
 		// <span class="abbr_add_overline"
@@ -832,15 +845,19 @@ function getHtmlByTei(inputString) {
 			else
 				readAllChildrenOfTeiNode($tempParent, c);
 		}
-
+ 
 		if ($tempParent) {
-			while($tempParent.hasChildNodes()){
+			while($tempParent.firstChild){
 			  $newNode.appendChild($tempParent.firstChild);
 			}
 		} 
 		
 		addFormatElement($newNode);
-		
+		//28.10.2013 YG
+		if(className=='abbr_add_overline'){
+			$teiNode=$teiNode.firstChild;
+		}
+		$newNode.setAttribute('wce_orig',getOriginalTextByTeiNode($teiNode));
 		$htmlParent.appendChild($newNode);
 		return null;
 	};
@@ -1163,6 +1180,33 @@ function getHtmlByTei(inputString) {
 			&& $teiNode.nextSibling.nodeName !== 'pb' && $teiNode.nextSibling.nodeName !== 'gb')
 			nodeAddText($htmlParent, ' ');
 		return null;
+	};
+	
+	var getOriginalTextByTeiNode = function($node){ 
+		var origText = '';
+		var origNode = $newDoc.createElement('t');
+		var list=$node.childNodes;
+		for (var i = 0, cl, l = list.length; i < l; i++) {
+			cl=list[i];
+			if(!cl){
+				break;
+			}
+			readAllChildrenOfTeiNode(origNode, cl); 
+		}
+		
+		//remove textNode with space ' '. It come from function readAllChildrenOfTeiNode::nodeAddText($htmlParent, ' ');
+		var oLast=origNode.lastChild;
+		if(oLast && oLast.nodeType==3 && oLast.nodeValue==' '){
+			origNode.removeChild(oLast);
+		}
+		var _oText=xml2String(origNode);
+		if(_oText && _oText.length>6){
+			_oText=_oText.substring(3,_oText.length-4); 
+			origText += _oText;
+		}		 
+		origText = origText.trim();
+		origText = encodeURIComponent(origText);
+		return origText;
 	};
 
 	/*
