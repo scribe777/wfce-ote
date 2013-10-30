@@ -838,7 +838,7 @@ function getHtmlByTei(inputString) {
 		for (var i = startlist, c, l = cList.length; i < l; i++) {
 			c = cList[i];
 			if (!c) {
-				break;
+				break; 
 			}
 			if (c.nodeType == 3)
 				nodeAddText($tempParent, c.nodeValue);
@@ -1482,8 +1482,8 @@ function getTeiByHtml(inputString, args) {
 				readAllHtmlNodes(g_currentParentNode, $c, false);
 			}
 		}
-		 
-	 	html2Tei_mergeNodes($newRoot, true);
+ 
+	 	html2Tei_mergeNodes($newRoot, true); 	 
 		
 		// DOM to String
 		var str = xml2String($newRoot);
@@ -1550,7 +1550,10 @@ function getTeiByHtml(inputString, args) {
 			var lastChildOfW = $w.lastChild;
 			while (ns) {
 				if (ns.nodeName == 'w') {
-					if (ns.getAttribute('before') == '1') {
+					if (ns.getAttribute('before') == '1' ||  ns.getAttribute('after') == '1') {
+						if(ns.getAttribute('before') == '0'){
+							toAppend.push(ns);
+						}
 						//merge
 						for (var i = 0, c, l = toAppend.length; i < l; i++) {
 							c = toAppend[i];
