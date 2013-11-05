@@ -474,7 +474,7 @@ function getHtmlByTei(inputString) {
 			$htmlParent.appendChild($newNode);
 		}
 		return $htmlParent;
-	}
+	};
 	/*
 	 * **** <ex>
 	 */
@@ -576,7 +576,7 @@ function getHtmlByTei(inputString) {
 		$htmlParent.appendChild($newNode);
 		nodeAddText($htmlParent, ' ');
 		return $htmlParent;
-	}
+	};
 	/*
 	 * <ab>
 	 */
@@ -1044,7 +1044,7 @@ function getHtmlByTei(inputString) {
 
 		var wceAttr = '__t=paratext&__n='; //marginals_text is content of editor in editor, 	 
 		var cs = $teiNode.childNodes;
-		var marginals_text=""
+		var marginals_text="";
 		for (var i = 0, c, l = cs.length; i < l; i++) {
 			c = cs[i];
 			if(!c){
@@ -1388,7 +1388,7 @@ function getHtmlByTei(inputString) {
 	return {
 		'htmlString' : getHtmlString(),
 		'teiIndexData' : teiIndexData,
-	}
+	};
 }
 
 /**
@@ -1550,7 +1550,7 @@ function getTeiByHtml(inputString, args) {
 			var lastChildOfW = $w.lastChild;
 			while (ns) {
 				if (ns.nodeName == 'w') {
-					if (ns.getAttribute('before') == '1' ||  ns.getAttribute('after') == '1') {
+					if (ns.getAttribute('before') == '1' ||  ns.getAttribute('after') == '1' || ns === ns.parentNode.lastChild) {
 						if(ns.getAttribute('before') == '0'){
 							toAppend.push(ns);
 						}
@@ -1573,7 +1573,8 @@ function getTeiByHtml(inputString, args) {
 						return;
 					}
 				}
-				if ($.inArray(ns.nodeName, wceNodeInsideW) < 0) {
+				if(ns.nodeName=='lb' && ns.getAttribute('break')=='no'){				    
+				}else if ($.inArray(ns.nodeName, wceNodeInsideW) < 0) {
 					if (removeAttr) {
 						removeAllAttribute($w);
 					}
@@ -1700,7 +1701,7 @@ function getTeiByHtml(inputString, args) {
 				if (!$c) {
 					continue;
 				} else {
-					 addWMark1($c)
+					 addWMark1($c);
 				}
 			} 
 		} 
@@ -1721,7 +1722,7 @@ function getTeiByHtml(inputString, args) {
 				if (!$c) {
 					continue;
 				} else {
-					 addWMark2($c)
+					 addWMark2($c);
 				}
 			}
 			var last=$htmlNode.lastChild;
@@ -2603,7 +2604,7 @@ function getTeiByHtml(inputString, args) {
 	 	return {
 			0 : $app,
 			1 : true
-		}
+		};
 	};
 
 	//text from editor in editor
@@ -2729,7 +2730,7 @@ function getTeiByHtml(inputString, args) {
 		return {
 			0 : $newNode,
 			1 : true
-		}
+		};
 	};
 
 	/*
@@ -2765,7 +2766,7 @@ function getTeiByHtml(inputString, args) {
 		return{
 			0: $teiParent,
 			1: true
-		}
+		};
 		
 		
 		 /* 22.10.2013 YG
@@ -2867,7 +2868,7 @@ function getTeiByHtml(inputString, args) {
 		return {
 			0 : $note,
 			1 : true
-		}
+		};
 	};
 
 	/*
@@ -2893,7 +2894,7 @@ function getTeiByHtml(inputString, args) {
 		return {
 			0 : $space,
 			1 : true
-		}
+		};
 	};
 
 	/*
@@ -2906,7 +2907,7 @@ function getTeiByHtml(inputString, args) {
 		return {
 			0 : $pc,
 			1 : true
-		}
+		};
 	};
 
 	/*
@@ -2957,8 +2958,8 @@ function getTeiByHtml(inputString, args) {
 			nodeAddText($paratext, 'Untranscribed commentary text');
 			$teiParent.appendChild($paratext);
 		} else if (fwType == 'ews') {
-			$paratext.setAttribute('type', 'editorial')
-			$paratext.setAttribute('subtype', 'ews')
+			$paratext.setAttribute('type', 'editorial');
+			$paratext.setAttribute('subtype', 'ews');
 			nodeAddText($paratext, decodeURIComponent(arr['marginals_text']));
 			$teiParent.appendChild($paratext);
 			var $gap = $newDoc.createElement('gap');
@@ -3073,8 +3074,8 @@ function getTeiByHtml(inputString, args) {
 		return {
 			0 : $unclear,
 		 	1 : true
-		}
-	}
+		};
+	};
 	
 	/*
 	 * change text to TEI Node. Determine if the text with other nodes belonging to a word
@@ -3208,7 +3209,7 @@ function getTeiByHtml(inputString, args) {
 		return {
 			0 : $ex,
 			1 : true
-		}
+		};
 		
 		/*
 		if (!stopAddW) {
@@ -3418,17 +3419,17 @@ function nodeAddText($node, str) {
 function addArrows(str) {
 	var out = str;
 	if (str.indexOf("x") == str.length-1)
-		out = str.substring(0, str.length-1)+"→"
+		out = str.substring(0, str.length-1)+"→";
 	else if (str.indexOf("y") == str.length-1)
-		out = str.substring(0, str.length-1)+"↑"
+		out = str.substring(0, str.length-1)+"↑";
 	return out;
 };
 
 function removeArrows(str) {
 	var out = str;
 	if (str.indexOf("→") == str.length-1)
-		out = str.substring(0, str.length-1) + "x"
+		out = str.substring(0, str.length-1) + "x";
 	else if (str.indexOf("↑") == str.length-1)
-		out = str.substring(0, str.length-1) + "y"
+		out = str.substring(0, str.length-1) + "y";
 	return out;
 };
