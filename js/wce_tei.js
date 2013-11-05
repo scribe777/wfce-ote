@@ -1499,7 +1499,7 @@ function getTeiByHtml(inputString, args) {
 
 		// Now we do some "magic" regex substitution do get correct <w> elements
 		//str = str.replace(/<\/supplied><supplied/g, "</supplied></w><w><supplied");
-		//str = str.replace(/<\/unclear><unclear/g, "</unclear></w><w><unclear");
+		//str = str.replace(/<\/unclear><unclear/g, "</unclear></w><w><unganclear");
 		//str = str.replace(/<\/w><unclear/g, "</w><w><unclear");
 
 		// There was no other way to insert &om;, so it is just replaced
@@ -2030,6 +2030,7 @@ function getTeiByHtml(inputString, args) {
 				 $teiParent.lastChild.previousSibling.previousSibling.nodeName === 'pb' && $teiParent.lastChild.previousSibling.previousSibling.getAttribute("break") === "no")
 				 final_w_found = true;
 				 } else {*/
+				textNode=textNode.firstChild;
 				g_verseNumber = textNode.nodeValue;
 				var cont_index = g_verseNumber.indexOf('Cont.');
 				if (cont_index > -1)
