@@ -2030,7 +2030,7 @@ function getTeiByHtml(inputString, args) {
 				 $teiParent.lastChild.previousSibling.previousSibling.nodeName === 'pb' && $teiParent.lastChild.previousSibling.previousSibling.getAttribute("break") === "no")
 				 final_w_found = true;
 				 } else {*/
-				textNode=textNode.firstChild;
+				textNode=textNode.firstChild;// because <w>
 				g_verseNumber = textNode.nodeValue;
 				var cont_index = g_verseNumber.indexOf('Cont.');
 				if (cont_index > -1)
@@ -2066,6 +2066,7 @@ function getTeiByHtml(inputString, args) {
 			// ******************* chapter *******************
 			var textNode = $htmlNode.firstChild;
 			if (textNode) {
+			    textNode=textNode.firstChild;
 				g_chapterNumber = textNode.nodeValue;
 				g_chapterNumber = $.trim(g_chapterNumber);
 				//if (g_chapterNumber != old_chapterNumber) {//ignore repeated chapter numbers; TODO: still needed?
@@ -2091,6 +2092,7 @@ function getTeiByHtml(inputString, args) {
 		} else if (wceAttrValue != null && wceAttrValue.match(/book_number/)) {
 			var textNode = $htmlNode.firstChild;
 			if (textNode) {
+			    textNode=textNode.firstChild;
 				g_bookNumber = textNode.nodeValue;
 				g_bookNumber = $.trim(g_bookNumber);
 				g_bookNode = $newDoc.createElement('div');
