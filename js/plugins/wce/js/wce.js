@@ -288,6 +288,15 @@ function writeWceNodeInfo(val) {
 			}
 
 		} else {
+			if(wcevar.isCaretAtFormatEnd && wcevar.isCaretAtFormatStart){//if start and end of selection are wce node
+				var sNode=wcevar.selectedStartNode;
+				var eNode=wcevar.selectedEndNode;
+				if(sNode && eNode && sNode!=eNode){
+					ed.selection.setContent("");
+					sNode.parentNode.removeChild(sNode);
+					eNode.parentNode.removeChild(eNode); 
+				}
+			};
 			ed.selection.setContent(new_content);
 		}
 
