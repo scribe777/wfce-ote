@@ -1461,9 +1461,9 @@ function getTeiByHtml(inputString, args) {
 
 		var $oldDoc = loadXMLString(inputString);
 
-		var $oldRoot = $oldDoc.documentElement;
+		var $oldRoot = $oldDoc.documentElement; 
 		$oldRoot=initHtmlContent($oldRoot);
-	 	
+		
 		$newDoc = loadXMLString('<TEI></TEI>'); 
 		// <TEMP>
 		$newRoot = $newDoc.documentElement;
@@ -1654,7 +1654,12 @@ function getTeiByHtml(inputString, args) {
 			return;
 		}
 
-		var childList = $r.childNodes;
+		var tempList=$r.childNodes; 
+		var childList = new Array();
+		 
+		for(var x=0, y=tempList.length; x<y; x++){
+			childList.push(tempList[x]);
+		} 		
 		for (var i = 0, l = childList.length, $c; i < l; i++) {
 			$c = childList[i];
 			if (!$c) {
@@ -2371,20 +2376,7 @@ function getTeiByHtml(inputString, args) {
 		}
 		
 		if ($newNode.nodeName === 'supplied'){
-			var firstW=$htmlNode.firstChild;
-			if(firstW){
-				var fistTextNode=firstW.firstChild;
-				if(fistTextNode.nodeType==3){
-					fistTextNode.nodeValue=fistTextNode.nodeValue.replace(/^\[/, "");
-				}
-			} 
-			var lastW=$htmlNode.lastChild;
-			if(lastW){
-				var lastTextNode= lastW.lastChild;
-				if(lastTextNode.nodeType==3){
-					lastTextNode.nodeValue=lastTextNode.nodeValue.replace(/\]$/, "");
-				}
-			}  
+			$htmlNode=removeBracketOfSuplied($htmlNode);
 		 	appendNodeInW($teiParent, $newNode, $htmlNode); 
 		}else{
 			$teiParent.appendChild($newNode);
@@ -2447,7 +2439,28 @@ function getTeiByHtml(inputString, args) {
 		};
 		*/
 	};
-
+	
+	/*
+	 * remove text "[" and "]" of <suplied>
+	 */
+	var removeBracketOfSuplied =function($htmlNode){
+		var firstW=$htmlNode.firstChild;
+		if(firstW){
+			var fistTextNode=firstW.firstChild;
+			if(fistTextNode && fistTextNode.nodeType==3){
+				fistTextNode.nodeValue=fistTextNode.nodeValue.replace(/^\[/, "");
+			}
+		} 
+		var lastW=$htmlNode.lastChild;
+		if(lastW){
+			var lastTextNode= lastW.lastChild;
+			if(lastTextNode && lastTextNode.nodeType==3){
+				lastTextNode.nodeValue=lastTextNode.nodeValue.replace(/\]$/, "");
+			}
+		}
+		return $htmlNode; 
+	};
+	
 	/*
 	 * type correction, return <app><rdg> ....
 	 */
