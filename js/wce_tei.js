@@ -1,7 +1,7 @@
 // setTEIXml
 window.onerror = Fehlerbehandlung;
 
-var wceNodeInsideW=["hi","unclear","gap","suplied", "w", "abbr"];//TODO: more type?
+var wceNodeInsideW=["hi","unclear","gap","suplied", "w", "abbr", "pc"];//TODO: more type?
 
 function Fehlerbehandlung(Nachricht, Datei, Zeile) {
 	Fehler = "Error:\n" + Nachricht + "\n" + Datei + "\n" + Zeile;
@@ -2914,11 +2914,11 @@ function getTeiByHtml(inputString, args) {
 	 * type pc, return <pc>
 	 */
 	var html2Tei_pc = function(arr, $teiParent, $htmlNode) {
-		var $pc = $newDoc.createElement('pc');
-		$teiParent.appendChild($pc);
-
+		var pc = $newDoc.createElement('pc');
+		$teiParent.appendChild(pc);
+		appendNodeInW($teiParent, pc, $htmlNode);
 		return {
-			0 : $pc,
+			0 : pc,
 			1 : true
 		};
 	};
