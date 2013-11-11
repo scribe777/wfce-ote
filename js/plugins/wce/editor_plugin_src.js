@@ -871,6 +871,21 @@
 				return false;
 			}
 		},
+		
+		//if start and end of selection both are wce node
+		setContent : function (ed, new_content){
+			var wcevar=ed.WCE_VAR;
+			if(wcevar.isCaretAtFormatEnd && wcevar.isCaretAtFormatStart){
+				var sNode=wcevar.selectedStartNode;
+				var eNode=wcevar.selectedEndNode;
+				if(sNode && eNode && sNode!=eNode){
+					ed.selection.setContent("");
+					sNode.parentNode.removeChild(sNode);
+					eNode.parentNode.removeChild(eNode); 
+				}
+			};
+			ed.selection.setContent(new_content);
+		},
 
 		/*
 		 * update wce variable
@@ -2108,12 +2123,12 @@
 			var wceClass, wceAttr, wceOrig;
 			var startFormatHtml = ed.WCE_CON.startFormatHtml;
 			var endFormatHtml = ed.WCE_CON.endFormatHtml;
-
+			var _setContent=WCEUtils.setContent;
 			switch (wceType) {
 				case 'pc':
 					wceClass = ' class="pc"';
 					wceAttr = ' wce="' + '__t' + '=' + wceType + '" wce_orig=""';
-					ed.selection.setContent('<span' + wceAttr + wceClass + '>' + startFormatHtml + character + endFormatHtml + '</span> ');
+					_setContent(ed, '<span' + wceAttr + wceClass + '>' + startFormatHtml + character + endFormatHtml + '</span> ');
 					break;
 				case 'abbr':
 					// style = 'style="border: 1px dotted #f00; margin:0px; padding:0;"';
@@ -2121,10 +2136,10 @@
 					wceOrig = ' wce_orig="' + encodeURIComponent(character);
 					+'"';
 					wceAttr = '"wce=__t=abbr&amp;__n=&amp;original_abbr_text=&amp;abbr_type=nomSac&amp;abbr_type_other=&amp;add_overline="';
-					ed.selection.setContent('<span ' + wceAttr + wceOrig + wceClass + '>' + startFormatHtml + character + endFormatHtml + '</span> ');
+					_setContent(ed, '<span ' + wceAttr + wceOrig + wceClass + '>' + startFormatHtml + character + endFormatHtml + '</span> ');
 					break;
 				case 'brea':
-					ed.selection.setContent(WCEUtils.getBreakHtml(ed, 'lb'));
+					_setContent(ed, WCEUtils.getBreakHtml(ed, 'lb'));
 					break;
 				case 'part_abbr':
 					// part-worded abbreviations
@@ -2143,7 +2158,7 @@
 						rng.setStart(startContainer, li);
 						WCEUtils.setRNG(ed, rng);
 						wceAttr = 'wce="' + '__t' + '=' + wceType + '" ';
-						ed.selection.setContent('<span ' + wceAttr + wceClass + '>' + startFormatHtml + part_abbr + endFormatHtml + '</span>');
+						_setContent(ed, '<span ' + wceAttr + wceClass + '>' + startFormatHtml + part_abbr + endFormatHtml + '</span>');
 					} else {
 						alert(ed.getLang('wce.error_part_abbr'));
 					}
@@ -2174,19 +2189,19 @@
 					}
 					// add last part of selection
 					newContent += '<span wce="__t=unclear&amp;__n=&amp;original_text=' + word + '" ' + wceClass + '>' + startFormatHtml + unclear_text + endFormatHtml + '</span>';
-					ed.selection.setContent(newContent);
+					_setContent(ed, newContent);
 					break;
 				case 'witnessend':
 					wceClass = ' class="witnessend"';
 					wceAttr = 'wce="__t=gap&amp;__n=&amp;original_gap_text=&amp;gap_reason=witnessEnd&amp;unit=&amp;unit_other=&amp;extent=&amp;supplied_source=na28&amp;supplied_source_other=&amp;insert=Insert&amp;cancel=Cancel" ';
-					ed.selection.setContent('<span ' + wceAttr + wceClass + '>' + startFormatHtml + 'Witness End' + endFormatHtml + '</span>');
+					_setContent(ed, '<span ' + wceAttr + wceClass + '>' + startFormatHtml + 'Witness End' + endFormatHtml + '</span>');
 					break;
 
 				default:
 					wceClass = ' class="' + wceType + '"';
 					wceAttr = 'wce="' + '__t' + '=' + wceType + '" ';
 					wceOrig = ' wce_orig="' + encodeURIComponent(content) + '"';
-					ed.selection.setContent('<span ' + wceAttr + wceClass + ' ' + wceOrig + '>' + startFormatHtml + content + endFormatHtml + '</span>');
+					_setContent(ed, '<span ' + wceAttr + wceClass + ' ' + wceOrig + '>' + startFormatHtml + content + endFormatHtml + '</span>');
 			}
 		},
 
