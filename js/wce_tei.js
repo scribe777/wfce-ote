@@ -1530,7 +1530,7 @@ function getTeiByHtml(inputString, args) {
 		}
  
 	 	html2Tei_mergeNodes($newRoot, true); 	 
-	 	html2Tei_clearBlankWAndSetPartAttribute($newRoot);
+	 	html2Tei_clearWandAddAttributePartI($newRoot);
 		
 		// DOM to String
 		var str = xml2String($newRoot);
@@ -1566,7 +1566,7 @@ function getTeiByHtml(inputString, args) {
 	/*
 	 * test if previousSibling pb/cb/lb with break="no" is,
 	 */
-	var html2Tei_addPartAttribute = function($htmlNode){
+	var html2Tei_addAttributePartF = function($htmlNode){
 		if(!$htmlNode){
 			return;
 		}
@@ -1666,23 +1666,7 @@ function getTeiByHtml(inputString, args) {
 						if(ns.getAttribute('before') == '0'){
 							toAppend.push(ns);
 						}
-						//merge
-						for (var i = 0, c, l = toAppend.length; i < l; i++) {
-							c = toAppend[i];
-							if (c.nodeName == 'w') {
-								//move all children of c to w;
-								while (c.firstChild) {
-									$w.appendChild(c.firstChild);
-								}
-								c.parentNode.removeChild(c);
-							} else
-								$w.appendChild(c);
-						}
-						if (removeAttr) {
-							removeAllAttribute($w);
-						}
-						html2Tei_mergeOtherNodes($w);
-						return;
+						break;
 					}
 				}
 				var _nodeName=ns.nodeName;
@@ -1693,19 +1677,32 @@ function getTeiByHtml(inputString, args) {
 					 else{
 					 	isNextBreak=true;
 					 }
-				}else if ($.inArray(_nodeName, wceNodeInsideW) < 0) {
-					if (removeAttr) {
-						removeAllAttribute($w);
-					}
-					return;
+				}else if ($.inArray(_nodeName, wceNodeInsideW) < 0) { 
+					break;
 				}
 				toAppend.push(ns);
 				ns = ns.nextSibling;
 			}
 		}
+		
+		//merge
+		for (var i = 0, c, l = toAppend.length; i < l; i++) {
+			c = toAppend[i];
+			if (c.nodeName == 'w') {
+				//move all children of c to w;
+				while (c.firstChild) {
+					$w.appendChild(c.firstChild);
+				}
+				c.parentNode.removeChild(c);
+			} else
+				$w.appendChild(c);
+		}
 		if (removeAttr) {
 			removeAllAttribute($w);
-		} 
+		}
+	//	if(toAppend.length>0){
+			html2Tei_mergeOtherNodes($w); 
+	//	}
 	};
 	
 	var html2Tei_mergeOtherNodes = function ($node){
@@ -1792,7 +1789,7 @@ function getTeiByHtml(inputString, args) {
 	/*
 	 *remove blank <w/>  and set Attribute Part
 	 */
-	var html2Tei_clearBlankWAndSetPartAttribute = function($r) {
+	var html2Tei_clearWandAddAttributePartI = function($r) {
 		if ($r.nodeType != 1 && $r.nodeType != 11)
 			return;
 
@@ -1813,45 +1810,57 @@ function getTeiByHtml(inputString, args) {
 			if (!$c) {
 				continue;
 			} else {
-				html2Tei_clearBlankWAndSetPartAttribute($c);
+				html2Tei_clearWandAddAttributePartI($c);
 			}
 		}
 		if(nName=='ab'){
-			var attr=$r.getAttribute('Part');
-			if(attr){ 
-				if($r.firstChild===$r.lastChild && attr=='M'){
-					var oneW=true;
-				}
-				if(attr!='I'){//F or M
-					var firstW=$r.firstChild;
-					while(firstW && firstW.nodeType!=3){
-						if(firstW.nodeName=='w'){
-							if(oneW){
-								firstW.setAttribute('Part','M');
-							}else{
-								firstW.setAttribute('Part','F');
-							} 
-							break;
-						}else{
-							firstW=firstW.firstChild;
-						}
-					}
+			//test if add Part="I"
+			var lastW, lastLB, _last=$r.lastChild;
+			while(_last){
+				if(_last.nodeType==3){
+					break;
 				}
 				
-				if(!oneW && attr!='F'){ //M or I
-					var lastW=$r.lastChild;
-					while(lastW && lastW.nodeType!=3){
-						if(lastW.nodeName=='w'){
-							lastW.setAttribute('Part','I'); 
-							break;
-						}else{
-							lastW=lastW.firstChild;
-						}
-					}
-				} 
+				if(_last.nodeName=='w'){
+					lastW=_last;
+				}else if(_last.nodeName=='lb' && _last.getAttribute('break') && _last.getAttribute('break')==='no'){
+					lastLB=_last;
+					break;
+				}
+				_last=_last.lastChild;
 			}
 			
-			
+			var attr = $r.getAttribute('Part');
+			if (attr) {
+				//add Attribute Part="F" / "M" to first <w>
+				var firstW = $r.firstChild;
+				while (firstW && firstW.nodeType != 3) {
+					if (firstW.nodeName == 'w') {
+						if (lastLB && lastW && lastW===firstW) {
+							firstW.setAttribute('Part', 'M');
+						} else {
+							firstW.setAttribute('Part', 'F');
+						}
+						break;
+					} else {
+						firstW = firstW.firstChild;
+					}
+				}
+				//add Attribute Part="F" / "M" to last <w>
+				if (lastW && lastLB) {
+					$r.setAttribute('Part', 'M');
+					if(lastW===firstW){
+						lastW.setAttribute('Part', 'M');
+					}else{
+						lastW.setAttribute('Part', 'I');
+					}					
+				}
+			} else if (lastLB && lastW) {
+				lastW.setAttribute('Part', 'M');
+			}
+			if(lastLB){
+				lastLB.parentNode.removeChild(lastLB);
+			}
 		}
 	};
 	
@@ -2032,8 +2041,8 @@ function getTeiByHtml(inputString, args) {
 		html2Tei_mergeNodes(tempParent, false);
 		var tFirst=tempParent.firstChild;
 		while(tFirst){ 
-			wrapNode=$teiNode.cloneNode(true);
 			if(tFirst.nodeName=='w'){
+				wrapNode=$teiNode.cloneNode(true);
 				var n=wrapChildNode(tFirst, wrapNode); 
 				$teiParent.appendChild(n);
 				tempParent.removeChild(tFirst);//remove tFirst
@@ -2208,7 +2217,7 @@ function getTeiByHtml(inputString, args) {
 
 		// ******************* verse *******************
 		if (wceAttrValue != null && wceAttrValue.match(/verse_number/)) {
-			html2Tei_addPartAttribute($htmlNode);
+			html2Tei_addAttributePartF($htmlNode);
 			
 			var textNode = $htmlNode.firstChild;
 			if (textNode) {
@@ -2832,6 +2841,17 @@ function getTeiByHtml(inputString, args) {
 		return html2Tei_correctionAddW($newNode, text);
 	};
 
+	
+	var isLastNodeOf = function ($node,nName){
+		var parent=$node.ParentNode;
+		while(parent){
+			if(parent.nodeName==nName){
+				return ture;
+			}
+			parent=parent.ParentNode;
+		}
+		return false;
+	};
 	/*
 	* type break,
 	*/
@@ -2848,16 +2868,16 @@ function getTeiByHtml(inputString, args) {
 			$newNode = $newDoc.createElement('gb');
 			$newNode.setAttribute('n', arr['number']);
 		} else if (break_type) {
+			/*
 			// pb, cb, lb
-			if (break_type == 'lb' && !$htmlNode.nextSibling && arr['hasBreak'] === 'yes' && $teiParent.nodeName=='ab') {//if this is the last element on a page, then it is only a marker
+			if (break_type == 'lb' && !$htmlNode.nextSibling && arr['hasBreak'] === 'yes' && isLastNodeOf($teiParent,'ab')) {//if this is the last element on a page, then it is only a marker
 				if($teiParent.getAttribute('Part')){
 					$teiParent.setAttribute('Part', 'M');
 				}else{
 					$teiParent.setAttribute('Part', 'I');
 				}
-				
 				return;
-			}
+			}*/
 			$newNode = $newDoc.createElement(break_type);
 			switch (break_type) {
 				case 'lb':

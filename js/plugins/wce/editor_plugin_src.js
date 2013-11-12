@@ -1239,7 +1239,7 @@
 			var ec = rng.endContainer;
 			var w=ed.WCE_VAR;
 
-			if (sc && ec && sc.nodeType == 3 && ec.nodeValue.length>0) {
+			if (sc && ec && sc.nodeType == 3 && ec.nodeValue && ec.nodeValue.length>0) {
 				var scParent = sc.parentNode;
 				if(w.isCaretAtFormatStart){
 					scParent=scParent.parentNode.parentNode;
