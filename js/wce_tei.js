@@ -96,11 +96,19 @@ function getHtmlByTei(inputString) {
 		return str;
 	};
 	
+	//merge <w> which come from wceNodeInsideW
 	var initTeiInput = function($parent){
-		if(!$parent || ($parent.nodeType!=1 && $parent.nodeType!=11)){ //nodeType==11: createDocumentFragment
+		if(!$parent || ($parent.nodeType!=1 && $parent.nodeType!=11)){ //nodeType==11 from createDocumentFragment
 			return;	
 		}
-		
+		if($parent.nodeName=='ab'){
+			var part=$parent.getAttribute('Part');
+			if(part && part=='M' || part=='I'){//Fixed #1896: Hyphen after supplied text
+				var lb=$parent.ownerDocument.createElement('lb'); 
+				lb.setAttribute('break', 'no');
+				$parent.appendChild(lb);
+			}
+		}
 		var tNext=$parent.firstChild;
 		while(tNext){
 			initTeiInput(tNext);
