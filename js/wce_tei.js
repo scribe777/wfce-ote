@@ -245,6 +245,36 @@ function getHtmlByTei(inputString) {
 		nodeAddText($end, '\u203a');
 		$node.appendChild($end);
 	};
+	
+	/*
+	 * add groupid for delete (pb, cb, lb)
+	 */
+	var addGroupID = function($teiNode, _id){
+		if(!$teiNode){
+			return;
+		}
+		var n=$teiNode.nodeName;
+		var i;
+		if(n=='pb'){
+			i='_3_';
+		}else if(n=='cb'){
+			i='_2_';
+		}else if(n=='lb' && _id){
+			i='';
+		}else{
+			return;
+		}
+		
+		if(!$teiNode.getAttribute('id')){
+			if(!_id){
+				 _id = i+new Date().getTime() + '' + Math.round(Math.random() * 1000);
+			}
+			$teiNode.setAttribute('id',n+_id);
+			$teiNode=$teiNode.nextSibling;
+			addGroupID($teiNode,_id);
+		}
+		
+	};
 
 	/*
 	 * read all nodes of $node and change and add
@@ -256,6 +286,10 @@ function getHtmlByTei(inputString) {
 		if ($teiNode.nodeType == 3) {
 			Tei2Html_TEXT($htmlParent, $teiNode);
 		} else if ($teiNode.nodeType == 1 || $teiNode.nodeType == 11) {
+			//add GroupId to pb, cb lb
+			addGroupID($teiNode);
+			
+			if($teiNode.nodeName)
 			var $newParent = getHtmlNodeByTeiNode($htmlParent, $teiNode);
 
 			// stop to read $teiNode
@@ -906,6 +940,10 @@ function getHtmlByTei(inputString) {
 		//
 		var $newNode = $newDoc.createElement('span');
 		$newNode.setAttribute('class', 'brea');
+		var _id=$teiNode.getAttribute('id');
+		if(_id){
+			$newNode.setAttribute('id',_id);
+		}
 
 		/*wce="__t=brea&amp;__n=&amp;hasBreak=no&amp;
 		break_type=lb&amp;number=2&amp;pb_type=&amp;fibre_type=&amp;
@@ -926,8 +964,7 @@ function getHtmlByTei(inputString) {
 		 $preNode.nodeValue = $preText;
 		 }
 		 }
-		 }*/
-
+		 }*/ 
 		switch (type) {
 			case 'pb':
 				// page break
