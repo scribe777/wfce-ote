@@ -1,6 +1,7 @@
 // setTEIXml
 window.onerror = Fehlerbehandlung;
 
+//pb, cb ,lb with break="no" defined in function html2Tei_mergeWNode();
 var wceNodeInsideW=["hi","unclear","gap","suplied", "w", "abbr", "pc"];//TODO: more type?
 
 function Fehlerbehandlung(Nachricht, Datei, Zeile) {
@@ -1484,6 +1485,7 @@ function getTeiByHtml(inputString, args) {
 		}
  
 	 	html2Tei_mergeNodes($newRoot, true); 	 
+	 	html2Tei_clearBlankWAndSetPartAttribute($newRoot);
 		
 		// DOM to String
 		var str = xml2String($newRoot);
@@ -1514,6 +1516,70 @@ function getTeiByHtml(inputString, args) {
 		//add <w> for each textNode
 	 	$node=addWElement2Html($node); 
 	 	return $node;
+	};
+	
+	/*
+	 * test if previousSibling pb/cb/lb with break="no" is,
+	 */
+	var html2Tei_addPartAttribute = function($htmlNode){
+		if(!$htmlNode){
+			return;
+		}
+		var firstNextW;
+		var _first=$htmlNode.nextSibling;
+		while(_first){
+		  if(_first.nodeType==3){
+		  	break;
+		  } 
+		  if(_first.nodeName=='w'){
+		  	if(!_first.firstChild){
+		  		//<w> from a space, without nodeText
+		  		//<w before="1" after="1"/>
+		  		_first=_first.nextSibling;
+		  		continue;
+		  	}
+		  	firstNextW=_first;
+		  	break;
+		  }
+		  _first=_first.firstChild;
+		}
+		
+		if(!firstNextW){
+			return;
+		}
+		
+		var preChild=$htmlNode.previousSibling;
+		var cName,wceAttr;
+		var isBreak=false;
+		while(preChild){
+			if((preChild.nodeName=='w' && !preChild.firstChild)){
+				preChild=preChild.previousSibling;
+				continue;
+			}
+			
+			cName=preChild.getAttribute('class');
+			if(!cName) {
+				break;
+			}
+			
+			if(cName=='chapter_number' || cName=='verse_number' || cName=='book_number'){
+				preChild=preChild.previousSibling;
+				continue;
+			}if(cName=='brea'){
+				wceAttr =preChild.getAttribute('wce');
+				if(wceAttr.match(/hasBreak=no/)){
+					isBreak=true;
+					break;
+				}
+				preChild=preChild.previousSibling;
+				continue;
+			}else{
+				break;
+			}
+		}
+		if(isBreak){ 
+			$htmlNode.setAttribute('Part','F');
+		}
 	};
 	
 	var html2Tei_mergeNodes = function($teiNode, removeAttr){
@@ -1548,6 +1614,7 @@ function getTeiByHtml(inputString, args) {
 		if ($w.getAttribute('after') == '0') {//$w is start
 			var ns = $w.nextSibling;
 			var lastChildOfW = $w.lastChild;
+			var isNextBreak=false;
 			while (ns) {
 				if (ns.nodeName == 'w') {
 					if (ns.getAttribute('before') == '1' ||  ns.getAttribute('after') == '1' || ns === ns.parentNode.lastChild) {
@@ -1573,8 +1640,15 @@ function getTeiByHtml(inputString, args) {
 						return;
 					}
 				}
-				if(ns.nodeName=='lb' && ns.getAttribute('break')=='no'){				    
-				}else if ($.inArray(ns.nodeName, wceNodeInsideW) < 0) {
+				var _nodeName=ns.nodeName;
+				if((_nodeName=='pb' || _nodeName=='cb' || _nodeName=='lb') && (isNextBreak || ns.getAttribute('break')=='no')){		
+					 if(_nodeName=='lb'){
+					 	isNextBreak=false;
+					 } 
+					 else{
+					 	isNextBreak=true;
+					 }
+				}else if ($.inArray(_nodeName, wceNodeInsideW) < 0) {
 					if (removeAttr) {
 						removeAllAttribute($w);
 					}
@@ -1632,7 +1706,7 @@ function getTeiByHtml(inputString, args) {
 		 var names=new Array();
 		 for(var i=0, l=as.length; i<l; i++){
 		 	a=as[i];
-		 	if(a){
+		 	if(a && a.nodeName!='Part'){
 		 		names.push(a.nodeName);
 		 	}		 		 
 		 }
@@ -1667,6 +1741,72 @@ function getTeiByHtml(inputString, args) {
 			} else {
 				removeFormatNode($c);
 			}
+		}
+	};
+	
+	/*
+	 *remove blank <w/>  and set Attribute Part
+	 */
+	var html2Tei_clearBlankWAndSetPartAttribute = function($r) {
+		if ($r.nodeType != 1 && $r.nodeType != 11)
+			return;
+
+		var nName = $r.nodeName; 
+		if (nName=='w' && !$r.firstChild) {
+			$r.parentNode.removeChild($r);
+			return;
+		}
+
+		var tempList=$r.childNodes; 
+		var childList = new Array();
+		 
+		for(var x=0, y=tempList.length; x<y; x++){
+			childList.push(tempList[x]);
+		} 		
+		for (var i = 0, l = childList.length, $c; i < l; i++) {
+			$c = childList[i];
+			if (!$c) {
+				continue;
+			} else {
+				html2Tei_clearBlankWAndSetPartAttribute($c);
+			}
+		}
+		if(nName=='ab'){
+			var attr=$r.getAttribute('Part');
+			if(attr){ 
+				if($r.firstChild===$r.lastChild && attr=='M'){
+					var oneW=true;
+				}
+				if(attr!='I'){//F or M
+					var firstW=$r.firstChild;
+					while(firstW && firstW.nodeType!=3){
+						if(firstW.nodeName=='w'){
+							if(oneW){
+								firstW.setAttribute('Part','M');
+							}else{
+								firstW.setAttribute('Part','F');
+							} 
+							break;
+						}else{
+							firstW=firstW.firstChild;
+						}
+					}
+				}
+				
+				if(!oneW && attr!='F'){ //M or I
+					var lastW=$r.lastChild;
+					while(lastW && lastW.nodeType!=3){
+						if(lastW.nodeName=='w'){
+							lastW.setAttribute('Part','I'); 
+							break;
+						}else{
+							lastW=lastW.firstChild;
+						}
+					}
+				} 
+			}
+			
+			
 		}
 	};
 	
@@ -2023,6 +2163,8 @@ function getTeiByHtml(inputString, args) {
 
 		// ******************* verse *******************
 		if (wceAttrValue != null && wceAttrValue.match(/verse_number/)) {
+			html2Tei_addPartAttribute($htmlNode);
+			
 			var textNode = $htmlNode.firstChild;
 			if (textNode) {
 				// TODO: This could maybe removed as the part handling has been changed.
@@ -2065,6 +2207,10 @@ function getTeiByHtml(inputString, args) {
 					$newRoot.appendChild(g_verseNode);
 				g_currentParentNode = g_verseNode;
 				//g_wordNumber = 0;
+			}
+			var partAttr=$htmlNode.getAttribute('Part');
+			if(partAttr){
+				g_verseNode.setAttribute('Part',partAttr);
 			}
 			return null;
 
@@ -2658,7 +2804,13 @@ function getTeiByHtml(inputString, args) {
 			$newNode.setAttribute('n', arr['number']);
 		} else if (break_type) {
 			// pb, cb, lb
-			if (break_type == 'lb' && !$htmlNode.nextSibling) {//if this is the last element on a page, then it is only a marker
+			if (break_type == 'lb' && !$htmlNode.nextSibling && arr['hasBreak'] === 'yes' && $teiParent.nodeName=='ab') {//if this is the last element on a page, then it is only a marker
+				if($teiParent.getAttribute('Part')){
+					$teiParent.setAttribute('Part', 'M');
+				}else{
+					$teiParent.setAttribute('Part', 'I');
+				}
+				
 				return;
 			}
 			$newNode = $newDoc.createElement(break_type);
