@@ -103,10 +103,10 @@ function getHtmlByTei(inputString) {
 		}
 		if($parent.nodeName=='ab'){
 			var part=$parent.getAttribute('Part');
-			if(part && part=='M' || part=='I'){//Fixed #1896: Hyphen after supplied text
+			if(part && (part=='M' || part=='I') && $parent.lastChild){//Fixed #1896: Hyphen after supplied text
 				var lb=$parent.ownerDocument.createElement('lb'); 
 				lb.setAttribute('break', 'no');
-				$parent.appendChild(lb);
+				$parent.lastChild.appendChild(lb);
 			}
 		}
 		var tNext=$parent.firstChild;
