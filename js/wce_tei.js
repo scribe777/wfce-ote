@@ -1830,14 +1830,15 @@ function getTeiByHtml(inputString, args) {
 				_last=_last.lastChild;
 			}
 			
-			var attr = $r.getAttribute('Part');
-			if (attr) {
+			var partF = $r.getAttribute('Part');//
+			if (partF) {
 				//add Attribute Part="F" / "M" to first <w>
 				var firstW = $r.firstChild;
 				while (firstW && firstW.nodeType != 3) {
 					if (firstW.nodeName == 'w') {
 						if (lastLB && lastW && lastW===firstW) {
 							firstW.setAttribute('Part', 'M');
+							$r.setAttribute('Part', 'M');
 						} else {
 							firstW.setAttribute('Part', 'F');
 						}
@@ -1856,8 +1857,10 @@ function getTeiByHtml(inputString, args) {
 					}					
 				}
 			} else if (lastLB && lastW) {
-				lastW.setAttribute('Part', 'M');
+				lastW.setAttribute('Part', 'I'); 
+				$r.setAttribute('Part', 'I'); 
 			}
+			//remove last <lb>
 			if(lastLB){
 				lastLB.parentNode.removeChild(lastLB);
 			}
