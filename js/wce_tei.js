@@ -344,9 +344,9 @@ function getHtmlByTei(inputString) {
 
 		switch (teiNodeName) {
 			case 'w':
-				return Tei2Html_w($htmlParent, $teiNode);
-			// w
-
+				return $htmlParent;
+				//return Tei2Html_w($htmlParent, $teiNode);
+				
 			case 'ex':
 				return Tei2Html_ex($htmlParent, $teiNode);
 			// ex
@@ -497,7 +497,7 @@ function getHtmlByTei(inputString) {
 
 	/*
 	 * **** <w>
-	 */
+	delete a 13.11.2013 by YG, see initTeiInput() the code: if(part && (part=='M' || part=='I') && $parent.lastChild){.....
 	var Tei2Html_w = function($htmlParent, $teiNode) {
 		if ($teiNode.hasAttributes && $teiNode.getAttribute("part") == "I" && $teiNode.firstChild) {
 			nodeAddText($htmlParent, $teiNode.firstChild.nodeValue);
@@ -517,7 +517,7 @@ function getHtmlByTei(inputString) {
 			$htmlParent.appendChild($newNode);
 		}
 		return $htmlParent;
-	};
+	}; */
 	/*
 	 * **** <ex>
 	 */
