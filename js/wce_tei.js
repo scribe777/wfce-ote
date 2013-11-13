@@ -499,7 +499,7 @@ function getHtmlByTei(inputString) {
 	 * **** <w>
 	 */
 	var Tei2Html_w = function($htmlParent, $teiNode) {
-		if ($teiNode.hasAttributes && $teiNode.getAttribute("part") == "I") {
+		if ($teiNode.hasAttributes && $teiNode.getAttribute("part") == "I" && $teiNode.firstChild) {
 			nodeAddText($htmlParent, $teiNode.firstChild.nodeValue);
 			//add word part to HTML
 			$teiNode.removeChild($teiNode.firstChild);
@@ -698,14 +698,14 @@ function getHtmlByTei(inputString) {
 				wceAttr += '&unit_other=&unit=';
 			if (teiNodeName == 'supplied') {
 				wceAttr += '&mark_as_supplied=supplied';
-				$newNode.setAttribute('wce_orig', $teiNode.firstChild.nodeValue);
+				$newNode.setAttribute('wce_orig', $teiNode.firstChild ? $teiNode.firstChild.nodeValue : '');
 				// get the content and save it as original
 			}
 
 			$newNode.setAttribute('wce', wceAttr);
 
 			if (teiNodeName == 'supplied') {// supplied MS
-				//nodeAddText($newNode, '[' + $teiNode.firstChild.nodeValue + ']');
+				//nodeAddText($newNode, '[' + ($teiNode.firstChild ? $teiNode.firstChild.nodeValue : '') + ']');
 				var $tempParent = $newDoc.createElement('t'); 
 				var cList = $teiNode.childNodes;
 				for (var i = 0, c, l = cList.length; i < l; i++) {
