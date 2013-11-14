@@ -25,6 +25,7 @@ function getHtmlByTei(inputString) {
 	};
 
 	// As &om; can not be handled we go back to OMISSION
+	inputString = inputString.replace(/\n/g,'');
 	inputString = inputString.replace(/&om;/g, "<w>OMISSION</w>");
 	//Trick to solve problem without <w>...</w>
 	inputString = inputString.replace('\u00a0', ' ');
@@ -537,7 +538,7 @@ function getHtmlByTei(inputString) {
 		$newNode.setAttribute('class', 'unclear');
 		var wceAttr = '__t=unclear&__n=';
 
-		$newNode.setAttribute('wce_orig', $teiNode.firstChild.nodeValue ? $teiNode.firstChild.nodeValue : '');
+		$newNode.setAttribute('wce_orig', $teiNode.firstChild && $teiNode.firstChild.nodeValue ? $teiNode.firstChild.nodeValue : '');
 		
 
 		if (!$teiNode.getAttribute('reason')) {// no reason given
