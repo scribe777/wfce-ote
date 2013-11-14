@@ -2842,9 +2842,39 @@ function getTeiByHtml(inputString, args) {
 	};
 	//text from editor in editor
 	var html2Tei_paratextAddChildren = function($newNode, text) {
-		return html2Tei_correctionAddW($newNode, text);
+		html2Tei_correctionAddW($newNode, text);
+		html2Tei_paratextRemoveWNode($newNode);
+		return;
 	};
-
+	
+	var html2Tei_paratextRemoveWNode = function($node){
+		if(!$node || $node.nodeType==3 || $node.nodeName=='w'){
+			return;
+		} 
+		var tempList=$node.childNodes; 
+		var childList = new Array();
+		 
+		for(var x=0, y=tempList.length; x<y; x++){
+			childList.push(tempList[x]);
+		} 		
+		
+		var w;
+		for(var i=0, l=childList.length; i<l; i++){
+			w=childList[i]; 
+			if(w.nodeType==3) continue;
+			
+			if(w.nodeName=='w'){ 
+				while(w.hasChildNodes()){
+					$node.appendChild(w.firstChild);
+				}
+				w.parentNode.removeChild(w);
+				
+			}else{
+				html2Tei_paratextRemoveWNode(w);
+			} 
+		}
+		
+	};
 	
 	var isLastNodeOf = function ($node,nName){
 		var parent=$node.ParentNode;
@@ -3136,7 +3166,7 @@ function getTeiByHtml(inputString, args) {
 	 */
 	var html2Tei_pc = function(arr, $teiParent, $htmlNode) {
 		var pc = $newDoc.createElement('pc');
-		$teiParent.appendChild(pc);
+		//$teiParent.appendChild(pc);
 		appendNodeInW($teiParent, pc, $htmlNode);
 		return {
 			0 : pc,
