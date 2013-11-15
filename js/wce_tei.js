@@ -125,19 +125,29 @@ function getHtmlByTei(inputString) {
 		var lastChild=$node.lastChild;
 		var startNode;
 		var nextW=$node.nextSibling;
+		var mergeAgain=false;
+		
 		if(lastChild && lastChild.nodeType!=3){
 			var toAppend=new Array();
+			//get nodes to merge
 			while(nextW){				
 				var firstChildOfNextW=nextW.firstChild;
 				if(compareNodes(lastChild, firstChildOfNextW)){
 					if(!startNode){
 						startNode=nextW.previousSibling;
-					}toAppend.push(nextW);
+					}					
+					toAppend.push(nextW);
+					if(firstChildOfNextW.nextSibling && !compareNodes(firstChildOfNextW,firstChildOfNextW.nextSibling)){
+						mergeAgain=true;
+						break;	
+					}
 					nextW=nextW.nextSibling;
 				}else{
 					break;
 				}										
 			}
+			
+			//merge
 			if(startNode){
 				for(var i=0, a, l=toAppend.length; i<l; i++){
 					a=toAppend[i];
@@ -150,7 +160,12 @@ function getHtmlByTei(inputString) {
 					a.parentNode.removeChild(a);
 				}
 				Tei2Html_mergeOtherNodes(startNode, true); 
+				
+				if(mergeAgain){
+					Tei2Html_mergeWNode(startNode);
+				}				
 			}
+			
 		} 
 	};
 	
