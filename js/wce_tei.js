@@ -2,7 +2,7 @@
 window.onerror = Fehlerbehandlung;
 
 //pb, cb ,lb with break="no" defined in function html2Tei_mergeWNode();
-var wceNodeInsideW=["hi","unclear","gap","suplied", "w", "abbr", "pc"];//TODO: more type?
+var wceNodeInsideW=["hi","unclear","gap","suplied", "w", "abbr", "pc", "ex"];//TODO: more type?
 
 function Fehlerbehandlung(Nachricht, Datei, Zeile) {
 	Fehler = "Error:\n" + Nachricht + "\n" + Datei + "\n" + Zeile;
@@ -130,7 +130,10 @@ function getHtmlByTei(inputString) {
 		if(lastChild && lastChild.nodeType!=3){
 			var toAppend=new Array();
 			//get nodes to merge
-			while(nextW){				
+			while(nextW){
+				if(nextW.nodeType==3 || nextW.nodeName!='w'){
+					break;
+				}								
 				var firstChildOfNextW=nextW.firstChild;
 				if(compareNodes(lastChild, firstChildOfNextW)){
 					if(!startNode){
