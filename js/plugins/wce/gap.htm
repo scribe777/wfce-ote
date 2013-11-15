@@ -204,10 +204,15 @@
 
 		function checkstatus_supplied_source() {
 			if (ed.WCE_VAR.isc) {
-				document.gapinfo.supplied_source.disabled = true;
-				document.gapinfo.supplied_source_other.disabled = true;
-				document.getElementById('supplied_source_other').style.backgroundColor = "#CCCCCC";
-				return;
+				if (document.gapinfo.mark_as_supplied.disabled == true) {
+					document.gapinfo.supplied_source.disabled = true;
+					document.gapinfo.supplied_source_other.disabled = true;
+					document.getElementById('supplied_source_other').style.backgroundColor = "#CCCCCC";
+				} else {
+					document.gapinfo.supplied_source.disabled = false;
+					document.gapinfo.supplied_source_other.disabled = false;
+					document.getElementById('supplied_source_other').style.backgroundColor = "white";
+				}
 			}
 			if (document.gapinfo.supplied_source.options[3].selected == true) {
 				document.gapinfo.supplied_source_other.disabled = false;
