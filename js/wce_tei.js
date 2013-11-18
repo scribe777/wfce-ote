@@ -25,8 +25,11 @@ function getHtmlByTei(inputString) {
 	};
 
 	// As &om; can not be handled we go back to OMISSION
-	inputString = inputString.replace(/\n/g,'');
-	inputString = inputString.replace(/&om;/g, "<w>OMISSION</w>");
+	inputString = inputString.replace(/([\r\n]|<w\s*\/\s*>)/g,''); 
+	inputString=inputString.replace(/(\s+|&om;)/g,' ');
+	inputString=inputString.replace(/>\s</g,'><');
+	//inputString=inputString.replace(/<w\s*\/\s*>/g,'');
+	//inputString = inputString.replace(/&om;/g, "<w>OMISSION</w>");
 	//Trick to solve problem without <w>...</w>
 	inputString = inputString.replace('\u00a0', ' ');
 	//inputString = inputString.replace(/<\/supplied><\/w><w><supplied.*?>/g, " ");
@@ -116,7 +119,7 @@ function getHtmlByTei(inputString) {
 			tNext=tNext.nextSibling;
 		}
 		Tei2Html_mergeWNode($parent); 
-	};
+	}; 
 	
 	var Tei2Html_mergeWNode = function ($node){
 		if(!$node || $node.nodeType==3 || $node.nodeName!='w'){
@@ -1388,7 +1391,7 @@ function getHtmlByTei(inputString) {
 			var corrector_text = $tempParent.xml;
 			corrector_text = xml2String($tempParent);
 			if (corrector_text && corrector_text.length > 7) {
-				corrector_text = corrector_text.substr(3, corrector_text.length - 8);
+				corrector_text = corrector_text.substr(3, corrector_text.length - 7);
 				if (corrector_text == 'OMISSION') {
 					wceAttr += '&corrector_text=&blank_correction=on';
 					//blank correction
@@ -1549,7 +1552,7 @@ function getTeiByHtml(inputString, args) {
 		}
  
 	 	html2Tei_mergeNodes($newRoot, true); 	 
-	 	html2Tei_clearWandAddAttributePartI($newRoot);
+	 	html2Tei_removeBlankW_addAttributePartI($newRoot);
 		
 		// DOM to String
 		var str = xml2String($newRoot);
@@ -1808,7 +1811,7 @@ function getTeiByHtml(inputString, args) {
 	/*
 	 *remove blank <w/>  and set Attribute Part
 	 */
-	var html2Tei_clearWandAddAttributePartI = function($r) {
+	var html2Tei_removeBlankW_addAttributePartI = function($r) {
 		if ($r.nodeType != 1 && $r.nodeType != 11)
 			return;
 
@@ -1829,7 +1832,7 @@ function getTeiByHtml(inputString, args) {
 			if (!$c) {
 				continue;
 			} else {
-				html2Tei_clearWandAddAttributePartI($c);
+				html2Tei_removeBlankW_addAttributePartI($c);
 			}
 		}
 		if(nName=='ab'){
