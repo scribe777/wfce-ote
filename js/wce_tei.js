@@ -1634,7 +1634,7 @@ function getTeiByHtml(inputString, args) {
 				continue;
 			}if(cName=='brea'){
 				wceAttr =preChild.getAttribute('wce');
-				if(wceAttr.match(/hasBreak=no/)){
+				if(wceAttr.match(/hasBreak=yes/)){
 					isBreak=true;
 					break;
 				}
