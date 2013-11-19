@@ -638,6 +638,10 @@ function getHtmlByTei(inputString) {
 				nodeAddText($newNode, "Subscriptio");
 		}
 		addFormatElement($newNode);
+		var pre=$htmlParent.previousSibling;
+		if(!pre || (!pre.nodeType==3 && pre.nodeName!='w')){//add a space before book number
+			nodeAddText($htmlParent, ' ');
+		}
 		$htmlParent.appendChild($newNode);
 		nodeAddText($htmlParent, ' ');
 		return $htmlParent;
