@@ -99,6 +99,7 @@ tinyMCE.addI18n('de.wce',{
 	gap_data : "Informationen über die Lücke",
 	lacuna : "Lücke (Beschreibstoff fehlt)",
 	illegible_text : "Unleserlich (Beschreibstoff vorhanden) ",
+	unspecified : "Unspezifiziert",
 	space : "Leerstelle",
 	other : "Anderes ",
 	othertype : "Benutzerdefinierte Art",

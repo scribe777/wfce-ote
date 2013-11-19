@@ -105,6 +105,7 @@ tinyMCE.addI18n('en.wce',{
 	gap_type: "Writing material is",
 	lacuna : "Lacuna (parchment is absent)",
 	illegible_text : "Illegible (parchment is present)",
+	unspecified : "Unspecified",
 	space : "Blank spaces",
 	other : "Other",
 	othertype : "User-defined type",

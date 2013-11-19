@@ -1809,7 +1809,7 @@
 							} else if (ar['gap_reason'] == 'illegible') {
 								info_text += ed.getLang('wce.infotext_illegible') + '</div>';
 							} else {
-								info_text += ed.getLang('wce.infotext_absent_text') + '</div>';
+								info_text += ed.getLang('wce.unspecified') + '</div>';
 							}
 							if (ar['extent'] && ar['extent'] != null) {
 								info_text += '<div style="margin-top:10px">' + ed.getLang('wce.extent') + ': ' + ar['extent'] + ' ';
@@ -3577,11 +3577,11 @@
 
 			// Add gaps/*********/
 			ed.addCommand('mceAddGap', function() {
-				doWithDialog(ed, url, '/gap.htm', 480, 320, 1, true);
+				doWithDialog(ed, url, '/gap.htm', 640, 320, 1, true);
 			});
 			// Edit gaps and spacing
 			ed.addCommand('mceEditGap', function() {
-				doWithDialog(ed, url, '/gap.htm', 480, 320, 1, false);
+				doWithDialog(ed, url, '/gap.htm', 640, 320, 1, false);
 			});
 
 			ed.addCommand('mceAddGap_Shortcut', function() {

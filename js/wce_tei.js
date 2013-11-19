@@ -699,7 +699,7 @@ function getHtmlByTei(inputString) {
 			$newNode.setAttribute('class', 'gap');
 			// for gap *and* supplied
 
-			var wceAttr = '__t=gap&__n=&gap_reason_dummy_lacuna=lacuna&gap_reason_dummy_illegible=illegible';
+			var wceAttr = '__t=gap&__n=&gap_reason_dummy_lacuna=lacuna&gap_reason_dummy_illegible=illegible&gap_reason_dummy_unspecified=lacuna/illegible';
 			var mapping = {
 				'reason' : '&gap_reason=',
 				'unit' : {
@@ -2584,7 +2584,7 @@ function getTeiByHtml(inputString, args) {
 		}
 		// reason
 		if (arr['gap_reason']) {
-			$newNode.setAttribute('reason', arr['gap_reason']);
+			$newNode.setAttribute('reason', decodeURIComponent(arr['gap_reason']));
 		}
 		// unit
 		var unitValue = arr['unit'];

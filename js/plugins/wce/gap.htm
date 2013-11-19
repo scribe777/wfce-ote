@@ -24,22 +24,15 @@
                         <td>
                         <input type="radio" id="gap_reason_dummy_illegible" name="gap_reason_dummy" value="illegible" onchange="checkstatus_gapreason()">
                         {#wce.illegible_text}</td>
-                        <td>
+						<td>
+                        <input type="radio" id="gap_reason_dummy_unspecified" name="gap_reason_dummy" value="lacuna/illegible" onchange="checkstatus_gapreason()">
+                        {#wce.unspecified}</td>
+					    <td>
                         <input id="gap_reason" name="gap_reason" value="" type="hidden" />
                         </td>
                     </tr>
                 </table>
                 <table border="0" cellpadding="4" cellspacing="0" width="100%">
-                    <!--<tr>
-                    <td><label id="gap_reason_label" for="gap_reason">{#wce.reason}</label>
-                    </td>
-                    <td><select id="gap_reason" name="gap_reason"
-                    onchange="checkstatus_gapreason()">
-                    <option value=""></option>
-                    <option value="hole">{#wce.hole}</option>
-                    </select>
-                    </td>
-                    </tr>-->
                     <tr>
                         <td><label id="unit_label" for="unit">{#wce.unit}</label></td>
                         <td>
@@ -141,8 +134,10 @@
 		function checkstatus_gapreason() {
 			if (radioWert(document.gapinfo.gap_reason_dummy) == "lacuna")
 				document.gapinfo.gap_reason.value = "lacuna";
-			else
+			else if (radioWert(document.gapinfo.gap_reason_dummy) == "illegible")
 				document.gapinfo.gap_reason.value = "illegible";
+			else
+				document.gapinfo.gap_reason.value = "lacuna/illegible";
 		}
 
 		function radioWert(rObj) {
@@ -155,6 +150,8 @@
 		function setstatus_gapreason() {
 			if (document.gapinfo.gap_reason.value == "lacuna")
 				document.gapinfo.gap_reason_dummy_lacuna.checked = true;
+			else if (document.gapinfo.gap_reason.value == "lacuna/illegible")
+				document.gapinfo.gap_reason_dummy_unspecified.checked = true;
 			else
 				document.gapinfo.gap_reason_dummy_illegible.checked = true;
 		}
