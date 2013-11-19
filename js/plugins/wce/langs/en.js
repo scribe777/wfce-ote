@@ -106,6 +106,7 @@ tinyMCE.addI18n('en.wce',{
 	lacuna : "Lacuna (parchment is absent)",
 	illegible_text : "Illegible (parchment is present)",
 	unspecified : "Unspecified",
+	info_lacuna_illegible : 'Please note, that this category was introduced only for existing transcriptions.\nYou should always try to assign "Lacuna" or "Illegible".',
 	space : "Blank spaces",
 	other : "Other",
 	othertype : "User-defined type",
