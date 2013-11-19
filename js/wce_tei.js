@@ -26,10 +26,10 @@ function getHtmlByTei(inputString) {
 
 	// As &om; can not be handled we go back to OMISSION
 	inputString = inputString.replace(/([\r\n]|<w\s*\/\s*>)/g,''); 
-	inputString=inputString.replace(/(\s+|&om;)/g,' ');
+	inputString=inputString.replace(/(\s+)/g,' ');
 	inputString=inputString.replace(/>\s</g,'><');
 	//inputString=inputString.replace(/<w\s*\/\s*>/g,'');
-	//inputString = inputString.replace(/&om;/g, "<w>OMISSION</w>");
+	inputString = inputString.replace(/&om;/g, "<w>OMISSION</w>");
 	//Trick to solve problem without <w>...</w>
 	inputString = inputString.replace('\u00a0', ' ');
 	//inputString = inputString.replace(/<\/supplied><\/w><w><supplied.*?>/g, " ");
