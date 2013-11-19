@@ -659,8 +659,9 @@ function getHtmlByTei(inputString) {
 			}
 		}
 		var partValue = $teiNode.getAttribute('part');
-		if (partValue && partValue === 'F')// <ab part="F">
+		if (partValue && partValue === 'F'){// <ab part="F">
 			nodeAddText($newNode, ' Cont.');
+		}
 		if (partValue)
 			$newNode.setAttribute('wce', '__t=verse_number&partial=' + partValue);
 		else
@@ -1078,14 +1079,26 @@ function getHtmlByTei(inputString) {
 					nodeAddText($newNode, '\u21B5');
 
 				//
-				//test, if the textnode after lb hat a space, if not, add a space
-
+				//test, if the textnode after lb hat a space, if not, add a space 
 				if (!hasBreak) {
-					var $nextNode = $teiNode.nextSibling;
-					if ($nextNode && $nextNode.nodeType == 3) {
-						var nextText = $nextNode.nodeValue;
-						if (nextText && !startHasSpace(nextText)) {
-							$nextNode.nodeValue = ' ' + nextText;
+					//test previous pb/qb/cb;
+					var pre=$teiNode.previousSibling;
+					while(pre){
+						if(pre.nodeType!=3){
+							if(pre.getAttribute('break')&& pre.getAttribute('break')=='no'){
+							hasBreak=true;
+							break;
+							}
+						}
+						pre=pre.previousSibling;
+					}
+					if(!hasBreak){
+						var $nextNode = $teiNode.nextSibling;
+						if ($nextNode && $nextNode.nodeType == 3) {
+							var nextText = $nextNode.nodeValue;
+							if (nextText && !startHasSpace(nextText)) {
+								$nextNode.nodeValue = ' ' + nextText;
+							}
 						}
 					}
 				}
