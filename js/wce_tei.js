@@ -219,7 +219,7 @@ function getHtmlByTei(inputString) {
 					a.parentNode.removeChild(a);
 				}
 			}
-			Tei2Html_mergeOtherNodes(startNode);
+			Tei2Html_mergeOtherNodes(startNode, isW);
 			//var wParent=getWParent(startNode);
 			//if(wParent){ 
 			//	Tei2Html_mergeWNode(wParent.previousSibling);
