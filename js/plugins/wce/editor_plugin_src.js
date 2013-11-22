@@ -1102,6 +1102,7 @@
 					w.not_O = !wholeSelect;
 					//when select whole gap, can add corr.
 					w.not_C = !wholeSelect;
+					w.not_A = !wholeSelect;
 					break;
 
 				case 'corr':
@@ -1151,6 +1152,7 @@
 					_disableAllControls(ed, true);
 					w.not_D = false;
 					w.not_C = !wholeSelect;
+					w.not_A = !wholeSelect;
 					break;
 
 				case 'spaces':
@@ -1158,6 +1160,7 @@
 					w.not_O = false;
 					w.not_C = !wholeSelect;
 					w.not_D = !wholeSelect;
+					w.not_A = !wholeSelect;
 					break;
 
 				case 'formatting_capitals':

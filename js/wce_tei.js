@@ -2,7 +2,7 @@
 window.onerror = Fehlerbehandlung;
 
 //pb, cb ,lb with break="no" defined in function html2Tei_mergeWNode();
-var wceNodeInsideW=["hi","unclear","gap","suplied", "w", "abbr", "pc", "ex"];//TODO: more type?
+var wceNodeInsideW=["hi","unclear","gap","supplied", "w", "abbr", "pc", "ex"];//TODO: more type?
 
 function Fehlerbehandlung(Nachricht, Datei, Zeile) {
 	Fehler = "Error:\n" + Nachricht + "\n" + Datei + "\n" + Zeile;
@@ -695,6 +695,12 @@ function getHtmlByTei(inputString) {
 	var Tei2Html_gap_supplied = function($htmlParent, $teiNode, teiNodeName) {
 		// <gap reason="lacuna" unit="char" />
 		var $newNode = $newDoc.createElement('span');
+		
+		var extAttr=$teiNode.getAttribute('ext');
+		if(extAttr){//suppied in abbr
+			$newNode.setAttribute('ext',extAttr);
+		}
+		
 		if ($teiNode.getAttribute("reason") === 'witnessEnd') {// Witness end
 			$newNode.setAttribute('class', 'witnessend');
 			wceAttr = '__t=gap&__n=&original_gap_text=&gap_reason=witnessEnd&unit=&unit_other=&extent=&supplied_source=na28&supplied_source_other=&insert=Insert&cancel=Cancel';
@@ -885,7 +891,48 @@ function getHtmlByTei(inputString) {
 				'2' : '&abbr_type=other&abbr_type_other='
 			}
 		};
-
+		var toMerge;
+		var _moveSuplied=function (_supp){
+			var _hi=_supp.firstChild;
+			if(_supp.nodeName!='supplied' || !_hi || _hi.nodeName!='hi' || !_hi.getAttribute('rend') || _hi.getAttribute('rend')!='overline'){
+				return;
+			} 
+			_supp.setAttribute('ext', 'inabbr');
+			toMerge=true;
+			var _deep,_temp=_hi; 
+			while(_temp){
+				if(_temp.nodeType==3){
+					break;
+				}
+				_deep=_temp;
+				_temp=_temp.firstChild; 
+			} 
+			_supp.parentNode.insertBefore(_hi,_supp);
+			while(_deep.firstChild){
+				_supp.appendChild(_deep.firstChild);
+			}
+			_deep.appendChild(_supp);
+			
+		};	
+		
+		var cList=$teiNode.childNodes;
+		//test if supplied under overline hi
+		for (var i = 0, c, l = cList.length; i < l; i++) {
+			c = cList[i];
+			if (!c) {
+				continue; 
+			}
+			_moveSuplied(c);
+		}
+		if(toMerge){
+			className = 'abbr_add_overline';
+			wceAttr += '&add_overline=overline';
+			$newNode.setAttribute('ext', 'inabbr');
+			Tei2Html_mergeOtherNodes($teiNode);
+			cList = $teiNode.firstChild.childNodes;
+		}
+	
+		/*
 		// Check if first child of <abbr> is an overline highlighting (=> nomen sacrum)
 		if ($teiNode.firstChild && $teiNode.firstChild.nodeName == 'hi' 
 			&& ($teiNode.firstChild.getAttribute("rend") == "overline" 
@@ -897,7 +944,7 @@ function getHtmlByTei(inputString) {
 		} else {
 			cList = $teiNode.childNodes;
 			startlist = 1;
-		}
+		}*/
 
 		$newNode.setAttribute('class', className);
 
@@ -905,7 +952,7 @@ function getHtmlByTei(inputString) {
 		$newNode.setAttribute('wce', wceAttr);
 		
 		var $tempParent = $newDoc.createElement('t'); 
-		for (var i = startlist, c, l = cList.length; i < l; i++) {
+		for (var i = 0, c, l = cList.length; i < l; i++) {
 			c = cList[i];
 			if (!c) {
 				break; 
@@ -2037,7 +2084,7 @@ function getTeiByHtml(inputString, args) {
 	};
 	
 	/*
-	 * append wce node into <w>, only for suplied, unclear,  highlight etc.
+	 * append wce node into <w>, only for supplied, unclear,  highlight etc.
 	 */
 	var appendNodeInW = function($teiParent, $teiNode, $htmlNode){
 		var childList = $htmlNode.childNodes;  
@@ -2105,10 +2152,150 @@ function getTeiByHtml(inputString, args) {
 		while($parent.hasChildNodes()){
 			deepChild.appendChild($parent.firstChild);
 		}
+		
+		//supplied in abbr //ticket #1762
+		if($wrapNode.nodeName=='abbr' && $wrapNode.getAttribute('ext')){  
+			$wrapNode.removeAttribute('ext');
+			$wrapNode=handleSupliedInAbbr($wrapNode, $newDoc.createDocumentFragment(), true);
+			//$wrapNode=handleSupliedInAbbr2($wrapNode);// both function do well
+		} 
+		
 		//use node name and attribute
 		var newParent=$parent.cloneNode(false);
 		newParent.appendChild($wrapNode);
 		return newParent;
+	};
+	
+	//or use function handleSupliedInAbbr2
+	//supplied in abbr //ticket #1762
+	var handleSupliedInAbbr = function ($node, $currNewNode, end){
+		if(!$node){
+			return; 
+		} 
+		
+		var nextNewParent=$node.cloneNode(false);   
+		if(nextNewParent.nodeType==3){ 
+			$currNewNode.appendChild(nextNewParent); 
+			return;
+		}
+		
+		//if it is <supplied>
+		if($node.nodeType!=3 && $node.nodeName!='abbr' && $node.getAttribute('ext')){   
+			//find <hi ovlerline>
+			var treeArr=new Array(); 
+			var cp=$currNewNode,hi; 
+			while(cp){
+				if(cp.nodeName=='abbr'){
+					break;
+				}
+				treeArr.push(cp); 
+				hi=cp;
+				cp=cp.parentNode;
+			}
+			var abbr=hi.parentNode; 
+			
+			var supplied=$node.cloneNode(true); //supplied from copy of original teinode		
+			supplied.removeAttribute('ext'); 
+			abbr.appendChild(supplied);//abbr append supplied
+			
+			var tempNode=$newDoc.createDocumentFragment();
+			while(supplied.firstChild){
+				tempNode.appendChild(supplied.firstChild);
+			}  
+			 
+			for(var c, l=treeArr.length, i=l-1; i>=0; i--){
+				c=treeArr[i].cloneNode(false); 
+				supplied.appendChild(c);
+				supplied=c;
+			}
+			while(tempNode.firstChild){
+				supplied.appendChild(tempNode.firstChild);
+			}	 
+			nextNewParent=abbr; 
+				for(var c, l=treeArr.length, i=l-1; i>=0; i--){
+					c=treeArr[i].cloneNode(false); 
+					nextNewParent.appendChild(c);
+					nextNewParent=c;
+				} 
+			return nextNewParent;			
+		} 
+		$currNewNode.appendChild(nextNewParent); 
+		
+		var next=$node.firstChild;
+		var newp;
+		while(next){
+			newP=handleSupliedInAbbr(next, nextNewParent);
+			if(newP){
+				nextNewParent=newP;
+			}
+			next=next.nextSibling;
+		}		
+		if(end){ 
+			return removeBlankNode($currNewNode.firstChild); 
+		}	
+	};
+	
+	//or use function handleSupliedInAbbr
+	//supplied in abbr //ticket #1762
+	var handleSupliedInAbbr2 = function ($node){
+		if(!$node || $node.nodeType==3){
+			return;
+		}
+		
+		if($node.nodeName!='abbr' && $node.getAttribute('ext')){
+			var s1='',s2='';
+			var parent=$node.parentNode;
+			var next=$node.nextSibling;
+			var str;
+			while(parent && parent.nodeName!='abbr'){ 
+				s1+='@{@/'+parent.nodeName+'@}@';
+				s2='@{@'+getNameAndAttributeAsString(parent)+'@}@'+s2;
+				parent=parent.parentNode;
+			}
+			$node.parentNode.insertBefore($node.ownerDocument.createTextNode(s1),$node);
+			$node.insertBefore($node.ownerDocument.createTextNode(s2),$node.firstChild);
+			$node.appendChild($node.ownerDocument.createTextNode(s1));
+			if(next){
+				$node.parentNode.insertBefore($node.ownerDocument.createTextNode(s2),next);
+			}else{
+				$node.parentNode.appendChild($node.ownerDocument.createTextNode(s2));
+			}
+			$node.removeAttribute('ext');
+			return;
+		}
+		
+		var  temp=$node.childNodes;
+		var childList=new Array();		
+		
+		for(var i=0, l=temp.length; i<l; i++){
+			childList.push(temp[i]);
+		} 
+		
+		for(var x=0, y=childList.length; x<y; x++){ 
+			handleSupliedInAbbr2(childList[x]);
+		}
+		
+		if($node.nodeName=='abbr'){
+			$node.removeAttribute('ext');
+			var xmlstr=xml2String($node);
+			xmlstr=xmlstr.replace(/@{@/g,'<');
+			xmlstr=xmlstr.replace(/@}@/g,'>');
+			$node= loadXMLString(xmlstr);
+			$node=$node.documentElement;
+			removeBlankNode($node);
+			return $node;
+		}
+	}; 
+	
+	var getNameAndAttributeAsString = function ($node){
+		 var s='';
+		 var attrs=$node.attributes;  
+		 for(var i=0,attr,an, l=attrs.length; i<l; i++){
+		 	attr=attrs[i];
+		 	an=attr.nodeName;
+		 	s=an+'="'+$node.getAttribute(an)+'" '; 
+		 } 
+		 return $node.nodeName+" "+s; 
 	};
 
 	/*
@@ -2579,7 +2766,7 @@ function getTeiByHtml(inputString, args) {
 	};
 
 	/*
-	 * type gap, return <gap> or <suplied>
+	 * type gap, return <gap> or <supplied>
 	 */
 	var html2Tei_gap = function(arr, $teiParent, $htmlNode) {
 		// wce_gap <gap OR <supplied source="STRING" _type_STRING type="STRING" _reason_STRING reason="STRING" _hand_STRING hand="STRING" _unit_STRING_extent_STRING unit="STRING" extent="STRING" />
@@ -2615,6 +2802,11 @@ function getTeiByHtml(inputString, args) {
 		// extent
 		if (arr['extent']) {
 			$newNode.setAttribute('extent', arr['extent']);
+		}
+		
+		var extAttr=$htmlNode.getAttribute('ext');
+		if(extAttr){
+			$newNode.setAttribute('ext',extAttr);
 		}
 		
 		if ($newNode.nodeName === 'supplied'){
@@ -2683,7 +2875,7 @@ function getTeiByHtml(inputString, args) {
 	};
 	
 	/*
-	 * remove text "[" and "]" of <suplied>
+	 * remove text "[" and "]" of <supplied>
 	 */
 	var removeBracketOfSuplied =function($htmlNode){
 		var firstW=$htmlNode.firstChild;
@@ -3040,6 +3232,11 @@ function getTeiByHtml(inputString, args) {
 	 */
 	var html2Tei_abbr = function(arr, $teiParent, $htmlNode) {
 		var $abbr = $newDoc.createElement('abbr');
+		var extAttr=$htmlNode.getAttribute('ext');
+		if(extAttr){
+			$abbr.setAttribute('ext',extAttr);
+		}
+		
 		// type
 		var abbr_type = arr['abbr_type'];
 		if (abbr_type && abbr_type != '') {
@@ -3351,6 +3548,11 @@ function getTeiByHtml(inputString, args) {
 	 * type unclear, return <unclear_reason_STRING reason="STRING">...</unclear>
 	 */
 	var html2Tei_unclear = function(arr, $teiParent, $htmlNode) {
+		//remove Dot Below
+		var str=xml2String($htmlNode);
+		str=str.replace(/\u0323/g,'');
+		$htmlNode=loadXMLString(str).documentElement;
+		
 		var $unclear = $newDoc.createElement('unclear');
 		var reasonValue = arr['unclear_text_reason'];
 		if (reasonValue == 'other') {
@@ -3359,19 +3561,19 @@ function getTeiByHtml(inputString, args) {
 		if (reasonValue && reasonValue != '') {
 			$unclear.setAttribute('reason', decodeURIComponent(reasonValue));
 		}
-		var wce_orig=$htmlNode.getAttribute('wce_orig');
-		if (wce_orig) {
+		//var wce_orig=$htmlNode.getAttribute('wce_orig');
+		//if (wce_orig) {
 			//if (decodeURIComponent(wce_orig).indexOf('<span class="spaces"') != 0) // take care of spaces element
 				//nodeAddText($unclear, decodeURIComponent(wce_orig));
-		}
+		//}
 
-		if(wce_orig){  
-		   	var tempDoc=loadXMLString("<temp>"+decodeURIComponent(wce_orig)+"</temp>");
-		   	var	tempRoot=initHtmlContent(tempDoc.documentElement); 
-		    appendNodeInW($teiParent, $unclear, tempRoot);
-		}else{
+		//if(wce_orig){  
+		 //  	var tempDoc=loadXMLString("<temp>"+decodeURIComponent(wce_orig)+"</temp>");
+		 //  	var	tempRoot=initHtmlContent(tempDoc.documentElement); 
+		 //   appendNodeInW($teiParent, $unclear, tempRoot);
+		//}else{
 		   	appendNodeInW($teiParent, $unclear, $htmlNode);
-		}
+	//}
 		
 		return {
 			0 : $unclear,
@@ -3735,3 +3937,102 @@ function removeArrows(str) {
 		out = str.substring(0, str.length-1) + "y";
 	return out;
 };
+
+var removeBlankNode=function ($root){//remove blank node,
+		var _remove=function($node){ 
+			var nodeName=$node.nodeName;
+			var notNames=['lb','pb','qb','cb','gap'];
+			if($node.nodeType!=3 && !$node.firstChild && $.inArray(nodeName,notNames)<0){
+				var parent=$node.parentNode;
+				parent.removeChild($node);
+				if(parent!=$root){
+					_remove(parent); 
+				}
+				return; 
+			}  
+			var temp = $node.childNodes;
+			var childList=new Array(); 
+			for (var i = 0, c, l = temp.length; i < l; i++) {
+				c = temp[i];
+				if (!c) {
+					continue;
+				} else {
+					childList.push(c);
+				}
+			}
+			for (var i = 0, c, l = childList.length; i < l; i++) {
+				c = childList[i];
+				if (!c) {
+					continue;
+				} else {
+					_remove(c);
+				}
+			} 
+				return; 
+		}
+		
+		//read all child of $root
+		var te = $root.childNodes;
+		var cl=new Array(); 
+		for (var i = 0, c, l = te.length; i < l; i++) {
+			c = te[i];
+			if (!c) {
+				continue;
+			} else {
+				cl.push(c);
+			}
+		}
+		for (var i = 0, c, l = cl.length; i < l; i++) {
+				c = cl[i];
+				if (!c) {
+					continue;
+				} else {
+					_remove(c);
+				}
+		}  
+		return $root;
+	};
+	
+var removeSpaceAfterLb=function ($node){ 
+		var nodeName=$node.nodeName;  
+		if(nodeName && nodeName=='lb'){
+			var toTrim=$node.getAttribute('break') && $node.getAttribute('break')=='no';
+			if(!toTrim){
+				var pre=$node.previousSibling;
+				while(pre){
+					if(pre.nodeType!=3){
+						if(pre.getAttribute('break')&& pre.getAttribute('break')=='no'){
+						toTrim=true;
+						break;
+						}
+					}
+					pre=pre.previousSibling;
+				}
+			}
+			if(toTrim){
+				var next=$node.nextSibling;
+				if(next && next.nodeType==3){
+					next.nodeValue=$.trim(next.nodeValue);
+				}
+			}
+		}
+		var temp = $node.childNodes;
+		var childList=new Array(); 
+		
+		for (var i = 0, $c, l = temp.length; i < l; i++) {
+			$c = temp[i];
+			if (!$c) {
+				continue;
+			} else {
+				childList.push($c);
+			}
+		}
+		for (var i = 0, $c, l = childList.length; i < l; i++) {
+			$c = childList[i];
+			if (!$c) {
+				continue;
+			} else {
+				removeSpaceAfterLb($c);
+			}
+		}
+	};
