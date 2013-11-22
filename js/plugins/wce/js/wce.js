@@ -142,9 +142,25 @@ function writeWceNodeInfo(val) {
 				var gap_text = "";
 				var gap_unit;
 				var gap_extent;
-				var gap_id;
+				var gap_id; 
 				if (document.getElementById('mark_as_supplied').checked == true) {// supplied text
 					gap_text = '[' + selected_content + ']';
+					//test if in node abbr with overline 
+					var gap_parent=wce_node;
+					var gap_parent_name;
+					while(gap_parent){
+						gap_parent_name=gap_parent.nodeName.toLowerCase();
+						if(gap_parent_name=='body' || gap_parent_name=='html'){
+							break;
+						}
+						if(gap_parent_name=='span' && gap_parent.className=='abbr_add_overline'){
+							gap_parent.setAttribute('ext','inabbr');
+							wceClass=' ext="inabbr" '+wceClass;
+							break;
+						}
+						gap_parent=gap_parent.parentNode;						
+					}				
+					 
 				} else {
 					gap_unit = document.getElementById('unit').value;
 					gap_extent = document.getElementById('extent').value;
