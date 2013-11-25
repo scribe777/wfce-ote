@@ -930,18 +930,14 @@ function getHtmlByTei(inputString) {
 			$newNode.setAttribute('ext', 'inabbr');
 			Tei2Html_mergeOtherNodes($teiNode);
 			cList = $teiNode.firstChild.childNodes;
-		}
-	
-		/*
-		// Check if first child of <abbr> is an overline highlighting (=> nomen sacrum)
-		if ($teiNode.firstChild && $teiNode.firstChild.nodeName == 'hi' 
+		}else if ($teiNode.firstChild && $teiNode.childNodes.length==1 && $teiNode.firstChild.nodeName == 'hi' 
 			&& ($teiNode.firstChild.getAttribute("rend") == "overline" 
 			|| $teiNode.firstChild.getAttribute("rend") == "ol")) {
+				// Check if first child of <abbr> is an overline highlighting (=> nomen sacrum)
 			className = 'abbr_add_overline';
 			wceAttr += '&add_overline=overline';
-			cList = $teiNode.firstChild.childNodes;
-			startlist = 0;
-		} else {
+			cList = $teiNode.firstChild.childNodes; 
+		}/* else {
 			cList = $teiNode.childNodes;
 			startlist = 1;
 		}*/
