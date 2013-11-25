@@ -8,7 +8,7 @@
  */
 
 (function() {
-	var wfce_editor = "2013-11-19";
+	var wfce_editor = "2013-11-25";
 
 	// Load plugin specific language pack
 	tinymce.PluginManager.requireLangPack('wce');
@@ -3433,7 +3433,7 @@
 				var wceClass;
 				if (wceNode) {
 					if(WCEUtils.hasWceParentNode(wceNode)){	
-						alert("The node has a parent node and can not be removed. The Format of parent node must first be removed.");//TODO: 				
+						alert(ed.getLang('wce.warning_deletion_inner_Node'));//TODO: 				
 						return;
 					}
 					//verse chapter
@@ -3470,15 +3470,25 @@
 							//id index
 							var bb = bArr[2];
 							if (bb && bc && bt) {
-								var arr = new Array('gap','lb', 'cb', 'pb', 'qb');
-								//for (var i = parseInt(bc) - 1; i > -1; i--) {
-								for(var i=0,elem,l=arr.length; i<l; i++){
-									elem=ed.dom.get(arr[i] + '_' + bc + '_' + bb);
-									if(elem){									
+								if (bt == 'lb' && bc == '2') {	// cb followed by lb => special case to be able to add missing line in a column (>1)
+									elem=ed.dom.get('lb' + '_' + bc + '_' + bb);
+									if (elem) {									
 										ed.selection.select(elem);
 										ed.selection.setContent("");
+										ed.WCE_VAR.lcnt = 0;
 									}
-									//$(ed.dom.get(arrItem + '_' + bc + '_' + bb)).remove();
+									
+								} else { // normal case
+									var arr = new Array('gap','lb', 'cb', 'pb', 'qb');
+									//for (var i = parseInt(bc) - 1; i > -1; i--) {
+									for(var i=0,elem,l=arr.length; i<l; i++){
+										elem=ed.dom.get(arr[i] + '_' + bc + '_' + bb);
+										if (elem) {									
+											ed.selection.select(elem);
+											ed.selection.setContent("");
+										}
+										//$(ed.dom.get(arrItem + '_' + bc + '_' + bb)).remove();
+									}
 								}
 							}
 						}

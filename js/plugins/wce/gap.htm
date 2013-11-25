@@ -105,7 +105,7 @@
 			comboBindReturnEvent('insert');
 			wceInfoInit('gap');
 			readWceNodeInfo();
-
+			
 			setstatus_gapreason();
 			checkstatus_gapreason();
 			checkstatus_gapunit();
@@ -116,7 +116,11 @@
 					"checked" : false,
 					"disabled" : true
 				});
+				$('#supplied_source').attr({
+					"disabled" : true
+				});
 			}
+			var info = false;
 		}
 
 		function testInput() {
@@ -136,8 +140,12 @@
 				document.gapinfo.gap_reason.value = "lacuna";
 			else if (radioWert(document.gapinfo.gap_reason_dummy) == "illegible")
 				document.gapinfo.gap_reason.value = "illegible";
-			else
+			else {
 				document.gapinfo.gap_reason.value = "lacuna/illegible";
+				if (info)
+					alert(ed.getLang('wce.info_lacuna_illegible'));
+			}
+			info = true;
 		}
 
 		function radioWert(rObj) {
