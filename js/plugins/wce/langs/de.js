@@ -255,4 +255,5 @@ tinyMCE.addI18n('de.wce',{
 	remove_partial : 'Lösche alle &quot;Part&quot;-Angaben',
 	previous_hyphenation : 'Vorherige Seite endet mit einer Worttrennung',
 	no_previous_hyphenation : 'Vorherige Seite endet mit einem vollständigen Wort',
+	warning_deletion_inner_Node : 'Dieser Knoten besitzt einen Elternknoten und kann daher nicht entfernt werden.\nBitte entfernen Sie zunächst die Formatierung des Elternknotens',
 });
