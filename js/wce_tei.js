@@ -106,7 +106,7 @@ function getHtmlByTei(inputString) {
 			return;	
 		}
 		if($parent.nodeName=='ab'){
-			var part=$parent.getAttribute('Part');
+			var part=$parent.getAttribute('part');
 			if(part && (part=='M' || part=='I') && $parent.lastChild){//Fixed #1896: Hyphen after supplied text
 				var lb=$parent.ownerDocument.createElement('lb'); 
 				lb.setAttribute('break', 'no');
@@ -1705,7 +1705,7 @@ function getTeiByHtml(inputString, args) {
 			}
 		}
 		if(isBreak){ 
-			$htmlNode.setAttribute('Part','F');
+			$htmlNode.setAttribute('part','F');
 		}
 	};
 	
@@ -1830,7 +1830,7 @@ function getTeiByHtml(inputString, args) {
 		 var names=new Array();
 		 for(var i=0, l=as.length; i<l; i++){
 		 	a=as[i];
-		 	if(a && a.nodeName!='Part'){
+		 	if(a && a.nodeName!='part'){
 		 		names.push(a.nodeName);
 		 	}		 		 
 		 }
@@ -1896,7 +1896,7 @@ function getTeiByHtml(inputString, args) {
 			}
 		}
 		if(nName=='ab'){
-			//test if add Part="I"
+			//test if add part="I"
 			var lastW, lastLB, _last=$r.lastChild;
 			while(_last){
 				if(_last.nodeType==3){
@@ -1912,35 +1912,35 @@ function getTeiByHtml(inputString, args) {
 				_last=_last.lastChild;
 			}
 			
-			var partF = $r.getAttribute('Part');//
+			var partF = $r.getAttribute('part');//
 			if (partF) {
-				//add Attribute Part="F" / "M" to first <w>
+				//add Attribute part="F" / "M" to first <w>
 				var firstW = $r.firstChild;
 				while (firstW && firstW.nodeType != 3) {
 					if (firstW.nodeName == 'w') {
 						if (lastLB && lastW && lastW===firstW) {
-							firstW.setAttribute('Part', 'M');
-							$r.setAttribute('Part', 'M');
+							firstW.setAttribute('part', 'M');
+							$r.setAttribute('part', 'M');
 						} else {
-							firstW.setAttribute('Part', 'F');
+							firstW.setAttribute('part', 'F');
 						}
 						break;
 					} else {
 						firstW = firstW.firstChild;
 					}
 				}
-				//add Attribute Part="F" / "M" to last <w>
+				//add Attribute part="F" / "M" to last <w>
 				if (lastW && lastLB) {
-					$r.setAttribute('Part', 'M');
+					$r.setAttribute('part', 'M');
 					if(lastW===firstW){
-						lastW.setAttribute('Part', 'M');
+						lastW.setAttribute('part', 'M');
 					}else{
-						lastW.setAttribute('Part', 'I');
+						lastW.setAttribute('part', 'I');
 					}					
 				}
 			} else if (lastLB && lastW) {
-				lastW.setAttribute('Part', 'I'); 
-				$r.setAttribute('Part', 'I'); 
+				lastW.setAttribute('part', 'I'); 
+				$r.setAttribute('part', 'I'); 
 			}
 			//remove last <lb>
 			if(lastLB){
@@ -2487,9 +2487,9 @@ function getTeiByHtml(inputString, args) {
 				g_currentParentNode = g_verseNode;
 				//g_wordNumber = 0;
 			}
-			var partAttr=$htmlNode.getAttribute('Part');
+			var partAttr=$htmlNode.getAttribute('part');
 			if(partAttr){
-				g_verseNode.setAttribute('Part',partAttr);
+				g_verseNode.setAttribute('part',partAttr);
 			}
 			return null;
 
@@ -3130,10 +3130,10 @@ function getTeiByHtml(inputString, args) {
 			/*
 			// pb, cb, lb
 			if (break_type == 'lb' && !$htmlNode.nextSibling && arr['hasBreak'] === 'yes' && isLastNodeOf($teiParent,'ab')) {//if this is the last element on a page, then it is only a marker
-				if($teiParent.getAttribute('Part')){
-					$teiParent.setAttribute('Part', 'M');
+				if($teiParent.getAttribute('part')){
+					$teiParent.setAttribute('part', 'M');
 				}else{
-					$teiParent.setAttribute('Part', 'I');
+					$teiParent.setAttribute('part', 'I');
 				}
 				return;
 			}*/
