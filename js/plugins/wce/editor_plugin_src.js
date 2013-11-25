@@ -3492,7 +3492,7 @@
 					 }
 					 }*/
 
-					if (originalText && originalText != 'null') {
+					if ((originalText && originalText != 'null') || originalText=='') {
 						if(notAddOriginal){ 
 						}else{
 							 ed.selection.setContent(originalText);

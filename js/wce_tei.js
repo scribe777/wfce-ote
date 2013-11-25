@@ -446,7 +446,7 @@ function getHtmlByTei(inputString) {
 			// correction
 
 			case 'seg':	// marginal information
-				if (($teiNode.firstChild && $teiNode.firstChild.nodeName == 'fw')
+				if (($teiNode.firstChild && ($teiNode.firstChild.nodeName == 'fw'||$teiNode.firstChild.nodeName == 'num'))
 					|| ($teiNode.parentNode && $teiNode.parentNode.nodeName == 'rdg')) 
 					return $htmlParent;
 				else
@@ -1193,7 +1193,7 @@ function getHtmlByTei(inputString) {
 
 		if ($teiNode.nodeName == 'seg') {
 			var mapping = {
-				'n' : '&edit_number=',
+				'n' : '&number=',
 				'rend' : '&paratext_alignment='
 			};
 			
@@ -1201,7 +1201,7 @@ function getHtmlByTei(inputString) {
 			var $next = $teiNode;
 		} else {
 			var mapping = {
-				'n' : '&edit_number=',
+				'n' : '&number=',
 				'rend' : '&paratext_alignment=',
 				'type' : {
 					'0' : '@commentary@ews@runTitle@chapNum@chapTitle@lectTitle@colophon@quireSig@AmmSec@EusCan@euthaliana@gloss@stichoi@pageNum',
@@ -3069,7 +3069,7 @@ function getTeiByHtml(inputString, args) {
 	//text from editor in editor
 	var html2Tei_paratextAddChildren = function($newNode, text) {
 		html2Tei_correctionAddW($newNode, text);
-		html2Tei_paratextRemoveWNode($newNode);
+		//html2Tei_paratextRemoveWNode($newNode);
 		return;
 	};
 	
@@ -3091,15 +3091,14 @@ function getTeiByHtml(inputString, args) {
 			
 			if(w.nodeName=='w'){ 
 				while(w.hasChildNodes()){
-					$node.appendChild(w.firstChild);
+					$node.insertBefore(w.firstChild, w);
 				}
 				w.parentNode.removeChild(w);
 				
 			}else{
 				html2Tei_paratextRemoveWNode(w);
 			} 
-		}
-		
+		} 
 	};
 	
 	var isLastNodeOf = function ($node,nName){
