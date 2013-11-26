@@ -105,14 +105,14 @@ function getHtmlByTei(inputString) {
 		if(!$parent || ($parent.nodeType!=1 && $parent.nodeType!=11)){ //nodeType==11 from createDocumentFragment
 			return;	
 		}
-		if($parent.nodeName=='ab'){
+		/*if($parent.nodeName=='ab'){
 			var part=$parent.getAttribute('part');
 			if(part && (part=='M' || part=='I') && $parent.lastChild){//Fixed #1896: Hyphen after supplied text
 				var lb=$parent.ownerDocument.createElement('lb'); 
 				lb.setAttribute('break', 'no');
 				$parent.lastChild.appendChild(lb);
 			}
-		}
+		}*/
 		var tNext=$parent.firstChild;
 		while(tNext){
 			initTeiInput(tNext);
@@ -1694,7 +1694,7 @@ function getTeiByHtml(inputString, args) {
 				continue;
 			}if(cName=='brea'){
 				wceAttr =preChild.getAttribute('wce');
-				if(wceAttr.match(/hasBreak=yes/)){
+				if(wceAttr.match(/hasBreak=yes/) && wceAttr.match(/break_type=pb/)){//only page break with hasBreak=yes
 					isBreak=true;
 					break;
 				}
@@ -1705,7 +1705,7 @@ function getTeiByHtml(inputString, args) {
 			}
 		}
 		if(isBreak){ 
-			$htmlNode.setAttribute('part','F');
+			$htmlNode.setAttribute('part','auto_F');
 		}
 	};
 	
@@ -1895,57 +1895,80 @@ function getTeiByHtml(inputString, args) {
 				html2Tei_removeBlankW_addAttributePartI($c);
 			}
 		}
+		
+		
 		if(nName=='ab'){
-			//test if add part="I"
-			var lastW, lastLB, _last=$r.lastChild;
-			while(_last){
-				if(_last.nodeType==3){
-					break;
-				}
-				
-				if(_last.nodeName=='w'){
-					lastW=_last;
-				}else if(_last.nodeName=='lb' && _last.getAttribute('break') && _last.getAttribute('break')==='no'){
-					lastLB=_last;
-					break;
-				}
-				_last=_last.lastChild;
-			}
-			
-			var partF = $r.getAttribute('part');//
-			if (partF) {
-				//add Attribute part="F" / "M" to first <w>
-				var firstW = $r.firstChild;
-				while (firstW && firstW.nodeType != 3) {
-					if (firstW.nodeName == 'w') {
-						if (lastLB && lastW && lastW===firstW) {
-							firstW.setAttribute('part', 'M');
-							$r.setAttribute('part', 'M');
-						} else {
-							firstW.setAttribute('part', 'F');
-						}
+			var firstW, lastW, lastLB;
+
+			var part = $r.getAttribute('part');//
+			if(part){
+				//get first <W>
+				var _first = $r.firstChild;
+				while (_first && _first.nodeType != 3) {
+					if (_first.nodeName == 'w') {
+						firstW=_first;					
 						break;
 					} else {
-						firstW = firstW.firstChild;
+						_first = _first.firstChild;
 					}
 				}
-				//add Attribute part="F" / "M" to last <w>
-				if (lastW && lastLB) {
+			}
+			
+			//get last <w>			
+			if($r===$r.parentNode.lastChild || (part && part=='I')){ //if it is last <ab>
+				var _last=$r.lastChild;
+				while(_last){
+					if(_last.nodeType==3){
+						break;
+					}
+					
+					if(_last.nodeName=='w'){
+						lastW=_last;
+					}else if(_last.nodeName=='lb' && _last.getAttribute('break') && _last.getAttribute('break')==='no'){
+						lastLB=_last;
+						break;
+					}
+					_last=_last.lastChild;
+				}
+			} 
+			 
+			if(!part){
+				if(lastLB && lastW){//Automatically generate part="I"
+					lastW.setAttribute('part', 'I'); 
+					$r.setAttribute('part', 'I'); 
+					lastLB.parentNode.removeChild(lastLB);////remove last <lb>
+				}
+				return;
+			}
+			
+			if (part=='auto_F' && firstW) {//Automatically generated part="f"
+				$r.setAttribute('part', 'F');   
+				firstW.setAttribute('part', 'F');
+				if (lastLB) {
 					$r.setAttribute('part', 'M');
 					if(lastW===firstW){
 						lastW.setAttribute('part', 'M');
 					}else{
 						lastW.setAttribute('part', 'I');
-					}					
+					}
+					lastLB.parentNode.removeChild(lastLB);////remove last <lb>					
+				}				 
+			}else if(part=='F' && firstW){//from manuel or import
+				firstW.setAttribute('part', 'F');
+			}else if(part=='I' && lastW){//from manuel or import
+				lastW.setAttribute('part', 'I');
+			}else if(part=='M'){//from manuel or import
+				if(firstW && lastW && firstW===lastW){
+					lastW.setAttribute('part', 'M');
+				}else if(firstW){
+					firstW.setAttribute('part', 'F'); 
+					if(lastW){
+						lastW.setAttribute('part', 'I');
+						if(lastLB)
+							lastLB.parentNode.removeChild(lastLB);////remove last <lb>	
+					}
 				}
-			} else if (lastLB && lastW) {
-				lastW.setAttribute('part', 'I'); 
-				$r.setAttribute('part', 'I'); 
-			}
-			//remove last <lb>
-			if(lastLB){
-				lastLB.parentNode.removeChild(lastLB);
-			}
+			} 		
 		}
 	};
 	
@@ -2441,9 +2464,10 @@ function getTeiByHtml(inputString, args) {
 		}
 
 		// ******************* verse *******************
-		if (wceAttrValue != null && wceAttrValue.match(/verse_number/)) {
-			html2Tei_addAttributePartF($htmlNode);
-			
+		if (wceAttrValue != null && wceAttrValue.match(/verse_number/)) { 
+			if(wceAttrValue && !wceAttrValue.match(/partial/)){ //automatic set attriubte "part"
+				html2Tei_addAttributePartF($htmlNode);
+			}
 			var textNode = $htmlNode.firstChild;
 			if (textNode) {
 				// TODO: This could maybe removed as the part handling has been changed.
