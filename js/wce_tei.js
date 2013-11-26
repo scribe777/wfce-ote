@@ -666,9 +666,9 @@ function getHtmlByTei(inputString) {
 		if (partValue && (partValue === 'F' || partValue === 'M')){// <ab part="F">
 			nodeAddText($newNode, ' Cont.');
 		}
-		//changed at 2013-11-26 by YG if (partValue) 
-		//	$newNode.setAttribute('wce', '__t=verse_number&partial=' + partValue);
-		//else
+		if (partValue) 
+		 	$newNode.setAttribute('wce', '__t=verse_number&partial=' + partValue);
+		else
 			$newNode.setAttribute('wce', '__t=verse_number');
 		addFormatElement($newNode);
 		$htmlParent.appendChild($newNode);
@@ -2465,13 +2465,13 @@ function getTeiByHtml(inputString, args) {
 				g_verseNumber = $.trim(g_verseNumber);
 				g_verseNode = $newDoc.createElement('ab');
 				g_verseNode.setAttribute('n', 'B' + g_bookNumber + 'K' + g_chapterNumber + 'V' + g_verseNumber);
-				/*changed at 2013-11-26 by YG  var partial_index = -1;
+				var partial_index = -1;
 				//just a workaround until Troy has fixed the append method
 				if ($htmlNode.getAttribute('wce'))
 					partial_index = $htmlNode.getAttribute('wce').indexOf('partial');
-				if (partial_index > -1)// node contains information about partial
+				if (partial_index > -1){// node contains information about partial
 					g_verseNode.setAttribute('part', $htmlNode.getAttribute('wce').substring(partial_index + 8, partial_index + 9));
-				//}*/
+				}
 				if (g_chapterNode)
 					g_chapterNode.appendChild(g_verseNode);
 				else
@@ -3939,9 +3939,11 @@ var removeBlankNode=function ($root){//remove blank node,
 			var notNames=['lb','pb','qb','cb','gap'];
 			if($node.nodeType!=3 && !$node.firstChild && $.inArray(nodeName,notNames)<0){
 				var parent=$node.parentNode;
-				parent.removeChild($node);
-				if(parent!=$root){
-					_remove(parent); 
+				if(parent){
+					parent.removeChild($node);
+					if(parent!=$root){
+						_remove(parent); 
+					}
 				}
 				return; 
 			}  
