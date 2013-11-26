@@ -663,12 +663,12 @@ function getHtmlByTei(inputString) {
 			}
 		}
 		var partValue = $teiNode.getAttribute('part');
-		if (partValue && partValue === 'F'){// <ab part="F">
+		if (partValue && (partValue === 'F' || partValue === 'M')){// <ab part="F">
 			nodeAddText($newNode, ' Cont.');
 		}
-		if (partValue)
-			$newNode.setAttribute('wce', '__t=verse_number&partial=' + partValue);
-		else
+		//changed at 2013-11-26 by YG if (partValue) 
+		//	$newNode.setAttribute('wce', '__t=verse_number&partial=' + partValue);
+		//else
 			$newNode.setAttribute('wce', '__t=verse_number');
 		addFormatElement($newNode);
 		$htmlParent.appendChild($newNode);
@@ -2465,13 +2465,13 @@ function getTeiByHtml(inputString, args) {
 				g_verseNumber = $.trim(g_verseNumber);
 				g_verseNode = $newDoc.createElement('ab');
 				g_verseNode.setAttribute('n', 'B' + g_bookNumber + 'K' + g_chapterNumber + 'V' + g_verseNumber);
-				var partial_index = -1;
+				/*changed at 2013-11-26 by YG  var partial_index = -1;
 				//just a workaround until Troy has fixed the append method
 				if ($htmlNode.getAttribute('wce'))
 					partial_index = $htmlNode.getAttribute('wce').indexOf('partial');
 				if (partial_index > -1)// node contains information about partial
 					g_verseNode.setAttribute('part', $htmlNode.getAttribute('wce').substring(partial_index + 8, partial_index + 9));
-				//}
+				//}*/
 				if (g_chapterNode)
 					g_chapterNode.appendChild(g_verseNode);
 				else
