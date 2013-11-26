@@ -2541,6 +2541,7 @@ function getTeiByHtml(inputString, args) {
 						g_bookNode.appendChild(g_chapterNode);
 					else
 						$newRoot.appendChild(g_chapterNode);
+					g_currentParentNode = g_chapterNode;
 			//	}
 			}
 			return null;
@@ -2556,6 +2557,7 @@ function getTeiByHtml(inputString, args) {
 					g_bookNumber = '0' + g_bookNumber;
 				g_bookNode.setAttribute('n', 'B' + g_bookNumber);
 				$newRoot.appendChild(g_bookNode);
+				g_currentParentNode = g_bookNode;
 			}
 			return null;
 		} else {
