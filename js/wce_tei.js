@@ -1043,15 +1043,15 @@ function getHtmlByTei(inputString) {
 				if (number) {
 					number = removeArrows(number); // Replace arrows for fibre type by "x" and "y" resp. => use for "xml:id"
 				}
-				var pbtype = $teiNode.getAttribute('type');
-				if (pbtype) {
-				if (pbtype == "page") {
+				var pb_type = $teiNode.getAttribute('type');
+				if (pb_type) {
+				if (pb_type == "page") {
 					if (number.match("[0-9]$")) {// ends with a digit => no fibre type
 						wceAttr += '&number=' + number + '&fibre_type=';
 					} else {
 						wceAttr += '&number=' + number.substring(0, number.length - 1) + '&fibre_type=' + number.substring(number.length - 1);
 					}
-					wceAttr += '&pbtype=' + pbtype;
+					wceAttr += '&pb_type=' + pb_type;
 				} else {//folio
 					if (number.match("[rv]$")) {// ends with r|v => no fibre type
 						wceAttr += '&number=' + number.substring(0, number.length - 1) + '&pb_type=' + number.substring(number.length - 1) + '&fibre_type=';
