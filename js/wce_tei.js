@@ -29,7 +29,7 @@ function getHtmlByTei(inputString) {
 	inputString=inputString.replace(/(\s+)/g,' ');
 	inputString=inputString.replace(/>\s</g,'><');
 	//inputString=inputString.replace(/<w\s*\/\s*>/g,'');
-	inputString = inputString.replace(/&om;/g, "<w>OMISSION</w>");
+	inputString = inputString.replace(/&om;/g, "<w>OMISSION</w>"); //for existing transcripts
 	//Trick to solve problem without <w>...</w>
 	inputString = inputString.replace('\u00a0', ' ');
 	//inputString = inputString.replace(/<\/supplied><\/w><w><supplied.*?>/g, " ");
@@ -1376,7 +1376,9 @@ function getHtmlByTei(inputString) {
 		}		 
 		origText = origText.trim();
 
-		if (origText === 'OMISSION')
+		if (origText === '')
+			origText = 'OMISSION';
+		if (origText === 'OMISSION') //blank first hand
 			$newNode.setAttribute('class', 'corr_blank_firsthand');
 		else {
 			$newNode.setAttribute('class', 'corr');
@@ -1450,28 +1452,17 @@ function getHtmlByTei(inputString) {
 			readAllChildrenOfTeiNode($tempParent, $rdg);
 			var corrector_text = $tempParent.xml;
 			corrector_text = xml2String($tempParent);
+			
 			if (corrector_text && corrector_text.length > 7) {
 				corrector_text = corrector_text.substr(3, corrector_text.length - 7);
-				if (corrector_text == 'OMISSION') {
+				if (corrector_text == 'OMISSION') { //Total deletion
 					wceAttr += '&corrector_text=&blank_correction=on';
-					//blank correction
 				} else
 					wceAttr += '&corrector_text=' + encodeURIComponent(corrector_text);
+			} else { //Omission
+				corrector_text = 'OMISSION';
+				wceAttr += '&corrector_text=&blank_correction=on';
 			}
-
-			/* We don't need this any longer as the editorial notes were removed from the correction dialogue
-			 wceAttr += '&editorial_note=';
-			 var $test = $rdg.lastChild;
-			 // this is the only candidate for a match
-			 if ($test != null && $test.nodeName == 'note' && $test.getAttribute('type') == 'local') {//editorial note ahead
-			 //if ($test.getAttribute('n') == i) { // note belongs to actual rdg-element
-			 wceAttr += encodeURIComponent($test.firstChild.nodeValue);
-			 //set the correct attribute value
-			 $rdg.removeChild($test);
-			 //remove this note from the list
-			 //}
-			 }
-			 */
 
 			wceAttr += '&place_corr=';
 			var $test = $rdg.firstChild;
@@ -1506,9 +1497,9 @@ function getHtmlByTei(inputString) {
 
 		addFormatElement($newNode);
 		$htmlParent.appendChild($newNode);
-		if ($teiNode.nextSibling && $teiNode.nextSibling.nodeName === 'w') {
+		if ($teiNode.nextSibling && ($teiNode.nextSibling.nodeName === 'w' || $teiNode.nextSibling.nodeName === 'app')) {
 			nodeAddText($htmlParent, ' ');
-			// add space only if new word follows
+			// add space only if new word or new apparatus follows
 		}
 		return null;
 	};
@@ -1621,7 +1612,7 @@ function getTeiByHtml(inputString, args) {
 
 		//
 		// add an required header to get a valid XML
-		str = str.replace('<TEI>', '<?xml  version="1.0" encoding="utf-8"?><!DOCTYPE TEI [<!ENTITY om "">]><?xml-model href="TEI-NTMSS.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?><TEI xmlns="http://www.tei-c.org/ns/1.0"><teiHeader><fileDesc><titleStmt><title/></titleStmt><publicationStmt><publisher/></publicationStmt><sourceDesc><msDesc><msIdentifier></msIdentifier></msDesc></sourceDesc></fileDesc></teiHeader><text><body>');
+		str = str.replace('<TEI>', '<?xml  version="1.0" encoding="utf-8"?><!DOCTYPE TEI [<!ENTITY om ""><!ENTITY lac ""><!ENTITY lacorom "">]><?xml-model href="TEI-NTMSS.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?><TEI xmlns="http://www.tei-c.org/ns/1.0"><teiHeader><fileDesc><titleStmt><title/></titleStmt><publicationStmt><publisher/></publicationStmt><sourceDesc><msDesc><msIdentifier></msIdentifier></msDesc></sourceDesc></fileDesc></teiHeader><text><body>');
 		if (g_manuscriptLang && g_manuscriptLang != '')// set manuscript language if there are information
 			str = str.replace("<text>", '<text xml:lang="' + g_manuscriptLang + '">');
 		str = str.replace("</TEI>", "</body></text></TEI>");
@@ -1631,8 +1622,7 @@ function getTeiByHtml(inputString, args) {
 		//str = str.replace(/<\/unclear><unclear/g, "</unclear></w><w><unganclear");
 		//str = str.replace(/<\/w><unclear/g, "</w><w><unclear");
 
-		// There was no other way to insert &om;, so it is just replaced
-		str = str.replace(/OMISSION/g, "&om;");
+		str = str.replace(/OMISSION/g, "");
 		return str;
 	};
 	
@@ -2929,15 +2919,12 @@ function getTeiByHtml(inputString, args) {
 				$orig.setAttribute('type', 'orig');
 				$orig.setAttribute('hand', 'firsthand');
 				if (arr['blank_firsthand'] === 'on') {//Blank first hand reading
-					var origText = 'OMISSION';
-					//this is later replaced by &om; DO NOT ADD <w> HERE
+					var origText = 'OMISSION'; //this is later replaced by "" DO NOT ADD <w> HERE
 					nodeAddText($orig, origText);
-					//html2Tei_correctionAddW($orig, origText);
 				} else {
 					var origText = $htmlNode.getAttribute('wce_orig');
 					if (origText) {
 						html2Tei_correctionAddW($orig, origText);
-						//g_wordNumber = startWordNumberInCorrection;
 					}
 				}
 				$app.appendChild($orig);
@@ -2963,8 +2950,7 @@ function getTeiByHtml(inputString, args) {
 			var place = arr['place_corr'];
 			var corrector_text = arr['corrector_text'];
 			if (arr['blank_correction'] == 'on') {
-				corrector_text = 'OMISSION';
-				//this is later replaced by &om;
+				corrector_text = 'OMISSION'; //this is later replaced by ""
 			}
 
 			// Define value for "n" attribute. This depends on the type of marginal material
@@ -3016,7 +3002,7 @@ function getTeiByHtml(inputString, args) {
 				$rdg.appendChild($seg);
 			} else {//non-marginal material
 				if (corrector_text) {//add to <rdg>
-					if (corrector_text === 'OMISSION'){//we don't want <w> around here
+					if (corrector_text === 'OMISSION') { //we don't want <w> around here
 						nodeAddText($rdg, corrector_text);
 					}
 					else
@@ -3024,23 +3010,6 @@ function getTeiByHtml(inputString, args) {
 				}
 			}
 
-			/* Due to the removal of editorial notes at the correction menu we do not need this any longer.
-			 // editorial_note
-			 var editorial_note = arr['editorial_note'];
-			 if (editorial_note != '') {
-			 //notecount++;
-			 var $note = $newDoc.createElement('note');
-			 $note.setAttribute('type', 'local');
-			 //$note.setAttribute('n', rdgcount); //store information about corresponding reading in "n" attribute
-			 xml_id = 'P' + g_pageNumber + 'C' + g_columnNumber + 'L' + g_lineNumber + '-' + g_witValue;
-			 //TODO: References pointing to the same verse should be numbered -1, -2, ... (cf. p.9)
-			 $note.setAttribute('n', xml_id);
-			 //TODO: If ids are identical we have to use xml:id; "n" is used for getting the correct corresponding reading
-			 nodeAddText($note, decodeURIComponent(editorial_note));
-			 $rdg.appendChild($note);
-			 //insert $note at the end of the current reading
-			 }
-			 */
 			$app.appendChild($rdg);
 		}
 	 
