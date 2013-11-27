@@ -710,7 +710,7 @@ function getHtmlByTei(inputString) {
 			$newNode.setAttribute('class', 'gap');
 			// for gap *and* supplied
 
-			var wceAttr = '__t=gap&__n=&gap_reason_dummy_lacuna=lacuna&gap_reason_dummy_illegible=illegible&gap_reason_dummy_unspecified=lacuna/illegible';
+			var wceAttr = '__t=gap&__n=&gap_reason_dummy_lacuna=lacuna&gap_reason_dummy_illegible=illegible&gap_reason_dummy_unspecified='+encodeURIComponent('lacuna/illegible');
 			var mapping = {
 				'reason' : '&gap_reason=',
 				'unit' : {
