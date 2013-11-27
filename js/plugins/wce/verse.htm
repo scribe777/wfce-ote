@@ -150,6 +150,11 @@ var contentWithVerse;
 		$('#verseList').html(getVerseList(contentWithVerse));
 		$('#chapterList').html(getChapterList(contentWithVerse));
 		$('#bookList').html(getBookList(contentWithVerse));
+		if(wce_node){
+		   if(wce_node.nodeName.toLowerCase()=='span'){
+		       $('#insertDiv input').attr('disabled',true);
+		   }
+		}
 	}
 	
 	function getVerseList(node){

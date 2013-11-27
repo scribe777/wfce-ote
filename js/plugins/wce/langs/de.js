@@ -100,7 +100,7 @@ tinyMCE.addI18n('de.wce',{
 	lacuna : "Lücke (Beschreibstoff fehlt)",
 	illegible_text : "Unleserlich (Beschreibstoff vorhanden) ",
 	unspecified : "Unspezifiziert",
-	info_lacuna/illegible : 'Bitte beachten Sie, dass die gewählte Kategorie nur für alte Transkriptionen gedacht ist.\nSie sollten immer versuchen, entweder "Lacuna" oder "Illegible" zuzuweisen.',
+	info_lacuna_illegible : 'Bitte beachten Sie, dass die gewählte Kategorie nur für alte Transkriptionen gedacht ist.\nSie sollten immer versuchen, entweder "Lacuna" oder "Illegible" zuzuweisen.',
 	space : "Leerstelle",
 	other : "Anderes ",
 	othertype : "Benutzerdefinierte Art",
