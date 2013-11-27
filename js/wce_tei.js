@@ -3186,14 +3186,14 @@ function getTeiByHtml(inputString, args) {
 				case 'pb':
 					var breaPage = '';
 					// Set page number and decide which type (folio|page)
-					if (arr['pb_type'] != '') {
+					if (arr['pb_type'] == 'folio') {
 						// folio
 						g_pageNumber = arr['number'] + arr['pb_type'] + arr['fibre_type'];
 						g_pageNumber = addArrows(g_pageNumber);
 						g_pageNumber_id = removeArrows(g_pageNumber);
 						$newNode.setAttribute('n', g_pageNumber);
 						$newNode.setAttribute('type', 'folio');
-					} else {
+					} else if(arr['pb_type'] == 'page') {
 						// page
 						g_pageNumber = arr['number'] + arr['fibre_type'];
 						g_pageNumber = addArrows(g_pageNumber);
