@@ -597,12 +597,12 @@
 					// line break in the middle of a word
 					v.lcnt = WCEUtils.counterCalc(v.lcnt, 1);
 					// set new wceAttr with hasBreak=yes
-					wceAttr = attr ? attr : 'wce="__t=brea&amp;__n=&amp;hasBreak=yes&amp;break_type=lb&amp;number=' + v.lcnt + '&amp;pb_type=&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment="';
+					wceAttr = attr ? attr : 'wce="__t=brea&amp;__n=&amp;hasBreak=yes&amp;break_type=lb&amp;number=' + v.lcnt + '&amp;rv=&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment="';
 					str = '&#8208;<br/ >'+'&crarr;'+indention;
 				} else {
 					// line break at the end of a word
 					v.lcnt = WCEUtils.counterCalc(v.lcnt, 1);
-					wceAttr = attr ? attr : 'wce="__t=brea&amp;__n=&amp;hasBreak=no&amp;break_type=lb&amp;number=' + v.lcnt + '&amp;pb_type=&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment=" ';
+					wceAttr = attr ? attr : 'wce="__t=brea&amp;__n=&amp;hasBreak=no&amp;break_type=lb&amp;number=' + v.lcnt + '&amp;rv=&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment=" ';
 					str = '<br/ >'+'&crarr;'+indention;
 				}
 				if(getOnlyIndention){
@@ -614,17 +614,17 @@
 				v.ccnt = WCEUtils.counterCalc(v.ccnt, 1);
 				v.lcnt = 0;
 				if (lbpos == 'lbm') {
-					wceAttr = attr ? attr : 'wce="__t=brea&amp;__n=&amp;hasBreak=yes&amp;break_type=cb&amp;number=' + v.ccnt + '&amp;pb_type=&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment="';
+					wceAttr = attr ? attr : 'wce="__t=brea&amp;__n=&amp;hasBreak=yes&amp;break_type=cb&amp;number=' + v.ccnt + '&amp;rv=&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment="';
 					str = '&#8208;<br />CB';
 				} else {
-					wceAttr = attr ? attr : 'wce="__t=brea&amp;__n=&amp;break_type=cb&amp;number=' + v.ccnt + '&amp;pb_type=&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment="';
+					wceAttr = attr ? attr : 'wce="__t=brea&amp;__n=&amp;break_type=cb&amp;number=' + v.ccnt + '&amp;rv=&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment="';
 					str = '<br />CB';
 				}
 			} else if (bType == 'pb') {
 				// page break
 				groupCount = 3;
 				var new_number, number;
-				var new_pb_type = "";
+				var new_rv = "";
 				v.pcnt = WCEUtils.counterCalc(v.pcnt, 1);
 				v.ccnt = 0;
 				v.lcnt = 0;
@@ -634,17 +634,17 @@
 					new_number = Math.ceil(number / 2);
 					if (number % 2 == 0) {
 						// verso page
-						new_pb_type = "v";
+						new_rv = "v";
 					} else {
 						// recto page
-						new_pb_type = "r";
+						new_rv = "r";
 					}
 				}
 				if (lbpos == 'lbm') {
-					wceAttr = attr ? attr : 'wce="__t=brea&amp;__n=&amp;hasBreak=yes&amp;break_type=pb&amp;number=' + new_number + '&amp;pb_type=' + new_pb_type + '&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment=' + '"';
+					wceAttr = attr ? attr : 'wce="__t=brea&amp;__n=&amp;hasBreak=yes&amp;break_type=pb&amp;number=' + new_number + '&amp;rv=' + new_rv + '&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment=' + '"';
 					str = '&#8208;<br />PB';
 				} else {
-					wceAttr = attr ? attr : 'wce="__t=brea&amp;__n=&amp;break_type=pb&amp;number=' + new_number + '&amp;pb_type=' + new_pb_type + '&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment=' + '"';
+					wceAttr = attr ? attr : 'wce="__t=brea&amp;__n=&amp;break_type=pb&amp;number=' + new_number + '&amp;rv=' + new_rv + '&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment=' + '"';
 					str = '<br />PB';
 				}
 			} else {
@@ -656,10 +656,10 @@
 				v.ccnt = 0;
 				v.lcnt = 0;
 				if (lbpos == 'lbm') {
-					wceAttr = attr ? attr : 'wce="__t=brea&amp;__n=&amp;hasBreak=yes&amp;break_type=gb&amp;number=' + v.qcnt + '&amp;pb_type=&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment=' + '"';
+					wceAttr = attr ? attr : 'wce="__t=brea&amp;__n=&amp;hasBreak=yes&amp;break_type=gb&amp;number=' + v.qcnt + '&amp;rv=&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment=' + '"';
 					str = '&#8208;<br />QB';
 				} else {
-					wceAttr = attr ? attr : 'wce="__t=brea&amp;__n=&amp;break_type=gb&amp;number=' + v.qcnt + '&amp;pb_type=&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment=' + '"';
+					wceAttr = attr ? attr : 'wce="__t=brea&amp;__n=&amp;break_type=gb&amp;number=' + v.qcnt + '&amp;rv=&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment=' + '"';
 					str = '<br />QB';
 				}
 			}
@@ -1664,8 +1664,8 @@
 									break;
 								case 'pb':
 									info_text = '<div>' + ed.getLang('wce.infotext_page_number_sequence') + ': ' + ar['number'];
-									if (ar['pb_type'])
-										info_text += ar['pb_type'];
+									if (ar['rv'])
+										info_text += ar['rv'];
 									if (ar['fibre_type'])
 										info_text += (ar['fibre_type'] === 'x') ? "\u2192" : "\u2191";
 									info_text += '</div>';

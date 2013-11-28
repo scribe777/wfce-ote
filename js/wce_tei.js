@@ -1045,20 +1045,19 @@ function getHtmlByTei(inputString) {
 				if (number) {
 					number = removeArrows(number); // Replace arrows for fibre type by "x" and "y" resp. => use for "xml:id"
 				}
-				var pb_type = $teiNode.getAttribute('type');
-				if (pb_type) {
-				if (pb_type == "page") {
+				var page_type = $teiNode.getAttribute('type');
+				if (page_type) {
+				if (page_type == "page") {
 					if (number.match("[0-9]$")) {// ends with a digit => no fibre type
-						wceAttr += '&number=' + number + '&fibre_type=';
+						wceAttr += '&number=' + number + '&rv=' + '&fibre_type=';
 					} else {
-						wceAttr += '&number=' + number.substring(0, number.length - 1) + '&fibre_type=' + number.substring(number.length - 1);
+						wceAttr += '&number=' + number.substring(0, number.length - 1) + '&rv=' + '&fibre_type=' + number.substring(number.length - 1);
 					}
-					wceAttr += '&pb_type=' + pb_type;
-				} else {//folio
+				} else { //folio
 					if (number.match("[rv]$")) {// ends with r|v => no fibre type
-						wceAttr += '&number=' + number.substring(0, number.length - 1) + '&pb_type=' + number.substring(number.length - 1) + '&fibre_type=';
+						wceAttr += '&number=' + number.substring(0, number.length - 1) + '&rv=' + number.substring(number.length - 1) + '&fibre_type=';
 					} else {
-						wceAttr += '&number=' + number.substring(0, number.length - 2) + '&pb_type=' + number.substring(number.length - 2, number.length - 1) + '&fibre_type=' + number.substring(number.length - 1);
+						wceAttr += '&number=' + number.substring(0, number.length - 2) + '&rv=' + number.substring(number.length - 2, number.length - 1) + '&fibre_type=' + number.substring(number.length - 1);
 					}
 				}
 				}
@@ -1083,7 +1082,7 @@ function getHtmlByTei(inputString) {
 				wceAttr += '&lb_alignment=';
 				if ($teiNode.getAttribute('rend'))
 					wceAttr += $teiNode.getAttribute('rend');
-				wceAttr += '&pb_type=&fibre_type=&facs=';
+				wceAttr += '&rv=&fibre_type=&facs=';
 		}
 
 		var hasBreak = false;
@@ -3151,14 +3150,14 @@ function getTeiByHtml(inputString, args) {
 				case 'pb':
 					var breaPage = '';
 					// Set page number and decide which type (folio|page)
-					if (arr['pb_type'] == 'folio') {
+					if (arr['rv'] != '') { //recto or verso
 						// folio
-						g_pageNumber = arr['number'] + arr['pb_type'] + arr['fibre_type'];
+						g_pageNumber = arr['number'] + arr['rv'] + arr['fibre_type'];
 						g_pageNumber = addArrows(g_pageNumber);
 						g_pageNumber_id = removeArrows(g_pageNumber);
 						$newNode.setAttribute('n', g_pageNumber);
 						$newNode.setAttribute('type', 'folio');
-					} else if(arr['pb_type'] == 'page') {
+					} else {
 						// page
 						g_pageNumber = arr['number'] + arr['fibre_type'];
 						g_pageNumber = addArrows(g_pageNumber);

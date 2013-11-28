@@ -32,9 +32,9 @@
                         <input id="number" name="number" type="text" value=""
                         size="10" maxlength="" class="required number min1 mceFocus" />
                         </td>
-                        <td><label id="pb_type_label" for="pb_type">{#wce.pb_position}</label></td>
+                        <td><label id="rv_label" for="rv">{#wce.pb_position}</label></td>
                         <td>
-                        <select id="pb_type" name="pb_type">
+                        <select id="rv" name="rv">
                             <option value=""></option>
                             <option value="r">{#wce.recto}</option>
                             <option value="v">{#wce.verso}</option>
@@ -177,8 +177,8 @@
 				document.breakinfo.number.value = qsParm['column'];
 			}
 			if (document.breakinfo.break_type.options[2].selected == true) {//PB
-				document.breakinfo.pb_type.disabled = false;
-				document.getElementById('pb_type').style.backgroundColor = "white";
+				document.breakinfo.rv.disabled = false;
+				document.getElementById('rv').style.backgroundColor = "white";
 				document.breakinfo.fibre_type.disabled = false;
 				document.getElementById('fibre_type').style.backgroundColor = "white";
 				//document.breakinfo.pb_hyphen.disabled = false;
@@ -190,14 +190,14 @@
 				if (qsParm['mode'] == 'new' && qsParm['rectoverso'] == 'true') {//only for new entries; old ones keep their counting
 					document.breakinfo.number.value = Math.ceil(qsParm['page'] / 2);
 					if (qsParm['page'] % 2 == 0)// verso page
-						document.breakinfo.pb_type.options[2].selected = true;
+						document.breakinfo.rv.options[2].selected = true;
 					else// recto page
-						document.breakinfo.pb_type.options[1].selected = true;
+						document.breakinfo.rv.options[1].selected = true;
 				} else
 					document.breakinfo.number.value = qsParm['page'];
 			} else {
-				document.breakinfo.pb_type.disabled = true;
-				document.getElementById('pb_type').style.backgroundColor = "#CCCCCC";
+				document.breakinfo.rv.disabled = true;
+				document.getElementById('rv').style.backgroundColor = "#CCCCCC";
 				document.breakinfo.fibre_type.disabled = true;
 				document.getElementById('fibre_type').style.backgroundColor = "#CCCCCC";
 				document.breakinfo.facs.disabled = true;
