@@ -30,6 +30,8 @@ function getHtmlByTei(inputString) {
 	inputString=inputString.replace(/>\s</g,'><');
 	//inputString=inputString.replace(/<w\s*\/\s*>/g,'');
 	inputString = inputString.replace(/&om;/g, "<w>OMISSION</w>"); //for existing transcripts
+	inputString = inputString.replace(/&lac;/g, '<gap reason="lacuna" unit="unspecified" extent="unspecified"/>');
+	inputString = inputString.replace(/&lacorom;/g, '<gap reason="unspecified" unit="unspecified" extent="unspecified"/>');
 	//Trick to solve problem without <w>...</w>
 	inputString = inputString.replace('\u00a0', ' ');
 	//inputString = inputString.replace(/<\/supplied><\/w><w><supplied.*?>/g, " ");
@@ -1616,12 +1618,6 @@ function getTeiByHtml(inputString, args) {
 		if (g_manuscriptLang && g_manuscriptLang != '')// set manuscript language if there are information
 			str = str.replace("<text>", '<text xml:lang="' + g_manuscriptLang + '">');
 		str = str.replace("</TEI>", "</body></text></TEI>");
-
-		// Now we do some "magic" regex substitution do get correct <w> elements
-		//str = str.replace(/<\/supplied><supplied/g, "</supplied></w><w><supplied");
-		//str = str.replace(/<\/unclear><unclear/g, "</unclear></w><w><unganclear");
-		//str = str.replace(/<\/w><unclear/g, "</w><w><unclear");
-
 		str = str.replace(/OMISSION/g, "");
 		return str;
 	};
