@@ -1045,15 +1045,15 @@ function getHtmlByTei(inputString) {
 				if (number) {
 					number = removeArrows(number); // Replace arrows for fibre type by "x" and "y" resp. => use for "xml:id"
 				}
-				var pbtype = $teiNode.getAttribute('type');
-				if (pbtype) {
-				if (pbtype == "page") {
+				var pb_type = $teiNode.getAttribute('type');
+				if (pb_type) {
+				if (pb_type == "page") {
 					if (number.match("[0-9]$")) {// ends with a digit => no fibre type
 						wceAttr += '&number=' + number + '&fibre_type=';
 					} else {
 						wceAttr += '&number=' + number.substring(0, number.length - 1) + '&fibre_type=' + number.substring(number.length - 1);
 					}
-					wceAttr += '&pbtype=' + pbtype;
+					wceAttr += '&pb_type=' + pb_type;
 				} else {//folio
 					if (number.match("[rv]$")) {// ends with r|v => no fibre type
 						wceAttr += '&number=' + number.substring(0, number.length - 1) + '&pb_type=' + number.substring(number.length - 1) + '&fibre_type=';
@@ -2454,6 +2454,11 @@ function getTeiByHtml(inputString, args) {
 			if(wceAttrValue && !wceAttrValue.match(/partial/)){ //automatic set attriubte "part"
 				html2Tei_addAttributePartF($htmlNode);
 			}
+			var partial_index = -1;
+				//just a workaround until Troy has fixed the append method
+			if (wceAttrValue)
+				partial_index = wceAttrValue.indexOf('partial');
+					
 			var textNode = $htmlNode.firstChild;
 			if (textNode) {
 				// TODO: This could maybe removed as the part handling has been changed.
@@ -2475,12 +2480,9 @@ function getTeiByHtml(inputString, args) {
 				g_verseNumber = $.trim(g_verseNumber);
 				g_verseNode = $newDoc.createElement('ab');
 				g_verseNode.setAttribute('n', 'B' + g_bookNumber + 'K' + g_chapterNumber + 'V' + g_verseNumber);
-				var partial_index = -1;
-				//just a workaround until Troy has fixed the append method
-				if ($htmlNode.getAttribute('wce'))
-					partial_index = $htmlNode.getAttribute('wce').indexOf('partial');
+				
 				if (partial_index > -1){// node contains information about partial
-					g_verseNode.setAttribute('part', $htmlNode.getAttribute('wce').substring(partial_index + 8, partial_index + 9));
+					g_verseNode.setAttribute('part', wceAttrValue.substring(partial_index + 8, partial_index + 9));
 				}
 				if (g_chapterNode)
 					g_chapterNode.appendChild(g_verseNode);
@@ -2490,6 +2492,9 @@ function getTeiByHtml(inputString, args) {
 				//g_wordNumber = 0;
 			} else {//empty verse
 				g_verseNode = $newDoc.createElement('ab');
+				if (partial_index > -1){// node contains information about partial
+					g_verseNode.setAttribute('part', wceAttrValue.substring(partial_index + 8, partial_index + 9));
+				}
 				if (g_chapterNode)
 					g_chapterNode.appendChild(g_verseNode);
 				else
@@ -3146,14 +3151,14 @@ function getTeiByHtml(inputString, args) {
 				case 'pb':
 					var breaPage = '';
 					// Set page number and decide which type (folio|page)
-					if (arr['pb_type'] != '') {
+					if (arr['pb_type'] == 'folio') {
 						// folio
 						g_pageNumber = arr['number'] + arr['pb_type'] + arr['fibre_type'];
 						g_pageNumber = addArrows(g_pageNumber);
 						g_pageNumber_id = removeArrows(g_pageNumber);
 						$newNode.setAttribute('n', g_pageNumber);
 						$newNode.setAttribute('type', 'folio');
-					} else {
+					} else if(arr['pb_type'] == 'page') {
 						// page
 						g_pageNumber = arr['number'] + arr['fibre_type'];
 						g_pageNumber = addArrows(g_pageNumber);
