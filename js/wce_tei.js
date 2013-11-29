@@ -1180,12 +1180,13 @@ function getHtmlByTei(inputString) {
 				break;
 			}
 			
-			var $tempParent = $newDoc.createElement('t');
+			//var $tempParent = $newDoc.createElement('t');
+			var $tempParent = $newDoc.createDocumentFragment();
 			// <t>...</t> 
 			readAllChildrenOfTeiNode($tempParent, c); 
-			var tempText= xml2String($tempParent);//TODO: create a function for this.  for tei element "app" too
-			if (tempText && tempText.length > 7) {
-				tempText = tempText.substr(3, tempText.length - 7);
+			var tempText= xml2String($tempParent);// at tei element "<app>" too
+			if (tempText && tempText.length > 0) {
+				//tempText = tempText.substr(3, tempText.length - 7);
 				marginals_text+=tempText;
 			}
 			
@@ -1390,7 +1391,7 @@ function getHtmlByTei(inputString) {
 
 		for (var i = 1, l = rdgs.length; i < l; i++) {// [0] is always original => no extra output
 			$rdg = rdgs[i];
-			if(!$rdg){
+			if(!$rdg || $rdg.nodeType==3){
 				break;
 			}
 			typeValue = $rdg.getAttribute('type');
@@ -1448,14 +1449,13 @@ function getHtmlByTei(inputString) {
 
 			// &correction_text Contain:
 			// <note>nnn</note><w n="2">aaa</w><w n="3"> c<hi rend="gold">a</hi> b<hi rend="green">c</hi></w><w n="4">bbb</w>
-			var $tempParent = $newDoc.createElement('t');
+			var $tempParent = $newDoc.createDocumentFragment();
 			// <t>...</t>
-			readAllChildrenOfTeiNode($tempParent, $rdg);
-			var corrector_text = $tempParent.xml;
-			corrector_text = xml2String($tempParent);
+			readAllChildrenOfTeiNode($tempParent, $rdg); 
+			var corrector_text = xml2String($tempParent);
 			
-			if (corrector_text && corrector_text.length > 7) {
-				corrector_text = corrector_text.substr(3, corrector_text.length - 7);
+			if (corrector_text && corrector_text.length > 0) {
+				//corrector_text = corrector_text.substr(3, corrector_text.length - 7);
 				if (corrector_text == 'OMISSION') { //Total deletion
 					wceAttr += '&corrector_text=&blank_correction=on';
 				} else
