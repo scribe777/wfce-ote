@@ -1546,8 +1546,7 @@ function getTeiByHtml(inputString, args) {
 	// node for te
 	var g_bookNode;
 	var g_chapterNode;
-	var g_verseNode;
-	var tempNode;
+	var g_verseNode; 
 
 	var old_chapterNumber = 0;
 
@@ -1570,7 +1569,7 @@ function getTeiByHtml(inputString, args) {
 	var w_start_s='{@@@{';
 	var w_end_s='}@@@}';
 	
-	var global_id=0; //only for test
+	//var global_id=0; //only for test
 	/*
 	 * Main Method <br /> return String of TEI-Format XML
 	 *
