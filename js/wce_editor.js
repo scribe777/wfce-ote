@@ -1,9 +1,9 @@
-﻿function setWceEditor(_id, rtl, finishCallback, lang, getWitness, getBook, myBaseURL, getManuscriptLang) {
+﻿function setWceEditor(_id, rtl, finishCallback, lang, myBaseURL, getWitness, getWitnessLang) {
 	if (myBaseURL && typeof myBaseURL != "undefined" && myBaseURL !== '') {
 		tinyMCE.baseURL = myBaseURL;
 		tinyMCE.baseURI = new tinyMCE.util.URI(tinyMCE.baseURL);
 	}
-	  
+	
 	tinyMCE.init({
 		// General options
 		mode : "exact",
@@ -21,9 +21,9 @@
 		save_onsavecallback : "saveDataToDB",
 		directionality : (rtl) ? "rtl" : "ltr",
 		language : (lang) ? lang : "en",
-		book : (getBook) ? getBook : "",
+		//book : (getBook) ? getBook : "",
 		witness : (getWitness) ? getWitness : "",
-		manuscriptLang : (getManuscriptLang) ? getManuscriptLang : "",
+		manuscriptLang : (getWitnessLang) ? getWitnessLang : "",
 		
 		// invalid_elements:'p',
 		plugins : "wce,pagebreak,style,save,layer,safari,print,inlinepopups,contextmenu,fullscreen,wordcount,autosave",
@@ -267,17 +267,3 @@ if (( typeof Range !== "undefined") && !Range.prototype.createContextualFragment
 		return frag;
 	};
 }
-/*
-function getWitness() {
-	return 'witnessPlaceholder';
-}
-
-
-function getBook() {
-	return 'bookPlaceholder';
-}
-
-function getManuscriptLang() {
-	return 'whatever';
-}
-*/

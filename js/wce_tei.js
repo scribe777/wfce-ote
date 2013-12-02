@@ -1531,17 +1531,17 @@ function getTeiByHtml(inputString, args) {
 	// arguments:
 	// g_bookNumber, g_pageNumber, g_chapterNumber, g_verseNumber, g_wordNumber, g_columnNumber, g_witValue,
 	//TODO: Check, if those values really have to be stored in an array. Aren't they just coming from the export routine directly (except for book, witness and manuscript language)
-	var g_bookNumber = args.book;
+	var g_bookNumber = '';
 	var g_witValue = args.witness;
 	var g_manuscriptLang = args.manuscriptLang;
 		
-	if(g_bookNumber && (g_bookNumber instanceof Function || typeof g_bookNumber =="function" || typeof g_bookNumber =="Function")){
+	/*if(g_bookNumber && (g_bookNumber instanceof Function || typeof g_bookNumber == "function" || typeof g_bookNumber == "Function")){
 		g_bookNumber=g_bookNumber();
+	}*/
+	if(g_witValue && (g_witValue instanceof Function || typeof g_witValue == "function" || typeof g_witValue == "Function")){
+		g_witValue=g_witValue();
 	}
-	if(g_witValue && (g_witValue instanceof Function || typeof g_witValue =="function" || typeof g_witValue =="Function")){
-			g_witValue=g_witValue();
-	}
-	if(g_manuscriptLang && (g_manuscriptLang instanceof Function || typeof g_manuscriptLang =="function" || typeof g_manuscriptLang =="Function")){
+	if(g_manuscriptLang && (g_manuscriptLang instanceof Function || typeof g_manuscriptLang == "function" || typeof g_manuscriptLang == "Function")){
 		g_manuscriptLang=g_manuscriptLang();
 	}
 	
