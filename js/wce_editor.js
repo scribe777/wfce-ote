@@ -3,17 +3,7 @@
 		tinyMCE.baseURL = myBaseURL;
 		tinyMCE.baseURI = new tinyMCE.util.URI(tinyMCE.baseURL);
 	}
-	
-	if(getWitness instanceof Function){
-		getWitness=getWitness();
-	}
-	if(getBook instanceof Function){
-		getBook=getBook();
-	}
-	if(getManuscriptLang instanceof Function){
-		getManuscriptLang=getManuscriptLang();
-	}
-	
+	  
 	tinyMCE.init({
 		// General options
 		mode : "exact",
@@ -62,8 +52,8 @@ function wceReload() {
 	var testData='aaa <span class="abbr_add_overline" wce_orig="%3Cspan%20class%3D%22unclear%22%20wce_orig%3D%22bbbbbb%22%20wce%3D%22__t%3Dunclear%26amp%3B__n%3D%26amp%3Bunclear_text_reason%3D%26amp%3Bunclear_text_reason_other%3D%22%3E%3Cspan%20class%3D%22format_start%22%3E%E2%80%B9%3C%2Fspan%3Eb%CC%A3b%CC%A3b%CC%A3b%CC%A3b%CC%A3b%CC%A3%3Cspan%20class%3D%22format_end%22%3E%E2%80%BA%3C%2Fspan%3E%3C%2Fspan%3E" wce="__t=abbr&amp;__n=&amp;original_abbr_text=&amp;abbr_type=nomSac&amp;abbr_type_other=&amp;add_overline=overline@__t=unclear&amp;__n=&amp;unclear_text_reason=&amp;unclear_text_reason_other=" ext="inabbr"><span class="format_start">‹</span><span class="unclear" wce_orig="bbbbbb" wce="__t=unclear&amp;__n=&amp;unclear_text_reason=&amp;unclear_text_reason_other="><span class="format_start">‹</span>ḅḅ<span class="gap" wce_orig="b%CC%A3b%CC%A3" wce="__t=gap&amp;__n=&amp;original_gap_text=&amp;gap_reason_dummy_lacuna=lacuna&amp;gap_reason_dummy_illegible=illegible&amp;gap_reason_dummy_unspecified=lacuna%2Fillegible&amp;gap_reason=illegible&amp;unit=&amp;unit_other=&amp;extent=&amp;mark_as_supplied=supplied&amp;supplied_source=na28&amp;supplied_source_other=@__t=unclear&amp;__n=&amp;unclear_text_reason=&amp;unclear_text_reason_other=" ext="inabbr"><span class="format_start">‹</span>[ḅḅ]<span class="format_end">›</span></span>ḅḅ<span class="format_end">›</span></span><span class="format_end">›</span></span> ccc';
  	testData='aaa <span class="abbr_add_overline" wce_orig="%3Cspan%20class%3D%22unclear%22%20wce_orig%3D%22bbbbbb%22%20wce%3D%22__t%3Dunclear%26amp%3B__n%3D%26amp%3Bunclear_text_reason%3D%26amp%3Bunclear_text_reason_other%3D%22%3E%3Cspan%20class%3D%22format_start%22%3E%E2%80%B9%3C%2Fspan%3Eb%CC%A3b%CC%A3b%CC%A3b%CC%A3b%CC%A3b%CC%A3%3Cspan%20class%3D%22format_end%22%3E%E2%80%BA%3C%2Fspan%3E%3C%2Fspan%3E" wce="__t=abbr&amp;__n=&amp;original_abbr_text=&amp;abbr_type=nomSac&amp;abbr_type_other=&amp;add_overline=overline@__t=unclear&amp;__n=&amp;unclear_text_reason=&amp;unclear_text_reason_other=" ext="inabbr"><span class="format_start">‹</span><span class="unclear" wce_orig="bbbbbb" wce="__t=unclear&amp;__n=&amp;unclear_text_reason=&amp;unclear_text_reason_other="><span class="format_start">‹</span><span class="gap" wce_orig="b%CC%A3b%CC%A3" wce="__t=gap&amp;__n=&amp;original_gap_text=&amp;gap_reason_dummy_lacuna=lacuna&amp;gap_reason_dummy_illegible=illegible&amp;gap_reason_dummy_unspecified=lacuna%2Fillegible&amp;gap_reason=illegible&amp;unit=&amp;unit_other=&amp;extent=&amp;mark_as_supplied=supplied&amp;supplied_source=na28&amp;supplied_source_other=@__t=unclear&amp;__n=&amp;unclear_text_reason=&amp;unclear_text_reason_other=" ext="inabbr"><span class="format_start">‹</span>[ḅḅ]<span class="format_end">›</span></span><span class="format_end">›</span></span><span class="format_end">›</span></span> ccc';
  	setData(testData);*/
-	var sett=tinymce.get(tinyMCE.activeEditor.id).settings;
-	setTeiIndexData(sett.book,sett.witness,sett.manuscriptLang);
+	//var sett=tinymce.get(tinyMCE.activeEditor.id).settings;
+	//setTeiIndexData(sett.book,sett.witness,sett.manuscriptLang);
 	
 	//setTeiIndexData(tinymce.get(tinyMCE.activeEditor.id).settings.book, tinymce.get(tinyMCE.activeEditor.id).settings.witness, tinymce.get(tinyMCE.activeEditor.id).settings.manuscriptLang);
 //setTEI('<?xml version="1.0" encoding="utf-8"?> <!DOCTYPE TEI [<!ENTITY om "">]> <?xml-model href="TEI-NTMSS.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?> <TEI xmlns="http://www.tei-c.org/ns/1.0"> <teiHeader> <fileDesc> <titleStmt> <title/> </titleStmt> <publicationStmt> <publisher/> </publicationStmt> <sourceDesc> <msDesc> <msIdentifier> </msIdentifier> </msDesc> </sourceDesc> </fileDesc> </teiHeader> <text> <body><ab n="B04K21V18"><gap extent="rest" unit="verse" reason="lacuna/illegible"/><gap extent="16" unit="char" reason="lacuna/illegible"/><w><gap extent="part" unit="word" reason="lacuna/illegible"/><unclear>νε</unclear>ι<supplied reason="lacuna/illegible">ς</supplied></w><lb xml:id="P1xC1L2-P109" n="2"/><w><supplied reason="lacuna/illegible">τας</supplied></w><w><supplied reason="lacuna/illegible">χειρας</supplied></w><w><supplied reason="lacuna/illegible"                   >σου</supplied></w><w><unclear>κ</unclear>αι</w><w>αλλοι</w><lb xml:id="P1xC1L3-P109" n="3"/><w><gap extent="12" unit="char" reason="lacuna/illegible"                                />ουσι<unclear>ν</unclear></w><w><unclear>σε</unclear></w><lb xml:id="P1xC1L4-P109" n="4"/><w><supplied reason="lacuna/illegible">οπου</supplied></w><w><supplied reason="lacuna/illegible"  >ου</supplied></w><w><supplied reason="lacuna/illegible">θελεις</supplied></w></ab></body> </text> </TEI>');
@@ -91,7 +81,7 @@ function setData(msg) {
 function getData() {
 	return tinyMCE.activeEditor.getContent();
 }
-
+/*
 // The following parameters should be set before tei-output:
 // @param {String} bookNumber: book number, default 00;
 // @param {Number} pageNumber: page start number, default 0,
@@ -116,13 +106,13 @@ function setTeiIndexData(bookNumber, witValue, manuscriptLang) {
 function getTeiIndexData() {
 	return tinyMCE.activeEditor.teiIndexData;
 }
-
+*/
 // get TEI String from editor html content
 function getTEI() {
 	//teiIndexData[0] = tinymce.get(tinyMCE.activeEditor.id).settings.book;
 	//teiIndexData[1] = tinymce.get(tinyMCE.activeEditor.id).settings.witness;
-	//teiIndexData[2] = tinymce.get(tinyMCE.activeEditor.id).settings.manuscriptLang;
-	return getTeiByHtml(getData(), getTeiIndexData());
+	//teiIndexData[2] = tinymce.get(tinyMCE.activeEditor.id).settings.manuscriptLang; 
+	return getTeiByHtml(getData(), tinyMCE.activeEditor.settings);
 }
 
 // set editor html content from tei input
@@ -135,10 +125,10 @@ function setTEI(teiStringInput) {
 		if (htmlContent)
 			setData(htmlContent);
 	}
-	var teiIndexData = result['teiIndexData'];
+	/*var teiIndexData = result['teiIndexData'];
 	if (teiIndexData) {
 		tinyMCE.activeEditor.teiIndexData = teiIndexData;
-	}
+	}*/
 	resetCounter(); //for resetting the counter each time this method is called
 	return 0;
 }

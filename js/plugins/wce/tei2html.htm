@@ -22,8 +22,8 @@
 	tinyMCEPopup.onInit.add(function(_ed){
 	 var x=document.getElementById('tei2htmlOuputContainer');
 		x.style.height=document.getElementById('div0').offsetHeight+ "px";
-		var str=_ed.getContent(); 
-		var teiContent=getTeiByHtml(str,_ed.teiIndexData);
+		var str=_ed.getContent();
+		var teiContent=getTeiByHtml(str,_ed.settings);
 		if(teiContent){
 			var result=getHtmlByTei(teiContent);
 			if(result){
@@ -31,15 +31,15 @@
 				if(htmlContent){
 					x.value=htmlContent;
 				} 
-				var teiIndexData = result['teiIndexData'];
+				/*var teiIndexData = result['teiIndexData'];
 				if (teiIndexData) {
 					//_ed.teiIndexData = teiIndexData;
-				}
+				}*/
 			}
 		}
+		var activeEditorSettings=_ed.settings;
 		
-		
-				corrector_text_editor=new tinymce.Editor('tei2htmlOuputContainer',{
+			corrector_text_editor=new tinymce.Editor('tei2htmlOuputContainer',{
 			mode : "textareas", 
 			theme : "advanced",
 			skin: "wce",
@@ -49,6 +49,11 @@
 			force_p_newlines : false,
 			entity_encoding : "raw",
 			theme_advanced_path : false,  
+			directionality : activeEditorSettings.ltr,
+            language : activeEditorSettings.language,
+            book : activeEditorSettings.book,
+            witness : activeEditorSettings.witness,
+            manuscriptLang : activeEditorSettings.manuscriptLang,
  			plugins : "wce,pagebreak,style,layer,safari,print,inlinepopups, paste", 
 
 			// Theme options
