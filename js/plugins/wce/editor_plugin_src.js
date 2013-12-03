@@ -8,7 +8,7 @@
  */
 
 (function() {
-	var wfce_editor = "2013-11-27";
+	var wfce_editor = "2013-12-03";
 
 	// Load plugin specific language pack
 	tinymce.PluginManager.requireLangPack('wce');
@@ -228,13 +228,15 @@
 			if (!node || node.nodeType == 3 || !ed) {
 				return false;
 			}
-
 			if (node.nodeName.toLowerCase() == 'span') {
+				if (!ed.selection.isCollapsed() && node.getAttribute("class") && 
+					(node.getAttribute("class").indexOf("format_") == 0 || node.getAttribute("class").indexOf("abbr") == 0))
+					return false;
 				return true;
 			}
 			return false;
 
-			//TODO:alle Node sind BE,  muss noch diskutiert werden.
+			//TODO: At the moment all <span> elements are "blocked elements". The array ed.WCE_CON.blockedElements is not used. This has to be discussed.
 			/*
 			 var arr = ed.WCE_CON.blockedElements;
 			 for (var i = 0, len = arr.length; i < len; i++) {
@@ -277,7 +279,7 @@
 		},
 
 		/*
-		 * get realy startContainer when startContainer.nodeType==1
+		 * get real startContainer when startContainer.nodeType==1
 		 */
 
 		getRealContainer : function(container, offset) {
@@ -948,7 +950,6 @@
 						} else if (selectedNode.className == ed.WCE_CON.formatStart) {
 							selectedNode = selectedNode.parentNode;
 							w.type = ed.WCE_CON.formatStart;
-
 						} else if (startText.length == rng.endOffset && (!startContainer.nextSibling || (startContainer.nextSibling && startContainer.nextSibling.nodeType != 3))) {
 							//mehrere txtNode koenen hintereinander stehen
 							//wenn startConatiner.nextSibling ein textNode ist ,dann ist nicht "at node Ende"
@@ -2272,7 +2273,9 @@
 			// TODO: if no short_cut B, C ,Z ,Y .....
 			if (wcevar.isInBE && ((!tinymce.isMac && !e.ctrlKey) || (tinymce.isMac && !e.metaKey))) {
 				// keydown for insert letter
-				if (wcevar.isCaretAtNodeEnd && ek != 8 && ek != 46 && (wcevar.type == ed.WCE_CON.formatEnd || wcevar.type == 'chapter_number' || wcevar.type === 'book_number' || wcevar.type == 'verse_number')) {
+				if (wcevar.isCaretAtNodeEnd && ek != 8 && ek != 46 && 
+					(wcevar.type == ed.WCE_CON.formatEnd || wcevar.type == 'chapter_number' 
+						|| wcevar.type === 'book_number' || wcevar.type == 'verse_number')) {
 					//wenn selectednode in andere BlockElement
 					if (WCEUtils.isWceBE(ed, wcevar.selectedNode.parentNode.parentNode)) {
 						return stopEvent(ed, e);
@@ -2320,7 +2323,7 @@
 				} else
 					return stopEvent(ed, e);
 			}
-
+			
 			// key "entf"
 			if (ek == 46 && wcevar.isCaretAtNodeEnd) {
 				if (wcevar.isNextElemBE) {
