@@ -32,6 +32,7 @@ function getHtmlByTei(inputString) {
 	inputString = inputString.replace(/&om;/g, "<w>OMISSION</w>"); //for existing transcripts
 	inputString = inputString.replace(/&lac;/g, '<gap reason="lacuna" unit="unspecified" extent="unspecified"/>');
 	inputString = inputString.replace(/&lacorom;/g, '<gap reason="unspecified" unit="unspecified" extent="unspecified"/>');
+	inputString = inputString.replace(/lacuna\/illegible/g, 'unspecified');
 	//Trick to solve problem without <w>...</w>
 	inputString = inputString.replace('\u00a0', ' ');
 	//inputString = inputString.replace(/<\/supplied><\/w><w><supplied.*?>/g, " ");
@@ -712,11 +713,11 @@ function getHtmlByTei(inputString) {
 			$newNode.setAttribute('class', 'gap');
 			// for gap *and* supplied
 
-			var wceAttr = '__t=gap&__n=&gap_reason_dummy_lacuna=lacuna&gap_reason_dummy_illegible=illegible&gap_reason_dummy_unspecified='+encodeURIComponent('lacuna/illegible');
+			var wceAttr = '__t=gap&__n=&gap_reason_dummy_lacuna=lacuna&gap_reason_dummy_illegible=illegible&gap_reason_dummy_unspecified=unspecified';
 			var mapping = {
 				'reason' : '&gap_reason=',
 				'unit' : {
-					'0' : '@char@line@page@quire@book@chapter@verse',
+					'0' : '@char@line@page@quire@book@chapter@verse@unspecified',
 					'1' : '&unit_other=&unit=',
 					'2' : '&unit=other&unit_other='
 				},

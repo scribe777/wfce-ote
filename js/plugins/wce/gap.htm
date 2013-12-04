@@ -25,7 +25,7 @@
                         <input type="radio" id="gap_reason_dummy_illegible" name="gap_reason_dummy" value="illegible" onchange="checkstatus_gapreason()">
                         {#wce.illegible_text}</td>
 						<td>
-                        <input type="radio" id="gap_reason_dummy_unspecified" name="gap_reason_dummy" value="lacuna/illegible" onchange="checkstatus_gapreason()">
+                        <input type="radio" id="gap_reason_dummy_unspecified" name="gap_reason_dummy" value="unspecified" onchange="checkstatus_gapreason()">
                         {#wce.unspecified}</td>
 					    <td>
                         <input id="gap_reason" name="gap_reason" value="" type="hidden" />
@@ -46,6 +46,7 @@
                             <option value="book">{#wce.unit_book}</option>
                             <option value="chapter">{#wce.unit_chapter}</option>
                             <option value="verse">{#wce.unit_verse}</option>
+							<option value="unspecified">{#wce.unspecified}</option>
                             <option value="other">{#wce.other}</option>
                         </select></td>
                         <td>
@@ -56,12 +57,16 @@
                     </tr>
                     <tr>
                         <td><label id="extent_label" for="extent">{#wce.extent}</label></td>
-                        <td colspan="2">
+                        <td>
                         <input id="extent" name="extent" type="text"
                         value="" size="10" maxlength=""
                         class="required number min1 mceFocus" />
                         </td>
-                    </tr>
+						<td>
+						<input type="button" id="extent_unspecified" value="{#wce.extent}={#wce.unspecified}"
+						onclick="if(document.gapinfo.extent.disabled == false)$('#extent').val('unspecified')"/>
+						</td>
+					</tr>
                     <tr>
                         <td colspan="2">
                         <input type="checkbox" name="mark_as_supplied"
@@ -120,6 +125,7 @@
 					"disabled" : true
 				});
 			}
+			document.getElementById("extent_unspecified").style.background='#F1F1F1';
 			var info = false;
 		}
 
@@ -141,7 +147,7 @@
 			else if (radioWert(document.gapinfo.gap_reason_dummy) == "illegible")
 				document.gapinfo.gap_reason.value = "illegible";
 			else {
-				document.gapinfo.gap_reason.value = "lacuna/illegible";
+				document.gapinfo.gap_reason.value = "unspecified";
 				if (info)
 					alert(ed.getLang('wce.info_lacuna_illegible'));
 			}
@@ -158,14 +164,14 @@
 		function setstatus_gapreason() {
 			if (document.gapinfo.gap_reason.value == "lacuna")
 				document.gapinfo.gap_reason_dummy_lacuna.checked = true;
-			else if (document.gapinfo.gap_reason.value == "lacuna/illegible")
+			else if (document.gapinfo.gap_reason.value == "unspecified")
 				document.gapinfo.gap_reason_dummy_unspecified.checked = true;
 			else
 				document.gapinfo.gap_reason_dummy_illegible.checked = true;
 		}
 
 		function checkstatus_gapunit() {
-			if (document.gapinfo.unit.options[8].selected == true) {
+			if (document.gapinfo.unit.options[9].selected == true) {
 				document.gapinfo.unit_other.disabled = false;
 				document.getElementById('unit_other').style.backgroundColor = "white";
 			} else {
@@ -233,7 +239,7 @@
 			if (document.gapinfo.mark_as_supplied.checked && document.gapinfo.supplied_source.options[3].selected == true && document.getElementById('supplied_source_other').value == '') {
 				return false;
 			}
-			if (document.gapinfo.unit.options[8].selected == true && document.getElementById('unit_other').value == '') {
+			if (document.gapinfo.unit.options[9].selected == true && document.getElementById('unit_other').value == '') {
 				return false;
 			}
 			//if (document.gapinfo.gap_reason.options[5].selected == true && document.getElementById('gap_reason_other').value == '')

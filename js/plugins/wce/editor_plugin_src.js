@@ -8,7 +8,7 @@
  */
 
 (function() {
-	var wfce_editor = "2013-12-03";
+	var wfce_editor = "2013-12-04";
 
 	// Load plugin specific language pack
 	tinymce.PluginManager.requireLangPack('wce');
@@ -1819,7 +1819,7 @@
 								info_text += '<div style="margin-top:10px">' + ed.getLang('wce.extent') + ': ' + ar['extent'] + ' ';
 								if (ar['unit'] == 'other') {
 									info_text += ar['unit_other'] + '</div>';
-								} else {
+								} else if (ar['unit'] != 'unspecified') { 
 									info_text += ar['unit'] + '(s)</div>';
 									//TODO: This is not good for German
 								}
