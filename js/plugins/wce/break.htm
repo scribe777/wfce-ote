@@ -10,7 +10,9 @@
     <body id="table" style="display: none">
         <form onsubmit="return false;" action="#" name="breakinfo">
             <input type="hidden" id="hasBreak" name="hasBreak" value="no" />
-            <fieldset>
+            <input type="button" id="help" name="help" value="{#wce.help}"
+				onclick="wce_openWindow('docu.htm#breaks')" />
+			<fieldset>
                 <legend>
                     {#wce.break_data}
                 </legend>
@@ -76,7 +78,7 @@
                 if (cont){setBreakValue(); writeWceNodeInfo();}else{alert('{#wce.empty_number}');}" />
                 <input type="button" id="cancel"  name="cancel" value="{#cancel}"
                 onclick="tinyMCEPopup.close();" />
-            </div>
+			</div>
         </form>
     </body>
     <script type="text/javascript">

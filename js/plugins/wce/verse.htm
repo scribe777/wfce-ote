@@ -8,9 +8,11 @@
 </head>
 <body id="table">
 	<form onsubmit="return false;" action="#">
+		<input type="button" id="help" name="help" value="{#wce.help}"
+				onclick="wce_openWindow('docu.htm#verse')" style="margin-bottom:100px" />
 		<div id="insertDiv">
 			<div id="insertVerseDiv">
-				<input type="radio" id="insertVerseRadio" name="versemodify" onclick="canInsertVerse();"/>{#wce.verse_insert}
+				<input type="radio" id="insertVerseRadio" name="versemodify" onclick="canInsertVerse();"/>{#wce.verse_insert}&nbsp;&nbsp;&nbsp;
 				<input id="insertVerseNumber" type="text" />
 			</div>
 			<div id="insertInscriptioDiv">
@@ -20,11 +22,11 @@
 				<input type="radio" id="insertSubscriptioRadio" name="versemodify" onclick="canInsertSubscriptio();"/>{#wce.subscriptio_insert}
 			</div>
 			<div id="insertChapterDiv">
-				<input type="radio" id="insertChapterRadio" name="versemodify" onclick="canInsertChapter();"/>{#wce.chapter_insert}
+				<input type="radio" id="insertChapterRadio" name="versemodify" onclick="canInsertChapter();"/>{#wce.chapter_insert}&nbsp;&nbsp;&nbsp;
 				<input id="insertChapterNumber" type="text" />
 			</div>
 			<div id="insertBookDiv">
-				<input type="radio" id="insertBookRadio" name="versemodify" onclick="canInsertBook();"/>{#wce.book_insert}
+				<input type="radio" id="insertBookRadio" name="versemodify" onclick="canInsertBook();"/>{#wce.book_insert}&nbsp;&nbsp;&nbsp;
 				<input id="insertBookNumber" type="text" />
 			</div>
 		</div>

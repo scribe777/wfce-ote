@@ -13,7 +13,9 @@
     <body id="table" style="display: none">
         <form onsubmit="insertTable();return false;" action="#"
         name="readinginfo" style="margin: 0; padding: 0">
-            <fieldset style="width: 150px; float: left; height: 475px">
+            <input type="button" id="help" name="help" value="{#wce.help}"
+				onclick="wce_openWindow('docu.htm#corrections')" />
+			<fieldset style="width: 150px; float: left; height: 525px">
                 <legend>
                     {#wce.reading_list}
                 </legend>
@@ -27,13 +29,13 @@
                 </div>
             </fieldset>
             <fieldset id="content_fieldset"
-            style="margin-left: 170px; height: 475px; width: auto">
+            style="margin-left: 170px; height: 525px; width: auto">
                 <legend>
                     {#wce.reading_data}
                 </legend>
                 <input type="hidden" id="original_firsthand_reading" name="original_firsthand_reading"/>
 				<input type="hidden" id="common_firsthand_partial" name="common_firsthand_partial"/>
-				<div style="height: 445px; overflow: auto">
+				<div style="height: 495px; overflow: auto">
                     <table border="0" cellpadding="4" cellspacing="0" width="100%">
                         <tr>
                             <td><label id="reading_label" for="reading">{#wce.reading_type}</label></td>

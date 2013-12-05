@@ -637,3 +637,16 @@ function comboBindReturnEvent(id1) {
 		});
 	}
 }
+
+function wce_openWindow(txt)
+{
+    var kleinesfenster;
+    if ((kleinesfenster == null)||(kleinesfenster.closed)) 
+     { kleinesfenster = window.open(txt,"Documentation",
+                        "width=800,height=600,resizable=yes,status=no,"+
+                        "menubar=yes,location=no,scrollbars=yes,toolbar=no");
+       kleinesfenster.opener = top;
+       kleinesfenster.focus(); 
+     } 
+    else { kleinesfenster.focus(); }
+}
