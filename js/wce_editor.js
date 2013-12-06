@@ -20,7 +20,7 @@
 		execcommand_callback : 'wceExecCommandHandler',
 		save_onsavecallback : "saveDataToDB",
 		directionality : (rtl) ? "rtl" : "ltr",
-		language : (lang) ? lang : "en",
+		language : (lang) ? (lang.indexOf('de') == 0 ? "de" : "en") : "en",
 		//book : (getBook) ? getBook : "",
 		witness : (getWitness) ? getWitness : "",
 		manuscriptLang : (getWitnessLang) ? getWitnessLang : "",

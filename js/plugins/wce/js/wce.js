@@ -640,13 +640,19 @@ function comboBindReturnEvent(id1) {
 
 function wce_openWindow(txt)
 {
-    var kleinesfenster;
-    if ((kleinesfenster == null)||(kleinesfenster.closed)) 
-     { kleinesfenster = window.open(txt,"Documentation",
-                        "width=800,height=600,resizable=yes,status=no,"+
-                        "menubar=yes,location=no,scrollbars=yes,toolbar=no");
-       kleinesfenster.opener = top;
-       kleinesfenster.focus(); 
-     } 
-    else { kleinesfenster.focus(); }
+    var smallwindow;
+	if ((smallwindow == null)||(smallwindow.closed)) {
+		if (tinyMCE.activeEditor.settings.language == 'de') //TODO: Add the English documentation
+			smallwindow = window.open(txt,"_blank",
+				"width=800,height=600,resizable=yes,status=no,"+
+                "menubar=no,location=no,scrollbars=yes,toolbar=no");
+		else
+			smallwindow = window.open(txt,"_blank",
+				"width=800,height=600,resizable=yes,status=no,"+
+                "menubar=no,location=no,scrollbars=yes,toolbar=no");
+		smallwindow.opener = top;
+		smallwindow.focus(); 
+    } else { 
+		smallwindow.focus();
+	}
 }
