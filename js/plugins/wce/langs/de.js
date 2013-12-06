@@ -257,4 +257,5 @@ tinyMCE.addI18n('de.wce',{
 	no_previous_hyphenation : 'Vorherige Seite endet mit einem vollständigen Wort',
 	warning_deletion_inner_Node : 'Dieser Knoten besitzt einen Elternknoten und kann daher nicht entfernt werden.\nBitte entfernen Sie zunächst die Formatierung des Elternknotens',
 	help : 'Hilfe',
+	menu_info : 'Dies ist Version: ',
 });

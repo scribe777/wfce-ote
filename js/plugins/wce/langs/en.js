@@ -310,4 +310,5 @@ tinyMCE.addI18n('en.wce',{
 	no_previous_hyphenation : 'Previous page ends with a complete word',
 	warning_deletion_inner_Node : 'This node has a parent node and can not be removed.\nPlease remove the Format of the parent node first.',
 	help : 'Help',
+	menu_info : 'This is version: ',
 });

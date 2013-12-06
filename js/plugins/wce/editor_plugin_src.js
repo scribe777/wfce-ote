@@ -8,7 +8,7 @@
  */
 
 (function() {
-	var wfce_editor = "2013-12-04";
+	var wfce_editor = "2013-12-06";
 
 	// Load plugin specific language pack
 	tinymce.PluginManager.requireLangPack('wce');
@@ -2435,7 +2435,7 @@
 				case 'breaks':
 					var c = cm.createMenuButton('menu-break', {
 						title : '{#wce.menu_break}' + ' (Ctrl+Alt+B)',
-						image : tinyMCE.baseURL + '/plugins/wce/img/button_B-new.png',
+						image : tinyMCE.baseURL + '/plugins/wce/img/button_B.png',
 						icons : false
 					});
 
@@ -2485,7 +2485,7 @@
 				case 'correction':
 					var c = cm.createButton('menu-correction', {
 						title : '{#wce.menu_corrections}' + ' (Ctrl+Alt+C)',
-						image : tinyMCE.baseURL + '/plugins/wce/img/button_C-new.png',
+						image : tinyMCE.baseURL + '/plugins/wce/img/button_C.png',
 						icons : false,
 						onclick : function() {
 							ed.execCommand('mceAddCorrection');
@@ -2497,7 +2497,7 @@
 				case 'illegible':
 					var c = cm.createMenuButton('menu-illegible', {
 						title : '{#wce.menu_deficiency}',
-						image : tinyMCE.baseURL + '/plugins/wce/img/button_D-new.png',
+						image : tinyMCE.baseURL + '/plugins/wce/img/button_D.png',
 						icons : false
 					});
 
@@ -2606,7 +2606,7 @@
 				case 'decoration':
 					var c = cm.createMenuButton('menu-decoration', {
 						title : '{#wce.menu_ornamentation}',
-						image : tinyMCE.baseURL + '/plugins/wce/img/button_O-new.png',
+						image : tinyMCE.baseURL + '/plugins/wce/img/button_O.png',
 						icons : false
 					});
 
@@ -2839,7 +2839,7 @@
 				case 'abbreviation':
 					var c = cm.createMenuButton('menu-abbreviation', {
 						title : '{#wce.menu_abbreviations}' + ' (Ctrl+Alt+A)',
-						image : tinyMCE.baseURL + '/plugins/wce/img/button_A-new.png',
+						image : tinyMCE.baseURL + '/plugins/wce/img/button_A.png',
 						icons : false
 					});
 
@@ -2888,7 +2888,7 @@
 				case 'paratext':
 					var c = cm.createMenuButton('menu-paratext', {
 						title : '{#wce.menu_marginalia}' + ' (Ctrl+Alt+M)',
-						image : tinyMCE.baseURL + '/plugins/wce/img/button_M-new.png',
+						image : tinyMCE.baseURL + '/plugins/wce/img/button_M.png',
 						icons : false
 					});
 
@@ -2937,7 +2937,7 @@
 				case 'note':
 					var c = cm.createMenuButton('menu-note', {
 						title : '{#wce.menu_note}' + ' (Ctrl+Alt+N)',
-						image : tinyMCE.baseURL + '/plugins/wce/img/button_N-new.png',
+						image : tinyMCE.baseURL + '/plugins/wce/img/button_N.png',
 						icons : false
 					});
 
@@ -2986,7 +2986,7 @@
 				case 'punctuation':
 					var c = cm.createMenuButton('menu-punctuation', {
 						title : '{#wce.menu_punctuation}',
-						image : tinyMCE.baseURL + '/plugins/wce/img/button_P-new.png',
+						image : tinyMCE.baseURL + '/plugins/wce/img/button_P.png',
 						icons : false
 					});
 
@@ -3294,18 +3294,18 @@
 			ed.addButton('versemodify', {
 				title : '{#wce.menu_verses}' + ' (Ctrl+Alt+V)',
 				cmd : 'mceVerseModify',
-				image : url + '/img/button_V-new.png'
+				image : url + '/img/button_V.png'
 			});
 
 			// add showTeiByHtml button
 			ed.addButton('showTeiByHtml', {
-				title : 'For test: \n set booknumber=00\nget TEI output from HTML',
+				title : 'Show XML format',
 				cmd : 'mceHtml2Tei',
-				image : url + '/img/xml.jpg'
+				image : url + '/img/button_XML.png'
 			});
 
 			// tei to html only for Test
-			ed.addCommand('mceTei2Html', function() {
+			/*ed.addCommand('mceTei2Html', function() {
 				doWithDialog(ed, url, '/tei2html.htm', 580, 420, 1, true);
 			});
 
@@ -3314,6 +3314,35 @@
 				title : 'For test: \n  get HTML output from TEI',
 				cmd : 'mceTei2Html',
 				image : url + '/img/xmlinput.jpg'
+			});*/
+			
+			ed.addCommand('mceShowHelp', function() {
+				if (tinyMCE.activeEditor.settings.language == 'de') 
+					window.open(url + "/docu.htm","_blank",
+						"width=800,height=600,resizable=yes,status=no,"+
+						"menubar=no,location=no,scrollbars=yes,toolbar=no");
+				else
+					window.open(url + "/docu.htm","_blank",
+						"width=800,height=600,resizable=yes,status=no,"+
+						"menubar=no,location=no,scrollbars=yes,toolbar=no");
+			});
+
+			// add showHtmlByTei button
+			ed.addButton('help', {
+				title : 'Open the documentation',
+				cmd : 'mceShowHelp',
+				image : url + '/img/button_Help.png'
+			});
+			
+			ed.addCommand('mceShowInfo', function() {
+				alert(ed.getLang('wce.menu_info')+wfce_editor);
+			});
+
+			// add showHtmlByTei button
+			ed.addButton('info', {
+				title : 'Information about the editor',
+				cmd : 'mceShowInfo',
+				image : url + '/img/button_Info.png'
 			});
 
 			ed.addCommand('mceReload', function(lang) {

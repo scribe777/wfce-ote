@@ -1,0 +1,12 @@
+The menu button were created using http://dabuttonfactory.com/ with the following parameters:
+Font: Condensed, 60, Bold
+Size: Fixed, 70x60
+Color: bg #4a81d9; fg #cfcfcf
+Rounded box 10 unicolored
+
+
+XML; ?
+Font: Condensed, 36, Bold,
+Size: Fixed, 90x60
+Color: bg #4a81d9; fg #cfcfcf
+Color: e88f00
