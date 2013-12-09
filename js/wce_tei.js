@@ -133,7 +133,7 @@ function getHtmlByTei(inputString) {
 		var nextW=$node.nextSibling;
 		var mergeAgain=false;
 		
-		if(lastChild && lastChild.nodeType!=3){
+		if(lastChild && lastChild.nodeType!=3 && lastChild.nodeName!='abbr'){
 			var toAppend=new Array();
 			//get nodes to merge
 			while(nextW){

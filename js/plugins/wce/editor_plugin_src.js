@@ -874,6 +874,48 @@
 			}
 		},
 		
+		/*
+		 * selected content has space?
+		 */
+		selectionHasSpace : function(ed) {
+			var c = ed.WCE_CON;
+			var fs=c.formatStart = 'format_start';
+			var fe=c.formatEnd = 'format_end';
+			try {
+				var elem = $('<div/>').html(ed.selection.getContent()); 
+				var testNode = function(node) {
+					if (node.nodeType==3){
+						var pName=node.parentNode.nodeName;
+						if(pName == fs || pName== fe){
+							return false;
+						}
+						var nv=node.nodeValue;
+						if(nv && nv.match(/\s/)) {
+							return true;
+						}else{
+							return false;
+						}
+					}
+					
+					var list = node.childNodes;
+					if (!list) {
+						return false;
+					}
+
+					for (var i = 0, c, len = list.length; i < len; i++) {
+						c = list[i]; 
+						if(c && testNode(c)){ 
+							return true;
+						} 
+					}
+					return false;
+				};
+				return testNode(elem[0]);
+			} catch (e) {
+				return false;
+			}
+		},
+		
 		//if start and end of selection both are wce node
 		setContent : function (ed, new_content){
 			var wcevar=ed.WCE_VAR;
@@ -916,7 +958,8 @@
 			var selectedNode;
 			var startContainer = rng.startContainer;
 			var endContainer;
-			w.isc = ed.selection.isCollapsed();
+			var selection=ed.selection;
+			w.isc = selection.isCollapsed();
 
 			// delete in firefox can create empty element and startOffset==0
 			if (startContainer.nodeType == 1 && !tinyMCE.isIE && startContainer.childNodes.length == 0 && rng.startOffset == 0 && startContainer.nodeName.toLowerCase() != 'body' && startContainer.nodeName.toLowerCase() != 'html') {
@@ -1049,7 +1092,8 @@
 					//TODO: If the selection contains only text and abbreviations, it should be removable
 					w.inputDisable = true;
 				}
-
+				
+				var selHasSpace=WCEUtils.selectionHasSpace(ed);
 			}
 
 			startContainer = rng.startContainer;
@@ -1094,8 +1138,7 @@
 				w.not_C=false;
 			} 
 			
-			w.not_P = !w.isc; 
-			
+			w.not_P = !w.isc;   
 			switch (w.type) {
 				case 'gap':
 					_disableAllControls(ed, true);
@@ -1189,7 +1232,10 @@
 				default: 
 					break;			
 			};
-			  
+			
+			if(selHasSpace){
+			 	w.not_A =true;
+			}
 		},
 
 		/*
