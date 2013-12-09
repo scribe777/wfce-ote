@@ -313,7 +313,7 @@
 		var Zeichen_Wert_alt = 1000; /* alter Wert fuer Zeichen */
 
 		var eing = document.paratextinfo.marginals_text.value.toUpperCase();
-		Pruefen_roemZahl(eing, eing.length);
+		fehler = Pruefen_roemZahl(eing, eing.length);
 
 		if (fehler == 0) {
 			for (var i = 0; i < eing.length; i++) {
@@ -340,15 +340,17 @@
 
 				Zeichen_Wert_alt = Zeichen_Wert;
 			}
-
 			document.paratextinfo.number.value = dezimalz;
 			//document.paratextinfo.number.disabled = true;
 			//document.getElementById('number').style.backgroundColor = "#CCCCCC";
-
 		} else {
-			document.paratextinfo.number.value = '';
-			document.paratextinfo.number.disabled = false;
-			document.getElementById('number').style.backgroundColor = "white";
+			var res = greek2arab(eing.toLowerCase());
+			if (res == 0) {
+				document.paratextinfo.number.value = '';
+				document.paratextinfo.number.disabled = false;
+				document.getElementById('number').style.backgroundColor = "white";
+			} else
+				document.paratextinfo.number.value = res;
 		}
 	}
 
@@ -382,7 +384,6 @@
 			Zeichen = Wert.charAt(i);
 			if (Zeichen != "I" && Zeichen != "V" && Zeichen != "X" && Zeichen != "L" && Zeichen != "C" && Zeichen != "D" && Zeichen != "M")
 				fehler++;
-
 			if (Zeichen == "I") {
 				Zeichen_Wert = 1;
 				anz_Zeichen_I++;
@@ -483,7 +484,72 @@
 		if (anz_Zeichen_V > 1 || anz_Zeichen_X > 4 || anz_Zeichen_L > 1 || anz_Zeichen_C > 4 || anz_Zeichen_D > 1 || anz_Zeichen_M > 3) {
 			fehler++;
 		}
+		return fehler;
 	}
+	
+	// Taken from http://canities.se/arithmos.html#mapp
+	var DIGITS = [['', 'α', 'β', 'γ', 'δ', 'ε', 'ϛ', 'ζ', 'η', 'θ'],
+	      ['', 'ι', 'κ', 'λ', 'μ', 'ν', 'ξ', 'ο', 'π', 'ϙ'],
+	      ['', 'ρ', 'σ', 'τ', 'υ', 'φ', 'χ', 'ψ', 'ω', 'ϡ']];
+
+	var VALUES = {'α' :   1, 'β' :   2, 'γ' :   3, 'δ' :   4, 'ε' :   5,
+			  'ϛ' :   6, 'ζ' :   7, 'η' :   8, 'θ' :   9,
+			  'ι' :  10, 'κ' :  20, 'λ' :  30, 'μ' :  40, 'ν' :  50,
+			  'ξ' :  60, 'ο' :  70, 'π' :  80, 'ϟ' :  90, 'ϙ' : 90,
+			  'ρ' : 100, 'σ' : 200, 'τ' : 300, 'υ' : 400, 'φ' : 500,
+			  'χ' : 600, 'ψ' : 700, 'ω' : 800, 'ϡ' : 900};
+
+	function arab2greek(str) {
+	  var out = '';
+	  var n = str.length - 1;
+	  if (n > 3) out += 'Μ' + '<span style="text-decoration: overline">';
+	  if (n < 3) out += '<span style="text-decoration: overline">';
+	  for (i in str.split('')) {
+		c = str.charAt(i).charCodeAt(0) - 0x30;
+		if (n > 6) {
+		  out = '<span>' + 'Too many digits!';
+		  break;
+		} else if (n > 4) {
+		  out += DIGITS[n - 4][c];
+		} else if (n == 4) {
+		  out += DIGITS[n - 4][c] + '</span>.';
+		} else if (n == 3) {
+		  if (c > 0) out += ',';
+		  out += '<span style="text-decoration: overline">';
+		  if (c > 0) out += DIGITS[0][c];
+		} else {
+		  out += DIGITS[n][c];
+		}
+		n -= 1;
+	  }
+	  return out + '</span>';
+	}
+
+	function greek2arab(str) {
+	  var out = 0;
+	  var flag = 0;
+	  for (i in str.split('')) {
+		c = str.charAt(i);
+		if (c.charCodeAt(0) == 0x4D || c.charCodeAt(0) == 0x39c) { // m or μ
+		  flag = 10000;
+		} else if (c == ',' || c == '͵') {
+		  flag = 1000;
+		} else if (c == '.') {
+		  flag = 0;
+		} else if (VALUES[c]) {
+		  if (flag == 10000) {
+		out += VALUES[c] * 10000;
+		  } else if (flag == 1000) {
+		out += VALUES[c] * 1000;
+		flag = 0;
+		  } else {
+			out += VALUES[c];
+		  }
+		}
+	  }
+	  return out;
+	}
+
 	function setstatus_paratext() {
 		checkstatus_position();
 		checkstatus_typ();
