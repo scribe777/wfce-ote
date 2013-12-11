@@ -3371,7 +3371,7 @@
 						"width=800,height=600,resizable=yes,status=no,"+
 						"menubar=no,location=no,scrollbars=yes,toolbar=no");
 				else
-					window.open(url + "/docu.htm","_blank",
+					window.open(url + "/docu_en.htm","_blank",
 						"width=800,height=600,resizable=yes,status=no,"+
 						"menubar=no,location=no,scrollbars=yes,toolbar=no");
 			});
