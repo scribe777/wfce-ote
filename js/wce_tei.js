@@ -2,7 +2,7 @@
 window.onerror = Fehlerbehandlung;
 
 //pb, cb ,lb with break="no" defined in function html2Tei_mergeWNode();
-var wceNodeInsideW=["hi","unclear","gap","supplied", "w", "abbr", "pc", "ex"];//TODO: more type?
+var wceNodeInsideW=["hi","unclear","gap","supplied", "w", "abbr", "ex"];//TODO: more type?
 
 function Fehlerbehandlung(Nachricht, Datei, Zeile) {
 	Fehler = "Error:\n" + Nachricht + "\n" + Datei + "\n" + Zeile;
@@ -133,7 +133,7 @@ function getHtmlByTei(inputString) {
 		var nextW=$node.nextSibling;
 		var mergeAgain=false;
 		
-		if(lastChild && lastChild.nodeType!=3){
+		if(lastChild && lastChild.nodeType!=3 && lastChild.nodeName!='abbr'){
 			var toAppend=new Array();
 			//get nodes to merge
 			while(nextW){
@@ -3408,9 +3408,20 @@ function getTeiByHtml(inputString, args) {
 	 * type pc, return <pc>
 	 */
 	var html2Tei_pc = function(arr, $teiParent, $htmlNode) {
+		//Fixed #1766
+		var pre=$htmlNode.previousSibling;
+		var next=$htmlNode.nextSibing;
+		if(pre && pre.nodeName=='w'){
+			pre.setAttribute('after','1');
+		}
+		if(next && next.nodeName=='w'){
+			next.setAttribute('before','1');
+		}
+		
 		var pc = $newDoc.createElement('pc');
-		//$teiParent.appendChild(pc);
-		appendNodeInW($teiParent, pc, $htmlNode);
+		nodeAddText(pc,getDomNodeText($htmlNode));
+		$teiParent.appendChild(pc);
+		//appendNodeInW($teiParent, pc, $htmlNode);
 		return {
 			0 : pc,
 			1 : true
