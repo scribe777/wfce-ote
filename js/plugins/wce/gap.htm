@@ -30,6 +30,10 @@
                         <input type="radio" id="gap_reason_dummy_unspecified" name="gap_reason_dummy" value="unspecified" onchange="checkstatus_gapreason()">
                         {#wce.unspecified}</td>
 					    <td>
+                        <td>
+                        <input type="radio" id="gap_reason_dummy_inferredPage" name="gap_reason_dummy" value="inferredPage" onchange="checkstatus_gapreason()">
+                        {#wce.inferredPage}</td>
+					    <td>
                         <input id="gap_reason" name="gap_reason" value="" type="hidden" />
                         </td>
                     </tr>
@@ -48,10 +52,11 @@
                             <option value="book">{#wce.unit_book}</option>
                             <option value="chapter">{#wce.unit_chapter}</option>
                             <option value="verse">{#wce.unit_verse}</option>
+							<option value="word">{#wce.unit_word}</option>
 							<option value="unspecified">{#wce.unspecified}</option>
                             <option value="other">{#wce.other}</option>
                         </select></td>
-                        <td>
+                        <td colspan="2">
                         <input id="unit_other" name="unit_other" type="text"
                         value="" size="50" maxlength=""
                         class="required number min1 mceFocus" />
@@ -67,6 +72,10 @@
 						<td>
 						<input type="button" id="extent_unspecified" value="{#wce.extent}={#wce.unspecified}"
 						onclick="if(document.gapinfo.extent.disabled == false)$('#extent').val('unspecified')"/>
+						</td>
+						<td>
+						<input type="button" id="extent_part" value="{#wce.extent}={#wce.part}"
+						onclick="if(document.gapinfo.extent.disabled == false)$('#extent').val('part')"/>
 						</td>
 					</tr>
                     <tr>
@@ -85,7 +94,7 @@
                             <option value="tr">{#wce.TR}</option>
                             <option value="other">{#wce.other}</option>
                         </select></td>
-                        <td>
+                        <td colspan="2">
                         <input id="supplied_source_other"
                         name="supplied_source_other" type="text" value="" size="30"
                         maxlength="" class="required number min1 mceFocus" />
@@ -117,7 +126,6 @@
 			checkstatus_gapreason();
 			checkstatus_gapunit();
 			checkstatus_supplied_source();
-			checkstatus_mark_as_supplied();
 			if (ed.WCE_VAR.isc && (!ed.WCE_VAR.type || (ed.WCE_VAR.type && !ed.WCE_VAR.type == 'gap'))) { // make it work in "edit" mode
 				$('#mark_as_supplied').attr({
 					"checked" : false,
@@ -127,7 +135,9 @@
 					"disabled" : true
 				});
 			}
+			checkstatus_mark_as_supplied();
 			document.getElementById("extent_unspecified").style.background='#F1F1F1';
+			document.getElementById("extent_part").style.background='#F1F1F1';
 			var info = false;
 		}
 
@@ -148,6 +158,8 @@
 				document.gapinfo.gap_reason.value = "lacuna";
 			else if (radioWert(document.gapinfo.gap_reason_dummy) == "illegible")
 				document.gapinfo.gap_reason.value = "illegible";
+			else if (radioWert(document.gapinfo.gap_reason_dummy) == "inferredPage")
+				document.gapinfo.gap_reason.value = "inferredPage";
 			else {
 				document.gapinfo.gap_reason.value = "unspecified";
 				if (info)
@@ -168,12 +180,24 @@
 				document.gapinfo.gap_reason_dummy_lacuna.checked = true;
 			else if (document.gapinfo.gap_reason.value == "unspecified")
 				document.gapinfo.gap_reason_dummy_unspecified.checked = true;
-			else
+			else if (document.gapinfo.gap_reason.value == "inferredPage")
+				document.gapinfo.gap_reason_dummy_inferredPage.checked = true;	
+			else //default
 				document.gapinfo.gap_reason_dummy_illegible.checked = true;
 		}
 
 		function checkstatus_gapunit() {
-			if (document.gapinfo.unit.options[9].selected == true) {
+			if (document.gapinfo.unit.disabled == true) {
+				document.gapinfo.unit_other.disabled = true;
+				document.getElementById('unit_other').style.backgroundColor = "#CCCCCC";
+				document.gapinfo.extent.disabled = true;
+				document.getElementById('extent').style.backgroundColor = "#CCCCCC";
+				document.gapinfo.extent_unspecified.disabled = true;
+				document.gapinfo.extent_part.disabled = true;
+				return;
+			}
+			
+			if (document.gapinfo.unit.options[10].selected == true) { //other unit
 				document.gapinfo.unit_other.disabled = false;
 				document.getElementById('unit_other').style.backgroundColor = "white";
 			} else {
@@ -181,15 +205,19 @@
 				document.getElementById('unit_other').style.backgroundColor = "#CCCCCC";
 			}
 
-			if (document.gapinfo.unit.options[0].selected == true) {
+			if (document.gapinfo.unit.options[0].selected == true) { // no unit given
 				document.gapinfo.extent.disabled = true;
 				document.getElementById('extent').style.backgroundColor = "#CCCCCC";
+				document.gapinfo.extent_unspecified.disabled = true;
+				document.gapinfo.extent_part.disabled = true;
 			} else {
 				document.gapinfo.extent.disabled = false;
 				document.getElementById('extent').style.backgroundColor = "white";
+				document.gapinfo.extent_unspecified.disabled = false;
+				document.gapinfo.extent_part.disabled = false;
 			}
 
-			if (!ed.WCE_VAR.isc || !add_new_wce_node) {
+			if (!ed.WCE_VAR.isc || (!add_new_wce_node && document.gapinfo.mark_as_supplied.checked == false)) { //real selection or edit mode
 				if (document.gapinfo.unit.options[1].selected == true || document.gapinfo.unit.options[2].selected == true) {// char or line
 					document.gapinfo.mark_as_supplied.checked = false;
 					document.gapinfo.mark_as_supplied.disabled = false;
@@ -205,14 +233,32 @@
 			}
 		}
 
+		function setstatus_mark_as_supplied() {
+			if (document.gapinfo.mark_as_supplied.value == "supplied") {
+				alert("TEST");
+				document.gapinfo.mark_as_supplied.checked = true;
+				}
+		}
+		
 		function checkstatus_mark_as_supplied() {
-			if (document.gapinfo.mark_as_supplied.checked) {
+			if (document.gapinfo.mark_as_supplied.checked == true) {
 				document.gapinfo.supplied_source.disabled = false;
-				checkstatus_supplied_source();
+				document.gapinfo.unit.disabled = true;
+				document.gapinfo.unit_other.disabled = true;
+				document.getElementById('unit_other').style.backgroundColor = "#CCCCCC";
+				document.gapinfo.extent.disabled = true;
+				document.getElementById('extent').style.backgroundColor = "#CCCCCC";
 			} else {
 				document.gapinfo.supplied_source.disabled = true;
 				document.gapinfo.supplied_source_other.disabled = true;
+				document.getElementById('supplied_source_other').style.backgroundColor = "#CCCCCC";
+				document.gapinfo.unit.disabled = false;
+				/*document.getElementById('unit_other').style.backgroundColor = "white";
+				document.gapinfo.extent.disabled = false;
+				document.getElementById('extent').style.backgroundColor = "white";*/
 			}
+			checkstatus_supplied_source();
+			checkstatus_gapunit();
 		}
 
 		function checkstatus_supplied_source() {
@@ -241,7 +287,7 @@
 			if (document.gapinfo.mark_as_supplied.checked && document.gapinfo.supplied_source.options[3].selected == true && document.getElementById('supplied_source_other').value == '') {
 				return false;
 			}
-			if (document.gapinfo.unit.options[9].selected == true && document.getElementById('unit_other').value == '') {
+			if (document.gapinfo.unit.options[10].selected == true && document.getElementById('unit_other').value == '') {
 				return false;
 			}
 			//if (document.gapinfo.gap_reason.options[5].selected == true && document.getElementById('gap_reason_other').value == '')

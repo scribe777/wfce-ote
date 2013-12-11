@@ -345,10 +345,11 @@
 			//document.getElementById('number').style.backgroundColor = "#CCCCCC";
 		} else {
 			var res = greek2arab(eing.toLowerCase());
-			if (res == 0) {
+			if (res == '') {
 				document.paratextinfo.number.value = '';
 				document.paratextinfo.number.disabled = false;
 				document.getElementById('number').style.backgroundColor = "white";
+				document.paratextinfo.edit_number.checked = false;
 			} else
 				document.paratextinfo.number.value = res;
 		}
@@ -528,6 +529,7 @@
 	function greek2arab(str) {
 	  var out = 0;
 	  var flag = 0;
+	  
 	  for (i in str.split('')) {
 		c = str.charAt(i);
 		if (c.charCodeAt(0) == 0x4D || c.charCodeAt(0) == 0x39c) { // m or μ
@@ -545,7 +547,8 @@
 		  } else {
 			out += VALUES[c];
 		  }
-		}
+		} else
+			out = '';
 	  }
 	  return out;
 	}

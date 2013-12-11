@@ -642,7 +642,7 @@ function getHtmlByTei(inputString) {
 		}
 		addFormatElement($newNode);
 		var pre=$htmlParent.previousSibling;
-		if(!pre || (!pre.nodeType==3 && pre.nodeName!='w')){//add a space before book number
+		if(!pre || (!pre.nodeType==3 && pre.nodeName!='w')){ //add a space before book number
 			nodeAddText($htmlParent, ' ');
 		}
 		$htmlParent.appendChild($newNode);
@@ -699,9 +699,9 @@ function getHtmlByTei(inputString) {
 		// <gap reason="lacuna" unit="char" />
 		var $newNode = $newDoc.createElement('span');
 		
-		var extAttr=$teiNode.getAttribute('ext');
-		if(extAttr){//suppied in abbr
-			$newNode.setAttribute('ext',extAttr);
+		var extAttr = $teiNode.getAttribute('ext');
+		if (extAttr) { //supplied text in abbr
+			$newNode.setAttribute('ext', extAttr);
 		}
 		
 		if ($teiNode.getAttribute("reason") === 'witnessEnd') {// Witness end
@@ -713,11 +713,11 @@ function getHtmlByTei(inputString) {
 			$newNode.setAttribute('class', 'gap');
 			// for gap *and* supplied
 
-			var wceAttr = '__t=gap&__n=&gap_reason_dummy_lacuna=lacuna&gap_reason_dummy_illegible=illegible&gap_reason_dummy_unspecified=unspecified';
+			var wceAttr = '__t=gap&__n=&gap_reason_dummy_lacuna=lacuna&gap_reason_dummy_illegible=illegible&gap_reason_dummy_unspecified=unspecified&gap_reason_dummy_inferredPage=inferredPage';
 			var mapping = {
 				'reason' : '&gap_reason=',
 				'unit' : {
-					'0' : '@char@line@page@quire@book@chapter@verse@unspecified',
+					'0' : '@char@line@page@quire@book@chapter@verse@word@unspecified',
 					'1' : '&unit_other=&unit=',
 					'2' : '&unit=other&unit_other='
 				},
@@ -740,8 +740,7 @@ function getHtmlByTei(inputString) {
 
 			$newNode.setAttribute('wce', wceAttr);
 
-			if (teiNodeName == 'supplied') {// supplied MS
-				//nodeAddText($newNode, '[' + ($teiNode.firstChild ? $teiNode.firstChild.nodeValue : '') + ']');
+			if (teiNodeName == 'supplied') {// supplied 
 				var $tempParent = $newDoc.createElement('t'); 
 				var cList = $teiNode.childNodes;
 				for (var i = 0, c, l = cList.length; i < l; i++) {
@@ -2583,7 +2582,7 @@ function getTeiByHtml(inputString, args) {
 		}
 
 		wceType = arr['__t'];
-
+		
 		// formatting
 		if (wceType.match(/formatting/)) {
 			return html2Tei_formating(arr, $teiParent, $htmlNode);
@@ -2671,10 +2670,11 @@ function getTeiByHtml(inputString, args) {
 		if (wceType == 'unclear') {
 			return html2Tei_unclear(arr, $teiParent, $htmlNode);
 			/*23.10.2013 YG
-			// split up content at word boundaries
-			var text = getDomNodeText($htmlNode).split(" ");
-			if (text == '\u2039sp\u203a') // take care of spaces element
-				return html2Tei_unclear(arr, $teiParent, $htmlNode);
+			// split up content at word boundaries*/
+			/*var text = getDomNodeText($htmlNode).split(" ");
+			if (text == 'sp') // take care of spaces element
+				return html2Tei_unclear(arr, $teiParent, $htmlNode, stopAddW);
+			
 			// split up original text attribute
 			var orig_text = $htmlNode.getAttribute('wce_orig').split("%20");
 			if (text.length > 1) {
@@ -2813,30 +2813,37 @@ function getTeiByHtml(inputString, args) {
 		if (arr['gap_reason']) {
 			$newNode.setAttribute('reason', decodeURIComponent(arr['gap_reason']));
 		}
-		// unit
-		var unitValue = arr['unit'];
-		if (unitValue != '') {
-			if (unitValue == 'other' && arr['unit_other']) {
-				$newNode.setAttribute('unit', arr['unit_other']);
-			} else {
-				$newNode.setAttribute('unit', unitValue);
-			}
-		}
-		// extent
-		if (arr['extent']) {
-			$newNode.setAttribute('extent', arr['extent']);
-		}
 		
+		if (arr['mark_as_supplied'] == 'supplied')
+			;//do not output unit and extent
+		else {
+			// unit
+			var unitValue = arr['unit'];
+			if (unitValue != '') {
+				if (unitValue == 'other' && arr['unit_other']) {
+					$newNode.setAttribute('unit', arr['unit_other']);
+				} else {
+					$newNode.setAttribute('unit', unitValue);
+				}
+			}
+			// extent
+			if (arr['extent']) {
+				$newNode.setAttribute('extent', arr['extent']);
+			}
+		}	
 		var extAttr=$htmlNode.getAttribute('ext');
 		if(extAttr){
 			$newNode.setAttribute('ext',extAttr);
 		}
 		
 		if ($newNode.nodeName === 'supplied'){
-			$htmlNode=removeBracketOfSuplied($htmlNode);
+			$htmlNode = removeBracketOfSupplied($htmlNode);
 		 	appendNodeInW($teiParent, $newNode, $htmlNode); 
-		}else{
-			$teiParent.appendChild($newNode);
+		} else {
+			if ($newNode.getAttribute('unit') == 'word')
+				appendNodeInW($teiParent, $newNode, $htmlNode); 
+			else
+				$teiParent.appendChild($newNode);
 		}
 	 
 		return {
@@ -2900,7 +2907,7 @@ function getTeiByHtml(inputString, args) {
 	/*
 	 * remove text "[" and "]" of <supplied>
 	 */
-	var removeBracketOfSuplied =function($htmlNode){
+	var removeBracketOfSupplied =function($htmlNode){
 		var firstW=$htmlNode.firstChild;
 		if(firstW){
 			var fistTextNode=firstW.firstChild;
@@ -3233,9 +3240,9 @@ function getTeiByHtml(inputString, args) {
 	 */
 	var html2Tei_abbr = function(arr, $teiParent, $htmlNode) {
 		var $abbr = $newDoc.createElement('abbr');
-		var extAttr=$htmlNode.getAttribute('ext');
+		var extAttr = $htmlNode.getAttribute('ext');
 		if(extAttr){
-			$abbr.setAttribute('ext',extAttr);
+			$abbr.setAttribute('ext', extAttr);
 		}
 		
 		// type
@@ -3562,18 +3569,19 @@ function getTeiByHtml(inputString, args) {
 		if (reasonValue && reasonValue != '') {
 			$unclear.setAttribute('reason', decodeURIComponent(reasonValue));
 		}
-		//var wce_orig=$htmlNode.getAttribute('wce_orig');
-		//if (wce_orig) {
-			//if (decodeURIComponent(wce_orig).indexOf('<span class="spaces"') != 0) // take care of spaces element
+		/*var wce_orig=$htmlNode.getAttribute('wce_orig');
+		if (wce_orig) {
+			if (decodeURIComponent(wce_orig).indexOf('<span class="spaces"') == 0) // take care of spaces element
 				//nodeAddText($unclear, decodeURIComponent(wce_orig));
-		//}
+				html2Tei_spaces(arr, $unclear, $htmlNode);
+		}*/
 
 		//if(wce_orig){  
 		 //  	var tempDoc=loadXMLString("<temp>"+decodeURIComponent(wce_orig)+"</temp>");
 		 //  	var	tempRoot=initHtmlContent(tempDoc.documentElement); 
 		 //   appendNodeInW($teiParent, $unclear, tempRoot);
 		//}else{
-		   	appendNodeInW($teiParent, $unclear, $htmlNode);
+		appendNodeInW($teiParent, $unclear, $htmlNode);
 	//}
 		
 		return {
@@ -3926,7 +3934,7 @@ function addArrows(str) {
 	if (str.indexOf("x") == str.length-1)
 		out = str.substring(0, str.length-1)+"→";
 	else if (str.indexOf("y") == str.length-1)
-		out = str.substring(0, str.length-1)+"↑";
+		out = str.substring(0, str.length-1)+"↓";
 	return out;
 };
 
@@ -3934,7 +3942,7 @@ function removeArrows(str) {
 	var out = str;
 	if (str.indexOf("→") == str.length-1)
 		out = str.substring(0, str.length-1) + "x";
-	else if (str.indexOf("↑") == str.length-1)
+	else if (str.indexOf("↓") == str.length-1 || str.indexOf("↑") == str.length-1) // Second one is just for compatibility
 		out = str.substring(0, str.length-1) + "y";
 	return out;
 };

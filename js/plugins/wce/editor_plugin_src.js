@@ -8,7 +8,7 @@
  */
 
 (function() {
-	var wfce_editor = "2013-12-06";
+	var wfce_editor = "2013-12-11";
 
 	// Load plugin specific language pack
 	tinymce.PluginManager.requireLangPack('wce');
@@ -1668,7 +1668,7 @@
 									if (ar['rv'])
 										info_text += ar['rv'];
 									if (ar['fibre_type'])
-										info_text += (ar['fibre_type'] === 'x') ? "\u2192" : "\u2191";
+										info_text += (ar['fibre_type'] === 'x') ? "\u2192" : "\u2193";
 									info_text += '</div>';
 									if (ar['facs']) {
 										info_text += '<div>' + ed.getLang('wce.infotext_url') + ': ' + ar['facs'] + '</div>';
@@ -1812,24 +1812,28 @@
 								info_text += ed.getLang('wce.infotext_lacuna') + '</div>';
 							} else if (ar['gap_reason'] == 'illegible') {
 								info_text += ed.getLang('wce.infotext_illegible') + '</div>';
+							} else if (ar['gap_reason'] == 'inferredPage') {
+								info_text += ed.getLang('wce.inferredPage') + '</div>';
 							} else {
 								info_text += ed.getLang('wce.unspecified') + '</div>';
 							}
-							if (ar['extent'] && ar['extent'] != null) {
-								info_text += '<div style="margin-top:10px">' + ed.getLang('wce.extent') + ': ' + ar['extent'] + ' ';
-								if (ar['unit'] == 'other') {
-									info_text += ar['unit_other'] + '</div>';
-								} else if (ar['unit'] != 'unspecified') { 
-									info_text += ar['unit'] + '(s)</div>';
-									//TODO: This is not good for German
-								}
-							}
+							
 							if (ar['mark_as_supplied'] == 'supplied') {
 								info_text += '<div style="margin-top:10px">' + ed.getLang('wce.suppliedsource') + ': ';
 								if (ar['supplied_source'] == 'other') {
 									info_text += ar['supplied_source_other'] + '</div>';
 								} else {
 									info_text += ar['supplied_source'] + '</div>';
+								}
+							} else {
+								if (ar['extent'] && ar['extent'] != null) {
+									info_text += '<div style="margin-top:10px">' + ed.getLang('wce.extent') + ': ' + ar['extent'] + ' ';
+									if (ar['unit'] == 'other') {
+										info_text += ar['unit_other'] + '</div>';
+									} else if (ar['unit'] != 'unspecified') {
+										var str_unit = "wce.unit_"+ar['unit'];
+										info_text += ed.getLang(str_unit) + (tinyMCE.activeEditor.settings.language == 'de' ? '(e)' : '(s)') + '</div>';
+									}
 								}
 							}
 							break;
@@ -1848,11 +1852,10 @@
 						case 'spaces':
 							info_text = '<div>' + ed.getLang('wce.space') + '</div><div style="margin-top:10px">' + ed.getLang('wce.extent') + ': ' + ar['sp_extent'] + ' ';
 							if (ar['sp_unit'] == 'other') {
-								info_text += ar['sp_unit_other'] + '(s)' + '</div>';
-								//TODO: Not good for German
+								info_text += ar['sp_unit_other'] + (tinyMCE.activeEditor.settings.language == 'de' ? '' : '(s)') + '</div>';
 							} else {
-								info_text += ar['sp_unit'] + '(s)</div>';
-								//TODO: Not good for German
+								var str_unit = "wce.unit_"+ar['sp_unit'];
+								info_text += ed.getLang(str_unit) + (tinyMCE.activeEditor.settings.language == 'de' ? '(e)' : '(s)') + '</div>';
 							}
 							break;
 						case 'formatting':
@@ -3305,7 +3308,7 @@
 			});
 
 			// tei to html only for Test
-			/*ed.addCommand('mceTei2Html', function() {
+			ed.addCommand('mceTei2Html', function() {
 				doWithDialog(ed, url, '/tei2html.htm', 580, 420, 1, true);
 			});
 
@@ -3314,7 +3317,7 @@
 				title : 'For test: \n  get HTML output from TEI',
 				cmd : 'mceTei2Html',
 				image : url + '/img/xmlinput.jpg'
-			});*/
+			});
 			
 			ed.addCommand('mceShowHelp', function() {
 				if (tinyMCE.activeEditor.settings.language == 'de') 
@@ -3622,11 +3625,11 @@
 
 			// Add gaps/*********/
 			ed.addCommand('mceAddGap', function() {
-				doWithDialog(ed, url, '/gap.htm', 640, 320, 1, true);
+				doWithDialog(ed, url, '/gap.htm', 800, 320, 1, true);
 			});
 			// Edit gaps and spacing
 			ed.addCommand('mceEditGap', function() {
-				doWithDialog(ed, url, '/gap.htm', 640, 320, 1, false);
+				doWithDialog(ed, url, '/gap.htm', 800, 320, 1, false);
 			});
 
 			ed.addCommand('mceAddGap_Shortcut', function() {

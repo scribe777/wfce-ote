@@ -1,0 +1,15 @@
+[core]
+	repositoryformatversion = 0
+	filemode = false
+	bare = false
+	logallrefupdates = true
+	symlinks = false
+	ignorecase = true
+	hideDotFiles = dotGitOnly
+[remote "origin"]
+	fetch = +refs/heads/*:refs/remotes/origin/*
+	url = ssh://martinsievers@git.code.sf.net/p/wfce-ote/code
+	puttykeyfile = 
+[branch "master"]
+	remote = origin
+	merge = refs/heads/master
