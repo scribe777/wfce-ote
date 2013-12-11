@@ -1201,10 +1201,11 @@
 
 				case 'spaces':
 					_disableAllControls(ed, true);
-					w.not_O = false;
+					w.not_O = true;
 					w.not_C = !wholeSelect;
 					w.not_D = !wholeSelect;
 					w.not_A = !wholeSelect;
+					w.not_PC = false;
 					break;
 
 				case 'formatting_capitals':

@@ -43,8 +43,7 @@
 		</fieldset>
 		<div class="mceActionPanel">
 			<input type="button" id="insert" name="insert" value="{#insert}"
-				onclick="cont = testOther();
-						if (cont){writeWceNodeInfo();}else{alert('{#wce.empty_other}');}" />
+				onclick="var cont=testInput(); if(cont=='0'){writeWceNodeInfo()} else if(cont=='1'){alert('{#wce.empty_other}')}else if(cont=='2'){alert('{#wce.empty_extent}');}" />
 			<input type="button" id="cancel" name="cancel" value="{#cancel}"
 				onclick="tinyMCEPopup.close();" />
 		</div>
@@ -77,10 +76,29 @@
 		checkstatus_spacesunit();
 	} 
 	
+	function testInput() {
+		var cont = testOther();
+		if (!cont) {
+			return 1;
+		}
+		cont = testUnit();
+		if (!cont) {
+			return 2;
+		}
+		return 0;
+	}
+	
 	function testOther() {
 		if (document.spacesinfo.sp_unit.options[2].selected == true && document.getElementById('sp_unit_other').value == '') 
 			return false;
 	return true;
+	}
+	
+	function testUnit() {
+		if ($('#sp_unit').val() != '' && $.trim($('#sp_extent').val()) == '') {
+			return false;
+		}
+		return true;
 	}
 	
 	if (!tinyMCE.isIE) {
