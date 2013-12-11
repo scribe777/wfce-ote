@@ -1803,22 +1803,37 @@ function getTeiByHtml(inputString, args) {
 					startNode=curr;
 				} 
 				toAppend.push(next); 
+			}else if(startNode){//merge which we have
+				html2Tei_addNodeArrayToNode(startNode, toAppend);			
+				startNode=null;
+				toAppend=new Array();	
 			}
 			curr=next;
 		}
 		if(startNode){
-			for(var i=0, a, l=toAppend.length; i<l; i++){
+			html2Tei_addNodeArrayToNode(startNode,toAppend);	
+			/*for(var i=0, a, l=toAppend.length; i<l; i++){
 				a=toAppend[i];
 				while(a.firstChild){
 					startNode.appendChild(a.firstChild);
 				}
-				a.parentNode.removeChild(a);
-				 
+				a.parentNode.removeChild(a);				 
 			}
-			html2Tei_mergeOtherNodes(startNode); 
+			html2Tei_mergeOtherNodes(startNode); */
 		}
 	};
 	
+	var html2Tei_addNodeArrayToNode = function(startNode, toAppend){
+		for(var i=0, a, l=toAppend.length; i<l; i++){
+				a=toAppend[i];
+				while(a.firstChild){
+					startNode.appendChild(a.firstChild);
+				}
+				a.parentNode.removeChild(a); 
+		}
+		html2Tei_mergeOtherNodes(startNode); 
+	};
+		
 	var removeAllAttribute = function($wn){
 		 var as=$wn.attributes; 
 		 var a;
@@ -2143,14 +2158,34 @@ function getTeiByHtml(inputString, args) {
 		}
 		html2Tei_mergeNodes(tempParent, false);
 		var tFirst=tempParent.firstChild;
+		var currentParentIsTeiNode=false; 
+		var currentParent=$teiParent;
 		while(tFirst){ 
 			if(tFirst.nodeName=='w'){
-				wrapNode=$teiNode.cloneNode(true);
-				var n=wrapChildNode(tFirst, wrapNode); 
-				$teiParent.appendChild(n);
-				tempParent.removeChild(tFirst);//remove tFirst
+				if(!tFirst.firstChild){
+					//if w is <w/>, this means that no content for $teiNode, then add only <w/> 
+					//in order to show there is a space and <w> stop.
+					$teiParent.appendChild(tFirst);
+				}else{
+					wrapNode=$teiNode.cloneNode(true);
+					var n=wrapChildNode(tFirst, wrapNode); 
+					$teiParent.appendChild(n);
+					tempParent.removeChild(tFirst);//remove tFirst
+				}
+				
+				currentParentIsTeiNode=false;
+				currentParent=$teiParent;
 			}else{
-				$teiParent.appendChild(tempParent.firstChild);//move tFirst
+				if(!currentParentIsTeiNode){
+					var clone=$teiNode.cloneNode(true);
+					clone.appendChild(tempParent.firstChild);//move tFirst
+					$teiParent.appendChild(clone);
+					currentParentIsTeiNode=true;
+					currentParent=clone;					
+				}else{
+					currentParent.appendChild(tempParent.firstChild);//move tFirst
+				}
+				
 			}
 			tFirst=tempParent.firstChild;
 		}
