@@ -261,4 +261,6 @@ tinyMCE.addI18n('de.wce',{
 	warning_deletion_inner_Node : 'Dieser Knoten besitzt einen Elternknoten und kann daher nicht entfernt werden.\nBitte entfernen Sie zunächst die Formatierung des Elternknotens',
 	help : 'Hilfe',
 	menu_info : 'Dies ist Version: ',
+	clipboard : 'In die Zwischenablage kopieren',
+	clipboard_note : 'Bitte nutzen Sie Ctrl+C bzw. Cmd+C, um das XML sicher in die Zwischenablage zu kopieren.',
 });

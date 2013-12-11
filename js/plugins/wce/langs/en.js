@@ -314,4 +314,6 @@ tinyMCE.addI18n('en.wce',{
 	warning_deletion_inner_Node : 'This node has a parent node and can not be removed.\nPlease remove the Format of the parent node first.',
 	help : 'Help',
 	menu_info : 'This is version: ',
+	clipboard : 'Copy to clipboard',
+	clipboard_note : 'Please press Ctrl+C (Cmd+C) for savely copying the XML to the clipboard.',
 });

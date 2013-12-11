@@ -3478,8 +3478,7 @@
 				ed.addShortcut('ctrl+alt+s', 'Add blank spaces', 'mceAddSpaces_Shortcut');
 				ed.addShortcut('ctrl+alt+n', 'Add note', 'mceAddNote_Shortcut');
 				ed.addShortcut('ctrl+alt+v', 'Modify verses', 'mceVerseModify_Shortcut');
-				// ed.addShortcut('ctrl+p', 'Add punctuation', 'mceAddNote_Shortcut');
-
+			
 				tinymce.dom.Event.add(ed.getDoc(), 'mouseover', function(e) {
 					WCEUtils.showWceInfo(ed, e)
 				});
