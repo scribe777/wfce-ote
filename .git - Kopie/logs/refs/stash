@@ -1,7 +1,0 @@
-0000000000000000000000000000000000000000 91eaffd8fadab74f9e692a12923cff9ef79e84c5 martinsievers <sievers@uni-trier.de> 1330606150 +0100	WIP on master: 1b7ea13 Fixed: output only 5 chapter
-91eaffd8fadab74f9e692a12923cff9ef79e84c5 afa345a4185845fb1990b410a63974d883ca4a7a martinsievers <sievers@uni-trier.de> 1331720237 +0100	WIP on master: e9570fc * Changed key events for breaks
-afa345a4185845fb1990b410a63974d883ca4a7a 9c9555784c0075daffa01d07c09f0f223e1dbb1b martinsievers <sievers@uni-trier.de> 1331720302 +0100	WIP on master: e9570fc * Changed key events for breaks
-9c9555784c0075daffa01d07c09f0f223e1dbb1b a3cd637c82db6e8986e7b224ffe8c84081d6c94a martinsievers <sievers@uni-trier.de> 1332235454 +0100	WIP on master: 276ce8b * Fixed #153 (wce/editor_plugin_src.js) * Fixed #159 (wce/correction.htm, wce/langs/en.js)
-a3cd637c82db6e8986e7b224ffe8c84081d6c94a 5f7a2bdadb328ca5ccde92ae22644a40e650ee2c martinsievers <sievers@uni-trier.de> 1332321137 +0100	WIP on master: 99a6dc4 Bug fixed from Troy A Griffitts; Input function for Metadata;
-5f7a2bdadb328ca5ccde92ae22644a40e650ee2c 3b39981c0acb88110895f193494c95fdb344ef26 martinsievers <sievers@uni-trier.de> 1340202615 +0200	WIP on master: df0de92 Revert "Restored css file after upgrade"
-3b39981c0acb88110895f193494c95fdb344ef26 17ae7a6f8f3b6fea417e024e6e3615b054ae5017 martinsievers <sievers@uni-trier.de> 1343201660 +0200	WIP on master: 565154a Fixed some issue with the correction dialog and its export
