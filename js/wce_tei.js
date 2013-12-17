@@ -35,6 +35,7 @@ function getHtmlByTei(inputString) {
 	inputString = inputString.replace(/lacuna\/illegible/g, 'unspecified');
 	//Trick to solve problem without <w>...</w>
 	inputString = inputString.replace('\u00a0', ' ');
+	inputString = inputString.replace(/<\/abbr>\s*<abbr\s*/g, '</abbr><w> </w><abbr ');//Fixed #1972
 	//inputString = inputString.replace(/<\/supplied><\/w><w><supplied.*?>/g, " ");
 	//inputString = inputString.replace(/<\/hi><\/w><w><hi.*?>/g, " ");
 	//24.10.2013 YG:funktioniert nicht wenn mehrere verschaltet sind z.B:
