@@ -737,6 +737,9 @@ function getHtmlByTei(inputString) {
 				wceAttr += '&mark_as_supplied=supplied';
 				$newNode.setAttribute('wce_orig', $teiNode.firstChild ? $teiNode.firstChild.nodeValue : '');
 				// get the content and save it as original
+				// for an empty source we have to add the "none" value
+				if (!$teiNode.getAttribute('source'))
+					wceAttr += '&supplied_source_other=&supplied_source=none';
 			}
 
 			$newNode.setAttribute('wce', wceAttr);
@@ -1685,34 +1688,38 @@ function getTeiByHtml(inputString, args) {
 				break;
 			}
 			
-			if(cName=='chapter_number' || cName=='verse_number' || cName=='book_number'){
+			if (cName=='chapter_number' || cName=='verse_number' || cName=='book_number') {
 				preChild=preChild.previousSibling;
 				continue;
-			}if(cName=='brea'){
-				wceAttr =preChild.getAttribute('wce');
-				if(wceAttr.match(/hasBreak=yes/) && wceAttr.match(/break_type=pb/)){//only page break with hasBreak=yes
+			} if (cName=='brea') {
+				wceAttr = preChild.getAttribute('wce');
+				if (wceAttr.match(/hasBreak=yes/) && wceAttr.match(/break_type=pb/)) {//only page break with hasBreak=yes
 					isBreak=true;
 					break;
 				}
 				preChild=preChild.previousSibling;
 				continue;
-			}else{
+			} else {
 				break;
 			}
 		}
-		if(isBreak){ 
-			$htmlNode.setAttribute('part','auto_F');
+		if (isBreak){ 
+			$htmlNode.setAttribute('part', 'auto_F');
 		}
 	};
 	
-	var html2Tei_mergeNodes = function($teiNode, removeAttr){
-		if(!$teiNode || ($teiNode.nodeType!=1 && $teiNode.nodeType!=11)){ //nodeType==11: createDocumentFragment
+	var html2Tei_mergeNodes = function($teiNode, removeAttr) {
+		if (!$teiNode || ($teiNode.nodeType != 1 && $teiNode.nodeType != 11)) { //nodeType==11: createDocumentFragment
 			return;	
 		}
 	 	
 	 	var tNext=$teiNode.firstChild;
-	 	while(tNext){
-	 		html2Tei_mergeNodes(tNext, removeAttr);
+	 	/*if (tNext && tNext.nodeName == 'gap' && tNext.getAttribute("unit") != "word"
+			&& $teiNode.childNodes.length == 1) // special case for isolated gaps. The word marker is removed
+			$teiNode.parentNode.replaceChild(tNext, $teiNode);
+		*/		
+		while (tNext) {
+			html2Tei_mergeNodes(tNext, removeAttr);
 	 		tNext=tNext.nextSibling;
 	 	}	 
 	 	/*24.10.2013 same as above
@@ -1729,7 +1736,7 @@ function getTeiByHtml(inputString, args) {
 	};
 	
 	var html2Tei_mergeWNode = function ($w, removeAttr){
-		if(!$w || $w.nodeName!='w'){
+		if (!$w || $w.nodeName != 'w') {
 			return;
 		}
 		
@@ -1748,14 +1755,14 @@ function getTeiByHtml(inputString, args) {
 					}
 				}
 				var _nodeName=ns.nodeName;
-				if((_nodeName=='pb' || _nodeName=='cb' || _nodeName=='lb') && (isNextBreak || ns.getAttribute('break')=='no')){		
-					 if(_nodeName=='lb'){
+				if ((_nodeName == 'pb' || _nodeName == 'cb' || _nodeName == 'lb') && (isNextBreak || ns.getAttribute('break') == 'no')){		
+					 if (_nodeName=='lb') {
 					 	isNextBreak=false;
 					 } 
-					 else{
+					 else {
 					 	isNextBreak=true;
 					 }
-				}else if ($.inArray(_nodeName, wceNodeInsideW) < 0) { 
+				} else if ($.inArray(_nodeName, wceNodeInsideW) < 0) { 
 					break;
 				}
 				toAppend.push(ns);
@@ -1768,6 +1775,7 @@ function getTeiByHtml(inputString, args) {
 			c = toAppend[i];
 			if (c.nodeName == 'w') {
 				//move all children of c to w;
+				
 				while (c.firstChild) {
 					$w.appendChild(c.firstChild);
 				}
@@ -1788,7 +1796,7 @@ function getTeiByHtml(inputString, args) {
 			return;
 		}
 		
-		if($.inArray($node.nodeName,wceNodeInsideW)<0){	
+		if ($.inArray($node.nodeName,wceNodeInsideW)<0) {	
 			return;
 		}
 		
@@ -1796,22 +1804,22 @@ function getTeiByHtml(inputString, args) {
 		var next;
 		var toAppend=new Array();
 		var startNode; 
-		while(curr){
+		while (curr) {
 			tempspace=null;
 			next=curr.nextSibling; 
-			if(compareNodes(curr,next)){
-				if(!startNode){
+			if (compareNodes(curr, next)) {
+				if (!startNode) {
 					startNode=curr;
 				} 
 				toAppend.push(next); 
-			}else if(startNode){//merge which we have
+			} else if (startNode) {//merge which we have
 				html2Tei_addNodeArrayToNode(startNode, toAppend);			
 				startNode=null;
 				toAppend=new Array();	
 			}
 			curr=next;
 		}
-		if(startNode){
+		if (startNode) {
 			html2Tei_addNodeArrayToNode(startNode,toAppend);	
 			/*for(var i=0, a, l=toAppend.length; i<l; i++){
 				a=toAppend[i];
@@ -1839,13 +1847,13 @@ function getTeiByHtml(inputString, args) {
 		 var as=$wn.attributes; 
 		 var a;
 		 var names=new Array();
-		 for(var i=0, l=as.length; i<l; i++){
+		 for (var i=0, l=as.length; i<l; i++) {
 		 	a=as[i];
 		 	if(a && a.nodeName!='part'){
 		 		names.push(a.nodeName);
 		 	}		 		 
 		 }
-		 for(var x=0, y=names.length; x<y; x++){
+		 for (var x=0, y=names.length; x<y; x++) {
 		 	$wn.removeAttribute(names[x]);
 		 }
 	};
@@ -1866,7 +1874,7 @@ function getTeiByHtml(inputString, args) {
 		var tempList=$r.childNodes; 
 		var childList = new Array();
 		 
-		for(var x=0, y=tempList.length; x<y; x++){
+		for (var x=0, y=tempList.length; x<y; x++) {
 			childList.push(tempList[x]);
 		} 		
 		for (var i = 0, l = childList.length, $c; i < l; i++) {
@@ -1986,7 +1994,7 @@ function getTeiByHtml(inputString, args) {
 	/*
 	 * 
 	 */
-	var addWMark1=function($htmlNode){
+	var addWMark1 = function($htmlNode){
 		if (!$htmlNode){
 			return;
 		}
@@ -2025,11 +2033,11 @@ function getTeiByHtml(inputString, args) {
 		} 
 	};
 	
-	var addWMark2=function($htmlNode){
+	var addWMark2 = function($htmlNode){
 		if(!$htmlNode){
 			return;
 		} 
-		if($htmlNode.nodeType==1 || $htmlNode.nodeType==11){
+		if ($htmlNode.nodeType==1 || $htmlNode.nodeType==11) {
 			//only for test
 			//if($htmlNode.nodeName=='w'){
 				//$htmlNode.setAttribute('id',global_id++);
@@ -2089,13 +2097,13 @@ function getTeiByHtml(inputString, args) {
 		} 
 		
 		if ($htmlNode.nodeType == 1 || $htmlNode.nodeType == 11){
-			if($htmlNode.nodeName=='w'){ 
+			if ($htmlNode.nodeName == 'w') { 
 				//$htmlNode.setAttribute('id',++global_id);//only for test
 				$teiParent.appendChild($htmlNode.cloneNode(true)); 
 				return;
 			}   
 			var arr = getTeiNodeByHtmlNode($teiParent, $htmlNode);  
-			if(arr==null || arr[1]){
+			if (arr == null || arr[1]) {
 				return;
 			} 
 			var newParent=arr[0];
@@ -2120,21 +2128,21 @@ function getTeiByHtml(inputString, args) {
 		var childList = $htmlNode.childNodes;  
 		var w;  
 		var wrapNode;
-		var tempParent=$newDoc.createDocumentFragment();
+		var tempParent = $newDoc.createDocumentFragment();
 		
 		for (var i = 0, c, l = childList.length; i < l; i++) {
-			w=null; 
+			w = null; 
 			c = childList[i];
 			if (!c) {
 				continue;
-			} else {   
-				if(c.nodeName=='w'){
-					w=c.cloneNode(true); 
+			} else {
+				if (c.nodeName == 'w') {
+					w = c.cloneNode(true); 
 					tempParent.appendChild(w);
-				}else{
-					var temp=$newDoc.createDocumentFragment();
+				} else {
+					var temp = $newDoc.createDocumentFragment();
 					getTeiNodeByHtmlNode(temp, c);//TODO: if not initHtmlContent, may be c.nodeType==3, what should to do?
-				  	while(temp.firstChild){
+				  	while (temp.firstChild) {
 				 		tempParent.appendChild(temp.firstChild);
 				 		/*
 				 		tFirst=temp.firstChild; 
@@ -2161,13 +2169,13 @@ function getTeiByHtml(inputString, args) {
 		var tFirst=tempParent.firstChild;
 		var currentParentIsTeiNode=false; 
 		var currentParent=$teiParent;
-		while(tFirst){ 
-			if(tFirst.nodeName=='w'){
-				if(!tFirst.firstChild){
+		while (tFirst) { 
+			if (tFirst.nodeName == 'w') {
+				if (!tFirst.firstChild) {
 					//if w is <w/>, this means that no content for $teiNode, then add only <w/> 
 					//in order to show there is a space and <w> stop.
 					$teiParent.appendChild(tFirst);
-				}else{
+				} else {
 					wrapNode=$teiNode.cloneNode(true);
 					var n=wrapChildNode(tFirst, wrapNode); 
 					$teiParent.appendChild(n);
@@ -2176,14 +2184,14 @@ function getTeiByHtml(inputString, args) {
 				
 				currentParentIsTeiNode=false;
 				currentParent=$teiParent;
-			}else{
-				if(!currentParentIsTeiNode){
+			} else {
+				if (!currentParentIsTeiNode){
 					var clone=$teiNode.cloneNode(true);
 					clone.appendChild(tempParent.firstChild);//move tFirst
 					$teiParent.appendChild(clone);
 					currentParentIsTeiNode=true;
 					currentParent=clone;					
-				}else{
+				} else {
 					currentParent.appendChild(tempParent.firstChild);//move tFirst
 				}
 				
@@ -2193,7 +2201,7 @@ function getTeiByHtml(inputString, args) {
 	};
 	
 	
-	var wrapChildNode =function ($parent, $wrapNode){
+	var wrapChildNode = function ($parent, $wrapNode){
 		var deepChild=$wrapNode;
 		while(deepChild.firstChild){
 			deepChild=deepChild.firstChild;
@@ -2838,7 +2846,7 @@ function getTeiByHtml(inputString, args) {
 			if (_supplied_source && _supplied_source != '') {
 				if (_supplied_source == 'other' && arr['supplied_source_other'])
 					$newNode.setAttribute('source', arr['supplied_source_other']);
-				else
+				else if (_supplied_source != 'none')
 					$newNode.setAttribute('source', _supplied_source);
 			}
 		} else {
@@ -2867,18 +2875,20 @@ function getTeiByHtml(inputString, args) {
 				$newNode.setAttribute('extent', arr['extent']);
 			}
 		}	
-		var extAttr=$htmlNode.getAttribute('ext');
-		if(extAttr){
-			$newNode.setAttribute('ext',extAttr);
+		var extAttr = $htmlNode.getAttribute('ext');
+		if (extAttr) {
+			$newNode.setAttribute('ext', extAttr);
 		}
 		
 		if ($newNode.nodeName === 'supplied'){
 			$htmlNode = removeBracketOfSupplied($htmlNode);
 		 	appendNodeInW($teiParent, $newNode, $htmlNode); 
 		} else {
-			if ($newNode.getAttribute('unit') == 'word')
+			if ($newNode.getAttribute('unit') == 'word') {
+				if ($htmlNode.firstChild.firstChild)
+					$htmlNode.firstChild.firstChild.nodeValue = ''; // remove content [...] etc. //TODO: This should be removeChild etc. Did not work.
 				appendNodeInW($teiParent, $newNode, $htmlNode); 
-			else
+			} else
 				$teiParent.appendChild($newNode);
 		}
 	 
@@ -2943,17 +2953,17 @@ function getTeiByHtml(inputString, args) {
 	/*
 	 * remove text "[" and "]" of <supplied>
 	 */
-	var removeBracketOfSupplied =function($htmlNode){
-		var firstW=$htmlNode.firstChild;
-		if(firstW){
-			var fistTextNode=firstW.firstChild;
-			if(fistTextNode && fistTextNode.nodeType==3){
-				fistTextNode.nodeValue=fistTextNode.nodeValue.replace(/^\[/, "");
+	var removeBracketOfSupplied = function($htmlNode){
+		var firstW = $htmlNode.firstChild;
+		if (firstW) {
+			var firstTextNode = firstW.firstChild;
+			if (firstTextNode && firstTextNode.nodeType == 3) {
+				firstTextNode.nodeValue=firstTextNode.nodeValue.replace(/^\[/, "");
 			}
 		} 
-		var lastW=$htmlNode.lastChild;
-		if(lastW){
-			var lastTextNode= lastW.lastChild;
+		var lastW = $htmlNode.lastChild;
+		if (lastW) {
+			var lastTextNode = lastW.lastChild;
 			if(lastTextNode && lastTextNode.nodeType==3){
 				lastTextNode.nodeValue=lastTextNode.nodeValue.replace(/\]$/, "");
 			}
@@ -3136,10 +3146,10 @@ function getTeiByHtml(inputString, args) {
 		var w;
 		for(var i=0, l=childList.length; i<l; i++){
 			w=childList[i]; 
-			if(w.nodeType==3) continue;
+			if (w.nodeType==3) continue;
 			
-			if(w.nodeName=='w'){ 
-				while(w.hasChildNodes()){
+			if (w.nodeName == 'w') { 
+				while (w.hasChildNodes()) {
 					$node.insertBefore(w.firstChild, w);
 				}
 				w.parentNode.removeChild(w);
@@ -4000,7 +4010,7 @@ var removeBlankNode=function ($root){//remove blank node,
 			var notNames=['lb','pb','qb','cb','gap'];
 			if($node.nodeType!=3 && !$node.firstChild && $.inArray(nodeName,notNames)<0){
 				var parent=$node.parentNode;
-				if(parent){
+				if (parent) {
 					parent.removeChild($node);
 					if(parent!=$root){
 						_remove(parent); 

@@ -313,6 +313,10 @@
 		var Zeichen_Wert_alt = 1000; /* alter Wert fuer Zeichen */
 
 		var eing = document.paratextinfo.marginals_text.value.toUpperCase();
+		
+		if (eing != '')
+			eing = stripFormats(eing);
+		
 		fehler = Pruefen_roemZahl(eing, eing.length);
 
 		if (fehler == 0) {
@@ -551,6 +555,10 @@
 			out = '';
 	  }
 	  return out;
+	}
+	
+	function stripFormats(str) {
+		return str.replace(/([^<]?)<span[^<]+?<span class="format_start">‹<\/span>([^<]+?)<span class="format_end">›<\/span><\/span>(.*?)/gi, "\$1\$2\$3");
 	}
 
 	function setstatus_paratext() {

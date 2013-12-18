@@ -106,7 +106,9 @@ function writeWceNodeInfo(val) {
 	}
 
 	var newWceAttr = arrayToString(info_arr);
-	newWceAttr += other_info_str;
+	if (wce_type != 'note' || other_info_str != '@__t=verse_number') //exception
+		newWceAttr += other_info_str;
+	
 	var wceID = '';
 
 	if (wce_node != null && newWceAttr == '') {

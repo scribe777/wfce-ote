@@ -69,6 +69,7 @@ var contentWithVerse;
 	function canInsertVerse(){
 		$('#insertVerseRadio').attr('checked','checked');
 		$('#insertVerseNumber').removeAttr('disabled');
+		$('#insertVerseNumber').focus();
 		$('#insertChapterNumber').attr('disabled','disabled');
 		$('#insertBookNumber').attr('disabled','disabled');
 		$('#verseList').attr('disabled','disabled');
@@ -99,6 +100,7 @@ var contentWithVerse;
 	function canInsertBook(){
 		$('#insertChapterBook').attr('checked','checked');
 		$('#insertBookNumber').removeAttr('disabled'); 
+		$('#insertBookNumber').focus(); 
 		$('#insertChapterNumber').attr('disabled','disabled');
 		$('#insertVerseNumber').attr('disabled','disabled');
 		$('#verseList').attr('disabled','disabled');
@@ -109,6 +111,7 @@ var contentWithVerse;
 	function canInsertChapter(){
 		$('#insertChapterRadio').attr('checked','checked');
 		$('#insertChapterNumber').removeAttr('disabled'); 
+		$('#insertChapterNumber').focus(); 
 		$('#insertVerseNumber').attr('disabled','disabled');
 		$('#insertBookNumber').attr('disabled','disabled');
 		$('#verseList').attr('disabled','disabled');
@@ -372,7 +375,7 @@ var contentWithVerse;
 		$(document).keydown(function(e) {
 			var evt = e || window.event
 			if (evt.keyCode == 13 || evt.keyCode == 10) {
-				document.getElementById('ok').click();
+				document.getElementById('insert').click();
 				return false;
 			}
 		});

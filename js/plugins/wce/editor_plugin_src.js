@@ -8,7 +8,7 @@
  */
 
 (function() {
-	var wfce_editor = "2013-12-17";
+	var wfce_editor = "2013-12-18";
 
 	// Load plugin specific language pack
 	tinymce.PluginManager.requireLangPack('wce');
@@ -1179,6 +1179,8 @@
 
 				case 'verse_number':
 					_disableAllControls(ed, true);
+					var canInsertNode = !w.isc ? false : WCEUtils.canInsertNote(ed, rng);
+					w.not_N = !canInsertNode;
 					break;
 
 				case 'brea':
@@ -1404,7 +1406,8 @@
 				}
 
 			} else if (endContainer.parentNode != ed.getBody()) {
-				return false;
+				if (endContainer.parentNode.getAttribute("class") != 'verse_number') // for verses go to next check
+					return false;
 			}
 
 			text = endContainer.nodeValue;
@@ -1867,11 +1870,12 @@
 							
 							if (ar['mark_as_supplied'] == 'supplied') {
 								info_text += '<div style="margin-top:10px">' + ed.getLang('wce.suppliedsource') + ': ';
-								if (ar['supplied_source'] == 'other') {
+								if (ar['supplied_source'] == 'none')
+									info_text += ed.getLang('wce.none')  + '</div>';
+								else if (ar['supplied_source'] == 'other')
 									info_text += ar['supplied_source_other'] + '</div>';
-								} else {
+								else
 									info_text += ar['supplied_source'] + '</div>';
-								}
 							} else {
 								if (ar['extent'] && ar['extent'] != null) {
 									info_text += '<div style="margin-top:10px">' + ed.getLang('wce.extent') + ': ' + ar['extent'] + ' ';
@@ -3671,11 +3675,11 @@
 
 			// Add gaps/*********/
 			ed.addCommand('mceAddGap', function() {
-				doWithDialog(ed, url, '/gap.htm', 800, 320, 1, true);
+				doWithDialog(ed, url, '/gap.htm', 900, 320, 1, true);
 			});
 			// Edit gaps and spacing
 			ed.addCommand('mceEditGap', function() {
-				doWithDialog(ed, url, '/gap.htm', 800, 320, 1, false);
+				doWithDialog(ed, url, '/gap.htm', 900, 320, 1, false);
 			});
 
 			ed.addCommand('mceAddGap_Shortcut', function() {

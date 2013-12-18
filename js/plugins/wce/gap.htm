@@ -92,6 +92,7 @@
                             <option value="na28">{#wce.na27}</option>
                             <option value="transcriber">{#wce.transcriber}</option>
                             <option value="tr">{#wce.TR}</option>
+							<option value="none">{#wce.none}</option>
                             <option value="other">{#wce.other}</option>
                         </select></td>
                         <td colspan="2">
@@ -216,26 +217,39 @@
 				document.gapinfo.extent_unspecified.disabled = false;
 				document.gapinfo.extent_part.disabled = false;
 			}
+			
+			document.gapinfo.extent.focus();
 
-			if (!ed.WCE_VAR.isc || (!add_new_wce_node && document.gapinfo.mark_as_supplied.checked == false)) { //real selection or edit mode
+
+			if (!ed.WCE_VAR.isc || !add_new_wce_node) { //real selection or edit mode
 				if (document.gapinfo.unit.options[1].selected == true || document.gapinfo.unit.options[2].selected == true) {// char or line
-					document.gapinfo.mark_as_supplied.checked = false;
 					document.gapinfo.mark_as_supplied.disabled = false;
-					document.gapinfo.supplied_source.disabled = false;
+					if (document.gapinfo.mark_as_supplied.checked == true) {
+						document.gapinfo.supplied_source.disabled = false;
+						document.gapinfo.supplied_source_other.disabled = false;
+					} else {
+						document.gapinfo.supplied_source.disabled = true;
+						document.gapinfo.supplied_source_other.disabled = true;
+					}
 				} else if (document.gapinfo.unit.options[3].selected == true || document.gapinfo.unit.options[4].selected == true) {//page or quire
 					document.gapinfo.mark_as_supplied.checked = false;
 					document.gapinfo.mark_as_supplied.disabled = true;
 					document.gapinfo.supplied_source.disabled = true;
 				} else {
 					document.gapinfo.mark_as_supplied.disabled = false;
-					document.gapinfo.supplied_source.disabled = false;
+					if (document.gapinfo.mark_as_supplied.checked == true) {
+						document.gapinfo.supplied_source.disabled = false;
+						document.gapinfo.supplied_source_other.disabled = false;
+					} else {
+						document.gapinfo.supplied_source.disabled = true;
+						document.gapinfo.supplied_source_other.disabled = true;
+					}
 				}
 			}
 		}
 
 		function setstatus_mark_as_supplied() {
 			if (document.gapinfo.mark_as_supplied.value == "supplied") {
-				alert("TEST");
 				document.gapinfo.mark_as_supplied.checked = true;
 				}
 		}
@@ -253,11 +267,8 @@
 				document.gapinfo.supplied_source_other.disabled = true;
 				document.getElementById('supplied_source_other').style.backgroundColor = "#CCCCCC";
 				document.gapinfo.unit.disabled = false;
-				/*document.getElementById('unit_other').style.backgroundColor = "white";
-				document.gapinfo.extent.disabled = false;
-				document.getElementById('extent').style.backgroundColor = "white";*/
 			}
-			checkstatus_supplied_source();
+			//checkstatus_supplied_source();
 			checkstatus_gapunit();
 		}
 
@@ -273,18 +284,26 @@
 					document.getElementById('supplied_source_other').style.backgroundColor = "white";
 				}
 			}
-			if (document.gapinfo.supplied_source.options[3].selected == true) {
+			
+			if (document.gapinfo.supplied_source.options[4].selected == true) {
 				document.gapinfo.supplied_source_other.disabled = false;
 				document.getElementById('supplied_source_other').style.backgroundColor = "white";
 			} else {
 				document.gapinfo.supplied_source_other.disabled = true;
 				document.getElementById('supplied_source_other').style.backgroundColor = "#CCCCCC";
 			}
+			
+			/*if (document.gapinfo.mark_as_supplied.checked == false) {
+				document.gapinfo.supplied_source.disabled = true;
+				document.gapinfo.supplied_source_other.disabled = true;
+				document.getElementById('supplied_source_other').style.backgroundColor = "#CCCCCC";
+			}*/
+			
 		}
 
 		function testOther() {
 
-			if (document.gapinfo.mark_as_supplied.checked && document.gapinfo.supplied_source.options[3].selected == true && document.getElementById('supplied_source_other').value == '') {
+			if (document.gapinfo.mark_as_supplied.checked && document.gapinfo.supplied_source.options[4].selected == true && document.getElementById('supplied_source_other').value == '') {
 				return false;
 			}
 			if (document.gapinfo.unit.options[10].selected == true && document.getElementById('unit_other').value == '') {
