@@ -2217,6 +2217,13 @@ function getTeiByHtml(inputString, args) {
 			$wrapNode=handleSupliedInAbbr($wrapNode, $newDoc.createDocumentFragment(), true);
 			//$wrapNode=handleSupliedInAbbr2($wrapNode);// both function do well
 		} 
+		//fixed #1772
+		if($wrapNode.getAttribute('removeText')){
+			while($wrapNode.firstChild){
+				$wrapNode.removeChild($wrapNode.firstChild);
+			}
+			$wrapNode.removeAttribute('removeText');
+		}
 		
 		//use node name and attribute
 		var newParent=$parent.cloneNode(false);
@@ -2884,12 +2891,47 @@ function getTeiByHtml(inputString, args) {
 			$htmlNode = removeBracketOfSupplied($htmlNode);
 		 	appendNodeInW($teiParent, $newNode, $htmlNode); 
 		} else {
-			if ($newNode.getAttribute('unit') == 'word') {
-				if ($htmlNode.firstChild.firstChild)
-					$htmlNode.firstChild.firstChild.nodeValue = ''; // remove content [...] etc. //TODO: This should be removeChild etc. Did not work.
-				appendNodeInW($teiParent, $newNode, $htmlNode); 
-			} else
-				$teiParent.appendChild($newNode);
+			var finished;
+			//if ($newNode.getAttribute('unit') == 'word') {
+			//	$newNode.setAttribute('removeText','true');
+			//	if ($htmlNode.firstChild.firstChild)
+			//		$htmlNode.firstChild.firstChild.nodeValue = ''; // remove content [...] etc. //TODO: This should be removeChild etc. Did not work.
+			//	appendNodeInW($teiParent, $newNode, $htmlNode); 
+			//	finished=1;
+			// } else
+			//
+			
+			//test if gap exist independent
+			if ($newNode.getAttribute('unit') != 'word') {
+			 	var pre=$htmlNode.previousSibling;
+			 	var next=$htmlNode.nextSibling;
+			 	 
+			 	while(pre){
+			 		if(pre.nodeName=='w'){
+			 			var lastAfter=pre.getAttribute('after');  
+			 			break;
+			 		}
+			 		pre=pre.lastChild;
+			 	}  
+			 	 
+			 	while(next){
+			 		if(next.nodeName=='w'){
+			 			var nextBefore=next.getAttribute('before');  
+			 			break;
+			 		}
+			 		next=next.firstChild;
+			 	} 
+			 	
+			 	if(((lastAfter && lastAfter=="1") || !lastAfter) && (!nextBefore || (nextBefore && nextBefore=="1"))){
+			 		$teiParent.appendChild($newNode);
+			 		finished=1;
+			 	} 		 	
+			 }
+			 
+			 if(!finished){// gap in <w>: in/before/after/ word fixed: #1772
+			 	$newNode.setAttribute('removeText','true');
+			 	appendNodeInW($teiParent, $newNode, $htmlNode); 
+			 }
 		}
 	 
 		return {
@@ -2949,6 +2991,7 @@ function getTeiByHtml(inputString, args) {
 		};
 		*/
 	};
+	
 	
 	/*
 	 * remove text "[" and "]" of <supplied>
