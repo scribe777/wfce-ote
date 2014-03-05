@@ -14,7 +14,7 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License
-    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+    along with OTE.  If not, see <http://www.gnu.org/licenses/>.
 
     Diese Datei ist Teil des Online-Transkriptions-Editor (OTE).
 
@@ -24,7 +24,7 @@
     veröffentlichten Version, weiterverbreiten und/oder modifizieren.
 
     OTE wird in der Hoffnung, dass es nützlich sein wird, aber
-    OHNE JEDE GEWÄHELEISTUNG, bereitgestellt; sogar ohne die implizite
+    OHNE JEDE GEWÄHRLEISTUNG, bereitgestellt; sogar ohne die implizite
     Gewährleistung der MARKTFÄHIGKEIT oder EIGNUNG FÜR EINEN BESTIMMTEN ZWECK.
     Siehe die GNU Lesser General Public License für weitere Details.
 
@@ -33,7 +33,7 @@
 */
 
 (function() {
-	var wfce_editor = "2013-12-19";
+	var wfce_editor = "v1.1 (March 2014)";
 
 	// Load plugin specific language pack
 	tinymce.PluginManager.requireLangPack('wce');
@@ -59,7 +59,8 @@
 			//c.endFormatHtml = '<span class="format_end">&rsaquo;</span>';
 
 			//blocked elements :If the Caret is inside, this will prohibit the key operation
-			c.blockedElements = new Array('gap', 'corr', 'book_number', 'chapter_number', 'verse_number', 'abbr', 'spaces', 'note', 'unclear', 'brea', 'paratext', 'pc');
+			c.blockedElements = new Array('gap', 'corr', 'lection_number', 'book_number', 
+				'chapter_number', 'verse_number', 'abbr', 'spaces', 'note', 'unclear', 'brea', 'paratext', 'pc');
  	 
 			// not blocked elements
 			// c.normalElemente = new Array('unclear');
@@ -229,7 +230,7 @@
 			var nodeName = node.nodeName;
 			if (nodeName && nodeName.toLowerCase() == 'span') {
 				// TODO
-				if (typeName == 'verse_number' || typeName == 'chapter_number' || typeName == 'book_number') {
+				if (typeName == 'verse_number' || typeName == 'chapter_number' || typeName == 'book_number' || typeName == 'lection_number') {
 					var className = node.className;
 					if (className) {
 						return className.indexOf(typeName) > -1;
@@ -1194,6 +1195,10 @@
 					}
 					break;
 				
+				case 'lection_number':
+					_disableAllControls(ed, true);
+					break;
+
 				case 'book_number':
 					_disableAllControls(ed, true);
 					break;
@@ -1967,6 +1972,9 @@
 						case 'book':
 							info_text = '<div>' + 'Book number' + '</div>';
 							break;
+						case 'lection':
+							info_text = '<div>' + 'Lection ' + ar['number'] + '</div>';
+							break;
 						default:
 							info_text = '';
 							break;
@@ -2354,7 +2362,7 @@
 				// keydown for insert letter
 				if (wcevar.isCaretAtNodeEnd && ek != 8 && ek != 46 && 
 					(wcevar.type == ed.WCE_CON.formatEnd || wcevar.type == 'chapter_number' 
-						|| wcevar.type === 'book_number' || wcevar.type == 'verse_number')) {
+						|| wcevar.type === 'book_number' || wcevar.type == 'verse_number'|| wcevar.type == 'lection_number')) {
 					//wenn selectednode in andere BlockElement
 					if (WCEUtils.isWceBE(ed, wcevar.selectedNode.parentNode.parentNode)) {
 						return stopEvent(ed, e);
@@ -3414,7 +3422,10 @@
 			});
 			
 			ed.addCommand('mceShowInfo', function() {
-				alert(ed.getLang('wce.menu_info')+wfce_editor);
+				window.open(url + "/changelog.htm","_blank",
+						"width=800,height=600,resizable=yes,status=no,"+
+						"menubar=no,location=no,scrollbars=yes,toolbar=no");
+				//alert(ed.getLang('wce.menu_info')+wfce_editor);
 			});
 
 			// add showHtmlByTei button
@@ -3548,7 +3559,7 @@
 					}
 					//verse chapter
 					wceClass = wceNode.getAttribute('class');
-					if (wceClass === 'verse_number' || wceClass == 'chapter_number' || wceClass == 'book_number') {
+					if (wceClass === 'verse_number' || wceClass == 'chapter_number' || wceClass == 'book_number' || wceClass == 'lection_number') {
 						return;
 					}
 

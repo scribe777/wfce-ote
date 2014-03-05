@@ -285,7 +285,7 @@ function getHtmlByTei(inputString) {
 			return;
 		if ($node.nodeType == 1 || $node.nodeType == 11) {
 			var cn = $node.getAttribute('class');
-			if (cn && (cn == 'verse_number' || cn == 'chapter_number' || cn == 'book_number')) {
+			if (cn && (cn == 'verse_number' || cn == 'chapter_number' || cn == 'book_number' || cn == 'lection_number')) {
 				return;
 			}
 		}
@@ -633,7 +633,12 @@ function getHtmlByTei(inputString) {
 		if (!divType)
 			return $htmlParent;
 
-		if (divType == 'book') {
+		if (divType == 'lection') {
+			var $newNode = $newDoc.createElement('span');
+			$newNode.setAttribute('class', 'lection_number');
+			$newNode.setAttribute('wce', '__t=lection_number&number=' + $teiNode.getAttribute('n'));
+			nodeAddText($newNode, 'Lec');
+		} else if (divType == 'book') {
 			var $newNode = $newDoc.createElement('span');
 			$newNode.setAttribute('class', 'book_number');
 			$newNode.setAttribute('wce', '__t=book_number');
@@ -1592,7 +1597,8 @@ function getTeiByHtml(inputString, args) {
 	var g_lineNumber = '';
 	//var g_wordNumber = '';
 
-	// node for te
+	// node for TEI
+	var g_lectionNode;
 	var g_bookNode;
 	var g_chapterNode;
 	var g_verseNode; 
@@ -2525,6 +2531,7 @@ function getTeiByHtml(inputString, args) {
 			return null;
 		}
 		var wceAttrValue, wceType, htmlNodeName, infoArr, arr;
+		var note = 1;
 
 		// If there is no special <div type="book"> element, the passed number from the Workspace is used.
 		// We check, if it is in the correct format.
@@ -2545,7 +2552,7 @@ function getTeiByHtml(inputString, args) {
 
 		// ******************* verse *******************
 		if (wceAttrValue != null && wceAttrValue.match(/verse_number/)) { 
-			if(wceAttrValue && !wceAttrValue.match(/partial/)){ //automatic set attriubte "part"
+			if(wceAttrValue && !wceAttrValue.match(/partial/)){ //automatic set attribute "part"
 				html2Tei_addAttributePartF($htmlNode);
 			}
 			var partial_index = -1;
@@ -2641,8 +2648,22 @@ function getTeiByHtml(inputString, args) {
 				if (g_bookNumber.length == 1)// add "0" if necessary
 					g_bookNumber = '0' + g_bookNumber;
 				g_bookNode.setAttribute('n', 'B' + g_bookNumber);
-				$newRoot.appendChild(g_bookNode);
+				if (g_lectionNode)
+					g_lectionNode.appendChild(g_bookNode);
+				else
+					$newRoot.appendChild(g_bookNode);
 				g_currentParentNode = g_bookNode;
+			}
+			return null;
+		} else if (wceAttrValue != null && wceAttrValue.match(/lection_number/)) {
+			var textNode = $htmlNode.firstChild;
+			if (textNode) {
+			    //textNode=textNode.firstChild;
+				g_lectionNode = $newDoc.createElement('div');
+				g_lectionNode.setAttribute('type', 'lection');
+				g_lectionNode.setAttribute('n', wceAttrValue.substring(wceAttrValue.lastIndexOf("=")+1));
+				$newRoot.appendChild(g_lectionNode);
+				g_currentParentNode = g_lectionNode;
 			}
 			return null;
 		} else {
@@ -3469,10 +3490,16 @@ function getTeiByHtml(inputString, args) {
 			}
 		}
 
-		// TODO: As long as there is no robust mechanism to set "-1", "-2", ... we have to "n" instead of "xml:id"
-		var xml_id = 'B' + g_bookNumber + 'K' + g_chapterNumber + 'V' + g_verseNumber + '-' + g_witValue;
-		$note.setAttribute('n', xml_id);
-
+		$lastNode = $teiParent.lastChild;
+		if ($lastNode)
+			var text = $lastNode.innerText || $lastNode.textContent;
+			if ($lastNode.nodeName === 'note' || ($lastNode.nodeName === 'w' && text === '')) //note is immediately preceded by another note
+			note++;
+		else 
+			note = 1;
+		var xml_id = 'B' + g_bookNumber + 'K' + g_chapterNumber + 'V' + g_verseNumber + '-' + g_witValue + '-' + note;
+		$note.setAttribute('xml:id', xml_id);
+		
 		// add <handshift/> if necessary
 		if (note_type_value === "changeOfHand") {
 			var $secNewNode = $newDoc.createElement('handshift');
@@ -3483,7 +3510,7 @@ function getTeiByHtml(inputString, args) {
 		nodeAddText($note, decodeURIComponent(arr['note_text'])); // add text to node
 		
 		/*23.10.2013 YG
-		// Note has to be moved after the current word; Caveat: If there is a break following the note, a special treatement has to be applied
+		// Note has to be moved after the current word; Caveat: If there is a break following the note, a special treatment has to be applied
 		if ($teiParent.nodeName == 'w') {
 			$teiParent = $teiParent.parentNode;
 			if ($htmlNode.nextSibling && $htmlNode.nextSibling.nodeType == 1

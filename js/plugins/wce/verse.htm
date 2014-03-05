@@ -14,7 +14,7 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License
-    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+    along with OTE.  If not, see <http://www.gnu.org/licenses/>.
 
     Diese Datei ist Teil des Online-Transkriptions-Editor (OTE).
 
@@ -24,7 +24,7 @@
     veröffentlichten Version, weiterverbreiten und/oder modifizieren.
 
     OTE wird in der Hoffnung, dass es nützlich sein wird, aber
-    OHNE JEDE GEWÄHELEISTUNG, bereitgestellt; sogar ohne die implizite
+    OHNE JEDE GEWÄHRLEISTUNG, bereitgestellt; sogar ohne die implizite
     Gewährleistung der MARKTFÄHIGKEIT oder EIGNUNG FÜR EINEN BESTIMMTEN ZWECK.
     Siehe die GNU Lesser General Public License für weitere Details.
 
@@ -63,6 +63,10 @@
 				<input type="radio" id="insertBookRadio" name="versemodify" onclick="canInsertBook();"/>{#wce.book_insert}&nbsp;&nbsp;&nbsp;
 				<input id="insertBookNumber" type="text" />
 			</div>
+			<div id="insertLectionDiv">
+				<input type="radio" id="insertLectionRadio" name="versemodify" onclick="canInsertLection();"/>{#wce.lection_insert}&nbsp;&nbsp;&nbsp;
+				<input id="insertLectionNumber" type="text" />
+			</div>
 		</div>
 		<div id="deleteVerseDiv" style="margin-top:10px">
 			<div>
@@ -81,6 +85,12 @@
 				<input type="radio" id="deleteBookRadio" onclick="canDeleteBook();" name="versemodify"/>{#wce.book_remove}
 			</div>
 			<fieldset style="border:1px solid #ccc;width:auto; height:auto; overflow-y:auto" id="bookList"></fieldset>
+		</div>
+		<div id="deleteLectionDiv" style="margin-top:10px">
+			<div>
+				<input type="radio" id="deleteLectionRadio" onclick="canDeleteLection();" name="versemodify"/>{#wce.lection_remove}
+			</div>
+			<fieldset style="border:1px solid #ccc;width:auto; height:auto; overflow-y:auto" id="lectionList"></fieldset>
 		</div>
 		<div class="mceActionPanel" style="margin-bottom:10px">
 			<input type="button" id="insert" name="insert" value="{#insert}"
@@ -106,9 +116,11 @@ var contentWithVerse;
 		$('#insertVerseNumber').focus();
 		$('#insertChapterNumber').attr('disabled','disabled');
 		$('#insertBookNumber').attr('disabled','disabled');
+		$('#insertLectionNumber').attr('disabled','disabled');
 		$('#verseList').attr('disabled','disabled');
 		$('#chapterList').attr('disabled','disabled');
 		$('#bookList').attr('disabled','disabled');
+		$('#lectionList').attr('disabled','disabled');
 	}
 	
 	function canInsertInscriptio(){
@@ -116,9 +128,11 @@ var contentWithVerse;
 		$('#insertVerseNumber').attr('disabled','disabled');
 		$('#insertChapterNumber').attr('disabled','disabled');
 		$('#insertBookNumber').attr('disabled','disabled');
+		$('#insertLectionNumber').attr('disabled','disabled');
 		$('#verseList').attr('disabled','disabled');
 		$('#chapterList').attr('disabled','disabled');
 		$('#bookList').attr('disabled','disabled');
+		$('#lectionList').attr('disabled','disabled');
 	}
 	
 	function canInsertSubscriptio(){
@@ -126,20 +140,36 @@ var contentWithVerse;
 		$('#insertVerseNumber').attr('disabled','disabled');
 		$('#insertChapterNumber').attr('disabled','disabled');
 		$('#insertBookNumber').attr('disabled','disabled');
+		$('#insertLectionNumber').attr('disabled','disabled');
+		$('#verseList').attr('disabled','disabled');
+		$('#chapterList').attr('disabled','disabled');
+		$('#bookList').attr('disabled','disabled');
+		$('#lectionList').attr('disabled','disabled');
+	}
+	
+	function canInsertLection(){
+		$('#insertLectionRadio').attr('checked','checked');
+		$('#insertLectionNumber').removeAttr('disabled'); 
+		$('#insertLectionNumber').focus();
+		$('#insertBookNumber').attr('disabled','disabled');
+		$('#insertChapterNumber').attr('disabled','disabled');
+		$('#insertVerseNumber').attr('disabled','disabled');
 		$('#verseList').attr('disabled','disabled');
 		$('#chapterList').attr('disabled','disabled');
 		$('#bookList').attr('disabled','disabled');
 	}
 	
 	function canInsertBook(){
-		$('#insertChapterBook').attr('checked','checked');
+		$('#insertBookRadio').attr('checked','checked');
 		$('#insertBookNumber').removeAttr('disabled'); 
 		$('#insertBookNumber').focus(); 
+		$('#insertLectionNumber').attr('disabled','disabled');
 		$('#insertChapterNumber').attr('disabled','disabled');
 		$('#insertVerseNumber').attr('disabled','disabled');
 		$('#verseList').attr('disabled','disabled');
 		$('#chapterList').attr('disabled','disabled');
 		$('#bookList').attr('disabled','disabled');
+		$('#lectionList').attr('disabled','disabled');
 	}
 		
 	function canInsertChapter(){
@@ -148,9 +178,11 @@ var contentWithVerse;
 		$('#insertChapterNumber').focus(); 
 		$('#insertVerseNumber').attr('disabled','disabled');
 		$('#insertBookNumber').attr('disabled','disabled');
+		$('#insertLectionNumber').attr('disabled','disabled');
 		$('#verseList').attr('disabled','disabled');
 		$('#chapterList').attr('disabled','disabled');
 		$('#bookList').attr('disabled','disabled');
+		$('#lectionList').attr('disabled','disabled');
 	}
 	
 	function canDeleteVerse(){
@@ -159,8 +191,10 @@ var contentWithVerse;
 		$('#insertVerseNumber').attr('disabled','disabled');
 		$('#insertChapterNumber').attr('disabled','disabled');
 		$('#insertBookNumber').attr('disabled','disabled');
+		$('#insertLectionNumber').attr('disabled','disabled');
 		$('#chapterList').attr('disabled','disabled');
 		$('#bookList').attr('disabled','disabled');
+		$('#lectionList').attr('disabled','disabled');
 	}
 	
 	function canDeleteChapter(){
@@ -169,8 +203,10 @@ var contentWithVerse;
 		$('#insertVerseNumber').attr('disabled','disabled');
 		$('#insertChapterNumber').attr('disabled','disabled');
 		$('#insertBookNumber').attr('disabled','disabled');
+		$('#insertLectionNumber').attr('disabled','disabled');
 		$('#verseList').attr('disabled','disabled');
 		$('#bookList').attr('disabled','disabled');
+		$('#lectionList').attr('disabled','disabled');
 	}
 	
 	function canDeleteBook(){
@@ -178,9 +214,23 @@ var contentWithVerse;
 		$('#bookList').removeAttr('disabled');
 		$('#insertVerseNumber').attr('disabled','disabled');
 		$('#insertChapterNumber').attr('disabled','disabled');
-		$('#inserBookNumber').attr('disabled','disabled');
+		$('#insertBookNumber').attr('disabled','disabled');
+		$('#insertLectionNumber').attr('disabled','disabled');
 		$('#verseList').attr('disabled','disabled');
 		$('#chapterList').attr('disabled','disabled');
+		$('#lectionList').attr('disabled','disabled');
+	}
+	
+	function canDeleteLection(){
+		$('#deleteLectionRadio').attr('checked','checked');
+		$('#lectionList').removeAttr('disabled');
+		$('#insertVerseNumber').attr('disabled','disabled');
+		$('#insertChapterNumber').attr('disabled','disabled');
+		$('#insertBookNumber').attr('disabled','disabled');
+		$('#insertLectionNumber').attr('disabled','disabled');
+		$('#verseList').attr('disabled','disabled');
+		$('#chapterList').attr('disabled','disabled');
+		$('#bookList').attr('disabled','disabled');
 	}
 	
 	function init() {
@@ -189,6 +239,7 @@ var contentWithVerse;
 		$('#verseList').html(getVerseList(contentWithVerse));
 		$('#chapterList').html(getChapterList(contentWithVerse));
 		$('#bookList').html(getBookList(contentWithVerse));
+		$('#lectionList').html(getLectionList(contentWithVerse));
 		if(wce_node){
 		   if(wce_node.nodeName.toLowerCase()=='span'){
 		       $('#insertDiv input').attr('disabled',true);
@@ -264,6 +315,30 @@ var contentWithVerse;
 		}	
 		return out;		
 	}
+	
+	function getLectionList(node){
+		var out="";
+		if(!node || node.nodeType != 1){
+			return out;
+		}
+		
+		var list=node.childNodes;
+		for(var i=0,len=list.length; i<len; i++){
+			var n=list[i];
+			if(n.nodeType==1){
+				out+=getLectionList(n); 
+			}
+		}
+		
+		var className=node.className;
+		if(className && className.match(/lection_number/)){
+			//var v=$.trim(node.innerHTML);
+			var v=$.trim(node.getAttribute('wce').substring(node.getAttribute('wce').lastIndexOf("=")+1));
+			if(v && v!='')
+				out+='<input type="checkbox" value="'+v+'">Lection '+v+'</input><br />'; 
+		}	
+		return out;		
+	}
 		
 	function update(){ 
 		if ($('#insertVerseRadio').attr('checked')){
@@ -291,6 +366,13 @@ var contentWithVerse;
 			newBookNr = newBookNr.replace(/\D/g,'');
 			if (newBookNr != ''){
 				ed.selection.setContent('<span class="book_number" wce="__t=book_number"> ' + newBookNr + '</span> ');
+			}
+			return;
+		} else if ($('#insertLectionRadio').attr('checked')){
+			var newLectionNr = $('#insertLectionNumber').val().trim();
+			//newLectionNr = newLectionNr.replace(/\D/g,'');
+			if (newLectionNr != ''){
+				ed.selection.setContent('<span class="lection_number" wce="__t=lection_number&__n=&number=' + newLectionNr + '"> ' + 'Lec' + '</span> ');
 			}
 			return;
 		} else if ($('#deleteVerseRadio').attr('checked')){
@@ -358,6 +440,28 @@ var contentWithVerse;
 						}
 						if (span.className.toLowerCase()=='book_number'){						
 							if (spanValue == bookNr)
+								$(span).remove();
+						}
+					}
+				}
+			}
+		} else if ($('#deleteLectionRadio').attr('checked')){
+			var lectionList=$('#lectionList').find('input:checkbox');
+			for (var i=0,len=lectionList.length; i<len; i++){ 
+				var cb=lectionList[i];
+				if ($(cb).attr('checked')){
+					var lectionNr=$(cb).val();				
+					var startNode=null,endNode=null;
+					var spanList=$(contentWithVerse).find('span');
+					// Loop through all <span> elements
+					for (var j=0,len2=spanList.length; j<len2; j++){
+						var span=spanList[j]; //actual <span>
+						if (!span.className){
+							continue;
+						}
+						var spanValue=span.getAttribute('wce');
+						if (span.className.toLowerCase()=='lection_number'){						
+							if (spanValue.substring(spanValue.lastIndexOf('=')+1) == lectionNr)
 								$(span).remove();
 						}
 					}

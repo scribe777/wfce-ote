@@ -14,7 +14,7 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License
-    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+    along with OTE.  If not, see <http://www.gnu.org/licenses/>.
 
     Diese Datei ist Teil des Online-Transkriptions-Editor (OTE).
 
@@ -24,7 +24,7 @@
     veröffentlichten Version, weiterverbreiten und/oder modifizieren.
 
     OTE wird in der Hoffnung, dass es nützlich sein wird, aber
-    OHNE JEDE GEWÄHELEISTUNG, bereitgestellt; sogar ohne die implizite
+    OHNE JEDE GEWÄHRLEISTUNG, bereitgestellt; sogar ohne die implizite
     Gewährleistung der MARKTFÄHIGKEIT oder EIGNUNG FÜR EINEN BESTIMMTEN ZWECK.
     Siehe die GNU Lesser General Public License für weitere Details.
 
@@ -277,6 +277,8 @@ tinyMCE.addI18n('en.wce',{
 	subscriptio_insert : 'Insert subscriptio',
 	book_insert : 'Insert book number: ',
 	book_remove : 'Remove the following book number(s):',
+	lection_insert : 'Insert lection number: ',
+	lection_remove : 'Remove the following lection(s):',
 	menu_add : 'Add',
 	menu_edit : 'Edit',
 	menu_delete : 'Delete',
@@ -348,6 +350,7 @@ tinyMCE.addI18n('en.wce',{
 	warning_deletion_inner_Node : 'This node has a parent node and can not be removed.\nPlease remove the Format of the parent node first.',
 	help : 'Help',
 	menu_info : 'This is version: ',
+	changelog : 'Changelog',
 	clipboard : 'To clipboard',
 	clipboard_note : 'Please press Ctrl+C (Cmd+C) for savely copying the XML to the clipboard.',
 });
