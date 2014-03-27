@@ -129,13 +129,40 @@ function getHtmlByTei(inputString) {
 				readAllChildrenOfTeiNode($newRoot, $c);
 			}
 		}
-
+		addSpaceBeforeVerse($newRoot);
 		// DOM to String
 		var str = xml2String($newRoot);
 		if (!str)
 			return '';
 		
 		return str;
+	};
+	
+	var addSpaceBeforeVerse =function($htmlNode){
+		if (!$htmlNode || ($htmlNode.nodeType!=1 && $htmlNode.nodeType!=11)){ //nodeType==11 from createDocumentFragment
+			return;	
+		}
+		var childList = $htmlNode.childNodes;
+		for (var i = 0, $c, l = childList.length; i < l; i++) {
+			$c = childList[i];
+			if (!$c) {
+				continue;
+			} else {
+				addSpaceBeforeVerse($c);
+			}
+		}
+		
+		var cn = $htmlNode.getAttribute('class'); 
+		if (cn && cn == 'verse_number') {
+			var pre=$htmlNode.previousSibling;
+			if(pre && pre.nodeType==3){
+				var preText=pre.nodeValue;
+				if(preText && !preText.match(/\s+$/)){ 
+					 pre.nodeValue=preText+' ';
+				}
+			}					
+		}		
+		
 	};
 	
 	//merge <w> which come from wceNodeInsideW
