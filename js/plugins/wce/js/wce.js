@@ -18,15 +18,15 @@
 
     Diese Datei ist Teil des Online-Transkriptions-Editor (OTE).
 
-    OTE ist Freie Software: Sie können es unter den Bedingungen
+    OTE ist Freie Software: Sie ké°Šnen es unter den Bedingungen
     der GNU Lesser General Public License, wie von der Free Software Foundation,
-    Version 2.1 der Lizenz oder (nach Ihrer Wahl) jeder späteren
-    veröffentlichten Version, weiterverbreiten und/oder modifizieren.
+    Version 2.1 der Lizenz oder (nach Ihrer Wahl) jeder spé‹eren
+    veré°‚fentlichten Version, weiterverbreiten und/oder modifizieren.
 
-    OTE wird in der Hoffnung, dass es nützlich sein wird, aber
-    OHNE JEDE GEWÄHRLEISTUNG, bereitgestellt; sogar ohne die implizite
-    Gewährleistung der MARKTFÄHIGKEIT oder EIGNUNG FÜR EINEN BESTIMMTEN ZWECK.
-    Siehe die GNU Lesser General Public License für weitere Details.
+    OTE wird in der Hoffnung, dass es né»·zlich sein wird, aber
+    OHNE JEDE GEWè…RLEISTUNG, bereitgestellt; sogar ohne die implizite
+    Gewé‹’rleistung der MARKTFè…IGKEIT oder EIGNUNG FèºŒ EINEN BESTIMMTEN ZWECK.
+    Siehe die GNU Lesser General Public License fé»µ weitere Details.
 
     Sie sollten eine Kopie der GNU Lesser General Public License zusammen mit diesem
     Programm erhalten haben. Wenn nicht, siehe <http://www.gnu.org/licenses/>.
@@ -309,6 +309,10 @@ function writeWceNodeInfo(val) {
 			case 'formatting_capitals':
 				//only for formatting_capitals needed
 				wceClass = ' class="formatting_capitals"';
+				break;
+				
+			case 'formatting_ornamentation_other': 
+				wceClass = ' class="formatting_ornamentation_other"';
 				break;
 
 			default:

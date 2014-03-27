@@ -883,7 +883,7 @@ function getHtmlByTei(inputString) {
 	 * <hi>
 	 */
 	var Tei2Html_hi = function($htmlParent, $teiNode) {
-		var className;
+		var className, wceValue;
 		var $newNode = $newDoc.createElement('span');
 		var rendValue = $teiNode.getAttribute('rend');
 		if (!rendValue) {
@@ -929,12 +929,18 @@ function getHtmlByTei(inputString) {
 			case 'displaced-other':
 				className = 'formatting_displaced-other';
 				break;
+				
+			default:
+				className = 'formatting_ornamentation_other';
+				wceValue='__t=formatting_ornamentation_other&__n=&formatting_ornamentation_other='+rendValue;
+				break;
 		}
 		if (!className)
 			return null;
 
 		$newNode.setAttribute('class', className);
-		$newNode.setAttribute('wce', '__t=' + className);
+		wceValue=wceValue?wceValue:'__t=' + className;
+		$newNode.setAttribute('wce', wceValue);
 		$newNode.setAttribute('wce_orig', getOriginalTextByTeiNode($teiNode));
 		addFormatElement($newNode);
 		$htmlParent.appendChild($newNode);
@@ -2887,6 +2893,9 @@ function getTeiByHtml(inputString, args) {
 				break;
 			case 'formatting_displaced-other':
 				formatting_rend = 'displaced-other';
+				break;
+			case 'formatting_ornamentation_other':
+				formatting_rend = arr['formatting_ornamentation_other'];
 				break;
 		}
 

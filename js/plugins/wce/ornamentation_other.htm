@@ -1,0 +1,41 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Other type of ornamentation</title>
+<script type="text/javascript" src="../../tiny_mce_popup.js"></script>
+<script type="text/javascript" src="../../jquery.js"></script>
+<script type="text/javascript" src="js/wce.js"></script>
+</head>
+
+<body id="table" style="display: none">
+	<form onsubmit="return false;" action="#" name="capitalsinfo">
+		<fieldset id="inputContainer"> 
+			<table border="0" cellpadding="4" cellspacing="0" width="100%">
+				<tr>
+					<td style="width:30%"><label id="formatting_ornamentation_other_label" for="formatting_ornamentation_other_height">Type of ornamentation</label></td>
+					<td style="width:68%"><input style="width:100%" id="formatting_ornamentation_other" name="formatting_ornamentation_other"
+						type="text" value=""/></td>
+				</tr>
+			</table>
+		</fieldset> 
+		<div class="mceActionPanel">
+			<input type="button"  id="insert" name="insert" value="{#insert}"
+				onclick="writeWceNodeInfo();" />
+			<input type="button" id="cancel" name="cancel" value="{#cancel}"
+				onclick="tinyMCEPopup.close();" />		</div>
+	</form>
+</body>
+<script type="text/javascript">
+	tinyMCEPopup.onInit.add(function(_ed){
+		ed=_ed;
+		setConstants(); 
+		init();
+	});	
+	
+	function init() {
+		comboBindReturnEvent('insert'); 
+		wceInfoInit('formatting_ornamentation_other');
+		readWceNodeInfo();
+	}
+</script>
+</html>

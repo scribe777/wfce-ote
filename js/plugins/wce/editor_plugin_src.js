@@ -1940,7 +1940,10 @@
 							}
 							break;
 						case 'formatting':
-							if (ar['capitals_height'] != null) {// output only if capitals
+							var foo=ar['formatting_ornamentation_other'];
+							if (foo != null) {//  another type of ornamentation
+								info_text = '<div>' + foo + '</div>';
+							}else if (ar['capitals_height'] != null) {// output only if capitals
 								info_text = '<div>' + ed.getLang('wce.menu_hl_capitals') + '</div><div style="margin-top:10px">' + ed.getLang('wce.capitals_height') + ': ' + ar['capitals_height'] + '</div>';
 							} else {// all other formatting
 								if (ar['__t'] === 'formatting_displaced-above')
@@ -2917,6 +2920,14 @@
 						 ed.execCommand('mceAdd_pc', '\u03A1\u0336');
 						 }
 						 });*/
+						
+						m.add({// Other
+							title : ed.getLang('wce.menu_hl_other'),
+							id : 'menu-decoration-other',
+							onclick : function() {
+								ed.execCommand('mceAdd_ornamentation_other');
+							}
+						});
 
 					});
 
@@ -3777,6 +3788,11 @@
 				} else {
 					ed.execCommand('mceAddNote');
 				}
+			});
+			
+			// Add Ornamentation  other /*********/
+			ed.addCommand('mceAdd_ornamentation_other', function() {
+				doWithDialog(ed, url, '/ornamentation_other.htm', 480, 320, 1, true);
 			});
 
 			// Add abbreviation/*********/
