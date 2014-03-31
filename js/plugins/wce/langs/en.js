@@ -349,8 +349,11 @@ tinyMCE.addI18n('en.wce',{
 	no_previous_hyphenation : 'Previous page ends with a complete word',
 	warning_deletion_inner_Node : 'This node has a parent node and can not be removed.\nPlease remove the Format of the parent node first.',
 	help : 'Help',
+	apply : 'Apply',
 	menu_info : 'This is version: ',
 	changelog : 'Changelog',
 	clipboard : 'To clipboard',
 	clipboard_note : 'Please press Ctrl+C (Cmd+C) for savely copying the XML to the clipboard.',
+	other_ornamentation : 'Type of ornamentation',
+	title_other_ornamentation : 'Other type of ornamentation',
 });

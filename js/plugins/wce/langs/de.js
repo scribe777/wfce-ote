@@ -297,8 +297,11 @@ tinyMCE.addI18n('de.wce',{
 	no_previous_hyphenation : 'Vorherige Seite endet mit einem vollständigen Wort',
 	warning_deletion_inner_Node : 'Dieser Knoten besitzt einen Elternknoten und kann daher nicht entfernt werden.\nBitte entfernen Sie zunächst die Formatierung des Elternknotens',
 	help : 'Hilfe',
+	apply : 'Anwenden',
 	menu_info : 'Dies ist Version: ',
 	changelog: 'Liste der Änderungen',
 	clipboard : 'Zwischenablage',
 	clipboard_note : 'Bitte nutzen Sie Ctrl+C bzw. Cmd+C, um das XML sicher in die Zwischenablage zu kopieren.',
+	other_ornamentation : 'Verzierungsart',
+	title_other_ornamentation : 'Andere Verzierung',
 });
