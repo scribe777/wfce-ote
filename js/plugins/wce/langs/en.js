@@ -106,6 +106,7 @@ tinyMCE.addI18n('en.wce',{
 	fw_gloss : "Gloss",
 	fw_stichoi: "Stichoi",
 	fw_isolated: "Isolated marginal note",
+	fw_andrew : "Andrew of Caesarea",
 	firsthand_reading : "First hand reading",
 	reading_title : "Please insert a reading",
 	reading_data : "Information about the reading",

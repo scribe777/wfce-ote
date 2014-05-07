@@ -1868,6 +1868,9 @@
 								case 'isolated':
 									info_text += ed.getLang('wce.fw_isolated');
 									break;
+								case 'andrew':
+									info_text += ed.getLang('wce.fw_andrew');
+									break;
 								default:
 									info_text += ar['fw_type_other'];
 							}

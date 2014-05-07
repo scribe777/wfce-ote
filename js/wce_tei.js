@@ -1282,7 +1282,7 @@ function getHtmlByTei(inputString) {
 				'n' : '&number=',
 				'rend' : '&paratext_alignment=',
 				'type' : {
-					'0' : '@commentary@ews@runTitle@chapNum@chapTitle@lectTitle@colophon@quireSig@AmmSec@EusCan@euthaliana@gloss@stichoi@pageNum',
+					'0' : '@commentary@ews@runTitle@chapNum@chapTitle@lectTitle@colophon@quireSig@AmmSec@EusCan@euthaliana@gloss@stichoi@pageNum@andrew',
 					'1' : '&fw_type=',
 					'2' : '&fw_type=other&fw_type_other='
 				}
@@ -3623,7 +3623,7 @@ function getTeiByHtml(inputString, args) {
 
 		if (fwType == 'commentary' || fwType == 'ews') {
 			newNodeName = 'note';
-		} else if (fwType == 'chapNum' || fwType == 'AmmSec' || fwType == 'EusCan' || fwType == 'stichoi') {
+		} else if (fwType == 'chapNum' || fwType == 'AmmSec' || fwType == 'EusCan' || fwType == 'stichoi' || fwType == 'andrew') {
 			newNodeName = 'num';
 		} else if (fwType == 'runTitle' || fwType == 'chapTitle' || fwType == 'lectTitle' || fwType == 'colophon' 
 			|| fwType == 'quireSig' || fwType == 'euthaliana' || fwType == 'gloss' || fwType == 'pageNum' || fwType == 'other') {
@@ -3643,7 +3643,7 @@ function getTeiByHtml(inputString, args) {
 		// n
 		// write attribute n only for certain values
 		var numberValue = arr['number'];
-		if (numberValue && (fwType == 'chapNum' || fwType == 'quireSig' || fwType == 'AmmSec' || fwType == 'EusCan' || fwType == 'stichoi')) {
+		if (numberValue && (fwType == 'chapNum' || fwType == 'quireSig' || fwType == 'AmmSec' || fwType == 'EusCan' || fwType == 'stichoi' || fwType == 'andrew')) {
 			$paratext.setAttribute('n', numberValue);
 		}
 

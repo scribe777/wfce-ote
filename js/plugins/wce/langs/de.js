@@ -103,6 +103,7 @@ tinyMCE.addI18n('de.wce',{
 	fw_gloss : "Glosse",
 	fw_stichoi: "Stichen",
 	fw_isolated: "Isolierte Randnotiz",
+	fw_andrew : "Andrew of Caesarea",
 	firsthand_reading : "Ursprüngliche Lesart",
 	reading_title : "Bitte Lesart einfügen",
 	reading_data : "Informationen über die Lesart ",

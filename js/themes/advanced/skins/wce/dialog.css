@@ -35,6 +35,9 @@
 @font-face{
   font-family: GentiumPlus;
     src: url(fonts/GentiumPlus-R.woff) format('woff'); /* should work for all recent browsers */
+	font-style: normal;
+}
+@font-face{
   font-family: GentiumPlus;
     src: url(fonts/GentiumPlus-I.woff) format('woff');	
 	font-style: italic;
