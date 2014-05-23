@@ -33,7 +33,7 @@
 */
 
 (function() {
-	var wfce_editor = "v1.1.1 (May 2014)";
+	var wfce_editor = "1.1.2 (2014-05-23)";
 
 	// Load plugin specific language pack
 	tinymce.PluginManager.requireLangPack('wce');
@@ -3711,12 +3711,12 @@
 				} else if (wceNode && wceAttr && wceAttr.match(/corr/)) {
 					_add_new_wce_node = false;
 				}
-				doWithDialog(ed, url, '/correction.htm', 800, 640, 1, _add_new_wce_node);
+				doWithDialog(ed, url, '/correction.htm', 825, 600, 1, _add_new_wce_node);
 			});
 
 			// Edit corrections
 			ed.addCommand('mceEditCorrection', function() {
-				doWithDialog(ed, url, '/correction.htm', 800, 640, 1, false);
+				doWithDialog(ed, url, '/correction.htm', 825, 600, 1, false);
 			});
 
 			ed.addCommand('mceAddCorrection_Shortcut', function() {

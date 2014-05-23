@@ -85,7 +85,7 @@
                             <td colspan="1">
 								<label id="firsthand_reading" name="firsthand_reading" style="color: green"></label>
 							</td>
-                            <td>
+                            <td colspan="2">
                             <input type="checkbox" name="blank_firsthand"
                             id="blank_firsthand" onclick="checkstatus_firsthand()">
                             {#wce.blank_firsthand} </td>
@@ -102,13 +102,13 @@
                                 <option value="corrector3">{#wce.corrector}3</option>
                                 <option value="other">{#wce.other}</option>
                             </select></td>
-                            <td>
+                            <td colspan="2">
                             <input id="corrector_name_other" name="corrector_name_other"
                             onkeyup="saveCurrCorrector(true);" type="text" value="" size="30" />
                             </td>
                         </tr>
                         <tr>
-                            <td>
+                            <td colspan="2">
                             <input type="checkbox" name="blank_correction"
                             id="blank_correction"
                             onclick="checkstatus_correction()">
@@ -135,7 +135,7 @@
                                 <option value="overwritten">{#wce.position_overwritten}</option>
                                 <option value="other">{#wce.other}</option>
                             </select></td>
-                            <td>
+                            <td colspan="2">
                             <input id="place_corr_other"
                             name="place_corr_other" type="text" value="" size="20"
                             maxlength="" class="required number min1 mceFocus" />
@@ -170,8 +170,6 @@
                                 <option value="I">{#wce.corr_partial_beginning}</option>
                                 <option value="F">{#wce.corr_partial_end}</option>
                             </select></td>
-                        </tr>
-                        <tr>
                             <td><label id="partial_label" for="partial">{#wce.correction_partial}</label></td>
                             <td>
                             <select id="partial" name="partial">
@@ -180,8 +178,8 @@
                                 <option value="F">{#wce.corr_partial_end}</option>
                             </select></td>
                         </tr>
-                        <tr>
-                            <td><label id="corrector_text_label" for="corrector_text">{#wce.corrector_text}</label></td>
+						<tr>
+                            <td colspan="3"><label id="corrector_text_label" for="corrector_text">{#wce.corrector_text}</label></td>
                         </tr>
                         <tr>
                             <td colspan="3">
@@ -197,7 +195,6 @@
                     onclick="$('#corr_reset').click();saveCurrCorrector();"
                     value="Reset" />
                 </div>
-
             </fieldset>
             <div class="mceActionPanel" id="mceActionPanel">
                 <input type="button" id="insert" name="insert" value="{#insert}"

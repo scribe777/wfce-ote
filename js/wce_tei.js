@@ -3527,11 +3527,13 @@ function getTeiByHtml(inputString, args) {
 		}
 
 		$lastNode = $teiParent.lastChild;
-		if ($lastNode)
+		if ($lastNode) {
 			var text = $lastNode.innerText || $lastNode.textContent;
 			if ($lastNode.nodeName === 'note' || ($lastNode.nodeName === 'w' && text === '')) //note is immediately preceded by another note
-			note++;
-		else 
+				note++;
+			else 
+				note = 1;
+		} else // this is important for notes being inserted directly after the verse number
 			note = 1;
 		var xml_id = 'B' + g_bookNumber + 'K' + g_chapterNumber + 'V' + g_verseNumber + '-' + g_witValue + '-' + note;
 		$note.setAttribute('xml:id', xml_id);
