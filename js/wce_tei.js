@@ -2895,7 +2895,7 @@ function getTeiByHtml(inputString, args) {
 				formatting_rend = 'displaced-other';
 				break;
 			case 'formatting_ornamentation_other':
-				formatting_rend = arr['formatting_ornamentation_other'];
+				formatting_rend = decodeURIComponent(arr['formatting_ornamentation_other']);
 				break;
 		}
 
