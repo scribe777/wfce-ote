@@ -2560,7 +2560,7 @@ function getTeiByHtml(inputString, args) {
 	 * read html-node, create tei-node and return
 	 */
 	var getTeiNodeByHtmlNode = function($teiParent, $htmlNode) {
-		if($htmlNode.nodeType !=1 && $htmlNode.nodeType != 11){ 
+		if ($htmlNode.nodeType != 1 && $htmlNode.nodeType != 11) { 
 			return null;
 		}
 		var wceAttrValue, wceType, htmlNodeName, infoArr, arr;
@@ -3529,7 +3529,8 @@ function getTeiByHtml(inputString, args) {
 		$lastNode = $teiParent.lastChild;
 		if ($lastNode) {
 			var text = $lastNode.innerText || $lastNode.textContent;
-			if ($lastNode.nodeName === 'note' || ($lastNode.nodeName === 'w' && text === '')) //note is immediately preceded by another note
+			if ($lastNode.nodeName === 'note' 
+				|| ($lastNode.nodeName === 'w' && text === '')) //note is immediately preceded by another note
 				note++;
 			else 
 				note = 1;

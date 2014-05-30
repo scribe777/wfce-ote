@@ -3774,11 +3774,11 @@
 
 			// Add note/*********/
 			ed.addCommand('mceAddNote', function() {
-				doWithDialog(ed, url, '/note.htm', 480, 380, 1, true);
+				doWithDialog(ed, url, '/note.htm', 640, 380, 1, true);
 			});
 			// Edit note
 			ed.addCommand('mceEditNote', function() {
-				doWithDialog(ed, url, '/note.htm', 480, 380, 1, false);
+				doWithDialog(ed, url, '/note.htm', 640, 380, 1, false);
 			});
 
 			ed.addCommand('mceAddNote_Shortcut', function() {
