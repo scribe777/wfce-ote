@@ -575,8 +575,6 @@ function getHtmlByTei(inputString) {
 				}
 			}
 			textValue = unclear_text;
-		} else {
-			textValue;
 		}
 
 		nodeAddText($htmlParent, textValue);
@@ -772,6 +770,7 @@ function getHtmlByTei(inputString) {
 		}
 		
 		if ($teiNode.getAttribute("reason") === 'witnessEnd') {// Witness end
+			nodeAddText($htmlParent, ' '); //add space before <span>
 			$newNode.setAttribute('class', 'witnessend');
 			wceAttr = '__t=gap&__n=&original_gap_text=&gap_reason=witnessEnd&unit=&unit_other=&extent=&supplied_source=na28&supplied_source_other=&insert=Insert&cancel=Cancel';
 			$newNode.setAttribute('wce', wceAttr);
@@ -1656,6 +1655,9 @@ function getTeiByHtml(inputString, args) {
 	var w_end='}@@}';
 	var w_start_s='{@@@{';
 	var w_end_s='}@@@}';
+	
+	var isSeg = false;
+	var note = 1;
 	
 	//var global_id=0; //only for test
 	/*
@@ -2564,8 +2566,8 @@ function getTeiByHtml(inputString, args) {
 			return null;
 		}
 		var wceAttrValue, wceType, htmlNodeName, infoArr, arr;
-		var note = 1;
-
+		//var note = 1;
+		
 		// If there is no special <div type="book"> element, the passed number from the Workspace is used.
 		// We check, if it is in the correct format.
 		if (g_bookNumber.length == 1) {// add "0"
@@ -3181,6 +3183,7 @@ function getTeiByHtml(inputString, args) {
 
 			if (place === 'pageleft' || place === 'pageright' || place === 'pagetop' || place === 'pagebottom') {//define <seg> element for marginal material
 				$seg = $newDoc.createElement('seg');
+				isSeg = true;
 				$seg.setAttribute('type', 'margin');
 				$seg.setAttribute('subtype', place);
 				$seg.setAttribute('n', '@' + 'P' + g_pageNumber + '-' + g_witValue);
@@ -3190,6 +3193,7 @@ function getTeiByHtml(inputString, args) {
 				$rdg.appendChild($seg);
 			} else if (place === 'coltop' || place === 'colbottom' || place === 'colleft' || place === 'colright') {
 				$seg = $newDoc.createElement('seg');
+				isSeg = true;
 				$seg.setAttribute('type', 'margin');
 				$seg.setAttribute('subtype', place);
 				$seg.setAttribute('n', '@' + 'P' + g_pageNumber + 'C' + g_columnNumber + '-' + g_witValue);
@@ -3199,6 +3203,7 @@ function getTeiByHtml(inputString, args) {
 				$rdg.appendChild($seg);
 			} else if (place === 'lineleft' || place === 'lineright') {
 				$seg = $newDoc.createElement('seg');
+				isSeg = true;
 				$seg.setAttribute('type', 'margin');
 				$seg.setAttribute('subtype', place);
 				$seg.setAttribute('n', '@' + 'P' + g_pageNumber + 'C' + g_columnNumber + 'L' + g_lineNumber + '-' + g_witValue);
@@ -3208,6 +3213,7 @@ function getTeiByHtml(inputString, args) {
 				$rdg.appendChild($seg);
 			} else if (place === 'overwritten' || place === 'above' || place === 'below' || place === 'here') {
 				$seg = $newDoc.createElement('seg');
+				isSeg = true;
 				$seg.setAttribute('type', 'line');
 				$seg.setAttribute('subtype', place);
 				$seg.setAttribute('n', '@' + 'P' + g_pageNumber + 'C' + g_columnNumber + 'L' + g_lineNumber + '-' + g_witValue);
@@ -3217,6 +3223,7 @@ function getTeiByHtml(inputString, args) {
 				$rdg.appendChild($seg);
 			} else if (place) {//other
 				$seg = $newDoc.createElement('seg');
+				isSeg = true;
 				$seg.setAttribute('type', 'other');
 				$seg.setAttribute('subtype', arr['place_corr_other']);
 				$seg.setAttribute('n', '@' + 'P' + g_pageNumber + 'C' + g_columnNumber + 'L' + g_lineNumber + '-' + g_witValue);
@@ -3233,7 +3240,7 @@ function getTeiByHtml(inputString, args) {
 						html2Tei_correctionAddW($rdg, corrector_text);
 				}
 			}
-
+			isSeg = false;
 			$app.appendChild($rdg);
 		}
 	 
@@ -3262,7 +3269,8 @@ function getTeiByHtml(inputString, args) {
 	//text from editor in editor
 	var html2Tei_paratextAddChildren = function($newNode, text) {
 		html2Tei_correctionAddW($newNode, text);
-		//html2Tei_paratextRemoveWNode($newNode);
+		if ($newNode.nodeName === 'num')
+			html2Tei_paratextRemoveWNode($newNode);
 		return;
 	};
 	
@@ -3288,7 +3296,7 @@ function getTeiByHtml(inputString, args) {
 				}
 				w.parentNode.removeChild(w);
 				
-			}else{
+			} else {
 				html2Tei_paratextRemoveWNode(w);
 			} 
 		} 
@@ -3334,7 +3342,8 @@ function getTeiByHtml(inputString, args) {
 			switch (break_type) {
 				case 'lb':
 					g_lineNumber = arr['number'];
-					$newNode.setAttribute('n', g_lineNumber);
+					if (!isSeg)
+						$newNode.setAttribute('n', g_lineNumber);
 					if (arr['lb_alignment'] != '') {
 						$newNode.setAttribute('rend', arr['lb_alignment']);
 					}
@@ -3342,7 +3351,8 @@ function getTeiByHtml(inputString, args) {
 					break;
 				case 'cb':
 					g_columnNumber = arr['number'];
-					$newNode.setAttribute('n', g_columnNumber);
+					if (!isSeg)
+						$newNode.setAttribute('n', g_columnNumber);
 					xml_id = 'P' + g_pageNumber_id + 'C' + g_columnNumber + '-' + g_witValue;
 					break;
 				case 'pb':
@@ -3353,14 +3363,16 @@ function getTeiByHtml(inputString, args) {
 						g_pageNumber = arr['number'] + arr['rv'] + arr['fibre_type'];
 						g_pageNumber = addArrows(g_pageNumber);
 						g_pageNumber_id = removeArrows(g_pageNumber);
-						$newNode.setAttribute('n', g_pageNumber);
+						if (!isSeg)
+							$newNode.setAttribute('n', g_pageNumber);
 						$newNode.setAttribute('type', 'folio');
 					} else {
 						// page
 						g_pageNumber = arr['number'] + arr['fibre_type'];
 						g_pageNumber = addArrows(g_pageNumber);
 						g_pageNumber_id = removeArrows(g_pageNumber);
-						$newNode.setAttribute('n', g_pageNumber);
+						if (!isSeg)
+							$newNode.setAttribute('n', g_pageNumber);
 						$newNode.setAttribute('type', 'page');
 					}
 					//}
@@ -3371,7 +3383,8 @@ function getTeiByHtml(inputString, args) {
 					xml_id = 'P' + g_pageNumber_id + '-' + g_witValue;
 					break;
 			}
-			$newNode.setAttribute("xml:id", xml_id);
+			if (!isSeg) //no ID for breaks inside <seg>
+				$newNode.setAttribute("xml:id", xml_id);
 			//IE gets confused here
 			if (arr['hasBreak'] === 'yes') {
 				$newNode.setAttribute('break', 'no'); //This has to be "no" due to the TEI standard
@@ -3623,7 +3636,7 @@ function getTeiByHtml(inputString, args) {
 	// <fw type="STRING" place="STRING" rend="align(STRING)">...</fw> <num type="STRING" n="STRING" place="STRING" rend="align(STRING)">...</num> <div type="incipit"><ab>...</ab></div> <div type="explicit"><ab>...</ab></div>
 	var html2Tei_paratext = function(arr, $teiParent, $htmlNode) {
 		var newNodeName, fwType = arr['fw_type'];
-
+			
 		if (fwType == 'commentary' || fwType == 'ews') {
 			newNodeName = 'note';
 		} else if (fwType == 'chapNum' || fwType == 'AmmSec' || fwType == 'EusCan' || fwType == 'stichoi' || fwType == 'andrew') {
@@ -3643,6 +3656,7 @@ function getTeiByHtml(inputString, args) {
 			else//no value for covered lines given
 				$paratext.setAttribute('rend', '0');
 		}
+		
 		// n
 		// write attribute n only for certain values
 		var numberValue = arr['number'];
@@ -3657,12 +3671,13 @@ function getTeiByHtml(inputString, args) {
 		}
 
 		var rendValue = arr['paratext_alignment'];
-		if (fwType != 'commentary' && fwType != 'ews' && rendValue && rendValue != '') {
+		if (fwType != 'commentary' && fwType != 'ews' && 
+			fwType != 'isolated' && rendValue && rendValue != '') {
 			$paratext.setAttribute('rend', rendValue);
 		}
-
+		
 		if (fwType == 'commentary') {
-			nodeAddText($paratext, 'Untranscribed commentary text');
+			nodeAddText($paratext, "Untranscribed commentary text");
 			$teiParent.appendChild($paratext);
 		} else if (fwType == 'ews') {
 			$paratext.setAttribute('type', 'editorial');
@@ -3675,6 +3690,7 @@ function getTeiByHtml(inputString, args) {
 			$teiParent.appendChild($gap);
 		} else if (fwType == 'isolated') {
 			var $seg;
+			isSeg = true;
 			if (placeValue === 'pageleft' || placeValue === 'pageright' || placeValue === 'pagetop' || placeValue === 'pagebottom') {//define <seg> element for marginal material
 				$seg = $newDoc.createElement('seg');
 				$seg.setAttribute('type', 'margin');
@@ -3699,14 +3715,15 @@ function getTeiByHtml(inputString, args) {
 				$seg.setAttribute('subtype', placeValue);
 				html2Tei_paratextAddChildren($seg, arr['marginals_text']);			
 				$teiParent.appendChild($seg);
-			} else {// other
+			} else { // other
 				$seg = $newDoc.createElement('seg');
 				$seg.setAttribute('type', 'other');
 				$seg.setAttribute('subtype', placeValue);
 				html2Tei_paratextAddChildren($seg, arr['marginals_text']);			
 				$teiParent.appendChild($seg);
 			}
-		} else {// only if not commentary nor ews nor isolated
+		} else { // only if not commentary nor ews nor isolated
+			isSeg = true;
 			html2Tei_paratextAddChildren($paratext, arr['marginals_text']);			
 			//nodeAddText($paratext, decodeURIComponent(arr['marginals_text']));
 			var $seg;
@@ -3749,6 +3766,7 @@ function getTeiByHtml(inputString, args) {
 				$teiParent.appendChild($seg);
 			}
 		}
+		isSeg = false;
 		return null;
 	};
 

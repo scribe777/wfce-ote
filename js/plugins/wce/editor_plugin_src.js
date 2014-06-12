@@ -33,7 +33,7 @@
 */
 
 (function() {
-	var wfce_editor = "1.1.2 (2014-05-23)";
+	var wfce_editor = "1.2 (2014-06-11)";
 
 	// Load plugin specific language pack
 	tinymce.PluginManager.requireLangPack('wce');
@@ -1897,6 +1897,8 @@
 								info_text += ed.getLang('wce.infotext_illegible') + '</div>';
 							} else if (ar['gap_reason'] == 'inferredPage') {
 								info_text += ed.getLang('wce.inferredPage') + '</div>';
+							} else if (ar['gap_reason'] == 'witnessEnd') {
+								info_text += ed.getLang('wce.witnessEnd') + '</div>';
 							} else {
 								info_text += ed.getLang('wce.unspecified') + '</div>';
 							}
