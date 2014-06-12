@@ -40,11 +40,11 @@ var wceNodeInsideW=["hi","unclear","gap","supplied", "w", "abbr", "ex"];//TODO: 
 
 function Fehlerbehandlung(Nachricht, Datei, Zeile) {
 	Fehler = "Error:\n" + Nachricht + "\n" + Datei + "\n" + Zeile;
-	zeigeFehler();
+	zeigeFehler(Fehler);
 	return true;
 }
 
-function zeigeFehler() {
+function zeigeFehler(Fehler) {
 	alert(Fehler);
 }
 
@@ -308,6 +308,7 @@ function getHtmlByTei(inputString) {
 	 * add format_start format end into wce element
 	 */
 	var addFormatElement = function($node) {
+		var $firstChild;
 		if (!$node)
 			return;
 		if ($node.nodeType == 1 || $node.nodeType == 11) {
@@ -1087,39 +1088,23 @@ function getHtmlByTei(inputString) {
 		//
 		var $newNode = $newDoc.createElement('span');
 		$newNode.setAttribute('class', 'brea');
-		var _id=$teiNode.getAttribute('id');
-		if(_id){
-			$newNode.setAttribute('id',_id);
+		var _id = $teiNode.getAttribute('id');
+		if (_id) {
+			$newNode.setAttribute('id', _id);
 		}
 
-		/*wce="__t=brea&amp;__n=&amp;hasBreak=no&amp;
-		break_type=lb&amp;number=2&amp;pb_type=&amp;fibre_type=&amp;
-		lb_alignment=centerJust&amp;facs=&amp;page_number=&amp;
-		running_title=&amp;paratext_position=pagetop&amp;paratext_position_other=">
-		*/
 		// For all types of breaks
 		var wceAttr = '__t=brea&__n=&break_type=' + type + '';
 
-		//test, if the textNode before break with endspace, if yes, delete
-		/*$preNode = $teiNode.previousSibling;
-		 if ($preNode && $preNode.nodeType == 1 && $preNode.nodeName == 'w') {
-		 $preNode = $preNode.firstChild;
-		 if ($preNode && $preNode.nodeType == 3) {
-		 $preText = $preNode.nodeValue;
-		 if ($preText && endHasSpace($preText)) {
-		 $preText = $preText.replace(/\s+$/, '');
-		 $preNode.nodeValue = $preText;
-		 }
-		 }
-		 }*/ 
 		switch (type) {
 			case 'pb':
 				// page break
 				//pb n="2rx" type="folio" facs="edfwe" xml:id="P2rx-0" break="no"/><fw type="runTitle"
 				var number = $teiNode.getAttribute('n');
-				if (number) {
+				if (number)
 					number = removeArrows(number); // Replace arrows for fibre type by "x" and "y" resp. => use for "xml:id"
-				}
+				else
+					number = '';
 				var page_type = $teiNode.getAttribute('type');
 				if (page_type) {
 				if (page_type == "page") {
@@ -1147,13 +1132,14 @@ function getHtmlByTei(inputString) {
 				if ($teiNode.getAttribute('n')) {
 					var n = parseInt($teiNode.getAttribute('n'));
 					wceAttr += n;
+					if (type === 'lb')
+						g_lineNumber = n;
+					else if (type === 'cb')
+						g_columnNumber = n;
+					else //qb
+						g_quireNumber = n;
 				}
-				if (type === 'lb')
-					g_lineNumber = n;
-				else if (type === 'cb')
-					g_columnNumber = n;
-				else //qb
-					g_quireNumber = n;
+				
 				wceAttr += '&lb_alignment=';
 				if ($teiNode.getAttribute('rend'))
 					wceAttr += $teiNode.getAttribute('rend');
@@ -1171,28 +1157,28 @@ function getHtmlByTei(inputString) {
 		}
 
 		$newNode.setAttribute('wce', wceAttr);
-
+		
 		switch (type) {
 			case 'qb':
-				$br = $newDoc.createElement('br');
+				var $br = $newDoc.createElement('br');
 				$newNode.appendChild($br);
 				nodeAddText($newNode, 'QB');
 				break;
 			case 'pb':
 				// page break
-				$br = $newDoc.createElement('br');
+				var $br = $newDoc.createElement('br');
 				$newNode.appendChild($br);
 				nodeAddText($newNode, 'PB');
 				break;
 			case 'cb':
 				// page break
-				$br = $newDoc.createElement('br');
+				var $br = $newDoc.createElement('br');
 				$newNode.appendChild($br);
 				nodeAddText($newNode, 'CB');
 				break;
 			case 'lb':
 				// line break
-				$br = $newDoc.createElement('br');
+				var $br = $newDoc.createElement('br');
 				$newNode.appendChild($br);
 				if ($teiNode.getAttribute("rend") && $teiNode.getAttribute("rend") === "indent")
 					nodeAddText($newNode, '\u21B5\u2192');
@@ -1206,16 +1192,16 @@ function getHtmlByTei(inputString) {
 				if (!hasBreak) {
 					//test previous pb/qb/cb;
 					var pre=$teiNode.previousSibling;
-					while(pre){
-						if(pre.nodeType!=3){
-							if(pre.getAttribute('break')&& pre.getAttribute('break')=='no'){
+					while (pre) {
+						if (pre.nodeType!=3) {
+							if (pre.getAttribute('break') && pre.getAttribute('break') == 'no') {
 							hasBreak=true;
 							break;
 							}
 						}
 						pre=pre.previousSibling;
 					}
-					if(!hasBreak){
+					if (!hasBreak) {
 						var $nextNode = $teiNode.nextSibling;
 						if ($nextNode && $nextNode.nodeType == 3) {
 							var nextText = $nextNode.nodeValue;
@@ -1880,8 +1866,8 @@ function getTeiByHtml(inputString, args) {
 		var toAppend=new Array();
 		var startNode; 
 		while (curr) {
-			tempspace=null;
-			next=curr.nextSibling; 
+			var tempspace = null;
+			next = curr.nextSibling; 
 			if (compareNodes(curr, next)) {
 				if (!startNode) {
 					startNode=curr;
@@ -1892,7 +1878,7 @@ function getTeiByHtml(inputString, args) {
 				startNode=null;
 				toAppend=new Array();	
 			}
-			curr=next;
+			curr = next;
 		}
 		if (startNode) {
 			html2Tei_addNodeArrayToNode(startNode,toAppend);	
@@ -3386,7 +3372,7 @@ function getTeiByHtml(inputString, args) {
 			if (!isSeg) //no ID for breaks inside <seg>
 				$newNode.setAttribute("xml:id", xml_id);
 			//IE gets confused here
-			if (arr['hasBreak'] === 'yes') {
+			if (arr['hasBreak'] && arr['hasBreak'] === 'yes') {
 				$newNode.setAttribute('break', 'no'); //This has to be "no" due to the TEI standard
 			}
 		}

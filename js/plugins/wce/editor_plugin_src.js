@@ -613,7 +613,7 @@
 
 			var wceClass = 'class="brea"', wceAttr;
 
-			//how many member hat a group
+			//how many member does a group have
 			var groupCount;
 			var str = '';
 			var v = ed.WCE_VAR;

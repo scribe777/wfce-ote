@@ -149,9 +149,10 @@
 	var marginals_text_editor;
 	
 	tinyMCEPopup.onInit.add(function(_ed) {
-		ed=_ed;
+		ed = _ed;
 		setConstants(); 
 		var timeout;
+		
 		marginals_text_editor = new tinymce.Editor('marginals_text',{
 			mode : "textareas", 
 			theme : "advanced",

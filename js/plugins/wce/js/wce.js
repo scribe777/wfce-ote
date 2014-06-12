@@ -18,15 +18,15 @@
 
     Diese Datei ist Teil des Online-Transkriptions-Editor (OTE).
 
-    OTE ist Freie Software: Sie k鰊nen es unter den Bedingungen
+    OTE ist Freie Software: Sie können es unter den Bedingungen
     der GNU Lesser General Public License, wie von der Free Software Foundation,
-    Version 2.1 der Lizenz oder (nach Ihrer Wahl) jeder sp鋞eren
-    ver鰂fentlichten Version, weiterverbreiten und/oder modifizieren.
+    Version 2.1 der Lizenz oder (nach Ihrer Wahl) jeder späteren
+    veröffentlichten Version, weiterverbreiten und/oder modifizieren.
 
-    OTE wird in der Hoffnung, dass es n黷zlich sein wird, aber
-    OHNE JEDE GEW腍RLEISTUNG, bereitgestellt; sogar ohne die implizite
-    Gew鋒rleistung der MARKTF腍IGKEIT oder EIGNUNG F躌 EINEN BESTIMMTEN ZWECK.
-    Siehe die GNU Lesser General Public License f黵 weitere Details.
+    OTE wird in der Hoffnung, dass es nüzlich sein wird, aber
+    OHNE JEDE GEWÄHRLEISTUNG, bereitgestellt; sogar ohne die implizite
+    Gewährleistung der MARKTFÄHIGKEIT oder EIGNUNG FÜR EINEN BESTIMMTEN ZWECK.
+    Siehe die GNU Lesser General Public License für weitere Details.
 
     Sie sollten eine Kopie der GNU Lesser General Public License zusammen mit diesem
     Programm erhalten haben. Wenn nicht, siehe <http://www.gnu.org/licenses/>.
@@ -129,7 +129,7 @@ function readWceNodeInfo() {
  *            type of wce node
  */
 function writeWceNodeInfo(val) {
-	if ( typeof wce_type == 'undefined') {
+	if (typeof wce_type == 'undefined') {
 		alert('wce_type error');
 		return;
 	}
@@ -237,7 +237,7 @@ function writeWceNodeInfo(val) {
 				if (break_type) {
 					new_content = wceUtils.getBreakHtml(ed, break_type, break_lbpos, break_indention, 'wce="' + newWceAttr + '"', null);
 				} else {
-					new_content = 'Error:test';
+					new_content = 'Error:test'; //TODO: Add error message
 				}
 				break;
 
