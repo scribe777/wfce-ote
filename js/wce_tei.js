@@ -540,7 +540,7 @@ function getHtmlByTei(inputString) {
 				continue;
 			}
 
-			if ( typeof obj == 'string') {
+			if (typeof obj == 'string') {
 				wceAttr += obj + attrValue;
 			} else if ( typeof obj == 'object') {
 				if (obj['0'].indexOf('@' + attrValue) > -1) {
@@ -610,7 +610,30 @@ function getHtmlByTei(inputString) {
 	var Tei2Html_ex = function($htmlParent, $teiNode) {
 		var $newNode = $newDoc.createElement('span');
 		$newNode.setAttribute('class', 'part_abbr');
-		$newNode.setAttribute('wce', '__t=part_abbr');
+		var wceAttr = '__t=part_abbr&__n=';
+		var rend = $teiNode.getAttribute('rend');
+		if (rend) {
+			switch (rend) {
+				case '̅': 
+				case 'ę':
+				case '÷':
+				case 'ƕ':
+				case '⧺':
+				case 'ə':
+				case '&et;':
+				case 'ϗ':
+				case '⁊':
+				case '∸':
+					wceAttr += '&exp_rend_other=&exp_rend=';
+					break;
+				default:
+					wceAttr += '&exp_rend=other&exp_rend_other='; 
+			}
+			wceAttr += encodeURIComponent(rend);
+		} else {
+			wceAttr += '&exp_rend=&exp_rend_other='
+		}
+		$newNode.setAttribute('wce', wceAttr);
 		addFormatElement($newNode);
 		$htmlParent.appendChild($newNode);
 		return $newNode;
@@ -841,10 +864,14 @@ function getHtmlByTei(inputString) {
 						nodeAddText($newNode, '[...]');
 				} else if (wceAttr.indexOf('unit=line') > -1) {
 					// TODO: numbering
-					for (var i = 0; i < $teiNode.getAttribute('extent'); i++) {
-						$br = $newDoc.createElement('br');
-						$newNode.appendChild($br);
-						nodeAddText($newNode, '\u21B5[...]');
+					if ($teiNode.getAttribute('extent') == 'part' || $teiNode.getAttribute('extent') == 'unspecified')
+						nodeAddText($newNode, '[...]');
+					else {
+						for (var i = 0; i < $teiNode.getAttribute('extent'); i++) {
+							$br = $newDoc.createElement('br');
+							$newNode.appendChild($br);
+							nodeAddText($newNode, '\u21B5[...]');
+						}
 					}
 				} else if (wceAttr.indexOf('unit=page') > -1) {
 					// TODO: numbering
@@ -3917,6 +3944,15 @@ function getTeiByHtml(inputString, args) {
 	 */
 	var html2Tei_partarr = function(arr, $teiParent, $htmlNode) {
 		var $ex = $newDoc.createElement('ex');
+		var rend = arr['exp_rend'];
+		if (rend == 'other') {
+			rend = arr['exp_rend_other'];
+		}
+		if (rend && rend != '') {
+			//if (rend === '%26et%3B') // &et;
+			//	rend = "&";
+			$ex.setAttribute('rend', decodeURIComponent(rend));
+		}
 		var textValue = getDomNodeText($htmlNode);
 		if (textValue) {
 			textValue = textValue.substr(1, textValue.length - 2);

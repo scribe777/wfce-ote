@@ -1,3 +1,36 @@
+/** 
+	Copyright (C) 2012-2014 Center for Digital Humanities, Trier
+	
+	This file is part of the Online Transcription Editor (OTE).
+
+    OTE is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as published by
+    the Free Software Foundation, either version 2.1 of the License, or
+    (at your option) any later version.
+
+    OTE is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with OTE.  If not, see <http://www.gnu.org/licenses/>.
+
+    Diese Datei ist Teil des Online-Transkriptions-Editor (OTE).
+
+    OTE ist Freie Software: Sie können es unter den Bedingungen
+    der GNU Lesser General Public License, wie von der Free Software Foundation,
+    Version 2.1 der Lizenz oder (nach Ihrer Wahl) jeder späteren
+    veröffentlichten Version, weiterverbreiten und/oder modifizieren.
+
+    OTE wird in der Hoffnung, dass es nützlich sein wird, aber
+    OHNE JEDE GEWÄHRLEISTUNG, bereitgestellt; sogar ohne die implizite
+    Gewährleistung der MARKTFÄHIGKEIT oder EIGNUNG FÜR EINEN BESTIMMTEN ZWECK.
+    Siehe die GNU Lesser General Public License für weitere Details.
+
+    Sie sollten eine Kopie der GNU Lesser General Public License zusammen mit diesem
+    Programm erhalten haben. Wenn nicht, siehe <http://www.gnu.org/licenses/>.
+*/
 /**
  * charmap.js
  *
@@ -472,23 +505,6 @@ var charmap_greek = [
 	['&#1016;',    '&#1016;',  true,'scho'],
 	['&#990;',     '&#990;',  true,'koppa'],
 	['&#991;',     '&#991;',  true,'Koppa'],
-
-
-// WCE Abbreviations	
-	['&nbar;',     '&#8194&#773;',  true, 'enbar'],
-	['&mbar;',     '&#8194&#773&#8194&#773;',  true, 'embar'],
-	['&ecaud;',    '&#281;',  true, 'e with caudata'],
-	['&est;',      '&#247;',  true, 'Abbreviation est'],
-	['&autem;',    '&#405;',  true, 'Abbreviation autem'],
-	['&enim;',     '&#10746;',  true, 'Abbreviation enim'],
-	['&eius;',     '&#601;',  true, 'Abbreviation eius'],
-	['&et;',       '&#38;',  true, 'Abbreviation et'],
-	['&et7;',      '&#8327;',  true, 'Abbreviation et7'],
-	['&paraph;',   '&#182;',  true, 'Paragraph'],
-	['&obelos;',   '&#173;',  false, 'soft hyphen'],
-	['&diple;',    '&#173;',  false, 'soft hyphen'],
-	['&semicolon;','&#59;',  true, 'Semicolon'],
-	['&slur;',      '&#865;', true, 'Slur']
 ];
 
 var charmap_latin = [
@@ -583,19 +599,81 @@ var charmap_latin = [
 	['&yuml;',    '&#255;',  true, 'y - diaeresis'],
 // WCE Abbreviations	
 	['&nbar;',     '&#8194&#773;',  true, 'enbar'],
-	['&mbar;',     '&#8194&#773&#8194&#773;',  true, 'embar'],
+	['&mbar;',     '&#8760;',  true, 'embar'],
 	['&ecaud;',    '&#281;',  true, 'e with caudata'],
 	['&est;',      '&#247;',  true, 'Abbreviation est'],
 	['&autem;',    '&#405;',  true, 'Abbreviation autem'],
 	['&enim;',     '&#10746;',  true, 'Abbreviation enim'],
 	['&eius;',     '&#601;',  true, 'Abbreviation eius'],
 	['&et;',       '&#38;',  true, 'Abbreviation et'],
-	['&et7;',      '&#8327;',  true, 'Abbreviation et7'],
+	['&et7;',      '&#8266;',  true, 'Abbreviation et7'],
 	['&paraph;',   '&#182;',  true, 'Paragraph'],
 	['&obelos;',   '&#173;',  false, 'soft hyphen'],
 	['&diple;',    '&#173;',  false, 'soft hyphen'],
 	['&semicolon;','&#59;',  true, 'Semicolon'],
 	['&slur;',      '&#865;', true, 'Slur']
+];
+
+var charmap_slavistic = [
+	['',   '&#x0406;',  true, ''],
+	['',   '&#x0407;',  true, ''],
+	['',   '&#x042A;',  true, ''],
+	['',   '&#x042B;',  true, ''],
+	['',   '&#x042C;',  true, ''],
+	['',   '&#x042E;',  true, ''],
+	['',   '&#x044A;',  true, ''],
+	['',   '&#x044B;',  true, ''],
+	['',   '&#x044C;',  true, ''],
+	['',   '&#x044E;',  true, ''],
+	['',   '&#x0460;',  true, ''],
+	['',   '&#x0461;',  true, ''],
+	['',   '&#x0462;',  true, ''],
+	['',   '&#x0463;',  true, ''],
+	['',   '&#x0464;',  true, ''],
+	['',   '&#x0465;',  true, ''],
+	['',   '&#x0466;',  true, ''],
+	['',   '&#x0467;',  true, ''],
+	['',   '&#x0468;',  true, ''],
+	['',   '&#x0469;',  true, ''],
+	['',   '&#x046A;',  true, ''],
+	['',   '&#x046B;',  true, ''],
+	['',   '&#x046C;',  true, ''],
+	['',   '&#x046D;',  true, ''],
+	['',   '&#x046E;',  true, ''],
+	['',   '&#x046F;',  true, ''],
+	['',   '&#x0470;',  true, ''],
+	['',   '&#x0471;',  true, ''],
+	['',   '&#x0472;',  true, ''],
+	['',   '&#x0473;',  true, ''],
+	['',   '&#x0474;',  true, ''],
+	['',   '&#x0475;',  true, ''],
+	['',   '&#x0476;',  true, ''],
+	['',   '&#x0477;',  true, ''],
+	['',   '&#x0478;',  true, ''],
+	['',   '&#x0479;',  true, ''],
+	['',   '&#x047A;',  true, ''],
+	['',   '&#x047B;',  true, ''],
+	['',   '&#x047C;',  true, ''],
+	['',   '&#x047D;',  true, ''],
+	['',   '&#x047E;',  true, ''],
+	['',   '&#x047F;',  true, ''],
+	['',   '&#x0480;',  true, ''],
+	['',   '&#x0481;',  true, ''],
+	['',   '&#x0482;',  true, ''],
+	['',   '&#x0483;',  true, ''],
+	['',   '&#x0484;',  true, ''],
+	['',   '&#x0485;',  true, ''],
+	['',   '&#x0486;',  true, ''],
+	['',   '&#x0487;',  true, ''],
+	['',   '&#x0488;',  true, ''],
+	['',   '&#x0489;',  true, ''],
+	['',   '&#x048A;',  true, ''],
+	['',   '&#x048B;',  true, ''],
+	['',   '&#x048C;',  true, ''],
+	['',   '&#x048D;',  true, ''],
+	['',   '&#x04E0;',  true, ''],
+	['',   '&#x04E0;',  true, ''],
+	['',   '&#x04E1;',  true, ''],
 ];
 
 tinyMCEPopup.onInit.add(function() { 
@@ -662,13 +740,15 @@ function previewChar(codeA, codeB, codeN) {
 }
 
 function checkstatus_charmap() {
-	var a=getCharmapType();
-	if(a=='charmap=charmap_g'){
+	var a = getCharmapType();
+	if (a == 'charmap=charmap_g') {
 		return	charmap_greek;
-	}else if(a=='charmap=charmap_l'){
-		return	charmap_latin;
-	}  
-	return charmap_greek.concat(charmap_latin);
+	} else if (a == 'charmap=charmap_l') {
+		return charmap_latin;
+	} else if (a == 'charmap=charmap_s') {
+		return charmap_slavistic;
+	}
+	return charmap_greek.concat(charmap_latin).concat(charmap_slavistic);
 	
 	//if (document.getElementById("charmap_g").checked == true) {
 	//	return charmap_greek;

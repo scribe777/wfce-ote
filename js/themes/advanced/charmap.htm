@@ -38,6 +38,12 @@
                             </td>
                             <td><label>{#wce.charmap_latin_only}</label></td>
                         </tr>
+						<tr>
+                            <td>
+                            <input type="radio" id="charmap_s" name="charmap_filter" value="Slavistic_only" onclick="update_charmap('charmap_s')" />
+                            </td>
+                            <td><label>{#wce.charmap_slavistic_only}</label></td>
+                        </tr>
                         <tr>
                             <td>
                             <input type="radio" id="charmap_all" name="charmap_filter" value="All_glyphs" onclick="update_charmap('charmap_all')" />
@@ -84,8 +90,10 @@
 				document.charmap_selection.charmap_filter[0].checked = true;
 			} else if (cookievalue == "charmap=charmap_l") {
 				document.charmap_selection.charmap_filter[1].checked = true;
-			} else {
+			} else if (cookievalue == "charmap=charmap_s") {
 				document.charmap_selection.charmap_filter[2].checked = true;
+			} else {
+				document.charmap_selection.charmap_filter[3].checked = true;
 			}
 
 			//}

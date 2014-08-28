@@ -33,7 +33,7 @@
 */
 
 (function() {
-	var wfce_editor = "1.2 (2014-06-11)";
+	var wfce_editor = "1.3a BETA (2014-08-26)";
 
 	// Load plugin specific language pack
 	tinymce.PluginManager.requireLangPack('wce');
@@ -910,15 +910,15 @@
 			try {
 				var elem = $('<div/>').html(ed.selection.getContent()); 
 				var testNode = function(node) {
-					if (node.nodeType==3){
+					if (node.nodeType == 3){
 						var pName=node.parentNode.nodeName;
-						if(pName == fs || pName== fe){
+						if (pName == fs || pName== fe) {
 							return false;
 						}
 						var nv=node.nodeValue;
-						if(nv && nv.match(/\s/)) {
+						if (nv && nv.match(/\s/)) {
 							return true;
-						}else{
+						} else {
 							return false;
 						}
 					}
@@ -938,6 +938,40 @@
 				};
 				return testNode(elem[0]);
 			} catch (e) {
+				return false;
+			}
+		},
+		
+		selectionContainsVerseNumber : function(ed) {
+			try {
+				var elem = $('<div/>').html(ed.selection.getContent());
+				var testNode = function(node) {
+					if (node.nodeType == 3){
+						var className = node.getAttribute('class');
+						alert(className);
+						if (className && className == 'verse_number') {			
+							return true;
+						} else {
+							return false;
+						}
+					}
+					
+					var list = node.childNodes;
+					if (!list) {
+						return false;
+					}
+
+					for (var i = 0, c, len = list.length; i < len; i++) {
+						c = list[i]; 
+						if (c && testNode(c)){ 
+							return true;
+						} 
+					}
+					return false;
+				};
+				return testNode(elem[0]);
+			} catch (e) {
+				alert("PECJ");
 				return false;
 			}
 		},
@@ -1115,9 +1149,13 @@
 				}
 
 				if (WCEUtils.selectionHasBlockElement(ed)) {
-					//TODO: If the selection contains only text and abbreviations, it should be removable
 					w.inputDisable = true;
 				}
+				
+				/*if (WCEUtils.selectionContainsVerseNumber(ed)) {
+					alert("TEST");	
+					_disableAllControls(ed, true);
+				}*/
 				
 				var selHasSpace=WCEUtils.selectionHasSpace(ed);
 			}
@@ -1139,7 +1177,7 @@
 				selectedNode = rng.startContainer.parentNode.parentNode;
 				//selectedNode = ed.selection.getNode();
 			}
-			var canMakeCorrection=WCEUtils.canMakeCorrection(rng,ed);
+			var canMakeCorrection = WCEUtils.canMakeCorrection(rng,ed);
 
 			//set other variable
 			w.isInBE = _isWceBE(ed, selectedNode);
@@ -1155,13 +1193,13 @@
 			var canInsertNode = !w.isc ? false : WCEUtils.canInsertNote(ed, rng);
 			w.not_N = !canInsertNode;
 
-			//highliting red, blue, yellow .....
+			//highlighting red, blue, yellow .....
 			if (w.type && w.type != "formatting_capitals" && w.type.match(/formatting/)) {
 				w.type = 'formatting';
 			}
 			
-			if(canMakeCorrection){
-				w.not_C=false;
+			if (canMakeCorrection) {
+				w.not_C = false;
 			} 
 			
 			w.not_P = !w.isc;   
@@ -1734,6 +1772,12 @@
 						case 'part':
 							// part_abbr
 							info_text = '<div>' + ed.getLang('wce.infotext_editorial_expansion') + '<div>';
+							if (ar['exp_rend'] == 'other') {
+								info_text += '<div>' + ed.getLang('wce.infotext_rendition') + ': ' + ar['exp_rend_other'] + '</div>';
+							} else {
+								if (ar['exp_rend'] != null)
+									info_text += '<div>' + ed.getLang('wce.infotext_rendition') + ': ' + ar['exp_rend'] + '</div>';
+							}
 							break;
 						case 'brea':
 							switch (ar['break_type']) {
@@ -1966,12 +2010,14 @@
 							break;
 						case 'verse':
 							info_text = '<div>' + 'Verse';
-							if (ar['partial'] == 'I')
-								info_text += ' (initial portion)';
-							if (ar['partial'] == 'M')
-								info_text += ' (medial portion)';
-							if (ar['partial'] == 'F')
-								info_text += ' (final portion)';
+							if (ar['partial']) {
+								if (ar['partial'] == 'I')
+									info_text += ' (initial portion)';
+								if (ar['partial'] == 'M')
+									info_text += ' (medial portion)';
+								if (ar['partial'] == 'F')
+									info_text += ' (final portion)';
+							}
 							info_text += '</div>';
 							break;
 						case 'chapter':
@@ -2256,7 +2302,7 @@
 						var part_abbr = text.substr(li) + ')';
 						rng.setStart(startContainer, li);
 						WCEUtils.setRNG(ed, rng);
-						wceAttr = 'wce="' + '__t' + '=' + wceType + '" ';
+						wceAttr = 'wce="' + '__t' + '=' + wceType + '&exp_rend=&exp_rend_other=' + '" ';
 						_setContent(ed, '<span ' + wceAttr + wceClass + '>' + startFormatHtml + part_abbr + endFormatHtml + '</span>');
 					} else {
 						alert(ed.getLang('wce.error_part_abbr'));
@@ -2941,14 +2987,19 @@
 
 				case 'abbreviation':
 					var c = cm.createMenuButton('menu-abbreviation', {
-						title : '{#wce.menu_abbreviations}' + ' (Ctrl+Alt+A)',
+						title : '{#wce.menu_abbreviations}',
 						image : tinyMCE.baseURL + '/plugins/wce/img/button_A.png',
 						icons : false
 					});
 
 					c.onRenderMenu.add(function(c, m) {
+						var sub;
 						var w = ed.WCE_VAR;
-						m.add({
+						sub = m.addMenu({
+							title : ed.getLang('wce.menu_abbreviations') + ' (Ctrl+Alt+A)',
+							id : 'menu-abbreviation'
+						});
+						sub.add({
 							title : ed.getLang('wce.menu_add'),
 							id : 'menu-abbreviation-add',
 							onclick : function() {
@@ -2956,7 +3007,7 @@
 							}
 						});
 
-						m.add({
+						sub.add({
 							title : ed.getLang('wce.menu_edit'),
 							id : 'menu-abbreviation-edit',
 							onclick : function() {
@@ -2964,7 +3015,7 @@
 							}
 						});
 
-						m.add({
+						sub.add({
 							title : ed.getLang('wce.menu_delete'),
 							id : 'menu-abbreviation-delete',
 							onclick : function() {
@@ -2972,7 +3023,7 @@
 							}
 						});
 
-						m.onShowMenu.add(function(m) {
+						sub.onShowMenu.add(function(m) {
 							var items = m.items;
 							if (w.type == 'abbr') {
 								items['menu-abbreviation-add'].setDisabled(true);
@@ -2982,6 +3033,47 @@
 								items['menu-abbreviation-add'].setDisabled(false);
 								items['menu-abbreviation-edit'].setDisabled(true);
 								items['menu-abbreviation-delete'].setDisabled(true);
+							}
+						});
+						
+						sub = m.addMenu({
+							title : ed.getLang('wce.menu_expansion') + ' (Ctrl+Alt+E)',
+							id : 'menu-abbreviation-expansion'
+						});
+						sub.add({
+							title : ed.getLang('wce.menu_add'),
+							id : 'menu-abbreviation-expansion-add',
+							onclick : function() {
+								ed.execCommand('mceAddExp');
+							}
+						});
+
+						sub.add({
+							title : ed.getLang('wce.menu_edit'),
+							id : 'menu-abbreviation-expansion-edit',
+							onclick : function() {
+								ed.execCommand('mceEditExp');
+							}
+						});
+
+						sub.add({
+							title : ed.getLang('wce.menu_delete'),
+							id : 'menu-abbreviation-expansion-delete',
+							onclick : function() {
+								ed.execCommand('wceDelNode');
+							}
+						});
+
+						sub.onShowMenu.add(function(m) {
+							var items = m.items;
+							if (w.type == 'part_abbr') {
+								items['menu-abbreviation-expansion-add'].setDisabled(true);
+								items['menu-abbreviation-expansion-edit'].setDisabled(false);
+								items['menu-abbreviation-expansion-delete'].setDisabled(false);
+							} else {
+								items['menu-abbreviation-expansion-add'].setDisabled(false);
+								items['menu-abbreviation-expansion-edit'].setDisabled(true);
+								items['menu-abbreviation-expansion-delete'].setDisabled(true);
 							}
 						});
 					});
@@ -3531,6 +3623,7 @@
 				ed.addShortcut('ctrl+alt+u', 'Add unclear text', 'mceAddUnclearText_Shortcut');
 				ed.addShortcut('ctrl+alt+g', 'Add gap', 'mceAddGap_Shortcut');
 				ed.addShortcut('ctrl+alt+a', 'Add abbreviation', 'mceAddAbbr_Shortcut');
+				ed.addShortcut('ctrl+alt+e', 'Add expansion', 'mceAddExp_Shortcut');
 				ed.addShortcut('ctrl+alt+m', 'Add marginalia', 'mceAddParatext_Shortcut');
 				ed.addShortcut('ctrl+alt+s', 'Add blank spaces', 'mceAddSpaces_Shortcut');
 				ed.addShortcut('ctrl+alt+n', 'Add note', 'mceAddNote_Shortcut');
@@ -3818,6 +3911,27 @@
 					ed.execCommand('mceEditAbbr');
 				} else {
 					ed.execCommand('mceAddAbbr');
+				}
+			});
+			
+			// Add expansion/*********/
+			ed.addCommand('mceAddExp', function() {
+				doWithDialog(ed, url, '/exp.htm', 480, 320, 1, true);
+			});
+			// Edit abbreviation
+			ed.addCommand('mceEditExp', function() {
+				doWithDialog(ed, url, '/exp.htm', 480, 320, 1, false);
+			});
+
+			ed.addCommand('mceAddExp_Shortcut', function() {
+				var w = ed.WCE_VAR;
+				if (w.not_A) {
+					return;
+				}
+				if (w.type == 'part_abbr') {
+					ed.execCommand('mceEditExp');
+				} else {
+					ed.execCommand('mceAddExp');
 				}
 			});
 

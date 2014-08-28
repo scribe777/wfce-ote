@@ -206,11 +206,15 @@ function writeWceNodeInfo(val) {
 						else
 							gap_text += '[...]';
 					} else if (gap_unit == "line") {
-						for (var i = 0; i < gap_extent; i++) {
-							gap_text += '<br/>&crarr;[...]';
+						if (gap_extent == 'part' || gap_extent == 'unspecified') {
+							gap_text += '[...]';
+						} else {
+							for (var i = 0; i < gap_extent; i++) {
+								gap_text += '<br/>&crarr;[...]';
+							}
+							wceUtils.addToCounter(ed, 'lb', gap_extent);
 						}
 						gap_id = '_2_' + wceUtils.getRandomID(ed, '');
-						wceUtils.addToCounter(ed, 'lb', gap_extent);
 					} else if (gap_unit == "page") {
 						for (var i = 0; i < gap_extent; i++) {
 							gap_text += '<br/>PB<br/>[...]';
@@ -277,13 +281,14 @@ function writeWceNodeInfo(val) {
 					wceClass = ' class="abbr_add_overline"';
 				}
 				break;
-
+			case 'part_abbr':
+				selected_content = "(" + selected_content + ")";
+				break;
 			case 'spaces':
 				// default
 				//selected_content = '&nbsp;';
 				new_content = '<span wce="' + newWceAttr + '"' + wceClass + '>' + startFormatHtml + 'sp' + endFormatHtml + '</span>';
 				break;
-
 			case 'paratext':
 				// default
 				if (document.getElementById('fw_type').value == "commentary") {
@@ -349,8 +354,10 @@ function writeWceNodeInfo(val) {
 
 		if (wce_type == 'gap') {
 			if (gap_unit == "line") {
-				wceUtils.updateBreakCounter(ed, 'lb', 0);
-				ed.selection.setContent(wceUtils.getBreakHtml(ed, 'lb', null, null, null, gap_id));
+				if (gap_extent !== 'part' && gap_extent !== 'unspecified') {
+					wceUtils.updateBreakCounter(ed, 'lb', 0);
+					ed.selection.setContent(wceUtils.getBreakHtml(ed, 'lb', null, null, null, gap_id));
+				}
 			} else if (gap_unit == "page") {
 				wceUtils.updateBreakCounter(ed, 'pb', 0);
 				ed.selection.setContent(wceUtils.getBreakHtml(ed, 'pb', null, null, null, gap_id));

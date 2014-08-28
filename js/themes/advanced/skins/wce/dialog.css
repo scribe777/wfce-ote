@@ -9,8 +9,7 @@
     (at your option) any later version.
 
     OTE is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY;
- without even the implied warranty of
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
@@ -25,39 +24,25 @@
     veröffentlichten Version, weiterverbreiten und/oder modifizieren.
 
     OTE wird in der Hoffnung, dass es nützlich sein wird, aber
-    OHNE JEDE GEWÄHRLEISTUNG, bereitgestellt;
- sogar ohne die implizite
+    OHNE JEDE GEWÄHRLEISTUNG, bereitgestellt; sogar ohne die implizite
     Gewährleistung der MARKTFÄHIGKEIT oder EIGNUNG FÜR EINEN BESTIMMTEN ZWECK.
     Siehe die GNU Lesser General Public License für weitere Details.
 
     Sie sollten eine Kopie der GNU Lesser General Public License zusammen mit diesem
     Programm erhalten haben. Wenn nicht, siehe <http://www.gnu.org/licenses/>.
 */
-
-@font-face{
-	
-  font-family: GentiumPlus;
-	
+@font-face{  
+	font-family: GentiumPlus;
     src: url(fonts/GentiumPlus-R.woff) format('woff');
 	 /* should work for all recent browsers */
 	font-style: normal;
-	
-
 }
-
 
 @font-face{
-	
-  font-family: GentiumPlus;
-	
+	font-family: GentiumPlus;
     src: url(fonts/GentiumPlus-I.woff) format('woff');
-		
 	font-style: italic;
-	
-
 }
-
- 
 
 /* Generic */
 body {

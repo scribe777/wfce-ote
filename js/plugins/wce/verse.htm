@@ -103,6 +103,7 @@
 <script type="text/javascript">
 var verseNode; 
 var contentWithVerse;
+var chapterNr;
 
 	tinyMCEPopup.onInit.add(function(_ed){
 		ed=_ed;
@@ -249,6 +250,7 @@ var contentWithVerse;
 	
 	function getVerseList(node){
 		var out="";
+		
 		if(!node || node.nodeType != 1){
 			return out;
 		}
@@ -262,10 +264,12 @@ var contentWithVerse;
 		}
 		
 		var className=node.className;
-		if(className && className.match(/verse_number/)){
+		if (className && className.match(/chapter_number/)){
+			chapterNr=$.trim(node.innerHTML);
+		} else if (className && className.match(/verse_number/)){
 			var v=$.trim(node.innerHTML);
 			if(v && v!='')
-				out+='<input type="checkbox" value="'+v+'">Verse '+v+'</input><br />'; 
+				out+='<input type="checkbox" value="'+chapterNr+'.'+v+'">Verse '+chapterNr+'.'+v+'</input><br />'; 
 		}	
 		return out;		
 	}
@@ -380,7 +384,8 @@ var contentWithVerse;
 			for (var i=0,len=verseList.length; i<len; i++){ 
 				var cb=verseList[i];
 				if ($(cb).attr('checked')){
-					var verseNr=$(cb).val();				
+					var chapterNr=$(cb).val().substr(0,1);
+					var verseNr=$(cb).val().substr(2);				
 					var startNode=null,endNode=null;
 					var spanList=$(contentWithVerse).find('span');
 					for (var j=0,len2=spanList.length; j<len2; j++){
@@ -389,11 +394,13 @@ var contentWithVerse;
 						if (!span.className){
 							continue;
 						}
+						if (span.className.toLowerCase()=='chapter_number')
+							currentChapter = spanValue;
 						if (span.className.toLowerCase()=='verse_number'){						
 							if (startNode){
 								endNode=span;
 								break;
-							} else if(spanValue==verseNr){
+							} else if(spanValue==verseNr && currentChapter == chapterNr ){
 								startNode=span; 
 							} 
 						}
