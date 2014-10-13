@@ -60,7 +60,7 @@ function setWceEditor(_id, rtl, finishCallback, lang, myBaseURL, getWitness, get
 		manuscriptLang : (getWitnessLang) ? getWitnessLang : "",
 		
 		// invalid_elements:'p',
-		plugins : "wce,pagebreak,style,save,layer,safari,print,inlinepopups,contextmenu,fullscreen,wordcount,autosave",
+		plugins : "wce,pagebreak,style,save,layer,safari,print,inlinepopups,contextmenu,fullscreen,wordcount,autosave,paste",
 
 		init_instance_callback : "wceReload",
 

@@ -3319,7 +3319,7 @@ function getTeiByHtml(inputString, args) {
 		var parent=$node.ParentNode;
 		while(parent){
 			if(parent.nodeName==nName){
-				return ture;
+				return true;
 			}
 			parent=parent.ParentNode;
 		}
