@@ -33,7 +33,7 @@
 */
 
 (function() {
-	var wfce_editor = "1.3a BETA (2014-08-26)";
+	var wfce_editor = "1.3BETA (2014-10-15)";
 
 	// Load plugin specific language pack
 	tinymce.PluginManager.requireLangPack('wce');
@@ -2525,6 +2525,9 @@
 			} else if (ek == 57 && e.shiftKey && e.altKey) {// For Mac OS X, Middledot
 				tinyMCE.activeEditor.execCommand('mceAdd_pc', '\u0387');
 				stopEvent(ed, e);
+			} else if (ek == 48 && e.shiftKey && e.altKey) {// Three Dot Punctuation
+				tinyMCE.activeEditor.execCommand('mceAdd_pc', '\u2056');
+				stopEvent(ed, e);
 			} else if (ek == 57 && e.shiftKey && !langEn) {// special handling for English keyboards
 				stopEvent(ed, e);
 				doWithoutDialog(ed, 'part_abbr', '');
@@ -3806,12 +3809,12 @@
 				} else if (wceNode && wceAttr && wceAttr.match(/corr/)) {
 					_add_new_wce_node = false;
 				}
-				doWithDialog(ed, url, '/correction.htm', 825, 600, 1, _add_new_wce_node);
+				doWithDialog(ed, url, '/correction.htm', 900, 600, 1, _add_new_wce_node);
 			});
 
 			// Edit corrections
 			ed.addCommand('mceEditCorrection', function() {
-				doWithDialog(ed, url, '/correction.htm', 825, 600, 1, false);
+				doWithDialog(ed, url, '/correction.htm', 900, 600, 1, false);
 			});
 
 			ed.addCommand('mceAddCorrection_Shortcut', function() {
