@@ -85,10 +85,14 @@
                             <td colspan="1">
 								<label id="firsthand_reading" name="firsthand_reading" style="color: green"></label>
 							</td>
-                            <td colspan="2">
+                            <td>
                             <input type="checkbox" name="blank_firsthand"
                             id="blank_firsthand" onclick="checkstatus_firsthand()">
                             {#wce.blank_firsthand} </td>
+							<td>
+                            <input type="checkbox" name="ut_videtur_firsthand"
+                            id="ut_videtur_firsthand">
+                            {#wce.ut_videtur} </td>
                         </tr>
                         <tr>
                             <td><label id="corrector_name_label" for="corrector_name">{#wce.corrector_name}</label></td>
@@ -102,10 +106,14 @@
                                 <option value="corrector3">{#wce.corrector}3</option>
                                 <option value="other">{#wce.other}</option>
                             </select></td>
-                            <td colspan="2">
+                            <td>
                             <input id="corrector_name_other" name="corrector_name_other"
-                            onkeyup="saveCurrCorrector(true);" type="text" value="" size="30" />
+                            onkeyup="saveCurrCorrector(true);" type="text" value="" size="20" />
                             </td>
+							<td>
+                            <input type="checkbox" name="ut_videtur_corr"
+                            id="ut_videtur_corr">
+                            {#wce.ut_videtur} </td>
                         </tr>
                         <tr>
                             <td colspan="2">
@@ -135,7 +143,7 @@
                                 <option value="overwritten">{#wce.position_overwritten}</option>
                                 <option value="other">{#wce.other}</option>
                             </select></td>
-                            <td colspan="2">
+                            <td>
                             <input id="place_corr_other"
                             name="place_corr_other" type="text" value="" size="20"
                             maxlength="" class="required number min1 mceFocus" />
@@ -170,7 +178,7 @@
                                 <option value="I">{#wce.corr_partial_beginning}</option>
                                 <option value="F">{#wce.corr_partial_end}</option>
                             </select></td>
-                            <td><label id="partial_label" for="partial">{#wce.correction_partial}</label></td>
+                            <td align="right"><label id="partial_label" for="partial">{#wce.correction_partial}</label></td>
                             <td>
                             <select id="partial" name="partial">
                                 <option value="">{#wce.corr_partial_complete}</option>
@@ -179,10 +187,10 @@
                             </select></td>
                         </tr>
 						<tr>
-                            <td colspan="3"><label id="corrector_text_label" for="corrector_text">{#wce.corrector_text}</label></td>
+                            <td colspan="5"><label id="corrector_text_label" for="corrector_text">{#wce.corrector_text}</label></td>
                         </tr>
                         <tr>
-                            <td colspan="3">
+                            <td colspan="5">
 								<textarea WRAP="PHYSICAL" ROWS="4" style="width:100%" id="corrector_text" name="corrector_text"></textarea>
 							</td>
                         </tr>

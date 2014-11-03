@@ -620,7 +620,7 @@ function getHtmlByTei(inputString) {
 				case 'ƕ':
 				case '⧺':
 				case 'ə':
-				case '&et;':
+				case '&':
 				case 'ϗ':
 				case '⁊':
 				case '∸':
@@ -1443,7 +1443,8 @@ function getHtmlByTei(inputString) {
 		var origText = '';
 		var rdgAttr;
 		var $origRdg = $newDoc.createElement('t');
-		//var textNodes = [];
+		var utvf = '';
+		var utv = '';
 
 		var collection = rdgs[0].childNodes; 
 		for (var i = 0, cl, l = collection.length; i < l; i++) {
@@ -1474,10 +1475,15 @@ function getHtmlByTei(inputString) {
 			$newNode.setAttribute('class', 'corr');
 			$newNode.setAttribute('wce_orig', encodeURIComponent(origText));
 		}
-
+		
+		if (rdgs[0].getAttribute('hand') == 'firsthandV') {
+			utvf = '&ut_videtur_firsthand=on';
+		}
+		
 		origText = decodeURIComponent(origText);
 
 		for (var i = 1, l = rdgs.length; i < l; i++) {// [0] is always original => no extra output
+			utv = '';
 			$rdg = rdgs[i];
 			if(!$rdg || $rdg.nodeType==3){
 				break;
@@ -1496,10 +1502,15 @@ function getHtmlByTei(inputString) {
 			} else
 				wceAttr += '@__t=corr';
 
+			//Test whether handValue ends with "V" -> ut videtur	
+			if (handValue.charAt(handValue.length-1) == 'V') {
+				handValue = handValue.substring(0,handValue.length-1);
+				utv = '&ut_videtur_corr=on';
+			}
 			if ('@corrector@firsthand@corrector1@corrector2@corrector3'.indexOf(handValue) > -1) {
-				wceAttr += '&__n=' + handValue + '&corrector_name_other=&corrector_name=' + handValue;
+				wceAttr += '&__n=' + handValue + utvf + '&corrector_name_other=&corrector_name=' + handValue + utv;
 			} else {//other corrector
-				wceAttr += '&__n=' + handValue + '&corrector_name=other&corrector_name_other=' + handValue;
+				wceAttr += '&__n=' + handValue + utvf + '&corrector_name=other&corrector_name_other=' + handValue + utv;
 			}
 
 			wceAttr += '&reading=' + typeValue;
@@ -2579,7 +2590,6 @@ function getTeiByHtml(inputString, args) {
 			return null;
 		}
 		var wceAttrValue, wceType, htmlNodeName, infoArr, arr;
-		//var note = 1;
 		
 		// If there is no special <div type="book"> element, the passed number from the Workspace is used.
 		// We check, if it is in the correct format.
@@ -2600,7 +2610,7 @@ function getTeiByHtml(inputString, args) {
 
 		// ******************* verse *******************
 		if (wceAttrValue != null && wceAttrValue.match(/verse_number/)) { 
-			if(wceAttrValue && !wceAttrValue.match(/partial/)){ //automatic set attribute "part"
+			if (wceAttrValue && !wceAttrValue.match(/partial/)){ //automatic set attribute "part"
 				html2Tei_addAttributePartF($htmlNode);
 			}
 			var partial_index = -1;
@@ -2639,7 +2649,7 @@ function getTeiByHtml(inputString, args) {
 					$newRoot.appendChild(g_verseNode);
 				g_currentParentNode = g_verseNode;
 				//g_wordNumber = 0;
-			} else {//empty verse
+			} else { //empty verse
 				g_verseNode = $newDoc.createElement('ab');
 				if (partial_index > -1){// node contains information about partial
 					g_verseNode.setAttribute('part', wceAttrValue.substring(partial_index + 8, partial_index + 9));
@@ -2655,6 +2665,7 @@ function getTeiByHtml(inputString, args) {
 			if(partAttr){
 				g_verseNode.setAttribute('part',partAttr);
 			}
+			note = 0; //reset note counter
 			return null;
 
 		} else if (wceAttrValue != null && wceAttrValue.match(/chapter_number/)) {
@@ -3156,7 +3167,10 @@ function getTeiByHtml(inputString, args) {
 				if (firsthand_partial != '')
 					$orig.setAttribute('part', firsthand_partial);
 				$orig.setAttribute('type', 'orig');
-				$orig.setAttribute('hand', 'firsthand');
+				if (arr['ut_videtur_firsthand'] === 'on')
+					$orig.setAttribute('hand', 'firsthandV');
+				else
+					$orig.setAttribute('hand', 'firsthand');
 				if (arr['blank_firsthand'] === 'on') {//Blank first hand reading
 					var origText = 'OMISSION'; //this is later replaced by "" DO NOT ADD <w> HERE
 					nodeAddText($orig, origText);
@@ -3176,9 +3190,15 @@ function getTeiByHtml(inputString, args) {
 			$rdg.setAttribute('type', arr['reading']);
 			var corrector_name = arr['corrector_name'];
 			if (corrector_name == 'other') {
-				corrector_name = arr['corrector_name_other'];
+				if (arr['ut_videtur_corr'] === 'on')
+					corrector_name = arr['corrector_name_other'] + 'V';
+				else
+					corrector_name = arr['corrector_name_other'];
 			}
-			$rdg.setAttribute('hand', decodeURIComponent(corrector_name));
+			if (arr['ut_videtur_corr'] === 'on')	
+				$rdg.setAttribute('hand', decodeURIComponent(corrector_name) + 'V');
+			else
+				$rdg.setAttribute('hand', decodeURIComponent(corrector_name));
 
 			// deletion
 			var deletion = decodeURIComponent(arr['deletion']);
@@ -3554,12 +3574,13 @@ function getTeiByHtml(inputString, args) {
 
 		$lastNode = $teiParent.lastChild;
 		if ($lastNode) {
-			var text = $lastNode.innerText || $lastNode.textContent;
+			note++;
+			/*var text = $lastNode.innerText || $lastNode.textContent;
 			if ($lastNode.nodeName === 'note' 
 				|| ($lastNode.nodeName === 'w' && text === '')) //note is immediately preceded by another note
 				note++;
 			else 
-				note = 1;
+				note = 1;*/
 		} else // this is important for notes being inserted directly after the verse number
 			note = 1;
 		var xml_id = 'B' + g_bookNumber + 'K' + g_chapterNumber + 'V' + g_verseNumber + '-' + g_witValue + '-' + note;
@@ -3949,8 +3970,6 @@ function getTeiByHtml(inputString, args) {
 			rend = arr['exp_rend_other'];
 		}
 		if (rend && rend != '') {
-			//if (rend === '%26et%3B') // &et;
-			//	rend = "&";
 			$ex.setAttribute('rend', decodeURIComponent(rend));
 		}
 		var textValue = getDomNodeText($htmlNode);

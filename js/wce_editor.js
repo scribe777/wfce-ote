@@ -65,7 +65,7 @@ function setWceEditor(_id, rtl, finishCallback, lang, myBaseURL, getWitness, get
 		init_instance_callback : "wceReload",
 
 		// Theme options
-		theme_advanced_buttons1 : "undo,redo,charmap,|,code,|,save,print,contextmenu,cut,copy,paste,fullscreen,|,"+
+		theme_advanced_buttons1 : "undo,redo,charmap,|,code,|,save,print,contextmenu,cut,copy,pastetext,pasteword,fullscreen,|,"+
 		"breaks,correction,illegible,decoration,abbreviation,paratext,note,punctuation,versemodify,|,showTeiByHtml,help,|,info,showHtmlByTei",
 		theme_advanced_buttons2 : "",
 		theme_advanced_toolbar_location : "top",

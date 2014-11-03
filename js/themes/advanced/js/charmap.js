@@ -44,6 +44,7 @@
 tinyMCEPopup.requireLangPack();
 var cmap;
 var charmap_greek = [
+	['',    '&#x0375;',  true, 'GREEK LOWER NUMERAL SIGN'],
 	['&nbsp;',    '&#160;',  false, 'no-break space'],
 	['&amp;',     '&#38;',   false, 'ampersand'],
 	['&quot;',    '&#34;',   false, 'quotation mark'],
@@ -488,7 +489,7 @@ var charmap_greek = [
 // WCE Greek
 	['&betav;',    '&#976;',  true,'beta symbol'],
 	['&thetav;',   '&#977;',  true,'theta symbol'],
-	['&upsih;',    '&#978;',  false,'upsilon - hook symbol'],
+	['&upsih;',    '&#978;',  true,'upsilon - hook symbol'],
 	['&phiv;',     '&#981;',  true,'phi symbol'],
 	['&piv;',      '&#982;',  true,'pi symbol'],
 	['&kaiv;',     '&#983;',  true,'kai symbol'],
