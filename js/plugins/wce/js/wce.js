@@ -333,11 +333,12 @@ function writeWceNodeInfo(val) {
 		//var marker = ed.dom.get('_marker'); //Does not work; intended for editing breaks
 		//ed.selection.select(marker, false);
 
-		//Fixed: if the selection range is collapsed and caret at end of a element,
-		//then, if add a new element by menu,
-		//the new element will appear in the inside of current element and not after the element.
+		//Fixed: if the selection range is collapsed and the caret is at the end of a element,
+		//then the new element will appear inside of current element and not after the element 
+		//when one adds a new element via the menu
 		var wcevar = ed.WCE_VAR;
-		if (wcevar.isc && wcevar.isInBE && wcevar.isCollapsedAtNodeEnd && (wcevar.type == ed.WCE_CON.formatEnd || wcevar.type == 'chapter_number' || wcevar.type === 'book_number' || wcevar.type == 'verse_number')) {
+		if (wcevar.isc && wcevar.isInBE && wcevar.isCaretAtNodeEnd && 
+			(wcevar.type == ed.WCE_CON.formatEnd || wcevar.type == 'chapter_number' || wcevar.type === 'book_number' || wcevar.type == 'verse_number' || wcevar.type == 'brea')) {
 			var selNode = wcevar.selectedNode;
 			if (wcevar.type == ed.WCE_CON.formatEnd) {
 				$(new_content).insertAfter(selNode.parentNode);
@@ -349,7 +350,7 @@ function writeWceNodeInfo(val) {
 			}
 
 		} else {
-			wceUtils.setContent(ed,new_content);
+			wceUtils.setContent(ed, new_content);
 		}
 
 		if (wce_type == 'gap') {

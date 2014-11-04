@@ -50,21 +50,30 @@
 	It was funded by the <a href="http://www.dfg.de/">DFG</a> and the <a href="http://www.ahrc.ac.uk/">AHRC</a>.</p>
 	<p>This software is based on TinyMCE v3 and is thus published as opensource under the terms of the 
 	<a href="https://www.gnu.org/licenses/old-licenses/lgpl-2.1.en.html">LGPL v2.1</a>.</font-size></p>
-	<p>Recent version 1.3 (2014-08-26)</p>
+	<p>Recent version 1.3 (2014-11-04)</p>
 	<br/>
 	<h1>{#wce.changelog}</h1>
 	<h2>Version 1.3</h2>
 	<h3>Bug fixes</h3>
 	<ul>
 	<li>When a deficiency is added using "line" as unit and "part" or "unspecified" as extent no line break is added anymore (<a href="https://redmine.kompetenzzentrum.uni-trier.de/issues/2593">#2593</a>)</li>
-	<li>The verse menu now lists verses together with their chapter number to allow more specific deletions (<a href="https://redmine.kompetenzzentrum.uni-trier.de/issues/2591">#2591</a>)</li>
+	<li>Verses, chapter and book numbers can now be safely removed without deleting duplicates (<a href="https://redmine.kompetenzzentrum.uni-trier.de/issues/2225">#2225</a>)</li>
+	<li>xml:id values for notes are now correctly set (<a href="https://redmine.kompetenzzentrum.uni-trier.de/issues/2195">#2195</a>)
+	<li>Marginalia can be added right after a line break (<a href="https://redmine.kompetenzzentrum.uni-trier.de/issues/2481">#2481</a>)</li>
+	</ul>
+	<h3>New features</h3>
+	<ul>
+	<li>Added new menu item "Expansion of symbol" to the abbreviation menu including XML (<a href="https://redmine.kompetenzzentrum.uni-trier.de/issues/2590">#2590</a>)</li>
+	<li>Added "ut videtur" boxes to the correction dialogue including XML (<a href="https://redmine.kompetenzzentrum.uni-trier.de/issues/2790">#2790</a>)</li>
 	</ul>
 	<h3>Other changes</h3>
 	<ul>
-	<li>Added new menu item "Expansion" to the abbreviation menu (<a href="https://redmine.kompetenzzentrum.uni-trier.de/issues/2590">#2590</a>)</li>
-	<li>Added rend attribute the the &lt;ex&gt element (<a href="https://redmine.kompetenzzentrum.uni-trier.de/issues/2590">#2590</a>)</li>
-	<li>Modified glyphs for et7 and mbar according to request frio Birmingham (<a href="https://redmine.kompetenzzentrum.uni-trier.de/issues/2589">#2589</a>)</li>
+	<li>Modified glyphs for et7 and mbar according to request from Birmingham (<a href="https://redmine.kompetenzzentrum.uni-trier.de/issues/2589">#2589</a>)</li>
 	<li>Added some glyphs for Old Church Slavonic to the character map</li>
+	<li>Added u0375 to the character map (<a href="https://redmine.kompetenzzentrum.uni-trier.de/issues/2792">#2792</a>)</li>
+	<li>The verse menu now lists verses together with their chapter number to allow more specific deletions (<a href="https://redmine.kompetenzzentrum.uni-trier.de/issues/2591">#2591</a>)</li>
+	<li>Fixed wrong terms in German language file (<a href="https://redmine.kompetenzzentrum.uni-trier.de/issues/2789">#2789</a>)</li>
+	<!--<li>Option "number of lines covered" now active for all marginalia</li>-->
 	</ul>
 	<br/>
 	<h2>Version 1.2</h2>

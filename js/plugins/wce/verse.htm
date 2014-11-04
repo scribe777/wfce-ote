@@ -103,7 +103,7 @@
 <script type="text/javascript">
 var verseNode; 
 var contentWithVerse;
-var chapterNr;
+var chapterNr, bookNr;
 
 	tinyMCEPopup.onInit.add(function(_ed){
 		ed=_ed;
@@ -241,8 +241,8 @@ var chapterNr;
 		$('#chapterList').html(getChapterList(contentWithVerse));
 		$('#bookList').html(getBookList(contentWithVerse));
 		$('#lectionList').html(getLectionList(contentWithVerse));
-		if(wce_node){
-		   if(wce_node.nodeName.toLowerCase()=='span'){
+		if (wce_node) { 
+		   if (wce_node.nodeName.toLowerCase()=='span') {
 		       $('#insertDiv input').attr('disabled',true);
 		   }
 		}
@@ -251,24 +251,24 @@ var chapterNr;
 	function getVerseList(node){
 		var out="";
 		
-		if(!node || node.nodeType != 1){
+		if (!node || node.nodeType != 1) {
 			return out;
 		}
 		
 		var list=node.childNodes;
-		for(var i=0,len=list.length; i<len; i++){
+		for (var i=0,len=list.length; i<len; i++) {
 			var n=list[i];
-			if(n.nodeType==1){
+			if (n.nodeType==1) {
 				out+=getVerseList(n); 
 			}
 		}
 		
 		var className=node.className;
-		if (className && className.match(/chapter_number/)){
+		if (className && className.match(/chapter_number/)) {
 			chapterNr=$.trim(node.innerHTML);
-		} else if (className && className.match(/verse_number/)){
+		} else if (className && className.match(/verse_number/)) {
 			var v=$.trim(node.innerHTML);
-			if(v && v!='')
+			if (v && v!='')
 				out+='<input type="checkbox" value="'+chapterNr+'.'+v+'">Verse '+chapterNr+'.'+v+'</input><br />'; 
 		}	
 		return out;		
@@ -276,27 +276,31 @@ var chapterNr;
 	
 	function getChapterList(node){
 		var out="";
-		if(!node || node.nodeType != 1){
+		if (!node || node.nodeType != 1) {
 			return out;
 		}
 		
 		var list=node.childNodes;
-		for(var i=0,len=list.length; i<len; i++){
+		for (var i=0,len=list.length; i<len; i++) {
 			var n=list[i];
-			if(n.nodeType==1){
+			if (n.nodeType==1) {
 				out+=getChapterList(n); 
 			}
 		}
 		
 		var className=node.className;
-		if(className && className.match(/chapter_number/)){
-			var v=$.trim(node.innerHTML);
-			if(v && v!='')
-				out+='<input type="checkbox" value="'+v+'">Chapter '+v+'</input><br />'; 
+		
+		if (className && className.match(/book_number/)){
+			bookNr = $.trim(node.innerHTML);
+		} else if (className && className.match(/chapter_number/)){
+			var v = $.trim(node.innerHTML);
+			var id = node.getAttribute('id');
+			if (v && v!='')
+				out+='<input type="checkbox" value="' + bookNr + '.' + v + '" id="' + id + '">Chapter ' + bookNr + '.' + v + '</input><br />'; 
 		}	
 		return out;		
 	}
-	
+		
 	function getBookList(node){
 		var out="";
 		if(!node || node.nodeType != 1){
@@ -314,8 +318,9 @@ var chapterNr;
 		var className=node.className;
 		if(className && className.match(/book_number/)){
 			var v=$.trim(node.innerHTML);
+			var id = node.getAttribute('id');
 			if(v && v!='')
-				out+='<input type="checkbox" value="'+v+'">Book '+v+'</input><br />'; 
+				out+='<input type="checkbox" value="' + v + '" id="' + id + '">Book ' + v + '</input><br />'; 
 		}	
 		return out;		
 	}
@@ -327,18 +332,18 @@ var chapterNr;
 		}
 		
 		var list=node.childNodes;
-		for(var i=0,len=list.length; i<len; i++){
+		for (var i=0,len=list.length; i<len; i++) {
 			var n=list[i];
-			if(n.nodeType==1){
+			if (n.nodeType==1) {
 				out+=getLectionList(n); 
 			}
 		}
 		
 		var className=node.className;
-		if(className && className.match(/lection_number/)){
+		if (className && className.match(/lection_number/)) {
 			//var v=$.trim(node.innerHTML);
 			var v=$.trim(node.getAttribute('wce').substring(node.getAttribute('wce').lastIndexOf("=")+1));
-			if(v && v!='')
+			if (v && v!='')
 				out+='<input type="checkbox" value="'+v+'">Lection '+v+'</input><br />'; 
 		}	
 		return out;		
@@ -362,14 +367,14 @@ var chapterNr;
 			var newChapterNr = $('#insertChapterNumber').val().trim();
 			newChapterNr = newChapterNr.replace(/\D/g,'');
 			if (newChapterNr != ''){
-				ed.selection.setContent('<span class="chapter_number" wce="__t=chapter_number"> ' + newChapterNr + '</span> ');
+				ed.selection.setContent('<span class="chapter_number" wce="__t=chapter_number" id="' + ed.dom.uniqueId('chap') + '"> ' + newChapterNr + '</span> ');
 			}
 			return;
 		} else if ($('#insertBookRadio').attr('checked')){
 			var newBookNr = $('#insertBookNumber').val().trim();
 			newBookNr = newBookNr.replace(/\D/g,'');
 			if (newBookNr != ''){
-				ed.selection.setContent('<span class="book_number" wce="__t=book_number"> ' + newBookNr + '</span> ');
+				ed.selection.setContent('<span class="book_number" wce="__t=book_number" id="' + ed.dom.uniqueId('book') + '"> ' + newBookNr + '</span> ');
 			}
 			return;
 		} else if ($('#insertLectionRadio').attr('checked')){
@@ -384,8 +389,9 @@ var chapterNr;
 			for (var i=0,len=verseList.length; i<len; i++){ 
 				var cb=verseList[i];
 				if ($(cb).attr('checked')){
-					var chapterNr=$(cb).val().substr(0,1);
-					var verseNr=$(cb).val().substr(2);				
+					var pos=$(cb).val().indexOf('.');
+					var chapterNr=$(cb).val().substr(0,pos);
+					var verseNr=$(cb).val().substr(pos);				
 					var startNode=null,endNode=null;
 					var spanList=$(contentWithVerse).find('span');
 					for (var j=0,len2=spanList.length; j<len2; j++){
@@ -395,12 +401,12 @@ var chapterNr;
 							continue;
 						}
 						if (span.className.toLowerCase()=='chapter_number')
-							currentChapter = spanValue;
+							var currentChapter = spanValue;
 						if (span.className.toLowerCase()=='verse_number'){						
 							if (startNode){
 								endNode=span;
 								break;
-							} else if(spanValue==verseNr && currentChapter == chapterNr ){
+							} else if (spanValue==verseNr && currentChapter == chapterNr){
 								startNode=span; 
 							} 
 						}
@@ -413,7 +419,10 @@ var chapterNr;
 			for (var i=0,len=chapterList.length; i<len; i++){ 
 				var cb=chapterList[i];
 				if ($(cb).attr('checked')){
-					var chapterNr=$(cb).val();				
+					var id=$(cb).attr('id');
+					var pos=$(cb).val().indexOf('.');
+					//var bookNr=$(cb).val().substr(0,pos);
+					var chapterNr=$(cb).val().substr(pos+1);				
 					var startNode=null,endNode=null;
 					var spanList=$(contentWithVerse).find('span');
 					// Loop through all <span> elements
@@ -423,8 +432,10 @@ var chapterNr;
 						if (!span.className){
 							continue;
 						}
-						if (span.className.toLowerCase()=='chapter_number'){						
-							if (spanValue == chapterNr)
+						//if (span.className.toLowerCase() == 'book_number')
+							//var currentBook = spanValue;
+						if (span.className.toLowerCase() == 'chapter_number'){						
+							if (spanValue == chapterNr && span.id == id)
 								$(span).remove();
 						}
 					}
@@ -435,7 +446,9 @@ var chapterNr;
 			for (var i=0,len=bookList.length; i<len; i++){ 
 				var cb=bookList[i];
 				if ($(cb).attr('checked')){
-					var bookNr=$(cb).val();				
+					var id=$(cb).attr('id');
+					var bookNr=$(cb).val();
+					alert(id + ' ' + bookNr);
 					var startNode=null,endNode=null;
 					var spanList=$(contentWithVerse).find('span');
 					// Loop through all <span> elements
@@ -446,7 +459,7 @@ var chapterNr;
 							continue;
 						}
 						if (span.className.toLowerCase()=='book_number'){						
-							if (spanValue == bookNr)
+							if (spanValue == bookNr && span.id == id)
 								$(span).remove();
 						}
 					}

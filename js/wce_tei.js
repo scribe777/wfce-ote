@@ -57,6 +57,8 @@ function getHtmlByTei(inputString) {
 		'witValue' : '',
 		'manuscriptLang' : ''
 	};
+	
+	var gid = 0;
 
 	// As &om; can not be handled we go back to OMISSION
 	inputString = inputString.replace(/([\r\n]|<w\s*\/\s*>)/g,''); 
@@ -686,11 +688,13 @@ function getHtmlByTei(inputString) {
 			var $newNode = $newDoc.createElement('span');
 			$newNode.setAttribute('class', 'lection_number');
 			$newNode.setAttribute('wce', '__t=lection_number&number=' + $teiNode.getAttribute('n'));
+			$newNode.setAttribute('id', ++gid);
 			nodeAddText($newNode, 'Lec');
 		} else if (divType == 'book') {
 			var $newNode = $newDoc.createElement('span');
 			$newNode.setAttribute('class', 'book_number');
 			$newNode.setAttribute('wce', '__t=book_number');
+			$newNode.setAttribute('id', ++gid);
 			$booknumber = $teiNode.getAttribute('n').substring(1);
 			// get rid of the "B"
 			if ($booknumber.charAt(0) == '0')
@@ -701,6 +705,7 @@ function getHtmlByTei(inputString) {
 			var $newNode = $newDoc.createElement('span');
 			$newNode.setAttribute('class', 'chapter_number');
 			$newNode.setAttribute('wce', '__t=chapter_number');
+			$newNode.setAttribute('id', ++gid);
 			var nValue = $teiNode.getAttribute('n');
 			// BXXK(Y)Y
 			if (nValue && nValue != '') {
@@ -720,7 +725,7 @@ function getHtmlByTei(inputString) {
 					nodeAddText($newNode, g_chapterNumber);
 				}
 			}
-		} else {//incipit or explicit
+		} else { //incipit or explicit
 			var $newNode = $newDoc.createElement('span');
 			$newNode.setAttribute('class', 'chapter_number');
 			$newNode.setAttribute('wce', '__t=chapter_number');
