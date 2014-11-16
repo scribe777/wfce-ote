@@ -302,6 +302,17 @@ function writeWceNodeInfo(val) {
 					} else {// no value given for covered lines
 						selected_content += '[<span class="commentary" ' + 'wce="__t=paratext&__n=&fw_type=commentary&covered=">comm</span>]';
 					}
+				} else if (document.getElementById('fw_type').value == "otherlect") {
+					selected_content = '';
+					var cl = document.getElementById('covered').value;
+					if (cl != '' && cl > 0) {
+						for (var i = 0; i < cl; i++) {
+							selected_content += '<br/>&crarr;[<span class="otherlect" ' + 'wce="__t=paratext&__n=&fw_type=otherlect&covered=' + cl + '">lect</span>]';
+						}
+						wceUtils.addToCounter(ed, 'lb', document.getElementById('covered').value);
+					} else {// no value given for covered lines
+						selected_content += '[<span class="otherlect" ' + 'wce="__t=paratext&__n=&fw_type=otherlect&covered=">lect</span>]';
+					}
 				} else if (document.getElementById('fw_type').value == "ews") {
 					selected_content = '[<span class="ews">ews</span>]';
 				} else

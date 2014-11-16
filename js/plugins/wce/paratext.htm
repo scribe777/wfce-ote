@@ -60,6 +60,7 @@
 							<option value="chapNum">{#wce.fw_chapter_number}</option>
 							<option value="chapTitle">{#wce.fw_chapter_title}</option>
 							<option value="lectTitle">{#wce.fw_lectionary_title}</option>
+							<option value="otherlect">{#wce.fw_other_lections}</option>
 							<option value="colophon">{#wce.fw_colophon}</option>
 							<option value="quireSig">{#wce.fw_quiresignature}</option>
 							<option value="AmmSec">{#wce.fw_ammonian}</option>
@@ -178,9 +179,9 @@
 				});
 				ed.onKeyDown.add(function(ed) {
 					var v = $('#fw_type').val();
-					if (v == 'runTitle' || v == 'chapTitle' || v == 'lectTitle' || v == 'colophon' 
-						|| v == 'euthaliana' || v == 'gloss' || v =='pageNum' || v == 'isolated'
-						|| v == 'commentary' || v == 'ews' || v == 'other') {
+					if (v == 'runTitle' || v == 'chapTitle' || v == 'lectTitle' || v == 'otherlect'
+						|| v == 'colophon' || v == 'euthaliana' || v == 'gloss' || v =='pageNum'
+						|| v == 'isolated' || v == 'commentary' || v == 'ews' || v == 'other') {
 						return;
 					}
 					if (timeout) {
@@ -209,7 +210,7 @@
 		if (v == 'runTitle' || 'chapTitle' || v == 'lectTitle' || v == 'colophon' || v == 'quireSig' 
 			|| v == 'euthaliana' || v == 'gloss' || v == 'pageNum' || v == 'isolated' || v == 'other')
 			return 'fw';
-		else if (v == 'commentary')
+		else if (v == 'commentary' || v == 'otherlect')
 			return '';
 		else
 			return 'num';
@@ -225,7 +226,7 @@
 			document.getElementById('fw_type_other').style.backgroundColor = "#CCCCCC";
 		}
 		marginals_text_editor.save();
-		if (v == 'commentary') {
+		if (v == 'commentary' || v == 'otherlect') {
 			document.paratextinfo.number.value = '';
 			document.paratextinfo.number.disabled = true;
 			document.getElementById('number').style.backgroundColor = "#CCCCCC";
@@ -318,13 +319,13 @@
 	
 	function testOther() {
 		if ((document.paratextinfo.paratext_position.options[15].selected == true && document.getElementById('paratext_position_other').value == '')
-			|| (document.paratextinfo.fw_type.options[16].selected == true && document.getElementById('fw_type_other').value == '')) 
+			|| (document.paratextinfo.fw_type.options[17].selected == true && document.getElementById('fw_type_other').value == '')) 
 			return false;
 		return true;
 	}
 	
 	function testIsolated() {
-		if (document.paratextinfo.fw_type.options[14].selected == true && document.paratextinfo.paratext_position.options[0].selected == true)
+		if (document.paratextinfo.fw_type.options[15].selected == true && document.paratextinfo.paratext_position.options[0].selected == true)
 			return false;
 		return true;
 	}

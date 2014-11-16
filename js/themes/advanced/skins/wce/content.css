@@ -488,22 +488,9 @@ span.paratext{
 
 
 
-span.commentary{
-	
+span.commentary, span.otherlect, span.ews {
 	font-style: italic;
-	
-
 }
-
-
-
-span.ews{
-	
-	font-style: italic;
-	
-
-}
-
 
 
 span.spaces{

@@ -1299,7 +1299,7 @@ function getHtmlByTei(inputString) {
 				'n' : '&number=',
 				'rend' : '&paratext_alignment=',
 				'type' : {
-					'0' : '@commentary@ews@runTitle@chapNum@chapTitle@lectTitle@colophon@quireSig@AmmSec@EusCan@euthaliana@gloss@stichoi@pageNum@andrew',
+					'0' : '@commentary@ews@runTitle@chapNum@chapTitle@lectTitle@otherlect@colophon@quireSig@AmmSec@EusCan@euthaliana@gloss@stichoi@pageNum@andrew',
 					'1' : '&fw_type=',
 					'2' : '&fw_type=other&fw_type_other='
 				}
@@ -1362,6 +1362,36 @@ function getHtmlByTei(inputString) {
 				$span.setAttribute('class', 'commentary');
 				$span.setAttribute('wce', '__t=paratext&__n=&fw_type=commentary&covered=');
 				nodeAddText($span, 'comm');
+				$newNode.appendChild($span);
+				nodeAddText($newNode, ']');
+			}
+		} else if ($teiNode.getAttribute('type') === 'otherlect') {// other lections
+			$newNode.setAttribute('class', 'paratext');
+			var cl = 0;
+			//default value for old documents
+			if ($teiNode.getAttribute('rend'))
+				cl = $teiNode.getAttribute('rend');
+			if (cl == 0)
+				cl = '';
+			var wceAttr = '__t=paratext&__n=&fw_type=otherlect&covered=' + cl + '&text=&number=&edit_number=on&paratext_position=pagetop&paratext_position_other=&paratext_alignment=left';
+			$newNode.setAttribute('wce', wceAttr);
+			if (cl != '') {
+				for (var i = 0; i < cl; i++) {
+					$newNode.appendChild($newDoc.createElement('br'));
+					nodeAddText($newNode, '\u21b5[');
+					$span = $newDoc.createElement('span');
+					$span.setAttribute('class', 'otherlect');
+					$span.setAttribute('wce', '__t=paratext&__n=&fw_type=otherlect&covered=' + cl);
+					nodeAddText($span, 'lect');
+					$newNode.appendChild($span);
+					nodeAddText($newNode, ']');
+				}
+			} else {
+				nodeAddText($newNode, '[');
+				$span = $newDoc.createElement('span');
+				$span.setAttribute('class', 'otherlect');
+				$span.setAttribute('wce', '__t=paratext&__n=&fw_type=otherlect&covered=');
+				nodeAddText($span, 'lect');
 				$newNode.appendChild($span);
 				nodeAddText($newNode, ']');
 			}
@@ -3670,13 +3700,13 @@ function getTeiByHtml(inputString, args) {
 	};
 
 	/*
-	* type paratext, return <fw>, <num> or <comm>
+	* type paratext, return <fw>, <num> or <note>
 	*/
 	// <fw type="STRING" place="STRING" rend="align(STRING)">...</fw> <num type="STRING" n="STRING" place="STRING" rend="align(STRING)">...</num> <div type="incipit"><ab>...</ab></div> <div type="explicit"><ab>...</ab></div>
 	var html2Tei_paratext = function(arr, $teiParent, $htmlNode) {
 		var newNodeName, fwType = arr['fw_type'];
 			
-		if (fwType == 'commentary' || fwType == 'ews') {
+		if (fwType == 'commentary' || fwType == 'ews' || fwType == 'otherlect') {
 			newNodeName = 'note';
 		} else if (fwType == 'chapNum' || fwType == 'AmmSec' || fwType == 'EusCan' || fwType == 'stichoi' || fwType == 'andrew') {
 			newNodeName = 'num';
@@ -3689,7 +3719,7 @@ function getTeiByHtml(inputString, args) {
 			fwType = (fwType == 'other') ? arr['fw_type_other'] : fwType;
 			$paratext.setAttribute('type', fwType);
 		}
-		if (fwType == 'commentary') {
+		if (fwType == 'commentary' || fwType == 'otherlect') {
 			if (arr['covered'] != '' && arr['covered'] > 0)//Value of 0 handles as empty value
 				$paratext.setAttribute('rend', arr['covered']);
 			else//no value for covered lines given
@@ -3710,13 +3740,16 @@ function getTeiByHtml(inputString, args) {
 		}
 
 		var rendValue = arr['paratext_alignment'];
-		if (fwType != 'commentary' && fwType != 'ews' && 
-			fwType != 'isolated' && rendValue && rendValue != '') {
+		if (fwType != 'commentary' && fwType != 'ews' && fwType != 'otherlect'
+			&& fwType != 'isolated' && rendValue && rendValue != '') {
 			$paratext.setAttribute('rend', rendValue);
 		}
 		
 		if (fwType == 'commentary') {
 			nodeAddText($paratext, "Untranscribed commentary text");
+			$teiParent.appendChild($paratext);
+		} else if (fwType == 'otherlect') {
+			nodeAddText($paratext, "Untranscribed other lections");
 			$teiParent.appendChild($paratext);
 		} else if (fwType == 'ews') {
 			$paratext.setAttribute('type', 'editorial');
@@ -3761,7 +3794,7 @@ function getTeiByHtml(inputString, args) {
 				html2Tei_paratextAddChildren($seg, arr['marginals_text']);			
 				$teiParent.appendChild($seg);
 			}
-		} else { // only if not commentary nor ews nor isolated
+		} else { // only if not commentary nor other lections nor ews nor isolated
 			isSeg = true;
 			html2Tei_paratextAddChildren($paratext, arr['marginals_text']);			
 			//nodeAddText($paratext, decodeURIComponent(arr['marginals_text']));
