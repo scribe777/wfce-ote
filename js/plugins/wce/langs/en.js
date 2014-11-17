@@ -54,7 +54,7 @@ tinyMCE.addI18n('en.wce',{
 	other : "Other",
 	note : "Note",
 	note_data : "Information about the note",
-	newHand : "Identifier for new hand",
+	newHand : "Name of new hand (if identified)",
 	break_title : "Please specify the break",
 	break_data : "Information about the break",
 	break_type : "Type of break",

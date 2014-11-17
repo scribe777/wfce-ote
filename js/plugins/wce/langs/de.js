@@ -54,7 +54,7 @@ tinyMCE.addI18n('de.wce',{
 	other : "Anderes",
 	note : "Anmerkung",
 	note_data : "Informationen über die Anmerkung",
-	newHand : "Kennzeichnung des neuen Schreibers	",
+	newHand : "Name des neuen Schreibers (sofern identifizierbar)",
 	break_title : "Bitte den Umbruch bestimmen",
 	break_data : "Informationen über den Umbruch",
 	break_type : "Art des Umbruchs",

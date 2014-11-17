@@ -1816,7 +1816,8 @@
 									break;
 								case 'changeOfHand':
 									info_text += ed.getLang('wce.infotext_change_of_hand') + '</div>';
-									info_text += '<div>' + ed.getLang('wce.infotext_new_hand') + ': ' + ar['newHand'] + '</div>';
+									if (ar['newHand'] != null && ar['newHand'].trim() != '')
+										info_text += '<div>' + ed.getLang('wce.infotext_new_hand') + ': ' + ar['newHand'] + '</div>';
 									break;
 								default:
 									// other

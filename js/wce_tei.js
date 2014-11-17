@@ -1411,7 +1411,13 @@ function getHtmlByTei(inputString) {
 
 			var wceAttr = '__t=note&__n=&note_text=' + encodeURIComponent(getDomNodeText($teiNode)) + '';
 			if ($teiNode.firstChild && $teiNode.firstChild.nodeName === 'handshift') {// child node <handshift/> => note_type=changeOfHand
-				wceAttr += '&note_type=changeOfHand&note_type_other=&newHand=' + encodeURIComponent($teiNode.firstChild.getAttribute('n'));
+				wceAttr += '&note_type=changeOfHand&note_type_other=';
+				if ($teiNode.firstChild.getAttribute('scribe')) //scribe is optional
+					wceAttr += '&newHand=' + encodeURIComponent($teiNode.firstChild.getAttribute('scribe'));
+				else if ($teiNode.firstChild.getAttribute('n')) // for compatibility
+					wceAttr += '&newHand=' + encodeURIComponent($teiNode.firstChild.getAttribute('n'));
+				else // write empty entry
+					wceAttr += '&newHand=';
 			} else {
 				var mapping = {
 					'xml:id' : null,
@@ -3624,7 +3630,8 @@ function getTeiByHtml(inputString, args) {
 		// add <handshift/> if necessary
 		if (note_type_value === "changeOfHand") {
 			var $secNewNode = $newDoc.createElement('handshift');
-			$secNewNode.setAttribute('n', decodeURIComponent(arr['newHand']));
+			if (arr['newHand'].trim() != '')
+				$secNewNode.setAttribute('scribe', decodeURIComponent(arr['newHand']));
 			$note.appendChild($secNewNode);
 		}
 		

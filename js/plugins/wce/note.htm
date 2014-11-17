@@ -66,8 +66,8 @@
 					</td>
 				</tr>
 				<tr>
-					<td><label id="newHand_label" for="newHand">{#wce.newHand}</label>
-					</td><td colspan="2"><input id="newHand" name="newHand"
+					<td colspan="2"><label id="newHand_label" for="newHand">{#wce.newHand}</label>
+					</td><td colspan="1"><input id="newHand" name="newHand"
 						type="text" value="" size="30" maxlength=""
 						class="required number min1 mceFocus" />
 					</td>
@@ -129,15 +129,15 @@
 	}
 
 	function testOther() {
-		if (document.noteinfo.note_type.options[3].selected == true && document.getElementById('newHand').value == '')
-			return false;
+		//if (document.noteinfo.note_type.options[3].selected == true && document.getElementById('newHand').value == '')
+			//return false;
 		if (document.noteinfo.note_type.options[4].selected == true && document.getElementById('note_type_other').value == '') 
 			return false;
 	return true;
 	}
 	
-	function testText() {
-		return (document.noteinfo.note_text.value !== '')
+	function testText() { // for change of hand the note text is optional
+		return (document.noteinfo.note_text.value !== '' || document.noteinfo.note_type.options[3].selected)
 	}
 	
 
