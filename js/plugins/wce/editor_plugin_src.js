@@ -1184,7 +1184,7 @@
 			w.isSelWholeNode = wholeSelect;
 			w.selectedNode = selectedNode;
 
-			if (selectedNode.getAttribute('class') === 'commentary'  || selectedNode.getAttribute('class') === 'ews' || selectedNode.getAttribute('class') === 'otherlect') {
+			if (selectedNode.getAttribute('class') === 'commentary'  || selectedNode.getAttribute('class') === 'ews' || selectedNode.getAttribute('class') === 'lectionary-other') {
 				w.type = 'paratext';
 			} else {
 				w.type = WCEUtils.getNodeTypeName(selectedNode);
@@ -1904,7 +1904,7 @@
 								case 'lectTitle':
 									info_text += ed.getLang('wce.fw_lectionary_title');
 									break;
-								case 'otherlect':
+								case 'lectionary-other':
 									info_text = '<div>' + ed.getLang('wce.infotext_untranscribed_other_lections') + '</div>';
 									if (ar['covered'])
 										info_text += '<div style="margin-top:5px">' + ar['covered'] + ' ' + ed.getLang('wce.infotext_lines_covered') + '.';
@@ -1925,7 +1925,7 @@
 									info_text += ar['fw_type_other'];
 							}
 							info_text += '</div>';
-							if (ar['fw_type'] != 'commentary' && ar['fw_type'] != 'otherlect') {
+							if (ar['fw_type'] != 'commentary' && ar['fw_type'] != 'lectionary-other') {
 								info_text += '<div style="margin-top:10px">' + ed.getLang('wce.infotext_value') + ': ' + ar['marginals_text'] + '</div>';
 								if (ar['paratext_position'] == 'other') {
 									info_text += '<div style="margin-top:10px">' + ed.getLang('wce.infotext_position') + ': ' + ar['paratext_position_other'] + '</div>';
@@ -2439,12 +2439,12 @@
 					if (isSpaceKey) {
 						return stopEvent(ed, e);
 					}
-				} else if (ek == 46 && wcevar.selectedNode && (wcevar.selectedNode.className == 'commentary') || wcevar.selectedNode.className == 'ews' || wcevar.selectedNode.className == 'otherlect') {
+				} else if (ek == 46 && wcevar.selectedNode && (wcevar.selectedNode.className == 'commentary') || wcevar.selectedNode.className == 'ews' || wcevar.selectedNode.className == 'lectionary-other') {
 					ed.execCommand('wceDelNode');
 					return stopEvent(ed, e);
 				} else if (ek == 46 && wcevar.isCaretAtNodeEnd && !wcevar.isNextElemBE) {
 
-				} else if (ek == 46 && wcevar.isCaretAtNodeEnd && wcevar.isNextElemBE && wcevar.nextElem.className != 'commentary' && wcevar.nextElem.className != 'ews' || wcevar.nextElem.className != 'otherlect') {
+				} else if (ek == 46 && wcevar.isCaretAtNodeEnd && wcevar.isNextElemBE && wcevar.nextElem.className != 'commentary' && wcevar.nextElem.className != 'ews' || wcevar.nextElem.className != 'lectionary-other') {
 					//caret at middle of two elements
 					return stopEvent(ed, e);
 				} else if ((ek == 46 && !wcevar.isCaretAtFormatStart) || (ek == 8 && wcevar.type != ed.WCE_CON.formatEnd && !wcevar.isCaretAtFormatStart)) {
@@ -3653,7 +3653,7 @@
 					if (cn == ed.WCE_CON.formatStart || sn.className == ed.WCE_CON.formatEnd) {
 						return sn.parentNode;
 					}
-					if (cn == 'commentary' || cn == 'ews' || cn == 'otherlect') {
+					if (cn == 'commentary' || cn == 'ews' || cn == 'lectionary-other') {
 						return sn.parentNode;
 					}
 				}

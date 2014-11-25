@@ -60,7 +60,7 @@
 							<option value="chapNum">{#wce.fw_chapter_number}</option>
 							<option value="chapTitle">{#wce.fw_chapter_title}</option>
 							<option value="lectTitle">{#wce.fw_lectionary_title}</option>
-							<option value="otherlect">{#wce.fw_other_lections}</option>
+							<option value="lectionary-other">{#wce.fw_other_lections}</option>
 							<option value="colophon">{#wce.fw_colophon}</option>
 							<option value="quireSig">{#wce.fw_quiresignature}</option>
 							<option value="AmmSec">{#wce.fw_ammonian}</option>
@@ -179,7 +179,7 @@
 				});
 				ed.onKeyDown.add(function(ed) {
 					var v = $('#fw_type').val();
-					if (v == 'runTitle' || v == 'chapTitle' || v == 'lectTitle' || v == 'otherlect'
+					if (v == 'runTitle' || v == 'chapTitle' || v == 'lectTitle' || v == 'lectionary-other'
 						|| v == 'colophon' || v == 'euthaliana' || v == 'gloss' || v =='pageNum'
 						|| v == 'isolated' || v == 'commentary' || v == 'ews' || v == 'other') {
 						return;
@@ -210,7 +210,7 @@
 		if (v == 'runTitle' || 'chapTitle' || v == 'lectTitle' || v == 'colophon' || v == 'quireSig' 
 			|| v == 'euthaliana' || v == 'gloss' || v == 'pageNum' || v == 'isolated' || v == 'other')
 			return 'fw';
-		else if (v == 'commentary' || v == 'otherlect')
+		else if (v == 'commentary' || v == 'lectionary-other')
 			return '';
 		else
 			return 'num';
@@ -226,7 +226,7 @@
 			document.getElementById('fw_type_other').style.backgroundColor = "#CCCCCC";
 		}
 		marginals_text_editor.save();
-		if (v == 'commentary' || v == 'otherlect') {
+		if (v == 'commentary' || v == 'lectionary-other') {
 			document.paratextinfo.number.value = '';
 			document.paratextinfo.number.disabled = true;
 			document.getElementById('number').style.backgroundColor = "#CCCCCC";

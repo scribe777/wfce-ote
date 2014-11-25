@@ -250,6 +250,8 @@ var chapterNr, bookNr;
 	
 	function getVerseList(node){
 		var out="";
+		bookNr = (bookNr) ? bookNr : '';
+		chapterNr = (chapterNr) ? chapterNr : '';
 		
 		if (!node || node.nodeType != 1) {
 			return out;
@@ -258,18 +260,27 @@ var chapterNr, bookNr;
 		var list=node.childNodes;
 		for (var i=0,len=list.length; i<len; i++) {
 			var n=list[i];
-			if (n.nodeType==1) {
-				out+=getVerseList(n); 
+			if (n.nodeType == 1) {
+				out += getVerseList(n); 
 			}
 		}
 		
 		var className=node.className;
-		if (className && className.match(/chapter_number/)) {
-			chapterNr=$.trim(node.innerHTML);
+		if (className && className.match(/book_number/)) {
+			bookNr = $.trim(node.innerHTML);
+		} else if (className && className.match(/chapter_number/)) {
+			var v = $.trim(node.innerHTML);
+			if (v) {
+				if (v === 'Inscriptio' || v === 'Subscriptio') //Special handling for Inscriptio and Subscriptio
+					out += '<input type="checkbox" value="'+v+'">'+v+'</input><br />'; 
+				else
+					chapterNr = v;
+			}
 		} else if (className && className.match(/verse_number/)) {
-			var v=$.trim(node.innerHTML);
-			if (v && v!='')
-				out+='<input type="checkbox" value="'+chapterNr+'.'+v+'">Verse '+chapterNr+'.'+v+'</input><br />'; 
+			var v = $.trim(node.innerHTML);
+			if (v && v!='') {
+				out += '<input type="checkbox" value="' + bookNr + '.' + chapterNr + '.' + v + '">Verse ' + bookNr + '.' + chapterNr + '.' + v + '</input><br />'; 
+			}
 		}	
 		return out;		
 	}
@@ -292,11 +303,11 @@ var chapterNr, bookNr;
 		
 		if (className && className.match(/book_number/)){
 			bookNr = $.trim(node.innerHTML);
-		} else if (className && className.match(/chapter_number/)){
+		} else if (className && className.match(/chapter_number/) && $.trim(node.innerHTML) !== 'Inscriptio' && $.trim(node.innerHTML) !== 'Subscriptio'){
 			var v = $.trim(node.innerHTML);
 			var id = node.getAttribute('id');
 			if (v && v!='')
-				out+='<input type="checkbox" value="' + bookNr + '.' + v + '" id="' + id + '">Chapter ' + bookNr + '.' + v + '</input><br />'; 
+				out += '<input type="checkbox" value="' + bookNr + '.' + v + '" id="' + id + '">Chapter ' + bookNr + '.' + v + '</input><br />'; 
 		}	
 		return out;		
 	}
@@ -388,10 +399,20 @@ var chapterNr, bookNr;
 			var verseList=$('#verseList').find('input:checkbox');
 			for (var i=0,len=verseList.length; i<len; i++){ 
 				var cb=verseList[i];
+				var currentBook = '';
 				if ($(cb).attr('checked')){
 					var pos=$(cb).val().indexOf('.');
-					var chapterNr=$(cb).val().substr(0,pos);
-					var verseNr=$(cb).val().substr(pos);				
+					if (pos == -1) {//Inscriptio or Subscriptio found
+						var bookNr = '';
+						var chapterNr = $(cb).val().trim();
+						var verseNr = '';
+					} else {
+						var bookNr=$(cb).val().substr(0,pos);
+						var cbnew = $(cb).val().substr(pos+1);
+						pos = cbnew.indexOf('.');
+						var chapterNr=cbnew.substr(0,pos);
+						var verseNr=cbnew.substr(pos+1);				
+					}
 					var startNode=null,endNode=null;
 					var spanList=$(contentWithVerse).find('span');
 					for (var j=0,len2=spanList.length; j<len2; j++){
@@ -400,17 +421,36 @@ var chapterNr, bookNr;
 						if (!span.className){
 							continue;
 						}
-						if (span.className.toLowerCase()=='chapter_number')
-							var currentChapter = spanValue;
-						if (span.className.toLowerCase()=='verse_number'){						
-							if (startNode){
+						if (span.className.toLowerCase()=='lection_number') {
+							if (startNode){ //if next entry after marked verse
 								endNode=span;
 								break;
-							} else if (spanValue==verseNr && currentChapter == chapterNr){
+							}
+						} else if (span.className.toLowerCase()=='book_number') {
+							currentBook = spanValue;
+							if (startNode){ //if next entry after marked verse
+								endNode=span;
+								break;
+							}
+						} else if (span.className.toLowerCase()=='chapter_number') {
+							var currentChapter = spanValue;
+							if (startNode){ //if next entry after marked verse
+								endNode=span;
+								break;
+							}
+							if (currentChapter == chapterNr && verseNr == '') //Inscriptio or Subscriptio
+								startNode=span; // set startNode; next verse number element will be endNode
+						} else if (span.className.toLowerCase()=='verse_number'){						
+							if (startNode && verseNr !== ''){
+								endNode=span;
+								break;
+							} else if (spanValue==verseNr && currentChapter == chapterNr && currentBook == bookNr && verseNr != ''){
 								startNode=span; 
 							} 
 						}
 					}
+					if (endNode == null) //startNode was last span node of document
+						endNode = ed.dom.getRoot().childNodes[ed.dom.getRoot().childNodes.length-1];
 					delVerse(startNode,endNode);
 				}
 			}	 
@@ -448,7 +488,6 @@ var chapterNr, bookNr;
 				if ($(cb).attr('checked')){
 					var id=$(cb).attr('id');
 					var bookNr=$(cb).val();
-					alert(id + ' ' + bookNr);
 					var startNode=null,endNode=null;
 					var spanList=$(contentWithVerse).find('span');
 					// Loop through all <span> elements

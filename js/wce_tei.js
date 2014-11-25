@@ -1299,7 +1299,7 @@ function getHtmlByTei(inputString) {
 				'n' : '&number=',
 				'rend' : '&paratext_alignment=',
 				'type' : {
-					'0' : '@commentary@ews@runTitle@chapNum@chapTitle@lectTitle@otherlect@colophon@quireSig@AmmSec@EusCan@euthaliana@gloss@stichoi@pageNum@andrew',
+					'0' : '@commentary@ews@runTitle@chapNum@chapTitle@lectTitle@lectionary-other@colophon@quireSig@AmmSec@EusCan@euthaliana@gloss@stichoi@pageNum@andrew',
 					'1' : '&fw_type=',
 					'2' : '&fw_type=other&fw_type_other='
 				}
@@ -1365,7 +1365,7 @@ function getHtmlByTei(inputString) {
 				$newNode.appendChild($span);
 				nodeAddText($newNode, ']');
 			}
-		} else if ($teiNode.getAttribute('type') === 'otherlect') {// other lections
+		} else if ($teiNode.getAttribute('type') === 'lectionary-other') {// other lections
 			$newNode.setAttribute('class', 'paratext');
 			var cl = 0;
 			//default value for old documents
@@ -1373,15 +1373,15 @@ function getHtmlByTei(inputString) {
 				cl = $teiNode.getAttribute('rend');
 			if (cl == 0)
 				cl = '';
-			var wceAttr = '__t=paratext&__n=&fw_type=otherlect&covered=' + cl + '&text=&number=&edit_number=on&paratext_position=pagetop&paratext_position_other=&paratext_alignment=left';
+			var wceAttr = '__t=paratext&__n=&fw_type=lectionary-other&covered=' + cl + '&text=&number=&edit_number=on&paratext_position=pagetop&paratext_position_other=&paratext_alignment=left';
 			$newNode.setAttribute('wce', wceAttr);
 			if (cl != '') {
 				for (var i = 0; i < cl; i++) {
 					$newNode.appendChild($newDoc.createElement('br'));
 					nodeAddText($newNode, '\u21b5[');
 					$span = $newDoc.createElement('span');
-					$span.setAttribute('class', 'otherlect');
-					$span.setAttribute('wce', '__t=paratext&__n=&fw_type=otherlect&covered=' + cl);
+					$span.setAttribute('class', 'lectionary-other');
+					$span.setAttribute('wce', '__t=paratext&__n=&fw_type=lectionary-other&covered=' + cl);
 					nodeAddText($span, 'lect');
 					$newNode.appendChild($span);
 					nodeAddText($newNode, ']');
@@ -1389,8 +1389,8 @@ function getHtmlByTei(inputString) {
 			} else {
 				nodeAddText($newNode, '[');
 				$span = $newDoc.createElement('span');
-				$span.setAttribute('class', 'otherlect');
-				$span.setAttribute('wce', '__t=paratext&__n=&fw_type=otherlect&covered=');
+				$span.setAttribute('class', 'lectionary-other');
+				$span.setAttribute('wce', '__t=paratext&__n=&fw_type=lectionary-other&covered=');
 				nodeAddText($span, 'lect');
 				$newNode.appendChild($span);
 				nodeAddText($newNode, ']');
@@ -3713,7 +3713,7 @@ function getTeiByHtml(inputString, args) {
 	var html2Tei_paratext = function(arr, $teiParent, $htmlNode) {
 		var newNodeName, fwType = arr['fw_type'];
 			
-		if (fwType == 'commentary' || fwType == 'ews' || fwType == 'otherlect') {
+		if (fwType == 'commentary' || fwType == 'ews' || fwType == 'lectionary-other') {
 			newNodeName = 'note';
 		} else if (fwType == 'chapNum' || fwType == 'AmmSec' || fwType == 'EusCan' || fwType == 'stichoi' || fwType == 'andrew') {
 			newNodeName = 'num';
@@ -3726,7 +3726,7 @@ function getTeiByHtml(inputString, args) {
 			fwType = (fwType == 'other') ? arr['fw_type_other'] : fwType;
 			$paratext.setAttribute('type', fwType);
 		}
-		if (fwType == 'commentary' || fwType == 'otherlect') {
+		if (fwType == 'commentary' || fwType == 'lectionary-other') {
 			if (arr['covered'] != '' && arr['covered'] > 0)//Value of 0 handles as empty value
 				$paratext.setAttribute('rend', arr['covered']);
 			else//no value for covered lines given
@@ -3747,7 +3747,7 @@ function getTeiByHtml(inputString, args) {
 		}
 
 		var rendValue = arr['paratext_alignment'];
-		if (fwType != 'commentary' && fwType != 'ews' && fwType != 'otherlect'
+		if (fwType != 'commentary' && fwType != 'ews' && fwType != 'lectionary-other'
 			&& fwType != 'isolated' && rendValue && rendValue != '') {
 			$paratext.setAttribute('rend', rendValue);
 		}
@@ -3755,7 +3755,7 @@ function getTeiByHtml(inputString, args) {
 		if (fwType == 'commentary') {
 			nodeAddText($paratext, "Untranscribed commentary text");
 			$teiParent.appendChild($paratext);
-		} else if (fwType == 'otherlect') {
+		} else if (fwType == 'lectionary-other') {
 			nodeAddText($paratext, "Untranscribed other lections");
 			$teiParent.appendChild($paratext);
 		} else if (fwType == 'ews') {
