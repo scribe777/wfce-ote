@@ -81,7 +81,7 @@
 				</tr>
 				<tr>
 					<td><label id="covered_label" for="covered">{#wce.covered}</label></td>
-					<td><input id="covered" name="covered" type="number" value=""
+					<td><input id="covered" name="covered" type="number" value="1"
 						size="5" maxlength="" class="required number min1 mceFocus"/></td>
 				</tr>
 				</tr>
@@ -140,7 +140,15 @@
 		<div class="mceActionPanel">
 			<input type="button"  id="insert" name="insert" value="{#insert}"
 				onclick="cont = testInput();
-						if (cont=='0'){writeWceNodeInfo(getParaTag());}else{if(cont=='1'){alert('{#wce.empty_other}');}else{alert('{#wce.empty_margin}');}}" />
+						if (cont=='0'){
+							writeWceNodeInfo(getParaTag());
+						} else if (cont == '1') {
+							alert('{#wce.empty_other}');
+						} else if (cont == '2') {
+							alert('{#wce.empty_margin}');
+						} else { // cont = 3
+							alert('{#wce.value_too_small}');
+						}" />
 			<input type="button" id="cancel" name="cancel" value="{#cancel}"
 				onclick="tinyMCEPopup.close();" />
 		</div>
@@ -330,6 +338,10 @@
 		return true;
 	}
 	
+	function testValue() {
+		return (document.paratextinfo.covered.value > 0 || ($('#fw_type').val() != 'commentary' && $('#fw_type').val() != 'lectionary-other'));
+	}
+	
 	function testInput() {
 		var cont = testOther();
 		if (!cont) {
@@ -338,6 +350,10 @@
 		cont = testIsolated();
 		if (!cont) {
 			return 2;
+		}
+		cont = testValue();
+		if (!cont) {
+			return 3;
 		}
 		return 0;
 	}
