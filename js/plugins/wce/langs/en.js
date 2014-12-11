@@ -96,7 +96,7 @@ tinyMCE.addI18n('en.wce',{
 	fw_chapter_title : "Chapter title",
 	fw_chapter_number : "Chapter number",
 	fw_lectionary_title : "Lectionary notation",
-	fw_other_lections : "Lectionary Text placeholder",
+	fw_other_lections : "Lectionary text placeholder",
 	fw_lectionary_incipit : "Lectionary incipit",
 	fw_lectionary_explicit : "Lectionary explicit",
 	fw_colophon : "Colophon",

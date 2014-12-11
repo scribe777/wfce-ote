@@ -2779,7 +2779,7 @@ function getTeiByHtml(inputString, args) {
 			// ******************* chapter *******************
 			var textNode = $htmlNode.firstChild;
 			if (textNode) {
-			    textNode=textNode.firstChild;
+				textNode=textNode.firstChild;
 				g_chapterNumber = textNode.nodeValue;
 				g_chapterNumber = $.trim(g_chapterNumber);
 				//if (g_chapterNumber != old_chapterNumber) {//ignore repeated chapter numbers; TODO: still needed?
@@ -2798,8 +2798,8 @@ function getTeiByHtml(inputString, args) {
 					
 					if (g_bookNode) 
 						g_bookNode.appendChild(g_chapterNode);
-					else if (g_lectionNode) //attach node to lection if there is no book node (important for multiple lections)
-						g_lectionNode.appendChild(g_chapterNode);
+					//else if (g_lectionNode) //attach node to lection if there is no book node (important for multiple lections)
+					//	g_lectionNode.appendChild(g_chapterNode);
 					else
 						$newRoot.appendChild(g_chapterNode);
 					g_currentParentNode = g_chapterNode;
@@ -2833,7 +2833,7 @@ function getTeiByHtml(inputString, args) {
 				g_lectionNode.setAttribute('n', wceAttrValue.substring(wceAttrValue.lastIndexOf("=")+1));
 				$newRoot.appendChild(g_lectionNode);
 				g_currentParentNode = g_lectionNode;
-				g_bookNode = null; // reset book node as chapter can also be attached to a lection directly (see line 2737)
+				//g_bookNode = null; // reset book node as chapter can also be attached to a lection directly (see line 2737)
 			}
 			return null;
 		} else {

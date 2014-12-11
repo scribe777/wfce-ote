@@ -33,7 +33,7 @@
 */
 
 (function() {
-	var wfce_editor = "1.3.1 (2014-12-02)";
+	var wfce_editor = "1.3.1 (2014-12-11)";
 
 	// Load plugin specific language pack
 	tinymce.PluginManager.requireLangPack('wce');
@@ -1849,6 +1849,8 @@
 								corr_str += ar['corrector_text'].replace(/<span class="abbr_add_overline"/g, 
 										'<span class="abbr_add_overline" style="text-decoration:overline"') + '</div>';
 							
+							if (ar['ut_videtur_corr'] && ar['ut_videtur_corr'] === 'on')
+								corr_str += '(ut videtur corr)';
 							var deletionText = ar['deletion'].replace(/\,/g, ', ');
 							if (deletionText && deletionText != 'null') {
 								// information on deletion
@@ -2047,7 +2049,10 @@
 					else {
 						var fs = new RegExp(ed.WCE_CON.startFormatHtml, 'g');
 						var fe = new RegExp(ed.WCE_CON.endFormatHtml, 'g');
-						corr_str = '*: ' + $(sele_node).html() + corr_str;
+						if (ar['ut_videtur_firsthand'] && ar['ut_videtur_firsthand'] === 'on')
+							corr_str = '*: ' + $(sele_node).html() + ' (ut videtur)' +  corr_str;
+						else 
+							corr_str = '*: ' + $(sele_node).html() + corr_str;
 						corr_str = corr_str.replace(fs, "").replace(fe, "");
 					}
 				}
