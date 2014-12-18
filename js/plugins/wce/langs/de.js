@@ -291,6 +291,7 @@ tinyMCE.addI18n('de.wce',{
 	infotext_untranscribed_text : 'Dies ist ein nichttranskribierter Kommentar',
 	infotext_untranscribed_other_lections : 'Dies ist eine nichttranskribierte Lektion',
 	infotext_lines_covered : 'Zeile(n) überdeckt',
+	infotext_within_line : 'innerhalb der Zeile',
 	infotext_value : 'Wert',
 	infotext_position : 'Position',
 	infotext_no_info_reason : 'Es liegen keine Informationen über Grund und Ausmaß der Lücke vor',

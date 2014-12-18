@@ -1394,19 +1394,13 @@ function getHtmlByTei(inputString) {
 
 		var $newNode = $newDoc.createElement('span');
 
-		if ($teiNode.getAttribute('type') === 'commentary') {// commentary text without <lb/> => old document, compatibility mode
+		if ($teiNode.getAttribute('type') === 'commentary') {// commentary text without <lb/> => old document (compatibility mode) or no covered lines
 			$newNode.setAttribute('class', 'paratext');
-			var cl = ($teiNode.getAttribute('rend')) ? $teiNode.getAttribute('rend') : 1;
+			var cl = ($teiNode.getAttribute('rend')) ? $teiNode.getAttribute('rend') : 0; //if new document, but no covered lines set cl=0
 			
-			/*var cl = 0;
-			//default value for old documents
-			if ($teiNode.getAttribute('rend')) // compatibility mode
-				cl = $teiNode.getAttribute('rend');
-			if (cl == 0)
-				cl = '';*/
 			var wceAttr = '__t=paratext&__n=&fw_type=commentary&covered=' + cl + '&text=&number=&edit_number=on&paratext_position=pagetop&paratext_position_other=&paratext_alignment=left';
 			$newNode.setAttribute('wce', wceAttr);
-			//if (cl != '') {
+			if (cl > 0) {
 				for (var i = 0; i < cl; i++) {
 					$newNode.appendChild($newDoc.createElement('br'));
 					nodeAddText($newNode, '\u21b5[');
@@ -1417,15 +1411,15 @@ function getHtmlByTei(inputString) {
 					$newNode.appendChild($span);
 					nodeAddText($newNode, ']');
 				}
-			/*} else {
+			} else {
 				nodeAddText($newNode, '[');
 				$span = $newDoc.createElement('span');
 				$span.setAttribute('class', 'commentary');
-				$span.setAttribute('wce', '__t=paratext&__n=&fw_type=commentary&covered=');
+				$span.setAttribute('wce', '__t=paratext&__n=&fw_type=commentary&covered=0');
 				nodeAddText($span, 'comm');
 				$newNode.appendChild($span);
 				nodeAddText($newNode, ']');
-			}*/
+			}
 		} else if ($teiNode.getAttribute('type') === 'lectionary-other') {// other lections without <lb/> => old document, compatibility mode
 			$newNode.setAttribute('class', 'paratext');
 			var cl = ($teiNode.getAttribute('rend')) ? $teiNode.getAttribute('rend') : 1;
@@ -3811,7 +3805,13 @@ function getTeiByHtml(inputString, args) {
 				}
 				//$paratext.setAttribute('rend', arr['covered']);
 			} else { //no value for covered lines given
-				alert("FEHLER");
+				var $paratext = $newDoc.createElement(newNodeName);
+				$paratext.setAttribute('type', fwType);
+				if (fwType == 'commentary')
+					nodeAddText($paratext, "Untranscribed commentary text within the line");
+				else
+					nodeAddText($paratext, "Untranscribed lectionary text within the line");
+				$teiParent.appendChild($paratext);
 				//$paratext.setAttribute('rend', '0');
 			}
 			isSeg = false;

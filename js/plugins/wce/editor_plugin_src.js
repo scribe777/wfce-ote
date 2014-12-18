@@ -33,7 +33,7 @@
 */
 
 (function() {
-	var wfce_editor = "1.3.1 (2014-12-11)";
+	var wfce_editor = "1.3.2 (2014-12-18)";
 
 	// Load plugin specific language pack
 	tinymce.PluginManager.requireLangPack('wce');
@@ -1869,9 +1869,13 @@
 							info_text = '<div>' + ed.getLang('wce.infotext_paratext_type') + ': ';
 							switch (ar['fw_type']) {
 								case 'commentary':
-									info_text = '<div>' + ed.getLang('wce.infotext_untranscribed_text') + '</div>';
-									if (ar['covered'])
-										info_text += '<div style="margin-top:5px">' + ar['covered'] + ' ' + ed.getLang('wce.infotext_lines_covered') + '.';
+									info_text = '<div>' + ed.getLang('wce.infotext_untranscribed_text');
+									if (ar['covered']) {
+										if (ar['covered'] > 0)
+											info_text += '</div><div style="margin-top:5px">' + ar['covered'] + ' ' + ed.getLang('wce.infotext_lines_covered') + '.';
+										else
+											info_text += ' ' + ed.getLang('wce.infotext_within_line') + '.</div>';
+									}
 									break;
 								case 'ews':
 									info_text += ed.getLang('wce.fw_ews');
@@ -2444,13 +2448,13 @@
 					if (isSpaceKey) {
 						return stopEvent(ed, e);
 					}
-				} else if (ek == 46 && wcevar.selectedNode && (wcevar.selectedNode.className == 'commentary') || wcevar.selectedNode.className == 'ews' || wcevar.selectedNode.className == 'lectionary-other') {
+				} else if (ek == 46 && wcevar.selectedNode && (wcevar.selectedNode.className == 'commentary' || wcevar.selectedNode.className == 'ews' || wcevar.selectedNode.className == 'lectionary-other')) {
 					ed.execCommand('wceDelNode');
 					return stopEvent(ed, e);
 				} else if (ek == 46 && wcevar.isCaretAtNodeEnd && !wcevar.isNextElemBE) {
 
-				} else if (ek == 46 && wcevar.isCaretAtNodeEnd && wcevar.isNextElemBE && wcevar.nextElem.className != 'commentary' && wcevar.nextElem.className != 'ews' || wcevar.nextElem.className != 'lectionary-other') {
-					//caret at middle of two elements
+				} else if (ek == 46 && wcevar.isCaretAtNodeEnd && wcevar.isNextElemBE && wcevar.nextElem.className != 'commentary' && wcevar.nextElem.className != 'ews' && wcevar.nextElem.className != 'lectionary-other') {
+					//caret in the middle of two elements
 					return stopEvent(ed, e);
 				} else if ((ek == 46 && !wcevar.isCaretAtFormatStart) || (ek == 8 && wcevar.type != ed.WCE_CON.formatEnd && !wcevar.isCaretAtFormatStart)) {
 					ed.execCommand('wceDelNode');
@@ -3973,11 +3977,11 @@
 			
 			// Add paratext/*********/
 			ed.addCommand('mceAddParatext', function() {
-				doWithDialog(ed, url, '/paratext.htm', 900, 480, 1, true);
+				doWithDialog(ed, url, '/paratext.htm', 950, 480, 1, true);
 			});
 			// Edit paratext
 			ed.addCommand('mceEditParatext', function() {
-				doWithDialog(ed, url, '/paratext.htm', 900, 480, 1, false);
+				doWithDialog(ed, url, '/paratext.htm', 950, 480, 1, false);
 			});
 
 			ed.addCommand('mceAddParatext_Shortcut', function() {
