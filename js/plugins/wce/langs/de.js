@@ -223,7 +223,7 @@ tinyMCE.addI18n('de.wce',{
 	empty_text : "Bitte geben Sie einen Text ein",
 	empty_margin : "Bitte wählen Sie eine Randposition aus",
 	invalid_char : "Bitte geben Sie ein gültiges Unicodezeichen in der Form &...; ein",
-	value_too_small : "Die Anzahl von Zeilen muss mindestens 1 betragen",
+	value_too_small : "Die Anzahl von Zeilen muss mindestens 0 betragen",
 	save : 'Die Änderungen sind noch nicht gespeichert worden. Klicken Sie "OK" um sie zu speichern, oder "Cancel" um die Änderungen zu verwerfen',
 	capitals_title: 'Bitte die Initialen bestimmen',
 	capitals_data: 'Informationen über die Großbuchstaben',

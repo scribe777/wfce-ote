@@ -275,7 +275,7 @@ tinyMCE.addI18n('en.wce',{
 	empty_text : "Please enter a text",
 	empty_margin : "Please select a marginal position",
 	invalid_char : "Please enter a valid Unicode expression",
-	value_too_small : "The value for the number of lines has to be at least 1",
+	value_too_small : "The value for the number of lines has to be at least 0",
 	save : 'Your changes have not been saved yet.\nClick "OK" to save them or "Cancel" to discard changes.',
 	capitals_title: 'Please specify the capitals',
 	capitals_data: 'Information about capitals',
