@@ -62,6 +62,9 @@ function getHtmlByTei(inputString) {
 	var g_lineNumber;
 	var g_columnNumber;
 	var g_quireNumber;
+	var g_verseNumber;
+	var g_chapterNumber;
+	var g_bookNumber;
 
 	// As &om; can not be handled we go back to OMISSION
 	inputString = inputString.replace(/([\r\n]|<w\s*\/\s*>)/g,''); 
@@ -698,7 +701,7 @@ function getHtmlByTei(inputString) {
 			$newNode.setAttribute('class', 'book_number');
 			$newNode.setAttribute('wce', '__t=book_number');
 			$newNode.setAttribute('id', ++gid);
-			$booknumber = $teiNode.getAttribute('n').substring(1);
+			var $booknumber = $teiNode.getAttribute('n').substring(1);
 			// get rid of the "B"
 			if ($booknumber.charAt(0) == '0')
 				$booknumber = $booknumber.substring(1);
@@ -715,7 +718,7 @@ function getHtmlByTei(inputString) {
 				var indexK = nValue.indexOf('K');
 				var indexB = nValue.indexOf('B');
 				if (indexB + 1 > -1 && indexK - 1 > 0) {//TODO: Do we need this, if the book number is passed to the editor at run-time? Maybe just a fallback?
-					bookValue = nValue.substr(indexB + 1, indexK - 1);
+					var bookValue = nValue.substr(indexB + 1, indexK - 1);
 					// we store the book number as it is, maybe with leading "0"
 					//if (bookValue.length == 2 && bookValue.charAt(0) == '0' //if bookValue is a two-digit number and starts with "0"
 					//	bookValue = bookValue.substring(1);
@@ -1123,12 +1126,13 @@ function getHtmlByTei(inputString) {
 		//
 		var $newNode = $newDoc.createElement('span');
 		var cl = 0;
-		var type;
+		var paratexttype;
+		var $temp;
 		
-		while ($teiNode.nodeName == 'lb' && $teiNode.nextSibling && $teiNode.nextSibling.nodeName == 'note' && ($teiNode.nextSibling.getAttribute('type') == 'lectionary-other'
+		while ($teiNode && $teiNode.nodeName == 'lb' && $teiNode.nextSibling && $teiNode.nextSibling.nodeName == 'note' && ($teiNode.nextSibling.getAttribute('type') == 'lectionary-other'
 			|| $teiNode.nextSibling.getAttribute('type') == 'commentary')) { // ignore <lb/> added for untranscribed text
 			cl++; //step counter
-			type = $teiNode.nextSibling.getAttribute('type'); // remember latest type for correct value below
+			paratexttype = $teiNode.nextSibling.getAttribute('type'); // remember latest type for correct value below
 			
 			$temp = ($teiNode.nextSibling.nextSibling) ? $teiNode.nextSibling.nextSibling : null;
 			$teiNode.parentNode.removeChild($teiNode.nextSibling);
@@ -1136,39 +1140,26 @@ function getHtmlByTei(inputString) {
 			$teiNode = $temp;
 		}
 		if (cl > 0) {
-			$teiNode.parentNode.insertBefore($teiNode.cloneNode(true), $teiNode.nextSibling); // add latest teiNode to the tree
+			if ($teiNode) { //if note is last element do nothing
+				$teiNode.parentNode.insertBefore($teiNode.cloneNode(true), $teiNode.nextSibling); // add latest teiNode to the tree
+			}
 			$newNode.setAttribute('class', 'paratext');
-			/*var cl = 0;
-			//default value for old documents
-			if ($teiNode.getAttribute('rend'))
-				cl = $teiNode.getAttribute('rend');
-			if (cl == 0)
-				cl = '';*/
+			
 			var wceAttr = '__t=paratext&__n=&fw_type=' + type + '&covered=' + cl + '&text=&number=&edit_number=on&paratext_position=pagetop&paratext_position_other=&paratext_alignment=left';
 			$newNode.setAttribute('wce', wceAttr);
-			//if (cl != '') {
 			for (var i = 0; i < cl; i++) {
 				$newNode.appendChild($newDoc.createElement('br'));
 				nodeAddText($newNode, '\u21b5[');
 				$span = $newDoc.createElement('span');
-				$span.setAttribute('class', type);
-				$span.setAttribute('wce', '__t=paratext&__n=&fw_type=' + type + '&covered=' + cl);
-				if (type == "commentary")
+				$span.setAttribute('class', paratexttype);
+				$span.setAttribute('wce', '__t=paratext&__n=&fw_type=' + paratexttype + '&covered=' + cl);
+				if (paratexttype == "commentary")
 					nodeAddText($span, 'comm');
 				else
 					nodeAddText($span, 'lect');
 				$newNode.appendChild($span);
 				nodeAddText($newNode, ']');
 			}
-			/*} else {
-				nodeAddText($newNode, '[');
-				$span = $newDoc.createElement('span');
-				$span.setAttribute('class', 'lectionary-other');
-				$span.setAttribute('wce', '__t=paratext&__n=&fw_type=lectionary-other&covered=');
-				nodeAddText($span, 'lect');
-				$newNode.appendChild($span);
-				nodeAddText($newNode, ']');
-			}*/
 			addFormatElement($newNode);
 			$htmlParent.appendChild($newNode);
 
