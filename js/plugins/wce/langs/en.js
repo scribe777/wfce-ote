@@ -280,6 +280,7 @@ tinyMCE.addI18n('en.wce',{
 	capitals_title: 'Please specify the capitals',
 	capitals_data: 'Information about capitals',
 	capitals_height : 'Height of the capitals',
+	capitals_unit : 'line(s)',
 	verses_title : 'Modify structure',
 	verse_insert : 'Insert verse number: ',
 	verse_remove : 'Remove the following verse(s) completely: ',

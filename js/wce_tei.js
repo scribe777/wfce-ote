@@ -1659,12 +1659,12 @@ function getHtmlByTei(inputString) {
 			if ($test != null && $test.nodeName == 'seg') {//seg element ahead -> place of correction
 				if ($test.getAttribute('type') == 'line') {
 					wceAttr += $test.getAttribute('subtype');
-					//overwritten, above, below, here
+					//overwritten, above, below
 				} else if ($test.getAttribute('type') == 'margin') {
 					wceAttr += $test.getAttribute('subtype');
 					//pagetop, pagebottom, pageleft, pageright, coltop, colbottom, colleft, colright, lineleft, lineright
 				} else {//type="other"
-					wceAttr += 'other&place_corr_other=' + $test.getAttribute('subtype');
+					wceAttr += 'other&place_corr_other=' + encodeURIComponent($test.getAttribute('subtype'));
 				}
 				$rdg.removeChild($test);
 				//remove this child from the list
@@ -3340,7 +3340,7 @@ function getTeiByHtml(inputString, args) {
 					html2Tei_correctionAddW($seg, corrector_text);
 				}
 				$rdg.appendChild($seg);
-			} else if (place === 'overwritten' || place === 'above' || place === 'below' || place === 'here') {
+			} else if (place === 'overwritten' || place === 'above' || place === 'below') {
 				$seg = $newDoc.createElement('seg');
 				isSeg = true;
 				$seg.setAttribute('type', 'line');
@@ -3354,7 +3354,7 @@ function getTeiByHtml(inputString, args) {
 				$seg = $newDoc.createElement('seg');
 				isSeg = true;
 				$seg.setAttribute('type', 'other');
-				$seg.setAttribute('subtype', arr['place_corr_other']);
+				$seg.setAttribute('subtype', decodeURIComponent(arr['place_corr_other']));
 				$seg.setAttribute('n', '@' + 'P' + g_pageNumber + 'C' + g_columnNumber + 'L' + g_lineNumber + '-' + g_witValue);
 				if (corrector_text) {//add to <seg>
 					html2Tei_correctionAddW($seg, corrector_text);

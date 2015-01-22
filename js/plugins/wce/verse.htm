@@ -104,6 +104,10 @@
 var verseNode; 
 var contentWithVerse;
 var chapterNr, bookNr;
+var subverse = 96;
+var v_old = '';
+var spanValue_cnt = 96;
+var spanValue_old = '';
 
 	tinyMCEPopup.onInit.add(function(_ed){
 		ed=_ed;
@@ -269,6 +273,8 @@ var chapterNr, bookNr;
 		if (className && className.match(/book_number/)) {
 			bookNr = $.trim(node.innerHTML);
 		} else if (className && className.match(/chapter_number/)) {
+		    subverse = 96;
+			v_old = '';
 			var v = $.trim(node.innerHTML);
 			if (v) {
 				if (v === 'Inscriptio' || v === 'Subscriptio') //Special handling for Inscriptio and Subscriptio
@@ -279,7 +285,15 @@ var chapterNr, bookNr;
 		} else if (className && className.match(/verse_number/)) {
 			var v = $.trim(node.innerHTML);
 			if (v && v!='') {
-				out += '<input type="checkbox" value="' + bookNr + '.' + chapterNr + '.' + v + '">Verse ' + bookNr + '.' + chapterNr + '.' + v + '</input><br />'; 
+				if (v_old == v)
+					subverse++;
+				else 
+					subverse = 96;
+				if (subverse == 96)
+					out += '<input type="checkbox" value="' + bookNr + '.' + chapterNr + '.' + v + '">Verse ' + bookNr + '.' + chapterNr + '.' + v + '</input><br />'; 
+				else
+					out += '<input type="checkbox" value="' + bookNr + '.' + chapterNr + '.' + v + '-' + String.fromCharCode(subverse) + '">Verse ' + bookNr + '.' + chapterNr + '.' + v + '</input><br />'; 
+				v_old = v;
 			}
 		}	
 		return out;		
@@ -401,17 +415,17 @@ var chapterNr, bookNr;
 				var cb=verseList[i];
 				var currentBook = '';
 				if ($(cb).attr('checked')){
-					var pos=$(cb).val().indexOf('.');
+					var pos=$(cb).val().indexOf('.');// usually bookNr.chapterNr.verseNr
 					if (pos == -1) {//Inscriptio or Subscriptio found
 						var bookNr = '';
 						var chapterNr = $(cb).val().trim();
 						var verseNr = '';
 					} else {
 						var bookNr=$(cb).val().substr(0,pos);
-						var cbnew = $(cb).val().substr(pos+1);
+						var cbnew = $(cb).val().substr(pos+1);// chapterNr.verseNr
 						pos = cbnew.indexOf('.');
 						var chapterNr=cbnew.substr(0,pos);
-						var verseNr=cbnew.substr(pos+1);				
+						var verseNr=cbnew.substr(pos+1);
 					}
 					var startNode=null,endNode=null;
 					var spanList=$(contentWithVerse).find('span');
@@ -434,6 +448,8 @@ var chapterNr, bookNr;
 							}
 						} else if (span.className.toLowerCase()=='chapter_number') {
 							var currentChapter = spanValue;
+							spanValue_cnt = 96;
+							spanValue_old = '';
 							if (startNode){ //if next entry after marked verse
 								endNode=span;
 								break;
@@ -441,12 +457,19 @@ var chapterNr, bookNr;
 							if (currentChapter == chapterNr && verseNr == '') //Inscriptio or Subscriptio
 								startNode=span; // set startNode; next verse number element will be endNode
 						} else if (span.className.toLowerCase()=='verse_number'){						
+							if (spanValue_old == spanValue) {
+								spanValue_cnt++;
+								spanValue=spanValue+'-'+String.fromCharCode(spanValue_cnt);
+							} else {
+								spanValue_cnt = 96;
+							}
 							if (startNode && verseNr !== ''){
 								endNode=span;
 								break;
 							} else if (spanValue==verseNr && currentChapter == chapterNr && currentBook == bookNr && verseNr != ''){
 								startNode=span; 
-							} 
+							}
+							spanValue_old = spanValue;
 						}
 					}
 					if (endNode == null) //startNode was last span node of document
@@ -461,8 +484,7 @@ var chapterNr, bookNr;
 				if ($(cb).attr('checked')){
 					var id=$(cb).attr('id');
 					var pos=$(cb).val().indexOf('.');
-					//var bookNr=$(cb).val().substr(0,pos);
-					var chapterNr=$(cb).val().substr(pos+1);				
+					var chapterNr=$(cb).val().substr(pos+1);// bookNr.chapterNr				
 					var startNode=null,endNode=null;
 					var spanList=$(contentWithVerse).find('span');
 					// Loop through all <span> elements
@@ -472,8 +494,6 @@ var chapterNr, bookNr;
 						if (!span.className){
 							continue;
 						}
-						//if (span.className.toLowerCase() == 'book_number')
-							//var currentBook = spanValue;
 						if (span.className.toLowerCase() == 'chapter_number'){						
 							if (spanValue == chapterNr && span.id == id)
 								$(span).remove();

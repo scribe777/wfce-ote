@@ -139,7 +139,6 @@
                                 <option value="lineright">{#wce.position_lineright}</option>
                                 <option value="above">{#wce.position_above}</option>
                                 <option value="below">{#wce.position_below}</option>
-                                <option value="here">{#wce.position_thispoint}</option>
                                 <option value="overwritten">{#wce.position_overwritten}</option>
                                 <option value="other">{#wce.other}</option>
                             </select></td>
@@ -284,7 +283,7 @@
 		}
 
 		function testOther() {
-			if ((document.readinginfo.corrector_name.options[5].selected == true && document.getElementById('corrector_name_other').value == '') || (document.readinginfo.place_corr.options[15].selected == true && document.getElementById('place_corr_other').value == ''))
+			if ((document.readinginfo.corrector_name.options[5].selected == true && document.getElementById('corrector_name_other').value == '') || (document.readinginfo.place_corr.options[14].selected == true && document.getElementById('place_corr_other').value == ''))
 				return false;
 			return true;
 		}
@@ -331,7 +330,7 @@
 		}
 
 		function checkstatus_corr_position() {
-			if (document.readinginfo.place_corr.options[15].selected == true) {
+			if (document.readinginfo.place_corr.options[14].selected == true) {
 				document.readinginfo.place_corr_other.disabled = false;
 				document.getElementById('place_corr_other').style.backgroundColor = "white";
 			} else {
