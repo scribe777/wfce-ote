@@ -1010,7 +1010,7 @@ function getHtmlByTei(inputString) {
 		var toMerge;
 		var _moveSuplied=function (_supp){
 			var _hi=_supp.firstChild;
-			if(_supp.nodeName!='supplied' || !_hi || _hi.nodeName!='hi' || !_hi.getAttribute('rend') || _hi.getAttribute('rend')!='overline'){
+			if(_supp.nodeName!='supplied' || !_hi || _hi.nodeName!='hi' || !_hi.getAttribute('rend') || _hi.getAttribute('rend')!='overline' || _supp.nodeName!='unclear') {
 				return;
 			} 
 			_supp.setAttribute('ext', 'inabbr');
