@@ -1133,7 +1133,6 @@ function getHtmlByTei(inputString) {
 			|| $teiNode.nextSibling.getAttribute('type') == 'commentary')) { // ignore <lb/> added for untranscribed text
 			cl++; //step counter
 			paratexttype = $teiNode.nextSibling.getAttribute('type'); // remember latest type for correct value below
-			
 			$temp = ($teiNode.nextSibling.nextSibling) ? $teiNode.nextSibling.nextSibling : null;
 			$teiNode.parentNode.removeChild($teiNode.nextSibling);
 			$teiNode.parentNode.removeChild($teiNode);
@@ -1145,7 +1144,7 @@ function getHtmlByTei(inputString) {
 			}
 			$newNode.setAttribute('class', 'paratext');
 			
-			var wceAttr = '__t=paratext&__n=&fw_type=' + type + '&covered=' + cl + '&text=&number=&edit_number=on&paratext_position=pagetop&paratext_position_other=&paratext_alignment=left';
+			var wceAttr = '__t=paratext&__n=&fw_type=' + paratexttype + '&covered=' + cl + '&text=&number=&edit_number=on&paratext_position=pagetop&paratext_position_other=&paratext_alignment=left';
 			$newNode.setAttribute('wce', wceAttr);
 			for (var i = 0; i < cl; i++) {
 				$newNode.appendChild($newDoc.createElement('br'));
