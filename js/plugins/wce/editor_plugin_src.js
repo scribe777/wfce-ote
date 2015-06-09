@@ -33,7 +33,7 @@
 */
 
 (function() {
-	var wfce_editor = "1.3.6 (2015-03-10)";
+	var wfce_editor = "1.3.7BETA (2015-06-09)";
 
 	// Load plugin specific language pack
 	tinymce.PluginManager.requireLangPack('wce');
@@ -609,8 +609,10 @@
 		getBreakHtml : function(ed, bType, lbpos, indention, attr, _id, getOnlyIndention) {
 			var _this = WCEUtils.getBreakHtml;
 
-			lbpos = lbpos ? lbpos : WCEUtils.modifyBreakPosition(ed);
-
+			if (lbpos === undefined || lbpos === null)
+				lbpos = WCEUtils.modifyBreakPosition(ed);
+			//lbpos = lbpos ? lbpos : WCEUtils.modifyBreakPosition(ed);
+			
 			var wceClass = 'class="brea"', wceAttr;
 
 			//how many member does a group have
@@ -619,21 +621,37 @@
 			var v = ed.WCE_VAR;
 			var out = '';
 			var indention = (indention) ? indention : "";
+			var num, pos;
+			var newstring = '', rv = '';
 
 			if (bType == 'lb') {
-				if (lbpos == 'lbm') {
+				if (lbpos === 'lbm') {
 					// line break in the middle of a word
 					v.lcnt = WCEUtils.counterCalc(v.lcnt, 1);
 					// set new wceAttr with hasBreak=yes
 					wceAttr = attr ? attr : 'wce="__t=brea&amp;__n=&amp;hasBreak=yes&amp;break_type=lb&amp;number=' + v.lcnt + '&amp;rv=&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment="';
-					str = '&#8208;<br/ >'+'&crarr;'+indention;
+					if (attr) {
+						pos = attr.indexOf("number=");
+						newstring = attr.substring(pos+7);
+						num = newstring.substring(0,newstring.indexOf("&"));
+						str = '&#8208;<br/ >'+'&crarr;'+indention + " " + num;
+					}
+					else
+						str = '&#8208;<br/ >'+'&crarr;'+indention + " " + v.lcnt;
 				} else {
 					// line break at the end of a word
 					v.lcnt = WCEUtils.counterCalc(v.lcnt, 1);
 					wceAttr = attr ? attr : 'wce="__t=brea&amp;__n=&amp;hasBreak=no&amp;break_type=lb&amp;number=' + v.lcnt + '&amp;rv=&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment=" ';
-					str = '<br/ >'+'&crarr;'+indention;
+					if (attr) {
+						pos = attr.indexOf("number=");
+						newstring = attr.substring(pos+7);
+						num = newstring.substring(0,newstring.indexOf("&"));
+						str = '<br/ >'+'&crarr;'+indention + " " + num;
+					}
+					else 
+						str = '<br/ >'+'&crarr;'+indention + " " + v.lcnt;
 				}
-				if(getOnlyIndention){
+				if (getOnlyIndention){
 					return str;
 				}
 			} else if (bType == 'cb') {
@@ -643,10 +661,24 @@
 				v.lcnt = 0;
 				if (lbpos == 'lbm') {
 					wceAttr = attr ? attr : 'wce="__t=brea&amp;__n=&amp;hasBreak=yes&amp;break_type=cb&amp;number=' + v.ccnt + '&amp;rv=&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment="';
-					str = '&#8208;<br />CB';
+					if (attr) {
+						pos = attr.indexOf("number=");
+						newstring = attr.substring(pos+7);
+						num = newstring.substring(0,newstring.indexOf("&"));
+						str = '&#8208;<br />CB' + " " + num;
+					}
+					else 
+						str = '&#8208;<br />CB' + " " + v.ccnt;
 				} else {
 					wceAttr = attr ? attr : 'wce="__t=brea&amp;__n=&amp;break_type=cb&amp;number=' + v.ccnt + '&amp;rv=&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment="';
-					str = '<br />CB';
+					if (attr) {
+						pos = attr.indexOf("number=");
+						newstring = attr.substring(pos+7);
+						num = newstring.substring(0,newstring.indexOf("&"));
+						str = '<br />CB' + " " + num;
+					}
+					else 
+						str = '<br />CB' + " " + v.ccnt;
 				}
 			} else if (bType == 'pb') {
 				// page break
@@ -670,10 +702,30 @@
 				}
 				if (lbpos == 'lbm') {
 					wceAttr = attr ? attr : 'wce="__t=brea&amp;__n=&amp;hasBreak=yes&amp;break_type=pb&amp;number=' + new_number + '&amp;rv=' + new_rv + '&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment=' + '"';
-					str = '&#8208;<br />PB';
+					if (attr) {
+						pos = attr.indexOf("number=");
+						newstring = attr.substring(pos+7);
+						num = newstring.substring(0,newstring.indexOf("&"));
+						pos = attr.indexOf("rv=");
+						newstring = attr.substring(pos+3);
+						rv = newstring.substring(0,newstring.indexOf("&"));
+						str = '&#8208;<br />PB' + " " + num + "" + rv;
+					}
+					else 
+						str = '&#8208;<br />PB' + " " + new_number + "" + new_rv;
 				} else {
 					wceAttr = attr ? attr : 'wce="__t=brea&amp;__n=&amp;break_type=pb&amp;number=' + new_number + '&amp;rv=' + new_rv + '&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment=' + '"';
-					str = '<br />PB';
+					if (attr) {
+						pos = attr.indexOf("number=");
+						newstring = attr.substring(pos+7);
+						num = newstring.substring(0,newstring.indexOf("&"));
+						pos = attr.indexOf("rv=");
+						newstring = attr.substring(pos+3);
+						rv = newstring.substring(0,newstring.indexOf("&"));
+						str = '<br />PB' + " " + num + "" + rv;
+					}
+					else 
+						str = '<br />PB' + " " + new_number + "" + new_rv;
 				}
 			} else {
 				// quire break
@@ -948,7 +1000,7 @@
 				var testNode = function(node) {
 					if (node.nodeType == 3){
 						var className = node.getAttribute('class');
-						alert(className);
+						//alert(className);
 						if (className && className == 'verse_number') {			
 							return true;
 						} else {
@@ -971,7 +1023,7 @@
 				};
 				return testNode(elem[0]);
 			} catch (e) {
-				alert("PECJ");
+				//alert("PECJ");
 				return false;
 			}
 		},
@@ -1736,9 +1788,24 @@
 					var switchvar = type_name[0];
 					
 					/*
-					// We test if there is a correction on an abbreviation. If so, we have to use the correction for the mouse over
+					// We test if there is a correction on an abbreviation or a gap. If so, we have to use the correction for the mouse over
 					*/
 					if (switchvar === 'abbr') {
+						if (i == 0 && sele_node.parentNode && sele_node.parentNode.getAttribute('class') === 'corr') { //check parent
+							wceAttr = sele_node.parentNode.getAttribute('wce');
+							info_arr = wceAttr.split('@');
+							ar = WCEUtils.stringToArray(info_arr[0]);
+						}
+						else if (i == 1) { // check ancestor
+							ar = WCEUtils.stringToArray(info_arr[0]);
+							if (ar['__t'] === 'corr') {
+								switchvar = 'corr';
+								type_name = 'corr';
+								corr_str = '';
+							} else
+								ar = WCEUtils.stringToArray(info_arr[i]);
+						}
+					} else if (switchvar === 'gap') {
 						if (i == 0 && sele_node.parentNode && sele_node.parentNode.getAttribute('class') === 'corr') { //check parent
 							wceAttr = sele_node.parentNode.getAttribute('wce');
 							info_arr = wceAttr.split('@');

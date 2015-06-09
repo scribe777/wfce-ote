@@ -14,7 +14,7 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License
-    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+    along with OTE.  If not, see <http://www.gnu.org/licenses/>.
 
     Diese Datei ist Teil des Online-Transkriptions-Editor (OTE).
 
@@ -1243,30 +1243,30 @@ function getHtmlByTei(inputString) {
 			case 'qb':
 				var $br = $newDoc.createElement('br');
 				$newNode.appendChild($br);
-				nodeAddText($newNode, 'QB');
+				nodeAddText($newNode, 'QB' + ' ' + n);
 				break;
 			case 'pb':
 				// page break
 				var $br = $newDoc.createElement('br');
 				$newNode.appendChild($br);
-				nodeAddText($newNode, 'PB');
+				nodeAddText($newNode, 'PB' + ' ' + n);
 				break;
 			case 'cb':
 				// page break
 				var $br = $newDoc.createElement('br');
 				$newNode.appendChild($br);
-				nodeAddText($newNode, 'CB');
+				nodeAddText($newNode, 'CB' + ' ' + n);
 				break;
 			case 'lb':
 				// line break
 				var $br = $newDoc.createElement('br');
 				$newNode.appendChild($br);
 				if ($teiNode.getAttribute("rend") && $teiNode.getAttribute("rend") === "indent")
-					nodeAddText($newNode, '\u21B5\u2192');
+					nodeAddText($newNode, '\u21B5\u2192' + ' ' + n);
 				else if ($teiNode.getAttribute("rend") && $teiNode.getAttribute("rend") === "hang")
-					nodeAddText($newNode, '\u21B5\u2190');
+					nodeAddText($newNode, '\u21B5\u2190' + ' ' + n);
 				else
-					nodeAddText($newNode, '\u21B5');
+					nodeAddText($newNode, '\u21B5' + ' ' + n);
 
 				//
 				//test, if the textnode after lb hat a space, if not, add a space 

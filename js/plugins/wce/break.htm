@@ -181,14 +181,13 @@
 			} else {
 				document.breakinfo.hasBreak.value = 'no';
 			}*/
-			if (!add_new_wce_node) {
+			if (!add_new_wce_node) { //edit mode
 				// set hasBreak attribute
 				// checkstatus_hyphen();
 				if ($('#hasBreak').val() == 'yes')
 					break_lbpos = 'lbm';
 				else
 					break_lbpos = '';
-
 			} else {
 				break_lbpos = wceUtils.modifyBreakPosition(ed);
 				if (break_lbpos == 'lbm') {//lbm

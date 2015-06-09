@@ -286,12 +286,18 @@ function addMenuItems(ed) {
 	});
 	ed.addCommand('mce_previous_hyphenation', function(b) {
 		var oldwce = ed.selection.getNode().getAttribute('wce');
+		var pos = oldwce.indexOf("number=");
+		var newstring = oldwce.substring(pos+7);
+		var num = newstring.substring(0,newstring.indexOf("&"));
+		pos = oldwce.indexOf("rv=");
+		newstring = oldwce.substring(pos+3);
+		rv = newstring.substring(0,newstring.indexOf("&"));
 		if (b == true) {
 			ed.selection.getNode().setAttribute('wce', oldwce.replace("hasBreak=no", "hasBreak=yes"));
-			ed.selection.getNode().innerHTML = ed.WCE_CON.startFormatHtml + '&#8208;<br />PB' + ed.WCE_CON.endFormatHtml;
+			ed.selection.getNode().innerHTML = ed.WCE_CON.startFormatHtml + '&#8208;<br />PB' + ' ' + num + '' + rv + ed.WCE_CON.endFormatHtml;
 		} else {
 			ed.selection.getNode().setAttribute('wce', oldwce.replace("hasBreak=yes", "hasBreak=no"));
-			ed.selection.getNode().innerHTML = ed.WCE_CON.startFormatHtml + '<br />PB' + ed.WCE_CON.endFormatHtml;
+			ed.selection.getNode().innerHTML = ed.WCE_CON.startFormatHtml + '<br />PB' + ' ' + num + '' + rv + ed.WCE_CON.endFormatHtml;
 		}
 	});
 }

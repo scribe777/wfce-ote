@@ -393,59 +393,6 @@ function writeWceNodeInfo(val) {
 				selected_content=ed.execCommand('wceDelNode', false, true);
 				add_new_wce_node = true;
 				return writeWceNodeInfo(val);
-				/*	
-				if (document.getElementById('fw_type').value == 'commentary') {// commentary note
-					var cl = document.getElementById('covered').value;
-					if (wce_node.getAttribute('class') === 'commentary') {//<span class=commentary>
-						wce_node_new = wce_node.parentNode.cloneNode(false);
-						// copy without children
-						if (cl != '' && cl > 0) {//value of 0 same as empty field
-							wce_attr = '__t=paratext&__n=&fw_type=commentary&covered=' + cl;
-							wce_node_new.setAttribute('wce', wce_attr);
-							//correct value for covered
-							for (var i = 0; i < cl; i++) {
-								$br = document.createElement('br');
-								wce_node_new.appendChild($br);
-								$text = document.createTextNode('\u21B5[');
-								wce_node_new.appendChild($text);
-								$span = document.createElement('span');
-								$span.setAttribute('class', 'commentary');
-								$span.setAttribute('wce', wce_attr);
-								$text = document.createTextNode('comm');
-								$span.appendChild($text);
-								wce_node_new.appendChild($span);
-								wce_node_new.appendChild(document.createTextNode(']'));
-							}
-						} else {// no value for covered lines was given
-							wce_attr = '__t=paratext&__n=&fw_type=commentary&covered=';
-							wce_node_new.setAttribute('wce', wce_attr);
-							//correct value for covered
-							$text = document.createTextNode('[');
-							wce_node_new.appendChild($text);
-							$span = document.createElement('span');
-							$span.setAttribute('class', 'commentary');
-							$span.setAttribute('wce', wce_attr);
-							$text = document.createTextNode('comm');
-							$span.appendChild($text);
-							wce_node_new.appendChild($span);
-							wce_node_new.appendChild(document.createTextNode(']'));
-						}
-						wce_node.parentNode.parentNode.replaceChild(wce_node_new, wce_node.parentNode);
-					} else {//<span class="paratext">
-						wce_node.removeChild(wce_node.firstChild);
-						// remove old content
-
-						var new_content = '';
-						for (var i = 0; i < document.getElementById('covered').value; i++) {
-							new_content += '<br/>&crarr;[<span class="commentary" ' + 'wce="__t=paratext&__n=&fw_type=commentary&covered=' + document.getElementById('covered').value + '">comm</span>]';
-						}
-						wce_node.innerHTML = startFormatHtml + new_content + endFormatHtml;
-					}
-					wceUtils.addToCounter(ed, 'lb', document.getElementById('covered').value);
-					//TODO: old value has to be subtract first
-				} else {// num or fw
-					wce_node.innerHTML = startFormatHtml + val + endFormatHtml;
-				}*/
 			} else if (wce_type == 'corr') {
 				if (document.getElementById('blank_firsthand').checked)
 					wce_node.innerHTML = startFormatHtml + 'T' + endFormatHtml;
@@ -461,7 +408,7 @@ function writeWceNodeInfo(val) {
 				} else {
 					//edit default
 					if (break_type == 'lb') {
-						break_indention = wceUtils.getBreakHtml(ed, break_type, break_lbpos, break_indention, null, null, true);
+						break_indention = wceUtils.getBreakHtml(ed, break_type, break_lbpos, break_indention, 'wce="' + newWceAttr + '"', null, true);
 						wceUtils.setInnerHTML(ed, wce_node, break_indention);
 					}
 					wceUtils.updateBreakCounter(ed, break_type, document.breakinfo.number.value);

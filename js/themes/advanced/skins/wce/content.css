@@ -412,6 +412,29 @@ span.witnessend{
 
 }
 
+span.corr, span.corr_blank_firsthand{
+	
+	border: 1px  dotted #f00;
+	 
+	margin:0px 0px 0px 1px;
+	 
+	padding:0;
+	
+	color: blue;
+
+}
+
+span[class="corr"] span[class="gap"]{
+	
+	border: 1px  dotted #f00;
+	 
+	margin:0px 0px 0px 1px;
+	 
+	padding:0;
+	
+	color:blue
+
+}
 
 
 span.gap{
@@ -423,21 +446,6 @@ span.gap{
 	padding:0;
 	
 	color:red
-
-}
-
-
-
-span.corr, span.corr_blank_firsthand{
-	
-	border: 1px  dotted #f00;
-	 
-	margin:0px 0px 0px 1px;
-	 
-	padding:0;
-	
-	color: blue;
-	
 
 }
 
