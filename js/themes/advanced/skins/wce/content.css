@@ -424,7 +424,7 @@ span.corr, span.corr_blank_firsthand{
 
 }
 
-span[class="corr"] span[class="gap"]{
+span[class="corr"] span[class=*]{
 	
 	border: 1px  dotted #f00;
 	 

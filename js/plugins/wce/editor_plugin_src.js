@@ -33,7 +33,7 @@
 */
 
 (function() {
-	var wfce_editor = "1.3.7BETA (2015-06-09)";
+	var wfce_editor = "1.3.7BETA (2015-06-11)";
 
 	// Load plugin specific language pack
 	tinymce.PluginManager.requireLangPack('wce');
@@ -1806,6 +1806,21 @@
 								ar = WCEUtils.stringToArray(info_arr[i]);
 						}
 					} else if (switchvar === 'gap') {
+						if (i == 0 && sele_node.parentNode && sele_node.parentNode.getAttribute('class') === 'corr') { //check parent
+							wceAttr = sele_node.parentNode.getAttribute('wce');
+							info_arr = wceAttr.split('@');
+							ar = WCEUtils.stringToArray(info_arr[0]);
+						}
+						else if (i == 1) { // check ancestor
+							ar = WCEUtils.stringToArray(info_arr[0]);
+							if (ar['__t'] === 'corr') {
+								switchvar = 'corr';
+								type_name = 'corr';
+								corr_str = '';
+							} else
+								ar = WCEUtils.stringToArray(info_arr[i]);
+						}
+					} else if (switchvar === 'formatting') {
 						if (i == 0 && sele_node.parentNode && sele_node.parentNode.getAttribute('class') === 'corr') { //check parent
 							wceAttr = sele_node.parentNode.getAttribute('wce');
 							info_arr = wceAttr.split('@');
