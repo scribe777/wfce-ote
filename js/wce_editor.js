@@ -1,5 +1,5 @@
 ﻿/* 
-	Copyright (C) 2012-2014 Center for Digital Humanities, Trier
+	Copyright (C) 2012-2015 Center for Digital Humanities, Trier
 	
 	This file is part of the Online Transcription Editor (OTE).
 
@@ -72,6 +72,9 @@ function setWceEditor(_id, rtl, finishCallback, lang, myBaseURL, getWitness, get
 		theme_advanced_toolbar_align : "left",
 		theme_advanced_statusbar_location : "bottom",
 		theme_advanced_resizing : false,
+		setup : function(ed) {
+			ed.onChange.add(wceOnContentsChange);
+		},
 		oninit : function() {// Once initialized, tell the editor to go fullscreen
 			addMenuItems(tinyMCE.activeEditor);
 			if (finishCallback)
@@ -204,6 +207,10 @@ function increaseLineHeight() {
 
 function decreaseLineHeight() {
 
+}
+
+function wceOnContentsChange() {
+	//alert(tinyMCE.activeEditor.getContent());
 }
 
 function resetCounter() {

@@ -1,5 +1,5 @@
 /*  
-	Copyright (C) 2012-2014 Center for Digital Humanities, Trier
+	Copyright (C) 2012-2015 Center for Digital Humanities, Trier
 	
 	This file is part of the Online Transcription Editor (OTE).
 
@@ -33,7 +33,7 @@
 */
 
 (function() {
-	var wfce_editor = "1.3.7BETA (2015-06-11)";
+	var wfce_editor = "1.3.7 (2015-08-05)";
 
 	// Load plugin specific language pack
 	tinymce.PluginManager.requireLangPack('wce');
