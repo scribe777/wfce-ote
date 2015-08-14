@@ -58,12 +58,9 @@ function setWceEditor(_id, rtl, finishCallback, lang, myBaseURL, getWitness, get
 		//book : (getBook) ? getBook : "",
 		witness : (getWitness) ? getWitness : "",
 		manuscriptLang : (getWitnessLang) ? getWitnessLang : "",
-		
 		// invalid_elements:'p',
 		plugins : "wce,pagebreak,style,save,layer,safari,print,inlinepopups,contextmenu,fullscreen,wordcount,autosave,paste",
-
 		init_instance_callback : "wceReload",
-
 		// Theme options
 		theme_advanced_buttons1 : "undo,redo,charmap,|,code,|,save,print,contextmenu,cut,copy,pastetext,pasteword,fullscreen,|,"+
 		"breaks,correction,illegible,decoration,abbreviation,paratext,note,punctuation,versemodify,|,showTeiByHtml,help,|,info,showHtmlByTei",

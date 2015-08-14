@@ -2497,6 +2497,9 @@
 					}
 				}
 			}
+			if (((tinymce.isMac && e.metaKey) || (e.ctrlKey)) && !e.altKey && (ek == 48 || ek == 66 || ek == 73)) {
+				return stopEvent(ed, e);
+			}
 
 			if (((tinymce.isMac && e.metaKey) || (e.ctrlKey)) && e.altKey && ek == 65) {
 				ed.execCommand('mceAddAbbr_Shortcut');
