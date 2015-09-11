@@ -949,6 +949,7 @@ function getHtmlByTei(inputString) {
 				break;
 			case 'cap':
 				className = 'formatting_capitals';
+				var height = $teiNode.getAttribute('height');
 				break;
 			case 'ol':
 				// for compatibility
@@ -978,6 +979,8 @@ function getHtmlByTei(inputString) {
 
 		$newNode.setAttribute('class', className);
 		wceValue=wceValue?wceValue:'__t=' + className;
+		if (height)
+			wceValue += '&__n=&capitals_height=' + height;
 		$newNode.setAttribute('wce', wceValue);
 		$newNode.setAttribute('wce_orig', getOriginalTextByTeiNode($teiNode));
 		addFormatElement($newNode);
