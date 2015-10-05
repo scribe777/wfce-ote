@@ -1,5 +1,5 @@
 /*  
-	Copyright (C) 2012-2014 Center for Digital Humanities, Trier
+	Copyright (C) 2012-2015 Center for Digital Humanities, Trier
 	
 	This file is part of the Online Transcription Editor (OTE).
 
@@ -2107,11 +2107,12 @@ function getTeiByHtml(inputString, args) {
 		}
 		
 		
-		if (nName=='ab'){
+		if (nName=='ab') {
 			var firstW, lastW, lastLB;
 
 			var part = $r.getAttribute('part');//
-			if(part){
+			alert(part);
+			if (part) {
 				//get first <W>
 				var _first = $r.firstChild;
 				while (_first && _first.nodeType != 3) {
@@ -2156,14 +2157,14 @@ function getTeiByHtml(inputString, args) {
 				firstW.setAttribute('part', 'F');
 				if (lastLB) {
 					$r.setAttribute('part', 'M');
-					if(lastW===firstW){
+					if (lastW===firstW) {
 						lastW.setAttribute('part', 'M');
-					}else{
+					} else {
 						lastW.setAttribute('part', 'I');
 					}
 					lastLB.parentNode.removeChild(lastLB);////remove last <lb>					
 				}				 
-			} else if (part == 'F' && firstW) { //manually set or from import
+			/*} else if (part == 'F' && firstW) { //manually set or from import
 				firstW.setAttribute('part', 'F');
 			} else if (part == 'I' && lastW) { //manually set or from import
 				lastW.setAttribute('part', 'I');
@@ -2178,7 +2179,7 @@ function getTeiByHtml(inputString, args) {
 							lastLB.parentNode.removeChild(lastLB);////remove last <lb>	
 					}
 				}
-			} 		
+			*/} 		
 		}
 	};
 	
