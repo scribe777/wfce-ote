@@ -1775,6 +1775,8 @@ function getTeiByHtml(inputString, args) {
 	var isSeg = false;
 	var note = 1;
 	
+	var idSet = new Set();
+	
 	//var global_id=0; //only for test
 	/*
 	 * Main Method <br /> return String of TEI-Format XML
@@ -2111,7 +2113,6 @@ function getTeiByHtml(inputString, args) {
 			var firstW, lastW, lastLB;
 
 			var part = $r.getAttribute('part');//
-			alert(part);
 			if (part) {
 				//get first <W>
 				var _first = $r.firstChild;
@@ -3081,9 +3082,7 @@ function getTeiByHtml(inputString, args) {
 			$newNode.setAttribute('reason', decodeURIComponent(arr['gap_reason']));
 		}
 		
-		if (arr['mark_as_supplied'] == 'supplied')
-			;//do not output unit and extent
-		else {
+		if (arr['mark_as_supplied'] !== 'supplied') {
 			// unit
 			var unitValue = arr['unit'];
 			if (unitValue != '') {
@@ -3671,7 +3670,7 @@ function getTeiByHtml(inputString, args) {
 			}
 		}
 
-		$lastNode = $teiParent.lastChild;
+		var $lastNode = $teiParent.lastChild;
 		if ($lastNode) {
 			note++;
 			/*var text = $lastNode.innerText || $lastNode.textContent;
@@ -3683,7 +3682,14 @@ function getTeiByHtml(inputString, args) {
 		} else // this is important for notes being inserted directly after the verse number
 			note = 1;
 		var xml_id = 'B' + g_bookNumber + 'K' + g_chapterNumber + 'V' + g_verseNumber + '-' + g_witValue + '-' + note;
-		$note.setAttribute('xml:id', xml_id);
+		var temp='';
+		var i=65;
+		while (idSet.has(xml_id + temp)) {
+			temp = String.fromCharCode(i).toLowerCase();
+			i++;
+		}
+		$note.setAttribute('xml:id', xml_id + temp);
+		idSet.add(xml_id + temp);
 		
 		// add <handshift/> if necessary
 		if (note_type_value === "changeOfHand") {
