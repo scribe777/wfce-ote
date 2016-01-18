@@ -1214,7 +1214,14 @@ function getHtmlByTei(inputString) {
 				//qb, cb and lb
 				wceAttr += '&number=';
 				if ($teiNode.getAttribute('n')) {
-					var n = parseInt($teiNode.getAttribute('n'));
+					if (type == 'lb') { //necessary if we use "n" instead of "xml:id"
+						var ntemp = $teiNode.getAttribute('n');
+						var start = ntemp.indexOf("L");
+						var end = ntemp.indexOf("-");
+						var n = parseInt($teiNode.getAttribute('n').substring(start+1,end));
+					} else {
+						var n = parseInt($teiNode.getAttribute('n'));
+					}
 					wceAttr += n;
 					if (type === 'lb')
 						g_lineNumber = n;
@@ -3515,7 +3522,8 @@ function getTeiByHtml(inputString, args) {
 					break;
 			}
 			if (!isSeg) //no ID for breaks inside <seg>
-				$newNode.setAttribute("xml:id", xml_id);
+				//$newNode.setAttribute("xml:id", xml_id);
+				$newNode.setAttribute("n", xml_id);
 			//IE gets confused here
 			if (arr['hasBreak'] && arr['hasBreak'] === 'yes') {
 				$newNode.setAttribute('break', 'no'); //This has to be "no" due to the TEI standard
