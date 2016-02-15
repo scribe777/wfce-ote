@@ -33,7 +33,7 @@
 */
 
 (function() {
-	var wfce_editor = "1.3.10 (2016-01-18)";
+	var wfce_editor = "1.3.11 (2016-02-15)";
 
 	// Load plugin specific language pack
 	tinymce.PluginManager.requireLangPack('wce');
@@ -627,9 +627,9 @@
 			if (bType == 'lb') {
 				if (lbpos === 'lbm') {
 					// line break in the middle of a word
-					v.lcnt = WCEUtils.counterCalc(v.lcnt, 1);
+					//v.lcnt = WCEUtils.counterCalc(v.lcnt, 1);
 					// set new wceAttr with hasBreak=yes
-					wceAttr = attr ? attr : 'wce="__t=brea&amp;__n=&amp;hasBreak=yes&amp;break_type=lb&amp;number=' + v.lcnt + '&amp;rv=&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment="';
+					wceAttr = attr ? attr : 'wce="__t=brea&amp;__n=&amp;hasBreak=yes&amp;break_type=lb&amp;number=' + '&amp;rv=&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment="';
 					if (attr) {
 						pos = attr.indexOf("number=");
 						newstring = attr.substring(pos+7);
@@ -637,11 +637,11 @@
 						str = '&#8208;<br/ >'+'&crarr;'+indention + " " + num;
 					}
 					else
-						str = '&#8208;<br/ >'+'&crarr;'+indention + " " + v.lcnt;
+						str = '&#8208;<br/ >'+'&crarr;'+indention;
 				} else {
 					// line break at the end of a word
-					v.lcnt = WCEUtils.counterCalc(v.lcnt, 1);
-					wceAttr = attr ? attr : 'wce="__t=brea&amp;__n=&amp;hasBreak=no&amp;break_type=lb&amp;number=' + v.lcnt + '&amp;rv=&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment=" ';
+					//v.lcnt = WCEUtils.counterCalc(v.lcnt, 1);
+					wceAttr = attr ? attr : 'wce="__t=brea&amp;__n=&amp;hasBreak=no&amp;break_type=lb&amp;number=' +'&amp;rv=&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment=" ';
 					if (attr) {
 						pos = attr.indexOf("number=");
 						newstring = attr.substring(pos+7);
@@ -1864,9 +1864,11 @@
 						case 'brea':
 							switch (ar['break_type']) {
 								case 'lb':
-									info_text = '<div>' + ed.getLang('wce.infotext_number') + ': ' + ar['number'] + '</div>';
-									if (ar['lb_alignment']) {
-										info_text += '<div>' + ed.getLang('wce.infotext_alignment') + ': ' + ar['lb_alignment'];
+									if (ar['number']) {
+										info_text = '<div>' + ed.getLang('wce.infotext_number') + ': ' + ar['number'] + '</div>';
+										if (ar['lb_alignment']) {
+											info_text += '<div>' + ed.getLang('wce.infotext_alignment') + ': ' + ar['lb_alignment'];
+										}
 									}
 									break;
 								case 'pb':
@@ -3858,13 +3860,11 @@
 			ed.addCommand('mceAddBreak', function() {
 				var wCon = ed.WCE_CON;
 				doWithDialog(ed, url, '/break.htm', 520, 320, 1, true);
-				//doWithDialog(ed, url, '/break.htm?mode=new&quire=' + ++wCon.qcnt + '&page=' + ++wCon.pcnt + '&column=' + ++wCon.ccnt + '&line=' + ++wCon.lcnt + '&rectoverso=' + wCon.rectoverso, 520, 320, 1, true);
 			});
 			// Edit breaks
 			ed.addCommand('mceEditBreak', function() {
 				var wCon = ed.WCE_CON;
 				doWithDialog(ed, url, '/break.htm', 520, 320, 1, false);
-				//doWithDialog(ed, url, '/break.htm?mode=edit&quire=' + ++wCon.qcnt + '&page=' + ++wCon.pcnt + '&column=' + ++wCon.ccnt + '&line=' + ++wCon.lcnt + '&rectoverso=' + wCon.rectoverso, 520, 320, 1, false);
 			});
 
 			ed.addCommand('mceAddBreak_Shortcut', function() {

@@ -1218,7 +1218,10 @@ function getHtmlByTei(inputString) {
 						var ntemp = $teiNode.getAttribute('n');
 						var start = ntemp.indexOf("L");
 						var end = ntemp.indexOf("-");
-						var n = parseInt($teiNode.getAttribute('n').substring(start+1,end));
+						if (end-start == 1)
+							var n = '';
+						else
+							var n = parseInt($teiNode.getAttribute('n').substring(start+1,end));
 					} else {
 						var n = parseInt($teiNode.getAttribute('n'));
 					}
@@ -1230,7 +1233,6 @@ function getHtmlByTei(inputString) {
 					else //qb
 						g_quireNumber = n;
 				}
-				
 				wceAttr += '&lb_alignment=';
 				if ($teiNode.getAttribute('rend'))
 					wceAttr += $teiNode.getAttribute('rend');

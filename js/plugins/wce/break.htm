@@ -108,7 +108,7 @@
             </fieldset>
             <div class="mceActionPanel">
                 <input type="button" id="insert" name="insert" value="{#insert}"
-                onclick="var cont = testNumber();
+                onclick="var cont = true;
                 if (cont){setBreakValue(); writeWceNodeInfo();}else{alert('{#wce.empty_number}');}" />
                 <input type="button" id="cancel"  name="cancel" value="{#cancel}"
                 onclick="tinyMCEPopup.close();" />
@@ -134,7 +134,7 @@
 			qsParm['quire'] = parseInt(v.qcnt) + 1;
 			qsParm['page'] = parseInt(v.pcnt) + 1
 			qsParm['column'] = parseInt(v.ccnt) + 1;
-			qsParm['line'] = parseInt(v.lcnt) + 1;
+			//qsParm['line'] = parseInt(v.lcnt) + 1;
 			qsParm['rectoverso'] = v.rectoverso;
 
 			comboBindReturnEvent('insert');
@@ -143,7 +143,7 @@
 			old_break_type = document.breakinfo.break_type.value;
 			//qs();
 			if (qsParm['mode'] == 'new') {// first call, no former value
-				document.breakinfo.number.value = qsParm['line'];
+				//document.breakinfo.number.value = qsParm['line'];
 			} else {// edit mode => number not empty
 				switch (old_break_type) {
 					case 'gb':
@@ -202,7 +202,7 @@
 			if (document.breakinfo.break_type.options[0].selected == true) {//LB
 				document.breakinfo.lb_alignment.disabled = false;
 				document.getElementById('lb_alignment').style.backgroundColor = "white";
-				document.breakinfo.number.value = qsParm['line'];
+				//document.breakinfo.number.value = qsParm['line'];
 			} else {
 				document.breakinfo.lb_alignment.disabled = true;
 				document.getElementById('lb_alignment').style.backgroundColor = "#CCCCCC";
