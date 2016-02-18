@@ -413,7 +413,6 @@ function writeWceNodeInfo(val) {
 					}
 					wceUtils.updateBreakCounter(ed, break_type, document.breakinfo.number.value);
 				}
-
 			} else if (wce_type == 'abbr') {
 				var abbrClass = 'abbr';
 				if (document.getElementById('add_overline').checked == true) {

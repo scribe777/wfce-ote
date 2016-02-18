@@ -33,7 +33,7 @@
 */
 
 (function() {
-	var wfce_editor = "1.3.11 (2016-02-15)";
+	var wfce_editor = "1.3.11 (2016-02-18)";
 
 	// Load plugin specific language pack
 	tinymce.PluginManager.requireLangPack('wce');
@@ -621,7 +621,7 @@
 			var v = ed.WCE_VAR;
 			var out = '';
 			var indention = (indention) ? indention : "";
-			var num, pos;
+			var num = '', pos;
 			var newstring = '', rv = '';
 
 			if (bType == 'lb') {
@@ -641,7 +641,7 @@
 				} else {
 					// line break at the end of a word
 					//v.lcnt = WCEUtils.counterCalc(v.lcnt, 1);
-					wceAttr = attr ? attr : 'wce="__t=brea&amp;__n=&amp;hasBreak=no&amp;break_type=lb&amp;number=' +'&amp;rv=&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment=" ';
+					wceAttr = attr ? attr : 'wce="__t=brea&amp;__n=&amp;hasBreak=no&amp;break_type=lb&amp;number=' + '&amp;rv=&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment=" ';
 					if (attr) {
 						pos = attr.indexOf("number=");
 						newstring = attr.substring(pos+7);
@@ -649,7 +649,7 @@
 						str = '<br/ >'+'&crarr;'+indention + " " + num;
 					}
 					else 
-						str = '<br/ >'+'&crarr;'+indention + " " + v.lcnt;
+						str = '<br/ >'+'&crarr;'+indention;
 				}
 				if (getOnlyIndention){
 					return str;
@@ -658,7 +658,7 @@
 				// column break
 				groupCount = 2;
 				v.ccnt = WCEUtils.counterCalc(v.ccnt, 1);
-				v.lcnt = 0;
+				v.lcnt = '';
 				if (lbpos == 'lbm') {
 					wceAttr = attr ? attr : 'wce="__t=brea&amp;__n=&amp;hasBreak=yes&amp;break_type=cb&amp;number=' + v.ccnt + '&amp;rv=&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment="';
 					if (attr) {
@@ -687,7 +687,7 @@
 				var new_rv = "";
 				v.pcnt = WCEUtils.counterCalc(v.pcnt, 1);
 				v.ccnt = 0;
-				v.lcnt = 0;
+				v.lcnt = '';
 				number = v.pcnt;
 				new_number = number;
 				if (v.rectoverso === 'true') {
@@ -709,7 +709,10 @@
 						pos = attr.indexOf("rv=");
 						newstring = attr.substring(pos+3);
 						rv = newstring.substring(0,newstring.indexOf("&"));
-						str = '&#8208;<br />PB' + " " + num + "" + rv;
+						pos = attr.indexOf("fibre_type=");
+						newstring = attr.substring(pos+11);
+						fibre = newstring.substring(0,newstring.indexOf("&"));
+						str = '&#8208;<br />PB' + " " + num + "" + rv + "" + fibre;
 					}
 					else 
 						str = '&#8208;<br />PB' + " " + new_number + "" + new_rv;
@@ -722,7 +725,10 @@
 						pos = attr.indexOf("rv=");
 						newstring = attr.substring(pos+3);
 						rv = newstring.substring(0,newstring.indexOf("&"));
-						str = '<br />PB' + " " + num + "" + rv;
+						pos = attr.indexOf("fibre_type=");
+						newstring = attr.substring(pos+11);
+						fibre = newstring.substring(0,newstring.indexOf("&"));
+						str = '<br />PB' + " " + num + "" + rv + "" + fibre;
 					}
 					else 
 						str = '<br />PB' + " " + new_number + "" + new_rv;
@@ -734,7 +740,7 @@
 				v.qcnt = WCEUtils.counterCalc(v.qcnt, 1);
 				v.pcnt = 0;
 				v.ccnt = 0;
-				v.lcnt = 0;
+				v.lcnt = '';
 				if (lbpos == 'lbm') {
 					wceAttr = attr ? attr : 'wce="__t=brea&amp;__n=&amp;hasBreak=yes&amp;break_type=gb&amp;number=' + v.qcnt + '&amp;rv=&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment=' + '"';
 					str = '&#8208;<br />QB';
@@ -760,11 +766,10 @@
 			var out = '<span ' + wceAttr + wceClass + wceID + '>' + ed.WCE_CON.startFormatHtml + str + ed.WCE_CON.endFormatHtml + '</span>';
 
 			if (bType == 'qb') {
-				//cb,pb und lb unter qb sind eine Grupe, die alle haben gleich Attribute von qb
+				//cb,pb und lb unter qb sind eine Gruppe, die alle haben gleich Attribute von qb
 				//also z.B. hier lb editieren wird popup von qb angezeigt
 				out = out + _this(ed, 'pb', 'ignore', indention, null, baseID);
 				v.pcnt = 1;
-
 			} else if (bType == 'pb') {
 				out = out + _this(ed, 'cb', 'ignore', indention, null, baseID);
 				v.ccnt = 1;

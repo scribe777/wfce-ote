@@ -175,12 +175,6 @@
 			else
 				break_indention = "";
 
-			/*break_lbpos = wceUtils.modifyBreakPosition(ed);
-			if (break_lbpos == 'lbm') {//lbm
-				document.breakinfo.hasBreak.value = 'yes';
-			} else {
-				document.breakinfo.hasBreak.value = 'no';
-			}*/
 			if (!add_new_wce_node) { //edit mode
 				// set hasBreak attribute
 				// checkstatus_hyphen();
@@ -215,10 +209,6 @@
 				document.getElementById('rv').style.backgroundColor = "white";
 				document.breakinfo.fibre_type.disabled = false;
 				document.getElementById('fibre_type').style.backgroundColor = "white";
-				//document.breakinfo.pb_hyphen.disabled = false;
-				//document.getElementById('pb_hyphen').style.backgroundColor = "white";
-				//document.breakinfo.pb_ghostpage.disabled = false;
-				//document.getElementById('pb_ghostpage').style.backgroundColor = "white";
 				document.breakinfo.facs.disabled = false;
 				document.getElementById('facs').style.backgroundColor = "white";
 				if (qsParm['mode'] == 'new' && qsParm['rectoverso'] == 'true') {//only for new entries; old ones keep their counting

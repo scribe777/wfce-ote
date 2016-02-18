@@ -1185,58 +1185,81 @@ function getHtmlByTei(inputString) {
 				// page break
 				//pb n="2rx" type="folio" facs="edfwe" xml:id="P2rx-0" break="no"/><fw type="runTitle"
 				var number = $teiNode.getAttribute('n');
-				if (number)
+				var n = '';
+				if (number) {
+					n = number.substring(1,number.lastIndexOf("-"));
 					number = removeArrows(number); // Replace arrows for fibre type by "x" and "y" resp. => use for "xml:id"
-				else
+					number = number.substring(1,number.lastIndexOf("-"));
+				} else
 					number = '';
 				var page_type = $teiNode.getAttribute('type');
 				if (page_type) {
-				if (page_type == "page") {
-					if (number.match("[0-9]$")) {// ends with a digit => no fibre type
-						wceAttr += '&number=' + number + '&rv=' + '&fibre_type=';
-					} else {
-						wceAttr += '&number=' + number.substring(0, number.length - 1) + '&rv=' + '&fibre_type=' + number.substring(number.length - 1);
+					if (page_type == "page") {
+						if (number.match("[0-9]$")) {// ends with a digit => no fibre type
+							wceAttr += '&number=' + number + '&rv=' + '&fibre_type=';
+						} else {
+							wceAttr += '&number=' + number.substring(0, number.length - 1) + '&rv=' + '&fibre_type=' + number.substring(number.length - 1);
+						}
+					} else { //folio
+						if (number.match("[rv]$")) {// ends with r|v => no fibre type
+							wceAttr += '&number=' + number.substring(0, number.length - 1) + '&rv=' + number.substring(number.length - 1) + '&fibre_type=';
+						} else {
+							wceAttr += '&number=' + number.substring(0, number.length - 2) + '&rv=' + number.substring(number.length - 2, number.length - 1) + '&fibre_type=' + number.substring(number.length - 1);
+						}
 					}
-				} else { //folio
-					if (number.match("[rv]$")) {// ends with r|v => no fibre type
-						wceAttr += '&number=' + number.substring(0, number.length - 1) + '&rv=' + number.substring(number.length - 1) + '&fibre_type=';
-					} else {
-						wceAttr += '&number=' + number.substring(0, number.length - 2) + '&rv=' + number.substring(number.length - 2, number.length - 1) + '&fibre_type=' + number.substring(number.length - 1);
-					}
-				}
 				}
 				wceAttr += '&facs=';
 				if ($teiNode.getAttribute('facs'))
 					wceAttr += $teiNode.getAttribute('facs');
 				wceAttr += '&lb_alignment=';
 				break;
-			default:
-				//qb, cb and lb
+			case 'cb':
 				wceAttr += '&number=';
+				var n = '';
 				if ($teiNode.getAttribute('n')) {
-					if (type == 'lb') { //necessary if we use "n" instead of "xml:id"
-						var ntemp = $teiNode.getAttribute('n');
-						var start = ntemp.indexOf("L");
-						var end = ntemp.indexOf("-");
-						if (end-start == 1)
-							var n = '';
-						else
-							var n = parseInt($teiNode.getAttribute('n').substring(start+1,end));
-					} else {
-						var n = parseInt($teiNode.getAttribute('n'));
-					}
-					wceAttr += n;
-					if (type === 'lb')
-						g_lineNumber = n;
-					else if (type === 'cb')
-						g_columnNumber = n;
-					else //qb
-						g_quireNumber = n;
+					var ntemp = $teiNode.getAttribute('n');
+					var start = ntemp.lastIndexOf("C");
+					var end = ntemp.lastIndexOf("-");
+					if (end-start > 1)
+						n = parseInt($teiNode.getAttribute('n').substring(start+1,end));
 				}
+				wceAttr += n;
+				g_columnNumber = n;
 				wceAttr += '&lb_alignment=';
 				if ($teiNode.getAttribute('rend'))
 					wceAttr += $teiNode.getAttribute('rend');
 				wceAttr += '&rv=&fibre_type=&facs=';
+				break;
+			case 'lb':
+				wceAttr += '&number=';
+				var n = '';
+				if ($teiNode.getAttribute('n')) {
+					var ntemp = $teiNode.getAttribute('n');
+					var start = ntemp.lastIndexOf("L");
+					var end = ntemp.lastIndexOf("-");
+					if (end-start > 1)
+						n = parseInt($teiNode.getAttribute('n').substring(start+1,end));
+				}
+				wceAttr += n;
+				g_lineNumber = n;
+				wceAttr += '&lb_alignment=';
+				if ($teiNode.getAttribute('rend'))
+					wceAttr += $teiNode.getAttribute('rend');
+				wceAttr += '&rv=&fibre_type=&facs=';
+				break;
+			case 'gb':
+				wceAttr += '&number=';
+				var n = '';
+				if ($teiNode.getAttribute('n')) {
+					n = parseInt($teiNode.getAttribute('n'));
+				}
+				wceAttr += n;
+				g_quireNumber = n;
+				wceAttr += '&lb_alignment=';
+				if ($teiNode.getAttribute('rend'))
+					wceAttr += $teiNode.getAttribute('rend');
+				wceAttr += '&rv=&fibre_type=&facs=';
+				break;
 		}
 
 		var hasBreak = false;
@@ -1255,7 +1278,7 @@ function getHtmlByTei(inputString) {
 			case 'qb':
 				var $br = $newDoc.createElement('br');
 				$newNode.appendChild($br);
-				nodeAddText($newNode, 'QB' + ' ' + n);
+				nodeAddText($newNode, 'QB');
 				break;
 			case 'pb':
 				// page break
@@ -1264,7 +1287,7 @@ function getHtmlByTei(inputString) {
 				nodeAddText($newNode, 'PB' + ' ' + n);
 				break;
 			case 'cb':
-				// page break
+				// column break
 				var $br = $newDoc.createElement('br');
 				$newNode.appendChild($br);
 				nodeAddText($newNode, 'CB' + ' ' + n);
