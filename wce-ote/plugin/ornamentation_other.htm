@@ -1,0 +1,59 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>{#title_other_ornamentation}</title>
+<script type="text/javascript" src="../jquery.js"></script>
+<script type="text/javascript" src="js/wce.js"></script>
+</head>
+
+<body id="table">
+	<form onsubmit="return false;" action="#" name="capitalsinfo">
+		<fieldset id="inputContainer"> 
+			<table border="0" cellpadding="4" cellspacing="0" width="100%">
+				<tr>
+					<td style="width:30%"><label id="formatting_ornamentation_other_label" for="formatting_ornamentation_other_height">{#other_ornamentation}</label></td>
+					<td style="width:68%"><input style="width:100%" id="formatting_ornamentation_other" name="formatting_ornamentation_other"
+						type="text" value=""/></td>
+				</tr>
+			</table>
+		</fieldset> 
+		<div class="mceActionPanel">
+			<input type="button"  id="insert" name="insert" value="{#insert}"
+				onclick="writeWceNodeInfo();" />
+			<input type="button" id="cancel" name="cancel" value="{#cancel}"
+				onclick="parent.tinymce.activeEditor.windowManager.close();" />		</div>
+	</form>
+</body>
+<script type="text/javascript">
+	$(document).ready(function() {
+		var _ed = parent.tinymce.activeEditor;
+		ed=_ed;
+		translate();
+		setConstants(); 
+		init();
+	});	
+	
+	function translate() {
+		var c=document.body.innerHTML;
+		var d=document.title;
+		var a;
+		if(parent.tinymce.isIE){c=c.replace(/ (value|title|alt)=([^"][^\s>]+)/gi,' $1="$2"')}
+		a=c.replace(/\{\#([^\}]+)\}/g, function(a, b) {
+			var c=parent.tinymce.translate(b);
+			return (c != b) ? c : '{#' + b + '}';
+		});
+		if(a!=c){document.body.innerHTML=a}
+		a=d.replace(/\{\#([^\}]+)\}/g, function(a, b) {
+			var c=parent.tinymce.translate(b);
+			return (c != b) ? c : '{#' + b + '}';
+		});
+		if(a!=d){document.title=d=a}
+	}
+	
+	function init() {
+		comboBindReturnEvent('insert'); 
+		wceInfoInit('formatting_ornamentation_other');
+		readWceNodeInfo();
+	}
+</script>
+</html>

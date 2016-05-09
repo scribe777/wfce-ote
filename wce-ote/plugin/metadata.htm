@@ -1,0 +1,981 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<title>{#metadata_title}</title>
+	<script type="text/javascript" src="../jquery.js"></script>  
+	<script type="text/javascript" src="../../utils/mctabs.js"></script>
+	<script type="text/javascript" src="../../utils/form_utils.js"></script>
+	<script type="text/javascript" src="js/wce.js"></script>
+</head>
+
+<body id="meta_table" style="display: none">
+	<form onsubmit="return false;" action="#" name="metadatainfo">
+		<div class="tabs">
+			<ul>
+				<li id="title_tab" class="current"><span><a href="javascript:mcTabs.displayTab('title_tab','title_panel');" onmousedown="return false;">{#meta_tab_title}</a></span></li>
+				<li id="publication_tab"><span><a href="javascript:mcTabs.displayTab('publication_tab','publication_panel');" onmousedown="return false;">{#meta_tab_publication}</a></span></li>
+				<li id="source_tab"><span><a href="javascript:mcTabs.displayTab('source_tab','source_panel');" onmousedown="return false;">{#meta_tab_source}</a></span></li>
+				<li id="encoding_tab"><span><a href="javascript:mcTabs.displayTab('encoding_tab','encoding_panel');" onmousedown="return false;">{#meta_tab_encoding}</a></span></li>
+				<li id="general_tab"><span><a href="javascript:mcTabs.displayTab('general_tab','general_panel');" onmousedown="return false;">{#meta_tab_general}</a></span></li>
+			</ul>
+		</div>
+
+		<div class="panel_wrapper">
+			<div id="title_panel" class="panel current" style="height:auto">
+				<fieldset>
+				<legend>{#meta_title_data}</legend>
+				
+					<!-- <titleStmt>
+					<div id="titleStmtBox">
+					<div id="titleStmt_tr">
+					<span>{#meta_title}</span>
+					</div>
+					
+					
+					</div> -->
+					<table  id="titleStmt_table" border="0" cellpadding="4" cellspacing="0" width="100%">
+					<!-- <titleStmt>
+					<title>	-->
+					<tr>
+					<td></td>
+					<td></td>
+					<td>
+						<label>Level</label>
+					</td>
+					<td>
+						<label>Language</label>
+					</td>
+					<td>
+						<label>Number</label>
+					</td>
+					</tr>
+					<tr id="meta_title_box">
+					<td>
+						<label xmlValue="?" for="meta_title">{#meta_title}</label>
+					</td>
+					<td>
+						<input  xmlValue="_text_" type="text" value="" size="30" maxlength="" class="required number min1 mceFocus" />
+					</td>
+					<!-- level= -->
+					<td>
+						<select xmlValue="level">
+							<option value=""></option>
+							<option value="a">analytic</option>
+							<option value="m">monographic</option>
+							<option value="j">journal</option>
+							<option value="s">series</option>
+							<option value="u">unpublished</option>
+						</select>
+					</td>
+					<!-- xml:lang= -->
+					<td>
+						<select xmlValue="xml:lang">
+							<option value=""></option>
+							<option value="en">English</option>
+							<option value="el">Greek</option>
+							<option value="la">Latin</option>
+						</select>
+					</td>
+					<!-- n= -->
+					<td>
+						<input id="meta_title_number" xmlValue="n" name="meta_title_number" type="text" value="" size="5" maxlength="" class="required number min1 mceFocus" />
+					</td>
+					</tr> 
+					</table>
+				</fieldset>
+				<br/>
+					<!-- </title> -->
+					<!-- <respStmt><resp>Created by</resp> -->
+					<!-- <name> -->
+				<fieldset>
+					<legend>{#meta_title_respStmt}</legend>
+					<table border="0" cellpadding="4" cellspacing="0" width="100%" >
+					<tr  id="meta_name_box" xmlCopyId="meta_name_box">
+					<td>
+						<label id="meta_name_label" for="meta_name">{#meta_resp}</label>
+					</td>
+					<td>
+						<input  xmlValue="_text_" type="text" value="" size="30" maxlength="" class="required number min1 mceFocus" /> <input type="button" value="+" onclick="boxCopy(this,'meta_name_box');" /> <input type="button" value="x" style="color: red; display:none" onclick="boxRemove(this);" />
+					</td>
+					<td>
+					</tr>
+					<!-- </name> -->
+					<!-- </respStmt> -->
+					<!-- <funder> -->
+					<tr id="meta_funder_box" >
+					<td>
+						<label id="meta_funder_label" for="meta_fuunder">{#meta_funder}</label>
+					</td>
+					<td >
+						<input xmlValue="_text_" type="text" value="" size="30" maxlength="" class="required number min1 mceFocus" />
+					</td>
+					</tr>
+					<!-- </funder> -->
+					<!-- <sponsor> -->
+					<tr id="meta_sponsor_box">
+					<td>
+						<label id="meta_sponsor_label" for="meta_sponsor">{#meta_sponsor}</label>
+					</td>
+					<td>
+						<input  xmlValue="_text_"  type="text" value="" size="30" maxlength="" class="required number min1 mceFocus" />
+					</td>
+					</tr>
+					</table>
+					<!-- </sponsor> -->
+					<!-- </titleStmt> -->
+				</fieldset>
+			</div>
+			<div id="publication_panel" class="panel">
+				<fieldset>
+					<legend>{#meta_editorialStmt}</legend>
+					<table>
+					<!-- <editionStmt> -->
+					<!-- <edition -->
+					<!-- n= -->
+					<tr>
+					<td>
+						<label id="meta_edition_version_label" for="meta_edition_version">{#meta_edition_version}</label>
+					</td>
+					<td id="meta_edition_version_box">
+						<input  xmlValue="n" type="text" value="" size="10" maxlength="" class="required number min1 mceFocus" />
+					</td>
+					<!-- <date> -->
+					<td>
+						<label id="meta_edition_date_label" for="meta_date_version">{#meta_edition_date}</label>
+					</td>
+					<td id="meta_edition_date_box" >
+						<input xmlValue="_text_" type="text" value="" size="10" maxlength="10" class="required number min1 mceFocus" />
+					</td>
+					</tr>
+					<!-- </date> -->
+					<!-- </edition> -->
+					<!-- </editionStmt> -->
+				</table>
+			</fieldset>
+			<br/>			
+					<!-- <publicationStmt -->
+					<!-- <publisher> -->
+			<fieldset>
+				<legend>{#meta_publicationStmt}</legend>
+				<table>
+					<tr id="meta_publisher_box" xmlCopyId="meta_publisher_box">
+					<td>
+						<label id="meta_publisher_1_label" for="meta_publisher_1">{#meta_publisher}</label>
+					</td>
+					<td>
+						<input xmlValue="_text_" type="text" value="" size="30" maxlength="" class="required number min1 mceFocus" />
+					</td>
+					<td>
+						<select xmlValue="type" id="meta_publisher_1_type" name="meta_publisher_1_type">
+							<option value=""></option>
+							<option value="org">Organisation</option>
+							<option value="person">Person</option>
+						</select> <input type="button" value="+" onclick="boxCopy(this,'meta_publisher_box');" /> <input type="button" value="x" style="color: red; display:none" onclick="boxRemove(this);" />
+					</td> 
+					</tr>
+					 
+					<!-- <date> -->
+					<tr id="meta_publication_date_box">
+					<td>
+						<label id="meta_publication_date_label" for="meta_publication_date">{#meta_publication_date}</label>
+					</td>
+					<td>
+						<input xmlValue="_text_" type="text" value="" size="10" maxlength="10" class="required number min1 mceFocus" />
+					</td>
+					</tr>
+					<!-- </date> -->
+					<!-- <availabilty> -->
+					<tr id="meta_publication_availability_box">
+					<td valign="top">
+						<label id="meta_publication_availability_label" for="meta_publication_availability">{#meta_publication_availability}</label>
+					</td>
+					<td colspan="2">
+						<textarea xmlValue="_text_" id="meta_publication_availability" name="meta_publication_availability" WRAP="PHYSICAL" ROWS="5" COLS="50">Available for noncommercial re-use provided attribution is made to the original creators and the subsequent derivative is licensed as ShareAlike (Creative Commons by-nc-sa)</textarea>
+					</td>
+					</tr>
+					<!-- </availability> -->
+					<!-- </publicationStmt> -->
+					</table>
+				</fieldset>
+			</div>
+			<div id="source_panel" class="panel">
+				<fieldset>
+					<legend>{#meta_sourceDesc}</legend>
+					<table>
+					<!-- <sourceDesc> -->
+					<!-- <msDesc> -->
+					<!-- <msIdentifier> -->
+					<!-- <country> -->
+					<tr id="meta_msDesc_country_box">
+					<td>
+						<label id="meta_msDesc_country_label" for="meta_msDesc_country">{#meta_msDesc_country}</label>
+					</td>
+					<td>
+						<input xmlValue="_text_" id="meta_msDesc_country" name="meta_msDesc_country" type="text" value="" size="30" maxlength="" class="required number min1 mceFocus" />
+					</td>
+					</tr>
+					<!-- </country> -->
+					<!-- <settlement> -->
+					<tr id="meta_msDesc_settlement_box">
+					<td>
+						<label id="meta_msDesc_settlement_label" for="meta_msDesc_settlement">{#meta_msDesc_settlement}</label>
+					</td>
+					<td>
+						<input xmlValue="_text_" id="meta_msDesc_settlement" name="meta_msDesc_settlement" type="text" value="" size="30" maxlength="" class="required number min1 mceFocus" />
+					</td>
+					</tr>
+					<!-- </settlement> -->
+					<!-- <repository> -->
+					<tr id="meta_msDesc_repository_box">
+					<td>
+						<label id="meta_msDesc_repository_label" for="meta_msDesc_repository">{#meta_msDesc_repository}</label>
+					</td>
+					<td>
+						<input xmlValue="_text_" id="meta_msDesc_repository" name="meta_msDesc_repository" type="text" value="" size="30" maxlength="" class="required number min1 mceFocus" />
+					</td>
+					</tr>
+					<!-- </repository> -->
+					<!-- <idno> -->
+					<tr id="meta_msDesc_idno_box">
+					<td>
+						<label id="meta_msDesc_idno_label" for="meta_msDesc_idno">{#meta_msDesc_idno}</label>
+					</td>
+					<td>
+						<input xmlValue="_text_" id="meta_msDesc_idno" name="meta_msDesc_repository" type="text" value="" size="30" maxlength="" class="required number min1 mceFocus" />
+					</td>
+					</tr>
+					<!-- </idno> -->
+					<!-- <msName> -->
+					<tr id="meta_msDesc_msName_box">
+					<td>
+						<label id="meta_msDesc_msName_label" for="meta_msDesc_msName">{#meta_msDesc_msName}</label>
+					</td>
+					<td>
+						<input xmlValue="_text_" id="meta_msDesc_msName" name="meta_msDesc_msName" type="text" value="" size="30" maxlength="" class="required number min1 mceFocus" />
+					</td>
+					 
+					<td>
+						<label>{#language}</label>
+					</td>
+					<td>
+						<select xmlValue="xml:lang" id="meta_msDesc_msName_language" name="meta_msDesc_msName_language">
+							<option value=""></option>
+							<option value="en">English</option>
+							<option value="el">Greek</option>
+							<option value="la">Latin</option>
+						</select>
+					</td>
+					</tr>
+					<!-- </msname> -->
+					<!-- <altIdentifier> -->
+					<tr id="meta_msDesc_altIdentifier_box" xmlCopyId="meta_msDesc_altIdentifier_box">
+					<td>
+						<label id="meta_msDesc_altIdentifier_label" for="meta_msDesc_altIdentifier">{#meta_msDesc_altIdentifier}</label>
+					</td>
+					<td>
+						<input xmlValue="_text_" id="meta_msDesc_altIdentifier" name="meta_msDesc_altIdentifier" type="text" value="" size="30" maxlength="" class="required number min1 mceFocus" />
+					</td>
+					<td>
+						<label>{#type}</label>
+					</td>
+					<td>
+						<select xmlValue="type" id="meta_msDesc_altIdentifier_type" name="meta_msDesc_altIdentifier_type">
+							<option value=""></option>
+							<option value="ga">GA</option>
+							<option value="li">Liste</option>
+							<option value="ti">Tischendorf</option>
+							<option value="tm">TM</option>
+							<option value="ld">LDAB</option>
+						</select> <input type="button" value="+" onclick="boxCopy(this,'meta_msDesc_altIdentifier_box');" /> <input type="button" value="x" style="color: red; display:none" onclick="boxRemove(this);" />
+					</td>
+					</tr>
+					<!-- </msIdentifier> -->
+					</table>
+				</fieldset>
+			</div>
+			<div id="encoding_panel" class="panel">
+				<fieldset>
+					<legend>{#meta_encoding_panel}</legend>
+					<table>
+					<!-- <encodingDesc> -->
+					<!-- <projectDesc> -->
+					<tr id="meta_projectDesc_box">
+					<td valign="top">
+						<label id="meta_projectDesc_label" for="meta_projectDesc">{#meta_projectDesc}</label>
+					</td>
+					<td>
+						<textarea xmlValue="_text_" id="meta_projectDesc" name="meta_msDesc_repository" WRAP="PHYSICAL" rows="3" cols="50"></textarea>
+					</td>
+					</tr>
+					<!-- </projectDesc> -->
+					<!-- <editorialDecl> -->
+					<tr id="meta_editorialDecl_box">
+					<td valign="top">
+						<label id="meta_editorialDecl_label" for="meta_editorialDecl">{#meta_editorialDecl}</label>
+					</td>
+					<td>
+						<textarea xmlValue="_text_" id="meta_editorialDecl" name="meta_editorialDecl" WRAP="PHYSICAL" rows="3" cols="50"></textarea>
+					</td>
+					</tr>
+					<!-- </editorialDecl> -->
+					<!-- </encodingDesc> -->
+					<!-- <revisionDesc> -->
+					<tr id="meta_revisionDesc_box">
+					<td valign="top">
+						<label id="meta_revisionDesc_label" for="meta_revisionDesc">{#meta_revisionDesc}</label>
+					</td>
+					<td>
+						<input xmlValue="_text_" id="meta_revisionDesc" name="meta_revisionDesc" ></input>						
+					</td>
+					</tr>
+					<!-- </revisionDesc> -->
+					</table>
+				</fieldset>
+			</div>
+			<div id="general_panel" class="panel">
+				<fieldset>
+				<legend>{#meta_general}</legend>
+				<table border="0" cellpadding="4" cellspacing="0" width="100%">
+					<tr>
+					<td>
+						<label id="meta_xmlID_label" for="meta_xmlID">XML ID</label>
+					</td>
+					<td>
+						<input id="meta_xmlID" name="meta_xmlID" type="text" value="" size="10" maxlength="" class="required number min1 mceFocus" />
+					</td>
+					</tr>
+					<tr>
+					<td valign="top">
+						<label id="meta_TEI_attributes_label" for="meta_TEI_attributes">TEI attributes</label>
+					</td>
+					<td>
+						<textarea id="meta_TEI_attributes" name="meta_TEI_attributes" wrap="off" rows="5" cols="50" placeholder="Enter the attributes you want to set for <TEI>">xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xml="http://www.w3.org/XML/1998/namespace" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 TEI-NTMSS.xsd"</textarea>
+					</td>
+					</tr>
+				</table>
+				</fieldset>
+			</div>
+		</div>  </form>
+		<div class="mceActionPanel"> 
+			<input type="button"  name="insert" value="{#insert}" onclick="writeWceMetaData();" />
+			<input type="button"  name="cancel" value="{#cancel}" onclick="tinyMCEPopup.close();" />
+		</div>
+
+<!--<textarea id="tempDiv" rows="15" style="width:100%;height:100%"></textarea>-->
+<script type="text/javascript"> 
+	tinyMCEPopup.onInit.add(function(_ed){
+		ed=_ed;
+		setConstants(); 
+		init();
+	});
+		
+	
+function init() {
+	wce_type = 'wce_metatata'; 
+	headerXmlTree = createheaderXmlTree();
+	readMetaData();
+}
+
+function readMetaData() {
+	var xmlString = ed.wceMetaData;
+	var $xml;
+ 	
+	if (xmlString) {
+		try { 
+			$xml = $($.parseXML(xmlString));
+		} catch (err) {
+
+		} 
+	}
+
+	if (!$xml) {
+		xmlString = xmlInit();
+		$xml = $($.parseXML(xmlString));
+	} 
+
+//	 $('#tempDiv').val(xmlString);
+	readXmlToForm($xml);
+}
+
+function readXmlToForm($xml) {
+	var readTree = function(xTree) {
+		var currNode,$elem;
+		for ( var currName in xTree) {
+			currNode = xTree[currName];
+			if (currName.match(/^_/))
+				continue;
+ 
+			// wenn _do hat, do
+			if (currNode['_do']) { 
+				$elem = $xml.find(currName); 
+				if (!$elem)
+					continue;
+				
+				elememtToForm($elem, currNode);
+			}
+
+			if(currName=='TEI'){
+				$elem = $xml.find(currName)[0];  
+				var xmlID=$elem.getAttribute('xml:id');
+				if(xmlID){
+					$('#meta_xmlID').val(xmlID);
+				}
+			}
+			
+			if (currNode) {
+				readTree(currNode);
+			}
+		}
+	};
+	readTree(headerXmlTree);
+}
+
+function elememtToForm($parentElem, xt) {
+	var currNode, boxId, $elem, $elems;
+	var a = tinymce;
+	for ( var currName in xt) {
+		if (currName.match(/^_/))
+			continue;
+
+		$elems = $parentElem.find(currName);
+		currNode = xt[currName]; 
+
+		boxId = currNode['_box'];
+		if ($elems && boxId) { 
+			// templeate Node for copy
+			var templateNode = $('#' + boxId);
+			var tn = templateNode[0].tagName;
+			var templateOuthtml = '<' + tn + ' xmlCopyId="'+boxId+'">'
+					+ $(templateNode).html() + '</' + tn + '>';
+			templateOuthtml = templateOuthtml.replace(/none/, 'display');
+
+			for ( var i = 0, len = $elems.length; i < len; i++) {
+				$elem = $elems[i]; // xml element titleStmt->title,
+				 
+				if($elem.parentNode!=$parentElem[0]) continue;
+				
+				// respStmt, ...
+				if (i > 0) {
+					templateNode = $(templateOuthtml);
+					$('#' + boxId).after(templateNode);
+				}
+ 
+				$(templateNode).find('[xmlValue]').each(function() {  
+					var tagAttri = $(this).attr('xmlValue'); 
+
+					// Ausname bei mata_title
+					if (tagAttri == '?' && boxId == 'meta_title_box') {
+						tagAttri = _getTitleStmtTitle(i);
+						$(this).html(tagAttri);
+						return;
+					}
+					var textValue;
+					if (tagAttri == '_text_') {
+						if($.browser.msie)
+							textValue = $elem.text;
+						else
+							textValue = $elem.textContent;
+					} else {
+						textValue = $elem.getAttribute(tagAttri);
+					}
+			  		 
+					if (textValue) {
+						if ($(this).tagName == 'label') {
+							$(this).html(textValue);
+						} else { 
+							$(this).val(textValue);
+						}
+					}
+				});
+			}
+
+		}
+	}
+}
+
+function _getTitleStmtTitleType(i){
+	switch (i) {
+	case 0:
+		return '';
+	case 1:
+		return ' type="document" ';
+	case 2:
+		return ' type="collection" ';
+	case 3:
+		return ' type="work" ';
+	case 4:
+		return ' type="short" ';
+	default:
+		return '';
+	} 
+}
+
+function _getTitleStmtTitle(i) {
+	switch (i) {
+	case 0:
+		return parent.tinymce.translate('meta_title');
+	case 1:
+		return parent.tinymce.translate('meta_title_document');
+	case 2:
+		return parent.tinymce.translate('meta_title_collection');
+	case 3:
+		return parent.tinymce.translate('meta_title_work');
+	case 4:
+		return parent.tinymce.translate('meta_title_short');
+	default:
+		return '';
+	}
+} 
+
+
+
+function writeWceMetaData() {
+	var xmlTreeToStr = function(xmlNode) {
+		var out = '', currNode, count, tmp, boxId, textValue, box, i = 0;
+		for ( var nodeName in xmlNode) {
+			textValue = '';
+
+			if (!nodeName || nodeName.match(/^_/))
+				continue;
+				
+			box = null;
+			var b = true;
+			currNode = xmlNode[nodeName];
+			boxId = currNode['_box'];
+			if (boxId) {
+				box = $('#' + boxId);
+			}
+ 
+			while (b) {
+				i++;
+				tmp = '<' + nodeName;
+				
+				// attribute or text
+				if (box) {
+					$(box).find('[xmlValue]').each(
+							function() {
+								var val = $(this).val();
+								var attriValue = $(this).attr('xmlValue');
+								// Ausname bei mata_title
+								if (attriValue == '?'
+										&& boxId == 'meta_title_box') {
+									attriValue = _getTitleStmtTitleType(i);
+									tmp += attriValue;
+								} else if (attriValue == '_text_') {
+									textValue = $(this).val();
+								} else if (val != '') {
+									tmp += " " + attriValue + '="'
+											+ val + '" ';
+								}
+							});
+
+					box = $(box).next('[xmlCopyId="'+boxId+'"]');
+					if (box.length == 0)
+						b = false;
+				} else {
+					b = false;
+				}
+
+				// TODO
+				if (nodeName == 'TEI') {
+					//tmp += ' xmlns="http://www.tei-c.org/ns/1.0" ';
+					// tmp +=' xmlns:xml="http://www.w3.org/XML/1998/namespace"
+					// ';
+					// tmp +='
+					// xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ;
+					// tmp +=' xsi:schemaLocation="http://www.tei-c.org/ns/1.0
+					// TEI-NTMSS.xsd" ';
+				}
+ 
+				tmp += '>' + textValue;
+				tmp += xmlTreeToStr(currNode);
+				tmp += '</' + nodeName + '>';
+				out += tmp;
+			} // end while
+		}
+
+		return out;
+	}
+	ed.wceMetaData = xmlTreeToStr(headerXmlTree);
+	ed.isNotDirty = 0;  
+	tinyMCEPopup.close();
+}
+
+/*
+ * create simply xml with alle elements
+ */
+function xmlInit() {
+	var xmlTreeToStr = function(xmlNode) {
+		var out = '', currNode, attri, count, tmp, boxId;
+		for ( var nodeName in xmlNode) {
+			if (nodeName.match(/^_/))
+				continue;
+
+			// <
+			tmp = '<' + nodeName;
+			currNode = xmlNode[nodeName];
+			boxId=currNode['_box'];
+			
+			// add attribute
+			attri = currNode['_attribute']; 
+			if (attri instanceof Array) {
+				for ( var i = 0, len = attri.length; i < len; i++) {
+					//tmp += " " + attri[i] + '="a" '; //TEST 
+						tmp += " " + attri[i] + '="" ';
+				}
+			} 
+			
+			 //TODO
+			if(nodeName=='TEI'){
+					//tmp +=' xmlns="http://www.tei-c.org/ns/1.0" ';
+					//tmp +=' xmlns:xml="http://www.w3.org/XML/1998/namespace" ';
+					//tmp +=' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ;
+					//tmp +=' xsi:schemaLocation="http://www.tei-c.org/ns/1.0 TEI-NTMSS.xsd" ';  
+			}
+			 
+
+			//tmp += '>' + nodeName; //TEST
+		 	tmp += '>';
+			tmp += xmlTreeToStr(currNode);
+			tmp += '</' + nodeName + '>';
+
+			//Ausnahme
+			if(boxId && boxId=='meta_title_box'){ 
+				out +=tmp.replace(/type="[^"]*"/, '');
+			}else{
+				out += tmp;			
+			}
+		
+			// count
+			count = currNode['_count'];
+			if (count) {
+				for ( var j = 1; j < count; j++) {
+					if(boxId && boxId=='meta_title_box'){ 
+						out +=tmp.replace(/type="[^"]*"/, _getTitleStmtTitleType(j));
+					}else {
+						out += tmp; 
+					}
+				}
+			}
+			
+		}
+		return out;
+	}
+	return xmlTreeToStr(headerXmlTree);
+}
+
+
+function boxCopy(elem, boxId){ 
+	var parentElem=elem.parentNode,na,_id; 
+	while(parentElem){  
+		na=$(parentElem).attr('xmlCopyId');    
+		if(na){  
+			 var tn =$(parentElem)[0].tagName;
+			 var outhtml = '<' + tn + ' xmlCopyId="'+boxId+'">' + $(parentElem).html()
+								+ '</' + tn + '> ';
+				outhtml=outhtml.replace(/none/,'display'); 
+				$(parentElem).after(outhtml); 
+			return;
+		} 
+		parentElem=parentElem.parentNode;
+	} 
+ 
+}
+
+function boxRemove(elem){
+	var parentElem=elem.parentNode,na;  
+	while(parentElem){  
+		na=$(parentElem).attr('xmlCopyId');  
+		if(na){ 
+			$(parentElem).remove();
+			return;
+		} 
+		parentElem=parentElem.parentNode;
+	} 
+}
+
+/*
+* "_do : true" nur f¨¹r eindeutige Element
+*
+<TEI xml:id="" xmlns="http://www.tei-c.org/ns/1.0">
+	<teiHeader>
+		<fileDescr>
+			<titleStmt>
+				<title level="" xml:lang="" n=""></title>
+				<title type="document" level="" xml:lang="" n=""></title>
+				<title type="collection" level="" xml:lang="" n=""></title>
+				<title type="work" level="" xml:lang="" n=""></title>
+				<title type="short" level="" xml:lang="" n=""></title>
+				<respStmt>
+					<resp></resp>
+					<name></name>
+				</respStmt>
+				<funder></funder>
+				<sponsor>
+					<name></name>
+				</sponsor>
+			</titleStmt>
+			<editionStmt>
+				<edition n="">
+					<date></date>
+				</edition>
+			</editionStmt>
+			<publicationStmt>
+				<publisher>
+					<name type=""></name>
+				</publisher>
+				<date></date>
+				<availability>
+					<p></p>
+				</availability>
+			</publicationStmt>
+			<sourceDesc>
+				<msDesc>
+					<msIdentifier>
+						<country></country>
+						<settlement></settlement>
+						<repository></repository>
+						<idno></idno>
+						<msName xml:lang=""></msName>
+						<altIdentifier type="" xml:lang="">
+							<idno></idno>
+						</altIdentifier> 
+					</msIdentifier>
+					<msContents>
+						<msItem>
+							<title type=""></title>
+							<textLang></textLang>
+						</msItem>
+					</msContents>
+					<physDesc>
+						<objectDesc form="">
+							<supportDesc material="">
+								<support>
+									<material></material>
+								</support>
+								<condition>
+									<p></p>
+								</condition>
+							</supportDesc>
+							<layoutDesc>
+								<layout>
+									<p></p>
+								</layout>
+							</layoutDesc>
+						</objectDesc>
+						<handDesc>
+							<p>
+								<term></term>
+							</p>
+						</handDesc>
+						<decoDesc>
+							<p></p>
+						</decoDesc>
+					</physDesc>
+					<history>
+						<origin>
+							<origPlace></origPlace>
+							<origDate notBefore="" notAfter=""></origDate>
+						</origin>
+					</history>
+					<surrogates>
+						<listBibl>
+							<bibl></bibl>
+						</listBibl>
+					</surrogates>
+				</msDesc>
+			</sourceDesc>
+			<encodingDesc>
+				<projectDesc>
+					<p></p>
+				</projectDesc>
+				<editorialDecl>
+					<p></p>
+				</editorialDecl>
+			</encodingDesc>
+			<revisionDesc>
+				<change n="" when=""></change>
+			</revisionDesc>
+		</fileDescr>
+	</teiHeader>
+</TEI>
+*/
+function createheaderXmlTree() {
+	return {
+		TEI : {
+			_attribute : [ 'xml:id' ],
+			teiHeader : {
+				fileDescr : {
+					titleStmt : {
+						_do : true,
+						title : {
+							_box : 'meta_title_box',
+							_count : 4,
+							_attribute : [ 'type', 'level', 'xml:lang', 'n' ]
+
+						},
+						respStmt : {
+							_do : true,
+							resp : {},
+							name : {
+								_box : 'meta_name_box',
+								_count : 1
+							}
+						},
+						funder : {
+							_box : 'meta_funder_box'
+						},
+						sponsor : {
+							_do : true,
+							name : {
+								_box : 'meta_sponsor_box',
+								_count : 1
+							}
+						}
+					},
+					editionStmt : {
+						_do : true,
+						edition : {
+							_do : true,
+							_box : 'meta_edition_version_box',
+							_attribute : [ 'n' ],
+							date : {
+								_box : 'meta_edition_date_box'
+							}
+						}
+					},
+					publicationStmt : {
+						_do : true,
+						publisher : {
+							_do : true,
+							name : {
+								_box : 'meta_publisher_box',
+								_count : 1,
+								_attribute : [ 'type' ]
+							}
+						},
+						date : {
+							_box : 'meta_publication_date_box'
+						},
+						availability : {
+							_do : true,
+							p : {
+								_box : 'meta_publication_availability_box'
+							}
+						}
+					},
+
+					sourceDesc : {
+						msDesc : {
+							msIdentifier : {
+								_do : true,
+								country : {
+									_box : 'meta_msDesc_country_box'
+								},
+								settlement : {
+									_box : 'meta_msDesc_settlement_box'
+								},
+								repository : {
+									_box : 'meta_msDesc_repository_box'
+								},
+								idno : {
+									_box : 'meta_msDesc_idno_box'
+								},
+								msName : {
+									_box : 'meta_msDesc_msName_box',
+									_attribute : [ 'xml:lang' ]
+								},
+								altIdentifier : {
+									_do : true,
+									_box : 'meta_msDesc_altIdentifier_box',
+									_attribute : [ 'type', 'xml:lang' ],
+									_count : 1,
+									idno : {}
+								}
+							},
+							msContents : {
+								msItem : {
+									title : {
+										_attribute : [ 'type' ]
+									},
+									textLang : {}
+								}
+							},
+							physDesc : {
+								objectDesc : {
+									_attribute : [ 'form' ],
+									supportDesc : {
+										_attribute : [ 'material' ],
+										support : {
+											material : {}
+										},
+										condition : {
+											p : {}
+										}
+									},
+									layoutDesc : {
+										layout : {
+											p : {}
+										}
+									}
+								},
+								handDesc : {
+									p : {
+										term : {}
+									}
+								},
+								decoDesc : {
+									p : {}
+								}
+							},
+							history : {
+								origin : {
+									origPlace : {},
+									origDate : {
+										_attribute : [ 'notBefore', 'notAfter' ]
+									}
+								}
+							},
+							surrogates : {
+								listBibl : {
+									bibl : {}
+								}
+							}
+						}
+					},
+
+					encodingDesc : {
+						projectDesc : {
+							_do : true,
+							p : {
+								_box : 'meta_projectDesc_box'
+							}
+						},
+
+						editorialDecl : {
+							_do : true,
+							p : {
+								_box : 'meta_editorialDecl_box'
+							}
+						}
+					},
+
+					revisionDesc : {
+						_do : true,
+						change : {
+							_count : 1,
+							_box : 'meta_revisionDesc_box',
+							_attribute : [ 'n', 'when' ]
+						}
+					}
+				}
+			}
+		}
+	};
+}
+</script>
+</body>
+</html>

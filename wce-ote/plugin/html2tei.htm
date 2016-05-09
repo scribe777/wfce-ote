@@ -1,0 +1,119 @@
+<!-- 
+	Copyright (C) 2012-2016 Trier Center for Digital Humanities, Trier (Germany)
+	
+	This file is part of the Online Transcription Editor (OTE).
+
+    OTE is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as published by
+    the Free Software Foundation, either version 2.1 of the License, or
+    (at your option) any later version.
+
+    OTE is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with OTE.  If not, see <http://www.gnu.org/licenses/>.
+
+    Diese Datei ist Teil des Online-Transkriptions-Editor (OTE).
+
+    OTE ist Freie Software: Sie können es unter den Bedingungen
+    der GNU Lesser General Public License, wie von der Free Software Foundation,
+    Version 2.1 der Lizenz oder (nach Ihrer Wahl) jeder späteren
+    veröffentlichten Version, weiterverbreiten und/oder modifizieren.
+
+    OTE wird in der Hoffnung, dass es nützlich sein wird, aber
+    OHNE JEDE GEWÄHRLEISTUNG, bereitgestellt; sogar ohne die implizite
+    Gewährleistung der MARKTFÄHIGKEIT oder EIGNUNG FÜR EINEN BESTIMMTEN ZWECK.
+    Siehe die GNU Lesser General Public License für weitere Details.
+
+    Sie sollten eine Kopie der GNU Lesser General Public License zusammen mit diesem
+    Programm erhalten haben. Wenn nicht, siehe <http://www.gnu.org/licenses/>.
+-->
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" style="height:100%">
+    <head>
+        <title>XML Output</title>
+        <script type="text/javascript" src="../jquery.js"></script>
+        <script type="text/javascript" src="../wce_tei.js"></script>
+    </head>
+    <body style="height:95%" style="overflow:hidden;">
+        <div style="height:90%; margin-bottom:10px" id="div0">
+            <textarea name="html2teiOutputContainer" id="html2teiOutputContainer" style="width: 100%; overflow-y:visible; height: 98%; font-family: 'Courier New',Courier,monospace; font-size: 12px;" dir="ltr" wrap="on" class="mceFocus"></textarea>
+        </div>
+        <div class="mceActionPanel">
+            <input type="button" id="close" value="{#close}" onclick="parent.tinymce.activeEditor.windowManager.close();" />
+			<input type="button" id="copy" value="{#clipboard}" onclick="copyToClipboard();" />
+        </div>
+
+    </body>
+    <script type="text/javascript">
+	$(document).ready(function() {
+			var _ed = parent.tinymce.activeEditor;
+			translate();
+			var x = document.getElementById('html2teiOutputContainer');
+			x.style.height = document.getElementById('div0').offsetHeight + "px";
+			var str = _ed.getContent();
+			var teiContent = getTeiByHtml(str, _ed.settings);
+			if (teiContent) {
+				teiContent = formatXml(teiContent);
+				x.value = teiContent;
+			}
+
+		});
+
+		function translate() {
+			var c=document.body.innerHTML;
+			var d=document.title;
+			var a;
+			if(parent.tinymce.isIE){c=c.replace(/ (value|title|alt)=([^"][^\s>]+)/gi,' $1="$2"')}
+			a=c.replace(/\{\#([^\}]+)\}/g, function(a, b) {
+				var c=parent.tinymce.translate(b);
+				return (c != b) ? c : '{#' + b + '}';
+			});
+			if(a!=c){document.body.innerHTML=a}
+			a=d.replace(/\{\#([^\}]+)\}/g, function(a, b) {
+				var c=parent.tinymce.translate(b);
+				return (c != b) ? c : '{#' + b + '}';
+			});
+			if(a!=d){document.title=d=a}
+		}
+
+		function formatXml(xml) {
+			var formatted = '';
+			var reg = /(>)(<)(\/*)/g;
+			xml = xml.replace(reg, '$1\r\n$2$3');
+			var pad = 0;
+			jQuery.each(xml.split('\r\n'), function(index, node) {
+				var indent = 0;
+				if (node.match(/.+<\/\w[^>]*>$/)) {
+					indent = 0;
+				} else if (node.match(/^<\/\w/)) {
+					if (pad != 0) {
+						pad -= 1;
+					}
+				} else if (node.match(/^<\w[^>]*[^\/]>.*$/)) {
+					indent = 1;
+				} else {
+					indent = 0;
+				}
+
+				var padding = '';
+				for (var i = 0; i < pad; i++) {
+					padding += ' ';
+				}
+
+				formatted += padding + node + '\r\n';
+				pad += indent;
+			});
+
+			return formatted;
+		}
+		function copyToClipboard () {
+			html2teiOutputContainer.select();
+			window.alert(parent.tinymce.translate('clipboard_note'));
+		}
+    </script>
+</html>

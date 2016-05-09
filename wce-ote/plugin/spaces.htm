@@ -1,0 +1,166 @@
+<!-- 
+	Copyright (C) 2012-2016 Trier Center for Digital Humanities, Trier (Germany)
+	
+	This file is part of the Online Transcription Editor (OTE).
+
+    OTE is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as published by
+    the Free Software Foundation, either version 2.1 of the License, or
+    (at your option) any later version.
+
+    OTE is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with OTE.  If not, see <http://www.gnu.org/licenses/>.
+
+    Diese Datei ist Teil des Online-Transkriptions-Editor (OTE).
+
+    OTE ist Freie Software: Sie können es unter den Bedingungen
+    der GNU Lesser General Public License, wie von der Free Software Foundation,
+    Version 2.1 der Lizenz oder (nach Ihrer Wahl) jeder späteren
+    veröffentlichten Version, weiterverbreiten und/oder modifizieren.
+
+    OTE wird in der Hoffnung, dass es nützlich sein wird, aber
+    OHNE JEDE GEWÄHRLEISTUNG, bereitgestellt; sogar ohne die implizite
+    Gewährleistung der MARKTFÄHIGKEIT oder EIGNUNG FÜR EINEN BESTIMMTEN ZWECK.
+    Siehe die GNU Lesser General Public License für weitere Details.
+
+    Sie sollten eine Kopie der GNU Lesser General Public License zusammen mit diesem
+    Programm erhalten haben. Wenn nicht, siehe <http://www.gnu.org/licenses/>.
+-->
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>{#spaces_title}</title>
+<script type="text/javascript" src="../jquery.js"></script>
+<script type="text/javascript" src="js/wce.js"></script>
+</head>
+
+<body id="table">
+	<form onsubmit="return false;" action="#" name="spacesinfo">
+		<input type="hidden" id="original_spaces_text"
+			name="original_spaces_text" value="" />
+		<input type="button" id="help" name="help" value="{#help}"
+				onclick="wce_openWindow('docu.htm#punctuation')" />
+		<fieldset>
+			<legend>{#spaces_data}</legend>
+			<table border="0" cellpadding="4" cellspacing="0" width="100%">
+				<tr>
+					<td><label id="sp_unit_label" for="sp_unit">{#unit}</label>
+					</td>
+					<td><select id="sp_unit" name="sp_unit"
+						onclick="checkstatus_spacesunit()">
+							<option value="char">{#unit_char}</option>
+							<option value="line">{#unit_line}</option>
+							<option value="other">{#other}</option>
+					</select>
+					</td>
+					<td><input id="sp_unit_other" name="sp_unit_other" type="text"
+						value="" size="50" maxlength=""
+						class="required number min1 mceFocus" />
+					</td>
+				</tr>
+				<tr>
+					<td><label id="sp_extent_label" for="sp_extent">{#extent}</label>
+					</td>
+					<td colspan="2"><input id="sp_extent" name="sp_extent"
+						type="text" value="" size="50" maxlength=""
+						class="required number min1 mceFocus" />
+					</td>
+				</tr>
+			</table>
+		</fieldset>
+		<div class="mceActionPanel">
+			<input type="button" id="insert" name="insert" value="{#insert}"
+				onclick="var cont=testInput(); if(cont=='0'){writeWceNodeInfo()} else if(cont=='1'){alert('{#empty_other}')}else if(cont=='2'){alert('{#empty_extent}');}" />
+			<input type="button" id="cancel" name="cancel" value="{#cancel}"
+				onclick="parent.tinymce.activeEditor.windowManager.close();" />
+		</div>
+	</form>
+</body>
+<script type="text/javascript">
+	$(document).ready(function() {
+		var _ed = parent.tinymce.activeEditor;
+		ed=_ed;
+		translate();
+		setConstants(); 
+		init();
+	});	
+	
+	function translate() {
+		var c=document.body.innerHTML;
+		var d=document.title;
+		var a;
+		if(parent.tinymce.isIE){c=c.replace(/ (value|title|alt)=([^"][^\s>]+)/gi,' $1="$2"')}
+		a=c.replace(/\{\#([^\}]+)\}/g, function(a, b) {
+			var c=parent.tinymce.translate(b);
+			return (c != b) ? c : '{#' + b + '}';
+		});
+		if(a!=c){document.body.innerHTML=a}
+		a=d.replace(/\{\#([^\}]+)\}/g, function(a, b) {
+			var c=parent.tinymce.translate(b);
+			return (c != b) ? c : '{#' + b + '}';
+		});
+		if(a!=d){document.title=d=a}
+	}
+		
+	function init() {
+		comboBindReturnEvent('insert'); 
+		wceInfoInit('spaces');
+		readWceNodeInfo();
+		setstatus_spaces();
+	}
+	function checkstatus_spacesunit() {
+		if (document.spacesinfo.sp_unit.options[2].selected == true) {
+			document.spacesinfo.sp_unit_other.disabled = false;
+			document.getElementById('sp_unit_other').style.backgroundColor = "white";
+		} else {
+			document.spacesinfo.sp_unit_other.disabled = true;
+			document.getElementById('sp_unit_other').style.backgroundColor = "#CCCCCC";
+		}
+	}
+
+	function setstatus_spaces() {
+		checkstatus_spacesunit();
+	} 
+	
+	function testInput() {
+		var cont = testOther();
+		if (!cont) {
+			return 1;
+		}
+		cont = testUnit();
+		if (!cont) {
+			return 2;
+		}
+		return 0;
+	}
+	
+	function testOther() {
+		if (document.spacesinfo.sp_unit.options[2].selected == true && document.getElementById('sp_unit_other').value == '') 
+			return false;
+	return true;
+	}
+	
+	function testUnit() {
+		if ($('#sp_unit').val() != '' && $.trim($('#sp_extent').val()) == '') {
+			return false;
+		}
+		return true;
+	}
+	
+	if (!parent.tinymce.isIE) {
+		$(document).keydown(function(e) {
+			var evt = e || window.event
+			if (evt.keyCode == 13 || evt.keyCode == 10) {
+				document.getElementById('insert').click();
+				return false;
+			}
+		});
+	}
+</script>
+</html>

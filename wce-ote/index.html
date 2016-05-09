@@ -1,0 +1,38 @@
+<!DOCTYPE html
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=8" />
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="wce_tei.js"></script>
+<script type="text/javascript" src="wce_callback.js"></script>
+<script type="text/javascript" src="../js/tinymce/tinymce.js"></script>  
+<script type="text/javascript" src="wce_editor.js"></script>
+<script type="text/javascript" src="wce_charmap.js"></script>
+<title>Workspace for Collaborative Editing</title>
+<style type="text/css">
+</style> 
+
+</head>
+<body>
+	<form method="post" id="wce_form" action=".">
+		<div id="user_toolbar" ></div>
+		<!--<div>
+		<input type="button" style="margin-right: 5px" value="+"
+			onclick="increaseLineHeight();" />
+		<input type="button" style="margin-right: 5px" value="-"
+			onclick="decreaseLineHeight();" />
+		</div>-->
+		<div style="margin: 10px 0px 10px 0px">
+			<textarea id="wce_editor" rows="28" cols="80" style="width: 100%;"></textarea>
+		</div>
+	</form>  
+	<script type="text/javascript">
+		setWceEditor('wce_editor', '', function() {
+//setTEI('<TEI xmlns="http://www.tei-c.org/ns/1.0"> <teiHeader> <fileDesc> <titleStmt> <title/> </titleStmt> <publicationStmt> <publisher/> </publicationStmt> <sourceDesc> <msDesc> <msIdentifier> </msIdentifier> </msDesc> </sourceDesc> </fileDesc> </teiHeader> <text> <body> <div type="incipit" n="Bincipit"> <ab> <w>PLACE</w> <w>THE</w> <w>INCIPIT</w> <w>HERE!</w> </ab> </div> </body> </text> </TEI>');
+		 }, '', '', '', '');	
+	</script>
+</body>  
+</html>

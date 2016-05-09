@@ -1,0 +1,730 @@
+.mce-content-body .mce-reset{margin:0;padding:0;border:0;outline:0;vertical-align:top;background:transparent;text-decoration:none;color:black;font-family:Arial;font-size:11px;text-shadow:none;float:none;position:static;width:auto;height:auto;white-space:nowrap;cursor:inherit;line-height:normal;font-weight:normal;text-align:left;-webkit-tap-highlight-color:transparent;-moz-box-sizing:content-box;-webkit-box-sizing:content-box;box-sizing:content-box;direction:ltr;max-width:none}.mce-object{border:1px dotted #3a3a3a;background:#d5d5d5 url(img/object.gif) no-repeat center}.mce-preview-object{display:inline-block;position:relative;margin:0 2px 0 2px;line-height:0;border:1px solid gray}.mce-preview-object .mce-shim{position:absolute;top:0;left:0;width:100%;height:100%;background:url(data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7)}figure.align-left{float:left}figure.align-right{float:right}figure.image.align-center{display:table;margin-left:auto;margin-right:auto}figure.image{display:inline-block;border:1px solid gray;margin:0 2px 0 1px;background:#f5f2f0}figure.image img{margin:8px 8px 0 8px}figure.image figcaption{margin:6px 8px 6px 8px;text-align:center}.mce-preview-object[data-mce-selected] .mce-shim{display:none}.mce-pagebreak{cursor:default;display:block;border:0;width:100%;height:5px;border:1px dashed #666;margin-top:15px;page-break-before:always}@media print{.mce-pagebreak{border:0}}.mce-item-anchor{cursor:default;display:inline-block;-webkit-user-select:all;-webkit-user-modify:read-only;-moz-user-select:all;-moz-user-modify:read-only;user-select:all;user-modify:read-only;width:9px !important;height:9px !important;border:1px dotted #3a3a3a;background:#d5d5d5 url(img/anchor.gif) no-repeat center}.mce-nbsp,.mce-shy{background:#aaa}.mce-shy::after{content:'-'}hr{cursor:default}.mce-match-marker{background:#aaa;color:#fff}.mce-match-marker-selected{background:#39f;color:#fff}.mce-spellchecker-word{border-bottom:2px solid #f00;cursor:default}.mce-spellchecker-grammar{border-bottom:2px solid #008000;cursor:default}.mce-item-table,.mce-item-table td,.mce-item-table th,.mce-item-table caption{border:1px dashed #bbb}td[data-mce-selected],th[data-mce-selected]{background-color:#39f !important}.mce-edit-focus{outline:1px dotted #333}.mce-content-body *[contentEditable=false] *[contentEditable=true]:focus{outline:2px solid #2d8ac7}.mce-content-body *[contentEditable=false] *[contentEditable=true]:hover{outline:2px solid #7acaff}.mce-content-body *[contentEditable=false][data-mce-selected]{outline:2px solid #2d8ac7}.mce-resize-bar-dragging{background-color:blue;opacity:.25;filter:alpha(opacity=25);zoom:1}
+
+/* above is the default skin values from the tinymce skin creator. below is the skin values from wce-ota for tinymce 3.x
+   update this accordingly
+*/
+
+/* 
+	Copyright (C) 2012-2014 Center for Digital Humanities, Trier
+	
+	This file is part of the Online Transcription Editor (OTE).
+
+    OTE is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as published by
+    the Free Software Foundation, either version 2.1 of the License, or
+    (at your option) any later version.
+
+    OTE is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with OTE. If not, see <http://www.gnu.org/licenses/>.
+
+    Diese Datei ist Teil des Online-Transkriptions-Editor (OTE).
+
+    OTE ist Freie Software: Sie können es unter den Bedingungen
+    der GNU Lesser General Public License, wie von der Free Software Foundation,
+    Version 2.1 der Lizenz oder (nach Ihrer Wahl) jeder späteren
+    veröffentlichten Version, weiterverbreiten und/oder modifizieren.
+
+    OTE wird in der Hoffnung, dass es nützlich sein wird, aber
+    OHNE JEDE GEWÄHRLEISTUNG, bereitgestellt; sogar ohne die implizite
+    Gewährleistung der MARKTFÄHIGKEIT oder EIGNUNG FÜR EINEN BESTIMMTEN ZWECK.
+    Siehe die GNU Lesser General Public License für weitere Details.
+
+    Sie sollten eine Kopie der GNU Lesser General Public License zusammen mit diesem
+    Programm erhalten haben. Wenn nicht, siehe <http://www.gnu.org/licenses/>.
+*/
+
+@font-face{
+	font-family: GentiumPlus;
+	src: url(fonts/GentiumPlus-I.woff) format('woff');
+	font-style: italic;
+}
+
+@font-face{
+	font-family: GentiumPlus;
+	src: url(fonts/GentiumPlus-R.woff) format('woff');
+		/* should work for all recent browsers */
+	font-style: normal;
+}
+
+body, td, pre {
+	color:#000;
+	 font-size:24px;
+	 margin:8px;
+	 line-height:48px;
+	 font-family: GentiumPlus;
+}
+
+
+body {
+	background-color:#FFE6BB;
+}
+
+
+body.mceForceColors {
+	background:#FFF;
+	 color:#000;
+}
+
+
+body.mceBrowserDefaults {
+	background:transparent;
+	 color:inherit;
+	 font-size:inherit;
+	 font-family:inherit;
+}
+
+
+h1 {
+	font-size: 2em
+}
+
+
+h2 {
+	font-size: 1.5em
+}
+
+
+h3 {
+	font-size: 1.17em
+}
+
+
+h4 {
+	font-size: 1em
+}
+
+
+h5 {
+	font-size: .83em
+}
+
+
+h6 {
+	font-size: .75em
+}
+
+
+.mceItemTable, .mceItemTable td, .mceItemTable th, .mceItemTable caption, .mceItemVisualAid {
+	border: 1px dashed #BBB;
+}
+
+
+a.mceItemAnchor {
+	display:inline-block;
+	 -webkit-user-select:all;
+	 -webkit-user-modify:read-only;
+	 -moz-user-select:all;
+	 -moz-user-modify:read-only;
+	 width:11px !important;
+	 height:11px !important;
+	 background:url(img/items.gif) no-repeat center center
+}
+
+
+span.mceItemNbsp {
+	background: #DDD
+}
+
+
+td.mceSelected, th.mceSelected {
+	background-color:#3399ff !important
+}
+
+
+img {
+	border:0;
+}
+
+
+table, img, hr, .mceItemAnchor {
+	cursor:default
+}
+
+
+table td, table th {
+	cursor:text
+}
+
+
+ins {
+	border-bottom:1px solid green;
+	 text-decoration: none;
+	 color:green
+}
+
+
+del {
+	color:red;
+	 text-decoration:line-through
+}
+
+
+cite {
+	border-bottom:1px dashed blue
+}
+
+
+acronym {
+	border-bottom:1px dotted #CCC;
+	 cursor:help
+}
+
+
+abbr {
+	border-bottom:1px dashed #CCC;
+	 cursor:help
+}
+
+
+
+/* IE */
+* html body {
+	
+scrollbar-3dlight-color:#F0F0EE;
+	
+scrollbar-arrow-color:#676662;
+	
+scrollbar-base-color:#F0F0EE;
+	
+scrollbar-darkshadow-color:#DDD;
+	
+scrollbar-face-color:#E0E0DD;
+	
+scrollbar-highlight-color:#F0F0EE;
+	
+scrollbar-shadow-color:#F0F0EE;
+	
+scrollbar-track-color:#F5F5F5;
+	
+
+}
+
+
+
+img:-moz-broken {
+	-moz-force-broken-image-icon:1;
+	 width:24px;
+	 height:24px
+}
+
+
+font[face=mceinline] {
+	font-family:inherit !important
+}
+
+
+*[contentEditable]:focus {
+	outline:0
+}
+
+
+
+.mceItemMedia {
+	border:1px dotted #cc0000;
+	 background-position:center;
+	 background-repeat:no-repeat;
+	 background-color:#ffffcc
+}
+
+
+.mceItemShockWave {
+	background-image:url(../../img/shockwave.gif)
+}
+
+
+.mceItemFlash {
+	background-image:url(../../img/flash.gif)
+}
+
+
+.mceItemQuickTime {
+	background-image:url(../../img/quicktime.gif)
+}
+
+
+.mceItemWindowsMedia {
+	background-image:url(../../img/windowsmedia.gif)
+}
+
+
+.mceItemRealMedia {
+	background-image:url(../../img/realmedia.gif)
+}
+
+
+.mceItemVideo {
+	background-image:url(../../img/video.gif)
+}
+
+
+.mceItemAudio {
+	background-image:url(../../img/video.gif)
+}
+
+
+.mceItemEmbeddedAudio {
+	background-image:url(../../img/video.gif)
+}
+
+
+.mceItemIframe {
+	background-image:url(../../img/iframe.gif)
+}
+
+
+.mcePageBreak {
+	display:block;
+	border:0;
+	width:100%;
+	height:12px;
+	border-top:1px dotted #ccc;
+	margin-top:15px;
+	background:#fff url(../../img/pagebreak.gif) no-repeat center top;
+}
+
+
+
+span.verse_number {
+	
+	color:gray;
+	
+
+}
+
+ 
+
+span.verse_number[wce="__t=verse_number&partial=I"] {
+	
+	color:green;
+	
+
+}
+
+ 
+
+span.verse_number[wce="__t=verse_number&partial=F"] {
+	
+	color:green;
+	
+
+}
+
+ 
+ 
+span.chapter_number{
+	
+	color:dimgray;
+	
+	font-size:36px;
+	
+
+}
+
+ 
+
+span.book_number{
+	
+	color:darkviolet;
+	
+	font-size:36px;
+	
+
+}
+
+ 
+
+span.lection_number{
+	
+	color:blue;
+	
+	font-size:36px;
+	
+
+}
+
+ 
+
+span.format_start, span.format_end {
+	
+	color:#d8d8d8;
+	
+	background-color:#d8d8d8;
+	
+
+}
+
+
+ 
+span.pc, span.abbr, span.abbr_add_overline, span.part_abbr, span.supplied, span.spaces{
+	
+	border: 1px dotted #f00;
+	  
+	margin:0px 0px 0px 1px;
+	 
+	padding:0 
+
+}
+
+
+
+span.abbr_add_overline{
+	 
+	text-decoration:overline
+
+}
+
+
+
+span.brea{
+	
+	border: 1px  dotted #f00;
+	  
+	margin:0px 0px 0px 1px;
+	 
+	padding:0;
+	 
+	color:#666 
+
+}
+
+
+
+span.unclear{
+	
+	border: 1px dotted #f00;
+	 
+	margin:0px 0px 0px 1px;
+	 
+	padding: 0 
+
+}
+
+
+
+span.witnessend{
+	
+	border: 1px  dotted #f00;
+	  
+	margin:0px 0px 0px 1px;
+	 
+	padding:0;
+	 
+	color:#666
+
+}
+
+span.corr, span.corr_blank_firsthand{
+	
+	border: 1px  dotted #f00;
+	 
+	margin:0px 0px 0px 1px;
+	 
+	padding:0;
+	
+	color: blue;
+
+}
+
+span[class="corr"] span[class=*]{
+	
+	border: 1px  dotted #f00;
+	 
+	margin:0px 0px 0px 1px;
+	 
+	padding:0;
+	
+	color:blue
+
+}
+
+
+span.gap{
+	
+	border: 1px  dotted #f00;
+	 
+	margin:0px 0px 0px 1px;
+	 
+	padding:0;
+	
+	color:red
+
+}
+
+
+
+span.corr_blank_firsthand{
+	 
+	vertical-align:super;
+	
+	font-size:10px;
+	
+
+}
+
+
+
+span.note{
+	
+	border: 1px  dotted #f00;
+	 
+	margin:0px 0px 0px 1px;
+	  
+	padding:0;
+	
+	vertical-align:super;
+	 
+	color:blue;
+	 
+	font-size:12px;
+	 
+	margin-right:2px
+
+}
+
+
+
+span.paratext{
+	
+	border: 1px  dotted #f00;
+	 
+	margin:0px 0px 0px 1px;
+	 
+	padding: 0;
+	
+	color:#666
+
+}
+
+
+
+span.commentary, span.lectionary-other, span.ews {
+	font-style: italic;
+}
+
+
+span.spaces{
+	
+	border: 1px  dotted #f00;
+	 
+	margin: 0px 0px 0px 1px;
+	 
+	padding: 0;
+	
+	color:#666
+
+}
+
+
+
+/*start: formatting group*/
+span.formatting_rubrication,span.formatting_gold,span.formatting_blue,span.formatting_green,span.formatting_yellow,
+span.formatting_other, span.formatting_overline, span.formatting_capitals, span.formatting_displaced-above, span.formatting_displaced-below,
+span.formatting_displaced-other, span.formatting_ornamentation_other {
+	
+	border: 1px  dotted #f00;
+	  
+	margin:0px 0px 0px 1px;
+	 
+	padding:0
+
+}
+
+
+span.formatting_rubrication{
+	
+	color: darkred;
+	
+
+}
+
+
+
+span.formatting_gold{
+	
+	color: gold;
+	
+
+}
+
+
+
+span.formatting_blue{
+	
+	color: blue;
+	
+
+}
+
+
+
+span.formatting_green{
+	
+	color: green;
+	
+
+}
+
+
+
+span.formatting_yellow{
+	
+	color: yellow;
+	
+
+}
+
+
+
+span.formatting_other{
+	
+	color: black;
+	
+
+}
+
+
+span.formatting_ornamentation_other{
+	
+	color: black;
+	
+
+}
+
+
+span.formatting_overline{
+	
+	text-decoration: overline;
+	
+
+}
+
+
+span.formatting_capitals{
+	
+	width: .75em;
+	
+	font-size: 48px;
+	
+	line-height: 24px;
+	
+
+}
+
+
+/*end: formatting group*/ 
+/*+++++++*/
+
+span[class*='wce_break_page']{
+	
+	display: block;
+	
+	padding: 0;
+	
+	margin: 0;
+	
+	text-align: center;
+	
+
+}
+
+
+
+span[class*='wce_paratext_incipit']{
+	
+	display: block;
+	
+	padding: 0;
+	
+	margin: 0;
+	
+	text-align: center;
+	
+	font-weight: bold;
+	 
+
+}
+
+
+
+span[class*='wce_paratext_num_chapnum']{
+	
+	color: purple;
+	
+
+}
+
+
+
+span[class*='wce_paratext_num_ammsec']{
+	
+	color: green;
+	
+
+}
+
+
+
+span[class*='wce_supplied_source']{
+	
+	color: red;
+	
+
+}
+
+ 
+
+span[class*='wce_abbr_nomenSacrum_Overline']{
+	
+	text-decoration: overline;
+	
+
+}
+
+
+
+span[class*='wce_abbr_numeral_Overline']{
+	
+	text-decoration: overline;
+	
+
+}
+
+
+
+
+.rubrication {
+	
+color : red;
+	
+
+}
+
+ 
+
+.xbtooltip {
+	
+    display: none;
+	
+	width: 150px;
+	
+    background-color: yellow;
+	
+    color: #000;
+	
+    border: 1px solid red;
+	
+    padding: 3px;
+	
+
+}
+
+
+
+.mceHideBrInPre pre br {
+	display: none
+}

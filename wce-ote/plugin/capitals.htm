@@ -1,0 +1,62 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>{#capitals_title}</title>
+<script type="text/javascript" src="../jquery.js"></script>
+<script type="text/javascript" src="js/wce.js"></script>
+</head>
+
+<body id="table">
+	<form onsubmit="return false;" action="#" name="capitalsinfo">
+		<fieldset id="inputContainer">
+			<legend>{#capitals_data}</legend>
+			<table border="0" cellpadding="0" cellspacing="0" width="60%">
+				<tr>
+					<td><label id="capitals_height_label" for="capitals_height">{#capitals_height}</label></td>
+					<td><input id="capitals_height" name="capitals_height"
+						type="text" value="" size="2" maxlength=""
+						class="required number min1 mceFocus" /></td>
+					<td><label>{#capitals_unit}</label></td>
+				</tr>
+			</table>
+		</fieldset>
+		<div class="mceActionPanel">
+			<input type="button"  id="insert" name="insert" value="{#insert}"
+				onclick="writeWceNodeInfo();" />
+			<input type="button" id="cancel" name="cancel" value="{#cancel}"
+				onclick="parent.tinymce.activeEditor.windowManager.close();" />		</div>
+	</form>
+</body>
+<script type="text/javascript">
+	$(document).ready(function() {
+		var _ed = parent.tinymce.activeEditor;
+		ed=_ed;
+		translate();
+		setConstants(); 
+		init();
+	});	
+	
+	function translate() {
+		var c=document.body.innerHTML;
+		var d=document.title;
+		var a;
+		if(parent.tinymce.isIE){c=c.replace(/ (value|title|alt)=([^"][^\s>]+)/gi,' $1="$2"')}
+		a=c.replace(/\{\#([^\}]+)\}/g, function(a, b) {
+			var c=parent.tinymce.translate(b);
+			return (c != b) ? c : '{#' + b + '}';
+		});
+		if(a!=c){document.body.innerHTML=a}
+		a=d.replace(/\{\#([^\}]+)\}/g, function(a, b) {
+			var c=parent.tinymce.translate(b);
+			return (c != b) ? c : '{#' + b + '}';
+		});
+		if(a!=d){document.title=d=a}
+	}
+
+	function init() {
+		comboBindReturnEvent('insert'); 
+		wceInfoInit('formatting_capitals');
+		readWceNodeInfo();
+	}
+</script>
+</html>

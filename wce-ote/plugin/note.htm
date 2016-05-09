@@ -1,0 +1,171 @@
+<!-- 
+	Copyright (C) 2012-2016 Trier Center for Digital Humanities, Trier (Germany)
+	
+	This file is part of the Online Transcription Editor (OTE).
+
+    OTE is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as published by
+    the Free Software Foundation, either version 2.1 of the License, or
+    (at your option) any later version.
+
+    OTE is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with OTE.  If not, see <http://www.gnu.org/licenses/>.
+
+    Diese Datei ist Teil des Online-Transkriptions-Editor (OTE).
+
+    OTE ist Freie Software: Sie können es unter den Bedingungen
+    der GNU Lesser General Public License, wie von der Free Software Foundation,
+    Version 2.1 der Lizenz oder (nach Ihrer Wahl) jeder späteren
+    veröffentlichten Version, weiterverbreiten und/oder modifizieren.
+
+    OTE wird in der Hoffnung, dass es nützlich sein wird, aber
+    OHNE JEDE GEWÄHRLEISTUNG, bereitgestellt; sogar ohne die implizite
+    Gewährleistung der MARKTFÄHIGKEIT oder EIGNUNG FÜR EINEN BESTIMMTEN ZWECK.
+    Siehe die GNU Lesser General Public License für weitere Details.
+
+    Sie sollten eine Kopie der GNU Lesser General Public License zusammen mit diesem
+    Programm erhalten haben. Wenn nicht, siehe <http://www.gnu.org/licenses/>.
+-->
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>{#note_title}</title>
+<script type="text/javascript" src="../jquery.js"></script>
+<script type="text/javascript" src="js/wce.js"></script>
+</head>
+<body id="table">
+	<form onsubmit="return false;" action="#" name="noteinfo">
+		<input type="button" id="help" name="help" value="{#help}"
+				onclick="wce_openWindow('docu.htm#note')" />
+		<fieldset>
+			<legend>{#note_data}</legend>
+			<table border="0" cellpadding="4" cellspacing="0" width="100%">
+				<tr>
+					<td><label id="note_type_label" for="note_type">{#note_type}</label>
+					</td>
+					<td>
+					<select id="note_type" name="note_type"
+						onchange="checkstatus_notetype()">
+							<option value="local">{#local}</option>
+							<option value="editorial">{#editorial}</option>
+							<option value="canonRef">{#canon}</option>
+							<option value="changeOfHand">{#changeOfHand}</option>
+							<option value="other">{#other}</option>
+					</select>
+					</td>
+					<td><input id="note_type_other" name="note_type_other"
+						type="text" value="" size="30" maxlength=""
+						class="required number min1 mceFocus" />
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2"><label id="newHand_label" for="newHand">{#newHand}</label>
+					</td><td colspan="1"><input id="newHand" name="newHand"
+						type="text" value="" size="30" maxlength=""
+						class="required number min1 mceFocus" />
+					</td>
+				</tr>
+				<tr>
+					<td><label id="note" for="note">{#note}</label>
+					</td>
+					<td colspan="2"><textarea id="note_text" name="note_text"
+							WRAP="PHYSICAL" ROWS="12" COLS="50"></textarea>
+					</td>
+				</tr>
+			</table>
+		</fieldset>
+		<div class="mceActionPanel">
+			<input type="button" id="insert" name="insert" value="{#insert}"
+				onclick="cont = testOther();cont2 = testText();
+						if (cont&&cont2){writeWceNodeInfo();} else{ if(!cont){ alert('{#empty_other}');} else{ alert('{#empty_text}');}}"/>
+			<input type="button" id="cancel" name="cancel" value="{#cancel}"
+				onclick="parent.tinymce.activeEditor.windowManager.close();" />
+		</div>
+	</form>
+</body>
+<script type="text/javascript">
+	$(document).ready(function() {
+		var _ed = parent.tinymce.activeEditor;
+		ed=_ed;
+		translate();
+		setConstants(); 
+		init();
+	});	
+	
+	function translate() {
+		var c=document.body.innerHTML;
+		var d=document.title;
+		var a;
+		if(parent.tinymce.isIE){c=c.replace(/ (value|title|alt)=([^"][^\s>]+)/gi,' $1="$2"')}
+		a=c.replace(/\{\#([^\}]+)\}/g, function(a, b) {
+			var c=parent.tinymce.translate(b);
+			return (c != b) ? c : '{#' + b + '}';
+		});
+		if(a!=c){document.body.innerHTML=a}
+		a=d.replace(/\{\#([^\}]+)\}/g, function(a, b) {
+			var c=parent.tinymce.translate(b);
+			return (c != b) ? c : '{#' + b + '}';
+		});
+		if(a!=d){document.title=d=a}
+	}
+	
+	function init() {
+		comboBindReturnEvent('insert'); 
+		wceInfoInit('note');
+		readWceNodeInfo();
+		setstatus_note();
+		document.noteinfo.note_text.focus();
+	}
+	function checkstatus_notetype() {
+		if (document.noteinfo.note_type.options[4].selected == true) {
+			document.noteinfo.note_type_other.disabled = false;
+			document.getElementById('note_type_other').style.backgroundColor = "white";
+		} else {
+			document.noteinfo.note_type_other.disabled = true;
+			document.getElementById('note_type_other').style.backgroundColor = "#CCCCCC";
+		}
+		if (document.noteinfo.note_type.options[3].selected == true) {
+			document.noteinfo.newHand.disabled = false;
+			document.getElementById('newHand').style.backgroundColor = "white";
+			document.getElementById('newHand').focus();
+		} else {
+			document.noteinfo.newHand.disabled = true;
+			document.getElementById('newHand').style.backgroundColor = "#CCCCCC";
+			document.noteinfo.note_text.focus();
+		}
+	}
+	
+	function setstatus_note() {
+		checkstatus_notetype();
+	}
+
+	function testOther() {
+		//if (document.noteinfo.note_type.options[3].selected == true && document.getElementById('newHand').value == '')
+			//return false;
+		if (document.noteinfo.note_type.options[4].selected == true && document.getElementById('note_type_other').value == '') 
+			return false;
+	return true;
+	}
+	
+	function testText() { // for change of hand the note text is optional
+		return (document.noteinfo.note_text.value !== '' || document.noteinfo.note_type.options[3].selected)
+	}
+	
+
+	if (!parent.tinymce.isIE) {
+		$(document).keydown(function(e) {
+			var evt = e || window.event
+			if ((evt.keyCode == 13 || evt.keyCode == 10) && !evt.shiftKey) {
+				document.getElementById('insert').click();
+				return false;
+			}
+		});
+	}
+</script>
+</html>

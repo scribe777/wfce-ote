@@ -1,0 +1,105 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" style="height:100%">
+<head>
+<title>TEI to HTML</title>
+<script type="text/javascript" src="../../js/tinymce/tinymce.js"></script>
+<script type="text/javascript" src="../jquery.js"></script>
+<script type="text/javascript" src="js/wce.js"></script>
+<script type="text/javascript" src="../wce_tei.js"></script>   
+</head>
+<body style="height:97%">
+<div style="height:95%; margin-bottom:10px" id="div0"> 
+<textarea name="tei2htmlOuputContainer" id="tei2htmlOuputContainer" style="width: 100%; overflow-y:visible; height: 98%; font-family: 'Courier New',Courier,monospace; font-size: 12px;" dir="ltr" wrap="on" class="mceFocus"></textarea> 
+</div> <div class="mceActionPanel">
+			<input type="button"  value="{#close}" onclick="parent.tinymce.activeEditor.windowManager.close();"  />      <input type="button" value=" Toggle" onclick="editorToggle();"; />
+		</div> 
+
+</body> 
+<script type="text/javascript">
+	var corrector_text_editor;
+	
+	$(document).ready(function() {
+		var _ed = parent.tinymce.activeEditor;
+		translate();
+		var x=document.getElementById('tei2htmlOuputContainer');
+		x.style.height=document.getElementById('div0').offsetHeight+ "px";
+		var str=_ed.getContent();
+		var teiContent=getTeiByHtml(str,_ed.settings);
+		if(teiContent){
+			var result=getHtmlByTei(teiContent);
+			if(result){
+				var htmlContent=result['htmlString'];
+				if(htmlContent){
+					x.value=htmlContent;
+				} 
+				/*var teiIndexData = result['teiIndexData'];
+				if (teiIndexData) {
+					//_ed.teiIndexData = teiIndexData;
+				}*/
+			}
+		}
+		var activeEditorSettings=_ed.settings;
+		
+			corrector_text_editor=new tinymce.Editor('tei2htmlOuputContainer',{
+			mode : "textareas", 
+			theme : "modern",
+			skin_url: "../skin/",
+			extended_valid_elements:'span[class|wce_orig|style|wce|id|ext]',
+			forced_root_block : false,
+			force_br_newlines : true,
+			force_p_newlines : false,
+			entity_encoding : "raw",
+			theme_advanced_path : false,  
+			directionality : activeEditorSettings.ltr,
+			language : activeEditorSettings.language,
+			book : activeEditorSettings.book,
+			witness : activeEditorSettings.witness,
+			manuscriptLang : activeEditorSettings.manuscriptLang,
+			plugins : "compat3x,pagebreak,layer,print,paste",
+			external_plugins: { 'wce' : '../../wce-ote/plugin/plugin.js' },
+			toolbar : "undo redo charmap | code removeformat | print contextmenu paste fullscreen | "+
+				"metadata breaks correction illegible decoration abbreviation paratext note punctuation | showTeiByHtml | showHtmlByTei",
+
+			// Theme options
+			theme_advanced_buttons1 : "undo,redo,charmap,|,code,removeformat,|,print,contextmenu,paste,fullscreen,|,metadata,breaks,correction,illegible,decoration,abbreviation,paratext,note,|,showTeiByHtml,|, showHtmlByTei",
+			theme_advanced_buttons2 : "",
+			theme_advanced_toolbar_location : "top",
+			theme_advanced_toolbar_align : "left",
+			theme_advanced_statusbar_location : "bottom",
+			theme_advanced_resizing : false  
+
+		}, tinymce.EditorManager);  
+		corrector_text_editor.on('init', function() {
+			corrector_text_editor.hide();
+		});  
+	 	corrector_text_editor.render();
+		
+	});   
+
+	function translate() {
+		var c=document.body.innerHTML;
+		var d=document.title;
+		var a;
+		if(parent.tinymce.isIE){c=c.replace(/ (value|title|alt)=([^"][^\s>]+)/gi,' $1="$2"')}
+		a=c.replace(/\{\#([^\}]+)\}/g, function(a, b) {
+			var c=parent.tinymce.translate(b);
+			return (c != b) ? c : '{#' + b + '}';
+		});
+		if(a!=c){document.body.innerHTML=a}
+		a=d.replace(/\{\#([^\}]+)\}/g, function(a, b) {
+			var c=parent.tinymce.translate(b);
+			return (c != b) ? c : '{#' + b + '}';
+		});
+		if(a!=d){document.title=d=a}
+	}
+
+	function editorToggle(){
+		if(corrector_text_editor.isHidden()){
+			corrector_text_editor.show();
+		}else{
+			corrector_text_editor.hide();
+		}
+	}
+	 
+</script>
+</html>
