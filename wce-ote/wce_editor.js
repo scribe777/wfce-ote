@@ -63,6 +63,7 @@ function setWceEditor(_id, rtl, finishCallback, lang, myBaseURL, getWitness, get
 		manuscriptLang : (getWitnessLang) ? getWitnessLang : "",
 		// invalid_elements:'p',
 		plugins : "pagebreak,save,layer,print,contextmenu,fullscreen,wordcount,autosave,paste,charmap",
+		contextmenu: 'cut copy paste',
 		charmap : charmap_greek.concat(charmap_latin).concat(charmap_slavistic),
 //		plugins : "compat3x,pagebreak,save,layer,print,contextmenu,fullscreen,wordcount,autosave,paste",
 		external_plugins: {
@@ -240,53 +241,71 @@ function addMenuItems(ed) {
 	var isPreviousActive = false;
 	var b = false;
 
+	var contextMenu = null;
+	var staticMenuCount = 0;
+	tinymce.ui.Menu.prototype.Mixins = [ { init : function() {
+		if (this.settings.context == 'contextmenu') contextMenu = this;
+	}} ];
+
 	console.log('fix context menu');
-/*
-	ed.plugins.contextmenu.onContextMenu.add(function(th, menu, event) {
+	ed.on('contextmenu', function(event) {
+		var ed = $(this)[0];
+		var items = contextMenu.items();
+		var menu = new tinymce.ui.Menu({
+			items: contextMenu.items().toArray(),
+			context: 'newcontextmenu',
+			classes: 'contextmenu'
+		}).renderTo();
+	
 		// added my options
 		if (ed.selection.getNode().getAttribute('wce') != null && ed.selection.getNode().getAttribute('wce').substring(4, 16) == 'verse_number') {
 			//wceAttr = ed.selection.getNode().getAttribute('wce');
-			menu.addSeparator();
+			menu.add({ text : '|'});
 			menu.add({
-				title : ed.getLang('wce.initial_portion'),
+				text : tinymce.translate('initial_portion'),
 				icon : '',
 				cmd : 'mce_partialI'
 			});
 			menu.add({
-				title : ed.getLang('wce.medial_portion'),
+				text : tinymce.translate('medial_portion'),
 				icon : '',
 				cmd : 'mce_partialM'
 			});
 			menu.add({
-				title : ed.getLang('wce.final_portion'),
+				text : tinymce.translate('final_portion'),
 				icon : '',
 				cmd : 'mce_partialF'
 			});
 			menu.add({
-				title : ed.getLang('wce.remove_partial'),
+				text : tinymce.translate('remove_partial'),
 				icon : '',
 				cmd : 'mce_partial_remove'
 			});
 		} else if (ed.selection.getNode().getAttribute('wce') != null && ed.selection.getNode().getAttribute('wce').indexOf('break_type=pb') > -1 
 			&& ed.selection.getNode().textContent.indexOf('PB') > -1) {
 			isPreviousActive = (ed.selection.getNode().getAttribute('wce').indexOf('hasBreak=yes') > -1);
+			menu.add({ text : '|'});
 			menu.add({
-				title : ed.getLang('wce.previous_hyphenation'),
+				text : tinymce.translate('previous_hyphenation'),
 				icon : '',
 				onclick : function() {
 					ed.execCommand('mce_previous_hyphenation', true);
 					}
-			}).setDisabled(isPreviousActive);
+			});
+			menu.items()[menu.items().length-1].disabled(isPreviousActive);
 			menu.add({
-				title : ed.getLang('wce.no_previous_hyphenation'),
+				text : tinymce.translate('no_previous_hyphenation'),
 				icon : '',
 				onclick : function() {
 					ed.execCommand('mce_previous_hyphenation', false);
 					}
-			}).setDisabled(!isPreviousActive);
+			});
+			menu.items()[menu.items().length-1].disabled(!isPreviousActive);
 		}
+		menu.renderNew();
+		menu.moveTo($(contextMenu.getEl()).position().left, $(contextMenu.getEl()).position().top);
+		contextMenu.hide();
 	});
-*/
 
 	ed.addCommand('mce_partialI', function() {
 		ed.selection.getNode().setAttribute('wce', '__t=verse_number' + '&partial=I');
