@@ -487,7 +487,7 @@ function writeWceNodeInfo(val) {
  *            attribute wce value of wce-node /*
  */
 function formUnserialize(str) {
-	$('input:checkbox').attr('checked', false);
+	$('input:checkbox').prop('checked', false);
 
 	if (str == null || str == '')
 		return;
@@ -502,7 +502,7 @@ function formUnserialize(str) {
 		v = v.replace(/\+/g, ' ');
 
 		if ($('#' + k).attr('type') == 'checkbox') {
-			$('#' + k).attr('checked', true);
+			$('#' + k).prop('checked', true);
 		} else {
 			if (!v)
 				continue;
@@ -546,7 +546,7 @@ function formSerialize(f, wce_name) {
 		if (!a_id || a_id == 'undefined' || a_type == 'reset' || a_id == 'insert' || a_id == 'cancel')
 			continue;
 
-		if (a.attr('type') == 'checkbox' && !a.attr('checked'))
+		if (a.attr('type') == 'checkbox' && !a.is(':checked'))
 			continue;
 
 		if (a.attr('id') == 'corrector_text') {

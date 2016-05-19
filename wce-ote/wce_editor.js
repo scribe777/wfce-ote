@@ -62,7 +62,7 @@ function setWceEditor(_id, rtl, finishCallback, lang, myBaseURL, getWitness, get
 		witness : (getWitness) ? getWitness : "",
 		manuscriptLang : (getWitnessLang) ? getWitnessLang : "",
 		// invalid_elements:'p',
-		plugins : "pagebreak,save,layer,print,contextmenu,fullscreen,wordcount,autosave,paste,charmap",
+		plugins : "pagebreak,save,layer,print,contextmenu,fullscreen,wordcount,autosave,paste,charmap,code",
 		contextmenu: 'cut copy paste',
 		charmap : charmap_greek.concat(charmap_latin).concat(charmap_slavistic),
 //		plugins : "compat3x,pagebreak,save,layer,print,contextmenu,fullscreen,wordcount,autosave,paste",
