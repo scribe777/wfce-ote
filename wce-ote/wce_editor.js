@@ -69,6 +69,8 @@ function setWceEditor(_id, rtl, finishCallback, lang, myBaseURL, getWitness, get
 		external_plugins: {
 			'wce' : '../../wce-ote/plugin/plugin.js'
 		},
+		ignoreShiftNotEn: [188, 190],
+		keyboardDebug: true,
 		init_instance_callback : "wceReload",
 		// Theme options
 		toolbar : "undo redo charmap | code | save print contextmenu cut copy pastetext pasteword fullscreen | "+

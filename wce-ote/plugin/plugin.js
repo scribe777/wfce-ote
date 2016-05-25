@@ -74,8 +74,6 @@
 			// Paste
 			ed.WCE_CON.control_PA = controls[ed_id + '_paste'];
 */
-
-
 		},
 
 		/*
@@ -2537,7 +2535,7 @@
 						return stopEvent(ed, e);
 					}
 				} else if (ek == 46 && wcevar.selectedNode && (wcevar.selectedNode.className == 'commentary' || wcevar.selectedNode.className == 'ews' || wcevar.selectedNode.className == 'lectionary-other')) {
-					WCEPlugin.wceDelNode(ed);
+					WCEUtils.wceDelNode(ed);
 					return stopEvent(ed, e);
 				} else if (ek == 46 && wcevar.isCaretAtNodeEnd && !wcevar.isNextElemBE) {
 
@@ -2545,7 +2543,7 @@
 					//caret in the middle of two elements
 					return stopEvent(ed, e);
 				} else if ((ek == 46 && !wcevar.isCaretAtFormatStart) || (ek == 8 && wcevar.type != ed.WCE_CON.formatEnd && !wcevar.isCaretAtFormatStart)) {
-					WCEPlugin.wceDelNode(ed);
+					WCEUtils.wceDelNode(ed);
 					return stopEvent(ed, e);
 				} else if (wcevar.isc) {
 					//Allow text input at begin of the editor #1362
@@ -2590,27 +2588,35 @@
 			}
 
 			var langEn = language.substring(0, 2) == "en";
+			var ignoreShiftNotEn = tinyMCE.activeEditor.settings.ignoreShiftNotEn ? tinyMCE.activeEditor.settings.ignoreShiftNotEn : [];
+			var keyboardDebug = tinyMCE.activeEditor.settings.keyboardDebug;
 			// Add <pc> for some special characters
 			// We need a lot of cases, because of different kyeboard layouts, different browsers and different platforms
+			if (keyboardDebug) console.log('ek: ' + ek + '; shiftKey: ' + e.shiftKey + '; altKey: ' + e.altKey + '; langEn: ' + langEn);
 			if (ek == 59 && !e.shiftKey && langEn && !tinymce.isWebKit) {// ; en
 				tinyMCE.activeEditor.execCommand('mceAdd_pc', ';');
 				stopEvent(ed, e);
-			} else if (ek == 188 && !langEn && e.shiftKey) {
+			} else if (ignoreShiftNotEn.indexOf[188] < 0 && ek == 188 && !langEn && e.shiftKey) {
 				// ; dt < en
 				tinyMCE.activeEditor.execCommand('mceAdd_pc', ';');
+				stopEvent(ed, e);
+			} else if (ignoreShiftNotEn.indexOf[190] < 0 && ek == 190 && e.shiftKey && !langEn) {
+				// :
+				tinyMCE.activeEditor.execCommand('mceAdd_pc', ':');
 				stopEvent(ed, e);
 			} else if (ek == 188 && !e.shiftKey) {
 				// ,
 				tinyMCE.activeEditor.execCommand('mceAdd_pc', ',');
 				stopEvent(ed, e);
-			} else if (ek == 190 && e.shiftKey && !langEn) {
-				// :
-				tinyMCE.activeEditor.execCommand('mceAdd_pc', ':');
-				stopEvent(ed, e);
 			} else if (ek == 190 && !e.shiftKey) {
 				// .
 				tinyMCE.activeEditor.execCommand('mceAdd_pc', '.');
 				stopEvent(ed, e);
+			} else if (ek == 189 && !e.shiftKey) {
+				// .
+				tinyMCE.activeEditor.execCommand('mceAdd_pc', '\u00B7');
+				stopEvent(ed, e);
+
 			} else if (ek == 63 && e.shiftKey) {// for FF
 				tinyMCE.activeEditor.execCommand('mceAdd_pc', '?');
 				stopEvent(ed, e);
@@ -2630,7 +2636,7 @@
 			} else if (ek == 48 && e.shiftKey && e.altKey) {// Three Dot Punctuation
 				tinyMCE.activeEditor.execCommand('mceAdd_pc', '\u2056');
 				stopEvent(ed, e);
-			} else if (ek == 57 && e.shiftKey && !langEn) {// special handling for English keyboards
+			} else if (ignoreShiftNotEn.indexOf[57] < 0 && ek == 57 && e.shiftKey && !langEn) {// special handling for English keyboards
 				stopEvent(ed, e);
 				doWithoutDialog(ed, 'part_abbr', '');
 			} else if (ek == 48 && langEn) {//special handling for English keyboard
@@ -2640,6 +2646,7 @@
 		},
 
 		setKeyPressEvent : function(e) {
+			var ed = this;
 			if (!e) {
 				var e = window.event;
 			}
@@ -2661,6 +2668,100 @@
 				if (!ed.WCE_VAR.not_N)
 					tinyMCE.activeEditor.execCommand('mceAddNote');
 				stopEvent(ed, e);
+			}
+		},
+		// delete nodeName
+		wceDelNode : function(ed, notAddOriginal) {
+			var wceNode = WCEPlugin.getWceNode(ed);
+			var wceClass;
+			if (wceNode) {
+				if (WCEUtils.hasWceParentNode(wceNode)) {
+					alert(tinymce.translate('warning_deletion_inner_Node'));//TODO: 				
+					return;
+				}
+				//verse chapter
+				wceClass = wceNode.getAttribute('class');
+				if (wceClass === 'verse_number' || wceClass == 'chapter_number' || wceClass == 'book_number' || wceClass == 'lection_number') {
+					return;
+				}
+
+				ed.selection.select(wceNode);
+
+				var wceAttr = wceNode.getAttribute('wce');
+				var originalText = decodeURIComponent(wceNode.getAttribute('wce_orig'));
+					
+				//TODO: after import some node have no wce_orig, we can set wce_orig at import, or don't use 'wce_orig'?
+				// originalText=WCEUtils.getTextWithoutFormat(wceNode);
+					
+				var isDel;
+				if (wceClass == 'brea' || wceClass=='gap') {
+					//We need a marker here similar to the one for deleting non-breaks. Otherwise there are problems under Safari!
+					//Fixed:  we do not use function remove
+					var bID = wceNode.getAttribute('id');
+					if (!bID) {
+						ed.selection.select(wceNode);
+						ed.selection.setContent("");
+						//$(wceNode).remove();
+					} else {
+						//delete group
+						var bArr = bID.split('_');
+						// for example: qb_4_6413132132121
+						//break type
+						var bt = bArr[0];
+						//group count
+						var bc = bArr[1];
+						//id index
+						var bb = bArr[2];
+						if (bb && bc && bt) {
+							if (bt == 'lb' && bc == '2') {	// cb followed by lb => special case to be able to add missing line in a column (>1)
+								elem=ed.dom.get('lb' + '_' + bc + '_' + bb);
+								if (elem) {									
+									ed.selection.select(elem);
+									ed.selection.setContent("");
+									ed.WCE_VAR.lcnt = 0;
+								}
+								
+							} else { // normal case
+								var arr = new Array('gap','lb', 'cb', 'pb', 'qb');
+								//for (var i = parseInt(bc) - 1; i > -1; i--) {
+								for(var i=0,elem,l=arr.length; i<l; i++){
+									elem=ed.dom.get(arr[i] + '_' + bc + '_' + bb);
+									if (elem) {									
+										ed.selection.select(elem);
+										ed.selection.setContent("");
+									}
+									//$(ed.dom.get(arrItem + '_' + bc + '_' + bb)).remove();
+								}
+							}
+						}
+					}
+					isDel=true;
+				}
+
+				/* else {
+				 if (wceNode !== null) {
+				 // Node is replaced by marker (which is then replaced by original text) => solution for problems with removing nodes under Safari (#1398)
+				 ed.selection.setContent('<span id="_math_marker">&nbsp;</span>');
+				 }
+				 }*/
+
+				if ((originalText && originalText != 'null') || originalText=='') {
+					if(notAddOriginal){ 
+					}else{
+						 ed.selection.setContent(originalText);
+					}
+					ed.focus(); 
+					ed.isNotDirty = 0;
+					return originalText;
+				} else if(!isDel){
+					if(wceNode){
+						ed.selection.select(wceNode);
+					}
+					ed.selection.setContent("");
+				}
+				ed.focus();
+
+				ed.isNotDirty = 0;
 			}
 		},
 	};
@@ -2947,7 +3048,7 @@
 				{ text : tinymce.translate('menu_delete'),
 					id : 'menu-break-delete',
 					onclick : function() {
-						WCEPlugin.wceDelNode(ed);
+						WCEUtils.wceDelNode(ed);
 					}
 				}]
 			});
@@ -2987,7 +3088,7 @@
 					{ text : tinymce.translate('menu_delete'),
 						id : 'menu-illegible-uncleartext-delete',
 						onclick : function() {
-							WCEPlugin.wceDelNode(ed);
+							WCEUtils.wceDelNode(ed);
 						}
 					}],
 					onshow : function(a) {
@@ -3026,7 +3127,7 @@
 					{ text : tinymce.translate('menu_delete'),
 						id : 'menu-illegible-lacuna-delete',
 						onclick : function() {
-							WCEPlugin.wceDelNode(ed);
+							WCEUtils.wceDelNode(ed);
 						}
 					}],
 					onshow : function(a) {
@@ -3137,7 +3238,7 @@
 						{ text : tinymce.translate('menu_delete'),
 							id : 'menu-decoration-highlight-capitals-delete',
 							onclick : function() {
-								WCEPlugin.wceDelNode(ed);
+								WCEUtils.wceDelNode(ed);
 							}
 						}],
 						onshow : function(a) {
@@ -3286,7 +3387,7 @@
 					{ text : tinymce.translate('menu_delete'),
 						id : 'menu-abbreviation-delete',
 						onclick : function() {
-							WCEPlugin.wceDelNode(ed);
+							WCEUtils.wceDelNode(ed);
 						}
 					}],
 					onshow : function(a) {
@@ -3321,7 +3422,7 @@
 					{ text : tinymce.translate('menu_delete'),
 						id : 'menu-abbreviation-expansion-delete',
 						onclick : function() {
-							WCEPlugin.wceDelNode(ed);
+							WCEUtils.wceDelNode(ed);
 						}
 					}],
 					onshow : function(a) {
@@ -3375,7 +3476,7 @@
 				{ text : tinymce.translate('menu_delete'),
 					id : 'menu-paratext-delete',
 					onclick : function() {
-						WCEPlugin.wceDelNode(ed);
+						WCEUtils.wceDelNode(ed);
 					}
 				}]
 			});
@@ -3415,7 +3516,7 @@
 				{ text : tinymce.translate('menu_delete'),
 					id : 'menu-note-delete',
 					onclick : function() {
-						WCEPlugin.wceDelNode(ed);
+						WCEUtils.wceDelNode(ed);
 					}
 				}]
 			});
@@ -3526,7 +3627,7 @@
 					{ text : tinymce.translate('menu_delete'),
 						id : 'menu-punctuation-blankspaces-delete',
 						onclick : function() {
-							WCEPlugin.wceDelNode(ed);
+							WCEUtils.wceDelNode(ed);
 						}
 					}],
 					onshow : function(a) {
@@ -3990,100 +4091,6 @@
 				return sn;
 			}
 			return null;
-		},
-		// delete nodeName
-		wceDelNode : function(ed, notAddOriginal) {
-			var wceNode = WCEPlugin.getWceNode(ed);
-			var wceClass;
-			if (wceNode) {
-				if (WCEUtils.hasWceParentNode(wceNode)) {
-					alert(tinymce.translate('warning_deletion_inner_Node'));//TODO: 				
-					return;
-				}
-				//verse chapter
-				wceClass = wceNode.getAttribute('class');
-				if (wceClass === 'verse_number' || wceClass == 'chapter_number' || wceClass == 'book_number' || wceClass == 'lection_number') {
-					return;
-				}
-
-				ed.selection.select(wceNode);
-
-				var wceAttr = wceNode.getAttribute('wce');
-				var originalText = decodeURIComponent(wceNode.getAttribute('wce_orig'));
-					
-				//TODO: after import some node have no wce_orig, we can set wce_orig at import, or don't use 'wce_orig'?
-				// originalText=WCEUtils.getTextWithoutFormat(wceNode);
-					
-				var isDel;
-				if (wceClass == 'brea' || wceClass=='gap') {
-					//We need a marker here similar to the one for deleting non-breaks. Otherwise there are problems under Safari!
-					//Fixed:  we do not use function remove
-					var bID = wceNode.getAttribute('id');
-					if (!bID) {
-						ed.selection.select(wceNode);
-						ed.selection.setContent("");
-						//$(wceNode).remove();
-					} else {
-						//delete group
-						var bArr = bID.split('_');
-						// for example: qb_4_6413132132121
-						//break type
-						var bt = bArr[0];
-						//group count
-						var bc = bArr[1];
-						//id index
-						var bb = bArr[2];
-						if (bb && bc && bt) {
-							if (bt == 'lb' && bc == '2') {	// cb followed by lb => special case to be able to add missing line in a column (>1)
-								elem=ed.dom.get('lb' + '_' + bc + '_' + bb);
-								if (elem) {									
-									ed.selection.select(elem);
-									ed.selection.setContent("");
-									ed.WCE_VAR.lcnt = 0;
-								}
-								
-							} else { // normal case
-								var arr = new Array('gap','lb', 'cb', 'pb', 'qb');
-								//for (var i = parseInt(bc) - 1; i > -1; i--) {
-								for(var i=0,elem,l=arr.length; i<l; i++){
-									elem=ed.dom.get(arr[i] + '_' + bc + '_' + bb);
-									if (elem) {									
-										ed.selection.select(elem);
-										ed.selection.setContent("");
-									}
-									//$(ed.dom.get(arrItem + '_' + bc + '_' + bb)).remove();
-								}
-							}
-						}
-					}
-					isDel=true;
-				}
-
-				/* else {
-				 if (wceNode !== null) {
-				 // Node is replaced by marker (which is then replaced by original text) => solution for problems with removing nodes under Safari (#1398)
-				 ed.selection.setContent('<span id="_math_marker">&nbsp;</span>');
-				 }
-				 }*/
-
-				if ((originalText && originalText != 'null') || originalText=='') {
-					if(notAddOriginal){ 
-					}else{
-						 ed.selection.setContent(originalText);
-					}
-					ed.focus(); 
-					ed.isNotDirty = 0;
-					return originalText;
-				} else if(!isDel){
-					if(wceNode){
-						ed.selection.select(wceNode);
-					}
-					ed.selection.setContent("");
-				}
-				ed.focus();
-
-				ed.isNotDirty = 0;
-			}
 		},
 
 		/**
