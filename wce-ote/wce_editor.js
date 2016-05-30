@@ -266,22 +266,30 @@ function addMenuItems(ed) {
 			menu.add({
 				text : tinymce.translate('initial_portion'),
 				icon : '',
-				cmd : 'mce_partialI'
+				onclick : function() {
+					ed.execCommand('mce_partialI');
+				}
 			});
 			menu.add({
 				text : tinymce.translate('medial_portion'),
 				icon : '',
-				cmd : 'mce_partialM'
+				onclick : function() {
+					ed.execCommand('mce_partialM');
+				}
 			});
 			menu.add({
 				text : tinymce.translate('final_portion'),
 				icon : '',
-				cmd : 'mce_partialF'
+				onclick : function() {
+					ed.execCommand('mce_partialF');
+				}
 			});
 			menu.add({
 				text : tinymce.translate('remove_partial'),
 				icon : '',
-				cmd : 'mce_partial_remove'
+				onclick : function() {
+					ed.execCommand('mce_partial_remove');
+				}
 			});
 		} else if (ed.selection.getNode().getAttribute('wce') != null && ed.selection.getNode().getAttribute('wce').indexOf('break_type=pb') > -1 
 			&& ed.selection.getNode().textContent.indexOf('PB') > -1) {
@@ -292,7 +300,7 @@ function addMenuItems(ed) {
 				icon : '',
 				onclick : function() {
 					ed.execCommand('mce_previous_hyphenation', true);
-					}
+				}
 			});
 			menu.items()[menu.items().length-1].disabled(isPreviousActive);
 			menu.add({
@@ -300,7 +308,7 @@ function addMenuItems(ed) {
 				icon : '',
 				onclick : function() {
 					ed.execCommand('mce_previous_hyphenation', false);
-					}
+				}
 			});
 			menu.items()[menu.items().length-1].disabled(!isPreviousActive);
 		}
