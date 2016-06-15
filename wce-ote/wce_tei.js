@@ -870,7 +870,7 @@ function getHtmlByTei(inputString) {
 				gap_text = '';
 				if (wceAttr.indexOf('unit=char') > -1) {
 					if ($teiNode.getAttribute('extent'))
-						nodeAddText($newNode, '[' + $teiNode.getAttribute('extent') + ']');
+						nodeAddText($newNode, '[' + decodeURIComponent($teiNode.getAttribute('extent')) + ']');
 					else
 						nodeAddText($newNode, '[...]');
 				} else if (wceAttr.indexOf('unit=line') > -1) {
