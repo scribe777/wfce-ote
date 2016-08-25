@@ -179,6 +179,8 @@
 	load('classes/ForceBlocks.js');
 	load('classes/caret/CaretUtils.js');
 	load('classes/caret/CaretWalker.js');
+	load('classes/InsertList.js');
+	load('classes/InsertContent.js');
 	load('classes/EditorCommands.js');
 	load('classes/util/URI.js');
 	load('classes/util/Class.js');
@@ -219,13 +221,16 @@
 	load('classes/file/Conversions.js');
 	load('classes/file/ImageScanner.js');
 	load('classes/file/BlobCache.js');
+	load('classes/file/UploadStatus.js');
 	load('classes/EditorUpload.js');
 	load('classes/caret/FakeCaret.js');
 	load('classes/dom/Dimensions.js');
 	load('classes/caret/LineWalker.js');
 	load('classes/caret/LineUtils.js');
+	load('classes/dom/MousePosition.js');
 	load('classes/DragDropOverrides.js');
 	load('classes/SelectionOverrides.js');
+	load('classes/util/Uuid.js');
 	load('classes/Editor.js');
 	load('classes/util/I18n.js');
 	load('classes/FocusManager.js');
@@ -283,4 +288,4 @@
 	writeScripts();
 })(this);
 
-// $hash: 2aed0fbac79c0f1a951d89d03bbda2dc
+// $hash: 5561034dda0b2b53bde7a1d77ef73914

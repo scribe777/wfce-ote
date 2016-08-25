@@ -27,7 +27,10 @@ module.exports = function(grunt) {
 				"!js/tinymce/plugins/codesample/classes/Prism.js"
 			],
 
-			themes: ["js/tinymce/themes/*/theme.js"]
+			themes: [
+				"js/tinymce/themes/*/theme.js",
+				"!js/tinymce/themes/inlite/theme.js"
+			]
 		},
 
 		qunit: {
@@ -43,6 +46,10 @@ module.exports = function(grunt) {
 		"bolt-init": {
 			"imagetools-plugin": {
 				config_dir: "js/tinymce/plugins/imagetools/config/bolt"
+			},
+
+			"inlite-theme": {
+				config_dir: "js/tinymce/themes/inlite/config/bolt"
 			}
 		},
 
@@ -59,6 +66,20 @@ module.exports = function(grunt) {
 				files: {
 					src: ['js/tinymce/plugins/imagetools/src/main/js/Plugin.js']
 				}
+			},
+
+			"inlite-theme": {
+				config_js: "js/tinymce/themes/inlite/config/bolt/prod.js",
+				output_dir: "js/tinymce/themes/inlite/scratch",
+				main: "tinymce/inlite/Theme",
+				filename: "theme",
+
+				generate_inline: true,
+				minimise_module_names: true,
+
+				files: {
+					src: ['js/tinymce/themes/inlite/src/main/js/tinymce/inlite/Theme.js']
+				}
 			}
 		},
 
@@ -68,6 +89,15 @@ module.exports = function(grunt) {
 					{
 						src: "js/tinymce/plugins/imagetools/scratch/inline/plugin.raw.js",
 						dest: "js/tinymce/plugins/imagetools/plugin.js"
+					}
+				]
+			},
+
+			"bolt-themes": {
+				files: [
+					{
+						src: "js/tinymce/themes/inlite/scratch/inline/theme.raw.js",
+						dest: "js/tinymce/themes/inlite/theme.js"
 					}
 				]
 			}
@@ -292,6 +322,15 @@ module.exports = function(grunt) {
 				]
 			},
 
+			"bolt-themes": {
+				files: [
+					{
+						src: "js/tinymce/themes/inlite/scratch/inline/theme.js",
+						dest: "js/tinymce/themes/inlite/theme.min.js"
+					}
+				]
+			},
+
 			"jquery-plugin": {
 				src: ["js/tinymce/classes/jquery.tinymce.js"],
 				dest: "js/tinymce/jquery.tinymce.min.js"
@@ -304,19 +343,20 @@ module.exports = function(grunt) {
 					baseDir: "tinymce",
 
 					excludes: [
+						"**/config",
+						"**/scratch",
+						"**/classes",
+						"**/src",
+						"**/plugin.js",
+						"**/theme.js",
+						"**/*.less",
+						"**/*.dev.svg",
+						"**/*.dev.js",
+						"js/tinymce/tinymce.full.min.js",
 						"js/tinymce/plugins/moxiemanager",
 						"js/tinymce/plugins/compat3x",
 						"js/tinymce/plugins/visualblocks/img",
-						"js/tinymce/plugins/*/config",
-						"js/tinymce/plugins/*/scratch",
-						"js/tinymce/plugins/*/classes",
-						"js/tinymce/plugins/*/src",
-						"js/tinymce/plugins/*/plugin.js",
-						"js/tinymce/plugins/*/plugin.dev.js",
-						"js/tinymce/themes/*/theme.js",
-						"js/tinymce/skins/*/*.less",
 						"js/tinymce/skins/*/fonts/*.json",
-						"js/tinymce/skins/*/fonts/*.dev.svg",
 						"js/tinymce/skins/*/fonts/readme.md",
 						"readme.md"
 					],
@@ -343,8 +383,8 @@ module.exports = function(grunt) {
 					baseDir: "tinymce",
 
 					excludes: [
-						"js/tinymce/plugins/*/config/bolt/bootstrap-*",
-						"js/tinymce/plugins/*/scratch",
+						"**/bolt/bootstrap-*",
+						"**/scratch",
 						"js/tinymce/tinymce.full.min.js",
 						"js/tinymce/plugins/moxiemanager",
 						"js/tests/.jshintrc"
@@ -391,18 +431,19 @@ module.exports = function(grunt) {
 					},
 
 					excludes: [
+						"**/config",
+						"**/scratch",
+						"**/classes",
+						"**/src",
+						"**/*.less",
+						"**/*.dev.js",
+						"**/*.dev.svg",
 						"js/tinymce/tinymce.full.min.js",
 						"js/tinymce/plugins/moxiemanager",
 						"js/tinymce/plugins/visualblocks/img",
-						"js/tinymce/plugins/*/plugin.dev.js",
-						"js/tinymce/skins/*/*.less",
 						"js/tinymce/skins/*/fonts/*.json",
 						"js/tinymce/skins/*/fonts/*.dev.svg",
 						"js/tinymce/skins/*/fonts/readme.md",
-						"js/tinymce/plugins/*/config",
-						"js/tinymce/plugins/*/scratch",
-						"js/tinymce/plugins/*/classes",
-						"js/tinymce/plugins/*/src",
 						"readme.md",
 						"js/tests/.jshintrc"
 					],
@@ -442,21 +483,21 @@ module.exports = function(grunt) {
 			component: {
 				options: {
 					excludes: [
+						"**/config",
+						"**/scratch",
+						"**/classes",
+						"**/src",
+						"**/*.less",
+						"**/*.dev.svg",
+						"**/*.dev.js",
+						"js/tinymce/tinymce.full.min.js",
 						"js/tinymce/plugins/moxiemanager",
 						"js/tinymce/plugins/example",
 						"js/tinymce/plugins/example_dependency",
 						"js/tinymce/plugins/compat3x",
 						"js/tinymce/plugins/visualblocks/img",
-						"js/tinymce/plugins/*/config",
-						"js/tinymce/plugins/*/scratch",
-						"js/tinymce/plugins/*/classes",
-						"js/tinymce/plugins/*/src",
-						"js/tinymce/plugins/*/plugin.dev.js",
-						"js/tinymce/skins/*/*.less",
 						"js/tinymce/skins/*/fonts/*.json",
-						"js/tinymce/skins/*/fonts/*.dev.svg",
-						"js/tinymce/skins/*/fonts/readme.md",
-						"readme.md"
+						"js/tinymce/skins/*/fonts/readme.md"
 					],
 
 					pathFilter: function(zipFilePath) {
@@ -547,7 +588,8 @@ module.exports = function(grunt) {
 					"js/tinymce/tinymce.min.js",
 					"js/tinymce/jquery.tinymce.min.js",
 					"js/tinymce/license.txt",
-					"changelog.txt"
+					"changelog.txt",
+					"readme.md"
 				]
 			}
 		},
@@ -602,13 +644,14 @@ module.exports = function(grunt) {
 					requireLicenseAcceptance: true,
 					tags: "Editor TinyMCE HTML HTMLEditor",
 					excludes: [
-						"js/tinymce/skins/**/*.dev.svg",
-						"js/tinymce/skins/**/*.less",
-						"js/tinymce/plugins/*/config",
-						"js/tinymce/plugins/*/scratch",
-						"js/tinymce/plugins/*/classes",
-						"js/tinymce/plugins/*/src",
-						"js/tinymce/plugins/**/*.dev.js"
+						"**/config",
+						"**/scratch",
+						"**/classes",
+						"**/src",
+						"**/*.less",
+						"**/*.dev.svg",
+						"**/*.dev.js",
+						"js/tinymce/tinymce.full.min.js"
 					],
 					outputDir: "tmp"
 				},
@@ -641,13 +684,14 @@ module.exports = function(grunt) {
 					requireLicenseAcceptance: true,
 					tags: "Editor TinyMCE HTML HTMLEditor",
 					excludes: [
-						"js/tinymce/skins/**/*.dev.svg",
-						"js/tinymce/skins/**/*.less",
-						"js/tinymce/plugins/*/config",
-						"js/tinymce/plugins/*/scratch",
-						"js/tinymce/plugins/*/classes",
-						"js/tinymce/plugins/*/src",
-						"js/tinymce/plugins/**/*.dev.js"
+						"**/config",
+						"**/scratch",
+						"**/classes",
+						"**/src",
+						"**/*.less",
+						"**/*.dev.svg",
+						"**/*.dev.js",
+						"js/tinymce/tinymce.full.min.js"
 					],
 					outputDir: "tmp"
 				},
