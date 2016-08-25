@@ -3606,7 +3606,13 @@
 						onclick : function() {
 							ed.execCommand('mceAdd_pc', '\u03A1\u0336');
 						}
-					}],
+					},
+					{ text : '\u030B    (combining double acute accent)',
+						onclick : function() {
+							ed.execCommand('mceAdd_pc', '\u030B');
+						}
+					}
+					],
 				},
 				{ text : tinymce.translate('menu_blank_spaces') + ' (Ctrl+Alt+S)',
 					id : 'menu-punctuation-blankspaces',
