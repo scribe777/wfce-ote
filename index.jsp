@@ -334,7 +334,7 @@ function onTranscriptionScrolled(topic, data, subscriberData) {
 	if (data.break < $(tinymce.activeEditor.getBody()).find('.brea').length) {
 		var b = $(tinymce.activeEditor.getBody()).find('.brea')[data.break];
 		$(b).css('background', 'white');
-		b.scrollIntoView();
+		b.parentNode.scrollTop = b.offsetTop;
 	}
 }
 function onTranscriptionUpdate(topic, data, subscriberData) {
