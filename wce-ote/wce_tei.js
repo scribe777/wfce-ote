@@ -160,8 +160,7 @@ function getHtmlByTei(inputString) {
 			}
 		}
 		
-		var cn = $htmlNode.getAttribute('class'); 
-		if (cn && cn == 'verse_number') {
+		if ($($htmlNode).hasClass('verse_number')) {
 			var pre=$htmlNode.previousSibling;
 			if(pre && pre.nodeType==3){
 				var preText=pre.nodeValue;
@@ -320,8 +319,7 @@ function getHtmlByTei(inputString) {
 		if (!$node)
 			return;
 		if ($node.nodeType == 1 || $node.nodeType == 11) {
-			var cn = $node.getAttribute('class');
-			if (cn && (cn == 'verse_number' || cn == 'chapter_number' || cn == 'book_number' || cn == 'lection_number')) {
+			if ($($node).hasClass('verse_number') || $($node).hasClass('chapter_number') || $($node).hasClass('book_number') || $($node).hasClass('lection_number')) {
 				return;
 			}
 		}
@@ -331,13 +329,13 @@ function getHtmlByTei(inputString) {
 			return;
 
 		var $start = $newDoc.createElement('span');
-		$start.setAttribute('class', 'format_start');
+		$start.setAttribute('class', 'format_start mceNonEditable');
 		nodeAddText($start, '\u2039');
 
 		$node.insertBefore($start, $firstChild);
 
 		var $end = $newDoc.createElement('span');
-		$end.setAttribute('class', 'format_end');
+		$end.setAttribute('class', 'format_end mceNonEditable');
 		nodeAddText($end, '\u203a');
 		$node.appendChild($end);
 	};
@@ -2090,8 +2088,7 @@ function getTeiByHtml(inputString, args) {
 		if ($r.nodeType != 1 && $r.nodeType != 11)
 			return;
 
-		var className = $r.getAttribute('class');
-		if (className && (className == 'format_start' || className == 'format_end'	)) {
+		if ($($r).hasClass('format_start') || $($r).hasClass('format_end')) {
 			$r.parentNode.removeChild($r);
 			return;
 		}

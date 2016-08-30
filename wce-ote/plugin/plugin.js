@@ -49,12 +49,12 @@
 			var c = ed.WCE_CON;
 
 			//extra elements for each wce Format.
-			c.formatStart = 'format_start';
-			c.formatEnd = 'format_end';
-			c.startFormatHtml = '<span class="format_start">' + '\u2039' + '</span>';
+			c.formatStart = 'format_start mceNonEditable';
+			c.formatEnd = 'format_end mceNonEditable';
+			c.startFormatHtml = '<span class="'+c.formatStart+'">' + '\u2039' + '</span>';
 			//c.endFormatHtml = '<span class="format_end">&rsaquo;</span>';
 
-			c.endFormatHtml = '<span class="format_end">' + '\u203a' + '</span>';
+			c.endFormatHtml = '<span class="'+c.formatEnd+'">' + '\u203a' + '</span>';
 			//c.endFormatHtml = '<span class="format_end">&rsaquo;</span>';
 
 			//blocked elements :If the Caret is inside, this will prohibit the key operation
@@ -222,11 +222,7 @@
 			if (nodeName && nodeName.toLowerCase() == 'span') {
 				// TODO
 				if (typeName == 'verse_number' || typeName == 'chapter_number' || typeName == 'book_number' || typeName == 'lection_number') {
-					var className = node.className;
-					if (className) {
-						return className.indexOf(typeName) > -1;
-					}
-					return false;
+					return $(node).hasClass(typeName);
 				}
 
 				var wceAttr = node.getAttribute('wce');
@@ -767,6 +763,8 @@
 			} else if (bType == 'cb') {
 				out = out + _this(ed, 'lb', 'ignore', indention, null, baseID);
 				v.lcnt = 1;
+			} else if (bType == 'lb'&& lbpos != 'lbm') {
+				out += '&nbsp;';	
 			}
 			return out;
 		},
@@ -955,12 +953,13 @@
 		 */
 		selectionHasSpace : function(ed) {
 			var c = ed.WCE_CON;
-			var fs=c.formatStart = 'format_start';
-			var fe=c.formatEnd = 'format_end';
+			var fs=c.formatStart;
+			var fe=c.formatEnd;
 			try {
 				var elem = $('<div/>').html(ed.selection.getContent()); 
 				var testNode = function(node) {
 					if (node.nodeType == 3){
+						// TODO: this looks very suspicious.  nodeName will never be formatStart or formatEnd; those are classes not names
 						var pName=node.parentNode.nodeName;
 						if (pName == fs || pName== fe) {
 							return false;
@@ -997,13 +996,7 @@
 				var elem = $('<div/>').html(ed.selection.getContent());
 				var testNode = function(node) {
 					if (node.nodeType == 3){
-						var className = node.getAttribute('class');
-						//alert(className);
-						if (className && className == 'verse_number') {			
-							return true;
-						} else {
-							return false;
-						}
+						return $(node).hasClass('verse_number');
 					}
 					
 					var list = node.childNodes;
@@ -1013,7 +1006,7 @@
 
 					for (var i = 0, c, len = list.length; i < len; i++) {
 						c = list[i]; 
-						if (c && testNode(c)){ 
+						if (c && testNode(c)) { 
 							return true;
 						} 
 					}
@@ -1097,12 +1090,12 @@
 					var startText = startContainer.nodeValue;
 					//wenn neuen Text in textNode hinzugefuegt, wird neue textNode erstellt.
 					if (startText) {
-						if (selectedNode.className == ed.WCE_CON.formatEnd) {
+						if ($(selectedNode).hasClass('format_end')) {
 							w.isCaretAtNodeEnd = true;
-							w.type = ed.WCE_CON.formatEnd;
-						} else if (selectedNode.className == ed.WCE_CON.formatStart) {
+							w.type = 'format_end';
+						} else if ($(selectedNode).hasClass('format_start')) {
 							selectedNode = selectedNode.parentNode;
-							w.type = ed.WCE_CON.formatStart;
+							w.type = 'format_start';
 						} else if (startText.length == rng.endOffset && (!startContainer.nextSibling || (startContainer.nextSibling && startContainer.nextSibling.nodeType != 3))) {
 							//mehrere txtNode koenen hintereinander stehen
 							//wenn startConatiner.nextSibling ein textNode ist ,dann ist nicht "at node Ende"
@@ -1211,12 +1204,12 @@
 			}
 
 			startContainer = rng.startContainer;
-			if (startContainer && startContainer.parentNode.className == ed.WCE_CON.formatStart && rng.startOffset == 0) {
+			if (startContainer && $(startContainer.parentNode).hasClass('format_start') && rng.startOffset == 0) {
 				w.isCaretAtFormatStart = true;
 				w.selectedStartNode = startContainer.parentNode.parentNode;
 			}
 			endContainer = rng.endContainer;
-			if (endContainer && endContainer.parentNode.className == ed.WCE_CON.formatEnd && rng.endOffset == 1) {
+			if (endContainer && $(endContainer.parentNode).hasClass('format_end') && rng.endOffset == 1) {
 				w.isCaretAtFormatEnd = true;
 				w.selectedEndNode = endContainer.parentNode.parentNode;
 			}
@@ -1234,7 +1227,7 @@
 			w.isSelWholeNode = wholeSelect;
 			w.selectedNode = selectedNode;
 
-			if (selectedNode.getAttribute('class') === 'commentary'  || selectedNode.getAttribute('class') === 'ews' || selectedNode.getAttribute('class') === 'lectionary-other') {
+			if ($(selectedNode).hasClass('commentary')  || $(selectedNode).hasClass('ews') || $(selectedNode).hasClass('lectionary-other')) {
 				w.type = 'paratext';
 			} else {
 				w.type = WCEUtils.getNodeTypeName(selectedNode);
@@ -1343,7 +1336,7 @@
 					w.not_N = false;
 					break;
 
-				case 'format_end':
+				case 'format_end mceNonEditable':
 					var pn = selectedNode.parentNode;
 					if (pn && WCEUtils.isNodeTypeOf(pn, 'brea')) {
 						WCEUtils.inhibitInput(ed, pn);
@@ -1507,7 +1500,7 @@
 
 			//caret at formatEnd
 			var ep = endContainer.parentNode;
-			if (ep.className == ed.WCE_CON.formatEnd) {
+			if ($(ep).hasClass('format_end')) {
 				if (ep.parentNode.parentNode != ed.getBody()) {
 					return false;
 				}
@@ -1524,7 +1517,7 @@
 				}
 
 			} else if (endContainer.parentNode != ed.getBody()) {
-				if (endContainer.parentNode.getAttribute("class") != 'verse_number') // for verses go to next check
+				if (!$(endContainer.parentNode).hasClass('verse_number')) // for verses go to next check
 					return false;
 			}
 
@@ -1789,7 +1782,7 @@
 					// We test if there is a correction on an abbreviation or a gap. If so, we have to use the correction for the mouse over
 					*/
 					if (switchvar === 'abbr') {
-						if (i == 0 && sele_node.parentNode && sele_node.parentNode.getAttribute('class') === 'corr') { //check parent
+						if (i == 0 && sele_node.parentNode && $(sele_node.parentNode).hasClass('corr')) { //check parent
 							wceAttr = sele_node.parentNode.getAttribute('wce');
 							info_arr = wceAttr.split('@');
 							ar = WCEUtils.stringToArray(info_arr[0]);
@@ -1804,7 +1797,7 @@
 								ar = WCEUtils.stringToArray(info_arr[i]);
 						}
 					} else if (switchvar === 'gap') {
-						if (i == 0 && sele_node.parentNode && sele_node.parentNode.getAttribute('class') === 'corr') { //check parent
+						if (i == 0 && sele_node.parentNode && $(sele_node.parentNode).hasClass('corr')) { //check parent
 							wceAttr = sele_node.parentNode.getAttribute('wce');
 							info_arr = wceAttr.split('@');
 							ar = WCEUtils.stringToArray(info_arr[0]);
@@ -1819,7 +1812,7 @@
 								ar = WCEUtils.stringToArray(info_arr[i]);
 						}
 					} else if (switchvar === 'formatting') {
-						if (i == 0 && sele_node.parentNode && sele_node.parentNode.getAttribute('class') === 'corr') { //check parent
+						if (i == 0 && sele_node.parentNode && $(sele_node.parentNode).hasClass('corr')) { //check parent
 							wceAttr = sele_node.parentNode.getAttribute('wce');
 							info_arr = wceAttr.split('@');
 							ar = WCEUtils.stringToArray(info_arr[0]);
@@ -2284,9 +2277,9 @@
 		getNodeTypeName : function(node) {
 			var nodeName = node.nodeName;
 			if (nodeName && nodeName.toLowerCase() == 'span') {
-				var cn = node.className;
-				if (cn == 'verse_number' || cn == 'chapter_number' || cn == 'format_start' || cn == 'format_end') {
-					return cn;
+				var class_types = ['verse_number', 'chapter_number', 'format_start', 'format_end'];
+				for (var i = 0; i < class_types.length; ++i) {
+					if ($(node).hasClass(class_types[i])) return class_types[i];
 				}
 
 				var wceAttr = node.getAttribute('wce');
@@ -2316,12 +2309,11 @@
 			return _node;
 		},
 		
-		getTextWithoutFormat : function(_node){ 
+		getTextWithoutFormat : function(_node, ed){ 
 			if (_node.nodeType != 1 && _node.nodeType != 11)
 				return;
 	
-			var className = _node.getAttribute('class');
-			if (className && (className == 'format_start' || className == 'format_end'	)) {
+			if ($(node).hasClass('format_start') || $(node).hasClass('format_end')) {
 				_node.parentNode.removeChild(_node);
 				return;
 			}
@@ -2332,7 +2324,7 @@
 				if (!c) {
 					continue;
 				} else {
-					WCEUtils.getTextWithoutFormat(c);
+					WCEUtils.getTextWithoutFormat(c, ed);
 				}
 			}  
 			return $(_node).html();
@@ -2515,6 +2507,7 @@
 			// TODO: if no short_cut B, C ,Z ,Y .....
 			if (wcevar.isInBE && ((!tinymce.isMac && !e.ctrlKey) || (tinymce.isMac && !e.metaKey))) {
 				// keydown for insert letter
+				/*
 				if (wcevar.isCaretAtNodeEnd && ek != 8 && ek != 46 && 
 					(wcevar.type == ed.WCE_CON.formatEnd || wcevar.type == 'chapter_number' 
 						|| wcevar.type === 'book_number' || wcevar.type == 'verse_number'|| wcevar.type == 'lection_number')) {
@@ -2534,12 +2527,16 @@
 					if (isSpaceKey) {
 						return stopEvent(ed, e);
 					}
-				} else if (ek == 46 && wcevar.selectedNode && (wcevar.selectedNode.className == 'commentary' || wcevar.selectedNode.className == 'ews' || wcevar.selectedNode.className == 'lectionary-other')) {
+				}
+
+				 else
+				*/
+				if (ek == 46 && wcevar.selectedNode && ($(wcevar.selectedNode).hasClass('commentary') || $(wcevar.selectedNode).hasClass('ews') || $(wcevar.selectedNode).hasClass('lectionary-other'))) {
 					WCEUtils.wceDelNode(ed);
 					return stopEvent(ed, e);
 				} else if (ek == 46 && wcevar.isCaretAtNodeEnd && !wcevar.isNextElemBE) {
 
-				} else if (ek == 46 && wcevar.isCaretAtNodeEnd && wcevar.isNextElemBE && wcevar.nextElem.className != 'commentary' && wcevar.nextElem.className != 'ews' && wcevar.nextElem.className != 'lectionary-other') {
+				} else if (ek == 46 && wcevar.isCaretAtNodeEnd && wcevar.isNextElemBE && !$(wcevar.nextElem).hasClass('commentary') && !$(wcevar.nextElem).hasClass('ews') && !$(wcevar.nextElem).hasClass('lectionary-other')) {
 					//caret in the middle of two elements
 					return stopEvent(ed, e);
 				} else if ((ek == 46 && !wcevar.isCaretAtFormatStart) || (ek == 8 && wcevar.type != ed.WCE_CON.formatEnd && !wcevar.isCaretAtFormatStart)) {
@@ -2673,15 +2670,13 @@
 		// delete nodeName
 		wceDelNode : function(ed, notAddOriginal) {
 			var wceNode = WCEPlugin.getWceNode(ed);
-			var wceClass;
 			if (wceNode) {
 				if (WCEUtils.hasWceParentNode(wceNode)) {
 					alert(tinymce.translate('warning_deletion_inner_Node'));//TODO: 				
 					return;
 				}
 				//verse chapter
-				wceClass = wceNode.getAttribute('class');
-				if (wceClass === 'verse_number' || wceClass == 'chapter_number' || wceClass == 'book_number' || wceClass == 'lection_number') {
+				if ($(wceNode).hasClass('verse_number') || $(wceNode).hasClass('chapter_number') || $(wceNode).hasClass('book_number') || $(wceNode).hasClass('lection_number')) {
 					return;
 				}
 
@@ -2691,10 +2686,10 @@
 				var originalText = decodeURIComponent(wceNode.getAttribute('wce_orig'));
 					
 				//TODO: after import some node have no wce_orig, we can set wce_orig at import, or don't use 'wce_orig'?
-				// originalText=WCEUtils.getTextWithoutFormat(wceNode);
+				// originalText=WCEUtils.getTextWithoutFormat(wceNode, ed);
 					
 				var isDel;
-				if (wceClass == 'brea' || wceClass=='gap') {
+				if ($(wceNode).hasClass('brea') || $(wceNode).hasClass('gap')) {
 					//We need a marker here similar to the one for deleting non-breaks. Otherwise there are problems under Safari!
 					//Fixed:  we do not use function remove
 					var bID = wceNode.getAttribute('id');
@@ -4082,14 +4077,11 @@
 			if (!sn || sn.nodeType == 3) {
 				return null;
 			}
-			var cn = sn.className;
-			if (cn) {
-				if (cn == ed.WCE_CON.formatStart || sn.className == ed.WCE_CON.formatEnd) {
-					return sn.parentNode;
-				}
-				if (cn == 'commentary' || cn == 'ews' || cn == 'lectionary-other') {
-					return sn.parentNode;
-				}
+			if ($(sn).hasClass('format_start') || $(sn).hasClass('format_end')) {
+				return sn.parentNode;
+			}
+			if ($(sn).hasClass('commentary') || $(sn).hasClass('ews') || $(sn).hasClass('lectionary-other')) {
+				return sn.parentNode;
 			}
 
 			var wceAttr = sn.getAttribute('wce');
