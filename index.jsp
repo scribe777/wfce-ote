@@ -7,10 +7,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <Module>
   <ModulePrefs
-	title="Transcription Editor 2.0beta"
+	title="Transcription Editor"
 	author_email="workspace@jiscmail.ac.uk"
 	author="Universität Trier"
-	description="Transcription Editor 2.0beta"
+	description="Transcription Editor"
 	screenshot="http://www.uni-trier.de/fileadmin/templates/inc/logo_universitaet-trier.gif"
 	thumbnail="http://www.uni-trier.de/fileadmin/templates/inc/logo_universitaet-trier.gif"
         scrolling="false"
@@ -41,6 +41,7 @@
 <UserPref name="baseText" datatype="enum" display_name="Base Text" default_value="Language Dependent">
 <EnumValue value="Language Dependent" display_value="Language Dependent"/>
 <%
+try {
 	String modListURL = "http://www.crosswire.org/study/fetchdata.jsp";
 	StringBuffer result = HTTPUtils.postURL(modListURL, null);
 	XMLBlock modules = XMLBlock.createXMLBlock(result.toString());
@@ -49,13 +50,14 @@
 %><EnumValue value="<%= module.getAttribute("id") %>" display_value="<%= HTTPUtils.canonize(module.getText()) %>"/><%
 		}
      }
+}
+catch (Exception e) {}
 %>
 </UserPref>
 <UserPref name="baseTextDocID" datatype="string" display_name="Base Text DocID" default_value="" />
 <UserPref name="direction" datatype="bool" display_name="Right to Left" default_value="false"/>
 
 
-<UserPref name="servicesBaseURL" datatype="string" display_name="Services Base URL" default_value="../../vmr/api" />
 <UserPref name="baseTextServiceURL" datatype="string" display_name="Base Text Service URL" default_value="http://crosswire.org/study/fetchdata.jsp" />
 
 <UserPref name="announceChanges" datatype="bool" display_name="Announce Changes" default_value="false"/>
@@ -71,19 +73,20 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<!-- odd path on the include because we use index.jsp here, so if we don't specify the index.jsp on the URL, we are 1 level different on our .. -->
+<!-- odd path on the include because we use index.jsp here, so if we do not specify the index.jsp on the URL, we are 1 level different on our .. -->
 
-<link rel="stylesheet" type="text/css" href="/community/js/jquery-ui/jquery-ui.css"/>
+	<link rel="stylesheet" type="text/css" href="/community/js/jquery-ui/jquery-ui.css"/>
 
-<script type="text/javascript" src="/community/js/jquery/jquery.min.js"></script>
-<script type="text/javascript" src="/community/js/URI.min.js"></script>
-<script type="text/javascript" src="/community/js/jquery/jquery.cookie.js"></script>
-<script type="text/javascript" src="/community/js/jquery-ui/jquery-ui.min.js"></script>
-<script type="text/javascript" src="js/tinymce/tinymce.js"></script>  
-<script type="text/javascript" src="wce-ote/wce_editor.js"></script>
-<script type="text/javascript" src="wce-ote/wce_charmap.js"></script>
-<script type="text/javascript" src="wce-ote/wce_tei.js"></script>
-<script type="text/javascript" src="/community/js/jquery.blockUI.js"></script>
+	<script type="text/javascript" src="/community/js/jquery/jquery.min.js"></script>
+	<script type="text/javascript" src="/community/js/URI.min.js"></script>
+	<script type="text/javascript" src="/community/js/jquery/jquery.cookie.js"></script>
+	<script type="text/javascript" src="/community/js/jquery-ui/jquery-ui.min.js"></script>
+	<script type="text/javascript" src="edit/js/tinymce/tinymce.js"></script>  
+	<script type="text/javascript" src="edit/wce-ote/wce_editor.js"></script>
+	<script type="text/javascript" src="edit/wce-ote/wce_charmap.js"></script>
+	<script type="text/javascript" src="edit/wce-ote/wce_tei.js"></script>
+	<script type="text/javascript" src="/community/js/jquery.blockUI.js"></script>
+	<script type="text/javascript" src="/community/js/vmr-common.js"></script>
 
 <title>Workspace for Collaborative Editing</title>
 
@@ -156,12 +159,9 @@ var lastVersion = null;
 // whoami
 var viewer = null;
 
-// default values.  These really are superfluous.  They get set in 'loaded()' by configuration parameters
+// default values.  These really are superfluous.  They get set in 'VMR.init...' by configuration parameters
 // but we'll set them to something in case somehow our reading of config params fails miserably
 
-// this is for future transcription repository data store and other VMR services.
-// this is the base of where all services live.  We don't use them yet, but will soon
-var servicesURL = '../../vmr/api';
 
 // this is for retrieving base text data this URL will receive posted data params:
 //	 mod : Base Text Name, currently either coptic or greek (SahidicBible|PapBasetext)
@@ -178,8 +178,6 @@ var autoSave = true;
 var reconciler = '../reconciler/reconciler.jsp';
 
 // where or not this user is a VMR Administrator
-var isAdmin = false;
-var siteName = '';
 var ignoreUpdateMessages = 0;
 
 </script>
@@ -211,8 +209,8 @@ var ignoreUpdateMessages = 0;
 
 
 	function previewPage() {
-		var url = servicesURL + '/transcript/show/';
-		window.open(url+'?docID='+lastPage.docID+'&pageID='+lastPage.pageID+'&userName='+(transcriptionOwner == 'user' ? viewer.getDisplayName() : siteName),'transcription',
+		var url = VMR.httpRoot + 'community/vmr/api/transcript/show/';
+		window.open(url+'?docID='+lastPage.docID+'&pageID='+lastPage.pageID+'&userName='+(transcriptionOwner == 'user' ? VMR.userName : VMR.siteName),'transcription',
                   'titlebar=no,toolbar=no,status=no,scrollbars=yes,resizable=yes,menubar=no,location=yes,directories=no,'
                 + 'width=900,height=768');
 
@@ -235,25 +233,20 @@ var ignoreUpdateMessages = 0;
 		// currently we grab the HTML span formatted data, but eventually we'd like to grab the TEI
 		var transcriptionData = getTEI();
 
-		var params = {};
 		var postData = {
-			sessionHash : $.cookie('ntvmrSession'),
 			docID : lastPage.docID,
 			pageID: lastPage.pageID,
-			userName: (typeof userName != 'undefined' ? userName : transcriptionOwner == 'user' ? viewer.getDisplayName() : siteName),
+			userName: (typeof userName != 'undefined' ? userName : transcriptionOwner == 'user' ? VMR.userName : VMR.siteName),
 			transcript: transcriptionData
 		};
-		var url = servicesURL + '/transcript/put/';
-		params[gadgets.io.RequestParameters.METHOD] = gadgets.io.MethodType.POST;
-		params[gadgets.io.RequestParameters.POST_DATA] = gadgets.io.encodeValues(postData);
-		gadgets.io.makeRequest(url, function (o) {
+		VMR.serviceRequest('transcript/put/', postData, function (o) {
 			$.unblockUI();
 			var xml = $.parseXML(o.text);
 			if ($(xml).children('error').length) {
 				alert($(xml).children('error').attr('message'));
 			}
 			if ($(xml).children('success').length) {
-				if (gadgets.util.hasFeature('pubsub-2')) gadgets.Hub.publish("interedition.transcription.saved", null);
+				VMR.publish("interedition.transcription.saved", null);
 				if ($('#historyDialog').dialog('isOpen')) {
 					showVersionHistory();
 				}
@@ -261,7 +254,7 @@ var ignoreUpdateMessages = 0;
 			tinymce.activeEditor.isNotDirty = 1;
 			
 			if (callback) callback();
-		}, params);
+		});
 	}
 
 
@@ -270,19 +263,15 @@ function showVersionHistory() {
 	if (lastPage) {
 		$.blockUI({ message: '<h4><img src="/community/images/fuzzball.gif" /> Loading history...</h4>' });
 
-		var params = {};
 		var postData = {
 			docID : lastPage.docID,
 			pageID: lastPage.pageID,
-			userName: transcriptionOwner == 'user' ? viewer.getDisplayName() : siteName,
+			userName: transcriptionOwner == 'user' ? VMR.userName : VMR.siteName,
 			history: true,
-			allUsers: isAdmin,
+			allUsers: VMR.isAdmin,
 		};
 
-		var url = servicesURL + '/transcript/get/';
-		params[gadgets.io.RequestParameters.METHOD] = gadgets.io.MethodType.POST;
-		params[gadgets.io.RequestParameters.POST_DATA] = gadgets.io.encodeValues(postData);
-		gadgets.io.makeRequest(url, function (o) {
+		VMR.serviceRequest('transcript/get/', postData, function (o) {
 			$.unblockUI();
 			document.body.style.cursor = 'default';
 			var xml = $.parseXML(o.text);
@@ -291,7 +280,7 @@ function showVersionHistory() {
 			h += '<tr class="'+(rownum%2?'rowodd':'roweven')+'" style="cursor:pointer;">';
 			h += '<td height="24" onclick="loadTranscription(\'workingTranscription\');" id="sel_workingTranscription" class="selectionCell">*</td>';
 			h += '<td onclick="loadTranscription(\'workingTranscription\');" class="vDate">working copy</td>';
-			h += '<td onclick="loadTranscription(\'workingTranscription\');">'+viewer.getDisplayName()+'</td>';
+			h += '<td onclick="loadTranscription(\'workingTranscription\');">' + VMR.userName + '</td>';
 			h += '<td onclick="loadTranscription(\'workingTranscription\');"></td>';
 			h += '<td><span class="mergeControl" style="display:none;"><a href="#" onclick="compareCurrentTo(\'workingTranscription\');return false;"><img height="24" src="/community/images/merge.png"/></a></span></td>';
 			h += '<td class="versionHash" style="display:none;">workingTranscription</td>';
@@ -318,7 +307,7 @@ function showVersionHistory() {
 			}
 			
 			$('#historyDialog').dialog('open');
-		}, params);
+		});
 	}
 }
 
@@ -372,28 +361,24 @@ function page_select_callback(topic, data, subscriberData) {
 
 
 function getTranscription(versionHash, userName, callback) {
-	var params = {};
-	if (userName && !isAdmin && userName != 'PUBLISHED') userName = null;
+	if (userName && !VMR.isAdmin && userName != 'PUBLISHED') userName = null;
 	var postData = {
 		docID : lastPage.docID,
 		pageID: lastPage.pageID,
-		userName: (userName ? userName : transcriptionOwner == 'user' ? viewer.getDisplayName() : siteName),
+		userName: (userName ? userName : transcriptionOwner == 'user' ? VMR.userName : VMR.siteName),
 		format: 'rawtei',
 		briefTEIHeader : 'true'
 	};
 
 	if (versionHash && versionHash.length > 0 && versionHash != 'HEAD') postData.versionHash = versionHash;
 
-	var url = servicesURL + '/transcript/get/';
-	params[gadgets.io.RequestParameters.METHOD] = gadgets.io.MethodType.POST;
-	params[gadgets.io.RequestParameters.POST_DATA] = gadgets.io.encodeValues(postData);
-	gadgets.io.makeRequest(url, function (o) {
+	VMR.serviceRequest('transcript/get/', postData, function (o) {
 		// silliness when sometimes stuff is returned as mime type XML it is stored in 'data' instead of 'text'.  stupid
 		var transText = (!o.text || o.text.length < 1) ? o.data : o.text;
 		if (transText.indexOf("<?xml") > 0) transText = transText.substring(transText.indexOf('>', transText.indexOf("<?xml"))+1);
 
 		if (callback) callback(transText);
-	}, params);
+	});
 }
 
 function loadTranscription(versionHash, userName) {
@@ -441,7 +426,6 @@ function populateFromBasetext(key, appendWhere) {
 	if (!appendWhere) tinymce.get('wce_editor').setContent('<img src="'+tinymce.baseURL+'../../../images/loading.gif"/>');
 
 
-	var params = {};
 	var postData = {};
 	var url = baseTextServiceURL;
 
@@ -453,17 +437,14 @@ function populateFromBasetext(key, appendWhere) {
 		postData.format = (appendWhere?'basetext':'tei');
 	}
 	else {
-		url = servicesURL + '/transcript/get/';
+		url = VMR.servicesURL + 'transcript/get/';
 		postData.docID = baseTextDocID;
 		postData.indexContent = key;
 		postData.format = 'teiraw';
 		postData.briefTEIHeader = 'true';
 	}
 
-	params[gadgets.io.RequestParameters.METHOD] = gadgets.io.MethodType.POST;
-	params[gadgets.io.RequestParameters.POST_DATA] = gadgets.io.encodeValues(postData);
-
-	gadgets.io.makeRequest(url, function (o) { 
+	VMR.webRequest(url, postData, function (o) {
 		if (appendWhere) {
 			var content = tinymce.get('wce_editor').getContent();   
 			tinymce.get('wce_editor').setContent((appendWhere>0)?content+o.text:o.text+content);   
@@ -483,7 +464,7 @@ function populateFromBasetext(key, appendWhere) {
 			content += o.text.substring(headerInsertOffset);
 			loadEditorWithTEI(content);
 		}
-	}, params);
+	});
 }
 
 
@@ -749,7 +730,7 @@ function discussTranscription() {
 
 	var messages = parent.Liferay.Service.MB.MBMessage.getCategoryMessages(params);
 
-	var subject = '' + viewer.getDisplayName()
+	var subject = '' + VMR.userName
 			 + ' - ' + lastPage.docID + ' ('+lastPage.docName+') '
 			 + pageCategoryName;
 
@@ -766,13 +747,13 @@ function discussTranscription() {
 		var transcription = getTEI();
 
 		var body = '<p><a href="http://ntvmr.uni-muenster.de/transcribing'
-				+ '?docID='+lastPage.docID
-				+ '&pageID='+lastPage.pageID
-				+ '&userName='+viewer.getDisplayName()
+				+ '?docID=' + lastPage.docID
+				+ '&pageID=' + lastPage.pageID
+				+ '&userName=' + VMR.userName
 				+ '" target="_blank">Jump To Artifact</a></p>'
 				+ '<br/>'
 				+ '<b>Transcription Text:</b>'
-				+ '<div style="margins: 5px 20px 5px 20px;">'+transcription+'</div><br/>'
+				+ '<div style="margins: 5px 20px 5px 20px;">' + transcription + '</div><br/>'
 				+ '<p> You should: <b>Edit this message.</b> '
 				+ 'Be sure to leave the above link, and delete this line.</p>';
 
@@ -851,7 +832,7 @@ function simplifyTEI(tei) {
 
 function compareCurrentTo(versionHash, userName) {
 
-	var reconcilerURL = URI(reconciler).absoluteTo(gadgets.util.getUrlParameters()['url']);
+	var reconcilerURL = VMR.httpRoot+'modules/transcript/edit/'+reconciler;
 	var form = document.createElement("form");
 	form.setAttribute("method", "post");
 	form.setAttribute("action", reconcilerURL);
@@ -907,17 +888,12 @@ function handleReconcilerWindow() {
 
 
 function loadPal(match) {
-	var params = {};
 	var postData = {
-		sessionHash : $.cookie('ntvmrSession'),
 		featureCode : 'Grapheme',
 		likeMatch   : '%'+match+'%',
 		limit       : 10
 	};
-	params[gadgets.io.RequestParameters.METHOD] = gadgets.io.MethodType.POST;
-	params[gadgets.io.RequestParameters.POST_DATA] = gadgets.io.encodeValues(postData);
-	var url = servicesURL + '/feature/definition/getvalues/';
-	gadgets.io.makeRequest(url, function(o) {
+	VMR.serviceRequest('feature/definition/getvalues/', postData, function(o) {
 		var h1 = '<table><thead></thead><tbody>';
 		h1 += '<tr style="cursor:pointer;">';
 		var h = '';
@@ -933,23 +909,18 @@ function loadPal(match) {
 		$('#palResultList').html(h1+h);
 		$('#palResultImages').html('');
 		showPalVal('%'+match+'%');
-	}, params);
+	});
 }
 
 
 function showPalVal(match) {
 	$('#palResultImages').html('<img src="/community/images/loading.gif"/>');
-	var params = {};
 	var postData = {
-		sessionHash : $.cookie('ntvmrSession'),
 		detail : 'page',
 		featureCode : 'Grapheme%='+match,
 		featureCodeClipString : 'Grapheme%='+match
 	};
-	params[gadgets.io.RequestParameters.METHOD] = gadgets.io.MethodType.POST;
-	params[gadgets.io.RequestParameters.POST_DATA] = gadgets.io.encodeValues(postData);
-	var url = servicesURL + '/metadata/liste/search/';
-	gadgets.io.makeRequest(url, function(o) {
+	VMR.serviceRequest('metadata/liste/search/', postData, function(o) {
 		var h = '<table style=""><thead></thead><tbody>';
 		h += '<tr style="cursor:pointer;">';
 		$(o.text).find('feature').each( function() {
@@ -966,7 +937,7 @@ function showPalVal(match) {
 		$('#palResultImages').html(h);
 		$('.palVal').css('background-color', '#FFF');
 		$('#pv'+match.replace(/%/g, '_')).css('background-color', '#E2E2E2');
-	}, params);
+	});
 }
 
 
@@ -978,52 +949,24 @@ function showDocument(docID, pageID, featureID) {
 
 var lang = null;
 
-// our initialization method
-function loaded() {
-	var prefs = new gadgets.Prefs();
-	servicesURL = prefs.getString('servicesBaseURL');
-	reconciler = prefs.getString('reconciler');
-	baseTextServiceURL = prefs.getString('baseTextServiceURL');
-	baseTextDocID = prefs.getString('baseTextDocID');
+VMR.init(function() {
+	reconciler = VMR.prefs.getString('reconciler');
+	baseTextDocID = VMR.prefs.getString('baseTextDocID');
 	if (baseTextDocID != null && baseTextDocID.length < 1) baseTextDocID = null;
-	baseText = prefs.getString('baseText');
-	transcriptionOwner = prefs.getString('transcriptionOwner');
-	rtl = prefs.getBool('direction');
-	announceChanges = prefs.getBool('announceChanges');
-	autoSave = prefs.getBool('autoSave');
-	// if we haven't been given an absolute URL, assume we're relative to our gadget and resolve an absolute URL from the given relative URL.
-	if (servicesURL.indexOf('http') != 0) {
-		servicesURL = URI(servicesURL).absoluteTo(gadgets.util.getUrlParameters()['url']);
-	}
-	var preferredHeight = parseInt(prefs.getString('height'));
-	if (gadgets.util.hasFeature('dynamic-height')) gadgets.window.adjustHeight(preferredHeight);
+	baseText = VMR.prefs.getString('baseText');
+	transcriptionOwner = VMR.prefs.getString('transcriptionOwner');
+	rtl = VMR.prefs.getBool('direction');
+	announceChanges = VMR.prefs.getBool('announceChanges');
+	autoSave = VMR.prefs.getBool('autoSave');
 
-	var req = opensocial.newDataRequest();
-	req.add(req.newFetchPersonRequest('VIEWER'), 'viewer');
-	req.send(function(data) {
-		viewer = data.get('viewer').getData();
-
-		$('#publishButton').hide();
-		for (i = 0; i < 3; ++i) {
-			var url = servicesURL+'/auth/hasrole/';
-			var params = {};
-			var postData = {
-				sessionHash : $.cookie('ntvmrSession'),
-				role        : (i==1 ? 'VMR Administrator' : i==2 ? 'Transcription Manager' : 'Site Administrator')
-			};
-			if (i == 0) postData.userGroupID = parent.Liferay.ThemeDisplay.getScopeGroupId();
-			params[gadgets.io.RequestParameters.METHOD] = gadgets.io.MethodType.POST;
-			params[gadgets.io.RequestParameters.POST_DATA] = gadgets.io.encodeValues(postData);
-			gadgets.io.makeRequest(url, function(o) {
-				var xml = $.parseXML(o.text);
-				if ($(xml).find('role').attr('hasRole') == 'true') {
-					isAdmin = true;
-					$('#publishButton').show();
-				}
-				var sn = $(xml).find('role').attr('userGroupName');
-				if (sn != null && sn.length > 0) siteName = sn;
-			}, params);
+	$('#publishButton').hide();
+				
+	VMR.serviceRequest('auth/hasrole/', { role : 'Transcription Manager' }, function(o) {
+		var xml = $.parseXML(o.text);
+		if ($(xml).find('role').attr('hasRole') == 'true') {
+			VMR.isAdmin = true;
 		}
+		if (VMR.isAdmin) $('#publishButton').show();
 	});
 
 	lastRTL = rtl;
@@ -1113,15 +1056,8 @@ function loaded() {
 			}
 			else $('#palDialog').dialog('close');
 		});
-		expandFillPageClients();
-		setTimeout(expandFillPageClients, 1000);
-		setTimeout(expandFillPageClients, 1200);
-		setTimeout(expandFillPageClients, 1400);
-		$(window).resize(function() {
-			expandFillPageClients();
-		});
-//		tinymce.activeEditor.contentCSS.push(URI('content-extra.css').absoluteTo(gadgets.util.getUrlParameters()['url']));
-		var extraCSS = URI('content-extra.css').absoluteTo(gadgets.util.getUrlParameters()['url']);
+//		tinymce.activeEditor.contentCSS.push(VMR.httpRoot+'modules/transcript/edit/content-extra.css');
+		var extraCSS = VMR.httpRoot+'modules/transcript/edit/content-extra.css';
 		$('#wce_editor_ifr').contents().find('head').append('<link rel="stylesheet" href="'+extraCSS+'" type="text/css" />');
 		tinymce.get('wce_editor').on('keyup', function() {
 			if (announceChanges) {
@@ -1134,49 +1070,52 @@ function loaded() {
 				if (endHeaderOffset > -1) tei = tei.substring(0, endHeaderOffset);
 				if (lastPage.lang == 'g') lastPage.lang = 'grc';
 				tei = '<?xml version="1.0" encoding="utf-8"?><?xml-model href="TEI-NTMSS.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?><TEI xmlns="http://www.tei-c.org/ns/1.0"><text'+(lastPage.lang?' xml:lang="'+lastPage.lang+'"' : '')+'><body>'+tei+'</body></text></TEI>';
-				var params = {};
 				var postData = {
-					sessionHash : $.cookie('ntvmrSession'),
 					text: tei,
 					docID : lastPage.docID,
 					pageID: lastPage.pageID,
 				};
-				var url = servicesURL + '/transcript/clean/';
-				params[gadgets.io.RequestParameters.METHOD] = gadgets.io.MethodType.POST;
-				params[gadgets.io.RequestParameters.POST_DATA] = gadgets.io.encodeValues(postData);
-				gadgets.io.makeRequest(url, function (o) {
+				VMR.serviceRequest('transcript/clean/', postData, function (o) {
 					if (o.text.match('^<TEI')) {
 						o.text = '<?xml version="1.0" encoding="utf-8"?><?xml-model href="TEI-NTMSS.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>' + o.text;
 					}
 					lastPage.transcriptionBody = o.text;
 					lastPage.sender = document;
 					++ignoreUpdateMessages; setTimeout(function() { --ignoreUpdateMessages; }, 500);
-					if (gadgets.util.hasFeature('pubsub-2')) gadgets.Hub.publish("interedition.transcription.updated", lastPage);
-				}, params);
+					VMR.publish("interedition.transcription.updated", lastPage);
+				});
 			}
 		});
 	});
 
-	document.getElementById(tinymce.activeEditor.id+'_tbl').style.width='100%';
-}
+//	document.getElementById(tinymce.activeEditor.id+'_tbl').style.width='100%';
+
+	VMR.expandFillPageClientsOrig = VMR.expandFillPageClients;
+	VMR.expandFillPageClients = function() {
+		VMR.expandFillPageClientsOrig();
+		resizeEditor();
+	};
+
+	VMR.subscribe("interedition.page.selected", page_select_callback);
+	VMR.subscribe("interedition.transcription.updated", onTranscriptionUpdate);
+	VMR.subscribe("interedition.transcription.scrolled", onTranscriptionScrolled);
+	VMR.subscribe("interedition.transcription.readonly", onTranscriptionReadOnly);
+
+	setTimeout(VMR.refreshHeight, 1000);
+	setTimeout(VMR.refreshHeight, 1200);
+	setTimeout(VMR.refreshHeight, 1400);
+
+}, '../../', true);
 
 
-var MARGIN=40;
-function expandFillPageClients() {
-	$('.fillPage').each(function () {
-		$(this).height(gadgets.window.getViewportDimensions().height - $(this).offset().top - MARGIN);
-	});
-	$('.fillPageAlmost').each(function () {
-		$(this).height(gadgets.window.getViewportDimensions().height - $(this).offset().top - MARGIN - 10);
-	});
-	resizeEditor();
-}
-
+var MARGIN=34;
 function resizeEditor() {
-	var height = gadgets.window.getViewportDimensions().height;
-	var toolbarHeight = $(tinymce.activeEditor.iframeElement.parentElement.parentElement).children('.mce-toolbar-grp').height();
-	var statusbarHeight = $(tinymce.activeEditor.iframeElement.parentElement.parentElement).children('.mce-statusbar').height();
-	tinymce.DOM.setStyle(tinymce.activeEditor.iframeElement, 'height', (height - toolbarHeight - statusbarHeight - 8 - MARGIN) + 'px');
+	if (tinymce && tinymce.activeEditor && tinymce.activeEditor.iframeElement) {
+		var height = gadgets.window.getViewportDimensions().height;
+		var toolbarHeight = $(tinymce.activeEditor.iframeElement.parentElement.parentElement).children('.mce-toolbar-grp').height();
+		var statusbarHeight = $(tinymce.activeEditor.iframeElement.parentElement.parentElement).children('.mce-statusbar').height();
+		tinymce.DOM.setStyle(tinymce.activeEditor.iframeElement, 'height', (height - toolbarHeight - statusbarHeight - 8 - MARGIN) + 'px');
+	}
 }
 
 
@@ -1186,7 +1125,7 @@ function setupEditor(rtl, callback) {
 		function() {
 			if (callback) callback();
 		},
-		lang, URI('js/tinymce').absoluteTo(gadgets.util.getUrlParameters()['url']),
+		lang, VMR.httpRoot+'modules/transcript/edit/js/tinymce',
 		function () {
 			return lastPage.docName;
 		},
@@ -1201,14 +1140,6 @@ function getFolio() {
 }
 
 
-if (gadgets.util.hasFeature('pubsub-2')) gadgets.HubSettings.onConnect = function(hum, suc, err) {
-	subId = gadgets.Hub.subscribe("interedition.page.selected", page_select_callback);
-	subId = gadgets.Hub.subscribe("interedition.transcription.updated", onTranscriptionUpdate);
-	subId = gadgets.Hub.subscribe("interedition.transcription.scrolled", onTranscriptionScrolled);
-	subId = gadgets.Hub.subscribe("interedition.transcription.readonly", onTranscriptionReadOnly);
-	loaded();
-};
-else gadgets.util.registerOnLoadHandler(loaded);
 
 
 
