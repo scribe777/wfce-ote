@@ -209,7 +209,7 @@ var ignoreUpdateMessages = 0;
 
 
 	function previewPage() {
-		var url = VMR.httpRoot + 'community/vmr/api/transcript/show/';
+		var url = VMR.httpRoot + 'vmr/api/transcript/show/';
 		window.open(url+'?docID='+lastPage.docID+'&pageID='+lastPage.pageID+'&userName='+(transcriptionOwner == 'user' ? VMR.userName : VMR.siteName),'transcription',
                   'titlebar=no,toolbar=no,status=no,scrollbars=yes,resizable=yes,menubar=no,location=yes,directories=no,'
                 + 'width=900,height=768');
