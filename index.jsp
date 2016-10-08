@@ -423,7 +423,7 @@ function populateFromBasetext(key, appendWhere) {
 
 	document.body.style.cursor = 'wait';
 
-	if (!appendWhere) tinymce.get('wce_editor').setContent('<img src="'+tinymce.baseURL+'../../../images/loading.gif"/>');
+	if (!appendWhere) tinymce.get('wce_editor').setContent('<img src="/community/images/loading.gif"/>');
 
 
 	var postData = {};
