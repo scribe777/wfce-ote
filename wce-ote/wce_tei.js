@@ -1611,7 +1611,9 @@ function getHtmlByTei(inputString) {
 				break;
 			}
 			typeValue = $rdg.getAttribute('type');
+			if (!typeValue) typeValue = '';
 			handValue = $rdg.getAttribute('hand');
+			if (!handValue) handValue = '';
 			deletionValue = $rdg.getAttribute('rend');
 			if ($rdg.getAttribute('part'))
 				partialValue = $rdg.getAttribute('part');

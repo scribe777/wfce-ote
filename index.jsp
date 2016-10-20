@@ -31,6 +31,7 @@
 <UserPref name="transcriptionOwner" datatype="enum" display_name="Transcription Owner" default_value="user">
 	<EnumValue value="user" display_value="Current User"/>
 	<EnumValue value="project" display_value="Current Project"/>
+	<EnumValue value="PUBLISHED" display_value="PUBLISHED"/>
 </UserPref>
 
 <UserPref name="height" datatype="enum" display_name="Gadget Height" default_value="550">
@@ -210,7 +211,7 @@ var ignoreUpdateMessages = 0;
 
 	function previewPage() {
 		var url = VMR.httpRoot + 'vmr/api/transcript/show/';
-		window.open(url+'?docID='+lastPage.docID+'&pageID='+lastPage.pageID+'&userName='+(transcriptionOwner == 'user' ? VMR.userName : VMR.siteName),'transcription',
+		window.open(url+'?docID='+lastPage.docID+'&pageID='+lastPage.pageID+'&userName='+(transcriptionOwner == 'user' ? VMR.userName : transcriptionOwner == 'project' ? VMR.siteName : transcriptionOwner),'transcription',
                   'titlebar=no,toolbar=no,status=no,scrollbars=yes,resizable=yes,menubar=no,location=yes,directories=no,'
                 + 'width=900,height=768');
 
@@ -236,7 +237,7 @@ var ignoreUpdateMessages = 0;
 		var postData = {
 			docID : lastPage.docID,
 			pageID: lastPage.pageID,
-			userName: (typeof userName != 'undefined' ? userName : transcriptionOwner == 'user' ? VMR.userName : VMR.siteName),
+			userName: (typeof userName != 'undefined' ? userName : transcriptionOwner == 'user' ? VMR.userName : transcriptionOwner == 'project' ? VMR.siteName : transcriptionOwner),
 			transcript: transcriptionData
 		};
 		VMR.serviceRequest('transcript/put/', postData, function (o) {
@@ -266,7 +267,7 @@ function showVersionHistory() {
 		var postData = {
 			docID : lastPage.docID,
 			pageID: lastPage.pageID,
-			userName: transcriptionOwner == 'user' ? VMR.userName : VMR.siteName,
+			userName: transcriptionOwner == 'user' ? VMR.userName : transcriptionOwner == 'project' ? VMR.siteName : transcriptionOwner,
 			history: true,
 			allUsers: VMR.isAdmin,
 		};
@@ -365,7 +366,7 @@ function getTranscription(versionHash, userName, callback) {
 	var postData = {
 		docID : lastPage.docID,
 		pageID: lastPage.pageID,
-		userName: (userName ? userName : transcriptionOwner == 'user' ? VMR.userName : VMR.siteName),
+		userName: (userName ? userName : transcriptionOwner == 'user' ? VMR.userName : transcriptionOwner == 'project' ? VMR.siteName : transcriptionOwner),
 		format: 'rawtei',
 		briefTEIHeader : 'true'
 	};
