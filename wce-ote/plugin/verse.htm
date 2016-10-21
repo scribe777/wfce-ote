@@ -287,10 +287,9 @@ var spanValue_old = '';
 			}
 		}
 		
-		var className=node.className;
-		if (className && className.match(/book_number/)) {
+		if ($(node).hasClass('book_number')) {
 			bookNr = $.trim(node.innerHTML);
-		} else if (className && className.match(/chapter_number/)) {
+		} else if ($(node).hasClass('chapter_number')) {
 		    subverse = 96;
 			v_old = '';
 			var v = $.trim(node.innerHTML);
@@ -300,7 +299,7 @@ var spanValue_old = '';
 				else
 					chapterNr = v;
 			}
-		} else if (className && className.match(/verse_number/)) {
+		} else if ($(node).hasClass('verse_number')) {
 			var v = $.trim(node.innerHTML);
 			if (v && v!='') {
 				if (v_old == v)
@@ -331,11 +330,9 @@ var spanValue_old = '';
 			}
 		}
 		
-		var className=node.className;
-		
-		if (className && className.match(/book_number/)){
+		if ($(node).hasClass('book_number')){
 			bookNr = $.trim(node.innerHTML);
-		} else if (className && className.match(/chapter_number/) && $.trim(node.innerHTML) !== 'Inscriptio' && $.trim(node.innerHTML) !== 'Subscriptio'){
+		} else if ($(node).hasClass('chapter_number') && $.trim(node.innerHTML) !== 'Inscriptio' && $.trim(node.innerHTML) !== 'Subscriptio') {
 			var v = $.trim(node.innerHTML);
 			var id = node.getAttribute('id');
 			if (v && v!='')
@@ -358,8 +355,7 @@ var spanValue_old = '';
 			}
 		}
 		
-		var className=node.className;
-		if(className && className.match(/book_number/)){
+		if ($(node).hasClass('book_number')) {
 			var v=$.trim(node.innerHTML);
 			var id = node.getAttribute('id');
 			if(v && v!='')
@@ -382,8 +378,7 @@ var spanValue_old = '';
 			}
 		}
 		
-		var className=node.className;
-		if (className && className.match(/lection_number/)) {
+		if ($(node).hasClass('lection_number')) {
 			//var v=$.trim(node.innerHTML);
 			var v=$.trim(node.getAttribute('wce').substring(node.getAttribute('wce').lastIndexOf("=")+1));
 			if (v && v!='')
@@ -397,34 +392,34 @@ var spanValue_old = '';
 			var newVerseNr = $('#insertVerseNumber').val().trim();
 			newVerseNr = newVerseNr.replace(/\D/g,'');
 			if (newVerseNr != ''){
-				ed.selection.setContent('<span class="verse_number" wce="__t=verse_number"> ' + newVerseNr + '</span> ');
+				ed.insertContent('<span class="verse_number mceNonEditable" wce="__t=verse_number"> ' + newVerseNr + '</span> ');
 			}
 			return;
 		} else if ($('#insertInscriptioRadio').is(':checked')){
-			ed.selection.setContent('<span class="chapter_number" wce="__t=chapter_number">' + 'Inscriptio' + '</span> <span class="verse_number" wce="__t=verse_number"></span> PLACE THE INCIPIT HERE! ');
+			ed.insertContent('<span class="chapter_number mceNonEditable" wce="__t=chapter_number">' + 'Inscriptio' + '</span> <span class="verse_number mceNonEditable" wce="__t=verse_number"></span> PLACE THE INCIPIT HERE! ');
 			return;
 		} else if ($('#insertSubscriptioRadio').is(':checked')){
-			ed.selection.setContent('<span class="chapter_number" wce="__t=chapter_number">' + 'Subscriptio' + '</span> <span class="verse_number" wce="__t=verse_number"></span> PLACE THE SUBSCRIPTIO HERE! ');
+			ed.insertContent('<span class="chapter_number mceNonEditable" wce="__t=chapter_number">' + 'Subscriptio' + '</span> <span class="verse_number mceNonEditable" wce="__t=verse_number"></span> PLACE THE SUBSCRIPTIO HERE! ');
 			return;
 		} else if ($('#insertChapterRadio').is(':checked')){
 			var newChapterNr = $('#insertChapterNumber').val().trim();
 			newChapterNr = newChapterNr.replace(/\D/g,'');
 			if (newChapterNr != ''){
-				ed.selection.setContent('<span class="chapter_number" wce="__t=chapter_number" id="' + ed.dom.uniqueId('chap') + '"> ' + newChapterNr + '</span> ');
+				ed.insertContent('<span class="chapter_number mceNonEditable" wce="__t=chapter_number" id="' + ed.dom.uniqueId('chap') + '"> ' + newChapterNr + '</span> ');
 			}
 			return;
 		} else if ($('#insertBookRadio').is(':checked')){
 			var newBookNr = $('#insertBookNumber').val().trim();
 			newBookNr = newBookNr.replace(/\D/g,'');
 			if (newBookNr != ''){
-				ed.selection.setContent('<span class="book_number" wce="__t=book_number" id="' + ed.dom.uniqueId('book') + '"> ' + newBookNr + '</span> ');
+				ed.insertContent('<span class="book_number mceNonEditable" wce="__t=book_number" id="' + ed.dom.uniqueId('book') + '"> ' + newBookNr + '</span> ');
 			}
 			return;
 		} else if ($('#insertLectionRadio').is(':checked')){
 			var newLectionNr = $('#insertLectionNumber').val().trim();
 			//newLectionNr = newLectionNr.replace(/\D/g,'');
 			if (newLectionNr != ''){
-				ed.selection.setContent('<span class="lection_number" wce="__t=lection_number&__n=&number=' + newLectionNr + '"> ' + 'Lec' + '</span> ');
+				ed.insertContent('<span class="lection_number mceNonEditable" wce="__t=lection_number&__n=&number=' + newLectionNr + '"> ' + 'Lec' + '</span> ');
 			}
 			return;
 		} else if ($('#deleteVerseRadio').is(':checked')){
@@ -450,21 +445,18 @@ var spanValue_old = '';
 					for (var j=0,len2=spanList.length; j<len2; j++){
 						var span=spanList[j];
 						var spanValue=$(span).html().trim();
-						if (!span.className){
-							continue;
-						}
-						if (span.className.toLowerCase()=='lection_number') {
+						if ($(span).hasClass('lection_number')) {
 							if (startNode){ //if next entry after marked verse
 								endNode=span;
 								break;
 							}
-						} else if (span.className.toLowerCase()=='book_number') {
+						} else if ($(span).hasClass('book_number')) {
 							currentBook = spanValue;
 							if (startNode){ //if next entry after marked verse
 								endNode=span;
 								break;
 							}
-						} else if (span.className.toLowerCase()=='chapter_number') {
+						} else if ($(span).hasClass('chapter_number')) {
 							var currentChapter = spanValue;
 							spanValue_cnt = 96;
 							spanValue_old = '';
@@ -474,7 +466,7 @@ var spanValue_old = '';
 							}
 							if (currentChapter == chapterNr && verseNr == '') //Inscriptio or Subscriptio
 								startNode=span; // set startNode; next verse number element will be endNode
-						} else if (span.className.toLowerCase()=='verse_number'){						
+						} else if ($(span).hasClass('verse_number')) {						
 							if (spanValue_old == spanValue) {
 								spanValue_cnt++;
 								spanValue=spanValue+'-'+String.fromCharCode(spanValue_cnt);
@@ -509,10 +501,7 @@ var spanValue_old = '';
 					for (var j=0,len2=spanList.length; j<len2; j++){
 						var span=spanList[j]; //actual <span>
 						var spanValue=$(span).html().trim();
-						if (!span.className){
-							continue;
-						}
-						if (span.className.toLowerCase() == 'chapter_number'){						
+						if ($(span).hasClass('chapter_number')) {						
 							if (spanValue == chapterNr && span.id == id)
 								$(span).remove();
 						}
@@ -532,10 +521,7 @@ var spanValue_old = '';
 					for (var j=0,len2=spanList.length; j<len2; j++){
 						var span=spanList[j]; //actual <span>
 						var spanValue=$(span).html().trim();
-						if (!span.className){
-							continue;
-						}
-						if (span.className.toLowerCase()=='book_number'){						
+						if ($(span).hasClass('book_number')){						
 							if (spanValue == bookNr && span.id == id)
 								$(span).remove();
 						}
@@ -553,11 +539,8 @@ var spanValue_old = '';
 					// Loop through all <span> elements
 					for (var j=0,len2=spanList.length; j<len2; j++){
 						var span=spanList[j]; //actual <span>
-						if (!span.className){
-							continue;
-						}
 						var spanValue=span.getAttribute('wce');
-						if (span.className.toLowerCase()=='lection_number'){						
+						if ($(span).hasClass('lection_number')) {						
 							if (spanValue.substring(spanValue.lastIndexOf('=')+1) == lectionNr)
 								$(span).remove();
 						}

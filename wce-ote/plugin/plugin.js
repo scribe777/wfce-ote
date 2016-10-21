@@ -33,7 +33,7 @@
 */
 
 (function() {
-	var wfce_editor = "2.0.00beta (2016-10-19)";
+	var wfce_editor = "2.0.00beta (2016-10-21)";
 
 	// Load plugin specific language pack
 	tinymce.PluginManager.requireLangPack('wce');
@@ -600,7 +600,7 @@
 				lbpos = WCEUtils.modifyBreakPosition(ed);
 			//lbpos = lbpos ? lbpos : WCEUtils.modifyBreakPosition(ed);
 			
-			var wceClass = 'class="brea"', wceAttr;
+			var wceClass = 'class="mceNonEditable brea"', wceAttr;
 
 			//how many member does a group have
 			var groupCount;
@@ -621,10 +621,10 @@
 						pos = attr.indexOf("number=");
 						newstring = attr.substring(pos+7);
 						num = newstring.substring(0,newstring.indexOf("&"));
-						str = '&#8208;<br/ >'+'&crarr;'+indention + " " + num;
+						str = '&#8208;<br />'+'&crarr;'+indention + " " + num;
 					}
 					else
-						str = '&#8208;<br/ >'+'&crarr;'+indention;
+						str = '&#8208;<br />'+'&crarr;'+indention;
 				} else {
 					// line break at the end of a word
 					//v.lcnt = WCEUtils.counterCalc(v.lcnt, 1);
@@ -633,10 +633,10 @@
 						pos = attr.indexOf("number=");
 						newstring = attr.substring(pos+7);
 						num = newstring.substring(0,newstring.indexOf("&"));
-						str = '<br/ >'+'&crarr;'+indention + " " + num;
+						str = '<br />'+'&crarr;'+indention + " " + num;
 					}
 					else 
-						str = '<br/ >'+'&crarr;'+indention;
+						str = '<br />'+'&crarr;'+indention;
 				}
 				if (getOnlyIndention){
 					return str;
@@ -1026,12 +1026,12 @@
 				var sNode=wcevar.selectedStartNode;
 				var eNode=wcevar.selectedEndNode;
 				if(sNode && eNode && sNode!=eNode){
-					ed.selection.setContent("");
+					ed.insertContent("");
 					sNode.parentNode.removeChild(sNode);
 					eNode.parentNode.removeChild(eNode); 
 				}
 			};
-			ed.selection.setContent(new_content);
+			ed.insertContent(new_content);
 		},
 
 		/*
@@ -1080,9 +1080,11 @@
 				w.not_O = true;
 
 				// move caret to EndOfPreviousSibling, mainly for IE:
+				/* TODO: What the frick is this? puts us in the wrong span when we are at the start of a text node
 				if (rng.startOffset == 0) {
 					rng = _moveCaretToEndOfPreviousSibling(ed, rng, startContainer);
 				}
+				*/
 				startContainer = rng.startContainer;
 
 				if (startContainer.nodeType == 3) {
@@ -2399,7 +2401,7 @@
 					}
 					break;
 				/*
-				 * case 'formatting_capitals': //Capitals ed.selection.setContent('<span wce="' + '__t' + '=' + wceType + '&amp;height=' + character + '"' + style + '>' + content + '</span>'); break;
+				 * case 'formatting_capitals': //Capitals ed.insertContent('<span wce="' + '__t' + '=' + wceType + '&amp;height=' + character + '"' + style + '>' + content + '</span>'); break;
 				 */
 				case 'unclear':
 					// uncertain letters
@@ -2452,6 +2454,9 @@
 				var e = window.event;
 			}
 			
+			// be sure WCE_VAR is up to date
+			WCEUtils.setWCEVariable(ed);
+
 			var language = window.navigator.userLanguage || window.navigator.language;
 
 			var ek = e.keyCode || e.charCode || 0;
@@ -2507,10 +2512,10 @@
 			// TODO: if no short_cut B, C ,Z ,Y .....
 			if (wcevar.isInBE && ((!tinymce.isMac && !e.ctrlKey) || (tinymce.isMac && !e.metaKey))) {
 				// keydown for insert letter
-				/*
-				if (wcevar.isCaretAtNodeEnd && ek != 8 && ek != 46 && 
-					(wcevar.type == ed.WCE_CON.formatEnd || wcevar.type == 'chapter_number' 
-						|| wcevar.type === 'book_number' || wcevar.type == 'verse_number'|| wcevar.type == 'lection_number')) {
+				if (wcevar.isCaretAtNodeEnd && ek != 8 && ek != 46
+					&& (wcevar.type == ed.WCE_CON.formatEnd || wcevar.type == 'chapter_number' 
+						|| wcevar.type === 'book_number' || wcevar.type == 'verse_number'|| wcevar.type == 'lection_number')
+				) {
 					//wenn selectednode in andere BlockElement
 					if (WCEUtils.isWceBE(ed, wcevar.selectedNode.parentNode.parentNode)) {
 						return stopEvent(ed, e);
@@ -2530,7 +2535,6 @@
 				}
 
 				 else
-				*/
 				if (ek == 46 && wcevar.selectedNode && ($(wcevar.selectedNode).hasClass('commentary') || $(wcevar.selectedNode).hasClass('ews') || $(wcevar.selectedNode).hasClass('lectionary-other'))) {
 					WCEUtils.wceDelNode(ed);
 					return stopEvent(ed, e);
@@ -2695,7 +2699,7 @@
 					var bID = wceNode.getAttribute('id');
 					if (!bID) {
 						ed.selection.select(wceNode);
-						ed.selection.setContent("");
+						ed.insertContent("");
 						//$(wceNode).remove();
 					} else {
 						//delete group
@@ -2712,7 +2716,7 @@
 								elem=ed.dom.get('lb' + '_' + bc + '_' + bb);
 								if (elem) {									
 									ed.selection.select(elem);
-									ed.selection.setContent("");
+									ed.insertContent("");
 									ed.WCE_VAR.lcnt = 0;
 								}
 								
@@ -2723,7 +2727,7 @@
 									elem=ed.dom.get(arr[i] + '_' + bc + '_' + bb);
 									if (elem) {									
 										ed.selection.select(elem);
-										ed.selection.setContent("");
+										ed.insertContent("");
 									}
 									//$(ed.dom.get(arrItem + '_' + bc + '_' + bb)).remove();
 								}
@@ -2736,14 +2740,14 @@
 				/* else {
 				 if (wceNode !== null) {
 				 // Node is replaced by marker (which is then replaced by original text) => solution for problems with removing nodes under Safari (#1398)
-				 ed.selection.setContent('<span id="_math_marker">&nbsp;</span>');
+				 ed.insertContent('<span id="_math_marker">&nbsp;</span>');
 				 }
 				 }*/
 
 				if ((originalText && originalText != 'null') || originalText=='') {
 					if(notAddOriginal){ 
 					}else{
-						 ed.selection.setContent(originalText);
+						 ed.insertContent(originalText);
 					}
 					ed.focus(); 
 					ed.isNotDirty = 0;
@@ -2752,7 +2756,7 @@
 					if(wceNode){
 						ed.selection.select(wceNode);
 					}
-					ed.selection.setContent("");
+					ed.insertContent("");
 				}
 				ed.focus();
 
@@ -3675,7 +3679,7 @@
 						if (v.isc) {
 							return;
 						}
-						//if select an element tinyMCE selection.setContent replace only innerHTML of the element and tag remain.
+						//if select an element tinyMCE insertContent replace only innerHTML of the element and tag remain.
 						//Fixed: tag muss be remove.
 						if (v.isCaretAtFormatStart && !v.isCaretAtFormatEnd) {
 							$(v.selectedStartNode).remove();
@@ -3970,7 +3974,7 @@
 				if (number) {
 					WCEUtils.updateBreakCounter(ed, c, number);
 				}
-				ed.selection.setContent(WCEUtils.getBreakHtml(ed, c));
+				ed.insertContent(WCEUtils.getBreakHtml(ed, c));
 			});
 
 			ed.addCommand('mceAdd_pc', function(c) {

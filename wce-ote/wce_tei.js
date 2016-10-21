@@ -599,7 +599,7 @@ function getHtmlByTei(inputString) {
 
 			var $newNode = $newDoc.createElement('span');
 			// add line break for "page end"
-			$newNode.setAttribute("class", "brea");
+			$newNode.setAttribute("class", "mceNonEditable brea");
 			$newNode.setAttribute("wce", "__t=brea&__n=&hasBreak=yes&break_type=lb&number=&pb_type=&fibre_type=&facs=&lb_alignment=");
 			nodeAddText($newNode, '\u2010');
 			$br = $newDoc.createElement('br');
@@ -690,13 +690,13 @@ function getHtmlByTei(inputString) {
 
 		if (divType == 'lection') {
 			var $newNode = $newDoc.createElement('span');
-			$newNode.setAttribute('class', 'lection_number');
+			$newNode.setAttribute('class', 'lection_number mceNonEditable');
 			$newNode.setAttribute('wce', '__t=lection_number&number=' + $teiNode.getAttribute('n'));
 			$newNode.setAttribute('id', ++gid);
 			nodeAddText($newNode, 'Lec');
 		} else if (divType == 'book') {
 			var $newNode = $newDoc.createElement('span');
-			$newNode.setAttribute('class', 'book_number');
+			$newNode.setAttribute('class', 'book_number mceNonEditable');
 			$newNode.setAttribute('wce', '__t=book_number');
 			$newNode.setAttribute('id', ++gid);
 			var $booknumber = $teiNode.getAttribute('n').substring(1);
@@ -707,7 +707,7 @@ function getHtmlByTei(inputString) {
 			nodeAddText($newNode, $booknumber);
 		} else if (divType == 'chapter') {
 			var $newNode = $newDoc.createElement('span');
-			$newNode.setAttribute('class', 'chapter_number');
+			$newNode.setAttribute('class', 'chapter_number mceNonEditable');
 			$newNode.setAttribute('wce', '__t=chapter_number');
 			$newNode.setAttribute('id', ++gid);
 			var nValue = $teiNode.getAttribute('n');
@@ -731,7 +731,7 @@ function getHtmlByTei(inputString) {
 			}
 		} else { //incipit or explicit
 			var $newNode = $newDoc.createElement('span');
-			$newNode.setAttribute('class', 'chapter_number');
+			$newNode.setAttribute('class', 'chapter_number mceNonEditable');
 			$newNode.setAttribute('wce', '__t=chapter_number');
 			if ($teiNode.getAttribute("type") === "incipit")
 				nodeAddText($newNode, "Inscriptio");
@@ -752,7 +752,7 @@ function getHtmlByTei(inputString) {
 	 */
 	var Tei2Html_ab = function($htmlParent, $teiNode) {
 		var $newNode = $newDoc.createElement('span');
-		$newNode.setAttribute('class', 'verse_number');
+		$newNode.setAttribute('class', 'verse_number mceNonEditable');
 		var nValue = $teiNode.getAttribute('n');
 		if (nValue && nValue != '') {
 			var indexV = nValue.indexOf('V');
@@ -1123,7 +1123,7 @@ function getHtmlByTei(inputString) {
 	 */
 	var Tei2Html_break = function($htmlParent, $teiNode, type) {
 		//
-		// <span class="brea" wce="__t=brea&amp;__n=&amp;break_type=lb&amp;number=2&amp;pb_type=&amp;fibre_type=&amp;running_title=&amp;lb_alignment=&amp;insert=Insert&amp;cancel=Cancel"> - <br /> </span>
+		// <span class="mceNonEditable brea" wce="__t=brea&amp;__n=&amp;break_type=lb&amp;number=2&amp;pb_type=&amp;fibre_type=&amp;running_title=&amp;lb_alignment=&amp;insert=Insert&amp;cancel=Cancel"> - <br /> </span>
 		//
 		var $newNode = $newDoc.createElement('span');
 		var cl = 0;
@@ -1169,7 +1169,7 @@ function getHtmlByTei(inputString) {
 			return null;
 		}
 			
-		$newNode.setAttribute('class', 'brea');
+		$newNode.setAttribute('class', 'mceNonEditable brea');
 		var _id = $teiNode.getAttribute('id');
 		if (_id) {
 			$newNode.setAttribute('id', _id);
@@ -1900,7 +1900,7 @@ function getTeiByHtml(inputString, args) {
 		}
 		
 		var preChild=$htmlNode.previousSibling;
-		var cName,wceAttr;
+		var wceAttr;
 		var isBreak=false;
 		while(preChild){
 			if((preChild.nodeName=='w' && !preChild.firstChild)){
@@ -1908,15 +1908,11 @@ function getTeiByHtml(inputString, args) {
 				continue;
 			}
 			
-			cName=preChild.getAttribute('class');
-			if(!cName) {
-				break;
-			}
-			
-			if (cName=='chapter_number' || cName=='verse_number' || cName=='book_number') {
+			if ($(preChild).hasClass('chapter_number') || $(preChild).hasClass('verse_number') || $(preChild).hasClass('book_number')) {
 				preChild=preChild.previousSibling;
 				continue;
-			} if (cName=='brea') {
+			}
+			if ($(preChild).hasClass('brea')) {
 				wceAttr = preChild.getAttribute('wce');
 				if (wceAttr.match(/hasBreak=yes/) && wceAttr.match(/break_type=pb/)) {//only page break with hasBreak=yes
 					isBreak=true;
@@ -2724,13 +2720,13 @@ function getTeiByHtml(inputString, args) {
 		
 		wceAttrValue = $htmlNode.getAttribute('wce'); 
 		if (!wceAttrValue) {
-			if ($htmlNode.getAttribute('class') == 'verse_number') {
+			if ($($htmlNode).hasClass('verse_number')) {
 				wceAttrValue = 'verse_number';
-			} else if ($htmlNode.getAttribute('class') == 'chapter_number') {
+			} else if ($($htmlNode).hasClass('chapter_number')) {
 				wceAttrValue = 'chapter_number';
-			} else if ($htmlNode.getAttribute('class') == 'book_number') {
+			} else if ($($htmlNode).hasClass('book_number')) {
 				wceAttrValue = 'book_number';
-			} else if ($htmlNode.getAttribute('class') == 'lection_number') {
+			} else if ($($htmlNode).hasClass('lection_number')) {
 				wceAttrValue = 'lection_number';
 			}
 		}
@@ -3738,7 +3734,7 @@ function getTeiByHtml(inputString, args) {
 		if ($teiParent.nodeName == 'w') {
 			$teiParent = $teiParent.parentNode;
 			if ($htmlNode.nextSibling && $htmlNode.nextSibling.nodeType == 1
-				&& $htmlNode.nextSibling.getAttribute("class") == 'brea') { // break following the note => insert space (don't forget to reverse that at import
+				&& $($htmlNode.nextSibling).hasClass('brea')) { // break following the note => insert space (don't forget to reverse that at import
 				var $tempNode = $newDoc.createTextNode(" ");
 				$htmlNode.parentNode.insertBefore($tempNode, $htmlNode.nextSibling);
 			}	
