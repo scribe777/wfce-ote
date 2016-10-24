@@ -1,5 +1,5 @@
 /* 
-	Copyright (C) 2012-2014 Center for Digital Humanities, Trier
+	Copyright (C) 2012-2016 Center for Digital Humanities, Trier
 	
 	This file is part of the Online Transcription Editor (OTE).
 
@@ -103,7 +103,8 @@ tinyMCE.addI18n('de.wce',{
 	fw_gloss : "Glosse",
 	fw_stichoi: "Stichen",
 	fw_isolated: "Isolierte Randnotiz",
-	fw_andrew : "Andrew of Caesarea",
+	fw_andrew: "Andrew of Caesarea",
+	fw_ornament: "Ornament",
 	text_untranscribed: "Nicht-transkribierter Kommentar",
 	other_lections_untranscribed: "Nicht-transkribierte(r) andere Lektion(en)",
 	firsthand_reading : "Ursprüngliche Lesart",

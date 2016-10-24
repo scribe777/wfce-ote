@@ -33,7 +33,7 @@
 */
 
 (function() {
-	var wfce_editor = "1.3.11 (2016-02-18)";
+	var wfce_editor = "1.3.12 (2016-05-20)";
 
 	// Load plugin specific language pack
 	tinymce.PluginManager.requireLangPack('wce');
@@ -2015,6 +2015,9 @@
 									break;
 								case 'andrew':
 									info_text += ed.getLang('wce.fw_andrew');
+									break;
+								case 'orn':
+									info_text += ed.getLang('wce.fw_ornament');
 									break;
 								default:
 									info_text += ar['fw_type_other'];
