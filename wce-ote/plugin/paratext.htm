@@ -70,6 +70,7 @@
 							<option value="pageNum">{#fw_pagenumber}</option>
 							<option value="isolated">{#fw_isolated}</option>
 							<option value="andrew">{#fw_andrew}</option>
+							<option value="orn">{#fw_ornament}</option>
 							<option value="other">{#other}</option>
 					</select>
 					</td>
@@ -194,7 +195,7 @@
 					var v = $('#fw_type').val();
 					if (v == 'runTitle' || v == 'chapTitle' || v == 'lectTitle' || v == 'lectionary-other'
 						|| v == 'colophon' || v == 'euthaliana' || v == 'gloss' || v =='pageNum'
-						|| v == 'isolated' || v == 'commentary' || v == 'ews' || v == 'other') {
+						|| v == 'isolated' || v == 'commentary' || v == 'ews' || v == 'orn' || v == 'other') {
 						return;
 					}
 					if (timeout) {
@@ -237,8 +238,9 @@
 
 	function getParaTag() {
 		var v = $('#fw_type').val();
-		if (v == 'runTitle' || 'chapTitle' || v == 'lectTitle' || v == 'colophon' || v == 'quireSig' 
-			|| v == 'euthaliana' || v == 'gloss' || v == 'pageNum' || v == 'isolated' || v == 'other')
+		if (v == 'runTitle' || 'chapTitle' || v == 'lectTitle' || v == 'colophon' 
+			|| v == 'quireSig' || v == 'euthaliana' || v == 'gloss' 
+			|| v == 'pageNum' || v == 'isolated' || v == 'orn' || v == 'other')
 			return 'fw';
 		else if (v == 'commentary' || v == 'lectionary-other')
 			return '';
@@ -293,7 +295,7 @@
 			document.paratextinfo.paratext_position.disabled = false;
 			document.paratextinfo.paratext_alignment.disabled = true;
 		} else if (v == 'runTitle' || v == 'chapTitle' || v == 'lectTitle' || v == 'colophon' 
-			|| v == 'euthaliana' || v == 'gloss' || v =='pageNum' || v == 'other') {
+			|| v == 'euthaliana' || v == 'gloss' || v == 'pageNum' || v == 'orn' || v == 'other') {
 			//don't get a number, only text
 			document.paratextinfo.number.value = '';
 			document.paratextinfo.number.disabled = true;
@@ -349,7 +351,7 @@
 	
 	function testOther() {
 		if ((document.paratextinfo.paratext_position.options[15].selected == true && document.getElementById('paratext_position_other').value == '')
-			|| (document.paratextinfo.fw_type.options[17].selected == true && document.getElementById('fw_type_other').value == '')) 
+			|| (document.paratextinfo.fw_type.options[18].selected == true && document.getElementById('fw_type_other').value == '')) 
 			return false;
 		return true;
 	}

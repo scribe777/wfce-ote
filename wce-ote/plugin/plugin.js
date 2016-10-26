@@ -33,7 +33,7 @@
 */
 
 (function() {
-	var wfce_editor = "2.0.00beta (2016-10-21)";
+	var wfce_editor = "2.0.1beta (2016-10-25)";
 
 	// Load plugin specific language pack
 	tinymce.PluginManager.requireLangPack('wce');
@@ -1755,7 +1755,7 @@
 			var sele_node = e.target;
 			var wceAttr = sele_node.getAttribute('wce');
 			var _dirty = ed.isDirty();
-
+			var useParent = false;
 			var type_to_show = ['note', 'corr'];
 			// TODO: make better
 
@@ -1772,52 +1772,34 @@
 				var corr_str = '';
 				var info_text = '';
 				var k, v, kv, kv_ar;
+				var type_name;
+				var switchvar;
+				var pNode;
 				for (var i = 0; i < info_arr.length; i++) {
 					ar = WCEUtils.stringToArray(info_arr[i]);
-					
-					var type_name = ar['__t'];
+					type_name = ar['__t'];
 					type_name = type_name.split('_');
-					
-					var switchvar = type_name[0];
+					switchvar = type_name[0];
 					
 					/*
-					// We test if there is a correction on an abbreviation or a gap. If so, we have to use the correction for the mouse over
+					// We test if there is a correction on top of another structure. If so, we have to use the correction for the mouse over. i=0 is the original meaning, i>1 consists of all corrections
 					*/
-					if (switchvar === 'abbr') {
-						if (i == 0 && sele_node.parentNode && $(sele_node.parentNode).hasClass('corr')) { //check parent
-							wceAttr = sele_node.parentNode.getAttribute('wce');
+					if (switchvar === 'abbr' || switchvar === 'gap' || switchvar === 'formatting') {
+						pNode = sele_node.parentNode;
+						if (i == 0 && pNode && pNode.getAttribute('class') === 'corr') { //check parent node
+							useParent = true;
+							wceAttr = pNode.getAttribute('wce');
 							info_arr = wceAttr.split('@');
 							ar = WCEUtils.stringToArray(info_arr[0]);
-						}
-						else if (i == 1) { // check ancestor
-							ar = WCEUtils.stringToArray(info_arr[0]);
-							if (ar['__t'] === 'corr') {
-								switchvar = 'corr';
-								type_name = 'corr';
-								corr_str = '';
-							} else
-								ar = WCEUtils.stringToArray(info_arr[i]);
-						}
-					} else if (switchvar === 'gap') {
-						if (i == 0 && sele_node.parentNode && $(sele_node.parentNode).hasClass('corr')) { //check parent
-							wceAttr = sele_node.parentNode.getAttribute('wce');
-							info_arr = wceAttr.split('@');
-							ar = WCEUtils.stringToArray(info_arr[0]);
-						}
-						else if (i == 1) { // check ancestor
-							ar = WCEUtils.stringToArray(info_arr[0]);
-							if (ar['__t'] === 'corr') {
-								switchvar = 'corr';
-								type_name = 'corr';
-								corr_str = '';
-							} else
-								ar = WCEUtils.stringToArray(info_arr[i]);
-						}
-					} else if (switchvar === 'formatting') {
-						if (i == 0 && sele_node.parentNode && $(sele_node.parentNode).hasClass('corr')) { //check parent
-							wceAttr = sele_node.parentNode.getAttribute('wce');
-							info_arr = wceAttr.split('@');
-							ar = WCEUtils.stringToArray(info_arr[0]);
+							switchvar = 'corr';
+							type_name = 'corr';
+							corr_str = '';
+							for (var j = 1; j < info_arr.length; j++) {
+								var temparray = WCEUtils.stringToArray(info_arr[j]);
+								if (temparray['__t'] === 'corr') { //can it be anything different?
+									Array.prototype.push.apply(ar,temparray)
+								}
+							}
 						}
 						else if (i == 1) { // check ancestor
 							ar = WCEUtils.stringToArray(info_arr[0]);
@@ -1920,12 +1902,11 @@
 							}
 							corr_str += '</div>';
 							corr_str += '<div style="margin-top:5px">' + ar['__n'] + ': ';
-							if (ar['blank_correction'] == 'on')
+							if (ar['blank_correction'] && ar['blank_correction'] === 'on')
 								corr_str += tinymce.translate('infotext_deleted') + '</div>';
 							else
 								corr_str += ar['corrector_text'].replace(/<span class="abbr_add_overline"/g, 
 										'<span class="abbr_add_overline" style="text-decoration:overline"') + '</div>';
-							
 							if (ar['ut_videtur_corr'] && ar['ut_videtur_corr'] === 'on')
 								corr_str += '(ut videtur corr)';
 							var deletionText = ar['deletion'].replace(/\,/g, ', ');
@@ -2004,6 +1985,9 @@
 								case 'andrew':
 									info_text += tinymce.translate('fw_andrew');
 									break;
+								case 'orn':
+									info_text += tinymce.translate('fw_ornament');
+									break;
 								default:
 									info_text += ar['fw_type_other'];
 							}
@@ -2081,7 +2065,7 @@
 							var foo=ar['formatting_ornamentation_other'];
 							if (foo != null) {//  another type of ornamentation
 								info_text = '<div>' + foo + '</div>';
-							}else if (ar['capitals_height'] != null) {// output only if capitals
+							} else if (ar['capitals_height'] != null) {// output only if capitals
 								info_text = '<div>' + tinymce.translate('menu_hl_capitals') + '</div><div style="margin-top:10px">' + tinymce.translate('capitals_height') + ': ' + ar['capitals_height'] + '</div>';
 							} else {// all other formatting
 								if (ar['__t'] === 'formatting_displaced-above')
@@ -2130,10 +2114,17 @@
 					else {
 						var fs = new RegExp(ed.WCE_CON.startFormatHtml, 'g');
 						var fe = new RegExp(ed.WCE_CON.endFormatHtml, 'g');
-						if (ar['ut_videtur_firsthand'] && ar['ut_videtur_firsthand'] === 'on')
-							corr_str = '*: ' + $(sele_node).html() + ' (ut videtur)' +  corr_str;
-						else 
-							corr_str = '*: ' + $(sele_node).html() + corr_str;
+						if (ar['ut_videtur_firsthand'] && ar['ut_videtur_firsthand'] === 'on') {
+							if (useParent)
+								corr_str = '*: ' + ar['original_firsthand_reading'] + ' (ut videtur)' +  corr_str;
+							else
+								corr_str = '*: ' + $(sele_node).html() + ' (ut videtur)' +  corr_str;
+						} else {
+							if (useParent)
+								corr_str = '*: ' + ar['original_firsthand_reading'] + corr_str;
+							else
+								corr_str = '*: ' + $(sele_node).html() + corr_str;
+						}
 						corr_str = corr_str.replace(fs, "").replace(fe, "");
 					}
 				}
@@ -2911,7 +2902,7 @@
 						tinymce.DOM.add(statusbar, 'div', {
 								'class' : 'mce-flow-layout-item',
 								'style' : 'padding:8px;'
-							}, '<input type="checkbox" id="' + id + '"> Adaptive selection</input><span style="margin: 0 100px">Version: ' + wfce_editor +'</span><span style="">Transcription Editor by <img style="height:1.5em;margin-top:-0.5em;" src="'+url+'/trier-logo.png"/></span>', true
+							}, '<input type="checkbox" id="' + id + '"> Adaptive selection</input><span style="margin: 0 100px">Version: ' + wfce_editor +'</span><span style="">Transcription Editor by <img style="height:2em;margin-top:-0.5em;" src="'+url+'/trier-logo-TCDH.png"/></span>', true
 						),
 						$(statusbar).find('.mce-first')[0]
 					);
@@ -3782,13 +3773,13 @@
 				} else if (wceNode && wceAttr && wceAttr.match(/corr/)) {
 					_add_new_wce_node = false;
 				}
-				doWithDialog(ed, url, '/correction.htm', 900, 600, 1, _add_new_wce_node, tinymce.translate('reading_title'));
+				doWithDialog(ed, url, '/correction.htm', 1024, 768, 1, _add_new_wce_node, tinymce.translate('reading_title'));
 				
 			});
 
 			// Edit corrections
 			ed.addCommand('mceEditCorrection', function() {
-				doWithDialog(ed, url, '/correction.htm', 900, 600, 1, false, tinymce.translate('reading_title'));
+				doWithDialog(ed, url, '/correction.htm', 1024, 768, 1, false, tinymce.translate('reading_title'));
 			});
 
 			ed.addCommand('mceAddCorrection_Shortcut', function() {

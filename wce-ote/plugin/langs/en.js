@@ -1,5 +1,5 @@
 /* 
-	Copyright (C) 2012-2014 Center for Digital Humanities, Trier
+	Copyright (C) 2012-2016 Center for Digital Humanities, Trier
 	
 	This file is part of the Online Transcription Editor (OTE).
 
@@ -87,8 +87,8 @@ tinymce.addI18n('en',{
 	number_attribute : 'Number (as used for XML attribute "n")',
 	number_calculate : "Calculate number automatically",
 	numeral : "Corresponding number",
-	fw_commentary_text: "Commentary text",
-	fw_ews: "Ews",
+	fw_commentary_text : "Commentary text",
+	fw_ews : "Ews",
 	fw_pagenumber: "Page number (as written)",
 	fw_quiresignature : "Quire signature",
 	fw_running_title : "Running title",
@@ -103,11 +103,12 @@ tinymce.addI18n('en',{
 	fw_eusebian : "Eusebian canon",
 	fw_euthaliana : "Euthaliana",
 	fw_gloss : "Gloss",
-	fw_stichoi: "Stichoi",
-	fw_isolated: "Isolated marginal note",
+	fw_stichoi : "Stichoi",
+	fw_isolated : "Isolated marginal note",
 	fw_andrew : "Andrew of Caesarea",
-	text_untranscribed: "Untranscribed commentary text",
-	other_lections_untranscribed: "Untranscribed other lection(s)",
+	fw_ornament : "Ornament",
+	text_untranscribed : "Untranscribed commentary text",
+	other_lections_untranscribed : "Untranscribed other lection(s)",
 	firsthand_reading : "First hand reading",
 	ut_videtur : "ut videtur",
 	reading_title : "Please insert a reading",

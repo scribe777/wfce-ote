@@ -1,5 +1,5 @@
 /* 
-	Copyright (C) 2012-2014 Center for Digital Humanities, Trier
+	Copyright (C) 2012-2016 Center for Digital Humanities, Trier
 	
 	This file is part of the Online Transcription Editor (OTE).
 
@@ -86,8 +86,8 @@ tinymce.addI18n('de',{
 	number_attribute : 'Zahl (wie für das XML-Attribut "n" benutzt)',
 	number_calculate : "Automatische Umwandlung der Zahl",
 	numeral : "Zugehörige Zahl",
-	fw_commentary_text: "Kommentartext",
-	fw_ews: "Ews",
+	fw_commentary_text : "Kommentartext",
+	fw_ews : "Ews",
 	fw_pagenumber: "Seitenzahl (wie vermerkt)",
 	fw_quiresignature : "Lagenzählung",
 	fw_running_title : "Laufender Titel",
@@ -103,8 +103,9 @@ tinymce.addI18n('de',{
 	fw_stichoi: "Stichen",
 	fw_isolated: "Isolierte Randnotiz",
 	fw_andrew : "Andrew of Caesarea",
-	text_untranscribed: "Nicht-transkribierter Kommentar",
-	other_lections_untranscribed: "Nicht-transkribierte(r) andere Lektion(en)",
+	fw_ornament : "Ornament",
+	text_untranscribed : "Nicht-transkribierter Kommentar",
+	other_lections_untranscribed : "Nicht-transkribierte(r) andere Lektion(en)",
 	firsthand_reading : "Ursprüngliche Lesart",
 	ut_videtur : "ut videtur",
 	reading_title : "Bitte Lesart einfügen",
@@ -310,7 +311,7 @@ tinymce.addI18n('de',{
 	help : 'Hilfe',
 	apply : 'Anwenden',
 	menu_info : 'Dies ist Version: ',
-	changelog: 'Liste der Änderungen',
+	changelog : 'Liste der Änderungen',
 	clipboard : 'Zwischenablage',
 	clipboard_note : 'Bitte nutzen Sie Ctrl+C bzw. Cmd+C, um das XML sicher in die Zwischenablage zu kopieren.',
 	other_ornamentation : 'Verzierungsart',
