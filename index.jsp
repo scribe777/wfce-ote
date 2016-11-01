@@ -288,13 +288,18 @@ function showVersionHistory() {
 			h += '</tr>';
 			$(xml).find('history').each(function() {
 				++rownum;
+				var hash = $(this).attr('versionHash');
+				var author = $(this).attr('author');
+				var comment = $(this).find('comment').text();
+				var saveDate = $(this).attr('date');
+				var userName = (comment && comment.match('^PUBLISHED:')) ? 'PUBLISHED' : author;
 				h += '<tr class="'+(rownum%2?'rowodd':'roweven')+'" style="cursor:pointer;">';
-				h += '<td height="24" onclick="loadTranscription(\''+$(this).attr('versionHash')+'\');" id="sel_'+$(this).attr('versionHash')+'_'+$(this).attr('author')+'" class="selectionCell">&nbsp;</td>';
-				h += '<td onclick="loadTranscription(\''+$(this).attr('versionHash')+'\', \''+$(this).attr('author')+'\');" class="vDate">'+$(this).attr('date')+'</td>';
-				h += '<td onclick="loadTranscription(\''+$(this).attr('versionHash')+'\', \''+$(this).attr('author')+'\');">'+$(this).attr('author')+'</td>';
-				h += '<td onclick="loadTranscription(\''+$(this).attr('versionHash')+'\', \''+$(this).attr('author')+'\');">'+$(this).find('comment').text()+'</td>';
-				h += '<td><span class="mergeControl"><a href="#" onclick="compareCurrentTo(\''+$(this).attr('versionHash')+'\', \''+$(this).attr('author')+'\');return false;"><img height="24" src="/community/images/merge.png"/></a></span></td>';
-				h += '<td class="versionHash" style="display:none;">'+$(this).attr('versionHash')+'</td>';
+				h += '<td height="24" onclick="loadTranscription(\''+hash+'\');" id="sel_'+hash+'_'+userName+'" class="selectionCell">&nbsp;</td>';
+				h += '<td onclick="loadTranscription(\''+hash+'\', \''+userName+'\');" class="vDate">'+saveDate+'</td>';
+				h += '<td onclick="loadTranscription(\''+hash+'\', \''+userName+'\');">'+author+'</td>';
+				h += '<td onclick="loadTranscription(\''+hash+'\', \''+userName+'\');">'+comment+'</td>';
+				h += '<td><span class="mergeControl"><a href="#" onclick="compareCurrentTo(\''+hash+'\', \''+userName+'\');return false;"><img height="24" src="/community/images/merge.png"/></a></span></td>';
+				h += '<td class="versionHash" style="display:none;">'+hash+'</td>';
 				h += '</tr>';
 			});
 			h += '</tbody></table>';
