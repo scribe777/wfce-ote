@@ -2034,7 +2034,7 @@
 									if (ar['unit'] == 'other') {
 										info_text += ar['unit_other'] + '</div>';
 									} else if (ar['unit'] != 'unspecified') {
-										var str_unit = "wce.unit_"+ar['unit'];
+										var str_unit = "unit_" + ar['unit'];
 										info_text += tinymce.translate(str_unit) + (tinyMCE.activeEditor.settings.language == 'de' ? '(e)' : '(s)') + '</div>';
 									}
 								}
@@ -3773,13 +3773,13 @@
 				} else if (wceNode && wceAttr && wceAttr.match(/corr/)) {
 					_add_new_wce_node = false;
 				}
-				doWithDialog(ed, url, '/correction.htm', 1024, 768, 1, _add_new_wce_node, tinymce.translate('reading_title'));
+				doWithDialog(ed, url, '/correction.htm', 1100, 700, 1, _add_new_wce_node, tinymce.translate('reading_title'));
 				
 			});
 
 			// Edit corrections
 			ed.addCommand('mceEditCorrection', function() {
-				doWithDialog(ed, url, '/correction.htm', 1024, 768, 1, false, tinymce.translate('reading_title'));
+				doWithDialog(ed, url, '/correction.htm', 1100, 700, 1, false, tinymce.translate('reading_title'));
 			});
 
 			ed.addCommand('mceAddCorrection_Shortcut', function() {
