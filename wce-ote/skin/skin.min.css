@@ -2,6 +2,33 @@
 
 /* above is the default skin values from the tinymce skin creator. below are custom values */
 
-.mce-menubtn {
-	margin-top: -3px !important;
+.mce-btn button {
+	padding:4px 4px; !important;
+	line-height: 0px; !important;
+}
+
+.mce-menubtn button {
+	padding:4px 1px 4px 4px; !important;
+}
+
+/*put the line height back in for the text in the Save button*/
+.mce-btn button .mce-txt {
+	line-height:20px; !important;
+	*line-height:16px; !important;
+}
+
+/*sort out the display of the popup windows*/
+.mce-window-head{
+	background: lightsteelblue; !important;
+}
+
+.mce-window-head .mce-close {
+	top: 4px; !important;
+	line-height:15px; !important;
+}
+
+.mce-window-head .mce-title {
+	font-size: 15px; !important;
+	line-height:15px; !important;
+	text-align: center; !important;
 }

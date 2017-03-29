@@ -2892,22 +2892,24 @@
 			
 			$(document.body).append(infoBox);
 
-			// add adaptive selection checkbox
-			ed.on('postRender', function() {
-				var ed = $(this)[0];
-				var id = ed.id + '_adaptive_selection';
-				var statusbar= $(tinymce.activeEditor.iframeElement.parentElement.parentElement).children('.mce-statusbar').children('div');
-				if (statusbar) {
-					tinymce.DOM.insertAfter(
-						tinymce.DOM.add(statusbar, 'div', {
-								'class' : 'mce-flow-layout-item',
-								'style' : 'padding:8px;'
-							}, '<input type="checkbox" id="' + id + '"> Adaptive selection</input><span style="margin: 0 100px">Version: ' + wfce_editor +'</span><span style="">Transcription Editor by <img style="height:2em;margin-top:-0.5em;" src="'+url+'/trier-logo-TCDH.png"/></span>', true
-						),
-						$(statusbar).find('.mce-first')[0]
-					);
-				}
-			});
+			// add adaptive selection checkbox if we are the main editor and not an internal one in a dialogue box
+			if (ed.getParam('internal_editor') !== true) {
+    			ed.on('postRender', function() {
+    				var ed = $(this)[0];
+    				var id = ed.id + '_adaptive_selection';
+    				var statusbar= $(tinymce.activeEditor.iframeElement.parentElement.parentElement).children('.mce-statusbar').children('div');
+    				if (statusbar) {
+    					tinymce.DOM.insertAfter(
+    						tinymce.DOM.add(statusbar, 'div', {
+    								'class' : 'mce-flow-layout-item',
+    								'style' : 'padding:8px;'
+    							}, '<input type="checkbox" id="' + id + '"> Adaptive selection</input><span style="margin: 0 100px">Version: ' + wfce_editor +'</span><span style="">Transcription Editor by <img style="height:2em;margin-top:-0.5em;" src="'+url+'/trier-logo-TCDH.png"/></span>', true
+    						),
+    						$(statusbar).find('.mce-first')[0]
+    					);
+    				}
+    			});
+			}
 
 			// html to tei
 			ed.addCommand('mceHtml2Tei', function() {
@@ -3973,7 +3975,7 @@
 			});
 
 			ed.addCommand('mceAddCapitals', function() {
-				doWithDialog(ed, url, '/capitals.htm', 480, 320, 1, true), tinymce.translate('capitals_title');
+				doWithDialog(ed, url, '/capitals.htm', 480, 320, 1, true, tinymce.translate('capitals_title'));
 			});
 
 			ed.addCommand('mceEditCapitals', function() {

@@ -40,6 +40,8 @@
 		<script type="text/javascript" src="../jquery.js"></script>
 		<script type="text/javascript" src="../rangy-core.js"></script>
 		<script type="text/javascript" src="js/wce.js"></script>
+		<link rel="stylesheet" type="text/css" href="../skin/dialog.css"/>
+		<link rel="stylesheet" type="text/css" href="../skin/ui.css"/>
 </head>
 
 <body id="table">
@@ -177,6 +179,7 @@
 			theme_advanced_path : false,  
 			plugins : "pagebreak,layer,print,paste", 
 			external_plugins: { 'wce' : '../../wce-ote/plugin/plugin.js' },
+			internal_editor: true,
 			toolbar : "undo redo charmap | code removeformat | print contextmenu paste fullscreen | "+
 				"breaks illegible decoration abbreviation punctuation",
 			// Theme options
