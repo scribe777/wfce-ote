@@ -1,5 +1,5 @@
 /*  
-	Copyright (C) 2012-2016 Trier Center for Digital Humanities, Trier (Germany)
+	Copyright (C) 2012-2017 Trier Center for Digital Humanities, Trier (Germany)
 	
 	This file is part of the Online Transcription Editor (OTE).
 
@@ -33,7 +33,7 @@
 */
 
 (function() {
-	var wfce_editor = "2.1 (2017-04-10)";
+	var wfce_editor = "2.2BETA (2017-04-11)";
 
 	// Load plugin specific language pack
 	tinymce.PluginManager.requireLangPack('wce');
@@ -1970,7 +1970,7 @@
 									break;
 								case 'lectionary-other':
 									info_text = '<div>' + tinymce.translate('infotext_untranscribed_other_lections') + '</div>';
-									if (ar['covered'])
+									if (ar['covered'] > 0)
 										info_text += '<div style="margin-top:5px">' + ar['covered'] + ' ' + tinymce.translate('infotext_lines_covered') + '.';
 									break;
 								case 'stichoi':

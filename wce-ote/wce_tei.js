@@ -1,5 +1,5 @@
 /*  
-	Copyright (C) 2012-2016 Trier Center for Digital Humanities, Trier (Germany)
+	Copyright (C) 2012-2017 Trier Center for Digital Humanities, Trier (Germany)
 	
 	This file is part of the Online Transcription Editor (OTE).
 
@@ -1130,14 +1130,17 @@ function getHtmlByTei(inputString) {
 		var paratexttype;
 		var $temp;
 		
-		while ($teiNode && $teiNode.nodeName == 'lb' && $teiNode.nextSibling && $teiNode.nextSibling.nodeName == 'note' && ($teiNode.nextSibling.getAttribute('type') == 'lectionary-other'
-			|| $teiNode.nextSibling.getAttribute('type') == 'commentary')) { // ignore <lb/> added for untranscribed text
-			cl++; //step counter
-			paratexttype = $teiNode.nextSibling.getAttribute('type'); // remember latest type for correct value below
-			$temp = ($teiNode.nextSibling.nextSibling) ? $teiNode.nextSibling.nextSibling : null;
-			$teiNode.parentNode.removeChild($teiNode.nextSibling);
-			$teiNode.parentNode.removeChild($teiNode);
-			$teiNode = $temp;
+		while ($teiNode && $teiNode.nodeName == 'lb' && $teiNode.nextSibling
+			&& $teiNode.nextSibling.nodeName == 'note' 
+			&& (($teiNode.nextSibling.getAttribute('type') === 'lectionary-other'
+				|| $teiNode.nextSibling.getAttribute('type') === 'commentary')
+				&& !$teiNode.nextSibling.textContent.startsWith('Untranscribed'))) { // ignore <lb/> added for untranscribed text if at least one line is completely covered
+				cl++; //step counter
+				paratexttype = $teiNode.nextSibling.getAttribute('type'); // remember latest type for correct value below
+				$temp = ($teiNode.nextSibling.nextSibling) ? $teiNode.nextSibling.nextSibling : null;
+				$teiNode.parentNode.removeChild($teiNode.nextSibling);
+				$teiNode.parentNode.removeChild($teiNode);
+				$teiNode = $temp;
 		}
 		if (cl > 0) {
 			if ($teiNode) { //if note is last element do nothing
@@ -1145,7 +1148,7 @@ function getHtmlByTei(inputString) {
 			}
 			$newNode.setAttribute('class', 'paratext');
 			
-			var wceAttr = '__t=paratext&__n=&fw_type=' + paratexttype + '&covered=' + cl + '&text=&number=&edit_number=on&paratext_position=pagetop&paratext_position_other=&paratext_alignment=left';
+			var wceAttr = '__t=paratext&__n=&fw_type=' + paratexttype + '&covered=' + cl-1 + '&text=&number=&edit_number=on&paratext_position=pagetop&paratext_position_other=&paratext_alignment=left';
 			$newNode.setAttribute('wce', wceAttr);
 			for (var i = 0; i < cl; i++) {
 				$newNode.appendChild($newDoc.createElement('br'));
@@ -1167,8 +1170,20 @@ function getHtmlByTei(inputString) {
 				nodeAddText($htmlParent, ' ');
 			}
 			return null;
-		}
+		}/* else { //cl==0 => we have untranscribed text within the line at the beginning of the line
+			paratexttype = $teiNode.nextSibling.getAttribute('type'); 
+			$newNode.setAttribute('class', 'paratext');
 			
+			var wceAttr = '__t=paratext&__n=&fw_type=' + paratexttype + '&covered=0' + '&text=&number=&edit_number=on&paratext_position=pagetop&paratext_position_other=&paratext_alignment=left';
+			$newNode.setAttribute('wce', wceAttr);
+			addFormatElement($newNode);
+			$htmlParent.appendChild($newNode);
+			if ($teiNode && $teiNode.nodeName === 'w') { // add space only if new word follows
+				nodeAddText($htmlParent, ' ');
+			}
+			return null;
+		}*/
+
 		$newNode.setAttribute('class', 'mceNonEditable brea');
 		var _id = $teiNode.getAttribute('id');
 		if (_id) {
@@ -1445,9 +1460,11 @@ function getHtmlByTei(inputString) {
 			}
 		} else if ($teiNode.getAttribute('type') === 'lectionary-other') {// other lections without <lb/> => old document, compatibility mode
 			$newNode.setAttribute('class', 'paratext');
-			var cl = ($teiNode.getAttribute('rend')) ? $teiNode.getAttribute('rend') : 1;
-			
-			/*var cl = 0;
+			if (!$teiNode.textContent.startsWith("Untranscribed"))
+				var cl = ($teiNode.getAttribute('rend')) ? $teiNode.getAttribute('rend') : 1;
+			else
+				var cl = 0;
+			/*
 			//default value for old documents
 			if ($teiNode.getAttribute('rend'))
 				cl = $teiNode.getAttribute('rend');
@@ -1456,7 +1473,7 @@ function getHtmlByTei(inputString) {
 				
 			var wceAttr = '__t=paratext&__n=&fw_type=lectionary-other&covered=' + cl + '&text=&number=&edit_number=on&paratext_position=pagetop&paratext_position_other=&paratext_alignment=left';
 			$newNode.setAttribute('wce', wceAttr);
-			//if (cl != '') {
+			if (cl > 0) {
 				for (var i = 0; i < cl; i++) {
 					$newNode.appendChild($newDoc.createElement('br'));
 					nodeAddText($newNode, '\u21b5[');
@@ -1467,15 +1484,15 @@ function getHtmlByTei(inputString) {
 					$newNode.appendChild($span);
 					nodeAddText($newNode, ']');
 				}
-			/*} else {
+			} else { //cl == 0
 				nodeAddText($newNode, '[');
 				$span = $newDoc.createElement('span');
 				$span.setAttribute('class', 'lectionary-other');
-				$span.setAttribute('wce', '__t=paratext&__n=&fw_type=lectionary-other&covered=');
+				$span.setAttribute('wce', '__t=paratext&__n=&fw_type=lectionary-other&covered=0');
 				nodeAddText($span, 'lect');
 				$newNode.appendChild($span);
 				nodeAddText($newNode, ']');
-			}*/
+			}
 		} else if ($teiNode.getAttribute('subtype') === 'ews') {
 			$newNode.setAttribute('class', 'paratext');
 			var wceAttr = '__t=paratext&__n=&marginals_text=' + getDomNodeText($teiNode) + '&fw_type=ews&covered=&text=&number=&edit_number=on&paratext_position=pagetop&paratext_position_other=&paratext_alignment=left';
