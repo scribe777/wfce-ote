@@ -1,3 +1,8 @@
 Workspace for Collaborative Editing
 -----------------------------------
 Online Transcription Editor (OTE)
+
+The WCE-OTE is written as a plugin for and distributed with a bundle of TinyMCE.
+
+For WCE-OTE-specific license, information, and code,
+see the wce-ote/ folder.
