@@ -13,7 +13,6 @@ unpack: clean
 release: unpack
 	rm -f ${TARBALL}
 	tar czfv ${TARBALL} `ls -ad *|grep -v tar.gz|grep -v .zip`
-	/c/Program\ Files/7-zip/7z.exe" a -tzip -mx9 `ls -ad *|grep -v tar.gz|grep -v .zip`
 
 clean:
 	rm -rf `ls -ad * .??*|grep -v wce-ote|grep -v *.zip|grep -v Makefile |grep -v .git|grep -v README|grep -v tinymce_languages.zip`
