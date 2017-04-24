@@ -1148,7 +1148,8 @@ function getHtmlByTei(inputString) {
 			}
 			$newNode.setAttribute('class', 'paratext');
 			
-			var wceAttr = '__t=paratext&__n=&fw_type=' + paratexttype + '&covered=' + cl-1 + '&text=&number=&edit_number=on&paratext_position=pagetop&paratext_position_other=&paratext_alignment=left';
+			var wceAttr = '__t=paratext&__n=&fw_type=' + paratexttype + '&covered=' + cl + '&text=&number=&edit_number=on&paratext_position=pagetop&' +
+			'paratext_position_other=&paratext_alignment=left';
 			$newNode.setAttribute('wce', wceAttr);
 			for (var i = 0; i < cl; i++) {
 				$newNode.appendChild($newDoc.createElement('br'));
@@ -1170,20 +1171,8 @@ function getHtmlByTei(inputString) {
 				nodeAddText($htmlParent, ' ');
 			}
 			return null;
-		}/* else { //cl==0 => we have untranscribed text within the line at the beginning of the line
-			paratexttype = $teiNode.nextSibling.getAttribute('type'); 
-			$newNode.setAttribute('class', 'paratext');
-			
-			var wceAttr = '__t=paratext&__n=&fw_type=' + paratexttype + '&covered=0' + '&text=&number=&edit_number=on&paratext_position=pagetop&paratext_position_other=&paratext_alignment=left';
-			$newNode.setAttribute('wce', wceAttr);
-			addFormatElement($newNode);
-			$htmlParent.appendChild($newNode);
-			if ($teiNode && $teiNode.nodeName === 'w') { // add space only if new word follows
-				nodeAddText($htmlParent, ' ');
-			}
-			return null;
-		}*/
-
+		}
+		
 		$newNode.setAttribute('class', 'mceNonEditable brea');
 		var _id = $teiNode.getAttribute('id');
 		if (_id) {
