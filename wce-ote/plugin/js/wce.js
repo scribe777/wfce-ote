@@ -1,6 +1,6 @@
-/*  
-	Copyright (C) 2012-2016 Trier Center for Digital Humanities, Trier (Germany)
-	
+/*
+	Copyright (C) 2012-2017 Trier Center for Digital Humanities, Trier (Germany)
+
 	This file is part of the Online Transcription Editor (OTE).
 
     OTE is free software: you can redistribute it and/or modify
@@ -142,7 +142,7 @@ function writeWceNodeInfo(val) {
 	var newWceAttr = arrayToString(info_arr);
 	if (wce_type != 'note' || other_info_str != '@__t=verse_number') //exception
 		newWceAttr += other_info_str;
-	
+
 	var wceID = '';
 
 	if (wce_node != null && newWceAttr == '') {
@@ -178,10 +178,10 @@ function writeWceNodeInfo(val) {
 				var gap_text = "";
 				var gap_unit;
 				var gap_extent;
-				var gap_id; 
+				var gap_id;
 				if (document.getElementById('mark_as_supplied').checked == true) {// supplied text
 					gap_text = '[' + selected_content + ']';
-					//test if in node abbr with overline 
+					//test if in node abbr with overline
 					var gap_parent=wce_node;
 					var gap_parent_name;
 					while(gap_parent){
@@ -194,9 +194,9 @@ function writeWceNodeInfo(val) {
 							wceClass=' ext="inabbr" '+wceClass;
 							break;
 						}
-						gap_parent=gap_parent.parentNode;						
-					}				
-					 
+						gap_parent=gap_parent.parentNode;
+					}
+
 				} else {
 					gap_unit = document.getElementById('unit').value;
 					gap_extent = document.getElementById('extent').value;
@@ -326,8 +326,8 @@ function writeWceNodeInfo(val) {
 				//only for formatting_capitals needed
 				wceClass = ' class="formatting_capitals"';
 				break;
-				
-			case 'formatting_ornamentation_other': 
+
+			case 'formatting_ornamentation_other':
 				wceClass = ' class="formatting_ornamentation_other"';
 				break;
 
@@ -345,10 +345,10 @@ function writeWceNodeInfo(val) {
 		//ed.selection.select(marker, false);
 
 		//Fixed: if the selection range is collapsed and the caret is at the end of a element,
-		//then the new element will appear inside of current element and not after the element 
+		//then the new element will appear inside of current element and not after the element
 		//when one adds a new element via the menu
 		var wcevar = ed.WCE_VAR;
-		if (wcevar.isc && wcevar.isInBE && wcevar.isCaretAtNodeEnd && 
+		if (wcevar.isc && wcevar.isInBE && wcevar.isCaretAtNodeEnd &&
 			(wcevar.type == ed.WCE_CON.formatEnd || wcevar.type == 'chapter_number' || wcevar.type === 'book_number' || wcevar.type == 'verse_number' || wcevar.type == 'brea')) {
 			var selNode = wcevar.selectedNode;
 			if (wcevar.type == ed.WCE_CON.formatEnd) {
@@ -656,8 +656,8 @@ function wce_openWindow(txt)
 				"width=800,height=600,resizable=yes,status=no,"+
                 "menubar=no,location=no,scrollbars=yes,toolbar=no");
 		smallwindow.opener = parent;
-		smallwindow.focus(); 
-    } else { 
+		smallwindow.focus();
+    } else {
 		smallwindow.focus();
 	}
 }

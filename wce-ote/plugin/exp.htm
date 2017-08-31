@@ -1,6 +1,6 @@
-<!-- 
-	Copyright (C) 2012-2016 Trier Center for Digital Humanities, Trier (Germany)
-	
+<!--
+	Copyright (C) 2012-2017 Trier Center for Digital Humanities, Trier (Germany)
+
 	This file is part of the Online Transcription Editor (OTE).
 
     OTE is free software: you can redistribute it and/or modify
@@ -18,15 +18,15 @@
 
     Diese Datei ist Teil des Online-Transkriptions-Editor (OTE).
 
-    OTE ist Freie Software: Sie k�nnen es unter den Bedingungen
+    OTE ist Freie Software: Sie können es unter den Bedingungen
     der GNU Lesser General Public License, wie von der Free Software Foundation,
-    Version 2.1 der Lizenz oder (nach Ihrer Wahl) jeder sp�teren
-    ver�ffentlichten Version, weiterverbreiten und/oder modifizieren.
+    Version 2.1 der Lizenz oder (nach Ihrer Wahl) jeder späteren
+    veröffentlichten Version, weiterverbreiten und/oder modifizieren.
 
-    OTE wird in der Hoffnung, dass es n�tzlich sein wird, aber
-    OHNE JEDE GEW�HRLEISTUNG, bereitgestellt; sogar ohne die implizite
-    Gew�hrleistung der MARKTF�HIGKEIT oder EIGNUNG F�R EINEN BESTIMMTEN ZWECK.
-    Siehe die GNU Lesser General Public License f�r weitere Details.
+    OTE wird in der Hoffnung, dass es nützlich sein wird, aber
+    OHNE JEDE GEWÄHRLEISTUNG, bereitgestellt; sogar ohne die implizite
+    Gewährleistung der MARKTFÄHIGKEIT oder EIGNUNG FÜR EINEN BESTIMMTEN ZWECK.
+    Siehe die GNU Lesser General Public License für weitere Details.
 
     Sie sollten eine Kopie der GNU Lesser General Public License zusammen mit diesem
     Programm erhalten haben. Wenn nicht, siehe <http://www.gnu.org/licenses/>.
@@ -65,6 +65,7 @@
 							<option value="&#983;">&#983;</option>
 							<option value="&#x204a;">&#x204a;</option>
 							<option value="&#x2238;">&#x2238;</option>
+                            <option value="&#x0254;">&#x0254;</option>
 							<option value="other">{#other}</option>
 					</select>
 					</td>
@@ -91,11 +92,11 @@
 		var _ed = parent.tinymce.activeEditor;
 		ed=_ed;
 		translate();
-		setConstants(); 
+		setConstants();
 		init();
-	});	
-	
-		
+	});
+
+
 	function translate() {
 		var c=document.body.innerHTML;
 		var d=document.title;
@@ -112,15 +113,15 @@
 		});
 		if(a!=d){document.title=d=a}
 	}
-		
+
 	function init() {
-		comboBindReturnEvent('insert'); 
+		comboBindReturnEvent('insert');
 		wceInfoInit('part_abbr');
 		readWceNodeInfo();
 		checkstatus_exp_rend();
 	}
 	function checkstatus_exp_rend() {
-		if (document.expinfo.exp_rend.options[11].selected == true) {
+		if (document.expinfo.exp_rend.options[12].selected == true) {
 			document.expinfo.exp_rend_other.disabled = false;
 			document.getElementById('exp_rend_other').style.backgroundColor = "white";
 		} else {
@@ -128,7 +129,7 @@
 			document.getElementById('exp_rend_other').style.backgroundColor = "#CCCCCC";
 		}
 	}
-	
+
 	function check_syntax() {
 		var input = document.getElementById('exp_rend_other').value;
 		var length = input.length;
@@ -140,7 +141,7 @@
 		}
 		return true;
 	}
-	
+
 	function unicodeHtmlEntity (t) {
 		var hex = t.charAt(2) === 'x';
 		var base = hex ? 16 : 10;
@@ -148,7 +149,7 @@
 		var numericValue = parseInt(t.slice(pos, -1), base);
 		return String.fromCharCode(numericValue);
 	}
-	
+
 	function testInput() {
 		var cont = testOther();
 		if (!cont) {
@@ -160,9 +161,9 @@
 		}
 		return 0;
 	}
-	
+
 	function testOther() {
-		if (document.expinfo.exp_rend.options[11].selected == true && document.getElementById('exp_rend_other').value == '') 
+		if (document.expinfo.exp_rend.options[12].selected == true && document.getElementById('exp_rend_other').value == '')
 			return false;
 		return true;
 	}
@@ -175,6 +176,6 @@
 				return false;
 			}
 		});
-	}	
+	}
 </script>
 </html>
