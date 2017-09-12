@@ -1658,9 +1658,11 @@ function getHtmlByTei(inputString) {
 				// &deletion_underdot=1
 				// &deletion_strikethrough=1
 				// &deletion_vertical_line=0
+                // &deletion_deletion_hooks=0
+                // &deletion_transposition_marks=0
 				// &deletion_other=0
 				var deletionstr = '';
-				var deletionArr = new Array('erased', 'underline', 'underdot', 'strikethrough', 'vertical_line', 'other');
+				var deletionArr = new Array('erased', 'underline', 'underdot', 'strikethrough', 'vertical_line', 'deletion_hooks', 'transposition_marks', 'other');
 				for (var d = 0; d < deletionArr.length; d++) {
 					var deletionItem = deletionArr[d];
 					if (deletionValue.indexOf(deletionItem) > -1) {
@@ -1673,7 +1675,7 @@ function getHtmlByTei(inputString) {
 				wceAttr += '&deletion=' + encodeURIComponent(deletionstr.substring(1));
 				// to get rid of very first ","
 			} else {// no deletion given
-				wceAttr += '&deletion_erased=0&deletion_underline=0&deletion_underdot=0&deletion_strikethrough=0&deletion_vertical_line=0&deletion_other=0&deletion=null';
+				wceAttr += '&deletion_erased=0&deletion_underline=0&deletion_underdot=0&deletion_strikethrough=0&deletion_vertical_line=0&deletion_deletion_hooks=0&deletion_transposition_marks=0&deletion_other=0&deletion=null';
 			}
 			wceAttr += '&firsthand_partial=' + firsthandPartialValue + '&partial=' + partialValue;
 

@@ -1,6 +1,6 @@
-/* 
-	Copyright (C) 2012-2016 Center for Digital Humanities, Trier
-	
+/*
+	Copyright (C) 2012-2017 Center for Digital Humanities, Trier
+
 	This file is part of the Online Transcription Editor (OTE).
 
     OTE is free software: you can redistribute it and/or modify
@@ -128,12 +128,14 @@ tinymce.addI18n('de',{
 	corr_partial_complete : "Komplett",
 	editorial_note: "Anmerkung",
 	corr_not_applicable : "Nicht anwendbar ",
-	deletion : "Art der Tilgung",
+	deletion : "Art der Tilgung/Korrektur",
 	del_erased : "Radiert",
 	del_underline : "Unterstrichen",
 	del_underdot : "Unterpunktet",
 	del_striketrough : "Durchgestrichen",
 	del_vertical_line : "Vertikaler Strich",
+    del_deletion_hooks : "Löschzeichen",
+    del_transposition_marks : "Transpositionsmarkierung",
 	gap_title : "Bitte die Leerstelle bestimmen",
 	gap_data : "Informationen über die Lücke",
 	lacuna : "Lücke (Beschreibstoff fehlt)",

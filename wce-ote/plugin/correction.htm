@@ -1,6 +1,6 @@
-﻿<!-- 
+﻿<!--
 	Copyright (C) 2012-2016 Trier Center for Digital Humanities, Trier (Germany)
-	
+
 	This file is part of the Online Transcription Editor (OTE).
 
     OTE is free software: you can redistribute it and/or modify
@@ -157,6 +157,8 @@
                             <input type="hidden" id="deletion_underdot" name="deletion_underdot" value="" />
                             <input type="hidden" id="deletion_strikethrough" name="deletion_strikethrough" value="" />
                             <input type="hidden" id="deletion_vertical_line" name="deletion_vertical_line" value="" />
+                            <input type="hidden" id="deletion_deletion_hooks" name="deletion_deletion_hooks" value="" />
+                            <input type="hidden" id="deletion_transposition_marks" name="deletion_transposition_marks" value="" />
                             <input type="hidden" id="deletion_other" name="deletion_other" value="" />
                             <select id="deletion" size="6" multiple="multiple" onchange="checkstatus_deletion()" onmouseover="XBT(this, {id:'corr_deletion'})">
                                 <option value="erased">{#del_erased}</option>
@@ -164,6 +166,8 @@
                                 <option value="underdot">{#del_underdot}</option>
                                 <option value="strikethrough">{#del_striketrough}</option>
                                 <option value="vertical_line">{#del_vertical_line}</option>
+                                <option value="deletion_hooks">{#del_deletion_hooks}</option>
+                                <option value="transposition_marks">{#del_transposition_marks}</option>
                                 <option value="other">{#other}</option>
                             </select></td>
                         </tr>
@@ -268,13 +272,13 @@
 						$('#original_firsthand_reading').val(selected_content); //Save initial value for later use
 						addCorrector();
 					}
-					
+
 					selectCorrItem();
-					
+
 					if (item_counter > -1) {//Use old value; needs this position, because otherwise the correct value is not available
 						$('#firsthand_reading').html($('#original_firsthand_reading').val());
 					}
-					
+
 					$(':input').change(function() {
 						saveCurrCorrector();
 					});
@@ -404,6 +408,16 @@
 				document.getElementById('deletion_vertical_line').value = 0;
 			}
 			if (document.readinginfo.deletion.options[5].selected == true) {
+				document.getElementById('deletion_deletion_hooks').value = 1
+			} else {
+				document.getElementById('deletion_deletion_hooks').value = 0;
+			}
+			if (document.readinginfo.deletion.options[6].selected == true) {
+				document.getElementById('deletion_transposition_marks').value = 1
+			} else {
+				document.getElementById('deletion_transposition_marks').value = 0;
+			}
+			if (document.readinginfo.deletion.options[7].selected == true) {
 				document.getElementById('deletion_other').value = 1
 			} else {
 				document.getElementById('deletion_other').value = 0;
@@ -436,10 +450,20 @@
 			} else {
 				document.readinginfo.deletion.options[4].selected = false;
 			}
-			if (document.getElementById('deletion_other').value == 1) {
+			if (document.getElementById('deletion_deletion_hooks').value == 1) {
 				document.readinginfo.deletion.options[5].selected = true;
 			} else {
 				document.readinginfo.deletion.options[5].selected = false;
+			}
+			if (document.getElementById('deletion_transposition_marks').value == 1) {
+				document.readinginfo.deletion.options[6].selected = true;
+			} else {
+				document.readinginfo.deletion.options[6].selected = false;
+			}
+			if (document.getElementById('deletion_other').value == 1) {
+				document.readinginfo.deletion.options[7].selected = true;
+			} else {
+				document.readinginfo.deletion.options[7].selected = false;
 			}
 		}
 
@@ -464,7 +488,7 @@
 					document.readinginfo.blank_firsthand.checked = true;
 					document.readinginfo.blank_firsthand.disabled = true;
 				}
-				
+
 				$('#corrector_text').val(first_val);
 				corrector_text_editor.setContent(first_val);
 				info_arr[_id] = formSerialize(null, corrector_name);
