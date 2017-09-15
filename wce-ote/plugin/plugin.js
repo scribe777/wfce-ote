@@ -2738,6 +2738,7 @@
 				if ((originalText && originalText != 'null') || originalText=='') {
 					if(notAddOriginal){
 					}else{
+						 ed.selection.setContent('');
 						 ed.insertContent(originalText);
 					}
 					ed.focus();
