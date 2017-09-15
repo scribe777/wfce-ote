@@ -1130,6 +1130,7 @@ function getHtmlByTei(inputString) {
 		var cl = 0;
 		var paratexttype;
 		var $temp;
+        var number='';
 
 		while ($teiNode && $teiNode.nodeName == 'lb' && $teiNode.nextSibling
 			&& $teiNode.nextSibling.nodeName == 'note'
@@ -1187,15 +1188,17 @@ function getHtmlByTei(inputString) {
 			case 'pb':
 				// page break
 				//pb n="2rx" type="folio" facs="edfwe" xml:id="P2rx-0" break="no"/><fw type="runTitle"
-				var number = $teiNode.getAttribute('n');
-				var n = '';
+				number = $teiNode.getAttribute('n');
+                // number can have different formats => check for existence of xml:id
+				//var n = '';
 				if (number) {
-					n = number.substring(1,number.lastIndexOf("-"));
+					//n = number.substring(1,number.lastIndexOf("-"));
 					number = removeArrows(number); // Replace arrows for fibre type by "x" and "y" resp. => use for "xml:id"
-					number = number.substring(1,number.lastIndexOf("-"));
-				} else
-					number = '';
-				var page_type = $teiNode.getAttribute('type');
+					if (!$teiNode.getAttribute("xml:id")) {
+                        number = number.substring(1,number.lastIndexOf("-"));
+                    }
+                }
+                var page_type = $teiNode.getAttribute('type');
 				if (page_type) {
 					if (page_type == "page") {
 						if (number.match("[0-9]$")) {// ends with a digit => no fibre type
@@ -1218,16 +1221,15 @@ function getHtmlByTei(inputString) {
 				break;
 			case 'cb':
 				wceAttr += '&number=';
-				var n = '';
 				if ($teiNode.getAttribute('n')) {
 					var ntemp = $teiNode.getAttribute('n');
 					var start = ntemp.lastIndexOf("C");
 					var end = ntemp.lastIndexOf("-");
 					if (end-start > 1)
-						n = parseInt($teiNode.getAttribute('n').substring(start+1,end));
+						number = parseInt($teiNode.getAttribute('n').substring(start+1,end));
 				}
-				wceAttr += n;
-				g_columnNumber = n;
+				wceAttr += number;
+				g_columnNumber = number;
 				wceAttr += '&lb_alignment=';
 				if ($teiNode.getAttribute('rend'))
 					wceAttr += $teiNode.getAttribute('rend');
@@ -1235,7 +1237,6 @@ function getHtmlByTei(inputString) {
 				break;
 			case 'lb':
 				wceAttr += '&number=';
-				var n = '';
 				if ($teiNode.getAttribute('n')) {
 					var ntemp = $teiNode.getAttribute('n');
 					var start = ntemp.lastIndexOf("L");
@@ -1243,8 +1244,8 @@ function getHtmlByTei(inputString) {
 					if (end-start > 1)
 						n = parseInt($teiNode.getAttribute('n').substring(start+1,end));
 				}
-				wceAttr += n;
-				g_lineNumber = n;
+				wceAttr += number;
+				g_lineNumber = number;
 				wceAttr += '&lb_alignment=';
 				if ($teiNode.getAttribute('rend'))
 					wceAttr += $teiNode.getAttribute('rend');
@@ -1252,12 +1253,11 @@ function getHtmlByTei(inputString) {
 				break;
 			case 'gb':
 				wceAttr += '&number=';
-				var n = '';
 				if ($teiNode.getAttribute('n')) {
 					n = parseInt($teiNode.getAttribute('n'));
 				}
-				wceAttr += n;
-				g_quireNumber = n;
+				wceAttr += number;
+				g_quireNumber = number;
 				wceAttr += '&lb_alignment=';
 				if ($teiNode.getAttribute('rend'))
 					wceAttr += $teiNode.getAttribute('rend');
@@ -1287,24 +1287,24 @@ function getHtmlByTei(inputString) {
 				// page break
 				var $br = $newDoc.createElement('br');
 				$newNode.appendChild($br);
-				nodeAddText($newNode, 'PB' + ' ' + n);
+				nodeAddText($newNode, 'PB' + ' ' + number);
 				break;
 			case 'cb':
 				// column break
 				var $br = $newDoc.createElement('br');
 				$newNode.appendChild($br);
-				nodeAddText($newNode, 'CB' + ' ' + n);
+				nodeAddText($newNode, 'CB' + ' ' + number);
 				break;
 			case 'lb':
 				// line break
 				var $br = $newDoc.createElement('br');
 				$newNode.appendChild($br);
 				if ($teiNode.getAttribute("rend") && $teiNode.getAttribute("rend") === "indent")
-					nodeAddText($newNode, '\u21B5\u2192' + ' ' + n);
+					nodeAddText($newNode, '\u21B5\u2192' + ' ' + number);
 				else if ($teiNode.getAttribute("rend") && $teiNode.getAttribute("rend") === "hang")
-					nodeAddText($newNode, '\u21B5\u2190' + ' ' + n);
+					nodeAddText($newNode, '\u21B5\u2190' + ' ' + number);
 				else
-					nodeAddText($newNode, '\u21B5' + ' ' + n);
+					nodeAddText($newNode, '\u21B5' + ' ' + number);
 
 				//
 				//test, if the textnode after lb hat a space, if not, add a space
@@ -3548,11 +3548,15 @@ function getTeiByHtml(inputString, args) {
 						$newNode.setAttribute('facs', decodeURIComponent(arr['facs']));
 					}
 					xml_id = 'P' + g_pageNumber_id + '-' + g_witValue;
+                    $newNode.setAttribute('xml:id', xml_id);
 					break;
 			}
-			if (!isSeg) //no ID for breaks inside <seg>
-				//$newNode.setAttribute("xml:id", xml_id);
-				$newNode.setAttribute("n", xml_id);
+			if (!isSeg) { //no ID for breaks inside <seg>
+				if (break_type == 'pb')
+				    $newNode.setAttribute("n", g_pageNumber);
+                else
+                    $newNode.setAttribute("n", xml_id);
+            }
 			//IE gets confused here
 			if (arr['hasBreak'] && arr['hasBreak'] === 'yes') {
 				$newNode.setAttribute('break', 'no'); //This has to be "no" due to the TEI standard
