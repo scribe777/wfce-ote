@@ -3710,7 +3710,7 @@
 				ed.addShortcut('ctrl+alt+c', 'Add correction', 'mceAddCorrection_Shortcut');
 				ed.addShortcut('ctrl+alt+u', 'Add unclear text', 'mceAddUnclearText_Shortcut');
 				ed.addShortcut('ctrl+alt+g', 'Add gap', 'mceAddGap_Shortcut');
-				ed.addShortcut('ctrl+alt+a', 'Add abbreviation', 'mceAddAbbr_Shortcut');
+				//ed.addShortcut('ctrl+alt+a', 'Add abbreviation', 'mceAddAbbr_Shortcut');
 				ed.addShortcut('ctrl+alt+e', 'Add expansion', 'mceAddExp_Shortcut');
 				ed.addShortcut('ctrl+alt+m', 'Add marginalia', 'mceAddParatext_Shortcut');
 				ed.addShortcut('ctrl+alt+s', 'Add blank spaces', 'mceAddSpaces_Shortcut');
