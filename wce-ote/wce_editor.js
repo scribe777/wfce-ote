@@ -1,6 +1,6 @@
-﻿/* 
+﻿/*
 	Copyright (C) 2012-2017 Trier Center for Digital Humanities, Trier (Germany)
-	
+
 	This file is part of the Online Transcription Editor (OTE).
 
     OTE is free software: you can redistribute it and/or modify
@@ -37,7 +37,7 @@ function setWceEditor(_id, rtl, finishCallback, lang, myBaseURL, getWitness, get
 		tinymce.baseURL = myBaseURL;
 		tinymce.baseURI = new tinymce.util.URI(tinymce.baseURL);
 	}
-	
+
 	tinymce.init({
 		// General options
 		mode : "exact",
@@ -69,7 +69,7 @@ function setWceEditor(_id, rtl, finishCallback, lang, myBaseURL, getWitness, get
 		external_plugins: {
 			'wce' : '../../wce-ote/plugin/plugin.js'
 		},
-//		ignoreShiftNotEn: [188, 190],
+		ignoreShiftNotEn: [188, 190],
 		keyboardDebug: true,
 		init_instance_callback : "wceReload",
 		// Theme options
@@ -145,7 +145,7 @@ function getTeiIndexData() {
 function getTEI() {
 	//teiIndexData[0] = tinymce.get(tinyMCE.activeEditor.id).settings.book;
 	//teiIndexData[1] = tinymce.get(tinyMCE.activeEditor.id).settings.witness;
-	//teiIndexData[2] = tinymce.get(tinyMCE.activeEditor.id).settings.manuscriptLang; 
+	//teiIndexData[2] = tinymce.get(tinyMCE.activeEditor.id).settings.manuscriptLang;
 	return getTeiByHtml(getData(), tinyMCE.activeEditor.settings);
 }
 
@@ -244,7 +244,7 @@ function addMenuItems(ed) {
 			context: 'newcontextmenu',
 			classes: 'contextmenu'
 		}).renderTo();
-	
+
 		// added my options
 		if (ed.selection.getNode().getAttribute('wce') != null && ed.selection.getNode().getAttribute('wce').substring(4, 16) == 'verse_number') {
 			//wceAttr = ed.selection.getNode().getAttribute('wce');
@@ -277,7 +277,7 @@ function addMenuItems(ed) {
 					ed.execCommand('mce_partial_remove');
 				}
 			});
-		} else if (ed.selection.getNode().getAttribute('wce') != null && ed.selection.getNode().getAttribute('wce').indexOf('break_type=pb') > -1 
+		} else if (ed.selection.getNode().getAttribute('wce') != null && ed.selection.getNode().getAttribute('wce').indexOf('break_type=pb') > -1
 			&& ed.selection.getNode().textContent.indexOf('PB') > -1) {
 			isPreviousActive = (ed.selection.getNode().getAttribute('wce').indexOf('hasBreak=yes') > -1);
 			menu.add({ text : '|'});
