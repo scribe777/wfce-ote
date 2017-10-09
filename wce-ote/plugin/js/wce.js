@@ -52,7 +52,7 @@ var wce_node_text = '';
 // wce-wce-name-array <span wce="wce_corr@%CE%BBdadffefadvfead" ....
 var info_arr = [];
 
-// infomation of other wce_type
+// information of other wce_type
 var other_info_str = '';
 
 // info arr counter
