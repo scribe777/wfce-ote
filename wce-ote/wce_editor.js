@@ -67,8 +67,10 @@ function setWceEditor(_id, rtl, finishCallback, lang, myBaseURL, getWitness, get
 		charmap : charmap_greek.concat(charmap_latin).concat(charmap_slavistic),
 //		plugins : "compat3x,pagebreak,save,layer,print,contextmenu,fullscreen,wordcount,autosave,paste",
 		external_plugins: {
-			'wce' : '../../wce-ote/plugin/plugin.js'
+			'wce' : '../../wce-ote/plugin/plugin.js',
+			'wcelinenumber': '../../wce-ote/plugin/js/line_number.js'
 		},
+		show_linenumber:true,//default false,
 		ignoreShiftNotEn: [188, 190],
 		keyboardDebug: true,
 		init_instance_callback : "wceReload",
