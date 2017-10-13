@@ -57,6 +57,19 @@ tinymce.PluginManager.add('wcelinenumber', function(ed) {
 		sidebar.style.display = b ? 'block' : 'none';
 	});
 
+	function getType(node) {
+		var wceAttr = node.getAttribute('wce');
+		if(wceAttr) {
+			var arr = wceAttr.split('&');
+			for(var i = 0, ai; i < arr.length; i++) {
+				ai = arr[i];
+				if(ai && ai.indexOf('break_type=') > -1) {
+					return ai.replace('break_type=', '');
+				}
+			}
+		}
+	}
+
 	function _drawLineNumber() {
 		var i = 1;
 		$(sidebar).empty();
@@ -65,28 +78,24 @@ tinymce.PluginManager.add('wcelinenumber', function(ed) {
 		var spans = ed.dom.select('span.brea');
 		var list = [];
 
-		if(spans.length > 0) {
-			list.push(spans[0]);
-		};
+		spans.forEach(function(n) {
+			var ty = getType(n);
+			if(ty == 'lb') {
+				var end = n.querySelector('.format_end');
+				var y = $(end).offset().top - 0 + lineheight / 4 - scrollY;
+				var div = document.createElement('div');
+				div.innerHTML = i;
+				div.style.position = "absolute";
+				div.style.width = "100%";
+				div.style.textAlign = "center";
+				div.style.top = y + 'px';
+				sidebar.appendChild(div);
+				bottom = y;
+				i++;
 
-		spans.forEach(function(sp) {
-			var end = sp.querySelector('.format_end');
-			if(end) {
-				list.push(end);
+			} else if(ty) {
+				i = 1;
 			}
-		});
-
-		list.forEach(function(n) {
-			var y = $(n).offset().top - 0 + lineheight / 4 - scrollY;
-			var div = document.createElement('div');
-			div.innerHTML = i;
-			div.style.position = "absolute";
-			div.style.width = "100%";
-			div.style.textAlign = "center";
-			div.style.top = y + 'px';
-			sidebar.appendChild(div);
-			bottom = y;
-			i++;
 		});
 	}
 });
