@@ -620,7 +620,12 @@ function getHtmlByTei(inputString) {
 		var rend = $teiNode.getAttribute('rend');
 		if (rend) {
 			switch (rend) {
+                    // For compatibility
 				case '̅':
+                    rend = "¯";
+                    wceAttr += '&exp_rend_other=&exp_rend=';
+					break;
+                case '¯':
 				case 'ę':
 				case '÷':
 				case 'ƕ':
