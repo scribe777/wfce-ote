@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2012-2017 Center for Digital Humanities, Trier
+	Copyright (C) 2012-2018 Center for Digital Humanities, Trier
 
 	This file is part of the Online Transcription Editor (OTE).
 
@@ -227,6 +227,8 @@ tinymce.addI18n('de',{
 	capitals_height : 'Höhe der Großbuchstaben',
 	capitals_unit : 'Zeile(n)',
 	verses_title : 'Struktur ändern',
+    add_structure: 'Füge Struktur(en) hinzu',
+    delete_structure: 'Lösche Struktur(en)',
 	verse_insert : 'Füge Versnummer ein: ',
 	verse_remove : 'Entferne folgende Verse vollständig:',
 	chapter_insert: 'Füge Kapitelnummer ein: ',

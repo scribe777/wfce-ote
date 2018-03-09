@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2012-2017 Trier Center for Digital Humanities, Trier (Germany)
+	Copyright (C) 2012-2018 Trier Center for Digital Humanities, Trier (Germany)
 
 	This file is part of the Online Transcription Editor (OTE).
 
@@ -33,7 +33,7 @@
 */
 
 (function() {
-	var wfce_editor = "2.3.1 (2017-10-09)";
+	var wfce_editor = "2.4.0 (2018-03-09)";
 
 	// Load plugin specific language pack
 	tinymce.PluginManager.requireLangPack('wce');
@@ -2897,14 +2897,14 @@
     				var id = ed.id + '_adaptive_selection';
     				var statusbar= $(tinymce.activeEditor.iframeElement.parentElement.parentElement).children('.mce-statusbar').children('div');
     				if (statusbar) {
-    					var linenumberCb='', lid;						
+    					var linenumberCb='', lid;
 						if(ed.plugins.wcelinenumber){
 							linenumberCb='<input type="checkbox" style="margin-left:15px" ';
 							ed.settings.show_linenumber?(linenumberCb+='checked="checked"'):'';
 							lid=ed.id+'_wce_line_number';
-							linenumberCb+=' id="'+lid+'"> Show line number';							
+							linenumberCb+=' id="'+lid+'"> Show line number';
 						}
-						
+
 						tinymce.DOM.insertAfter(
 							tinymce.DOM.add(statusbar, 'div', {
 								'class' : 'mce-flow-layout-item',
@@ -2913,7 +2913,7 @@
 							),
 							$(statusbar).find('.mce-first')[0]
 						);
-						
+
 						if(lid){
 							$('#'+lid).change(function(){
 								ed.execCommand('wceShowLineNumber',this.checked);
@@ -2932,11 +2932,36 @@
 
 			// add verse modify button
 			ed.addButton('versemodify', {
-				title : tinymce.translate('menu_verses') + ' (Ctrl+Alt+V)',
-				cmd : 'mceVerseModify',
-				image : url + '/img/button_V.png',
-				onPostRender : function() { ed.WCE_CON.buttons[this.settings.icon] = this; },
-			});
+                title: tinymce.translate('menu_verses') + ' (Ctrl+Alt+V)',
+                //cmd: 'mceVerseModify',
+                image: url + '/img/button_V.png',
+                type: 'menubutton',
+                icons: false,
+                onPostRender: function () {
+                    ed.WCE_CON.buttons[this.settings.icon] = this;
+                },
+                onshow: function (a) {
+                    var items = a.control.items();
+                    var w = ed.WCE_VAR;
+                    items[0].disabled(false);
+                    items[1].disabled(false);
+                },
+                menu: [
+                    {
+                        text: tinymce.translate('add_structure'),
+                        id: 'menu-add-structure',
+                        onclick: function () {
+                            ed.execCommand('mceVerseAdd');
+                        }
+ 		        },
+                    {
+                        text: tinymce.translate('delete_structure'),
+                        id: 'menu-delete-structure',
+                        onclick: function () {
+                            ed.execCommand('mceVerseDelete');
+                        }
+                 }]
+            });
 
 			// add showTeiByHtml button
 			ed.addButton('showTeiByHtml', {
@@ -3999,13 +4024,17 @@
 				doWithoutDialog(ed, 'formatting_' + c, '');
 			});
 
-			// verse modify
-			ed.addCommand('mceVerseModify', function() {
-				doWithDialog(ed, url, '/verse.htm', 480, 1024, 1, true, tinymce.translate('verses_title'));
-			});
+			//verse add and delete
+			ed.addCommand('mceVerseAdd', function () {
+                doWithDialog(ed, url, '/addverse.htm', 480, 300, 1, true, tinymce.translate('verses_title'));
+            });
+
+            ed.addCommand('mceVerseDelete', function () {
+                doWithDialog(ed, url, '/deleteverse.htm', 480, 700, 1, true, tinymce.translate('verses_title'));
+            });
 
 			ed.addCommand('mceVerseModify_Shortcut', function() {
-				ed.execCommand('mceVerseModify');
+				ed.execCommand('mceVerseAdd');
 			});
 
 			ed.addCommand('printData', function() {// Problem in IE
