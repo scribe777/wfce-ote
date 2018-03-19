@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2012-2017 Trier Center for Digital Humanities, Trier (Germany)
+	Copyright (C) 2012-2018 Trier Center for Digital Humanities, Trier (Germany)
 
 	This file is part of the Online Transcription Editor (OTE).
 
@@ -735,13 +735,13 @@ function getHtmlByTei(inputString) {
 					nodeAddText($newNode, g_chapterNumber);
 				}
 			}
-		} else { //incipit or explicit
+		} else { //inscriptio or subscriptio
 			var $newNode = $newDoc.createElement('span');
 			$newNode.setAttribute('class', 'chapter_number mceNonEditable');
 			$newNode.setAttribute('wce', '__t=chapter_number');
-			if ($teiNode.getAttribute("type") === "incipit")
+			if ($teiNode.getAttribute("type") === "incipit" || $teiNode.getAttribute("type") === "inscriptio")
 				nodeAddText($newNode, "Inscriptio");
-			else if ($teiNode.getAttribute("type") === "explicit")
+			else if ($teiNode.getAttribute("type") === "explicit" || $teiNode.getAttribute("type") === "subscriptio")
 				nodeAddText($newNode, "Subscriptio");
 		}
 		addFormatElement($newNode);
@@ -2816,11 +2816,11 @@ function getTeiByHtml(inputString, args) {
 					old_chapterNumber = g_chapterNumber;
 					g_chapterNode = $newDoc.createElement('div');
 					if (g_chapterNumber === 'Inscriptio') {
-						g_chapterNode.setAttribute('type', 'incipit');
-						g_chapterNode.setAttribute('n', 'B' + g_bookNumber + 'incipit');
+						g_chapterNode.setAttribute('type', 'inscriptio');
+						g_chapterNode.setAttribute('n', 'B' + g_bookNumber + 'inscriptio');
 					} else if (g_chapterNumber === 'Subscriptio') {
-						g_chapterNode.setAttribute('type', 'explicit');
-						g_chapterNode.setAttribute('n', 'B' + g_bookNumber + 'explicit');
+						g_chapterNode.setAttribute('type', 'subscriptio');
+						g_chapterNode.setAttribute('n', 'B' + g_bookNumber + 'subscriptio');
 					} else {
 						g_chapterNode.setAttribute('type', 'chapter');
 						g_chapterNode.setAttribute('n', 'B' + g_bookNumber + 'K' + g_chapterNumber);
