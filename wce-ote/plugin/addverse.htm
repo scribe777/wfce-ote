@@ -1,0 +1,300 @@
+<!--
+	Copyright (C) 2012-2018 Trier Center for Digital Humanities, Trier (Germany)
+
+	This file is part of the Online Transcription Editor (OTE).
+
+    OTE is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as published by
+    the Free Software Foundation, either version 2.1 of the License, or
+    (at your option) any later version.
+
+    OTE is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with OTE.  If not, see <http://www.gnu.org/licenses/>.
+
+    Diese Datei ist Teil des Online-Transkriptions-Editor (OTE).
+
+    OTE ist Freie Software: Sie können es unter den Bedingungen
+    der GNU Lesser General Public License, wie von der Free Software Foundation,
+    Version 2.1 der Lizenz oder (nach Ihrer Wahl) jeder späteren
+    veröffentlichten Version, weiterverbreiten und/oder modifizieren.
+
+    OTE wird in der Hoffnung, dass es nützlich sein wird, aber
+    OHNE JEDE GEWÄHRLEISTUNG, bereitgestellt; sogar ohne die implizite
+    Gewährleistung der MARKTFÄHIGKEIT oder EIGNUNG FÜR EINEN BESTIMMTEN ZWECK.
+    Siehe die GNU Lesser General Public License für weitere Details.
+
+    Sie sollten eine Kopie der GNU Lesser General Public License zusammen mit diesem
+    Programm erhalten haben. Wenn nicht, siehe <http://www.gnu.org/licenses/>.
+-->
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" style="height:100%">
+
+<head>
+    <title>{#verses_title}</title>
+    <script type="text/javascript" src="js/wce.js"></script>
+    <script type="text/javascript" src="../jquery.js"></script>
+    <link rel="stylesheet" type="text/css" href="../skin/dialog.css" />
+    <link rel="stylesheet" type="text/css" href="../skin/ui.css" />
+</head>
+
+<body id="table">
+    <form onsubmit="return false;" action="#">
+        <input type="button" id="help" name="help" value="{#help}" onclick="wce_openWindow('docu.htm#verse')" style="margin-bottom:10px" />
+        <div id="insertDiv">
+            <div id="insertVerseDiv">
+                <table width="100%">
+                    <tr>
+                        <td width="200">
+                            <input type="radio" id="insertVerseRadio" name="versemodify" onclick="canInsertVerse();" />{#verse_insert}
+                        </td>
+                        <td>
+                            <input id="insertVerseNumber" type="text" />
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div id="insertInscriptioDiv">
+                <table width="100%">
+                    <tr>
+                        <td>
+                            <input type="radio" id="insertInscriptioRadio" name="versemodify" onclick="canInsertInscriptio();" />{#inscriptio_insert}
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div id="insertSubscriptioDiv">
+                <table width="100%">
+                    <tr>
+                        <td>
+                            <input type="radio" id="insertSubscriptioRadio" name="versemodify" onclick="canInsertSubscriptio();" />{#subscriptio_insert}
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div id="insertChapterDiv">
+                <table width="100%">
+                    <tr>
+                        <td width="200">
+                            <input type="radio" id="insertChapterRadio" name="versemodify" onclick="canInsertChapter();" />{#chapter_insert}
+                        </td>
+                        <td>
+                            <input id="insertChapterNumber" type="text" />
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div id="insertBookDiv">
+                <table width="100%">
+                    <tr>
+                        <td width="200">
+                            <input type="radio" id="insertBookRadio" name="versemodify" onclick="canInsertBook();" />{#book_insert}
+                        </td>
+                        <td>
+                            <input id="insertBookNumber" type="text" />
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div id="insertLectionDiv">
+                <table width="100%">
+                    <tr>
+                        <td width="200">
+                            <input type="radio" id="insertLectionRadio" name="versemodify" onclick="canInsertLection();" />{#lection_insert}
+                        </td>
+                        <td>
+                            <input id="insertLectionNumber" type="text" />
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="mceActionPanel" style="margin-bottom:10px">
+            <input type="button" id="insert" name="insert" value="{#apply}" onclick="update();parent.tinymce.activeEditor.windowManager.close();" />
+            <input type="button" id="cancel" name="cancel" value="{#cancel}" onclick="parent.tinymce.activeEditor.windowManager.close();" />
+        </div>
+    </form>
+</body>
+<script type="text/javascript">
+    $(document).ready(function() {
+        var _ed = parent.tinymce.activeEditor;
+        ed = _ed;
+        translate();
+        setConstants();
+        init();
+    });
+
+    function translate() {
+        var c = document.body.innerHTML;
+        var d = document.title;
+        var a;
+        if (parent.tinymce.isIE) {
+            c = c.replace(/ (value|title|alt)=([^"][^\s>]+)/gi, ' $1="$2"')
+        }
+        a = c.replace(/\{\#([^\}]+)\}/g, function(a, b) {
+            var c = parent.tinymce.translate(b);
+            return (c != b) ? c : '{#' + b + '}';
+        });
+        if (a != c) {
+            document.body.innerHTML = a
+        }
+        a = d.replace(/\{\#([^\}]+)\}/g, function(a, b) {
+            var c = parent.tinymce.translate(b);
+            return (c != b) ? c : '{#' + b + '}';
+        });
+        if (a != d) {
+            document.title = d = a
+        }
+    }
+
+    function canInsertVerse() {
+        $('#insertVerseRadio').prop('checked', true);
+        $('#insertVerseNumber').prop('disabled', false);
+        $('#insertVerseNumber').focus();
+        $('#insertChapterNumber').prop('disabled', true);
+        $('#insertBookNumber').prop('disabled', true);
+        $('#insertLectionNumber').prop('disabled', true);
+        $('#verseList').prop('disabled', true);
+        $('#chapterList').prop('disabled', true);
+        $('#bookList').prop('disabled', true);
+        $('#lectionList').prop('disabled', true);
+    }
+
+    function canInsertInscriptio() {
+        $('#insertInscriptioRadio').prop('checked', true);
+        $('#insertVerseNumber').prop('disabled', true);
+        $('#insertChapterNumber').prop('disabled', true);
+        $('#insertBookNumber').prop('disabled', true);
+        $('#insertLectionNumber').prop('disabled', true);
+        $('#verseList').prop('disabled', true);
+        $('#chapterList').prop('disabled', true);
+        $('#bookList').prop('disabled', true);
+        $('#lectionList').prop('disabled', true);
+    }
+
+    function canInsertSubscriptio() {
+        $('#insertSubscriptioRadio').prop('checked', true);
+        $('#insertVerseNumber').prop('disabled', true);
+        $('#insertChapterNumber').prop('disabled', true);
+        $('#insertBookNumber').prop('disabled', true);
+        $('#insertLectionNumber').prop('disabled', true);
+        $('#verseList').prop('disabled', true);
+        $('#chapterList').prop('disabled', true);
+        $('#bookList').prop('disabled', true);
+        $('#lectionList').prop('disabled', true);
+    }
+
+    function canInsertLection() {
+        $('#insertLectionRadio').prop('checked', true);
+        $('#insertLectionNumber').prop('disabled', false);
+        $('#insertLectionNumber').focus();
+        $('#insertBookNumber').prop('disabled', true);
+        $('#insertChapterNumber').prop('disabled', true);
+        $('#insertVerseNumber').prop('disabled', true);
+        $('#verseList').prop('disabled', true);
+        $('#chapterList').prop('disabled', true);
+        $('#bookList').prop('disabled', true);
+    }
+
+    function canInsertBook() {
+        $('#insertBookRadio').prop('checked', true);
+        $('#insertBookNumber').prop('disabled', false);
+        $('#insertBookNumber').focus();
+        $('#insertLectionNumber').prop('disabled', true);
+        $('#insertChapterNumber').prop('disabled', true);
+        $('#insertVerseNumber').prop('disabled', true);
+        $('#verseList').prop('disabled', true);
+        $('#chapterList').prop('disabled', true);
+        $('#bookList').prop('disabled', true);
+        $('#lectionList').prop('disabled', true);
+    }
+
+    function canInsertChapter() {
+        $('#insertChapterRadio').prop('checked', true);
+        $('#insertChapterNumber').prop('disabled', false);
+        $('#insertChapterNumber').focus();
+        $('#insertVerseNumber').prop('disabled', true);
+        $('#insertBookNumber').prop('disabled', true);
+        $('#insertLectionNumber').prop('disabled', true);
+        $('#verseList').prop('disabled', true);
+        $('#chapterList').prop('disabled', true);
+        $('#bookList').prop('disabled', true);
+        $('#lectionList').prop('disabled', true);
+    }
+
+    function init() {
+        canInsertVerse();
+        if (wce_node) {
+            if (wce_node.nodeName.toLowerCase() == 'span') {
+                $('#insertDiv input').prop('disabled', true);
+            }
+        }
+    }
+
+
+    function update() {
+        if ($('#insertVerseRadio').is(':checked')) {
+            var newVerseNr = $('#insertVerseNumber').val().trim();
+            newVerseNr = newVerseNr.replace(/\D/g, '');
+            if (newVerseNr != '') {
+                ed.insertContent('<span class="verse_number mceNonEditable" wce="__t=verse_number"> ' + newVerseNr + '</span> ');
+            }
+            return;
+        } else if ($('#insertInscriptioRadio').is(':checked')) {
+            ed.insertContent('<span class="chapter_number mceNonEditable" wce="__t=chapter_number">' + 'Inscriptio' + '</span> <span class="verse_number mceNonEditable" wce="__t=verse_number"></span> PLACE THE INSCRIPTIO HERE! ');
+            return;
+        } else if ($('#insertSubscriptioRadio').is(':checked')) {
+            ed.insertContent('<span class="chapter_number mceNonEditable" wce="__t=chapter_number">' + 'Subscriptio' + '</span> <span class="verse_number mceNonEditable" wce="__t=verse_number"></span> PLACE THE SUBSCRIPTIO HERE! ');
+            return;
+        } else if ($('#insertChapterRadio').is(':checked')) {
+            var newChapterNr = $('#insertChapterNumber').val().trim();
+            newChapterNr = newChapterNr.replace(/\D/g, '');
+            if (newChapterNr != '') {
+                ed.insertContent('<span class="chapter_number mceNonEditable" wce="__t=chapter_number" id="' + ed.dom.uniqueId('chap') + '"> ' + newChapterNr + '</span> ');
+            }
+            return;
+        } else if ($('#insertBookRadio').is(':checked')) {
+            var newBookNr = $('#insertBookNumber').val().trim();
+            newBookNr = newBookNr.replace(/\D/g, '');
+            if (newBookNr != '') {
+                ed.insertContent('<span class="book_number mceNonEditable" wce="__t=book_number" id="' + ed.dom.uniqueId('book') + '"> ' + newBookNr + '</span> ');
+            }
+            return;
+        } else if ($('#insertLectionRadio').is(':checked')) {
+            var newLectionNr = $('#insertLectionNumber').val().trim();
+            //newLectionNr = newLectionNr.replace(/\D/g,'');
+            if (newLectionNr != '') {
+                ed.insertContent('<span class="lection_number mceNonEditable" wce="__t=lection_number&__n=&number=' + newLectionNr + '"> ' + 'Lec' + '</span> ');
+            }
+            return;
+        }
+    }
+
+    function getCursorPositionInTextOf(element) {
+        var range = document.createRange(),
+            curRange = window.getSelection().getRangeAt(0);
+        range.setStart(element, 0);
+        range.setEnd(curRange.startContainer, curRange.startOffset);
+        //Measure the length of the text from the start of the given element to the start of the current range (position of the cursor)
+        return document.createElement("div").appendChild(range.cloneContents()).textContent.length;
+    }
+
+
+    if (!parent.tinymce.isIE) {
+        $(document).keydown(function(e) {
+            var evt = e || window.event
+            if (evt.keyCode == 13 || evt.keyCode == 10) {
+                document.getElementById('insert').click();
+                return false;
+            }
+        });
+    }
+</script>
+
+</html>
