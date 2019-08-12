@@ -839,7 +839,12 @@ function getHtmlByTei(inputString) {
 				wceAttr += '&unit_other=&unit=';
 			if (teiNodeName == 'supplied') {
 				wceAttr += '&mark_as_supplied=supplied';
-				$newNode.setAttribute('wce_orig', $teiNode.firstChild ? $teiNode.firstChild.nodeValue : '');
+				// This .firstChild logic fails when the content is more than a character string with no whitespace.
+				// var origText = $teiNode.firstChild ? $teiNode.firstChild.nodeValue : '';
+				// This logic comes closer to the original
+				var origText = '<TEMP>'+$($teiNode).html().replace(/ xmlns="[^"]*"/g, '').replace(/<[/]?tempspace>/g, '')+'</TEMP>';
+				var htmlOrigText = getHtmlByTei(origText).htmlString.replace(/<[/]?TEMP>/g, '');
+				$newNode.setAttribute('wce_orig', encodeURIComponent(htmlOrigText));
 				// get the content and save it as original
 				// for an empty source we have to add the "none" value
 				if (!$teiNode.getAttribute('source'))
