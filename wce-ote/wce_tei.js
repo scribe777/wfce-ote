@@ -4154,30 +4154,16 @@ function getTeiByHtml(inputString, args) {
 		if (rend && rend != '') {
 			$ex.setAttribute('rend', decodeURIComponent(rend));
 		}
-		var textValue = getDomNodeText($htmlNode);
-		if (textValue) {
-			textValue = textValue.substr(1, textValue.length - 2);
-			nodeAddText($ex, textValue);
-		}
-		$teiParent.appendChild($ex);
+		// remove '( .. )' from first text node
+		var textValue = $($htmlNode).text();
+		var newTextValue = textValue.substring(1, textValue.length - 1);
+		if ($htmlNode.firstChild && $htmlNode.firstChild.nodeValue == textValue) $htmlNode.firstChild.nodeValue = newTextValue;
+		if ($htmlNode.firstChild && $htmlNode.firstChild.firstChild && $htmlNode.firstChild.firstChild.nodeValue == textValue) $htmlNode.firstChild.firstChild.nodeValue = newTextValue;
+		appendNodeInW($teiParent, $ex, $htmlNode);
 		return {
-			0 : $ex,
+			0 : $teiParent,
 			1 : true
 		};
-
-		/*
-		if (!stopAddW) {
-			var $w = createNewWElement();
-			$w.appendChild($ex);
-			$teiParent.appendChild($w);
-		} else {
-			$teiParent.appendChild($ex);
-		}
-
-		return {
-			0 : $ex,
-			1 : true
-		}*/
 	};
 
 	/*
