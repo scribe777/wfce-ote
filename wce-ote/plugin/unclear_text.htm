@@ -105,6 +105,8 @@
 	}
 		 
 	function init() {
+		if (ed.settings.unclear_text_reason_default) $('#unclear_text_reason').val(ed.settings.unclear_text_reason_default);
+
 		comboBindReturnEvent('insert'); 
 		wceInfoInit('unclear');
 		readWceNodeInfo();
