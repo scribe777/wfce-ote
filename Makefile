@@ -4,6 +4,7 @@ ZIPFILE=wce-ote-${VERSION}.zip
 
 unpack: clean
 	unzip tinymce_*_dev.zip
+	rm tinymce/package.json
 	mv tinymce/* tinymce/.??* .
 	rmdir tinymce
 	unzip tinymce_languages.zip
@@ -17,3 +18,8 @@ release: unpack
 clean:
 	rm -rf `ls -ad * .??*|grep -v LICENSE|grep -v __tests__|grep -v package-lock.json|grep -v package.json|grep -v wce-ote|grep -v .zip|grep -v Makefile |grep -v .git|grep -v README|grep -v tinymce_languages.zip`
 	rm -rf *.tar.gz
+	rm -rf LICENSE.TXT
+
+test: unpack
+	npm install
+	npm test
