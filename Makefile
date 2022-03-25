@@ -15,5 +15,5 @@ release: unpack
 	tar czfv ${TARBALL} `ls -ad *|grep -v tar.gz|grep -v .zip`
 
 clean:
-	rm -rf `ls -ad * .??*|grep -v wce-ote|grep -v .zip|grep -v Makefile |grep -v .git|grep -v README|grep -v tinymce_languages.zip`
+	rm -rf `ls -ad * .??*|grep -v LICENSE|grep -v __tests__|grep -v package-lock.json|grep -v package.json|grep -v wce-ote|grep -v .zip|grep -v Makefile |grep -v .git|grep -v README|grep -v tinymce_languages.zip`
 	rm -rf *.tar.gz
