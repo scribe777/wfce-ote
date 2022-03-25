@@ -4474,3 +4474,6 @@ var removeSpaceAfterLb=function ($node){
 			}
 		}
 	};
+
+
+module.exports = addArrows;
