@@ -1,9 +1,14 @@
 VERSION=$(shell grep "var wfce_editor" wce-ote/plugin/plugin.js | cut -f2 -d\"|sed 's/[-()]//g'|sed 's/ /-/g')
 TARBALL=wce-ote-${VERSION}.tar.gz
 ZIPFILE=wce-ote-${VERSION}.zip
+TINYRELEASE=$(shell ls tinymce_*_dev.zip)
 
-unpack: clean
-	unzip tinymce_*_dev.zip
+all: install
+
+install: js
+
+js: ${TINYRELEASE}
+	unzip ${TINYRELEASE}
 	rm tinymce/package.json
 	mv tinymce/* tinymce/.??* .
 	rmdir tinymce
@@ -20,6 +25,8 @@ clean:
 	rm -rf *.tar.gz
 	rm -rf LICENSE.TXT
 
-test: unpack
+node_modules: package.json
 	npm install
+
+test: node_modules install
 	npm test
