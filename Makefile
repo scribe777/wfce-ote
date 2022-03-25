@@ -1,4 +1,6 @@
-VERSION=$(shell grep "var wfce_editor" wce-ote/plugin/plugin.js | cut -f2 -d\"|sed 's/[-()]//g'|sed 's/ /-/g')
+WCEVERSION=$(shell grep "var wfce_editor" wce-ote/plugin/plugin.js | cut -f2 -d\"|sed 's/[-()]//g'|sed 's/ /-/g')
+NOW=$(shell date "+%Y%m%d")
+VERSION=${WCEVERSION}.b${NOW}
 TARBALL=wce-ote-${VERSION}.tar.gz
 ZIPFILE=wce-ote-${VERSION}.zip
 TINYRELEASE=$(shell ls tinymce_*_dev.zip)
@@ -16,7 +18,7 @@ js: ${TINYRELEASE}
 	mv langs/* js/tinymce/langs
 	rmdir langs
 
-release: unpack
+release: install
 	rm -f ${TARBALL}
 	tar czfv ${TARBALL} `ls -ad *|grep -v tar.gz|grep -v .zip`
 
