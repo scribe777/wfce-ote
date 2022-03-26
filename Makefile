@@ -9,26 +9,30 @@ all: install
 
 install: js
 
-js: ${TINYRELEASE}
-	unzip ${TINYRELEASE}
-	rm tinymce/package.json
-	mv tinymce/* tinymce/.??* .
-	rmdir tinymce
-	unzip tinymce_languages.zip
-	mv langs/* js/tinymce/langs
-	rmdir langs
+test: node_modules install
+	npm test
 
 release: install
 	rm -f ${TARBALL}
-	tar czfv ${TARBALL} `ls -ad *|grep -v tar.gz|grep -v .zip`
+	tar czfv ${TARBALL} `ls -ad *|grep -v node_modules|grep -v tar.gz|grep -v .zip`
 
 clean:
-	rm -rf `ls -ad * .??*|grep -v LICENSE|grep -v __tests__|grep -v package-lock.json|grep -v package.json|grep -v wce-ote|grep -v .zip|grep -v Makefile |grep -v .git|grep -v README|grep -v tinymce_languages.zip`
-	rm -rf *.tar.gz
-	rm -rf LICENSE.TXT
+	rm -rf ${TARBAL} ${ZIPFILE}
+	rm -rf js/
+	rm -rf TinyMCE-LICENSE.TXT
+	rm -rf TinyMCE-readme.md
+	rm -rf TinyMCE-changelog.txt
 
 node_modules: package.json
 	npm install
 
-test: node_modules install
-	npm test
+js: ${TINYRELEASE}
+	unzip ${TINYRELEASE}
+	mv tinymce/js .
+	mv tinymce/readme.md TinyMCE-readme.md
+	mv tinymce/LICENSE.TXT TinyMCE-LICENSE.TXT
+	mv tinymce/changelog.txt TinyMCE-changelog.txt
+	rm -rf tinymce
+	unzip tinymce_languages.zip
+	mv langs/* js/tinymce/langs
+	rmdir langs

@@ -38,7 +38,10 @@
 						$('#textControl').val(decodeURIComponent(document.location.search.substring(5)));
 						$('#setTEIControl').click();
 					}
-				}, '', '', '', '');	
+					try {
+						if (window.onModulesLoaded) window.onModulesLoaded();
+					} catch {}
+				}, '', '', '', '');
 			});
 		</script>
 	</body>
