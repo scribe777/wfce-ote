@@ -58,27 +58,24 @@ test('initiate tinymce', done => {
 // General annotation tests where nothing in the XML should change
 const generalAnnotation = new Map([
 	[ 'simple correction',
-		xmlHead +
-		'<app><rdg type="orig" hand="firsthand"><w>correctedword</w></rdg><rdg type="corr" hand="corrector"><w>word</w></rdg></app>' +
-		xmlTail
+		'<app><rdg type="orig" hand="firsthand"><w>correctedword</w></rdg>' +
+		'<rdg type="corr" hand="corrector"><w>word</w></rdg></app>'
 	],
 	[ 'uncertain midword',
-		xmlHead +
-		'<w>w<unclear reason="faded ink">or</unclear>d</w>' +
-		xmlTail
+		'<w>w<unclear reason="faded ink">or</unclear>d</w>'
 	],
 	[ 'expanded full word',
-		xmlHead +
-		'<w>this</w><w>is</w><w>my</w><w><ex rend="÷">symbol</ex></w><w>as</w><w>word</w>' +
-		xmlTail
-]
+		'<w>this</w><w>is</w><w>my</w><w><ex rend="÷">symbol</ex></w><w>as</w><w>word</w>'
+	]
 ]);
 
 generalAnnotation.forEach((value, key, map) => {
 	test('generalAnnotation: ' + key, () => {
-		testDOM.window.eval(`setTEI('${value}');`);
-		var tei = testDOM.window.eval(`getTEI();`);
-		expect(tei).toBe(value);
+		let testInput, tei;
+		testInput = xmlHead + value + xmlTail;
+		testDOM.window.eval(`setTEI('${testInput}');`);
+		tei = testDOM.window.eval(`getTEI();`);
+		expect(tei).toBe(testInput);
 	});
 });
 
@@ -86,23 +83,13 @@ generalAnnotation.forEach((value, key, map) => {
 // General annotation tests when changes are expected between input and output
 const generalAnnotation2 = new Map([
 	[ '<w> tags are correctly added to text',
-	  [ xmlHead +
-	 		'these are my words for tags' +
-	 		xmlTail,
-
-	 		xmlHead +
-	 		'<w>these</w><w>are</w><w>my</w><w>words</w><w>for</w><w>tags</w>' +
-	 		xmlTail
+	  [ 'these are my words for tags',
+	 		'<w>these</w><w>are</w><w>my</w><w>words</w><w>for</w><w>tags</w>'
  		],
 	],
   [ '<w> tags are correctly added to text if nomina sacra already present',
-	  [ xmlHead +
-			'these are <abbr type="nomSac"><hi rend="overline">word</hi></abbr> words for tags' +
-			xmlTail,
-
-			xmlHead +
-			'<w>these</w><w>are</w><w><abbr type="nomSac"><hi rend="overline">word</hi></abbr></w><w>words</w><w>for</w><w>tags</w>' +
-			xmlTail
+	  [ 'these are <abbr type="nomSac"><hi rend="overline">word</hi></abbr> words for tags',
+			'<w>these</w><w>are</w><w><abbr type="nomSac"><hi rend="overline">word</hi></abbr></w><w>words</w><w>for</w><w>tags</w>'
 		]
  	]
 	// ideally the code would allow this to work for protection of legacy transcriptions
@@ -132,9 +119,12 @@ const generalAnnotation2 = new Map([
 
 generalAnnotation2.forEach((value, key, map) => {
 	test('generalAnnotation2: ' + key, () => {
-		testDOM.window.eval(`setTEI('${value[0]}');`);
-		var tei = testDOM.window.eval(`getTEI();`);
-		expect(tei).toBe(value[1]);
+		let testInput, expectedOutput, tei;
+		testInput = xmlHead + value[0] + xmlTail;
+		expectedOutput = xmlHead + value[1] + xmlTail;
+		testDOM.window.eval(`setTEI('${testInput}');`);
+		tei = testDOM.window.eval(`getTEI();`);
+		expect(tei).toBe(expectedOutput);
 	});
 });
 
@@ -142,23 +132,23 @@ generalAnnotation2.forEach((value, key, map) => {
 // Book/chapter/verse structure tests where nothing in the XML should change
 const textStructure = new Map([
 	[ 'Standard structure single verse',
-		xmlHead +
-		'<div type="book" n="B04"><div type="chapter" n="B04K3"><ab n="B04K3V2"><w>the</w><w>second</w><w>verse</w><w>of</w><w>chapter</w><w>three</w></ab></div></div>' +
-		xmlTail
+		'<div type="book" n="B04"><div type="chapter" n="B04K3">' +
+		'<ab n="B04K3V2"><w>the</w><w>second</w><w>verse</w><w>of</w><w>chapter</w><w>three</w></ab></div></div>'
 	],
 	[ 'Standard structure multiple verses',
-		xmlHead +
-		'<div type="book" n="B04"><div type="chapter" n="B04K3"><ab n="B04K3V2"><w>the</w><w>second</w><w>verse</w><w>of</w><w>chapter</w><w>one</w></ab>' +
-		'<ab n="B04K3V3"><w>third</w><w>verse</w><w>of</w><w>chapter</w><w>3</w></ab></div></div>' +
-		xmlTail
+		'<div type="book" n="B04"><div type="chapter" n="B04K3">' +
+		'<ab n="B04K3V2"><w>the</w><w>second</w><w>verse</w><w>of</w><w>chapter</w><w>one</w></ab>' +
+		'<ab n="B04K3V3"><w>third</w><w>verse</w><w>of</w><w>chapter</w><w>3</w></ab></div></div>'
 	],
 ]);
 
 textStructure.forEach((value, key, map) => {
 	test('textStructure: ' + key, () => {
-		testDOM.window.eval(`setTEI('${value}');`);
-		var tei = testDOM.window.eval(`getTEI();`);
-		expect(tei).toBe(value);
+		let testInput, tei;
+		testInput = xmlHead + value + xmlTail;
+		testDOM.window.eval(`setTEI('${testInput}');`);
+		tei = testDOM.window.eval(`getTEI();`);
+		expect(tei).toBe(testInput);
 	});
 });
 
@@ -166,38 +156,40 @@ textStructure.forEach((value, key, map) => {
 // In the real world the siglum of the ms would appear after the dash in @xml:id of pb and @n of cb and lb
 const pageLayout = new Map([
 	[ 'initial page',
-		xmlHead +
-		'<pb n="1r" type="folio" xml:id="P1r-"/><cb n="P1rC1-"/><lb n="P1rC1L-"/><w>my</w><w>first</w><w>page</w>' +
-		xmlTail
+		'<pb n="1r" type="folio" xml:id="P1r-"/><cb n="P1rC1-"/><lb n="P1rC1L-"/><w>my</w><w>first</w><w>page</w>'
 	],
 	[ 'mid-text page',
-		xmlHead +
-		'<w>end</w><w>of</w><w>page</w><pb n="1v" type="folio" xml:id="P1v-"/><cb n="P1vC1-"/><lb n="P1vC1L-"/><w>my</w><w>second</w><w>page</w>' +
-		xmlTail
+		'<w>end</w><w>of</w><w>page</w><pb n="1v" type="folio" xml:id="P1v-"/><cb n="P1vC1-"/><lb n="P1vC1L-"/>' +
+		'<w>my</w><w>second</w><w>page</w>'
 	],
 	[ 'mid-word page',
-		xmlHead +
-		'<w>half</w><w>of</w><w>wo<pb n="1v" type="folio" xml:id="P1v-" break="no"/><cb n="P1vC1-"/><lb n="P1vC1L-"/>rd</w><w>on</w><w>second</w><w>page</w>' +
-		xmlTail
+		'<w>half</w><w>of</w><w>wo<pb n="1v" type="folio" xml:id="P1v-" break="no"/><cb n="P1vC1-"/>' +
+		'<lb n="P1vC1L-"/>rd</w><w>on</w><w>second</w><w>page</w>'
 	],
-	[ 'mid-text column',
-		xmlHead +
+	[ 'between-word column',
 		'<pb n="1v" type="folio" xml:id="P1v-"/><cb n="P1vC1-"/><lb n="P1vC1L-"/><w>my</w><w>first</w><w>column</w>' +
-		'<cb n="P1vC2-"/><lb n="P1vC2L-"/><w>my</w><w>second</w><w>column</w>' +
-		xmlTail
+		'<cb n="P1vC2-"/><lb n="P1vC2L-"/><w>my</w><w>second</w><w>column</w>'
 	],
 	[ 'mid-word column',
-		xmlHead +
 		'<pb n="1v" type="folio" xml:id="P1v-"/><cb n="P1vC1-"/><lb n="P1vC1L-"/><w>my</w><w>first</w><w>colu' +
-		'<cb n="P1vC2-" break="no"/><lb n="P1vC2L-"/>mn</w><w>my</w><w>second</w><w>column</w>' +
-		xmlTail
+		'<cb n="P1vC2-" break="no"/><lb n="P1vC2L-"/>mn</w><w>my</w><w>second</w><w>column</w>'
+	],
+	[ 'between-word linebreak',
+		'<pb n="1v" type="folio" xml:id="P1v-"/><cb n="P1vC1-"/><lb n="P1vC1L-"/><w>my</w><w>first</w><w>line</w>' +
+		'<lb n="P1vC1L-"/><w>my</w><w>second</w><w>line</w>'
+	],
+	[ 'mid-word linebreak',
+		'<pb n="1v" type="folio" xml:id="P1v-"/><cb n="P1vC1-"/><lb n="P1vC1L-"/><w>my</w><w>first</w><w>li' +
+		'<lb n="P1vC1L-" break="no"/>ne</w><w>my</w><w>second</w><w>line</w>'
 	]
 ]);
 
 pageLayout.forEach((value, key, map) => {
 	test('rountrip: ' + key, () => {
-		testDOM.window.eval(`setTEI('${value}');`);
-		var tei = testDOM.window.eval(`getTEI();`);
-		expect(tei).toBe(value);
+		let testInput, tei;
+		testInput = xmlHead + value + xmlTail;
+		testDOM.window.eval(`setTEI('${testInput}');`);
+		tei = testDOM.window.eval(`getTEI();`);
+		expect(tei).toBe(testInput);
 	});
 });
