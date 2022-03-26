@@ -17,7 +17,7 @@ release: install
 	tar czfv ${TARBALL} `ls -ad *|grep -v node_modules|grep -v tar.gz|grep -v .zip`
 
 clean:
-	rm -rf ${TARBAL} ${ZIPFILE}
+	rm -rf wce-ote-*.tar.gz wce-ote*.zip
 	rm -rf js/
 	rm -rf TinyMCE-LICENSE.TXT
 	rm -rf TinyMCE-readme.md
