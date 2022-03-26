@@ -1,0 +1,13 @@
+{
+    "source": {
+        "includePattern": ".+\\.js?$",
+        "include": ["wce-ote"],
+        "exclude": ["node_modules", "js", "wce-ote/rangy-core.js", "wce-ote/jquery.js"]
+    },
+    "recurseDepth": 1,
+    "opts": {
+        "destination": "./docs/reference/",
+        "recurse": true,
+        "template": "node_modules/minami"
+    }
+}
