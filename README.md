@@ -1,6 +1,3 @@
-![Tests](https://github.com/github/docs/actions/workflows/ci-jest-tests.yml/badge.svg)
-
-
 Workspace for Collaborative Editing
 -----------------------------------
 Online Transcription Editor (OTE)
