@@ -6,7 +6,7 @@
     },
     "recurseDepth": 1,
     "opts": {
-        "destination": "./docs/reference/",
+        "destination": "./docs/",
         "recurse": true,
         "template": "node_modules/minami"
     }

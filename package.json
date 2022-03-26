@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
-    "build-docs": "jsdoc -c jsdoc-config.json"
+    "build-docs": "jsdoc -c jsdoc-config.json --readme README.md"
   },
   "repository": {
     "type": "git",
