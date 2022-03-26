@@ -1,3 +1,9 @@
+<<<<<<< HEAD
+=======
+![Tests](https://github.com/itsee-birmingham/wfce-ote/actions/workflows/ci-jest-tests.yml/badge.svg)
+
+
+>>>>>>> 636303514608906905950812ad5a9e2b5832c0d1
 Workspace for Collaborative Editing
 -----------------------------------
 Online Transcription Editor (OTE)
