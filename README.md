@@ -23,7 +23,7 @@ to the root of the source distribution (this folder).  There is a Makefile to do
 Simply type:
 
 ```bash
-make
+make install
 ```
 
 to clean things up again:
@@ -36,4 +36,10 @@ to build the distribution bundle, type:
 
 ```bash
 make release
+```
+
+to run the tests, type:
+
+```bash
+make test
 ```
