@@ -38,7 +38,7 @@ to build the distribution bundle, type:
 make release
 ```
 
-to run the tests, type:
+to run the tests (requires nodejs), type:
 
 ```bash
 make test
