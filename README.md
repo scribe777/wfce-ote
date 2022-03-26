@@ -1,4 +1,4 @@
-![Tests](https://github.com/github/docs/actions/workflows/ci-jest-tests.yml/badge.svg)
+![Tests](https://github.com/itsee-birmingham/wfce-ote/actions/workflows/ci-jest-tests.yml/badge.svg)
 
 
 Workspace for Collaborative Editing
