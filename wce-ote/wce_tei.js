@@ -4372,6 +4372,13 @@ function addArrows(str) {
 	return out;
 };
 
+/** Replaces a right pointing arrow at the end of a string with an x and down arrow (and for legacy purposes an up
+arrow) at the end of a string with a y.
+
+@param {string} str - The string to transform.
+@returns {string} - The transformed string.
+
+*/
 function removeArrows(str) {
 	var out = str;
 	if (str.indexOf("→") == str.length-1)
@@ -4438,6 +4445,7 @@ var removeBlankNode=function ($root){//remove blank node,
 		return $root;
 	};
 
+// NOT-USED: seems to only call itself recursively but never called from outside this function
 var removeSpaceAfterLb=function ($node){
 		var nodeName=$node.nodeName;
 		if(nodeName && nodeName=='lb'){
