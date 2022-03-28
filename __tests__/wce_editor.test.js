@@ -193,3 +193,32 @@ pageLayout.forEach((value, key, map) => {
 		expect(tei).toBe(testInput);
 	});
 });
+
+
+// Special tests for ITSEE which test for unwanted behaviour that is currently being fixed in the export in the ITSEE
+// tools. If ever these tests fail, the ITSEE code can be changed.
+const specialItsee = new Map([
+	[ 'test for seg after internal word page break',
+		[ '<pb n="1r" type="folio" xml:id="P1r-"/><cb n="P1rC1-"/><lb n="P1rC1L-"/><w>here</w><w>is</w><w>the</w>' +
+		  '<w>text</w><lb n="P1rC1L-"/><w>of</w><w>the</w><w>page</w><w>whi' +
+			'<pb n="1v" type="folio" xml:id="P1v-" break="no"/><cb n="P1vC1-"/><lb n="P1vC1L-"/>' +
+			'<fw type="runTitle"><w>Running</w><w>Title</w></fw>ch</w><w>ends</w><w>mid</w><w>word</w>',
+
+			'<pb n="1r" type="folio" xml:id="P1r-"/><cb n="P1rC1-"/><lb n="P1rC1L-"/><w>here</w><w>is</w><w>the</w>' +
+			'<w>text</w><lb n="P1rC1L-"/><w>of</w><w>the</w><w>page</w><w>whi' +
+			'<pb n="1v" type="folio" xml:id="P1v-" break="no"/><cb n="P1vC1-"/><lb n="P1vC1L-"/></w>' +
+			'<fw type="runTitle"><w>Running</w><w>Title</w></fw><w>ch</w><w>ends</w><w>mid</w><w>word</w>'
+		]
+	]
+]);
+
+specialItsee.forEach((value, key, map) => {
+	test('specialItsee: ' + key, () => {
+		let testInput, expectedOutput, tei;
+		testInput = xmlHead + value[0] + xmlTail;
+		expectedOutput = xmlHead + value[1] + xmlTail;
+		testDOM.window.eval(`setTEI('${testInput}');`);
+		tei = testDOM.window.eval(`getTEI();`);
+		expect(tei).toBe(expectedOutput);
+	});
+});
