@@ -114,16 +114,40 @@ const teiToHtmlAndBack = new Map([
       '<span class="chapter_number mceNonEditable" wce="__t=chapter_number" id="3">1</span> The content of my chapter ' //spaces at beg and end are important
     ],
   ],
-  // TODO: add inscriptio and subscriptio test here
+  [ 'book and inscriptio divs',
+    [ '<div type="book" n="B04"><div type="incipit" n="B04incipit"><ab><w>inscriptio</w><w>text</w></ab></div></div>',
+      ' <span class="book_number mceNonEditable" wce="__t=book_number" id="1">4</span>  ' +
+      '<span class="chapter_number mceNonEditable" wce="__t=chapter_number">Inscriptio</span> ' +
+      '<span class="verse_number mceNonEditable" wce="__t=verse_number"/> inscriptio text '
+    ]
+  ],
+  [ 'book and subscriptio div',
+    [ '<div type="book" n="B04"><div type="explicit" n="B04explicit"><ab><w>subscriptio</w><w>text</w></ab></div></div>',
+      ' <span class="book_number mceNonEditable" wce="__t=book_number" id="1">4</span>  ' +
+      '<span class="chapter_number mceNonEditable" wce="__t=chapter_number">Subscriptio</span> ' +
+      '<span class="verse_number mceNonEditable" wce="__t=verse_number"/> subscriptio text '
+    ]
+  ],
+  // gaps
+  // TODO: add witness end test here
+
+  // 
 
 
+  //supplied
+  // [ 'supplied text in abbr',
+  //   [ '<div type="book" n="B04"><div type="explicit" n="B04explicit"><ab><w>subscriptio</w><w>text</w></ab></div></div>',
+  //     ' <span class="book_number mceNonEditable" wce="__t=book_number" id="1">4</span>  ' +
+  //     '<span class="chapter_number mceNonEditable" wce="__t=chapter_number">Subscriptio</span> ' +
+  //     '<span class="verse_number mceNonEditable" wce="__t=verse_number"/> subscriptio text '
+  //   ]
+  // ],
 
-
-
-
+  // pc
   [ 'simple <pc> tag',
 	  [ '<pc>.</pc>',
-	 		'<span class="pc" wce="__t=pc"><span class="format_start mceNonEditable">‹</span>.<span class="format_end mceNonEditable">›</span></span> ' //space at end is important
+	 		'<span class="pc" wce="__t=pc"><span class="format_start mceNonEditable">‹</span>.' +
+      '<span class="format_end mceNonEditable">›</span></span> ' //space at end is important
  		],
 	]
 ]);
