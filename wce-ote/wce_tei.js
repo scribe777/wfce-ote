@@ -48,6 +48,13 @@ function zeigeFehler(Fehler) {
 	alert(Fehler);
 }
 
+/**
+		Convert the supplied string to the HTML format used internally in the editor.
+
+		@param {string} inputString The TEI string to convert to the display format for the editor contents
+		@returns {object}
+*/
+
 function getHtmlByTei(inputString) {
 	var $newDoc, $newRoot, $newRoot;
 	var $formatStart, $formatEnd;
@@ -100,6 +107,11 @@ function getHtmlByTei(inputString) {
 		<hi rend="rubric">m</hi>m
 	</w>*/
 
+	/**
+ * Load the TEI string into a DOM object and process that into the format to display in the editor
+ * @instance getHtmlString
+ * @memberof getHtmlByTei
+ */
 	var getHtmlString = function() {
 		var $oldDoc = loadXMLString(inputString);
 		if(!$oldDoc){
@@ -312,7 +324,9 @@ function getHtmlByTei(inputString) {
 	*/
 
 	/**
-	 * add format_start format end into wce element
+	 * add format_start/format_end into wce element
+	 * @instance addFormatElement
+	 * @memberof getHtmlByTei
 	 */
 	var addFormatElement = function($node) {
 		var $firstChild;
@@ -1752,6 +1766,8 @@ function getHtmlByTei(inputString) {
 		'teiIndexData' : teiIndexData//TODO if we need it
 	};
 }
+// end of getHtmlByTei
+
 
 /*
  * ************************************************************************ ************************************************************************ ************************************************************************
@@ -4219,6 +4235,10 @@ function getTeiByHtml(inputString, args) {
 	return getTeiString();
 
 };
+// end of getTeiByHtml
+
+
+// globals start here
 
 /*
  * Compare two node by nodeName and attribute, but not textContent
@@ -4492,7 +4512,9 @@ var removeSpaceAfterLb=function ($node){
 
 
 	try {
-		module.exports = addArrows;
+		module.exports = {
+		  addArrows, removeArrows
+		};
 	} catch (e) {
 		// nodejs is not available which is fine as long as we are not running tests.
 	}
