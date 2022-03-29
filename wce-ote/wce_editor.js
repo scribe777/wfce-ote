@@ -143,7 +143,9 @@ function getTeiIndexData() {
 	return tinyMCE.activeEditor.teiIndexData;
 }
 */
-// get TEI String from editor html content
+
+/** Get TEI String from editor html content
+*/
 function getTEI() {
 	//teiIndexData[0] = tinymce.get(tinyMCE.activeEditor.id).settings.book;
 	//teiIndexData[1] = tinymce.get(tinyMCE.activeEditor.id).settings.witness;
@@ -151,9 +153,10 @@ function getTEI() {
 	return getTeiByHtml(getData(), tinyMCE.activeEditor.settings);
 }
 
-// set editor html content from tei input
-// teiIndexData can be change
-// @param {String} teiStringInput
+/** Set editor html content from tei input
+
+ @param {String} teiStringInput - the xml string to display for editing
+*/
 function setTEI(teiStringInput) {
 	var result = getHtmlByTei(teiStringInput);
 	if (result) {
@@ -169,6 +172,9 @@ function setTEI(teiStringInput) {
 	return 0;
 }
 
+/**
+	NTVMR specific function to save straight to the NTVMR database
+*/
 function saveDataToDB() {
 	if (!tinyMCE.activeEditor.isDirty())
 		return;
@@ -191,6 +197,11 @@ function saveDataToDB() {
 	});
 }
 
+/**
+	Set the font family to use for the editor contents
+
+	@param {string} fontFamily - the name of the font family to use
+*/
 function setPreferredFontFamily(fontFamily) {
 	$('#wce_editor_ifr').contents().find('#tinymce').css('font-family', fontFamily);
 }
@@ -209,6 +220,10 @@ function wceOnContentsChange() {
 	//alert(tinyMCE.activeEditor.getContent());
 }
 
+/**
+Reset the counters which provide automatic page, quire, column and line counts
+
+*/
 function resetCounter() {
 	var v = tinyMCE.activeEditor.WCE_VAR;
 	if (!v)
