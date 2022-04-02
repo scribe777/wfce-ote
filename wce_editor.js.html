@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>wce_editor.js - Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <li class="nav-link nav-home-link"><a href="index.html">Home</a></li><li class="nav-heading"><a href="global.html">Globals</a></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#addArrows">addArrows</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#getHtmlByTei">getHtmlByTei</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#getTEI">getTEI</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#removeArrows">removeArrows</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#resetCounter">resetCounter</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#saveDataToDB">saveDataToDB</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#setPreferredFontFamily">setPreferredFontFamily</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#setTEI">setTEI</a></span></li>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">wce_editor.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>﻿/*
+	Copyright (C) 2012-2017 Trier Center for Digital Humanities, Trier (Germany)
+
+	This file is part of the Online Transcription Editor (OTE).
+
+    OTE is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as published by
+    the Free Software Foundation, either version 2.1 of the License, or
+    (at your option) any later version.
+
+    OTE is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with OTE.  If not, see &lt;http://www.gnu.org/licenses/>.
+
+    Diese Datei ist Teil des Online-Transkriptions-Editor (OTE).
+
+    OTE ist Freie Software: Sie können es unter den Bedingungen
+    der GNU Lesser General Public License, wie von der Free Software Foundation,
+    Version 2.1 der Lizenz oder (nach Ihrer Wahl) jeder späteren
+    veröffentlichten Version, weiterverbreiten und/oder modifizieren.
+
+    OTE wird in der Hoffnung, dass es nützlich sein wird, aber
+    OHNE JEDE GEWÄHRLEISTUNG, bereitgestellt; sogar ohne die implizite
+    Gewährleistung der MARKTFÄHIGKEIT oder EIGNUNG FÜR EINEN BESTIMMTEN ZWECK.
+    Siehe die GNU Lesser General Public License für weitere Details.
+
+    Sie sollten eine Kopie der GNU Lesser General Public License zusammen mit diesem
+    Programm erhalten haben. Wenn nicht, siehe &lt;http://www.gnu.org/licenses/>.
+*/
+
+function setWceEditor(_id, rtl, finishCallback, lang, myBaseURL, getWitness, getWitnessLang) {
+	if (myBaseURL &amp;&amp; typeof myBaseURL != "undefined" &amp;&amp; myBaseURL !== '') {
+		tinymce.baseURL = myBaseURL;
+		tinymce.baseURI = new tinymce.util.URI(tinymce.baseURL);
+	}
+
+	tinymce.init({
+		// General options
+		mode : "exact",
+		selector : '#'+_id,
+		theme : "modern",
+		menubar: false,
+		skin_url: tinymce.baseURL + "../../../wce-ote/skin/",
+		extended_valid_elements : 'span[class|wce_orig|style|wce|ext|id]',
+		forced_root_block : false,
+		force_br_newlines : true,
+		force_p_newlines : false,
+		entity_encoding : "raw",
+		//entities : "62,diple,8224,obelus",
+		theme_advanced_path : false,
+		execcommand_callback : 'wceExecCommandHandler',
+		save_onsavecallback : function() {
+			if (saveDataToDB) saveDataToDB(true);
+		},
+		directionality : (rtl) ? "rtl" : "ltr",
+		language : (lang) ? (lang.indexOf('de') == 0 ? "de" : "en") : "en",
+		//book : (getBook) ? getBook : "",
+		witness : (getWitness) ? getWitness : "",
+		manuscriptLang : (getWitnessLang) ? getWitnessLang : "",
+		// invalid_elements:'p',
+		plugins : "pagebreak,save,print,contextmenu,fullscreen,wordcount,autosave,paste,charmap,code,noneditable",
+		contextmenu: 'cut copy paste',
+		charmap : charmap_greek.concat(charmap_latin).concat(charmap_slavistic),
+//		plugins : "compat3x,pagebreak,save,layer,print,contextmenu,fullscreen,wordcount,autosave,paste",
+		external_plugins: {
+			'wce' : '../../wce-ote/plugin/plugin.js',
+			'wcelinenumber': '../../wce-ote/plugin/js/line_number.js'
+		},
+		show_linenumber:true,//default false,
+		ignoreShiftNotEn: [188, 190],
+		keyboardDebug: true,
+		init_instance_callback : "wceReload",
+		// Theme options
+		toolbar : "undo redo charmap | code | save print contextmenu cut copy pastetext pasteword fullscreen | "+
+		"breaks correction illegible decoration abbreviation paratext note punctuation versemodify | showTeiByHtml help | info showHtmlByTei",
+		theme_advanced_buttons2 : "",
+		theme_advanced_toolbar_location : "top",
+		theme_advanced_toolbar_align : "left",
+		theme_advanced_statusbar_location : "bottom",
+		theme_advanced_resizing : false,
+		setup : function(ed) {
+			ed.on('change', wceOnContentsChange);
+			ed.on('init', function(e) {// Once initialized, tell the editor to go fullscreen
+				addMenuItems(tinyMCE.activeEditor);
+				if (finishCallback)
+					finishCallback();
+			});
+		}
+	});
+}
+
+// wenn brower reload, set editor blank
+function wceReload() {
+	// for test
+}
+
+// get dirty-value of editor
+function isEditorDirty() {
+	return tinyMCE.activeEditor.isDirty();
+}
+
+// set editor dirty-value
+function setEditorNotDirty(b) {
+	tinyMCE.activeEditor.isNotDirty = b;
+}
+
+// set editor html content
+function setData(msg) {
+	tinyMCE.activeEditor.setContent(msg);
+}
+
+// get editor html content
+function getData() {
+	return tinyMCE.activeEditor.getContent();
+}
+/*
+// The following parameters should be set before tei-output:
+// @param {String} bookNumber: book number, default 00;
+// @param {Number} pageNumber: page start number, default 0,
+// @param {Number} chapterNumber: chapter number, default 0, only use the if htmlInput not start with chapter/verse;
+// @param {Number} verseNumber: verseNumber, default 0, only use the if if htmlInput not start with chapter/verse;
+// @param {Number} wordNumber: word start number for &lt;w>, default 0, only use the if htmlInput not start with chapter/verse;
+// @param {Number} columnNumber: column number, defualt 0
+// @param {Number} witValue: value for wit, defualt 0
+function setTeiIndexData(bookNumber, witValue, manuscriptLang) {
+	var wid = getTeiIndexData();
+	if (bookNumber) {
+		wid['bookNumber'] = bookNumber;
+	}
+	if (witValue) {
+		wid['witValue'] = witValue;
+	}
+	if (manuscriptLang) {
+		wid['manuscriptLang'] = manuscriptLang;
+	}
+}
+
+function getTeiIndexData() {
+	return tinyMCE.activeEditor.teiIndexData;
+}
+*/
+
+/** Get TEI String from editor html content
+*/
+function getTEI() {
+	//teiIndexData[0] = tinymce.get(tinyMCE.activeEditor.id).settings.book;
+	//teiIndexData[1] = tinymce.get(tinyMCE.activeEditor.id).settings.witness;
+	//teiIndexData[2] = tinymce.get(tinyMCE.activeEditor.id).settings.manuscriptLang;
+	return getTeiByHtml(getData(), tinyMCE.activeEditor.settings);
+}
+
+/** Set editor html content from tei input
+
+ @param {String} teiStringInput - the xml string to display for editing
+*/
+function setTEI(teiStringInput) {
+	var result = getHtmlByTei(teiStringInput);
+	if (result) {
+		var htmlContent = result['htmlString'];
+		if (htmlContent)
+			setData(htmlContent);
+	}
+	/*var teiIndexData = result['teiIndexData'];
+	if (teiIndexData) {
+		tinyMCE.activeEditor.teiIndexData = teiIndexData;
+	}*/
+	resetCounter(); //for resetting the counter each time this method is called
+	return 0;
+}
+
+/**
+	NTVMR specific function to save straight to the NTVMR database
+*/
+function saveDataToDB() {
+	if (!tinyMCE.activeEditor.isDirty())
+		return;
+
+	// currently we grab the HTML span formatted data, but eventually we'd like to grab the TEI
+	var transcriptionData = getData();
+
+	// currently we store to the portal user's personal data store, but eventually we'd like to
+	// store to the transcription repository
+	var req = opensocial.newDataRequest();
+	req.add(req.newUpdatePersonAppDataRequest("VIEWER", 'trans-' + lastPage.docid + '-' + lastPage.pageid, encodeURIComponent(transcriptionData)));
+	req.send(function(data) {
+		if (data.hadError()) {
+			alert(data.getErrorMessage());
+			return;
+		}
+		alert("Changes are saved.");
+		if (gadgets.util.hasFeature('pubsub-2'))
+			gadgets.Hub.publish("interedition.transcription.saved", null);
+	});
+}
+
+/**
+	Set the font family to use for the editor contents
+
+	@param {string} fontFamily - the name of the font family to use
+*/
+function setPreferredFontFamily(fontFamily) {
+	$('#wce_editor_ifr').contents().find('#tinymce').css('font-family', fontFamily);
+}
+
+function increaseLineHeight() {
+	/*
+	 * var lineheight = document.getElementById($(this)).style.lineHeight; alert(document.getElementsByTagName('textarea')[0].style.lineHeight); document.getElementByTagName('wce_editor').style.lineHeight = "30px";
+	 */
+}
+
+function decreaseLineHeight() {
+
+}
+
+function wceOnContentsChange() {
+	//alert(tinyMCE.activeEditor.getContent());
+}
+
+/**
+Reset the counters which provide automatic page, quire, column and line counts
+
+*/
+function resetCounter() {
+	var v = tinyMCE.activeEditor.WCE_VAR;
+	if (!v)
+		return false;
+	// quire count
+	v.qcnt = 0;
+	// page count
+	v.pcnt = 0;
+	// column count
+	v.ccnt = 1; //Because of the predefined part from the NTVMR
+	// line count
+	v.lcnt = 1; //Because of the predefined part from the NTVMR
+	// counting as r/v
+	v.rectoverso = 'true';
+	return true;
+}
+
+function addMenuItems(ed) {
+	//var wceAttr = '';
+	var isPreviousActive = false;
+	var b = false;
+
+	var contextMenu = null;
+	var staticMenuCount = 0;
+	tinymce.ui.Menu.prototype.Mixins = [ { init : function() {
+		if (this.settings.context == 'contextmenu') contextMenu = this;
+	}} ];
+
+	console.log('fix context menu');
+	ed.on('contextmenu', function(event) {
+		var ed = $(this)[0];
+		var items = contextMenu.items();
+		var menu = new tinymce.ui.Menu({
+			items: contextMenu.items().toArray(),
+			context: 'newcontextmenu',
+			classes: 'contextmenu'
+		}).renderTo();
+
+		// added my options
+		if (ed.selection.getNode().getAttribute('wce') != null &amp;&amp; ed.selection.getNode().getAttribute('wce').substring(4, 16) == 'verse_number') {
+			//wceAttr = ed.selection.getNode().getAttribute('wce');
+			menu.add({ text : '|'});
+			menu.add({
+				text : tinymce.translate('initial_portion'),
+				icon : '',
+				onclick : function() {
+					ed.execCommand('mce_partialI');
+				}
+			});
+			menu.add({
+				text : tinymce.translate('medial_portion'),
+				icon : '',
+				onclick : function() {
+					ed.execCommand('mce_partialM');
+				}
+			});
+			menu.add({
+				text : tinymce.translate('final_portion'),
+				icon : '',
+				onclick : function() {
+					ed.execCommand('mce_partialF');
+				}
+			});
+			menu.add({
+				text : tinymce.translate('remove_partial'),
+				icon : '',
+				onclick : function() {
+					ed.execCommand('mce_partial_remove');
+				}
+			});
+		} else if (ed.selection.getNode().getAttribute('wce') != null &amp;&amp; ed.selection.getNode().getAttribute('wce').indexOf('break_type=pb') > -1
+			&amp;&amp; ed.selection.getNode().textContent.indexOf('PB') > -1) {
+			isPreviousActive = (ed.selection.getNode().getAttribute('wce').indexOf('hasBreak=yes') > -1);
+			menu.add({ text : '|'});
+			menu.add({
+				text : tinymce.translate('previous_hyphenation'),
+				icon : '',
+				onclick : function() {
+					ed.execCommand('mce_previous_hyphenation', true);
+				}
+			});
+			menu.items()[menu.items().length-1].disabled(isPreviousActive);
+			menu.add({
+				text : tinymce.translate('no_previous_hyphenation'),
+				icon : '',
+				onclick : function() {
+					ed.execCommand('mce_previous_hyphenation', false);
+				}
+			});
+			menu.items()[menu.items().length-1].disabled(!isPreviousActive);
+		}
+		menu.renderNew();
+		menu.moveTo($(contextMenu.getEl()).position().left, $(contextMenu.getEl()).position().top);
+		contextMenu.hide();
+	});
+
+	ed.addCommand('mce_partialI', function() {
+		ed.selection.getNode().setAttribute('wce', '__t=verse_number' + '&amp;partial=I');
+	});
+	ed.addCommand('mce_partialM', function() {
+		ed.selection.getNode().setAttribute('wce', '__t=verse_number' + '&amp;partial=M');
+	});
+	ed.addCommand('mce_partialF', function() {
+		ed.selection.getNode().setAttribute('wce', '__t=verse_number' + '&amp;partial=F');
+	});
+	ed.addCommand('mce_partial_remove', function() {
+		ed.selection.getNode().setAttribute('wce', '__t=verse_number');
+	});
+	ed.addCommand('mce_previous_hyphenation', function(b) {
+		var oldwce = ed.selection.getNode().getAttribute('wce');
+		var pos = oldwce.indexOf("number=");
+		var newstring = oldwce.substring(pos+7);
+		var num = newstring.substring(0,newstring.indexOf("&amp;"));
+		pos = oldwce.indexOf("rv=");
+		newstring = oldwce.substring(pos+3);
+		rv = newstring.substring(0,newstring.indexOf("&amp;"));
+		if (b == true) {
+			ed.selection.getNode().setAttribute('wce', oldwce.replace("hasBreak=no", "hasBreak=yes"));
+			ed.selection.getNode().innerHTML = ed.WCE_CON.startFormatHtml + '&amp;#8208;&lt;br />PB' + ' ' + num + '' + rv + ed.WCE_CON.endFormatHtml;
+		} else {
+			ed.selection.getNode().setAttribute('wce', oldwce.replace("hasBreak=yes", "hasBreak=no"));
+			ed.selection.getNode().innerHTML = ed.WCE_CON.startFormatHtml + '&lt;br />PB' + ' ' + num + '' + rv + ed.WCE_CON.endFormatHtml;
+		}
+	});
+}
+
+if (( typeof Range !== "undefined") &amp;&amp; !Range.prototype.createContextualFragment) {
+	Range.prototype.createContextualFragment = function(html) {
+		var frag = document.createDocumentFragment(), div = document.createElement("div");
+		frag.appendChild(div);
+		div.outerHTML = html;
+		return frag;
+	};
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.10</a> on Sat Apr 02 2022 22:58:33 GMT+0000 (Coordinated Universal Time) using the Minami theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>
