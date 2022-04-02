@@ -1,36 +1,36 @@
 const puppeteer = require('puppeteer');
 const path = require('path');
 
-test('test index page', async () => {
-  const browser = await puppeteer.launch({
-    headless: true,
-    // slowMo: 80,
-    // args: ['--window-size=1920,1080']
-  });
-  const page = await browser.newPage();
+let browser, page, frame;
+
+beforeAll(async () => {
+  jest.setTimeout(50000);
+  browser = await puppeteer.launch({
+     headless: true,
+     // slowMo: 80,
+     // args: ['--window-size=1920,1080', '--disable-web-security']
+     args: ['--disable-web-security']
+   });
+});
+
+beforeEach(async () => {
+  page = await browser.newPage();
   await page.goto(`file:${path.join(__dirname, '..', 'wce-ote', 'index.html')}`);
-  const frameHandle = await page.$("iframe[id='wce_editor_ifr']");
-  const frame = await frameHandle.contentFrame();
+  let frameHandle = await page.$("iframe[id='wce_editor_ifr']");
+  frame = await frameHandle.contentFrame();
+});
+
+afterAll(async () => {
+  await browser.close();
+});
+
+test('test index page', async () => {
   await frame.type('body#tinymce', 'my words');
   const htmlData = await page.evaluate(`getData()`);
   expect(htmlData).toBe('my words');
-  await browser.close();
-}, 10000);
-
+});
 
 test('test highlight text', async () => {
-  const browser = await puppeteer.launch({
-    headless: true,
-    // slowMo: 80,
-    // args: ['--window-size=1920,1080', '--disable-web-security']
-    args: ['--disable-web-security']
-  });
-  const page = await browser.newPage();
-  await page.goto(`file:${path.join(__dirname, '..', 'wce-ote', 'index.html')}`);
-
-
-  const frameHandle = await page.$('iframe[id="wce_editor_ifr"]');
-  const frame = await frameHandle.contentFrame();
   await frame.type('body#tinymce', 'my words');
   await page.keyboard.down('Shift');
   for (let i = 0; i < 'rds'.length; i++) {
@@ -50,5 +50,4 @@ test('test highlight text', async () => {
                         '&amp;unclear_text_reason=damage%20to%20page&amp;unclear_text_reason_other=">' +
                         '<span class="format_start mceNonEditable">‹</span>ṛḍṣ' +
                         '<span class="format_end mceNonEditable">›</span></span>');
-  await browser.close();
-}, 10000);
+});

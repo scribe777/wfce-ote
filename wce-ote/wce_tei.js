@@ -4237,7 +4237,7 @@ function getTeiByHtml(inputString, args) {
 };
 // end of getTeiByHtml
 
-
+//*********************************************************************************************************************
 // globals start here
 
 /*
@@ -4513,7 +4513,7 @@ var removeSpaceAfterLb=function ($node){
 
 	try {
 		module.exports = {
-		  addArrows, removeArrows
+		  addArrows, removeArrows, loadXMLString, getHtmlByTei, getTeiByHtml, Fehlerbehandlung, zeigeFehler
 		};
 	} catch (e) {
 		// nodejs is not available which is fine as long as we are not running tests.
