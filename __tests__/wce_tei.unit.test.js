@@ -1,38 +1,28 @@
-
 const wce_tei = require('../wce-ote/wce_tei');
 
 // addArrows
-
-test('replaces x with left arrow at end of string', () => {
+test('replaces x and y with correct arrows at end of Papyri sigla', () => {
   expect(wce_tei.addArrows('P45x')).toBe('P45→');
-});
-
-test('does not replace x with left arrow if x not at end of string', () => {
   expect(wce_tei.addArrows('Px45')).toBe('Px45');
-});
-
-test('replaces y with down arrow at end of string', () => {
   expect(wce_tei.addArrows('P45y')).toBe('P45↓');
-});
-
-test('does not replace y with down arrow if y not at end of string', () => {
   expect(wce_tei.addArrows('Py45')).toBe('Py45');
 });
 
 // removeArrows
-
-test('replaces left arrow at end of string with x', () => {
+test('replaces arrows with x and y at end of Papyri sigla', () => {
   expect(wce_tei.removeArrows('P45→')).toBe('P45x');
-});
-
-test('does not replace left arrow if arrow not at end of string', () => {
   expect(wce_tei.removeArrows('P→45')).toBe('P→45');
-});
-
-test('replaces down arrow at end of string with y', () => {
   expect(wce_tei.removeArrows('P45↓')).toBe('P45y');
+  expect(wce_tei.removeArrows('P↓45')).toBe('P↓45');
+  // legacy support
+  expect(wce_tei.removeArrows('P45↑')).toBe('P45y');
+  expect(wce_tei.removeArrows('P↑45')).toBe('P↑45');
 });
 
-test('does not replace down arrow if arrow not at end of string', () => {
-  expect(wce_tei.removeArrows('P↓45')).toBe('P↓45');
-});
+//NOT WORKING MAY NEED A MOCK can't find alert
+// error handling (this one needs to change because code needs to change)
+// test('errors are handled', () => {
+//   let alertFunction = jest.spyOn(wce_tei, 'zeigeFehler').mockImplementation(() => {});
+//   wce_tei.Fehlerbehandlung('error message', 'datei', 'zeilen');
+//   expect(alertFunction).toHaveBeenCalled();
+// });
