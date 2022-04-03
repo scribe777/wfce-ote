@@ -198,6 +198,7 @@ const teiToHtmlAndBack = new Map([
       '</span> abbreviation '
     ]
   ],
+  // this seems like overkill in the html doesn't it?
   [ 'nomen sacrum abbreviation with overline in supplied',
     [ '<w><supplied source="na28" reason="illegible">a</supplied></w><w><supplied source="na28" reason="illegible">' +
       '<abbr type="nomSac"><hi rend="overline">ns</hi></abbr></supplied></w>' +
@@ -207,8 +208,198 @@ const teiToHtmlAndBack = new Map([
   ],
 
 
+  // corrections
+  [ 'a simple correction with visible firsthand',
+    [ '<w>a</w><app><rdg type="orig" hand="firsthand"><w>smple</w></rdg><rdg type="corr" hand="corrector">' +
+      '<w>simple</w></rdg></app><w>correction</w>',
+      'a <span class="corr" wce_orig="smple" wce="__t=corr&amp;__n=corrector&amp;corrector_name_other=&amp;' +
+      'corrector_name=corrector&amp;reading=corr&amp;original_firsthand_reading=smple&amp;' +
+      'common_firsthand_partial=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;' +
+      'deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_deletion_hooks=0&amp;' +
+      'deletion_transposition_marks=0&amp;deletion_other=0&amp;deletion=null&amp;firsthand_partial=&amp;' +
+      'partial=&amp;corrector_text=simple%20&amp;place_corr="><span class="format_start mceNonEditable">‹</span>' +
+      'smple<span class="format_end mceNonEditable">›</span></span> correction '
+    ]
+  ],
+  // another undefined for sigla in this one which could be better
+  [ 'a simple correction in the margin',
+    [ '<w>a</w><app><rdg type="orig" hand="firsthand"><w>smple</w></rdg>' +
+      '<rdg type="corr" hand="corrector1" rend="deletion_hooks"><seg type="margin" subtype="pageleft" n="@P-undefined">' +
+      '<w>simple</w></seg></rdg></app><w>correction</w>',
+      'a <span class="corr" wce_orig="smple" wce="__t=corr&amp;__n=corrector1&amp;corrector_name_other=&amp;' +
+      'corrector_name=corrector1&amp;reading=corr&amp;original_firsthand_reading=smple&amp;' +
+      'common_firsthand_partial=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;' +
+      'deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_deletion_hooks=1&amp;' +
+      'deletion_transposition_marks=0&amp;deletion_other=0&amp;deletion=deletion_hooks&amp;firsthand_partial=&amp;' +
+      'partial=&amp;corrector_text=simple%20&amp;place_corr=pageleft">' +
+      '<span class="format_start mceNonEditable">‹</span>smple<span class="format_end mceNonEditable">›</span>' +
+      '</span> correction '
+    ]
+  ],
+  [ 'a simple correction above line',
+    [ '<w>a</w><app><rdg type="orig" hand="firsthand"><w>smple</w></rdg>' +
+      '<rdg type="corr" hand="corrector1" rend="deletion_hooks"><seg type="line" subtype="above" n="@PCL-undefined">' +
+      '<w>simple</w></seg></rdg></app><w>correction</w>',
+      'a <span class="corr" wce_orig="smple" wce="__t=corr&amp;__n=corrector1&amp;corrector_name_other=&amp;' +
+      'corrector_name=corrector1&amp;reading=corr&amp;original_firsthand_reading=smple&amp;' +
+      'common_firsthand_partial=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;' +
+      'deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_deletion_hooks=1&amp;' +
+      'deletion_transposition_marks=0&amp;deletion_other=0&amp;deletion=deletion_hooks&amp;firsthand_partial=&amp;' +
+      'partial=&amp;corrector_text=simple%20&amp;place_corr=above">' +
+      '<span class="format_start mceNonEditable">‹</span>smple<span class="format_end mceNonEditable">›</span>' +
+      '</span> correction '
+    ]
+  ],
+  [ 'a simple correction with other location',
+    [ '<w>a</w><app><rdg type="orig" hand="firsthand"><w>smple</w></rdg>' +
+      '<rdg type="corr" hand="corrector1" rend="transposition_marks">' +
+      '<seg type="other" subtype="inline" n="@PCL-undefined"><w>simple</w></seg></rdg></app><w>correction</w>',
+      'a <span class="corr" wce_orig="smple" wce="__t=corr&amp;__n=corrector1&amp;corrector_name_other=&amp;' +
+      'corrector_name=corrector1&amp;reading=corr&amp;original_firsthand_reading=smple&amp;' +
+      'common_firsthand_partial=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;' +
+      'deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_deletion_hooks=0&amp;' +
+      'deletion_transposition_marks=1&amp;deletion_other=0&amp;deletion=transposition_marks&amp;' +
+      'firsthand_partial=&amp;partial=&amp;corrector_text=simple%20&amp;place_corr=other&amp;' +
+      'place_corr_other=inline"><span class="format_start mceNonEditable">‹</span>smple' +
+      '<span class="format_end mceNonEditable">›</span></span> correction '
+    ]
+  ],
+  [ 'a deletion (correction)',
+    [ '<w>a</w><app><rdg type="orig" hand="firsthand"><w>deletion</w></rdg>' +
+      '<rdg type="corr" hand="corrector" rend="strikethrough"></rdg></app><w>correction</w>',
+      'a <span class="corr" wce_orig="deletion" wce="__t=corr&amp;__n=corrector&amp;corrector_name_other=&amp;' +
+      'corrector_name=corrector&amp;reading=corr&amp;original_firsthand_reading=deletion&amp;' +
+      'common_firsthand_partial=&amp;deletion_erased=0&amp;deletion_underline=0&amp;' +
+      'deletion_underdot=0&amp;deletion_strikethrough=1&amp;deletion_vertical_line=0&amp;' +
+      'deletion_deletion_hooks=0&amp;deletion_transposition_marks=0&amp;deletion_other=0&amp;' +
+      'deletion=strikethrough&amp;firsthand_partial=&amp;partial=&amp;corrector_text=&amp;blank_correction=on&amp;' +
+      'place_corr="><span class="format_start mceNonEditable">‹</span>deletion' +
+      '<span class="format_end mceNonEditable">›</span></span> correction '
+    ]
+  ],
+  [ 'an addition (correction)',
+    [ '<w>an</w><app><rdg type="orig" hand="firsthand"></rdg><rdg type="corr" hand="corrector">' +
+      '<w>addition</w></rdg></app><w>correction</w>',
+      'an <span class="corr_blank_firsthand" wce="__t=corr&amp;__n=corrector&amp;corrector_name_other=&amp;' +
+      'corrector_name=corrector&amp;reading=corr&amp;original_firsthand_reading=&amp;blank_firsthand=on&amp;' +
+      'common_firsthand_partial=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;' +
+      'deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_deletion_hooks=0&amp;' +
+      'deletion_transposition_marks=0&amp;deletion_other=0&amp;deletion=null&amp;firsthand_partial=&amp;' +
+      'partial=&amp;corrector_text=addition%20&amp;place_corr="><span class="format_start mceNonEditable">‹</span>T' +
+      '<span class="format_end mceNonEditable">›</span></span> correction '
+    ]
+  ],
+  [ 'consecutive corrections',
+    [ '<app><rdg type="orig" hand="firsthand"><w>consecutive</w></rdg>' +
+      '<rdg type="corr" hand="corrector" rend="underline"></rdg></app><app>' +
+      '<rdg type="orig" hand="firsthand"><w>corrections</w></rdg>' +
+      '<rdg type="corr" hand="corrector"><w>correction</w></rdg></app>',
+      '<span class="corr" wce_orig="consecutive" wce="__t=corr&amp;__n=corrector&amp;corrector_name_other=&amp;' +
+      'corrector_name=corrector&amp;reading=corr&amp;original_firsthand_reading=consecutive&amp;' +
+      'common_firsthand_partial=&amp;deletion_erased=0&amp;deletion_underline=1&amp;deletion_underdot=0&amp;' +
+      'deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_deletion_hooks=0&amp;deletion_transposition_marks=0&amp;deletion_other=0&amp;deletion=underline&amp;firsthand_partial=&amp;partial=&amp;corrector_text=&amp;blank_correction=on&amp;place_corr="><span class="format_start mceNonEditable">‹</span>consecutive<span class="format_end mceNonEditable">›</span></span> <span class="corr" wce_orig="corrections" wce="__t=corr&amp;__n=corrector&amp;corrector_name_other=&amp;corrector_name=corrector&amp;reading=corr&amp;original_firsthand_reading=corrections&amp;common_firsthand_partial=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_deletion_hooks=0&amp;deletion_transposition_marks=0&amp;deletion_other=0&amp;deletion=null&amp;firsthand_partial=&amp;partial=&amp;corrector_text=correction%20&amp;place_corr="><span class="format_start mceNonEditable">‹</span>corrections<span class="format_end mceNonEditable">›</span></span>'
+    ]
+  ],
+  // notes
+  // another undefined issue
+  [ 'a local note',
+    [ '<w>a</w><w>note</w><note type="local" xml:id="BKV-undefined-2">my new local note</note>',
+      'a note<span class="note" wce="__t=note&amp;__n=&amp;note_text=my%20new%20local%20note&amp;' +
+      'note_type=local&amp;newhand="><span class="format_start mceNonEditable">‹</span>Note' +
+      '<span class="format_end mceNonEditable">›</span></span>'
+    ]
+  ],
+  // a handshift note - OTE-TODO needs to be changed to handShift
+  [ 'a handShift note',
+    [ '<w>a</w><w>note</w><note type="editorial" xml:id="BKV-undefined-2"><handshift/></note>',
+      'a note<span class="note" wce="__t=note&amp;__n=&amp;note_text=&amp;note_type=changeOfHand&amp;' +
+      'note_type_other=&amp;newHand="><span class="format_start mceNonEditable">‹</span>Note' +
+      '<span class="format_end mceNonEditable">›</span></span>'
+    ]
+  ],
+  // OTE-TODO spaces added in attribute should be replaced with _?
+  [ 'a handShift note with new hand',
+    [ '<w>a</w><w>note</w><note type="editorial" xml:id="BKV-undefined-2"><handshift scribe="new hand"/></note>',
+      'a note<span class="note" wce="__t=note&amp;__n=&amp;note_text=&amp;note_type=changeOfHand&amp;' +
+      'note_type_other=&amp;newHand=new%20hand"><span class="format_start mceNonEditable">‹</span>Note' +
+      '<span class="format_end mceNonEditable">›</span></span>'
+    ]
+  ],
+  // commentary
+  // OTE-TODO this tests the paratext function but there is also code relating to commentary left in note function
+  // which probably needs to be removed as I can't see any way it would be used in the interface.
+  [ '1 line of commentary text note',
+    [ '<w>some</w><w>commentary</w><lb/><note type="commentary">One line of untranscribed commentary text</note>' +
+      '<lb n="PCL-undefined"/><w>in</w><w>here</w>',
+      'some commentary <span class="paratext" wce="__t=paratext&amp;__n=&amp;fw_type=commentary&amp;covered=1&amp;' +
+      'text=&amp;number=&amp;edit_number=on&amp;paratext_position=pagetop&amp;paratext_position_other=&amp;' +
+      'paratext_alignment=left"><span class="format_start mceNonEditable">‹</span><br/>↵[' +
+      '<span class="commentary" wce="__t=paratext&amp;__n=&amp;fw_type=commentary&amp;covered=1">comm</span>]' +
+      '<span class="format_end mceNonEditable">›</span></span>' +
+      '<span class="mceNonEditable brea" wce="__t=brea&amp;__n=&amp;break_type=lb&amp;number=&amp;' +
+      'lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no">' +
+      '<span class="format_start mceNonEditable">‹</span><br/>↵ <span class="format_end mceNonEditable">›</span>' +
+      '</span> in here '
+    ]
+  ],
+  // pb, cb and lb
+  // [ 'page, column and line breaks',
+  //   [ '<pb n="1r" type="folio" xml:id="P1r-undefined"/><cb n="P1rC1-undefined"/><lb n="P1rC1L-undefined"/>',
+  //     '<span class="mceNonEditable brea" wce="__t=brea&amp;__n=&amp;break_type=pb&amp;number=1&amp;rv=r&amp;' +
+  //     'fibre_type=&amp;facs=&amp;lb_alignment=&amp;hasBreak=no" id="pb_3_1649011885292667">' +
+  //     '<span class="format_start mceNonEditable">‹</span><br/>PB 1r<span class="format_end mceNonEditable">›</span>' +
+  //     '</span><span class="mceNonEditable brea" wce="__t=brea&amp;__n=&amp;break_type=cb&amp;number=1&amp;' +
+  //     'lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no" id="cb_3_1649011885292667">' +
+  //     '<span class="format_start mceNonEditable">‹</span><br/>CB 1<span class="format_end mceNonEditable">›</span>' +
+  //     '</span><span class="mceNonEditable brea" wce="__t=brea&amp;__n=&amp;break_type=lb&amp;number=&amp;' +
+  //     'lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no" id="lb_3_1649011885292667">' +
+  //     '<span class="format_start mceNonEditable">‹</span><br/>↵ <span class="format_end mceNonEditable">›</span></span>'
+  //   ]
+  // ],
+
+  // quire break (with everything that comes with it)
+  // [ 'quire break',
+  //   [ '<w>a</w><w>new</w><w>quire</w><w>starts</w><gb n="1"/>' +
+  //     '<pb n="1r" type="folio" xml:id="P1r-undefined"/><cb n="P1rC1-undefined"/><lb n="P1rC1L-undefined"/><w>here</w>',
+  //     'a new quire starts <span class="mceNonEditable brea" wce="__t=brea&amp;__n=&amp;break_type=pb&amp;' +
+  //     'number=1&amp;rv=r&amp;fibre_type=&amp;facs=&amp;lb_alignment=&amp;hasBreak=no" id="pb_3_1649014573626523">' +
+  //     '<span class="format_start mceNonEditable">‹</span><br />PB 1r<span class="format_end mceNonEditable">›</span>' +
+  //     '</span><span class="mceNonEditable brea" wce="__t=brea&amp;__n=&amp;break_type=cb&amp;number=1&amp;' +
+  //     'lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no" id="cb_3_1649014573626523">' +
+  //     '<span class="format_start mceNonEditable">‹</span><br />CB 1<span class="format_end mceNonEditable">›</span>' +
+  //     '</span><span class="mceNonEditable brea" wce="__t=brea&amp;__n=&amp;break_type=lb&amp;number=&amp;' +
+  //     'lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no" id="lb_3_1649014573626523">' +
+  //     '<span class="format_start mceNonEditable">‹</span><br />↵ <span class="format_end mceNonEditable">›</span></span> here'
+  //   ]
+  // ],
+  // hi
+  [ 'rubric',
+    [ '<w>test</w><w><hi rend="rubric">for</hi></w><w>rendering</w>',
+      'test <span class=\"formatting_rubrication\" wce=\"__t=formatting_rubrication\" wce_orig=\"for\">' +
+      '<span class=\"format_start mceNonEditable\">‹</span>for<span class=\"format_end mceNonEditable\">›</span>' +
+      '</span> rendering '
+    ]
+  ],
+  [ 'capitals',
+    [ '<w><hi rend="cap" height="3">I</hi>nitial</w><w>capital</w>',
+      '<span class=\"formatting_capitals\" wce=\"__t=formatting_capitals&amp;__n=&amp;capitals_height=3\" wce_orig=\"I\">' +
+      '<span class=\"format_start mceNonEditable\">‹</span>I<span class=\"format_end mceNonEditable\">›</span>' +
+      '</span>nitial capital '
+    ]
+  ],
+
+  // space
+  [ 'space',
+    [ '<w>space</w><w>between</w><space unit="char" extent="5"/><w>words</w>',
+      'space between <span class="spaces" wce="__t=spaces&amp;__n=&amp;sp_unit_other=&amp;sp_unit=char&amp;' +
+      'sp_extent=5"><span class="format_start mceNonEditable">‹</span>sp' +
+      '<span class="format_end mceNonEditable">›</span></span>words '
+    ]
+
+  ],
 
 
+  //
 
   // pc
   [ 'simple <pc> tag',
@@ -236,6 +427,68 @@ teiToHtmlAndBack.forEach((value, key, map) => {
 		expect(xml).toBe(expectedOutput);
 	});
 });
+
+
+
+const teiToHtmlAndBackWithChange = new Map([
+    [ 'a deletion with legacy corrector OMISSION',
+      [ '<w>a</w><app><rdg type="orig" hand="firsthand"><w>deletion</w></rdg>' +
+        '<rdg type="corr" hand="corrector" rend="underdot">OMISSION</rdg></app><w>correction</w>',
+        'a <span class="corr" wce_orig="deletion" wce="__t=corr&amp;__n=corrector&amp;corrector_name_other=&amp;' +
+        'corrector_name=corrector&amp;reading=corr&amp;original_firsthand_reading=deletion&amp;' +
+        'common_firsthand_partial=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=1&amp;' +
+        'deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_deletion_hooks=0&amp;' +
+        'deletion_transposition_marks=0&amp;deletion_other=0&amp;deletion=underdot&amp;firsthand_partial=&amp;' +
+        'partial=&amp;corrector_text=&amp;blank_correction=on&amp;place_corr=">' +
+        '<span class="format_start mceNonEditable">‹</span>deletion<span class="format_end mceNonEditable">›</span>' +
+        '</span> correction ',
+        '<w>a</w><app><rdg type="orig" hand="firsthand"><w>deletion</w></rdg>' +
+        '<rdg type="corr" hand="corrector" rend="underdot"></rdg></app><w>correction</w>'
+      ]
+    ],
+    [ 'an addition (correction) with legacy firsthand OMISSION',
+      [ '<w>an</w><app><rdg type="orig" hand="firsthand">OMISSION</rdg><rdg type="corr" hand="corrector">' +
+        '<w>addition</w></rdg></app><w>correction</w>',
+        'an <span class="corr_blank_firsthand" wce="__t=corr&amp;__n=corrector&amp;corrector_name_other=&amp;' +
+        'corrector_name=corrector&amp;reading=corr&amp;original_firsthand_reading=&amp;blank_firsthand=on&amp;' +
+        'common_firsthand_partial=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;' +
+        'deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_deletion_hooks=0&amp;' +
+        'deletion_transposition_marks=0&amp;deletion_other=0&amp;deletion=null&amp;firsthand_partial=&amp;' +
+        'partial=&amp;corrector_text=addition%20&amp;place_corr="><span class="format_start mceNonEditable">‹</span>T' +
+        '<span class="format_end mceNonEditable">›</span></span> correction ',
+        '<w>an</w><app><rdg type="orig" hand="firsthand"></rdg><rdg type="corr" hand="corrector">' +
+        '<w>addition</w></rdg></app><w>correction</w>'
+      ]
+    ],
+    [ 'a handShift note with new hand, legacy for when new hand was in n attribute',
+      [ '<w>a</w><w>note</w><note type="editorial" xml:id="BKV-undefined-2"><handshift n="new hand"/></note>',
+        'a note<span class="note" wce="__t=note&amp;__n=&amp;note_text=&amp;note_type=changeOfHand&amp;' +
+        'note_type_other=&amp;newHand=new%20hand"><span class="format_start mceNonEditable">‹</span>Note' +
+        '<span class="format_end mceNonEditable">›</span></span>',
+        '<w>a</w><w>note</w><note type="editorial" xml:id="BKV-undefined-2"><handshift scribe="new hand"/></note>'
+      ]
+    ],
+]);
+
+teiToHtmlAndBackWithChange.forEach((value, key, map) => {
+	test('TEI2HTML: ' + key, () => {
+		let testInput, expectedOutput, html;
+		testInput = xmlHead + value[0] + xmlTail;
+		expectedOutput = '<TEMP>' + value[1] + '</TEMP>';
+		html = wce_tei.getHtmlByTei(testInput);
+		expect(html.htmlString).toBe(expectedOutput);
+	});
+  test('HTML2TEI: ' + key, () => {
+		let testInput, expectedOutput, xml;
+		testInput = value[1];
+		expectedOutput = xmlHead + value[2] + xmlTail;
+		xml = wce_tei.getTeiByHtml(testInput, {});
+		expect(xml).toBe(expectedOutput);
+	});
+});
+
+
+
 
 
 // OTE-TODO: error handling shouldn't have undefined args printed out in the alert
