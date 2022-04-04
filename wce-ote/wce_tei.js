@@ -4465,7 +4465,7 @@ var removeBlankNode=function ($root){//remove blank node,
 		return $root;
 	};
 
-// NOT-USED: seems to only call itself recursively but never called from outside this function
+// Cat thinks NOT-USED: seems to only call itself recursively but never called from outside this function
 var removeSpaceAfterLb=function ($node){
 		var nodeName=$node.nodeName;
 		if(nodeName && nodeName=='lb'){

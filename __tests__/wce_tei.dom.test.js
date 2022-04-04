@@ -342,38 +342,26 @@ const teiToHtmlAndBack = new Map([
       '</span> in here '
     ]
   ],
-  // pb, cb and lb
-  // [ 'page, column and line breaks',
-  //   [ '<pb n="1r" type="folio" xml:id="P1r-undefined"/><cb n="P1rC1-undefined"/><lb n="P1rC1L-undefined"/>',
-  //     '<span class="mceNonEditable brea" wce="__t=brea&amp;__n=&amp;break_type=pb&amp;number=1&amp;rv=r&amp;' +
-  //     'fibre_type=&amp;facs=&amp;lb_alignment=&amp;hasBreak=no" id="pb_3_1649011885292667">' +
-  //     '<span class="format_start mceNonEditable">‹</span><br/>PB 1r<span class="format_end mceNonEditable">›</span>' +
-  //     '</span><span class="mceNonEditable brea" wce="__t=brea&amp;__n=&amp;break_type=cb&amp;number=1&amp;' +
-  //     'lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no" id="cb_3_1649011885292667">' +
-  //     '<span class="format_start mceNonEditable">‹</span><br/>CB 1<span class="format_end mceNonEditable">›</span>' +
-  //     '</span><span class="mceNonEditable brea" wce="__t=brea&amp;__n=&amp;break_type=lb&amp;number=&amp;' +
-  //     'lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no" id="lb_3_1649011885292667">' +
-  //     '<span class="format_start mceNonEditable">‹</span><br/>↵ <span class="format_end mceNonEditable">›</span></span>'
-  //   ]
-  // ],
-
-  // quire break (with everything that comes with it)
-  // [ 'quire break',
-  //   [ '<w>a</w><w>new</w><w>quire</w><w>starts</w><gb n="1"/>' +
-  //     '<pb n="1r" type="folio" xml:id="P1r-undefined"/><cb n="P1rC1-undefined"/><lb n="P1rC1L-undefined"/><w>here</w>',
-  //     'a new quire starts <span class="mceNonEditable brea" wce="__t=brea&amp;__n=&amp;break_type=pb&amp;' +
-  //     'number=1&amp;rv=r&amp;fibre_type=&amp;facs=&amp;lb_alignment=&amp;hasBreak=no" id="pb_3_1649014573626523">' +
-  //     '<span class="format_start mceNonEditable">‹</span><br />PB 1r<span class="format_end mceNonEditable">›</span>' +
-  //     '</span><span class="mceNonEditable brea" wce="__t=brea&amp;__n=&amp;break_type=cb&amp;number=1&amp;' +
-  //     'lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no" id="cb_3_1649014573626523">' +
-  //     '<span class="format_start mceNonEditable">‹</span><br />CB 1<span class="format_end mceNonEditable">›</span>' +
-  //     '</span><span class="mceNonEditable brea" wce="__t=brea&amp;__n=&amp;break_type=lb&amp;number=&amp;' +
-  //     'lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no" id="lb_3_1649014573626523">' +
-  //     '<span class="format_start mceNonEditable">‹</span><br />↵ <span class="format_end mceNonEditable">›</span></span> here'
-  //   ]
-  // ],
-  // hi
-
+  // ews
+  // this one is definitely handled in the note function
+  [ 'ews ',
+    [ '<w>abbreviated</w><w>commentary</w><note type="editorial" subtype="ews"/><gap unit="verse" extent="rest"/>',
+      'abbreviated commentary<span class="paratext" wce="__t=paratext&amp;__n=&amp;marginals_text=&amp;' +
+      'fw_type=ews&amp;covered=&amp;text=&amp;number=&amp;edit_number=on&amp;paratext_position=pagetop&amp;' +
+      'paratext_position_other=&amp;paratext_alignment=left"><span class="format_start mceNonEditable">‹</span>' +
+      '[<span class="ews">ews</span>]<span class="format_end mceNonEditable">›</span></span>'
+    ]
+  ],
+  // running title in centre of top margin
+  [ 'running title (fw) in centre top margin (seg)',
+    [ '<seg type="margin" subtype="pagetop" n="@P-undefined"><fw type="runTitle" rend="center">' +
+      '<w>running</w><w>title</w></fw></seg>',
+      '<span class="paratext" wce="__t=paratext&amp;__n=&amp;marginals_text=running%20title%20&amp;' +
+      'fw_type=runTitle&amp;paratext_alignment=center&amp;paratext_position=pagetop&amp;paratext_position_other=">' +
+      '<span class="format_start mceNonEditable">‹</span>fw<span class="format_end mceNonEditable">›</span></span>'
+    ]
+  ],
+  // special hi not covered in separate tests below
   [ 'capitals',
     [ '<w><hi rend="cap" height="3">I</hi>nitial</w><w>capital</w>',
       '<span class=\"formatting_capitals\" wce=\"__t=formatting_capitals&amp;__n=&amp;capitals_height=3\" wce_orig=\"I\">' +
@@ -381,7 +369,14 @@ const teiToHtmlAndBack = new Map([
       '</span>nitial capital '
     ]
   ],
-
+  [ 'other ornamentation',
+    [ '<w>test</w><w><hi rend="underlined">for</hi></w><w>rendering</w>',
+      'test <span class="formatting_ornamentation_other" wce="__t=formatting_ornamentation_other&amp;' +
+      '__n=&amp;formatting_ornamentation_other=underlined" wce_orig="for">' +
+      '<span class="format_start mceNonEditable">‹</span>for' +
+      '<span class="format_end mceNonEditable">›</span></span> rendering '
+    ]
+  ],
   // space
   [ 'space',
     [ '<w>space</w><w>between</w><space unit="char" extent="5"/><w>words</w>',
@@ -416,6 +411,7 @@ teiToHtmlAndBack.forEach((value, key, map) => {
 	});
 });
 
+// special test for all branches of of the hi switch statement
 const hiRendToHtmlAndBack = new Map([
   // rubric
 	[ 'rubric',
@@ -491,6 +487,232 @@ hiRendToHtmlAndBack.forEach((value, key, map) => {
 	});
 });
 
+
+// breaks added at the same time as each other use math.random as an identifier so they need special tests that use regex
+const breaksToHtmlAndBack = new Map([
+
+  [ 'initial page, using type=folio',
+    [ '<pb n="1r" type="folio" xml:id="P1r-undefined"/><cb n="P1rC1-undefined"/>' +
+      '<lb n="P1rC1L-undefined"/><w>my</w><w>first</w><w>page</w>',
+      '<span class=\"mceNonEditable brea\" id=\"pb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;break_type=pb&amp;' +
+      'number=1&amp;rv=r&amp;fibre_type=&amp;facs=&amp;lb_alignment=&amp;hasBreak=no\">' +
+      '<span class=\"format_start mceNonEditable\">‹</span><br/>PB 1r<span class=\"format_end mceNonEditable\">›</span>' +
+      '</span><span class=\"mceNonEditable brea\" id=\"cb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;' +
+      'break_type=cb&amp;number=1&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
+      '<span class=\"format_start mceNonEditable\">‹</span><br/>CB 1<span class=\"format_end mceNonEditable\">›</span>' +
+      '</span><span class=\"mceNonEditable brea\" id=\"lb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;' +
+      'break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
+      '<span class=\"format_start mceNonEditable\">‹</span><br/>↵ <span class=\"format_end mceNonEditable\">›</span>' +
+      '</span> my first page '
+    ]
+  ],
+  [ 'initial page, using type=folio, with facsimile',
+    [ '<pb n="1r" type="folio" facs="http://thelibrary/image7.jpg" xml:id="P1r-undefined"/><cb n="P1rC1-undefined"/>' +
+      '<lb n="P1rC1L-undefined"/><w>my</w><w>first</w><w>page</w>',
+      '<span class=\"mceNonEditable brea\" id=\"pb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;break_type=pb&amp;' +
+      'number=1&amp;rv=r&amp;fibre_type=&amp;facs=http://thelibrary/image7.jpg&amp;lb_alignment=&amp;hasBreak=no\">' +
+      '<span class=\"format_start mceNonEditable\">‹</span><br/>PB 1r<span class=\"format_end mceNonEditable\">›</span>' +
+      '</span><span class=\"mceNonEditable brea\" id=\"cb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;' +
+      'break_type=cb&amp;number=1&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
+      '<span class=\"format_start mceNonEditable\">‹</span><br/>CB 1<span class=\"format_end mceNonEditable\">›</span>' +
+      '</span><span class=\"mceNonEditable brea\" id=\"lb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;' +
+      'break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
+      '<span class=\"format_start mceNonEditable\">‹</span><br/>↵ <span class=\"format_end mceNonEditable\">›</span>' +
+      '</span> my first page '
+    ]
+  ],
+  [ 'mid-text page, using type=page',
+    [ '<w>end</w><w>of</w><w>page</w><pb n="1" type="page" xml:id="P1-undefined"/><cb n="P1C1-undefined"/>' +
+      '<lb n="P1C1L-undefined"/><w>my</w><w>second</w><w>page</w>',
+      'end of page <span class=\"mceNonEditable brea\" id=\"pb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;' +
+      'break_type=pb&amp;number=1&amp;rv=&amp;fibre_type=&amp;facs=&amp;lb_alignment=&amp;hasBreak=no\">' +
+      '<span class=\"format_start mceNonEditable\">‹</span><br/>PB 1<span class=\"format_end mceNonEditable\">›</span>' +
+      '</span><span class=\"mceNonEditable brea\" id=\"cb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;' +
+      'break_type=cb&amp;number=1&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
+      '<span class=\"format_start mceNonEditable\">‹</span><br/>CB 1<span class=\"format_end mceNonEditable\">›</span>' +
+      '</span><span class=\"mceNonEditable brea\" id=\"lb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;' +
+      'break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
+      '<span class=\"format_start mceNonEditable\">‹</span><br/>↵ <span class=\"format_end mceNonEditable\">›</span>' +
+      '</span> my second page '
+    ]
+  ],
+  [ 'mid-word page, for papyri (type=page and y)',
+    [ '<w>half</w><w>of</w><w>wo<pb n="1↓" type="page" xml:id="P1y-undefined" break="no"/><cb n="P1yC1-undefined"/>' +
+      '<lb n="P1yC1L-undefined"/>rd</w><w>on</w><w>second</w><w>page</w>',
+      'half of wo<span class=\"mceNonEditable brea\" id=\"pb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;' +
+      'break_type=pb&amp;number=1&amp;rv=&amp;fibre_type=y&amp;facs=&amp;lb_alignment=&amp;hasBreak=yes\">' +
+      '<span class=\"format_start mceNonEditable\">‹</span>-<br/>PB 1y<span class=\"format_end mceNonEditable\">›</span>' +
+      '</span><span class=\"mceNonEditable brea\" id=\"cb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;' +
+      'break_type=cb&amp;number=1&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
+      '<span class=\"format_start mceNonEditable\">‹</span><br/>CB 1<span class=\"format_end mceNonEditable\">›</span>' +
+      '</span><span class=\"mceNonEditable brea\" id=\"lb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;' +
+      'break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
+      '<span class=\"format_start mceNonEditable\">‹</span><br/>↵ <span class=\"format_end mceNonEditable\">›</span>' +
+      '</span>rd on second page '
+    ]
+  ],
+  [ 'between-word column',
+    [ '<pb n="1v" type="folio" xml:id="P1v-undefined"/><cb n="P1vC1-undefined"/><lb n="P1vC1L-undefined"/>' +
+      '<w>my</w><w>first</w><w>column</w><cb n="P1vC2-undefined"/><lb n="P1vC2L-undefined"/>' +
+      '<w>my</w><w>second</w><w>column</w>',
+      '<span class=\"mceNonEditable brea\" id=\"pb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;break_type=pb&amp;' +
+      'number=1&amp;rv=v&amp;fibre_type=&amp;facs=&amp;lb_alignment=&amp;hasBreak=no\">' +
+      '<span class=\"format_start mceNonEditable\">‹</span><br/>PB 1v<span class=\"format_end mceNonEditable\">›</span>' +
+      '</span><span class=\"mceNonEditable brea\" id=\"cb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;' +
+      'break_type=cb&amp;number=1&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
+      '<span class=\"format_start mceNonEditable\">‹</span><br/>CB 1<span class=\"format_end mceNonEditable\">›</span>' +
+      '</span><span class=\"mceNonEditable brea\" id=\"lb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;' +
+      'break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
+      '<span class=\"format_start mceNonEditable\">‹</span><br/>↵ <span class=\"format_end mceNonEditable\">›</span>' +
+      '</span> my first column <span class=\"mceNonEditable brea\" id=\"cb_2_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;' +
+      'break_type=cb&amp;number=2&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
+      '<span class=\"format_start mceNonEditable\">‹</span><br/>CB 2<span class=\"format_end mceNonEditable\">›</span>' +
+      '</span><span class=\"mceNonEditable brea\" id=\"lb_2_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;' +
+      'break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
+      '<span class=\"format_start mceNonEditable\">‹</span><br/>↵ <span class=\"format_end mceNonEditable\">›</span>' +
+      '</span> my second column '
+    ]
+  ],
+  [ 'mid-word column',
+    [ '<pb n="1v" type="folio" xml:id="P1v-undefined"/><cb n="P1vC1-undefined"/><lb n="P1vC1L-undefined"/>' +
+      '<w>my</w><w>first</w><w>colu<cb n="P1vC2-undefined" break="no"/><lb n="P1vC2L-undefined"/>mn</w>' +
+      '<w>my</w><w>second</w><w>column</w>',
+      '<span class=\"mceNonEditable brea\" id=\"pb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;break_type=pb&amp;' +
+      'number=1&amp;rv=v&amp;fibre_type=&amp;facs=&amp;lb_alignment=&amp;hasBreak=no\">' +
+      '<span class=\"format_start mceNonEditable\">‹</span><br/>PB 1v<span class=\"format_end mceNonEditable\">›</span>' +
+      '</span><span class=\"mceNonEditable brea\" id=\"cb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;' +
+      'break_type=cb&amp;number=1&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
+      '<span class=\"format_start mceNonEditable\">‹</span><br/>CB 1<span class=\"format_end mceNonEditable\">›</span>' +
+      '</span><span class=\"mceNonEditable brea\" id=\"lb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;' +
+      'break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
+      '<span class=\"format_start mceNonEditable\">‹</span><br/>↵ <span class=\"format_end mceNonEditable\">›</span>' +
+      '</span> my first colu<span class=\"mceNonEditable brea\" id=\"cb_2_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;' +
+      'break_type=cb&amp;number=2&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=yes\">' +
+      '<span class=\"format_start mceNonEditable\">‹</span>-<br/>CB 2<span class=\"format_end mceNonEditable\">›</span>' +
+      '</span><span class=\"mceNonEditable brea\" id=\"lb_2_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;' +
+      'break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
+      '<span class=\"format_start mceNonEditable\">‹</span><br/>↵ <span class=\"format_end mceNonEditable\">›</span>' +
+      '</span>mn my second column '
+    ]
+  ],
+  [ 'between-word linebreak',
+    [ '<pb n="1" type="page" xml:id="P1-undefined"/><cb n="P1C1-undefined"/><lb n="P1C1L-undefined"/>' +
+      '<w>my</w><w>first</w><w>line</w><lb n="P1C1L-undefined"/><w>my</w><w>second</w><w>line</w>',
+      '<span class=\"mceNonEditable brea\" id=\"pb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;break_type=pb&amp;' +
+      'number=1&amp;rv=&amp;fibre_type=&amp;facs=&amp;lb_alignment=&amp;hasBreak=no\">' +
+      '<span class=\"format_start mceNonEditable\">‹</span><br/>PB 1<span class=\"format_end mceNonEditable\">›</span>' +
+      '</span><span class=\"mceNonEditable brea\" id=\"cb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;' +
+      'break_type=cb&amp;number=1&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
+      '<span class=\"format_start mceNonEditable\">‹</span><br/>CB 1<span class=\"format_end mceNonEditable\">›</span>' +
+      '</span><span class=\"mceNonEditable brea\" id=\"lb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;' +
+      'break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
+      '<span class=\"format_start mceNonEditable\">‹</span><br/>↵ <span class=\"format_end mceNonEditable\">›</span>' +
+      '</span> my first line <span class=\"mceNonEditable brea\" wce=\"__t=brea&amp;__n=&amp;' +
+      'break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
+      '<span class=\"format_start mceNonEditable\">‹</span><br/>↵ <span class=\"format_end mceNonEditable\">›</span>' +
+      '</span> my second line '
+    ]
+  ],
+  [ 'between-word linebreak, hanging line',
+    [ '<pb n="1" type="page" xml:id="P1-undefined"/><cb n="P1C1-undefined"/><lb n="P1C1L-undefined"/>' +
+      '<w>my</w><w>first</w><w>line</w><lb n="P1C1L-undefined" rend="hang"/><w>my</w><w>second</w><w>line</w>',
+      '<span class=\"mceNonEditable brea\" id=\"pb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;break_type=pb&amp;' +
+      'number=1&amp;rv=&amp;fibre_type=&amp;facs=&amp;lb_alignment=&amp;hasBreak=no\">' +
+      '<span class=\"format_start mceNonEditable\">‹</span><br/>PB 1<span class=\"format_end mceNonEditable\">›</span>' +
+      '</span><span class=\"mceNonEditable brea\" id=\"cb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;' +
+      'break_type=cb&amp;number=1&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
+      '<span class=\"format_start mceNonEditable\">‹</span><br/>CB 1<span class=\"format_end mceNonEditable\">›</span>' +
+      '</span><span class=\"mceNonEditable brea\" id=\"lb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;' +
+      'break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
+      '<span class=\"format_start mceNonEditable\">‹</span><br/>↵ <span class=\"format_end mceNonEditable\">›</span>' +
+      '</span> my first line <span class=\"mceNonEditable brea\" wce=\"__t=brea&amp;__n=&amp;break_type=lb&amp;' +
+      'number=&amp;lb_alignment=hang&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
+      '<span class=\"format_start mceNonEditable\">‹</span><br/>↵← <span class=\"format_end mceNonEditable\">›</span>' +
+      '</span> my second line '
+    ]
+  ],
+  [ 'between-word linebreak, indented line',
+    [ '<pb n="1" type="page" xml:id="P1-undefined"/><cb n="P1C1-undefined"/><lb n="P1C1L-undefined"/>' +
+      '<w>my</w><w>first</w><w>line</w><lb n="P1C1L-undefined" rend="indent"/><w>my</w><w>second</w><w>line</w>',
+      '<span class=\"mceNonEditable brea\" id=\"pb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;break_type=pb&amp;' +
+      'number=1&amp;rv=&amp;fibre_type=&amp;facs=&amp;lb_alignment=&amp;hasBreak=no\">' +
+      '<span class=\"format_start mceNonEditable\">‹</span><br/>PB 1<span class=\"format_end mceNonEditable\">›</span>' +
+      '</span><span class=\"mceNonEditable brea\" id=\"cb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;' +
+      'break_type=cb&amp;number=1&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
+      '<span class=\"format_start mceNonEditable\">‹</span><br/>CB 1<span class=\"format_end mceNonEditable\">›</span>' +
+      '</span><span class=\"mceNonEditable brea\" id=\"lb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;' +
+      'break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
+      '<span class=\"format_start mceNonEditable\">‹</span><br/>↵ <span class=\"format_end mceNonEditable\">›</span>' +
+      '</span> my first line <span class=\"mceNonEditable brea\" wce=\"__t=brea&amp;__n=&amp;break_type=lb&amp;' +
+      'number=&amp;lb_alignment=indent&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
+      '<span class=\"format_start mceNonEditable\">‹</span><br/>↵→ <span class=\"format_end mceNonEditable\">›</span>' +
+      '</span> my second line '
+    ]
+  ],
+  [ 'mid-word linebreak',
+    [ '<pb n="1v" type="folio" xml:id="P1v-undefined"/><cb n="P1vC1-undefined"/><lb n="P1vC1L-undefined"/><w>my</w><w>first</w><w>li' +
+      '<lb n="P1vC1L-undefined" break="no"/>ne</w><w>my</w><w>second</w><w>line</w>',
+      '<span class=\"mceNonEditable brea\" id=\"pb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;break_type=pb&amp;' +
+      'number=1&amp;rv=v&amp;fibre_type=&amp;facs=&amp;lb_alignment=&amp;hasBreak=no\">' +
+      '<span class=\"format_start mceNonEditable\">‹</span><br/>PB 1v<span class=\"format_end mceNonEditable\">›</span>' +
+      '</span><span class=\"mceNonEditable brea\" id=\"cb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;' +
+      'break_type=cb&amp;number=1&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
+      '<span class=\"format_start mceNonEditable\">‹</span><br/>CB 1<span class=\"format_end mceNonEditable\">›</span>' +
+      '</span><span class=\"mceNonEditable brea\" id=\"lb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;' +
+      'break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
+      '<span class=\"format_start mceNonEditable\">‹</span><br/>↵ <span class=\"format_end mceNonEditable\">›</span>' +
+      '</span> my first li<span class=\"mceNonEditable brea\" wce=\"__t=brea&amp;__n=&amp;break_type=lb&amp;' +
+      'number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=yes\">' +
+      '<span class=\"format_start mceNonEditable\">‹</span>-<br/>↵ <span class=\"format_end mceNonEditable\">›</span>' +
+      '</span>ne my second line '
+    ]
+  ],
+  [ 'mid-word linebreak with rend attribute',
+    [ '<pb n="1v" type="folio" xml:id="P1v-undefined"/><cb n="P1vC1-undefined"/><lb n="P1vC1L-undefined"/><w>my</w><w>first</w><w>li' +
+      '<lb n="P1vC1L-undefined" rend="hang" break="no"/>ne</w><w>my</w><w>second</w><w>line</w>',
+      '<span class=\"mceNonEditable brea\" id=\"pb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;break_type=pb&amp;' +
+      'number=1&amp;rv=v&amp;fibre_type=&amp;facs=&amp;lb_alignment=&amp;hasBreak=no\">' +
+      '<span class=\"format_start mceNonEditable\">‹</span><br/>PB 1v<span class=\"format_end mceNonEditable\">›</span>' +
+      '</span><span class=\"mceNonEditable brea\" id=\"cb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;' +
+      'break_type=cb&amp;number=1&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
+      '<span class=\"format_start mceNonEditable\">‹</span><br/>CB 1<span class=\"format_end mceNonEditable\">›</span>' +
+      '</span><span class=\"mceNonEditable brea\" id=\"lb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;' +
+      'break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
+      '<span class=\"format_start mceNonEditable\">‹</span><br/>↵ <span class=\"format_end mceNonEditable\">›</span>' +
+      '</span> my first li<span class=\"mceNonEditable brea\" wce=\"__t=brea&amp;__n=&amp;break_type=lb&amp;' +
+      'number=&amp;lb_alignment=hang&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=yes\">' +
+      '<span class=\"format_start mceNonEditable\">‹</span>-<br/>↵← <span class=\"format_end mceNonEditable\">›</span>' +
+      '</span>ne my second line '
+    ]
+  ]
+
+
+  //quire break (with everything that comes with it) doesn't seem to work at all (is the TEI tag gb or qb)
+  // [ 'quire break',
+  //   [ '<w>a</w><w>new</w><w>quire</w><w>starts</w><gb n="1"/><pb n="1r" type="folio" xml:id="P1r-undefined"/><cb n="P1rC1-undefined"/><lb n="P1rC1L-undefined"/><w>here</w>',
+  //     ''
+  //   ]
+  // ],
+]);
+
+breaksToHtmlAndBack.forEach((value, key, map) => {
+	test('TEI2HTML: ' + key, () => {
+		let testInput, expectedOutput, html, modifiedHtml, idRegex;
+    idRegex = /id="(.)b_(\d)_\d+"/g
+		testInput = xmlHead + value[0] + xmlTail;
+		expectedOutput = '<TEMP>' + value[1] + '</TEMP>';
+		html = wce_tei.getHtmlByTei(testInput);
+    modifiedHtml = html.htmlString.replace(idRegex, 'id="$1b_$2_MATH.RAND"');
+		expect(modifiedHtml).toBe(expectedOutput);
+	});
+  test('HTML2TEI: ' + key, () => {
+		let testInput, expectedOutput, xml;
+		testInput = value[1];
+		expectedOutput = xmlHead + value[0] + xmlTail;
+		xml = wce_tei.getTeiByHtml(testInput, {});
+		expect(xml).toBe(expectedOutput);
+	});
+});
 
 const teiToHtmlAndBackWithChange = new Map([
     [ 'a deletion with legacy corrector OMISSION',
