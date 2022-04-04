@@ -373,13 +373,7 @@ const teiToHtmlAndBack = new Map([
   //   ]
   // ],
   // hi
-  [ 'rubric',
-    [ '<w>test</w><w><hi rend="rubric">for</hi></w><w>rendering</w>',
-      'test <span class=\"formatting_rubrication\" wce=\"__t=formatting_rubrication\" wce_orig=\"for\">' +
-      '<span class=\"format_start mceNonEditable\">‹</span>for<span class=\"format_end mceNonEditable\">›</span>' +
-      '</span> rendering '
-    ]
-  ],
+
   [ 'capitals',
     [ '<w><hi rend="cap" height="3">I</hi>nitial</w><w>capital</w>',
       '<span class=\"formatting_capitals\" wce=\"__t=formatting_capitals&amp;__n=&amp;capitals_height=3\" wce_orig=\"I\">' +
@@ -395,12 +389,7 @@ const teiToHtmlAndBack = new Map([
       'sp_extent=5"><span class="format_start mceNonEditable">‹</span>sp' +
       '<span class="format_end mceNonEditable">›</span></span>words '
     ]
-
   ],
-
-
-  //
-
   // pc
   [ 'simple <pc> tag',
 	  [ '<pc>.</pc>',
@@ -409,7 +398,6 @@ const teiToHtmlAndBack = new Map([
  		],
 	]
 ]);
-
 
 teiToHtmlAndBack.forEach((value, key, map) => {
 	test('TEI2HTML: ' + key, () => {
@@ -428,6 +416,80 @@ teiToHtmlAndBack.forEach((value, key, map) => {
 	});
 });
 
+const hiRendToHtmlAndBack = new Map([
+  // rubric
+	[ 'rubric',
+	  [ 'rubric',
+	 		'formatting_rubrication'
+ 		],
+	],
+  [ 'gold',
+	  [ 'gold',
+	 		'formatting_gold'
+ 		],
+	],
+  [ 'blue',
+	  [ 'blue',
+	 		'formatting_blue'
+ 		],
+	],
+  [ 'green',
+	  [ 'green',
+	 		'formatting_green'
+ 		],
+	],
+  [ 'yellow',
+	  [ 'yellow',
+	 		'formatting_yellow'
+ 		],
+	],
+  [ 'overline',
+	  [ 'overline',
+	 		'formatting_overline'
+ 		],
+	],
+  [ 'other',
+	  [ 'other',
+	 		'formatting_other'
+ 		],
+	],
+  [ 'displaced-above',
+	  [ 'displaced-above',
+	 		'formatting_displaced-above'
+ 		],
+	],
+  [ 'displaced-below',
+	  [ 'displaced-below',
+	 		'formatting_displaced-below'
+ 		],
+	],
+  [ 'displaced-other',
+	  [ 'displaced-other',
+	 		'formatting_displaced-other'
+ 		],
+	]
+]);
+
+hiRendToHtmlAndBack.forEach((value, key, map) => {
+  let xmlFormat = xmlHead + '<w>test</w><w><hi rend="' + value[0] + '">for</hi></w><w>rendering</w>' + xmlTail;
+  let htmlFormat = 'test <span class="' + value[1] + '" wce="__t=' + value[1] +
+                   '" wce_orig="for"><span class="format_start mceNonEditable">‹</span>for' +
+                   '<span class="format_end mceNonEditable">›</span></span> rendering ';
+	test('TEI2HTML: ' + key, () => {
+		let testInput, expectedOutput, html;
+		testInput = xmlFormat;
+		expectedOutput = '<TEMP>' + htmlFormat + '</TEMP>';
+		html = wce_tei.getHtmlByTei(testInput);
+		expect(html.htmlString).toBe(expectedOutput);
+	});
+  test('HTML2TEI: ' + key, () => {
+		let testInput, expectedOutput, xml;
+		testInput = htmlFormat;
+		expectedOutput = xmlFormat;
+		xml = wce_tei.getTeiByHtml(testInput, {});
+		expect(xml).toBe(expectedOutput);
+	});
+});
 
 
 const teiToHtmlAndBackWithChange = new Map([
@@ -468,6 +530,28 @@ const teiToHtmlAndBackWithChange = new Map([
         '<w>a</w><w>note</w><note type="editorial" xml:id="BKV-undefined-2"><handshift scribe="new hand"/></note>'
       ]
     ],
+    [ 'hi rend ol as legacy support for overline',
+      [ '<w>test</w><w><hi rend="ol">for</hi></w><w>rendering</w>',
+        'test <span class="formatting_overline" wce="__t=formatting_overline" wce_orig="for">' +
+        '<span class="format_start mceNonEditable">‹</span>for' +
+        '<span class="format_end mceNonEditable">›</span></span> rendering ',
+        '<w>test</w><w><hi rend="overline">for</hi></w><w>rendering</w>'
+      ]
+    ],
+    // not sure the next two are desireable behaviour but it is the current behaviour
+    // OTE-TODO: fix this and at least keep the word?
+    [ 'hi with no rend attribute removes the word with the hi tag',
+      [ '<w>test</w><w><hi>for</hi></w><w>rendering</w>',
+        'test  rendering ',
+        '<w>test</w><w>rendering</w>'
+      ]
+    ],
+    [ 'hi with empty rend attribute removes the word with the hi tag',
+      [ '<w>test</w><w><hi rend="">for</hi></w><w>rendering</w>',
+        'test  rendering ',
+        '<w>test</w><w>rendering</w>'
+      ]
+    ]
 ]);
 
 teiToHtmlAndBackWithChange.forEach((value, key, map) => {
