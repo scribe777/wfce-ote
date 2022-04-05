@@ -4321,7 +4321,7 @@ function loadXMLString(txt) {
 	return xmlDoc;
 }
 
-/*
+/* Cat thinks this is never used
  * Read xml file to generate the DOM object
  */
 function loadXMLDoc(dname) {

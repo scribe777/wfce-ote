@@ -73,6 +73,22 @@ const teiToHtmlAndBack = new Map([
       '<span class="chapter_number mceNonEditable" wce="__t=chapter_number" id="2">1</span> The content of my chapter ' //spaces at beg and end are important
  		],
 	],
+  [ 'book, chapter and verse',
+	  [ '<div type="book" n="B04"><div type="chapter" n="B04K1"><ab n="B04K1V2"><w>The</w><w>content</w><w>of</w>' +
+      '<w>my</w><w>verse</w></ab></div></div>',
+	 		' <span class="book_number mceNonEditable" wce="__t=book_number" id="1">4</span>  ' +
+      '<span class="chapter_number mceNonEditable" wce="__t=chapter_number" id="2">1</span> ' +
+      '<span class="verse_number mceNonEditable" wce="__t=verse_number">2</span> The content of my verse ' //spaces at beg and end are important
+ 		],
+	],
+  [ 'book, chapter and verse (verse continues from previous page, part="F")',
+	  [ '<div type="book" n="B04"><div type="chapter" n="B04K1"><ab n="B04K1V2" part="F"><w>continuation</w>' +
+      '<w>of</w><w>my</w><w>verse</w></ab></div></div>',
+	 		' <span class="book_number mceNonEditable" wce="__t=book_number" id="1">4</span>  ' +
+      '<span class="chapter_number mceNonEditable" wce="__t=chapter_number" id="2">1</span> ' +
+      '<span class="verse_number mceNonEditable" wce="__t=verse_number&amp;partial=F">2 Cont.</span> continuation of my verse ' //spaces at beg and end are important
+ 		],
+	],
   [ 'lection div',
 	  [ '<div type="lection" n="R12"><w>The</w><w>content</w><w>of</w><w>my</w><w>lection</w></div>',
 	 		' <span class="lection_number mceNonEditable" wce="__t=lection_number&amp;number=R12" id="1">Lec</span> The content of my lection ' //spaces at beg and end are important
@@ -166,6 +182,14 @@ const teiToHtmlAndBack = new Map([
       'lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no">' +
       '<span class="format_start mceNonEditable">‹</span><br/>↵ ' +
       '<span class="format_end mceNonEditable">›</span></span> line '
+    ]
+  ],
+  [ 'gap witness end',
+    [ '<w>the</w><w>end</w><w>of</w><w>the</w><w>witness</w><gap reason="witnessEnd"/>',
+      'the end of the witness  <span class="witnessend" wce="__t=gap&amp;__n=&amp;original_gap_text=&amp;' +
+      'gap_reason=witnessEnd&amp;unit=&amp;unit_other=&amp;extent=&amp;supplied_source=na28&amp;' +
+      'supplied_source_other=&amp;insert=Insert&amp;cancel=Cancel"><span class="format_start mceNonEditable">‹</span>' +
+      'Witness End<span class="format_end mceNonEditable">›</span></span>'
     ]
   ],
   //supplied
@@ -297,9 +321,56 @@ const teiToHtmlAndBack = new Map([
       '<span class="corr" wce_orig="consecutive" wce="__t=corr&amp;__n=corrector&amp;corrector_name_other=&amp;' +
       'corrector_name=corrector&amp;reading=corr&amp;original_firsthand_reading=consecutive&amp;' +
       'common_firsthand_partial=&amp;deletion_erased=0&amp;deletion_underline=1&amp;deletion_underdot=0&amp;' +
-      'deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_deletion_hooks=0&amp;deletion_transposition_marks=0&amp;deletion_other=0&amp;deletion=underline&amp;firsthand_partial=&amp;partial=&amp;corrector_text=&amp;blank_correction=on&amp;place_corr="><span class="format_start mceNonEditable">‹</span>consecutive<span class="format_end mceNonEditable">›</span></span> <span class="corr" wce_orig="corrections" wce="__t=corr&amp;__n=corrector&amp;corrector_name_other=&amp;corrector_name=corrector&amp;reading=corr&amp;original_firsthand_reading=corrections&amp;common_firsthand_partial=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_deletion_hooks=0&amp;deletion_transposition_marks=0&amp;deletion_other=0&amp;deletion=null&amp;firsthand_partial=&amp;partial=&amp;corrector_text=correction%20&amp;place_corr="><span class="format_start mceNonEditable">‹</span>corrections<span class="format_end mceNonEditable">›</span></span>'
+      'deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_deletion_hooks=0&amp;' +
+      'deletion_transposition_marks=0&amp;deletion_other=0&amp;deletion=underline&amp;firsthand_partial=&amp;' +
+      'partial=&amp;corrector_text=&amp;blank_correction=on&amp;place_corr=">' +
+      '<span class="format_start mceNonEditable">‹</span>consecutive<span class="format_end mceNonEditable">›</span>' +
+      '</span> <span class="corr" wce_orig="corrections" wce="__t=corr&amp;__n=corrector&amp;corrector_name_other=&amp;' +
+      'corrector_name=corrector&amp;reading=corr&amp;original_firsthand_reading=corrections&amp;' +
+      'common_firsthand_partial=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;' +
+      'deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_deletion_hooks=0&amp;' +
+      'deletion_transposition_marks=0&amp;deletion_other=0&amp;deletion=null&amp;firsthand_partial=&amp;' +
+      'partial=&amp;corrector_text=correction%20&amp;place_corr="><span class="format_start mceNonEditable">‹</span>' +
+      'corrections<span class="format_end mceNonEditable">›</span></span>'
     ]
   ],
+  [ 'firsthand ut videtur',
+    [ '<w>a</w><app><rdg type="orig" hand="firsthandV"><w>smple</w></rdg>' +
+      '<rdg type="corr" hand="corrector"><w>simple</w></rdg></app><w>correction</w>',
+      'a <span class="corr" wce_orig="smple" wce="__t=corr&amp;__n=corrector&amp;ut_videtur_firsthand=on&amp;' +
+      'corrector_name_other=&amp;corrector_name=corrector&amp;reading=corr&amp;original_firsthand_reading=smple&amp;' +
+      'common_firsthand_partial=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;' +
+      'deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_deletion_hooks=0&amp;' +
+      'deletion_transposition_marks=0&amp;deletion_other=0&amp;deletion=null&amp;firsthand_partial=&amp;' +
+      'partial=&amp;corrector_text=simple%20&amp;place_corr="><span class="format_start mceNonEditable">‹</span>' +
+      'smple<span class="format_end mceNonEditable">›</span></span> correction '
+    ]
+  ],
+  [ 'corrector ut videtur',
+    [ '<w>a</w><app><rdg type="orig" hand="firsthand"><w>smple</w></rdg><rdg type="corr" hand="correctorV">' +
+      '<w>simple</w></rdg></app><w>correction</w>',
+      'a <span class="corr" wce_orig="smple" wce="__t=corr&amp;__n=corrector&amp;corrector_name_other=&amp;' +
+      'corrector_name=corrector&amp;ut_videtur_corr=on&amp;reading=corr&amp;original_firsthand_reading=smple&amp;' +
+      'common_firsthand_partial=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;' +
+      'deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_deletion_hooks=0&amp;' +
+      'deletion_transposition_marks=0&amp;deletion_other=0&amp;deletion=null&amp;firsthand_partial=&amp;' +
+      'partial=&amp;corrector_text=simple%20&amp;place_corr="><span class="format_start mceNonEditable">‹</span>' +
+      'smple<span class="format_end mceNonEditable">›</span></span> correction '
+    ]
+  ],
+  [ 'an alternative reading',
+    [ '<w>a</w><app><rdg type="orig" hand="firsthand"><w>simple</w></rdg>' +
+      '<rdg type="alt" hand="corrector" rend="other"><w>basic</w></rdg></app><w>correction</w>',
+      'a <span class="corr" wce_orig="simple" wce="__t=corr&amp;__n=corrector&amp;corrector_name_other=&amp;' +
+      'corrector_name=corrector&amp;reading=alt&amp;original_firsthand_reading=simple&amp;' +
+      'common_firsthand_partial=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;' +
+      'deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_deletion_hooks=0&amp;' +
+      'deletion_transposition_marks=0&amp;deletion_other=1&amp;deletion=other&amp;firsthand_partial=&amp;' +
+      'partial=&amp;corrector_text=basic%20&amp;place_corr="><span class="format_start mceNonEditable">‹</span>' +
+      'simple<span class="format_end mceNonEditable">›</span></span> correction '
+    ]
+  ],
+
   // notes
   // another undefined issue
   [ 'a local note',
@@ -342,8 +413,32 @@ const teiToHtmlAndBack = new Map([
       '</span> in here '
     ]
   ],
+  [ 'commentary in line',
+    [ '<w>in</w><w>line</w><w>commentary</w><note type="commentary">Untranscribed commentary text within the line</note>',
+      'in line commentary<span class="paratext" wce="__t=paratext&amp;__n=&amp;fw_type=commentary&amp;covered=0&amp;' +
+      'text=&amp;number=&amp;edit_number=on&amp;paratext_position=pagetop&amp;paratext_position_other=&amp;' +
+      'paratext_alignment=left"><span class="format_start mceNonEditable">‹</span>[' +
+      '<span class="commentary" wce="__t=paratext&amp;__n=&amp;fw_type=commentary&amp;covered=0">comm</span>]' +
+      '<span class="format_end mceNonEditable">›</span></span>'
+    ]
+  ],
+  // lectionary
+  // again there is code for this in the note function but this seems to use the paratext one (notes stuff claims to be legacy)
+  [ '2 lines of untranscribed lectionary text',
+    [ '<w>lection</w><w>text</w><w>next</w><lb/>' +
+      '<note type="lectionary-other">One line of untranscribed lectionary text</note><lb/>' +
+      '<note type="lectionary-other">One line of untranscribed lectionary text</note>',
+      'lection text next <span class="paratext" wce="__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;' +
+      'covered=2&amp;text=&amp;number=&amp;edit_number=on&amp;paratext_position=pagetop&amp;' +
+      'paratext_position_other=&amp;paratext_alignment=left"><span class="format_start mceNonEditable">‹</span>' +
+      '<br/>↵[<span class="lectionary-other" wce="__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;' +
+      'covered=2">lect</span>]<br/>↵[<span class="lectionary-other" wce="__t=paratext&amp;__n=&amp;' +
+      'fw_type=lectionary-other&amp;covered=2">lect</span>]<span class="format_end mceNonEditable">›</span></span>'
+    ]
+  ],
   // ews
   // this one is definitely handled in the note function
+  // TODO: add more of these to deal with multi-verse ews (see transcription guidelines)
   [ 'ews ',
     [ '<w>abbreviated</w><w>commentary</w><note type="editorial" subtype="ews"/><gap unit="verse" extent="rest"/>',
       'abbreviated commentary<span class="paratext" wce="__t=paratext&amp;__n=&amp;marginals_text=&amp;' +
@@ -361,7 +456,7 @@ const teiToHtmlAndBack = new Map([
       '<span class="format_start mceNonEditable">‹</span>fw<span class="format_end mceNonEditable">›</span></span>'
     ]
   ],
-  // special hi not covered in separate tests below
+  // special his with extra details not covered in separate simpler tests below
   [ 'capitals',
     [ '<w><hi rend="cap" height="3">I</hi>nitial</w><w>capital</w>',
       '<span class=\"formatting_capitals\" wce=\"__t=formatting_capitals&amp;__n=&amp;capitals_height=3\" wce_orig=\"I\">' +
@@ -377,8 +472,15 @@ const teiToHtmlAndBack = new Map([
       '<span class="format_end mceNonEditable">›</span></span> rendering '
     ]
   ],
+  // chapter number in the margin
+  [ 'chapter number in left margin',
+    [ '<w>this</w><w>is</w><w>a</w><w>chapter</w><w>number</w><w>in</w><w>the</w><w>margin</w>' +
+      '<seg type="margin" subtype="colleft" n="@PC-undefined"><num type="chapNum">12</num></seg>',
+      'this is a chapter number in the margin <span class="paratext" wce="__t=paratext&amp;__n=&amp;marginals_text=12&amp;fw_type=chapNum&amp;paratext_position=colleft&amp;paratext_position_other="><span class="format_start mceNonEditable">‹</span>fw<span class="format_end mceNonEditable">›</span></span>'
+    ]
+  ],
   // space
-  [ 'space',
+  [ 'character space',
     [ '<w>space</w><w>between</w><space unit="char" extent="5"/><w>words</w>',
       'space between <span class="spaces" wce="__t=spaces&amp;__n=&amp;sp_unit_other=&amp;sp_unit=char&amp;' +
       'sp_extent=5"><span class="format_start mceNonEditable">‹</span>sp' +
@@ -760,6 +862,12 @@ const teiToHtmlAndBackWithChange = new Map([
         '<w>test</w><w><hi rend="overline">for</hi></w><w>rendering</w>'
       ]
     ],
+    [ 'book and chapter div if chapter has no type then it is removed',
+  	  [ '<div type="book" n="B04"><div n="B04K1"><w>The</w><w>content</w><w>of</w><w>my</w><w>chapter</w></div></div>',
+  	 		' <span class="book_number mceNonEditable" wce="__t=book_number" id="1">4</span> The content of my chapter ',
+        '<div type="book" n="B04"><w>The</w><w>content</w><w>of</w><w>my</w><w>chapter</w></div>'
+   		],
+  	],
     // not sure the next two are desireable behaviour but it is the current behaviour
     // OTE-TODO: fix this and at least keep the word?
     [ 'hi with no rend attribute removes the word with the hi tag',
@@ -773,7 +881,21 @@ const teiToHtmlAndBackWithChange = new Map([
         'test  rendering ',
         '<w>test</w><w>rendering</w>'
       ]
-    ]
+    ],
+    // legacy commentary notes (rend attribute - for number of lines covered - now converted to line breaks)
+    [ 'commentary in line with rend attribute',
+      [ '<w>in</w><w>line</w><w>commentary</w><note type="commentary" rend="3">Untranscribed commentary text within the line</note>',
+        'in line commentary<span class="paratext" wce="__t=paratext&amp;__n=&amp;fw_type=commentary&amp;covered=3&amp;text=&amp;number=&amp;edit_number=on&amp;paratext_position=pagetop&amp;paratext_position_other=&amp;paratext_alignment=left"><span class="format_start mceNonEditable">‹</span><br/>↵[<span class="commentary" wce="__t=paratext&amp;__n=&amp;fw_type=commentary&amp;covered=3">comm</span>]<br/>↵[<span class="commentary" wce="__t=paratext&amp;__n=&amp;fw_type=commentary&amp;covered=3">comm</span>]<br/>↵[<span class="commentary" wce="__t=paratext&amp;__n=&amp;fw_type=commentary&amp;covered=3">comm</span>]<span class="format_end mceNonEditable">›</span></span>',
+        '<w>in</w><w>line</w><w>commentary</w><lb/><note type="commentary">One line of untranscribed commentary text</note><lb/><note type="commentary">One line of untranscribed commentary text</note><lb/><note type="commentary">One line of untranscribed commentary text</note>'
+      ]
+    ],
+    // [ 'lectionary in line with rend attribute',
+    //   [ '<w>in</w><w>line</w><w>lectionary</w><note type="lectionary-other" rend="3">Untranscribed lectionary text within the line</note>',
+    //     'in line lectionary<span class=\"paratext\" wce=\"__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=0&amp;text=&amp;number=&amp;edit_number=on&amp;paratext_position=pagetop&amp;paratext_position_other=&amp;paratext_alignment=left\"><span class=\"format_start mceNonEditable\">‹</span>[<span class=\"lectionary-other\" wce=\"__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=0\">lect</span>]<span class=\"format_end mceNonEditable\">›</span></span>',
+    //     '<w>in</w><w>line</w><w>lectionary</w><note type="lectionary-other" rend="3">Untranscribed lectionary text within the line</note>'
+    //   ]
+    // ],
+
 ]);
 
 teiToHtmlAndBackWithChange.forEach((value, key, map) => {
