@@ -222,6 +222,12 @@ const teiToHtmlAndBack = new Map([
       '</span> abbreviation '
     ]
   ],
+  // // supplied in abbr - this isn't hitting what I expected
+  // [ 'supplied text in nomsac',
+  //   [ '<w>supplied</w><w>text</w><w>in</w><w><abbr type="nomSac"><hi rend="overline">nom<supplied source="transcriber" reason="illegible">sac</supplied></hi></abbr></w>',
+  //     'supplied text in <span class=\"abbr_add_overline\" wce=\"__t=abbr&amp;__n=&amp;original_abbr_text=&amp;add_overline=overline&amp;abbr_type_other=&amp;abbr_type=nomSac\" wce_orig=\"nom%3Cspan%20class%3D%22gap%22%20wce_orig%3D%22sac%22%20wce%3D%22__t%3Dgap%26amp%3B__n%3D%26amp%3Bgap_reason_dummy_lacuna%3Dlacuna%26amp%3Bgap_reason_dummy_illegible%3Dillegible%26amp%3Bgap_reason_dummy_unspecified%3Dunspecified%26amp%3Bgap_reason_dummy_inferredPage%3DinferredPage%26amp%3Bsupplied_source_other%3D%26amp%3Bsupplied_source%3Dtranscriber%26amp%3Bgap_reason%3Dillegible%26amp%3Bunit_other%3D%26amp%3Bunit%3D%26amp%3Bmark_as_supplied%3Dsupplied%22%3E%3Cspan%20class%3D%22format_start%20mceNonEditable%22%3E%E2%80%B9%3C%2Fspan%3E%5Bsac%5D%3Cspan%20class%3D%22format_end%20mceNonEditable%22%3E%E2%80%BA%3C%2Fspan%3E%3C%2Fspan%3E\"><span class=\"format_start mceNonEditable\">‹</span>nom<span class=\"gap\" wce_orig=\"sac\" wce=\"__t=gap&amp;__n=&amp;gap_reason_dummy_lacuna=lacuna&amp;gap_reason_dummy_illegible=illegible&amp;gap_reason_dummy_unspecified=unspecified&amp;gap_reason_dummy_inferredPage=inferredPage&amp;supplied_source_other=&amp;supplied_source=transcriber&amp;gap_reason=illegible&amp;unit_other=&amp;unit=&amp;mark_as_supplied=supplied\"><span class=\"format_start mceNonEditable\">‹</span>[sac]<span class=\"format_end mceNonEditable\">›</span></span><span class=\"format_end mceNonEditable\">›</span></span> '
+  //   ]
+  // ],
   // this seems like overkill in the html doesn't it?
   [ 'nomen sacrum abbreviation with overline in supplied',
     [ '<w><supplied source="na28" reason="illegible">a</supplied></w><w><supplied source="na28" reason="illegible">' +
@@ -424,6 +430,11 @@ const teiToHtmlAndBack = new Map([
   ],
   // lectionary
   // again there is code for this in the note function but this seems to use the paratext one (notes stuff claims to be legacy)
+  [ 'lectionary in line',
+    [ '<w>in</w><w>line</w><w>lectionary</w><note type="lectionary-other">Untranscribed lectionary text within the line</note>',
+      'in line lectionary<span class=\"paratext\" wce=\"__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=0&amp;text=&amp;number=&amp;edit_number=on&amp;paratext_position=pagetop&amp;paratext_position_other=&amp;paratext_alignment=left\"><span class=\"format_start mceNonEditable\">‹</span>[<span class=\"lectionary-other\" wce=\"__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=0\">lect</span>]<span class=\"format_end mceNonEditable\">›</span></span>'
+    ]
+  ],
   [ '2 lines of untranscribed lectionary text',
     [ '<w>lection</w><w>text</w><w>next</w><lb/>' +
       '<note type="lectionary-other">One line of untranscribed lectionary text</note><lb/>' +
@@ -889,12 +900,12 @@ const teiToHtmlAndBackWithChange = new Map([
         '<w>in</w><w>line</w><w>commentary</w><lb/><note type="commentary">One line of untranscribed commentary text</note><lb/><note type="commentary">One line of untranscribed commentary text</note><lb/><note type="commentary">One line of untranscribed commentary text</note>'
       ]
     ],
-    // [ 'lectionary in line with rend attribute',
-    //   [ '<w>in</w><w>line</w><w>lectionary</w><note type="lectionary-other" rend="3">Untranscribed lectionary text within the line</note>',
-    //     'in line lectionary<span class=\"paratext\" wce=\"__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=0&amp;text=&amp;number=&amp;edit_number=on&amp;paratext_position=pagetop&amp;paratext_position_other=&amp;paratext_alignment=left\"><span class=\"format_start mceNonEditable\">‹</span>[<span class=\"lectionary-other\" wce=\"__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=0\">lect</span>]<span class=\"format_end mceNonEditable\">›</span></span>',
-    //     '<w>in</w><w>line</w><w>lectionary</w><note type="lectionary-other" rend="3">Untranscribed lectionary text within the line</note>'
-    //   ]
-    // ],
+    [ 'lectionary in line with rend attribute',
+      [ '<w>in</w><w>line</w><w>lectionary</w><note type="lectionary-other" rend="3">Lectionary text within the line</note>',
+        'in line lectionary<span class=\"paratext\" wce=\"__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=3&amp;text=&amp;number=&amp;edit_number=on&amp;paratext_position=pagetop&amp;paratext_position_other=&amp;paratext_alignment=left\"><span class=\"format_start mceNonEditable\">‹</span><br/>↵[<span class=\"lectionary-other\" wce=\"__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=3\">lect</span>]<br/>↵[<span class=\"lectionary-other\" wce=\"__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=3\">lect</span>]<br/>↵[<span class=\"lectionary-other\" wce=\"__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=3\">lect</span>]<span class=\"format_end mceNonEditable\">›</span></span>',
+        '<w>in</w><w>line</w><w>lectionary</w><lb/><note type=\"lectionary-other\">One line of untranscribed lectionary text</note><lb/><note type=\"lectionary-other\">One line of untranscribed lectionary text</note><lb/><note type=\"lectionary-other\">One line of untranscribed lectionary text</note>'
+      ]
+    ],
 
 ]);
 
