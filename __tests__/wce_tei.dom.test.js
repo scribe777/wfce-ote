@@ -152,6 +152,26 @@ const teiToHtmlAndBack = new Map([
       '<span class=\"format_start mceNonEditable\">‹</span>[...]<span class=\"format_end mceNonEditable\">›</span></span> '
     ]
   ],
+  [ 'gap with unit char and no extent given',
+    [ '<w>wo<gap reason="illegible" unit="char"/></w>',
+      'wo<span class=\"gap\" wce=\"__t=gap&amp;__n=&amp;gap_reason_dummy_lacuna=lacuna&amp;gap_reason_dummy_illegible=illegible&amp;gap_reason_dummy_unspecified=unspecified&amp;gap_reason_dummy_inferredPage=inferredPage&amp;gap_reason=illegible&amp;unit_other=&amp;unit=char\"><span class=\"format_start mceNonEditable\">‹</span>[...]<span class=\"format_end mceNonEditable\">›</span></span> '
+    ]
+  ],
+  [ 'gap with unit line and no extent given',
+    [ '<w>missing</w><w>line</w><gap reason="illegible" unit="line"/>',
+      'missing line <span class=\"gap\" wce=\"__t=gap&amp;__n=&amp;gap_reason_dummy_lacuna=lacuna&amp;gap_reason_dummy_illegible=illegible&amp;gap_reason_dummy_unspecified=unspecified&amp;gap_reason_dummy_inferredPage=inferredPage&amp;gap_reason=illegible&amp;unit_other=&amp;unit=line\"/>'
+    ]
+  ],
+  [ 'gap with unit line and extent part',
+    [ '<w>missing</w><w>line</w><gap reason="illegible" unit="line" extent="part"/>',
+      'missing line <span class=\"gap\" wce=\"__t=gap&amp;__n=&amp;gap_reason_dummy_lacuna=lacuna&amp;gap_reason_dummy_illegible=illegible&amp;gap_reason_dummy_unspecified=unspecified&amp;gap_reason_dummy_inferredPage=inferredPage&amp;gap_reason=illegible&amp;unit_other=&amp;unit=line&amp;extent=part\"><span class=\"format_start mceNonEditable\">‹</span>[...]<span class=\"format_end mceNonEditable\">›</span></span>'
+    ]
+  ],
+  [ 'gap with unit line and extent unspecified',
+    [ '<w>missing</w><w>line</w><gap reason="illegible" unit="line" extent="unspecified"/>',
+      'missing line <span class=\"gap\" wce=\"__t=gap&amp;__n=&amp;gap_reason_dummy_lacuna=lacuna&amp;gap_reason_dummy_illegible=illegible&amp;gap_reason_dummy_unspecified=unspecified&amp;gap_reason_dummy_inferredPage=inferredPage&amp;gap_reason=illegible&amp;unit_other=&amp;unit=line&amp;extent=unspecified\"><span class=\"format_start mceNonEditable\">‹</span>[...]<span class=\"format_end mceNonEditable\">›</span></span>'
+    ]
+  ],
   [ 'missing quire',
     [ '<w>missing</w><gap reason="lacuna" unit="quire" extent="1"/><w>quire</w>',
       'missing <span class="gap" wce="__t=gap&amp;__n=&amp;gap_reason_dummy_lacuna=lacuna&amp;' +
@@ -796,16 +816,13 @@ const breaksToHtmlAndBack = new Map([
       'number=&amp;lb_alignment=hang&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=yes\">' +
       '<span class=\"format_start mceNonEditable\">‹</span>-<br/>↵← <span class=\"format_end mceNonEditable\">›</span>' +
       '</span>ne my second line '
+    ],
+  ],
+  [ 'quire break',
+    [ '<gb n="3"/><pb n="1r" type="folio" xml:id="P1r-undefined"/><cb n="P1rC1-undefined"/><lb n="P1rC1L-undefined"/>',
+      '<span class=\"mceNonEditable brea\" wce=\"__t=brea&amp;__n=&amp;break_type=gb&amp;number=3&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\"><span class=\"format_start mceNonEditable\">‹</span><br/>QB<span class=\"format_end mceNonEditable\">›</span></span><span class=\"mceNonEditable brea\" id=\"pb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;break_type=pb&amp;number=1&amp;rv=r&amp;fibre_type=&amp;facs=&amp;lb_alignment=&amp;hasBreak=no\"><span class=\"format_start mceNonEditable\">‹</span><br/>PB 1r<span class=\"format_end mceNonEditable\">›</span></span><span class=\"mceNonEditable brea\" id=\"cb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;break_type=cb&amp;number=1&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\"><span class=\"format_start mceNonEditable\">‹</span><br/>CB 1<span class=\"format_end mceNonEditable\">›</span></span><span class=\"mceNonEditable brea\" id=\"lb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\"><span class=\"format_start mceNonEditable\">‹</span><br/>↵ <span class=\"format_end mceNonEditable\">›</span></span>'
     ]
   ]
-
-
-  //quire break (with everything that comes with it) doesn't seem to work at all (is the TEI tag gb or qb)
-  // [ 'quire break',
-  //   [ '<w>a</w><w>new</w><w>quire</w><w>starts</w><gb n="1"/><pb n="1r" type="folio" xml:id="P1r-undefined"/><cb n="P1rC1-undefined"/><lb n="P1rC1L-undefined"/><w>here</w>',
-  //     ''
-  //   ]
-  // ],
 ]);
 
 breaksToHtmlAndBack.forEach((value, key, map) => {
