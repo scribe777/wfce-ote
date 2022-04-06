@@ -507,8 +507,8 @@ function getHtmlByTei(inputString) {
 				return Tei2Html_space($htmlParent, $teiNode);
 			// spaces
 
-			case 'qb':
-				return Tei2Html_break($htmlParent, $teiNode, 'qb');
+			case 'gb':
+				return Tei2Html_break($htmlParent, $teiNode, 'gb');
 			// Quire break
 
 			case 'pb':
@@ -1278,7 +1278,7 @@ function getHtmlByTei(inputString) {
 			case 'gb':
 				wceAttr += '&number=';
 				if ($teiNode.getAttribute('n')) {
-					n = parseInt($teiNode.getAttribute('n'));
+					number = parseInt($teiNode.getAttribute('n'));
 				}
 				wceAttr += number;
 				g_quireNumber = number;
@@ -1302,7 +1302,7 @@ function getHtmlByTei(inputString) {
 		$newNode.setAttribute('wce', wceAttr);
 
 		switch (type) {
-			case 'qb':
+			case 'gb':
 				var $br = $newDoc.createElement('br');
 				$newNode.appendChild($br);
 				nodeAddText($newNode, 'QB');
@@ -4282,18 +4282,24 @@ var compareNodes =function ($n1, $n2){
 		return true;
 };
 
-/*
- * Is the string begins with a space
- */
+/** Check if the string starts with a space.
+
+@param {string} str - The string to test.
+@returns {boolean} - true if the string starts with a space or undefined if not
+
+*/
 var startHasSpace = function(str) {
 	if (str.match(/^\s+/)) {
 		return true;
 	}
 };
 
-/*
- * Is the string end with a space
- */
+/** Check if the string ends with a space.
+
+@param {string} str - The string to test.
+@returns {boolean} - true if the string ends with a space or undefined if not
+
+*/
 var endHasSpace = function(str) {
 	if (str.match(/\s+$/)) {
 		return true;
@@ -4411,7 +4417,7 @@ function removeArrows(str) {
 var removeBlankNode=function ($root){//remove blank node,
 		var _remove=function($node){
 			var nodeName=$node.nodeName;
-			var notNames=['lb','pb','qb','cb','gap'];
+			var notNames=['lb','pb','gb','cb','gap'];
 			if($node.nodeType!=3 && !$node.firstChild && $.inArray(nodeName,notNames)<0){
 				var parent=$node.parentNode;
 				if (parent) {
@@ -4513,7 +4519,8 @@ var removeSpaceAfterLb=function ($node){
 
 	try {
 		module.exports = {
-		  addArrows, removeArrows, loadXMLString, getHtmlByTei, getTeiByHtml, Fehlerbehandlung, zeigeFehler
+		  startHasSpace, endHasSpace, addArrows, removeArrows, loadXMLString, getHtmlByTei,
+			getTeiByHtml, Fehlerbehandlung, zeigeFehler
 		};
 	} catch (e) {
 		// nodejs is not available which is fine as long as we are not running tests.
