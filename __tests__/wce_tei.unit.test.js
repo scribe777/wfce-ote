@@ -38,6 +38,11 @@ test ('string ends with a space', () => {
   expect(wce_tei.endHasSpace(' string')).toBe(undefined);
 });
 
+// test ('string to array', () => {
+//   const array = wce_tei.getTeiByHtml.strToArray('string&this');
+//   console.log(array)
+// });
+
 
 //NOT WORKING MAY NEED A MOCK can't find alert
 // error handling (this one needs to change because code needs to change)

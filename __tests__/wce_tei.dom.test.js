@@ -954,3 +954,16 @@ test('Invalid XML gives error', () => {
   html = wce_tei.getHtmlByTei('<w>broken<w>');
   expect(window.alert).toBeCalledWith('Error:\n XML parser 1:12: unclosed tag: w\nundefined\nundefined');
 });
+
+
+test ('node comparison', () => {
+  const dom = wce_tei.loadXMLString('<body><w>word</w><w>test</w><w n="2">test</w><w n="3"></w><w n="3">text</w>textNode<notW>check</notW></body>');
+  const root = dom.documentElement;
+  const childList = root.childNodes;
+  expect(wce_tei.compareNodes(childList[0], childList[1])).toBe(true);
+  expect(wce_tei.compareNodes(childList[1], childList[2])).toBe(false);
+  expect(wce_tei.compareNodes(childList[2], childList[3])).toBe(false);
+  expect(wce_tei.compareNodes(childList[3], childList[4])).toBe(true);
+  expect(wce_tei.compareNodes(childList[4], childList[5])).toBe(false);
+  expect(wce_tei.compareNodes(childList[0], childList[6])).toBe(false);
+});
