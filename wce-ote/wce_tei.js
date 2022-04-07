@@ -2555,6 +2555,7 @@ function getTeiByHtml(inputString, args) {
 		}
 	};
 
+	// Cat says this is not used as the alternative is in use.
 	//or use function handleSupliedInAbbr
 	//supplied in abbr //ticket #1762
 	var handleSupliedInAbbr2 = function ($node){
