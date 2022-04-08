@@ -16,13 +16,14 @@ const xmlHead = '<?xml  version="1.0" encoding="utf-8"?><!DOCTYPE TEI [<!ENTITY 
 								'</fileDesc></teiHeader><text><body>';
 const xmlTail = '</body></text></TEI>';
 
+
 // TEI to HTML tests and the reverse
-const teiToHtmlAndBack = new Map([
+const basicAnnotation = new Map([
   // w
 	[ '<w> tag',
 	  [ '<w>word</w>',
 	 		'word ' //space at end is important
- 		],
+ 		]
 	],
   // ex
   [ 'part word <ex> tag',
@@ -30,14 +31,14 @@ const teiToHtmlAndBack = new Map([
 	 		'wo<span class="part_abbr" wce="__t=part_abbr&amp;__n=&amp;exp_rend=&amp;exp_rend_other=">' +
       '<span class="format_start mceNonEditable">‹</span>(rd)<span class="format_end mceNonEditable">›</span>' +
       '</span> ' //space at end is important
- 		],
+ 		]
 	],
   [ 'whole word <ex> tag',
 	  [ '<w><ex rend="÷">word</ex></w>',
 	 		'<span class="part_abbr" wce="__t=part_abbr&amp;__n=&amp;exp_rend_other=&amp;exp_rend=%C3%B7">' +
       '<span class="format_start mceNonEditable">‹</span>(word)<span class="format_end mceNonEditable">›</span>' +
       '</span> ' //space at end is important
- 		],
+ 		]
 	],
   // OTE-TODO: Add here a test for whole word <ex> and see if you can make that work correctly in input
 
@@ -46,15 +47,85 @@ const teiToHtmlAndBack = new Map([
 	  [ '<w>wor<unclear>d</unclear></w>',
 	 		'wor<span class="unclear" wce_orig="d" wce="__t=unclear&amp;__n=&amp;unclear_text_reason=&amp;unclear_text_reason_other=">' +
       '<span class="format_start mceNonEditable">‹</span>ḍ<span class="format_end mceNonEditable">›</span></span> ' //space at end is important
- 		],
+ 		]
 	],
   // OTE-TODO: faded ink should have an underscore rather than a space, same for all other reason attributes
   [ 'whole word <unclear> tag with reason',
 	  [ '<w><unclear reason="faded ink">word</unclear></w>',
 	 		'<span class="unclear" wce_orig="word" wce="__t=unclear&amp;__n=&amp;unclear_text_reason_other=&amp;unclear_text_reason=faded ink">' +
       '<span class="format_start mceNonEditable">‹</span>ẉọṛḍ<span class="format_end mceNonEditable">›</span></span> ' //space at end is important
+ 		]
+	],
+	// space
+  [ 'character space',
+    [ '<w>space</w><w>between</w><space unit="char" extent="5"/><w>words</w>',
+      'space between <span class="spaces" wce="__t=spaces&amp;__n=&amp;sp_unit_other=&amp;sp_unit=char&amp;' +
+      'sp_extent=5"><span class="format_start mceNonEditable">‹</span>sp' +
+      '<span class="format_end mceNonEditable">›</span></span>words '
+    ]
+  ],
+  // pc
+  [ 'simple <pc> tag',
+	  [ '<pc>.</pc>',
+	 		'<span class="pc" wce="__t=pc"><span class="format_start mceNonEditable">‹</span>.' +
+      '<span class="format_end mceNonEditable">›</span></span> ' //space at end is important
  		],
 	],
+	// abbr
+	[ 'nomen sacrum abbreviation with overline',
+		[ '<w>a</w><w><abbr type="nomSac"><hi rend="overline">ns</hi></abbr></w><w>abbreviation</w>',
+			'a <span class=\"abbr_add_overline\" wce=\"__t=abbr&amp;__n=&amp;original_abbr_text=&amp;' +
+			'add_overline=overline&amp;abbr_type_other=&amp;abbr_type=nomSac\" wce_orig=\"ns\">' +
+			'<span class=\"format_start mceNonEditable\">‹</span>ns<span class=\"format_end mceNonEditable\">›</span>' +
+			'</span> abbreviation '
+		]
+	],
+	// // supplied in abbr - this isn't hitting what I expected
+	// [ 'supplied text in nomsac',
+	//   [ '<w>supplied</w><w>text</w><w>in</w><w><abbr type="nomSac"><hi rend="overline">nom<supplied source="transcriber" reason="illegible">sac</supplied></hi></abbr></w>',
+	//     'supplied text in <span class=\"abbr_add_overline\" wce=\"__t=abbr&amp;__n=&amp;original_abbr_text=&amp;add_overline=overline&amp;abbr_type_other=&amp;abbr_type=nomSac\" wce_orig=\"nom%3Cspan%20class%3D%22gap%22%20wce_orig%3D%22sac%22%20wce%3D%22__t%3Dgap%26amp%3B__n%3D%26amp%3Bgap_reason_dummy_lacuna%3Dlacuna%26amp%3Bgap_reason_dummy_illegible%3Dillegible%26amp%3Bgap_reason_dummy_unspecified%3Dunspecified%26amp%3Bgap_reason_dummy_inferredPage%3DinferredPage%26amp%3Bsupplied_source_other%3D%26amp%3Bsupplied_source%3Dtranscriber%26amp%3Bgap_reason%3Dillegible%26amp%3Bunit_other%3D%26amp%3Bunit%3D%26amp%3Bmark_as_supplied%3Dsupplied%22%3E%3Cspan%20class%3D%22format_start%20mceNonEditable%22%3E%E2%80%B9%3C%2Fspan%3E%5Bsac%5D%3Cspan%20class%3D%22format_end%20mceNonEditable%22%3E%E2%80%BA%3C%2Fspan%3E%3C%2Fspan%3E\"><span class=\"format_start mceNonEditable\">‹</span>nom<span class=\"gap\" wce_orig=\"sac\" wce=\"__t=gap&amp;__n=&amp;gap_reason_dummy_lacuna=lacuna&amp;gap_reason_dummy_illegible=illegible&amp;gap_reason_dummy_unspecified=unspecified&amp;gap_reason_dummy_inferredPage=inferredPage&amp;supplied_source_other=&amp;supplied_source=transcriber&amp;gap_reason=illegible&amp;unit_other=&amp;unit=&amp;mark_as_supplied=supplied\"><span class=\"format_start mceNonEditable\">‹</span>[sac]<span class=\"format_end mceNonEditable\">›</span></span><span class=\"format_end mceNonEditable\">›</span></span> '
+	//   ]
+	// ],
+	// this seems like overkill in the html doesn't it?
+	[ 'nomen sacrum abbreviation with overline in supplied',
+		[ '<w><supplied source="na28" reason="illegible">a</supplied></w><w><supplied source="na28" reason="illegible">' +
+			'<abbr type="nomSac"><hi rend="overline">ns</hi></abbr></supplied></w>' +
+			'<w><supplied source="na28" reason="illegible">abbreviation</supplied></w>',
+			'<span class=\"gap\" wce_orig=\"a%20%3Cspan%20class%3D%22abbr_add_overline%22%20wce%3D%22__t%3Dabbr%26amp%' +
+			'3B__n%3D%26amp%3Boriginal_abbr_text%3D%26amp%3Badd_overline%3Doverline%26amp%3Babbr_type_other%3D%26amp%3B' +
+			'abbr_type%3DnomSac%22%20wce_orig%3D%22ns%22%3E%3Cspan%20class%3D%22format_start%20mceNonEditable' +
+			'%22%3E%E2%80%B9%3C%2Fspan%3Ens%3Cspan%20class%3D%22format_end%20mceNonEditable%22%3E%E2%80%BA%3C%2Fspan' +
+			'%3E%3C%2Fspan%3E%20abbreviation\" wce=\"__t=gap&amp;__n=&amp;gap_reason_dummy_lacuna=lacuna&amp;' +
+			'gap_reason_dummy_illegible=illegible&amp;gap_reason_dummy_unspecified=unspecified&amp;' +
+			'gap_reason_dummy_inferredPage=inferredPage&amp;supplied_source_other=&amp;supplied_source=na28&amp;' +
+			'gap_reason=illegible&amp;unit_other=&amp;unit=&amp;mark_as_supplied=supplied\">' +
+			'<span class=\"format_start mceNonEditable\">‹</span>[a <span class=\"abbr_add_overline\" wce=\"__t=abbr&amp;' +
+			'__n=&amp;original_abbr_text=&amp;add_overline=overline&amp;abbr_type_other=&amp;' +
+			'abbr_type=nomSac\" wce_orig=\"ns\"><span class=\"format_start mceNonEditable\">‹</span>ns' +
+			'<span class=\"format_end mceNonEditable\">›</span></span> abbreviation]<span class=\"format_end mceNonEditable\">›</span></span> '
+		]
+	],
+	// special his with extra details not covered in separate simpler tests below
+  [ 'capitals',
+    [ '<w><hi rend="cap" height="3">I</hi>nitial</w><w>capital</w>',
+      '<span class=\"formatting_capitals\" wce=\"__t=formatting_capitals&amp;__n=&amp;capitals_height=3\" wce_orig=\"I\">' +
+      '<span class=\"format_start mceNonEditable\">‹</span>I<span class=\"format_end mceNonEditable\">›</span>' +
+      '</span>nitial capital '
+    ]
+  ],
+  [ 'other ornamentation',
+    [ '<w>test</w><w><hi rend="underlined">for</hi></w><w>rendering</w>',
+      'test <span class="formatting_ornamentation_other" wce="__t=formatting_ornamentation_other&amp;' +
+      '__n=&amp;formatting_ornamentation_other=underlined" wce_orig="for">' +
+      '<span class="format_start mceNonEditable">‹</span>for' +
+      '<span class="format_end mceNonEditable">›</span></span> rendering '
+    ]
+  ],
+]);
+
+
+
+const textStructureDivs = new Map([
   // divs
   // OTE-TODO: these will need to change when references change
   [ 'book div',
@@ -115,7 +186,12 @@ const teiToHtmlAndBack = new Map([
       '<span class="chapter_number mceNonEditable" wce="__t=chapter_number">Subscriptio</span> ' +
       '<span class="verse_number mceNonEditable" wce="__t=verse_number"/> subscriptio text '
     ]
-  ],
+  ]
+]);
+
+
+
+const gapAndSupplied = new Map([
   // gaps
   // TODO: add witness end test here
   [ 'gap between words',
@@ -154,22 +230,35 @@ const teiToHtmlAndBack = new Map([
   ],
   [ 'gap with unit char and no extent given',
     [ '<w>wo<gap reason="illegible" unit="char"/></w>',
-      'wo<span class=\"gap\" wce=\"__t=gap&amp;__n=&amp;gap_reason_dummy_lacuna=lacuna&amp;gap_reason_dummy_illegible=illegible&amp;gap_reason_dummy_unspecified=unspecified&amp;gap_reason_dummy_inferredPage=inferredPage&amp;gap_reason=illegible&amp;unit_other=&amp;unit=char\"><span class=\"format_start mceNonEditable\">‹</span>[...]<span class=\"format_end mceNonEditable\">›</span></span> '
+      'wo<span class=\"gap\" wce=\"__t=gap&amp;__n=&amp;gap_reason_dummy_lacuna=lacuna&amp;' +
+			'gap_reason_dummy_illegible=illegible&amp;gap_reason_dummy_unspecified=unspecified&amp;' +
+			'gap_reason_dummy_inferredPage=inferredPage&amp;gap_reason=illegible&amp;unit_other=&amp;unit=char\">' +
+			'<span class=\"format_start mceNonEditable\">‹</span>[...]<span class=\"format_end mceNonEditable\">›</span></span> '
     ]
   ],
   [ 'gap with unit line and no extent given',
     [ '<w>missing</w><w>line</w><gap reason="illegible" unit="line"/>',
-      'missing line <span class=\"gap\" wce=\"__t=gap&amp;__n=&amp;gap_reason_dummy_lacuna=lacuna&amp;gap_reason_dummy_illegible=illegible&amp;gap_reason_dummy_unspecified=unspecified&amp;gap_reason_dummy_inferredPage=inferredPage&amp;gap_reason=illegible&amp;unit_other=&amp;unit=line\"/>'
+      'missing line <span class=\"gap\" wce=\"__t=gap&amp;__n=&amp;gap_reason_dummy_lacuna=lacuna&amp;' +
+			'gap_reason_dummy_illegible=illegible&amp;gap_reason_dummy_unspecified=unspecified&amp;' +
+			'gap_reason_dummy_inferredPage=inferredPage&amp;gap_reason=illegible&amp;unit_other=&amp;unit=line\"/>'
     ]
   ],
   [ 'gap with unit line and extent part',
     [ '<w>missing</w><w>line</w><gap reason="illegible" unit="line" extent="part"/>',
-      'missing line <span class=\"gap\" wce=\"__t=gap&amp;__n=&amp;gap_reason_dummy_lacuna=lacuna&amp;gap_reason_dummy_illegible=illegible&amp;gap_reason_dummy_unspecified=unspecified&amp;gap_reason_dummy_inferredPage=inferredPage&amp;gap_reason=illegible&amp;unit_other=&amp;unit=line&amp;extent=part\"><span class=\"format_start mceNonEditable\">‹</span>[...]<span class=\"format_end mceNonEditable\">›</span></span>'
+      'missing line <span class=\"gap\" wce=\"__t=gap&amp;__n=&amp;gap_reason_dummy_lacuna=lacuna&amp;' +
+			'gap_reason_dummy_illegible=illegible&amp;gap_reason_dummy_unspecified=unspecified&amp;' +
+			'gap_reason_dummy_inferredPage=inferredPage&amp;gap_reason=illegible&amp;unit_other=&amp;unit=line&amp;' +
+			'extent=part\"><span class=\"format_start mceNonEditable\">‹</span>[...]' +
+			'<span class=\"format_end mceNonEditable\">›</span></span>'
     ]
   ],
   [ 'gap with unit line and extent unspecified',
     [ '<w>missing</w><w>line</w><gap reason="illegible" unit="line" extent="unspecified"/>',
-      'missing line <span class=\"gap\" wce=\"__t=gap&amp;__n=&amp;gap_reason_dummy_lacuna=lacuna&amp;gap_reason_dummy_illegible=illegible&amp;gap_reason_dummy_unspecified=unspecified&amp;gap_reason_dummy_inferredPage=inferredPage&amp;gap_reason=illegible&amp;unit_other=&amp;unit=line&amp;extent=unspecified\"><span class=\"format_start mceNonEditable\">‹</span>[...]<span class=\"format_end mceNonEditable\">›</span></span>'
+      'missing line <span class=\"gap\" wce=\"__t=gap&amp;__n=&amp;gap_reason_dummy_lacuna=lacuna&amp;' +
+			'gap_reason_dummy_illegible=illegible&amp;gap_reason_dummy_unspecified=unspecified&amp;' +
+			'gap_reason_dummy_inferredPage=inferredPage&amp;gap_reason=illegible&amp;unit_other=&amp;unit=line&amp;' +
+			'extent=unspecified\"><span class=\"format_start mceNonEditable\">‹</span>[...]' +
+			'<span class=\"format_end mceNonEditable\">›</span></span>'
     ]
   ],
   [ 'missing quire',
@@ -232,32 +321,11 @@ const teiToHtmlAndBack = new Map([
       '<span class="format_start mceNonEditable">‹</span>[supplied wo]' +
       '<span class="format_end mceNonEditable">›</span></span>rd '
     ]
-  ],
-  // abbr
-  [ 'nomen sacrum abbreviation with overline',
-    [ '<w>a</w><w><abbr type="nomSac"><hi rend="overline">ns</hi></abbr></w><w>abbreviation</w>',
-      'a <span class=\"abbr_add_overline\" wce=\"__t=abbr&amp;__n=&amp;original_abbr_text=&amp;' +
-      'add_overline=overline&amp;abbr_type_other=&amp;abbr_type=nomSac\" wce_orig=\"ns\">' +
-      '<span class=\"format_start mceNonEditable\">‹</span>ns<span class=\"format_end mceNonEditable\">›</span>' +
-      '</span> abbreviation '
-    ]
-  ],
-  // // supplied in abbr - this isn't hitting what I expected
-  // [ 'supplied text in nomsac',
-  //   [ '<w>supplied</w><w>text</w><w>in</w><w><abbr type="nomSac"><hi rend="overline">nom<supplied source="transcriber" reason="illegible">sac</supplied></hi></abbr></w>',
-  //     'supplied text in <span class=\"abbr_add_overline\" wce=\"__t=abbr&amp;__n=&amp;original_abbr_text=&amp;add_overline=overline&amp;abbr_type_other=&amp;abbr_type=nomSac\" wce_orig=\"nom%3Cspan%20class%3D%22gap%22%20wce_orig%3D%22sac%22%20wce%3D%22__t%3Dgap%26amp%3B__n%3D%26amp%3Bgap_reason_dummy_lacuna%3Dlacuna%26amp%3Bgap_reason_dummy_illegible%3Dillegible%26amp%3Bgap_reason_dummy_unspecified%3Dunspecified%26amp%3Bgap_reason_dummy_inferredPage%3DinferredPage%26amp%3Bsupplied_source_other%3D%26amp%3Bsupplied_source%3Dtranscriber%26amp%3Bgap_reason%3Dillegible%26amp%3Bunit_other%3D%26amp%3Bunit%3D%26amp%3Bmark_as_supplied%3Dsupplied%22%3E%3Cspan%20class%3D%22format_start%20mceNonEditable%22%3E%E2%80%B9%3C%2Fspan%3E%5Bsac%5D%3Cspan%20class%3D%22format_end%20mceNonEditable%22%3E%E2%80%BA%3C%2Fspan%3E%3C%2Fspan%3E\"><span class=\"format_start mceNonEditable\">‹</span>nom<span class=\"gap\" wce_orig=\"sac\" wce=\"__t=gap&amp;__n=&amp;gap_reason_dummy_lacuna=lacuna&amp;gap_reason_dummy_illegible=illegible&amp;gap_reason_dummy_unspecified=unspecified&amp;gap_reason_dummy_inferredPage=inferredPage&amp;supplied_source_other=&amp;supplied_source=transcriber&amp;gap_reason=illegible&amp;unit_other=&amp;unit=&amp;mark_as_supplied=supplied\"><span class=\"format_start mceNonEditable\">‹</span>[sac]<span class=\"format_end mceNonEditable\">›</span></span><span class=\"format_end mceNonEditable\">›</span></span> '
-  //   ]
-  // ],
-  // this seems like overkill in the html doesn't it?
-  [ 'nomen sacrum abbreviation with overline in supplied',
-    [ '<w><supplied source="na28" reason="illegible">a</supplied></w><w><supplied source="na28" reason="illegible">' +
-      '<abbr type="nomSac"><hi rend="overline">ns</hi></abbr></supplied></w>' +
-      '<w><supplied source="na28" reason="illegible">abbreviation</supplied></w>',
-      '<span class=\"gap\" wce_orig=\"a%20%3Cspan%20class%3D%22abbr_add_overline%22%20wce%3D%22__t%3Dabbr%26amp%3B__n%3D%26amp%3Boriginal_abbr_text%3D%26amp%3Badd_overline%3Doverline%26amp%3Babbr_type_other%3D%26amp%3Babbr_type%3DnomSac%22%20wce_orig%3D%22ns%22%3E%3Cspan%20class%3D%22format_start%20mceNonEditable%22%3E%E2%80%B9%3C%2Fspan%3Ens%3Cspan%20class%3D%22format_end%20mceNonEditable%22%3E%E2%80%BA%3C%2Fspan%3E%3C%2Fspan%3E%20abbreviation\" wce=\"__t=gap&amp;__n=&amp;gap_reason_dummy_lacuna=lacuna&amp;gap_reason_dummy_illegible=illegible&amp;gap_reason_dummy_unspecified=unspecified&amp;gap_reason_dummy_inferredPage=inferredPage&amp;supplied_source_other=&amp;supplied_source=na28&amp;gap_reason=illegible&amp;unit_other=&amp;unit=&amp;mark_as_supplied=supplied\"><span class=\"format_start mceNonEditable\">‹</span>[a <span class=\"abbr_add_overline\" wce=\"__t=abbr&amp;__n=&amp;original_abbr_text=&amp;add_overline=overline&amp;abbr_type_other=&amp;abbr_type=nomSac\" wce_orig=\"ns\"><span class=\"format_start mceNonEditable\">‹</span>ns<span class=\"format_end mceNonEditable\">›</span></span> abbreviation]<span class=\"format_end mceNonEditable\">›</span></span> '
-    ]
-  ],
+  ]
+]);
 
 
+const corrections = new Map([
   // corrections
   [ 'a simple correction with visible firsthand',
     [ '<w>a</w><app><rdg type="orig" hand="firsthand"><w>smple</w></rdg><rdg type="corr" hand="corrector">' +
@@ -395,8 +463,11 @@ const teiToHtmlAndBack = new Map([
       'partial=&amp;corrector_text=basic%20&amp;place_corr="><span class="format_start mceNonEditable">‹</span>' +
       'simple<span class="format_end mceNonEditable">›</span></span> correction '
     ]
-  ],
+  ]
+]);
 
+
+const notes = new Map([
   // notes
   // another undefined issue
   [ 'a local note',
@@ -452,7 +523,11 @@ const teiToHtmlAndBack = new Map([
   // again there is code for this in the note function but this seems to use the paratext one (notes stuff claims to be legacy)
   [ 'lectionary in line',
     [ '<w>in</w><w>line</w><w>lectionary</w><note type="lectionary-other">Untranscribed lectionary text within the line</note>',
-      'in line lectionary<span class=\"paratext\" wce=\"__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=0&amp;text=&amp;number=&amp;edit_number=on&amp;paratext_position=pagetop&amp;paratext_position_other=&amp;paratext_alignment=left\"><span class=\"format_start mceNonEditable\">‹</span>[<span class=\"lectionary-other\" wce=\"__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=0\">lect</span>]<span class=\"format_end mceNonEditable\">›</span></span>'
+      'in line lectionary<span class=\"paratext\" wce=\"__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;' +
+			'covered=0&amp;text=&amp;number=&amp;edit_number=on&amp;paratext_position=pagetop&amp;' +
+			'paratext_position_other=&amp;paratext_alignment=left\"><span class=\"format_start mceNonEditable\">‹</span>' +
+			'[<span class=\"lectionary-other\" wce=\"__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;' +
+			'covered=0\">lect</span>]<span class=\"format_end mceNonEditable\">›</span></span>'
     ]
   ],
   [ '2 lines of untranscribed lectionary text',
@@ -477,7 +552,12 @@ const teiToHtmlAndBack = new Map([
       'paratext_position_other=&amp;paratext_alignment=left"><span class="format_start mceNonEditable">‹</span>' +
       '[<span class="ews">ews</span>]<span class="format_end mceNonEditable">›</span></span>'
     ]
-  ],
+  ]
+]);
+
+
+
+const fw = new Map([
   // running title in centre of top margin
   [ 'running title (fw) in centre top margin (seg)',
     [ '<seg type="margin" subtype="pagetop" n="@P-undefined"><fw type="runTitle" rend="center">' +
@@ -487,65 +567,42 @@ const teiToHtmlAndBack = new Map([
       '<span class="format_start mceNonEditable">‹</span>fw<span class="format_end mceNonEditable">›</span></span>'
     ]
   ],
-  // special his with extra details not covered in separate simpler tests below
-  [ 'capitals',
-    [ '<w><hi rend="cap" height="3">I</hi>nitial</w><w>capital</w>',
-      '<span class=\"formatting_capitals\" wce=\"__t=formatting_capitals&amp;__n=&amp;capitals_height=3\" wce_orig=\"I\">' +
-      '<span class=\"format_start mceNonEditable\">‹</span>I<span class=\"format_end mceNonEditable\">›</span>' +
-      '</span>nitial capital '
-    ]
-  ],
-  [ 'other ornamentation',
-    [ '<w>test</w><w><hi rend="underlined">for</hi></w><w>rendering</w>',
-      'test <span class="formatting_ornamentation_other" wce="__t=formatting_ornamentation_other&amp;' +
-      '__n=&amp;formatting_ornamentation_other=underlined" wce_orig="for">' +
-      '<span class="format_start mceNonEditable">‹</span>for' +
-      '<span class="format_end mceNonEditable">›</span></span> rendering '
-    ]
-  ],
+
   // chapter number in the margin
   [ 'chapter number in left margin',
     [ '<w>this</w><w>is</w><w>a</w><w>chapter</w><w>number</w><w>in</w><w>the</w><w>margin</w>' +
       '<seg type="margin" subtype="colleft" n="@PC-undefined"><num type="chapNum">12</num></seg>',
-      'this is a chapter number in the margin <span class="paratext" wce="__t=paratext&amp;__n=&amp;marginals_text=12&amp;fw_type=chapNum&amp;paratext_position=colleft&amp;paratext_position_other="><span class="format_start mceNonEditable">‹</span>fw<span class="format_end mceNonEditable">›</span></span>'
+      'this is a chapter number in the margin <span class="paratext" wce="__t=paratext&amp;__n=&amp;' +
+			'marginals_text=12&amp;fw_type=chapNum&amp;paratext_position=colleft&amp;paratext_position_other=">' +
+			'<span class="format_start mceNonEditable">‹</span>fw<span class="format_end mceNonEditable">›</span></span>'
     ]
-  ],
-  // space
-  [ 'character space',
-    [ '<w>space</w><w>between</w><space unit="char" extent="5"/><w>words</w>',
-      'space between <span class="spaces" wce="__t=spaces&amp;__n=&amp;sp_unit_other=&amp;sp_unit=char&amp;' +
-      'sp_extent=5"><span class="format_start mceNonEditable">‹</span>sp' +
-      '<span class="format_end mceNonEditable">›</span></span>words '
-    ]
-  ],
-  // pc
-  [ 'simple <pc> tag',
-	  [ '<pc>.</pc>',
-	 		'<span class="pc" wce="__t=pc"><span class="format_start mceNonEditable">‹</span>.' +
-      '<span class="format_end mceNonEditable">›</span></span> ' //space at end is important
- 		],
-	]
+  ]
 ]);
 
-teiToHtmlAndBack.forEach((value, key, map) => {
-	test('TEI2HTML: ' + key, () => {
-		let testInput, expectedOutput, html;
-		testInput = xmlHead + value[0] + xmlTail;
-		expectedOutput = '<TEMP>' + value[1] + '</TEMP>';
-		html = wce_tei.getHtmlByTei(testInput);
-		expect(html.htmlString).toBe(expectedOutput);
+const testDataMaps = [basicAnnotation, textStructureDivs, gapAndSupplied, corrections, notes, fw];
+
+for (let i=0; i<testDataMaps.length; i+=1) {
+	testDataMaps[i].forEach((value, key, map) => {
+		test('TEI2HTML: ' + key, () => {
+			let testInput, expectedOutput, html;
+			testInput = xmlHead + value[0] + xmlTail;
+			expectedOutput = '<TEMP>' + value[1] + '</TEMP>';
+			html = wce_tei.getHtmlByTei(testInput);
+			expect(html.htmlString).toBe(expectedOutput);
+		});
+	  test('HTML2TEI: ' + key, () => {
+			let testInput, expectedOutput, xml;
+			testInput = value[1];
+			expectedOutput = xmlHead + value[0] + xmlTail;
+			xml = wce_tei.getTeiByHtml(testInput, {});
+			expect(xml).toBe(expectedOutput);
+		});
 	});
-  test('HTML2TEI: ' + key, () => {
-		let testInput, expectedOutput, xml;
-		testInput = value[1];
-		expectedOutput = xmlHead + value[0] + xmlTail;
-		xml = wce_tei.getTeiByHtml(testInput, {});
-		expect(xml).toBe(expectedOutput);
-	});
-});
+}
+
 
 // special test for all branches of of the hi switch statement
-const hiRendToHtmlAndBack = new Map([
+const hiRendOptions = new Map([
   // rubric
 	[ 'rubric',
 	  [ 'rubric',
@@ -599,7 +656,7 @@ const hiRendToHtmlAndBack = new Map([
 	]
 ]);
 
-hiRendToHtmlAndBack.forEach((value, key, map) => {
+hiRendOptions.forEach((value, key, map) => {
   let xmlFormat = xmlHead + '<w>test</w><w><hi rend="' + value[0] + '">for</hi></w><w>rendering</w>' + xmlTail;
   let htmlFormat = 'test <span class="' + value[1] + '" wce="__t=' + value[1] +
                    '" wce_orig="for"><span class="format_start mceNonEditable">‹</span>for' +
@@ -622,7 +679,7 @@ hiRendToHtmlAndBack.forEach((value, key, map) => {
 
 
 // breaks added at the same time as each other use math.random as an identifier so they need special tests that use regex
-const breaksToHtmlAndBack = new Map([
+const manuscriptPageStructure = new Map([
 
   [ 'initial page, using type=folio',
     [ '<pb n="1r" type="folio" xml:id="P1r-undefined"/><cb n="P1rC1-undefined"/>' +
@@ -820,12 +877,23 @@ const breaksToHtmlAndBack = new Map([
   ],
   [ 'quire break',
     [ '<gb n="3"/><pb n="1r" type="folio" xml:id="P1r-undefined"/><cb n="P1rC1-undefined"/><lb n="P1rC1L-undefined"/>',
-      '<span class=\"mceNonEditable brea\" wce=\"__t=brea&amp;__n=&amp;break_type=gb&amp;number=3&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\"><span class=\"format_start mceNonEditable\">‹</span><br/>QB<span class=\"format_end mceNonEditable\">›</span></span><span class=\"mceNonEditable brea\" id=\"pb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;break_type=pb&amp;number=1&amp;rv=r&amp;fibre_type=&amp;facs=&amp;lb_alignment=&amp;hasBreak=no\"><span class=\"format_start mceNonEditable\">‹</span><br/>PB 1r<span class=\"format_end mceNonEditable\">›</span></span><span class=\"mceNonEditable brea\" id=\"cb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;break_type=cb&amp;number=1&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\"><span class=\"format_start mceNonEditable\">‹</span><br/>CB 1<span class=\"format_end mceNonEditable\">›</span></span><span class=\"mceNonEditable brea\" id=\"lb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\"><span class=\"format_start mceNonEditable\">‹</span><br/>↵ <span class=\"format_end mceNonEditable\">›</span></span>'
+      '<span class=\"mceNonEditable brea\" wce=\"__t=brea&amp;__n=&amp;break_type=gb&amp;number=3&amp;' +
+			'lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
+			'<span class=\"format_start mceNonEditable\">‹</span><br/>QB<span class=\"format_end mceNonEditable\">›</span>' +
+			'</span><span class=\"mceNonEditable brea\" id=\"pb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;' +
+			'break_type=pb&amp;number=1&amp;rv=r&amp;fibre_type=&amp;facs=&amp;lb_alignment=&amp;hasBreak=no\">' +
+			'<span class=\"format_start mceNonEditable\">‹</span><br/>PB 1r<span class=\"format_end mceNonEditable\">›</span>' +
+			'</span><span class=\"mceNonEditable brea\" id=\"cb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;' +
+			'break_type=cb&amp;number=1&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
+			'<span class=\"format_start mceNonEditable\">‹</span><br/>CB 1<span class=\"format_end mceNonEditable\">›</span>' +
+			'</span><span class=\"mceNonEditable brea\" id=\"lb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;' +
+			'break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
+			'<span class=\"format_start mceNonEditable\">‹</span><br/>↵ <span class=\"format_end mceNonEditable\">›</span></span>'
     ]
   ]
 ]);
 
-breaksToHtmlAndBack.forEach((value, key, map) => {
+manuscriptPageStructure.forEach((value, key, map) => {
 	test('TEI2HTML: ' + key, () => {
 		let testInput, expectedOutput, html, modifiedHtml, idRegex;
     idRegex = /id="(.)b_(\d)_\d+"/g
@@ -922,8 +990,7 @@ const teiToHtmlAndBackWithChange = new Map([
         'in line lectionary<span class=\"paratext\" wce=\"__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=3&amp;text=&amp;number=&amp;edit_number=on&amp;paratext_position=pagetop&amp;paratext_position_other=&amp;paratext_alignment=left\"><span class=\"format_start mceNonEditable\">‹</span><br/>↵[<span class=\"lectionary-other\" wce=\"__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=3\">lect</span>]<br/>↵[<span class=\"lectionary-other\" wce=\"__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=3\">lect</span>]<br/>↵[<span class=\"lectionary-other\" wce=\"__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=3\">lect</span>]<span class=\"format_end mceNonEditable\">›</span></span>',
         '<w>in</w><w>line</w><w>lectionary</w><lb/><note type=\"lectionary-other\">One line of untranscribed lectionary text</note><lb/><note type=\"lectionary-other\">One line of untranscribed lectionary text</note><lb/><note type=\"lectionary-other\">One line of untranscribed lectionary text</note>'
       ]
-    ],
-
+    ]
 ]);
 
 teiToHtmlAndBackWithChange.forEach((value, key, map) => {
@@ -953,6 +1020,7 @@ test ('test export of abbr where supplied and overline need flipping', () => {
   expect(xml).toBe(expectedOutput);
 });
 
+// other unit test which need dom
 
 // OTE-TODO: error handling shouldn't have undefined args printed out in the alert
 // Might need to mock window.alert of the error function for this
