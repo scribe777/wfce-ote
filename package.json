@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
-    "build-docs": "jsdoc -c jsdoc-config.json --readme README.md"
+    "build-docs": "jsdoc -c jsdoc-config.json --readme README.md",
+    "lint": "jshint ./__tests__"
   },
   "repository": {
     "type": "git",
@@ -21,6 +22,7 @@
   "devDependencies": {
     "jest": "^27.5.1",
     "jsdoc": "^3.6.10",
+    "jshint": "^2.13.4",
     "minami": "^1.2.3",
     "puppeteer": "^13.5.1"
   },
