@@ -193,7 +193,6 @@ const textStructureDivs = new Map([
 
 const gapAndSupplied = new Map([
   // gaps
-  // TODO: add witness end test here
   [ 'gap between words',
     [ '<w>this</w><gap reason="illegible" unit="char" extent="10"/><w>continues</w>',
       'this <span class="gap" wce="__t=gap&amp;__n=&amp;gap_reason_dummy_lacuna=lacuna&amp;' +
