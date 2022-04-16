@@ -66,6 +66,7 @@ test('test expanded text', async () => {
   const menuFrameHandle = await page.$('div[id="mceu_40"] > div > div > iframe');
   const menuFrame = await menuFrameHandle.contentFrame();
   await menuFrame.click('input#insert');
+  await page.waitForSelector('div[id="mceu_40"]', {hidden: true});
   const htmlData = await page.evaluate(`getData()`);
   expect(htmlData).toBe('my wo<span class=\"part_abbr\" wce_orig=\"rds\" wce=\"__t=part_abbr&amp;__n=&amp;' +
                         'help=Help&amp;exp_rend=&amp;exp_rend_other=\"><span class=\"format_start mceNonEditable\">‹' +
@@ -91,6 +92,7 @@ test('test expanded whole word with symbol', async () => {
   const menuFrame = await menuFrameHandle.contentFrame();
   await menuFrame.select('select[id="exp_rend"]', '÷');
   await menuFrame.click('input#insert');
+  await page.waitForSelector('div[id="mceu_40"]', {hidden: true});
   const htmlData = await page.evaluate(`getData()`);
   expect(htmlData).toBe('my <span class=\"part_abbr\" wce_orig=\"words\" wce=\"__t=part_abbr&amp;__n=&amp;' +
                         'help=Help&amp;exp_rend=%C3%B7&amp;exp_rend_other=\">' +
@@ -115,6 +117,7 @@ test('whole word unclear with no reason', async () => {
   const menuFrameHandle = await page.$('div[id="mceu_40"] > div > div > iframe');
   const menuFrame = await menuFrameHandle.contentFrame();
   await menuFrame.click('input#insert');
+  await page.waitForSelector('div[id="mceu_40"]', {hidden: true});
   const htmlData = await page.evaluate(`getData()`);
   expect(htmlData).toBe('my <span class=\"unclear\" wce_orig=\"words\" wce=\"__t=unclear&amp;__n=&amp;' +
                         'help=Help&amp;unclear_text_reason=&amp;unclear_text_reason_other=\">' +
@@ -140,6 +143,7 @@ test('part word unclear with reason', async () => {
   const menuFrame = await menuFrameHandle.contentFrame();
   await menuFrame.select('select[id="unclear_text_reason"]', 'damage to page');
   await menuFrame.click('input#insert');
+  await page.waitForSelector('div[id="mceu_40"]', {hidden: true});
   const htmlData = await page.evaluate(`getData()`);
   expect(htmlData).toBe('my wo<span class="unclear" wce_orig="rds" wce="__t=unclear&amp;__n=&amp;help=Help' +
                         '&amp;unclear_text_reason=damage%20to%20page&amp;unclear_text_reason_other=">' +
@@ -167,6 +171,7 @@ test('space between words', async () => {
   const menuFrame = await menuFrameHandle.contentFrame();
   await menuFrame.type('input#sp_extent', '5');
   await menuFrame.click('input#insert');
+  await page.waitForSelector('div[id="mceu_41"]', {hidden: true});
   const htmlData = await page.evaluate(`getData()`);
   expect(htmlData).toBe('space between <span class=\"spaces\" wce=\"__t=spaces&amp;__n=&amp;original_spaces_text=&amp;help=Help&amp;sp_unit=char&amp;sp_unit_other=&amp;sp_extent=5\"><span class=\"format_start mceNonEditable\">‹</span>sp<span class=\"format_end mceNonEditable\">›</span></span> words');
   const xmlData = await page.evaluate(`getTEI()`);
@@ -233,6 +238,7 @@ test('test abbr', async () => {
   const menuFrameHandle = await page.$('div[id="mceu_40"] > div > div > iframe');
   const menuFrame = await menuFrameHandle.contentFrame();
   await menuFrame.click('input#insert');
+  await page.waitForSelector('div[id="mceu_40"]', {hidden: true});
 
   const htmlData = await page.evaluate(`getData()`);
   expect(htmlData).toBe('a <span class="abbr_add_overline" wce_orig="ns" wce="__t=abbr&amp;__n=&amp;original_abbr_text=&amp;help=Help&amp;abbr_type=nomSac&amp;abbr_type_other=&amp;add_overline=overline"><span class="format_start mceNonEditable">‹</span>ns<span class="format_end mceNonEditable">›</span></span> abbreviation');
@@ -270,6 +276,7 @@ test('capitals', async () => {
   const menuFrame = await menuFrameHandle.contentFrame();
   await menuFrame.type('input#capitals_height', '3');
   await menuFrame.click('input#insert');
+  await page.waitForSelector('div[id="mceu_41"]', {hidden: true});
 
   const htmlData = await page.evaluate(`getData()`);
   expect(htmlData).toBe('<span class="formatting_capitals" wce_orig="I" wce="__t=formatting_capitals&amp;__n=&amp;capitals_height=3"><span class="format_start mceNonEditable">‹</span>I<span class="format_end mceNonEditable">›</span></span>nitial capital');
@@ -301,6 +308,7 @@ test('other ornamentation', async () => {
   const menuFrame = await menuFrameHandle.contentFrame();
   await menuFrame.type('input#formatting_ornamentation_other', 'underlined');
   await menuFrame.click('input#insert');
+  await page.waitForSelector('div[id="mceu_39"]', {hidden: true});
 
   const htmlData = await page.evaluate(`getData()`);
   expect(htmlData).toBe('test <span class=\"formatting_ornamentation_other\" wce_orig=\"for\" wce=\"__t=formatting_ornamentation_other&amp;__n=&amp;formatting_ornamentation_other=underlined\"><span class=\"format_start mceNonEditable\">‹</span>for<span class=\"format_end mceNonEditable\">›</span></span> rendering');
@@ -351,6 +359,7 @@ test('book div', async () => {
   await menuFrame.click('input#insertBookRadio');
   await menuFrame.type('input#insertBookNumber', '4');
   await menuFrame.click('input#insert');
+  await page.waitForSelector('div[id="mceu_39"]', {hidden: true});
   await frame.type('body#tinymce', 'The content of my book');
 
   const htmlData = await page.evaluate(`getData()`);
@@ -370,6 +379,7 @@ test('chapter div', async () => {
   await menuFrame.click('input#insertChapterRadio');
   await menuFrame.type('input#insertChapterNumber', '1');
   await menuFrame.click('input#insert');
+  await page.waitForSelector('div[id="mceu_39"]', {hidden: true});
   await frame.type('body#tinymce', 'The content of my chapter');
 
   const htmlData = await page.evaluate(`getData()`);
@@ -397,6 +407,7 @@ test('book and chapter div', async () => {
   await menuFrame2.click('input#insertChapterRadio');
   await menuFrame2.type('input#insertChapterNumber', '1');
   await menuFrame2.click('input#insert');
+  await page.waitForSelector('div[id="mceu_40"]', {hidden: true});
   await frame.type('body#tinymce', 'The content of my chapter');
 
   const htmlData = await page.evaluate(`getData()`);
@@ -425,6 +436,7 @@ test('book, chapter and verse', async () => {
   await menuFrame2.click('input#insertChapterRadio');
   await menuFrame2.type('input#insertChapterNumber', '1');
   await menuFrame2.click('input#insert');
+  await page.waitForSelector('div[id="mceu_40"]', {hidden: true});
 
   await page.click('button#mceu_18-open');
   await page.keyboard.press('ArrowDown');
@@ -434,6 +446,7 @@ test('book, chapter and verse', async () => {
   await menuFrame3.click('input#insertVerseRadio');
   await menuFrame3.type('input#insertVerseNumber', '2');
   await menuFrame3.click('input#insert');
+  await page.waitForSelector('div[id="mceu_41"]', {hidden: true});
   await frame.type('body#tinymce', 'The content of my verse');
 
   const htmlData = await page.evaluate(`getData()`);
@@ -456,7 +469,7 @@ test('lection', async () => {
   await menuFrame.click('input#insertLectionRadio');
   await menuFrame.type('input#insertLectionNumber', 'R12');
   await menuFrame.click('input#insert');
-
+  await page.waitForSelector('div[id="mceu_39"]', {hidden: true});
   await frame.type('body#tinymce', 'The content of my lection');
 
   const htmlData = await page.evaluate(`getData()`);
@@ -486,6 +499,7 @@ test('lection, book and chapter', async () => {
   await menuFrame2.click('input#insertBookRadio');
   await menuFrame2.type('input#insertBookNumber', '4');
   await menuFrame2.click('input#insert');
+  await page.waitForSelector('div[id="mceu_40"]', {hidden: true});
 
   await page.click('button#mceu_18-open');
   await page.keyboard.press('ArrowDown');
@@ -495,6 +509,7 @@ test('lection, book and chapter', async () => {
   await menuFrame3.click('input#insertChapterRadio');
   await menuFrame3.type('input#insertChapterNumber', '1');
   await menuFrame3.click('input#insert');
+  await page.waitForSelector('div[id="mceu_41"]', {hidden: true});
 
   await frame.type('body#tinymce', 'The content of my chapter');
 
@@ -524,6 +539,7 @@ test('book and inscriptio divs', async () => {
   const menuFrame2 = await menuFrameHandle2.contentFrame();
   await menuFrame2.click('input#insertInscriptioRadio');
   await menuFrame2.click('input#insert');
+  await page.waitForSelector('div[id="mceu_40"]', {hidden: true});
   await page.keyboard.down('Shift');
   for (let i = 0; i < 'PLACE THE INSCRIPTIO HERE! '.length; i++) {
     await page.keyboard.press('ArrowLeft');
@@ -556,6 +572,7 @@ test('book and subscriptio divs', async () => {
   const menuFrame2 = await menuFrameHandle2.contentFrame();
   await menuFrame2.click('input#insertSubscriptioRadio');
   await menuFrame2.click('input#insert');
+  await page.waitForSelector('div[id="mceu_40"]', {hidden: true});
   await page.keyboard.down('Shift');
   for (let i = 0; i < 'PLACE THE SUBSCRIPTIO HERE! '.length; i++) {
     await page.keyboard.press('ArrowLeft');
@@ -588,6 +605,7 @@ test('gap between words', async () => {
   await menuFrame.select('select[id="unit"]', 'char');
   await menuFrame.type('input#extent', '10');
   await menuFrame.click('input#insert');
+  await page.waitForSelector('div[id="mceu_40"]', {hidden: true});
 
   const htmlData = await page.evaluate(`getData()`);
   expect(htmlData).toBe('this <span class=\"gap\" wce_orig=\"\" wce=\"__t=gap&amp;__n=&amp;original_gap_text=&amp;help=Help&amp;gap_reason_dummy_lacuna=lacuna&amp;gap_reason_dummy_illegible=illegible&amp;gap_reason_dummy_unspecified=unspecified&amp;gap_reason_dummy_inferredPage=inferredPage&amp;gap_reason=illegible&amp;unit=char&amp;unit_other=&amp;extent=10&amp;extent_unspecified=Extent%3DUnspecified&amp;extent_part=Extent%3DPart&amp;supplied_source=na28&amp;supplied_source_other=\"><span class=\"format_start mceNonEditable\">‹</span>[10]<span class=\"format_end mceNonEditable\">›</span></span> continues');
@@ -611,11 +629,12 @@ test('gap between words no details given', async () => {
   const menuFrame = await menuFrameHandle.contentFrame();
   await menuFrame.click('input#gap_reason_dummy_unspecified');
   await menuFrame.click('input#insert');
+  await page.waitForSelector('div[id="mceu_40"]', {hidden: true});
 
   const htmlData = await page.evaluate(`getData()`);
   expect(htmlData).toBe('this <span class=\"gap\" wce_orig=\"\" wce=\"__t=gap&amp;__n=&amp;original_gap_text=&amp;help=Help&amp;gap_reason_dummy_lacuna=lacuna&amp;gap_reason_dummy_illegible=illegible&amp;gap_reason_dummy_unspecified=unspecified&amp;gap_reason_dummy_inferredPage=inferredPage&amp;gap_reason=unspecified&amp;unit=&amp;unit_other=&amp;extent=&amp;extent_unspecified=Extent%3DUnspecified&amp;extent_part=Extent%3DPart&amp;supplied_source=na28&amp;supplied_source_other=\"><span class=\"format_start mceNonEditable\">‹</span>[...]<span class=\"format_end mceNonEditable\">›</span></span> continues');
   const xmlData = await page.evaluate(`getTEI()`);
-  expect(xmlData).toBe(xmlHead + '<w>this</w><gap/><w>continues</w>' + xmlTail);
+  expect(xmlData).toBe(xmlHead + '<w>this</w><gap reason="unspecified"/><w>continues</w>' + xmlTail);
 }, 200000);
 
 test('gap within word', async () => {
@@ -632,6 +651,7 @@ test('gap within word', async () => {
   await menuFrame.select('select[id="unit"]', 'char');
   await menuFrame.type('input#extent', '2');
   await menuFrame.click('input#insert');
+  await page.waitForSelector('div[id="mceu_40"]', {hidden: true});
 
   const htmlData = await page.evaluate(`getData()`);
   expect(htmlData).toBe('wo<span class=\"gap\" wce_orig=\"\" wce=\"__t=gap&amp;__n=&amp;original_gap_text=&amp;help=Help&amp;gap_reason_dummy_lacuna=lacuna&amp;gap_reason_dummy_illegible=illegible&amp;gap_reason_dummy_unspecified=unspecified&amp;gap_reason_dummy_inferredPage=inferredPage&amp;gap_reason=illegible&amp;unit=char&amp;unit_other=&amp;extent=2&amp;extent_unspecified=Extent%3DUnspecified&amp;extent_part=Extent%3DPart&amp;supplied_source=na28&amp;supplied_source_other=\"><span class=\"format_start mceNonEditable\">‹</span>[2]<span class=\"format_end mceNonEditable\">›</span></span>');
@@ -651,6 +671,7 @@ test('gap within word no unit given', async () => {
   const menuFrameHandle = await page.$('div[id="mceu_40"] > div > div > iframe');
   const menuFrame = await menuFrameHandle.contentFrame();
   await menuFrame.click('input#insert');
+  await page.waitForSelector('div[id="mceu_40"]', {hidden: true});
 
   const htmlData = await page.evaluate(`getData()`);
   expect(htmlData).toBe('wo<span class=\"gap\" wce_orig=\"\" wce=\"__t=gap&amp;__n=&amp;original_gap_text=&amp;help=Help&amp;gap_reason_dummy_lacuna=lacuna&amp;gap_reason_dummy_illegible=illegible&amp;gap_reason_dummy_unspecified=unspecified&amp;gap_reason_dummy_inferredPage=inferredPage&amp;gap_reason=illegible&amp;unit=&amp;unit_other=&amp;extent=&amp;extent_unspecified=Extent%3DUnspecified&amp;extent_part=Extent%3DPart&amp;supplied_source=na28&amp;supplied_source_other=\"><span class=\"format_start mceNonEditable\">‹</span>[...]<span class=\"format_end mceNonEditable\">›</span></span>');
@@ -674,6 +695,7 @@ test('gap with unit line and extent part', async () => {
   await menuFrame.select('select[id="unit"]', 'line');
   await menuFrame.click('input#extent_part');
   await menuFrame.click('input#insert');
+  await page.waitForSelector('div[id="mceu_40"]', {hidden: true});
   const idRegex = /id="gap_(\d)_\d+"/g;
   const htmlData = await page.evaluate(`getData()`);
   const modifiedHtml = htmlData.replace(idRegex, 'id="gap_$1_MATH.RAND"');
@@ -696,6 +718,7 @@ test('gap with unit line and unspecified extent', async () => {
   await menuFrame.select('select[id="unit"]', 'line');
   await menuFrame.click('input#extent_unspecified');
   await menuFrame.click('input#insert');
+  await page.waitForSelector('div[id="mceu_40"]', {hidden: true});
   const idRegex = /id="gap_(\d)_\d+"/g;
   const htmlData = await page.evaluate(`getData()`);
   const modifiedHtml = htmlData.replace(idRegex, 'id="gap_$1_MATH.RAND"');
@@ -722,6 +745,7 @@ test('missing quire', async () => {
   await menuFrame.click('input#gap_reason_dummy_lacuna');
   await menuFrame.type('input#extent', '1');
   await menuFrame.click('input#insert');
+  await page.waitForSelector('div[id="mceu_40"]', {hidden: true});
   const htmlData = await page.evaluate(`getData()`);
   expect(htmlData).toBe('missing <span class=\"gap\" wce_orig=\"\" wce=\"__t=gap&amp;__n=&amp;original_gap_text=&amp;help=Help&amp;gap_reason_dummy_lacuna=lacuna&amp;gap_reason_dummy_illegible=illegible&amp;gap_reason_dummy_unspecified=unspecified&amp;gap_reason_dummy_inferredPage=inferredPage&amp;gap_reason=lacuna&amp;unit=quire&amp;unit_other=&amp;extent=1&amp;extent_unspecified=Extent%3DUnspecified&amp;extent_part=Extent%3DPart&amp;supplied_source=na28&amp;supplied_source_other=\"><span class=\"format_start mceNonEditable\">‹</span><br />QB<br />[...]<span class=\"format_end mceNonEditable\">›</span></span> quire');
   const xmlData = await page.evaluate(`getTEI()`);
@@ -767,4 +791,250 @@ test('gap witness end', async () => {
   expect(htmlData).toBe('the end of the witness <span class=\"witnessend\" wce=\"__t=gap&amp;__n=&amp;original_gap_text=&amp;gap_reason=witnessEnd&amp;unit=&amp;unit_other=&amp;extent=&amp;supplied_source=na28&amp;supplied_source_other=&amp;insert=Insert&amp;cancel=Cancel\"><span class=\"format_start mceNonEditable\">‹</span>Witness End<span class=\"format_end mceNonEditable\">›</span></span>');
   const xmlData = await page.evaluate(`getTEI()`);
   expect(xmlData).toBe(xmlHead + '<w>the</w><w>end</w><w>of</w><w>the</w><w>witness</w><gap reason="witnessEnd"/>' + xmlTail);
+}, 200000);
+
+test('supplied word', async () => {
+  await frame.type('body#tinymce', 'a supplied word');
+  for (let i = 0; i < ' word'.length; i++) {
+    await page.keyboard.press('ArrowLeft');
+  }
+  await page.keyboard.down('Shift');
+  for (let i = 0; i < 'supplied'.length; i++) {
+    await page.keyboard.press('ArrowLeft');
+  }
+  await page.keyboard.up('Shift');
+
+  // open D menu
+  await page.click('button#mceu_12-open');
+  await page.keyboard.press('ArrowDown');
+  await page.keyboard.press('ArrowDown');
+  await page.keyboard.press('ArrowRight');
+  await page.keyboard.press('Enter');
+  const menuFrameHandle = await page.$('div[id="mceu_40"] > div > div > iframe');
+  const menuFrame = await menuFrameHandle.contentFrame();
+  // NB: when test is selected makr as supplied is automatically checked
+  await menuFrame.click('input#insert');
+
+  const htmlData = await page.evaluate(`getData()`);
+  expect(htmlData).toBe('a <span class=\"gap\" wce_orig=\"supplied\" wce=\"__t=gap&amp;__n=&amp;original_gap_text=&amp;help=Help&amp;gap_reason_dummy_lacuna=lacuna&amp;gap_reason_dummy_illegible=illegible&amp;gap_reason_dummy_unspecified=unspecified&amp;gap_reason_dummy_inferredPage=inferredPage&amp;gap_reason=illegible&amp;unit=&amp;unit_other=&amp;extent=&amp;extent_unspecified=Extent%3DUnspecified&amp;extent_part=Extent%3DPart&amp;mark_as_supplied=supplied&amp;supplied_source=na28&amp;supplied_source_other=\"><span class=\"format_start mceNonEditable\">‹</span>[supplied]<span class=\"format_end mceNonEditable\">›</span></span> word');
+  const xmlData = await page.evaluate(`getTEI()`);
+  expect(xmlData).toBe(xmlHead + '<w>a</w><w><supplied source="na28" reason="illegible">supplied</supplied></w><w>word</w>' + xmlTail);
+}, 200000);
+
+test('multi-word/part-word supplied with no source given', async () => {
+  await frame.type('body#tinymce', 'a supplied word');
+  for (let i = 0; i < 'rd'.length; i++) {
+    await page.keyboard.press('ArrowLeft');
+  }
+  await page.keyboard.down('Shift');
+  for (let i = 0; i < 'supplied wo'.length; i++) {
+    await page.keyboard.press('ArrowLeft');
+  }
+  await page.keyboard.up('Shift');
+
+  // open D menu
+  await page.click('button#mceu_12-open');
+  await page.keyboard.press('ArrowDown');
+  await page.keyboard.press('ArrowDown');
+  await page.keyboard.press('ArrowRight');
+  await page.keyboard.press('Enter');
+  const menuFrameHandle = await page.$('div[id="mceu_40"] > div > div > iframe');
+  const menuFrame = await menuFrameHandle.contentFrame();
+  // NB: when test is selected makr as supplied is automatically checked
+  await menuFrame.select('select[id="supplied_source"]', 'none');
+  await menuFrame.click('input#insert');
+
+  const htmlData = await page.evaluate(`getData()`);
+  expect(htmlData).toBe('a <span class=\"gap\" wce_orig=\"supplied%20wo\" wce=\"__t=gap&amp;__n=&amp;original_gap_text=&amp;help=Help&amp;gap_reason_dummy_lacuna=lacuna&amp;gap_reason_dummy_illegible=illegible&amp;gap_reason_dummy_unspecified=unspecified&amp;gap_reason_dummy_inferredPage=inferredPage&amp;gap_reason=illegible&amp;unit=&amp;unit_other=&amp;extent=&amp;extent_unspecified=Extent%3DUnspecified&amp;extent_part=Extent%3DPart&amp;mark_as_supplied=supplied&amp;supplied_source=none&amp;supplied_source_other=\"><span class=\"format_start mceNonEditable\">‹</span>[supplied wo]<span class=\"format_end mceNonEditable\">›</span></span>rd');
+  const xmlData = await page.evaluate(`getTEI()`);
+  expect(xmlData).toBe(xmlHead + '<w>a</w><w><supplied reason="illegible">supplied</supplied></w><w><supplied reason="illegible">wo</supplied>rd</w>' + xmlTail);
+}, 200000);
+
+// CORRECTIONS
+
+test('a simple correction with visible firsthand', async () => {
+  await frame.type('body#tinymce', 'a smple correction');
+  for (let i = 0; i < ' correction'.length; i++) {
+    await page.keyboard.press('ArrowLeft');
+  }
+  await page.keyboard.down('Shift');
+  for (let i = 0; i < 'smple'.length; i++) {
+    await page.keyboard.press('ArrowLeft');
+  }
+  await page.keyboard.up('Shift');
+
+  // open C menu
+  await page.click('div#mceu_11 > button');
+
+  const menuFrameHandle = await page.$('div[id="mceu_38"] > div > div > iframe');
+  const menuFrame = await menuFrameHandle.contentFrame();
+
+  const menuFrameHandle2 = await menuFrame.$('iframe[id="corrector_text_ifr"]');
+  const menuFrame2 = await menuFrameHandle2.contentFrame();
+  await page.keyboard.press('ArrowRight');
+  await menuFrame2.type('body#tinymce', 'i');
+  await menuFrame.click('input#insert');
+
+  const htmlData = await page.evaluate(`getData()`);
+  expect(htmlData).toBe('a <span class=\"corr\" wce_orig=\"smple\" wce=\"__t=corr&amp;__n=corrector&amp;help=Help&amp;original_firsthand_reading=smple&amp;common_firsthand_partial=&amp;reading=corr&amp;corrector_name=corrector&amp;corrector_name_other=&amp;place_corr=&amp;place_corr_other=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_deletion_hooks=0&amp;deletion_transposition_marks=0&amp;deletion_other=0&amp;deletion=null&amp;firsthand_partial=&amp;partial=&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;corrector_text=simple\"><span class=\"format_start mceNonEditable\">‹</span>smple<span class=\"format_end mceNonEditable\">›</span></span> correction');
+  const xmlData = await page.evaluate(`getTEI()`);
+  expect(xmlData).toBe(xmlHead + '<w>a</w><app><rdg type="orig" hand="firsthand"><w>smple</w></rdg><rdg type="corr" hand="corrector">' +
+                       '<w>simple</w></rdg></app><w>correction</w>' + xmlTail);
+}, 200000);
+
+test('a simple correction in the margin', async () => {
+  await frame.type('body#tinymce', 'a smple correction');
+  for (let i = 0; i < ' correction'.length; i++) {
+    await page.keyboard.press('ArrowLeft');
+  }
+  await page.keyboard.down('Shift');
+  for (let i = 0; i < 'smple'.length; i++) {
+    await page.keyboard.press('ArrowLeft');
+  }
+  await page.keyboard.up('Shift');
+
+  // open C menu
+  await page.click('div#mceu_11 > button');
+
+  const menuFrameHandle = await page.$('div[id="mceu_38"] > div > div > iframe');
+  const menuFrame = await menuFrameHandle.contentFrame();
+  await menuFrame.select('select[id="corrector_name"]', 'corrector1');
+  await menuFrame.select('select[id="deletion"]', 'deletion_hooks');
+  await menuFrame.select('select[id="place_corr"]', 'pageleft');
+
+  const menuFrameHandle2 = await menuFrame.$('iframe[id="corrector_text_ifr"]');
+  const menuFrame2 = await menuFrameHandle2.contentFrame();
+  await page.keyboard.press('ArrowRight');
+  await menuFrame2.type('body#tinymce', 'i');
+  await menuFrame.click('input#insert');
+
+  const htmlData = await page.evaluate(`getData()`);
+  expect(htmlData).toBe('a <span class=\"corr\" wce_orig=\"smple\" wce=\"__t=corr&amp;__n=corrector1&amp;help=Help&amp;original_firsthand_reading=smple&amp;common_firsthand_partial=&amp;reading=corr&amp;corrector_name=corrector1&amp;corrector_name_other=&amp;place_corr=pageleft&amp;place_corr_other=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_deletion_hooks=1&amp;deletion_transposition_marks=0&amp;deletion_other=0&amp;deletion=deletion_hooks&amp;firsthand_partial=&amp;partial=&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;corrector_text=simple\"><span class=\"format_start mceNonEditable\">‹</span>smple<span class=\"format_end mceNonEditable\">›</span></span> correction');
+  const xmlData = await page.evaluate(`getTEI()`);
+  expect(xmlData).toBe(xmlHead + '<w>a</w><app><rdg type="orig" hand="firsthand"><w>smple</w></rdg>' +
+                       '<rdg type="corr" hand="corrector1" rend="deletion_hooks"><seg type="margin" subtype="pageleft" n="@P-">' +
+                       '<w>simple</w></seg></rdg></app><w>correction</w>' + xmlTail);
+}, 200000);
+
+test('a simple correction above line', async () => {
+  await frame.type('body#tinymce', 'a smple correction');
+  for (let i = 0; i < ' correction'.length; i++) {
+    await page.keyboard.press('ArrowLeft');
+  }
+  await page.keyboard.down('Shift');
+  for (let i = 0; i < 'smple'.length; i++) {
+    await page.keyboard.press('ArrowLeft');
+  }
+  await page.keyboard.up('Shift');
+
+  // open C menu
+  await page.click('div#mceu_11 > button');
+
+  const menuFrameHandle = await page.$('div[id="mceu_38"] > div > div > iframe');
+  const menuFrame = await menuFrameHandle.contentFrame();
+  await menuFrame.select('select[id="corrector_name"]', 'corrector1');
+  await menuFrame.select('select[id="deletion"]', 'deletion_hooks');
+  await menuFrame.select('select[id="place_corr"]', 'above');
+
+  const menuFrameHandle2 = await menuFrame.$('iframe[id="corrector_text_ifr"]');
+  const menuFrame2 = await menuFrameHandle2.contentFrame();
+  await page.keyboard.press('ArrowRight');
+  await menuFrame2.type('body#tinymce', 'i');
+  await menuFrame.click('input#insert');
+
+  const htmlData = await page.evaluate(`getData()`);
+  expect(htmlData).toBe('a <span class=\"corr\" wce_orig=\"smple\" wce=\"__t=corr&amp;__n=corrector1&amp;help=Help&amp;original_firsthand_reading=smple&amp;common_firsthand_partial=&amp;reading=corr&amp;corrector_name=corrector1&amp;corrector_name_other=&amp;place_corr=above&amp;place_corr_other=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_deletion_hooks=1&amp;deletion_transposition_marks=0&amp;deletion_other=0&amp;deletion=deletion_hooks&amp;firsthand_partial=&amp;partial=&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;corrector_text=simple\"><span class=\"format_start mceNonEditable\">‹</span>smple<span class=\"format_end mceNonEditable\">›</span></span> correction');
+  const xmlData = await page.evaluate(`getTEI()`);
+  expect(xmlData).toBe(xmlHead + '<w>a</w><app><rdg type="orig" hand="firsthand"><w>smple</w></rdg>' +
+                       '<rdg type="corr" hand="corrector1" rend="deletion_hooks"><seg type="line" subtype="above" n="@PCL-">' +
+                       '<w>simple</w></seg></rdg></app><w>correction</w>' + xmlTail);
+}, 200000);
+
+test('a simple correction with other location', async () => {
+  await frame.type('body#tinymce', 'a smple correction');
+  for (let i = 0; i < ' correction'.length; i++) {
+    await page.keyboard.press('ArrowLeft');
+  }
+  await page.keyboard.down('Shift');
+  for (let i = 0; i < 'smple'.length; i++) {
+    await page.keyboard.press('ArrowLeft');
+  }
+  await page.keyboard.up('Shift');
+
+  // open C menu
+  await page.click('div#mceu_11 > button');
+
+  const menuFrameHandle = await page.$('div[id="mceu_38"] > div > div > iframe');
+  const menuFrame = await menuFrameHandle.contentFrame();
+  await menuFrame.select('select[id="corrector_name"]', 'corrector1');
+  await menuFrame.select('select[id="deletion"]', 'transposition_marks');
+  await menuFrame.select('select[id="place_corr"]', 'other');
+  await menuFrame.type('input[id="place_corr_other"]', 'inline');
+
+  const menuFrameHandle2 = await menuFrame.$('iframe[id="corrector_text_ifr"]');
+  const menuFrame2 = await menuFrameHandle2.contentFrame();
+  // I can't work out how to get the cursor to move to this window so typing and then deleting does this.
+  await menuFrame2.type('body#tinymce', 'l');
+  await page.keyboard.press('Backspace');
+  await page.keyboard.press('ArrowRight');
+  await menuFrame2.type('body#tinymce', 'i');
+  await menuFrame.click('input#insert');
+
+  const htmlData = await page.evaluate(`getData()`);
+  expect(htmlData).toBe('a <span class=\"corr\" wce_orig=\"smple\" wce=\"__t=corr&amp;__n=corrector1&amp;help=Help&amp;original_firsthand_reading=smple&amp;common_firsthand_partial=&amp;reading=corr&amp;corrector_name=corrector1&amp;corrector_name_other=&amp;place_corr=other&amp;place_corr_other=inline&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_deletion_hooks=0&amp;deletion_transposition_marks=1&amp;deletion_other=0&amp;deletion=transposition_marks&amp;firsthand_partial=&amp;partial=&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;corrector_text=simple\"><span class=\"format_start mceNonEditable\">‹</span>smple<span class=\"format_end mceNonEditable\">›</span></span> correction');
+  const xmlData = await page.evaluate(`getTEI()`);
+  expect(xmlData).toBe(xmlHead + '<w>a</w><app><rdg type="orig" hand="firsthand"><w>smple</w></rdg>' +
+                       '<rdg type="corr" hand="corrector1" rend="transposition_marks">' +
+                       '<seg type="other" subtype="inline" n="@PCL-"><w>simple</w></seg></rdg></app><w>correction</w>' + xmlTail);
+}, 200000);
+
+test('a deletion (correction)', async () => {
+  await frame.type('body#tinymce', 'a deletion correction');
+  for (let i = 0; i < ' correction'.length; i++) {
+    await page.keyboard.press('ArrowLeft');
+  }
+  await page.keyboard.down('Shift');
+  for (let i = 0; i < 'deletion'.length; i++) {
+    await page.keyboard.press('ArrowLeft');
+  }
+  await page.keyboard.up('Shift');
+
+  // open C menu
+  await page.click('div#mceu_11 > button');
+
+  const menuFrameHandle = await page.$('div[id="mceu_38"] > div > div > iframe');
+  const menuFrame = await menuFrameHandle.contentFrame();
+  await menuFrame.click('input[id="blank_correction"]');
+  await menuFrame.select('select[id="deletion"]', 'strikethrough');
+  await menuFrame.click('input#insert');
+
+  const htmlData = await page.evaluate(`getData()`);
+  expect(htmlData).toBe('a <span class=\"corr\" wce_orig=\"deletion\" wce=\"__t=corr&amp;__n=corrector&amp;help=Help&amp;original_firsthand_reading=deletion&amp;common_firsthand_partial=&amp;reading=corr&amp;corrector_name=corrector&amp;corrector_name_other=&amp;blank_correction=on&amp;place_corr=&amp;place_corr_other=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;deletion_strikethrough=1&amp;deletion_vertical_line=0&amp;deletion_deletion_hooks=0&amp;deletion_transposition_marks=0&amp;deletion_other=0&amp;deletion=strikethrough&amp;firsthand_partial=&amp;partial=&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;corrector_text=deletion\"><span class=\"format_start mceNonEditable\">‹</span>deletion<span class=\"format_end mceNonEditable\">›</span></span> correction');
+  const xmlData = await page.evaluate(`getTEI()`);
+  expect(xmlData).toBe(xmlHead + '<w>a</w><app><rdg type="orig" hand="firsthand"><w>deletion</w></rdg>' +
+                       '<rdg type="corr" hand="corrector" rend="strikethrough"></rdg></app><w>correction</w>' + xmlTail);
+}, 200000);
+
+test('a simple correction with other location', async () => {
+  await frame.type('body#tinymce', 'an  correction');
+  for (let i = 0; i < ' correction'.length; i++) {
+    await page.keyboard.press('ArrowLeft');
+  }
+  // open C menu
+  await page.click('div#mceu_11 > button');
+
+  const menuFrameHandle = await page.$('div[id="mceu_38"] > div > div > iframe');
+  const menuFrame = await menuFrameHandle.contentFrame();
+
+  const menuFrameHandle2 = await menuFrame.$('iframe[id="corrector_text_ifr"]');
+  const menuFrame2 = await menuFrameHandle2.contentFrame();
+
+  await menuFrame2.type('body#tinymce', 'addition');
+  await menuFrame.click('input#insert');
+
+  const htmlData = await page.evaluate(`getData()`);
+  expect(htmlData).toBe('an <span class=\"corr_blank_firsthand\" wce_orig=\"\" wce=\"__t=corr&amp;__n=corrector&amp;help=Help&amp;original_firsthand_reading=&amp;common_firsthand_partial=&amp;reading=corr&amp;blank_firsthand=on&amp;corrector_name=corrector&amp;corrector_name_other=&amp;place_corr=&amp;place_corr_other=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_deletion_hooks=0&amp;deletion_transposition_marks=0&amp;deletion_other=0&amp;deletion=null&amp;firsthand_partial=&amp;partial=&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;corrector_text=addition\"><span class=\"format_start mceNonEditable\">‹</span>T<span class=\"format_end mceNonEditable\">›</span></span> correction');
+  const xmlData = await page.evaluate(`getTEI()`);
+  expect(xmlData).toBe(xmlHead + '<w>an</w><app><rdg type="orig" hand="firsthand"></rdg><rdg type="corr" hand="corrector">' +
+    '<w>addition</w></rdg></app><w>correction</w>' + xmlTail);
 }, 200000);
