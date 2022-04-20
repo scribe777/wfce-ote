@@ -507,8 +507,8 @@ function getHtmlByTei(inputString) {
 				return Tei2Html_space($htmlParent, $teiNode);
 			// spaces
 
-			case 'gb':
-				return Tei2Html_break($htmlParent, $teiNode, 'gb');
+			case 'qb':
+				return Tei2Html_break($htmlParent, $teiNode, 'qb');
 			// Quire break
 
 			case 'pb':
@@ -1278,7 +1278,7 @@ function getHtmlByTei(inputString) {
 			case 'gb':
 				wceAttr += '&number=';
 				if ($teiNode.getAttribute('n')) {
-					number = parseInt($teiNode.getAttribute('n'));
+					n = parseInt($teiNode.getAttribute('n'));
 				}
 				wceAttr += number;
 				g_quireNumber = number;
@@ -1302,7 +1302,7 @@ function getHtmlByTei(inputString) {
 		$newNode.setAttribute('wce', wceAttr);
 
 		switch (type) {
-			case 'gb':
+			case 'qb':
 				var $br = $newDoc.createElement('br');
 				$newNode.appendChild($br);
 				nodeAddText($newNode, 'QB');
@@ -4286,24 +4286,18 @@ var compareNodes =function ($n1, $n2){
 		return true;
 };
 
-/** Check if the string starts with a space.
-
-@param {string} str - The string to test.
-@returns {boolean} - true if the string starts with a space or undefined if not
-
-*/
+/*
+ * Is the string begins with a space
+ */
 var startHasSpace = function(str) {
 	if (str.match(/^\s+/)) {
 		return true;
 	}
 };
 
-/** Check if the string ends with a space.
-
-@param {string} str - The string to test.
-@returns {boolean} - true if the string ends with a space or undefined if not
-
-*/
+/*
+ * Is the string end with a space
+ */
 var endHasSpace = function(str) {
 	if (str.match(/\s+$/)) {
 		return true;
@@ -4421,7 +4415,7 @@ function removeArrows(str) {
 var removeBlankNode=function ($root){//remove blank node,
 		var _remove=function($node){
 			var nodeName=$node.nodeName;
-			var notNames=['lb','pb','gb','cb','gap'];
+			var notNames=['lb','pb','qb','cb','gap'];
 			if($node.nodeType!=3 && !$node.firstChild && $.inArray(nodeName,notNames)<0){
 				var parent=$node.parentNode;
 				if (parent) {
