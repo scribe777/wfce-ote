@@ -976,14 +976,14 @@ const teiToHtmlAndBackWithChange = new Map([
     // fix this and at least keep the word [issue #14]
     [ 'hi with no rend attribute removes the word with the hi tag',
       [ '<w>test</w><w><hi>for</hi></w><w>rendering</w>',
-        'test  rendering ',
-        '<w>test</w><w>rendering</w>'
+        'test for rendering ',
+        '<w>test</w><w>for</w><w>rendering</w>'
       ]
     ],
     [ 'hi with empty rend attribute removes the word with the hi tag',
       [ '<w>test</w><w><hi rend="">for</hi></w><w>rendering</w>',
-        'test  rendering ',
-        '<w>test</w><w>rendering</w>'
+        'test for rendering ',
+        '<w>test</w><w>for</w><w>rendering</w>'
       ]
     ],
     // legacy commentary notes (rend attribute - for number of lines covered - now converted to line breaks)
