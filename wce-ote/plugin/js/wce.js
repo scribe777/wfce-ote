@@ -292,7 +292,7 @@ function writeWceNodeInfo(val) {
 
 			case 'pc_other':
 				var pc_char = document.getElementById('pc_char').value;
-				new_content = '<span wce="__t=pc" class="pc">' + startFormatHtml + pc_char + endFormatHtml + '</span>';
+				new_content = '<span wce="__t=pc" class="pc">' + startFormatHtml + pc_char + endFormatHtml + '</span> ';
 				break;
 
 			case 'paratext':
