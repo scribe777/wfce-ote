@@ -72,6 +72,12 @@ const basicAnnotation = new Map([
       '<span class="format_end mceNonEditable">›</span></span> ' //space at end is important
  		],
 	],
+	[ 'a semicolon simple <pc> tag',
+	  [ '<pc>;</pc>',
+	 		'<span class="pc" wce="__t=pc"><span class="format_start mceNonEditable">‹</span>;' +
+      '<span class="format_end mceNonEditable">›</span></span> ' //space at end is important
+ 		],
+	],
 	// abbr
 	[ 'nomen sacrum abbreviation with overline',
 		[ '<w>a</w><w><abbr type="nomSac"><hi rend="overline">ns</hi></abbr></w><w>abbreviation</w>',

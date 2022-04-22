@@ -190,7 +190,6 @@ test('test pc typed', async () => {
   expect(xmlData).toBe(xmlHead + '<w>my</w><w>words</w><pc>.</pc>' + xmlTail);
 }, 200000);
 
-// check what semicolon on the punctuation menu is doing cause its weird when used in a test [issue #17]
 // pc with menu
 test('test pc with menu', async () => {
   await frame.type('body#tinymce', 'my words');
@@ -215,6 +214,33 @@ test('test pc with menu', async () => {
                         '<span class=\"format_end mceNonEditable\">›</span></span>');
   const xmlData = await page.evaluate(`getTEI()`);
   expect(xmlData).toBe(xmlHead + '<w>my</w><w>words</w><pc>?</pc>' + xmlTail);
+}, 200000);
+
+// pc with menu
+test('test pc with menu (semicolon as I changed the code for that)', async () => {
+  await frame.type('body#tinymce', 'my words');
+  // open P menu
+  await page.click('button#mceu_17-open');
+  // navigate to question mark on submenu
+  await page.keyboard.press('ArrowDown');
+  await page.keyboard.press('ArrowRight');
+  await page.keyboard.press('ArrowDown');
+  await page.keyboard.press('ArrowDown');
+  await page.keyboard.press('ArrowDown');
+  await page.keyboard.press('ArrowDown');
+  await page.keyboard.press('ArrowDown');
+  await page.keyboard.press('ArrowDown');
+  await page.keyboard.press('ArrowDown');
+  await page.keyboard.press('ArrowDown');
+	await page.keyboard.press('ArrowDown');
+  await page.keyboard.press('Enter');
+
+  const htmlData = await page.evaluate(`getData()`);
+  expect(htmlData).toBe('my words<span class=\"pc\" wce_orig=\"\" wce=\"__t=pc\">' +
+                        '<span class=\"format_start mceNonEditable\">‹</span>;' +
+                        '<span class=\"format_end mceNonEditable\">›</span></span>');
+  const xmlData = await page.evaluate(`getTEI()`);
+  expect(xmlData).toBe(xmlHead + '<w>my</w><w>words</w><pc>;</pc>' + xmlTail);
 }, 200000);
 
 // abbr
