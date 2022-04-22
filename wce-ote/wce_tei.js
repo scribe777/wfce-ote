@@ -719,10 +719,12 @@ function getHtmlByTei(inputString) {
 			$newNode.setAttribute('class', 'book_number mceNonEditable');
 			$newNode.setAttribute('wce', '__t=book_number');
 			$newNode.setAttribute('id', ++gid);
-			var $booknumber = $teiNode.getAttribute('n').substring(1);
-			// get rid of the "B"
-			if ($booknumber.charAt(0) == '0')
-				$booknumber = $booknumber.substring(1);
+			var $booknumber = $teiNode.getAttribute('n')
+			// Cat commented out while changing referencing to OSIS - delete when done
+			// var $booknumber = $teiNode.getAttribute('n').substring(1);
+			// // get rid of the "B"
+			// if ($booknumber.charAt(0) == '0')
+			// 	$booknumber = $booknumber.substring(1);
 			// get rid of "0"
 			nodeAddText($newNode, $booknumber);
 		} else if (divType == 'chapter') {

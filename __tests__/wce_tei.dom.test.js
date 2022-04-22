@@ -130,33 +130,33 @@ const textStructureDivs = new Map([
   // divs
   // these will need to change when references change [issue #15]
   [ 'book div',
-	  [ '<div type="book" n="B04"><w>The</w><w>content</w><w>of</w><w>my</w><w>book</w></div>',
-	 		' <span class="book_number mceNonEditable" wce="__t=book_number" id="1">4</span> The content of my book ' //spaces at beg and end are important
+	  [ '<div type="book" n="John"><w>The</w><w>content</w><w>of</w><w>my</w><w>book</w></div>',
+	 		' <span class="book_number mceNonEditable" wce="__t=book_number" id="1">John</span> The content of my book ' //spaces at beg and end are important
  		],
 	],
   [ 'chapter div', // note that book value is empty until we combine them
-	  [ '<div type="chapter" n="BK1"><w>The</w><w>content</w><w>of</w><w>my</w><w>chapter</w></div>',
+	  [ '<div type="chapter" n=".1"><w>The</w><w>content</w><w>of</w><w>my</w><w>chapter</w></div>',
 	 		' <span class="chapter_number mceNonEditable" wce="__t=chapter_number" id="1">1</span> The content of my chapter ' //spaces at beg and end are important
  		],
 	],
   [ 'book and chapter div',
-	  [ '<div type="book" n="B04"><div type="chapter" n="B04K1"><w>The</w><w>content</w><w>of</w><w>my</w><w>chapter</w></div></div>',
-	 		' <span class="book_number mceNonEditable" wce="__t=book_number" id="1">4</span>  ' +
+	  [ '<div type="book" n="John"><div type="chapter" n="John.1"><w>The</w><w>content</w><w>of</w><w>my</w><w>chapter</w></div></div>',
+	 		' <span class="book_number mceNonEditable" wce="__t=book_number" id="1">John</span>  ' +
       '<span class="chapter_number mceNonEditable" wce="__t=chapter_number" id="2">1</span> The content of my chapter ' //spaces at beg and end are important
  		],
 	],
   [ 'book, chapter and verse',
-	  [ '<div type="book" n="B04"><div type="chapter" n="B04K1"><ab n="B04K1V2"><w>The</w><w>content</w><w>of</w>' +
+	  [ '<div type="book" n="John"><div type="chapter" n="John.1"><ab n="John.1.2"><w>The</w><w>content</w><w>of</w>' +
       '<w>my</w><w>verse</w></ab></div></div>',
-	 		' <span class="book_number mceNonEditable" wce="__t=book_number" id="1">4</span>  ' +
+	 		' <span class="book_number mceNonEditable" wce="__t=book_number" id="1">John</span>  ' +
       '<span class="chapter_number mceNonEditable" wce="__t=chapter_number" id="2">1</span> ' +
       '<span class="verse_number mceNonEditable" wce="__t=verse_number">2</span> The content of my verse ' //spaces at beg and end are important
  		],
 	],
   [ 'book, chapter and verse (verse continues from previous page, part="F")',
-	  [ '<div type="book" n="B04"><div type="chapter" n="B04K1"><ab n="B04K1V2" part="F"><w>continuation</w>' +
+	  [ '<div type="book" n="John"><div type="chapter" n="John.1"><ab n="John.1.2" part="F"><w>continuation</w>' +
       '<w>of</w><w>my</w><w>verse</w></ab></div></div>',
-	 		' <span class="book_number mceNonEditable" wce="__t=book_number" id="1">4</span>  ' +
+	 		' <span class="book_number mceNonEditable" wce="__t=book_number" id="1">John</span>  ' +
       '<span class="chapter_number mceNonEditable" wce="__t=chapter_number" id="2">1</span> ' +
       '<span class="verse_number mceNonEditable" wce="__t=verse_number&amp;partial=F">2 Cont.</span> continuation of my verse ' //spaces at beg and end are important
  		],
@@ -167,10 +167,10 @@ const textStructureDivs = new Map([
  		],
 	],
   [ 'lection, book and chapter div',
-    [ '<div type="lection" n="R12"><div type="book" n="B04"><div type="chapter" n="B04K1">' +
+    [ '<div type="lection" n="R12"><div type="book" n="John"><div type="chapter" n="John.1">' +
       '<w>The</w><w>content</w><w>of</w><w>my</w><w>chapter</w></div></div></div>',
       ' <span class="lection_number mceNonEditable" wce="__t=lection_number&amp;number=R12" id="1">Lec</span>  ' +
-      '<span class="book_number mceNonEditable" wce="__t=book_number" id="2">4</span>  '+
+      '<span class="book_number mceNonEditable" wce="__t=book_number" id="2">John</span>  '+
       '<span class="chapter_number mceNonEditable" wce="__t=chapter_number" id="3">1</span> The content of my chapter ' //spaces at beg and end are important
     ],
   ],
