@@ -1035,7 +1035,7 @@ test ('test export of abbr where supplied and overline need flipping', () => {
 test('Invalid XML gives error', () => {
   jest.spyOn(window, 'alert').mockImplementation(() => {});
   html = wce_tei.getHtmlByTei('<w>broken<w>');
-  expect(window.alert).toBeCalledWith('Error:\n XML parser 1:12: unclosed tag: w\nundefined\nundefined');
+  expect(window.alert).toBeCalledWith('Error:\n XML parser 1:12: unclosed tag: w');
 });
 
 
