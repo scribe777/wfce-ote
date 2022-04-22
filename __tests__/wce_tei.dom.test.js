@@ -964,13 +964,22 @@ const teiToHtmlAndBackWithChange = new Map([
         '<div type="book" n="B04"><w>The</w><w>content</w><w>of</w><w>my</w><w>chapter</w></div>'
    		],
   	],
+		// next two tests test fix for issue #16
 		[ 'whole word <ex> tag (no w wrapper and only one word in total)',
 		  [ '<ex rend="÷">word</ex>',
 				'<span class="part_abbr" wce="__t=part_abbr&amp;__n=&amp;exp_rend_other=&amp;exp_rend=%C3%B7">' +
 	      '<span class="format_start mceNonEditable">‹</span>(word)<span class="format_end mceNonEditable">›</span>' +
-	      '</span>',
+	      '</span> ',
 				'<w><ex rend="÷">word</ex></w>'
 	 		]
+		],
+		[ 'whole word <ex> tag (no w wrapper and words either side)',
+			[ '<w>first</w><ex rend="÷">word</ex><w>last</w>',
+				'first <span class="part_abbr" wce="__t=part_abbr&amp;__n=&amp;exp_rend_other=&amp;exp_rend=%C3%B7">' +
+				'<span class="format_start mceNonEditable">‹</span>(word)<span class="format_end mceNonEditable">›</span>' +
+				'</span> last ',
+				'<w>first</w><w><ex rend="÷">word</ex></w><w>last</w>'
+			]
 		],
     // not sure the next two are desireable behaviour but it is the current behaviour
     // fix this and at least keep the word [issue #14]
@@ -1049,4 +1058,16 @@ test ('node comparison', () => {
   expect(wce_tei.compareNodes(childList[3], childList[4])).toBe(true);
   expect(wce_tei.compareNodes(childList[4], childList[5])).toBe(false);
   expect(wce_tei.compareNodes(childList[0], childList[6])).toBe(false);
+});
+
+test ('hasWAncestor', () => {
+  const dom = wce_tei.loadXMLString('<text><body><w>word</w><ex>expansion</ex><w>pa<ex>rt</ex></w><w><unclear>unclear</unclear></w></body></text>');
+  const root = dom.documentElement;
+  const body = root.childNodes[0];
+	const childList = body.childNodes;
+  expect(wce_tei.hasWAncestor(childList[0])).toBe(true);
+	expect(wce_tei.hasWAncestor(childList[1])).toBe(false);
+	expect(wce_tei.hasWAncestor(childList[2])).toBe(true);
+	expect(wce_tei.hasWAncestor(childList[2])).toBe(true);
+	expect(wce_tei.hasWAncestor(body)).toBe(false);
 });

@@ -662,6 +662,11 @@ function getHtmlByTei(inputString) {
 		$newNode.setAttribute('wce', wceAttr);
 		addFormatElement($newNode);
 		$htmlParent.appendChild($newNode);
+		// legacy support
+		// add a space if the input was an <ex> without a <w> parent
+		if (!hasWAncestor($teiNode) ) {
+			nodeAddText($htmlParent, ' ');
+		}
 		return $newNode;
 	};
 	/*
@@ -4412,6 +4417,25 @@ function removeArrows(str) {
 	return out;
 };
 
+/** Recursive function to check if the given element has a <w> tag as an ancestor.
+
+@param {$node} element - The dom element node to check.
+@returns {boolean} - A boolean to indicate if w is present in the ancestors of the given node.
+
+*/
+function hasWAncestor($node) {
+	while ($node.nodeName != 'body') {
+		if ($node.nodeName == 'w') {
+			return true;
+		}
+		if (!$node.parentNode) {
+			return false;
+		}
+		return hasWAncestor($node.parentNode);
+	}
+	return false;
+}
+
 var removeBlankNode=function ($root){//remove blank node,
 		var _remove=function($node){
 			var nodeName=$node.nodeName;
@@ -4517,7 +4541,7 @@ var removeSpaceAfterLb=function ($node){
 
 	try {
 		module.exports = {
-		  startHasSpace, endHasSpace, addArrows, removeArrows, loadXMLString, getHtmlByTei,
+		  startHasSpace, endHasSpace, addArrows, removeArrows, hasWAncestor, loadXMLString, getHtmlByTei,
 			getTeiByHtml, Fehlerbehandlung, zeigeFehler, compareNodes
 		};
 	} catch (e) {
