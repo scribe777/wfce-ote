@@ -479,7 +479,7 @@ const notes = new Map([
   ],
   // a handshift note - needs to be changed to handShift [issue #12]
   [ 'a handShift note',
-    [ '<w>a</w><w>note</w><note type="editorial" xml:id="BKV-undefined-2"><handshift/></note>',
+    [ '<w>a</w><w>note</w><note type="editorial" xml:id="BKV-undefined-2"><handShift/></note>',
       'a note<span class="note" wce="__t=note&amp;__n=&amp;note_text=&amp;note_type=changeOfHand&amp;' +
       'note_type_other=&amp;newHand="><span class="format_start mceNonEditable">‹</span>Note' +
       '<span class="format_end mceNonEditable">›</span></span>'
@@ -487,7 +487,7 @@ const notes = new Map([
   ],
   // spaces added in attribute should be replaced with _ [issue #13]
   [ 'a handShift note with new hand',
-    [ '<w>a</w><w>note</w><note type="editorial" xml:id="BKV-undefined-2"><handshift scribe="new hand"/></note>',
+    [ '<w>a</w><w>note</w><note type="editorial" xml:id="BKV-undefined-2"><handShift scribe="new hand"/></note>',
       'a note<span class="note" wce="__t=note&amp;__n=&amp;note_text=&amp;note_type=changeOfHand&amp;' +
       'note_type_other=&amp;newHand=new%20hand"><span class="format_start mceNonEditable">‹</span>Note' +
       '<span class="format_end mceNonEditable">›</span></span>'
@@ -947,9 +947,27 @@ const teiToHtmlAndBackWithChange = new Map([
         'a note<span class="note" wce="__t=note&amp;__n=&amp;note_text=&amp;note_type=changeOfHand&amp;' +
         'note_type_other=&amp;newHand=new%20hand"><span class="format_start mceNonEditable">‹</span>Note' +
         '<span class="format_end mceNonEditable">›</span></span>',
-        '<w>a</w><w>note</w><note type="editorial" xml:id="BKV-undefined-2"><handshift scribe="new hand"/></note>'
+        '<w>a</w><w>note</w><note type="editorial" xml:id="BKV-undefined-2"><handShift scribe="new hand"/></note>'
       ]
     ],
+		// legacy support
+	  [ 'a handShift note',
+	    [ '<w>a</w><w>note</w><note type="editorial" xml:id="BKV-undefined-2"><handshift/></note>',
+	      'a note<span class="note" wce="__t=note&amp;__n=&amp;note_text=&amp;note_type=changeOfHand&amp;' +
+	      'note_type_other=&amp;newHand="><span class="format_start mceNonEditable">‹</span>Note' +
+	      '<span class="format_end mceNonEditable">›</span></span>',
+				'<w>a</w><w>note</w><note type="editorial" xml:id="BKV-undefined-2"><handShift/></note>'
+	    ]
+	  ],
+	  // spaces added in attribute should be replaced with _ [issue #13]
+	  [ 'a handShift note with new hand',
+	    [ '<w>a</w><w>note</w><note type="editorial" xml:id="BKV-undefined-2"><handshift scribe="new hand"/></note>',
+	      'a note<span class="note" wce="__t=note&amp;__n=&amp;note_text=&amp;note_type=changeOfHand&amp;' +
+	      'note_type_other=&amp;newHand=new%20hand"><span class="format_start mceNonEditable">‹</span>Note' +
+	      '<span class="format_end mceNonEditable">›</span></span>',
+				'<w>a</w><w>note</w><note type="editorial" xml:id="BKV-undefined-2"><handShift scribe="new hand"/></note>',
+	    ]
+	  ],
     [ 'hi rend ol as legacy support for overline',
       [ '<w>test</w><w><hi rend="ol">for</hi></w><w>rendering</w>',
         'test <span class="formatting_overline" wce="__t=formatting_overline" wce_orig="for">' +
