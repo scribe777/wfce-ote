@@ -40,6 +40,7 @@ const basicAnnotation = new Map([
       '</span> ' //space at end is important
  		]
 	],
+
   // Add here a test for whole word <ex> and see if you can make that work correctly in input [issue #16]
 
   // unclear
@@ -963,6 +964,14 @@ const teiToHtmlAndBackWithChange = new Map([
         '<div type="book" n="B04"><w>The</w><w>content</w><w>of</w><w>my</w><w>chapter</w></div>'
    		],
   	],
+		[ 'whole word <ex> tag (no w wrapper and only one word in total)',
+		  [ '<ex rend="÷">word</ex>',
+				'<span class="part_abbr" wce="__t=part_abbr&amp;__n=&amp;exp_rend_other=&amp;exp_rend=%C3%B7">' +
+	      '<span class="format_start mceNonEditable">‹</span>(word)<span class="format_end mceNonEditable">›</span>' +
+	      '</span>',
+				'<w><ex rend="÷">word</ex></w>'
+	 		]
+		],
     // not sure the next two are desireable behaviour but it is the current behaviour
     // fix this and at least keep the word [issue #14]
     [ 'hi with no rend attribute removes the word with the hi tag',
