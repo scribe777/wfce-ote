@@ -40,7 +40,7 @@ const basicAnnotation = new Map([
       '</span> ' //space at end is important
  		]
 	],
-  // OTE-TODO: Add here a test for whole word <ex> and see if you can make that work correctly in input
+  // Add here a test for whole word <ex> and see if you can make that work correctly in input [issue #16]
 
   // unclear
   [ 'part word <unclear> tag with no reason',
@@ -49,7 +49,7 @@ const basicAnnotation = new Map([
       '<span class="format_start mceNonEditable">‹</span>ḍ<span class="format_end mceNonEditable">›</span></span> ' //space at end is important
  		]
 	],
-  // OTE-TODO: faded ink should have an underscore rather than a space, same for all other reason attributes
+  // faded ink should have an underscore rather than a space, same for all other reason attributes [issue #13]
   [ 'whole word <unclear> tag with reason',
 	  [ '<w><unclear reason="faded ink">word</unclear></w>',
 	 		'<span class="unclear" wce_orig="word" wce="__t=unclear&amp;__n=&amp;unclear_text_reason_other=&amp;unclear_text_reason=faded ink">' +
@@ -127,7 +127,7 @@ const basicAnnotation = new Map([
 
 const textStructureDivs = new Map([
   // divs
-  // OTE-TODO: these will need to change when references change
+  // these will need to change when references change [issue #15]
   [ 'book div',
 	  [ '<div type="book" n="B04"><w>The</w><w>content</w><w>of</w><w>my</w><w>book</w></div>',
 	 		' <span class="book_number mceNonEditable" wce="__t=book_number" id="1">4</span> The content of my book ' //spaces at beg and end are important
@@ -476,7 +476,7 @@ const notes = new Map([
       '<span class="format_end mceNonEditable">›</span></span>'
     ]
   ],
-  // a handshift note - OTE-TODO needs to be changed to handShift
+  // a handshift note - needs to be changed to handShift [issue #12]
   [ 'a handShift note',
     [ '<w>a</w><w>note</w><note type="editorial" xml:id="BKV-undefined-2"><handshift/></note>',
       'a note<span class="note" wce="__t=note&amp;__n=&amp;note_text=&amp;note_type=changeOfHand&amp;' +
@@ -484,7 +484,7 @@ const notes = new Map([
       '<span class="format_end mceNonEditable">›</span></span>'
     ]
   ],
-  // OTE-TODO spaces added in attribute should be replaced with _?
+  // spaces added in attribute should be replaced with _ [issue #13]
   [ 'a handShift note with new hand',
     [ '<w>a</w><w>note</w><note type="editorial" xml:id="BKV-undefined-2"><handshift scribe="new hand"/></note>',
       'a note<span class="note" wce="__t=note&amp;__n=&amp;note_text=&amp;note_type=changeOfHand&amp;' +
@@ -493,8 +493,8 @@ const notes = new Map([
     ]
   ],
   // commentary
-  // OTE-TODO this tests the paratext function but there is also code relating to commentary left in note function
-  // which probably needs to be removed as I can't see any way it would be used in the interface.
+  // This tests the paratext function but there is also code relating to commentary left in note function
+  // which probably needs to be removed as I can't see any way it would be used in the interface. [issue #18]
   [ '1 line of commentary text note',
     [ '<w>some</w><w>commentary</w><lb/><note type="commentary">One line of untranscribed commentary text</note>' +
       '<lb n="PCL-undefined"/><w>in</w><w>here</w>',
@@ -964,7 +964,7 @@ const teiToHtmlAndBackWithChange = new Map([
    		],
   	],
     // not sure the next two are desireable behaviour but it is the current behaviour
-    // OTE-TODO: fix this and at least keep the word?
+    // fix this and at least keep the word [issue #14]
     [ 'hi with no rend attribute removes the word with the hi tag',
       [ '<w>test</w><w><hi>for</hi></w><w>rendering</w>',
         'test  rendering ',
@@ -1021,8 +1021,8 @@ test ('test export of abbr where supplied and overline need flipping', () => {
 
 // other unit test which need dom
 
-// OTE-TODO: error handling shouldn't have undefined args printed out in the alert
-// Might need to mock window.alert of the error function for this
+// Error handling shouldn't have undefined args printed out in the alert
+// Might need to mock window.alert of the error function for this [issue #19]
 test('Invalid XML gives error', () => {
   jest.spyOn(window, 'alert').mockImplementation(() => {});
   html = wce_tei.getHtmlByTei('<w>broken<w>');

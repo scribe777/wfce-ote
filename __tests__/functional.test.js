@@ -190,7 +190,7 @@ test('test pc typed', async () => {
   expect(xmlData).toBe(xmlHead + '<w>my</w><w>words</w><pc>.</pc>' + xmlTail);
 }, 200000);
 
-// OTE-TODO: check what semicolon on the punctuation menu is doing cause its weird when used in a test
+// check what semicolon on the punctuation menu is doing cause its weird when used in a test [issue #17]
 // pc with menu
 test('test pc with menu', async () => {
   await frame.type('body#tinymce', 'my words');
