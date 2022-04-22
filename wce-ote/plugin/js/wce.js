@@ -289,6 +289,12 @@ function writeWceNodeInfo(val) {
 				//selected_content = '&nbsp;';
 				new_content = '<span wce="' + newWceAttr + '"' + wceClass + '>' + startFormatHtml + 'sp' + endFormatHtml + '</span>';
 				break;
+
+			case 'pc_other':
+				var pc_char = document.getElementById('pc_char').value;
+				new_content = '<span wce="__t=pc" class="pc">' + startFormatHtml + pc_char + endFormatHtml + '</span>';
+				break;
+
 			case 'paratext':
 				// default
 				if (document.getElementById('fw_type').value == "commentary") {
@@ -333,6 +339,10 @@ function writeWceNodeInfo(val) {
 
 			case 'formatting_ornamentation_other':
 				wceClass = ' class="formatting_ornamentation_other"';
+				break;
+
+			case 'formatting_puncutation_other':
+				wceClass = ' class="formatting_punctuationn_other"';
 				break;
 
 			default:

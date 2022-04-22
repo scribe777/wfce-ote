@@ -18,15 +18,15 @@
 
     Diese Datei ist Teil des Online-Transkriptions-Editor (OTE).
 
-    OTE ist Freie Software: Sie können es unter den Bedingungen
+    OTE ist Freie Software: Sie kï¿½nnen es unter den Bedingungen
     der GNU Lesser General Public License, wie von der Free Software Foundation,
-    Version 2.1 der Lizenz oder (nach Ihrer Wahl) jeder späteren
-    veröffentlichten Version, weiterverbreiten und/oder modifizieren.
+    Version 2.1 der Lizenz oder (nach Ihrer Wahl) jeder spï¿½teren
+    verï¿½ffentlichten Version, weiterverbreiten und/oder modifizieren.
 
-    OTE wird in der Hoffnung, dass es nützlich sein wird, aber
-    OHNE JEDE GEWÄHRLEISTUNG, bereitgestellt; sogar ohne die implizite
-    Gewährleistung der MARKTFÄHIGKEIT oder EIGNUNG FÜR EINEN BESTIMMTEN ZWECK.
-    Siehe die GNU Lesser General Public License für weitere Details.
+    OTE wird in der Hoffnung, dass es nï¿½tzlich sein wird, aber
+    OHNE JEDE GEWï¿½HRLEISTUNG, bereitgestellt; sogar ohne die implizite
+    Gewï¿½hrleistung der MARKTFï¿½HIGKEIT oder EIGNUNG Fï¿½R EINEN BESTIMMTEN ZWECK.
+    Siehe die GNU Lesser General Public License fï¿½r weitere Details.
 
     Sie sollten eine Kopie der GNU Lesser General Public License zusammen mit diesem
     Programm erhalten haben. Wenn nicht, siehe <http://www.gnu.org/licenses/>.
@@ -368,6 +368,8 @@ tinymce.addI18n('en',{
 	clipboard_note : 'Please press Ctrl+C (Cmd+C) for savely copying the XML to the clipboard.',
 	other_ornamentation : 'Type of ornamentation',
 	title_other_ornamentation : 'Other type of ornamentation',
+	other_punctuation : 'Punctuation character',
+	title_other_punctuation : 'Other punctuation character',
 	insert : 'Insert',
 	cancel : 'Cancel',
 	new_hand: 'New',
