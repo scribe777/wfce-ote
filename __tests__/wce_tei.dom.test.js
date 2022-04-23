@@ -999,6 +999,15 @@ const teiToHtmlAndBackWithChange = new Map([
         '<w>in</w><w>line</w><w>lectionary</w><lb/><note type=\"lectionary-other\">One line of untranscribed lectionary text</note><lb/><note type=\"lectionary-other\">One line of untranscribed lectionary text</note><lb/><note type=\"lectionary-other\">One line of untranscribed lectionary text</note>'
       ]
     ],
+		// legacy support for referencing system
+		[ 'book, chapter and verse',
+	    [ '<div type="book" n="B04"><div type="chapter" n="B04K1"><ab n="B04K1V1"><w>first</w><w>verse</w></ab></div></div>',
+	      ' <span class="book_number mceNonEditable" wce="__t=book_number" id="1">John</span>  ' +
+	      '<span class="chapter_number mceNonEditable" wce="__t=chapter_number">Inscriptio</span> ' +
+	      '<span class="verse_number mceNonEditable" wce="__t=verse_number"/> inscriptio text ',
+				'<div type="book" n="John"><div type="chapter" n="John.1"><ab n="John.1.1"><w>first</w><w>verse</w></ab></div></div>'
+	    ]
+	  ],
 		// legacy support for incipit and explicit (already having updated book which will need to be handled separately)
 		[ 'book and incipit divs',
 	    [ '<div type="book" n="John"><div type="incipit" n="Johnincipit"><ab><w>inscriptio</w><w>text</w></ab></div></div>',
