@@ -34,10 +34,16 @@
 
 const NT_lookup = {'B04': 'John'}
 
-function setWceEditor(_id, rtl, finishCallback, lang, myBaseURL, getWitness, getWitnessLang) {
+function setWceEditor(_id, rtl, finishCallback, lang, myBaseURL, getWitness, getWitnessLang, bookLookup) {
 	if (myBaseURL && typeof myBaseURL != "undefined" && myBaseURL !== '') {
 		tinymce.baseURL = myBaseURL;
 		tinymce.baseURI = new tinymce.util.URI(tinymce.baseURL);
+	}
+
+	if (bookLookup !== undefined) {
+		tinymce.bookLookup = bookLookup;
+	} else {
+		tinymce.bookLookup = NT_lookup;
 	}
 
 	tinymce.init({

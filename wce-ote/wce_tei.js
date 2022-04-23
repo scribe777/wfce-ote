@@ -4468,9 +4468,7 @@ function removeArrows(str) {
 };
 
 function getBookName(bookRef) {
-	// return args.book_lookup[bookRef];
-	// TODO work out how to access data in here
-	return bookRef;
+	return tinymce.bookLookup[bookRef];
 };
 
 var removeBlankNode=function ($root){//remove blank node,
