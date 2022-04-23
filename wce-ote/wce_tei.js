@@ -719,7 +719,11 @@ function getHtmlByTei(inputString) {
 			$newNode.setAttribute('class', 'book_number mceNonEditable');
 			$newNode.setAttribute('wce', '__t=book_number');
 			$newNode.setAttribute('id', ++gid);
-			var $booknumber = $teiNode.getAttribute('n')
+			var $booknumber = $teiNode.getAttribute('n');
+			// legacy support
+			if ($booknumber.match(/B\d+/)) {
+				$booknumber = getBookName($booknumber);
+			}
 			// Cat commented out while changing referencing to OSIS - delete when done #15
 			// var $booknumber = $teiNode.getAttribute('n').substring(1);
 			// // get rid of the "B"
@@ -753,10 +757,18 @@ function getHtmlByTei(inputString) {
 			// 	}
 			// }
 			if (nValue && nValue != '') {
-				var nValueArray = nValue.split('.')
-				g_bookNumber = nValueArray[0];
-				g_chapterNumber = nValueArray[1];
-				nodeAddText($newNode, g_chapterNumber);
+				// legacy support (ingest only)
+				if (nValue.indexOf('.') == -1) {
+					var nValueArray = nValue.split('K')
+					g_bookNumber = getBookName(nValueArray[0]);
+					g_chapterNumber = nValueArray[1];
+					nodeAddText($newNode, g_chapterNumber);
+				} else {
+					var nValueArray = nValue.split('.')
+					g_bookNumber = nValueArray[0];
+					g_chapterNumber = nValueArray[1];
+					nodeAddText($newNode, g_chapterNumber);
+				}
 			}
 		} else { //incipit or explicit
 			var $newNode = $newDoc.createElement('span');
@@ -4453,6 +4465,12 @@ function removeArrows(str) {
 	else if (str.indexOf("↓") == str.length-1 || str.indexOf("↑") == str.length-1) // Second one is just for compatibility
 		out = str.substring(0, str.length-1) + "y";
 	return out;
+};
+
+function getBookName(bookRef) {
+	// return args.book_lookup[bookRef];
+	// TODO work out how to access data in here
+	return bookRef;
 };
 
 var removeBlankNode=function ($root){//remove blank node,

@@ -1010,7 +1010,7 @@ const teiToHtmlAndBackWithChange = new Map([
 	  ],
 		// legacy support for incipit and explicit (already having updated book which will need to be handled separately)
 		[ 'book and incipit divs',
-	    [ '<div type="book" n="John"><div type="incipit" n="Johnincipit"><ab><w>inscriptio</w><w>text</w></ab></div></div>',
+	    [ '<div type="book" n="B04"><div type="incipit" n="B04incipit"><ab><w>inscriptio</w><w>text</w></ab></div></div>',
 	      ' <span class="book_number mceNonEditable" wce="__t=book_number" id="1">John</span>  ' +
 	      '<span class="chapter_number mceNonEditable" wce="__t=chapter_number">Inscriptio</span> ' +
 	      '<span class="verse_number mceNonEditable" wce="__t=verse_number"/> inscriptio text ',
@@ -1018,7 +1018,7 @@ const teiToHtmlAndBackWithChange = new Map([
 	    ]
 	  ],
 	  [ 'book and explicit div',
-	    [ '<div type="book" n="John"><div type="explicit" n="Johnexplicit"><ab><w>subscriptio</w><w>text</w></ab></div></div>',
+	    [ '<div type="book" n="B04"><div type="explicit" n="B04explicit"><ab><w>subscriptio</w><w>text</w></ab></div></div>',
 	      ' <span class="book_number mceNonEditable" wce="__t=book_number" id="1">John</span>  ' +
 	      '<span class="chapter_number mceNonEditable" wce="__t=chapter_number">Subscriptio</span> ' +
 	      '<span class="verse_number mceNonEditable" wce="__t=verse_number"/> subscriptio text ',

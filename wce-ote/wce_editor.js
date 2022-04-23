@@ -32,6 +32,8 @@
     Programm erhalten haben. Wenn nicht, siehe <http://www.gnu.org/licenses/>.
 */
 
+const NT_lookup = {'B04': 'John'}
+
 function setWceEditor(_id, rtl, finishCallback, lang, myBaseURL, getWitness, getWitnessLang) {
 	if (myBaseURL && typeof myBaseURL != "undefined" && myBaseURL !== '') {
 		tinymce.baseURL = myBaseURL;
@@ -90,6 +92,8 @@ function setWceEditor(_id, rtl, finishCallback, lang, myBaseURL, getWitness, get
 					finishCallback();
 			});
 		}
+		// ,
+		// book_lookup : NT_lookup,
 	});
 }
 
