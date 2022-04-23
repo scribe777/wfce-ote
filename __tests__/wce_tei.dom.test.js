@@ -175,15 +175,15 @@ const textStructureDivs = new Map([
     ],
   ],
   [ 'book and inscriptio divs',
-    [ '<div type="book" n="B04"><div type="incipit" n="B04incipit"><ab><w>inscriptio</w><w>text</w></ab></div></div>',
-      ' <span class="book_number mceNonEditable" wce="__t=book_number" id="1">4</span>  ' +
+    [ '<div type="book" n="John"><div type="inscriptio"><ab n="John.inscriptio"><w>inscriptio</w><w>text</w></ab></div></div>',
+      ' <span class="book_number mceNonEditable" wce="__t=book_number" id="1">John</span>  ' +
       '<span class="chapter_number mceNonEditable" wce="__t=chapter_number">Inscriptio</span> ' +
       '<span class="verse_number mceNonEditable" wce="__t=verse_number"/> inscriptio text '
     ]
   ],
   [ 'book and subscriptio div',
-    [ '<div type="book" n="B04"><div type="explicit" n="B04explicit"><ab><w>subscriptio</w><w>text</w></ab></div></div>',
-      ' <span class="book_number mceNonEditable" wce="__t=book_number" id="1">4</span>  ' +
+    [ '<div type="book" n="John"><div type="subscriptio"><ab n="John.subscriptio"><w>subscriptio</w><w>text</w></ab></div></div>',
+      ' <span class="book_number mceNonEditable" wce="__t=book_number" id="1">John</span>  ' +
       '<span class="chapter_number mceNonEditable" wce="__t=chapter_number">Subscriptio</span> ' +
       '<span class="verse_number mceNonEditable" wce="__t=verse_number"/> subscriptio text '
     ]
@@ -471,7 +471,7 @@ const notes = new Map([
   // notes
   // another undefined issue
   [ 'a local note',
-    [ '<w>a</w><w>note</w><note type="local" xml:id="BKV-undefined-2">my new local note</note>',
+    [ '<w>a</w><w>note</w><note type="local" xml:id="..-undefined-2">my new local note</note>',
       'a note<span class="note" wce="__t=note&amp;__n=&amp;note_text=my%20new%20local%20note&amp;' +
       'note_type=local&amp;newhand="><span class="format_start mceNonEditable">‹</span>Note' +
       '<span class="format_end mceNonEditable">›</span></span>'
@@ -479,7 +479,7 @@ const notes = new Map([
   ],
   // a handshift note - needs to be changed to handShift [issue #12]
   [ 'a handShift note',
-    [ '<w>a</w><w>note</w><note type="editorial" xml:id="BKV-undefined-2"><handshift/></note>',
+    [ '<w>a</w><w>note</w><note type="editorial" xml:id="..-undefined-2"><handshift/></note>',
       'a note<span class="note" wce="__t=note&amp;__n=&amp;note_text=&amp;note_type=changeOfHand&amp;' +
       'note_type_other=&amp;newHand="><span class="format_start mceNonEditable">‹</span>Note' +
       '<span class="format_end mceNonEditable">›</span></span>'
@@ -487,7 +487,7 @@ const notes = new Map([
   ],
   // spaces added in attribute should be replaced with _ [issue #13]
   [ 'a handShift note with new hand',
-    [ '<w>a</w><w>note</w><note type="editorial" xml:id="BKV-undefined-2"><handshift scribe="new hand"/></note>',
+    [ '<w>a</w><w>note</w><note type="editorial" xml:id="..-undefined-2"><handshift scribe="new hand"/></note>',
       'a note<span class="note" wce="__t=note&amp;__n=&amp;note_text=&amp;note_type=changeOfHand&amp;' +
       'note_type_other=&amp;newHand=new%20hand"><span class="format_start mceNonEditable">‹</span>Note' +
       '<span class="format_end mceNonEditable">›</span></span>'
@@ -943,11 +943,11 @@ const teiToHtmlAndBackWithChange = new Map([
       ]
     ],
     [ 'a handShift note with new hand, legacy for when new hand was in n attribute',
-      [ '<w>a</w><w>note</w><note type="editorial" xml:id="BKV-undefined-2"><handshift n="new hand"/></note>',
+      [ '<w>a</w><w>note</w><note type="editorial" xml:id="..-undefined-2"><handshift n="new hand"/></note>',
         'a note<span class="note" wce="__t=note&amp;__n=&amp;note_text=&amp;note_type=changeOfHand&amp;' +
         'note_type_other=&amp;newHand=new%20hand"><span class="format_start mceNonEditable">‹</span>Note' +
         '<span class="format_end mceNonEditable">›</span></span>',
-        '<w>a</w><w>note</w><note type="editorial" xml:id="BKV-undefined-2"><handshift scribe="new hand"/></note>'
+        '<w>a</w><w>note</w><note type="editorial" xml:id="..-undefined-2"><handshift scribe="new hand"/></note>'
       ]
     ],
     [ 'hi rend ol as legacy support for overline',
@@ -959,9 +959,9 @@ const teiToHtmlAndBackWithChange = new Map([
       ]
     ],
     [ 'book and chapter div if chapter has no type then it is removed',
-  	  [ '<div type="book" n="B04"><div n="B04K1"><w>The</w><w>content</w><w>of</w><w>my</w><w>chapter</w></div></div>',
-  	 		' <span class="book_number mceNonEditable" wce="__t=book_number" id="1">4</span> The content of my chapter ',
-        '<div type="book" n="B04"><w>The</w><w>content</w><w>of</w><w>my</w><w>chapter</w></div>'
+  	  [ '<div type="book" n="John"><div n="John.1"><w>The</w><w>content</w><w>of</w><w>my</w><w>chapter</w></div></div>',
+  	 		' <span class="book_number mceNonEditable" wce="__t=book_number" id="1">John</span> The content of my chapter ',
+        '<div type="book" n="John"><w>The</w><w>content</w><w>of</w><w>my</w><w>chapter</w></div>'
    		],
   	],
 		[ 'whole word <ex> tag (no w wrapper and only one word in total)',
@@ -998,7 +998,24 @@ const teiToHtmlAndBackWithChange = new Map([
         'in line lectionary<span class=\"paratext\" wce=\"__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=3&amp;text=&amp;number=&amp;edit_number=on&amp;paratext_position=pagetop&amp;paratext_position_other=&amp;paratext_alignment=left\"><span class=\"format_start mceNonEditable\">‹</span><br/>↵[<span class=\"lectionary-other\" wce=\"__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=3\">lect</span>]<br/>↵[<span class=\"lectionary-other\" wce=\"__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=3\">lect</span>]<br/>↵[<span class=\"lectionary-other\" wce=\"__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=3\">lect</span>]<span class=\"format_end mceNonEditable\">›</span></span>',
         '<w>in</w><w>line</w><w>lectionary</w><lb/><note type=\"lectionary-other\">One line of untranscribed lectionary text</note><lb/><note type=\"lectionary-other\">One line of untranscribed lectionary text</note><lb/><note type=\"lectionary-other\">One line of untranscribed lectionary text</note>'
       ]
-    ]
+    ],
+		// legacy support for incipit and explicit (already having updated book which will need to be handled separately)
+		[ 'book and incipit divs',
+	    [ '<div type="book" n="John"><div type="incipit" n="Johnincipit"><ab><w>inscriptio</w><w>text</w></ab></div></div>',
+	      ' <span class="book_number mceNonEditable" wce="__t=book_number" id="1">John</span>  ' +
+	      '<span class="chapter_number mceNonEditable" wce="__t=chapter_number">Inscriptio</span> ' +
+	      '<span class="verse_number mceNonEditable" wce="__t=verse_number"/> inscriptio text ',
+				'<div type="book" n="John"><div type="inscriptio"><ab n="John.inscriptio"><w>inscriptio</w><w>text</w></ab></div></div>'
+	    ]
+	  ],
+	  [ 'book and explicit div',
+	    [ '<div type="book" n="John"><div type="explicit" n="Johnexplicit"><ab><w>subscriptio</w><w>text</w></ab></div></div>',
+	      ' <span class="book_number mceNonEditable" wce="__t=book_number" id="1">John</span>  ' +
+	      '<span class="chapter_number mceNonEditable" wce="__t=chapter_number">Subscriptio</span> ' +
+	      '<span class="verse_number mceNonEditable" wce="__t=verse_number"/> subscriptio text ',
+				'<div type="book" n="John"><div type="subscriptio"><ab n="John.subscriptio"><w>subscriptio</w><w>text</w></ab></div></div>'
+	    ]
+	  ]
 ]);
 
 teiToHtmlAndBackWithChange.forEach((value, key, map) => {

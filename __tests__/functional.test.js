@@ -358,15 +358,15 @@ test('book div', async () => {
   const menuFrameHandle = await page.$('div[id="mceu_39"] > div > div > iframe');
   const menuFrame = await menuFrameHandle.contentFrame();
   await menuFrame.click('input#insertBookRadio');
-  await menuFrame.type('input#insertBookNumber', '4');
+  await menuFrame.type('input#insertBookNumber', 'John');
   await menuFrame.click('input#insert');
   await page.waitForSelector('div[id="mceu_39"]', {hidden: true});
   await frame.type('body#tinymce', 'The content of my book');
 
   const htmlData = await page.evaluate(`getData()`);
-  expect(htmlData).toBe('<span class=\"book_number mceNonEditable\" wce=\"__t=book_number\" id=\"book1\"> 4</span>The content of my book');
+  expect(htmlData).toBe('<span class=\"book_number mceNonEditable\" wce=\"__t=book_number\" id=\"book1\"> John</span>The content of my book');
   const xmlData = await page.evaluate(`getTEI()`);
-  expect(xmlData).toBe(xmlHead + '<div type="book" n="B04"><w>The</w><w>content</w><w>of</w><w>my</w><w>book</w></div>' + xmlTail);
+  expect(xmlData).toBe(xmlHead + '<div type="book" n="John"><w>The</w><w>content</w><w>of</w><w>my</w><w>book</w></div>' + xmlTail);
 }, 200000);
 
 // chapter
@@ -386,7 +386,7 @@ test('chapter div', async () => {
   const htmlData = await page.evaluate(`getData()`);
   expect(htmlData).toBe('<span class=\"chapter_number mceNonEditable\" wce=\"__t=chapter_number\" id=\"chap1\"> 1</span>The content of my chapter');
   const xmlData = await page.evaluate(`getTEI()`);
-  expect(xmlData).toBe(xmlHead + '<div type="chapter" n="BK1"><w>The</w><w>content</w><w>of</w><w>my</w><w>chapter</w></div>' + xmlTail);
+  expect(xmlData).toBe(xmlHead + '<div type="chapter" n=".1"><w>The</w><w>content</w><w>of</w><w>my</w><w>chapter</w></div>' + xmlTail);
 }, 200000);
 
 // book and chapter
@@ -398,7 +398,7 @@ test('book and chapter div', async () => {
   const menuFrameHandle = await page.$('div[id="mceu_39"] > div > div > iframe');
   const menuFrame = await menuFrameHandle.contentFrame();
   await menuFrame.click('input#insertBookRadio');
-  await menuFrame.type('input#insertBookNumber', '4');
+  await menuFrame.type('input#insertBookNumber', 'John');
   await menuFrame.click('input#insert');
   await page.click('button#mceu_18-open');
   await page.keyboard.press('ArrowDown');
@@ -412,9 +412,9 @@ test('book and chapter div', async () => {
   await frame.type('body#tinymce', 'The content of my chapter');
 
   const htmlData = await page.evaluate(`getData()`);
-  expect(htmlData).toBe('<span class=\"book_number mceNonEditable\" wce=\"__t=book_number\" id=\"book1\"> 4</span> <span class=\"chapter_number mceNonEditable\" wce=\"__t=chapter_number\" id=\"chap2\"> 1</span> The content of my chapter');
+  expect(htmlData).toBe('<span class=\"book_number mceNonEditable\" wce=\"__t=book_number\" id=\"book1\"> John</span> <span class=\"chapter_number mceNonEditable\" wce=\"__t=chapter_number\" id=\"chap2\"> 1</span> The content of my chapter');
   const xmlData = await page.evaluate(`getTEI()`);
-  expect(xmlData).toBe(xmlHead + '<div type="book" n="B04"><div type="chapter" n="B04K1"><w>The</w><w>content</w><w>of</w><w>my</w><w>chapter</w></div></div>' + xmlTail);
+  expect(xmlData).toBe(xmlHead + '<div type="book" n="John"><div type="chapter" n="John.1"><w>The</w><w>content</w><w>of</w><w>my</w><w>chapter</w></div></div>' + xmlTail);
 }, 200000);
 
 // book, chapter and verse
@@ -426,7 +426,7 @@ test('book, chapter and verse', async () => {
   const menuFrameHandle = await page.$('div[id="mceu_39"] > div > div > iframe');
   const menuFrame = await menuFrameHandle.contentFrame();
   await menuFrame.click('input#insertBookRadio');
-  await menuFrame.type('input#insertBookNumber', '4');
+  await menuFrame.type('input#insertBookNumber', 'John');
   await menuFrame.click('input#insert');
 
   await page.click('button#mceu_18-open');
@@ -451,9 +451,9 @@ test('book, chapter and verse', async () => {
   await frame.type('body#tinymce', 'The content of my verse');
 
   const htmlData = await page.evaluate(`getData()`);
-  expect(htmlData).toBe('<span class=\"book_number mceNonEditable\" wce=\"__t=book_number\" id=\"book1\"> 4</span> <span class=\"chapter_number mceNonEditable\" wce=\"__t=chapter_number\" id=\"chap2\"> 1</span> <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\"> 2</span> The content of my verse');
+  expect(htmlData).toBe('<span class=\"book_number mceNonEditable\" wce=\"__t=book_number\" id=\"book1\"> John</span> <span class=\"chapter_number mceNonEditable\" wce=\"__t=chapter_number\" id=\"chap2\"> 1</span> <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\"> 2</span> The content of my verse');
   const xmlData = await page.evaluate(`getTEI()`);
-  expect(xmlData).toBe(xmlHead + '<div type="book" n="B04"><div type="chapter" n="B04K1"><ab n="B04K1V2"><w>The</w><w>content</w><w>of</w>' +
+  expect(xmlData).toBe(xmlHead + '<div type="book" n="John"><div type="chapter" n="John.1"><ab n="John.1.2"><w>The</w><w>content</w><w>of</w>' +
                        '<w>my</w><w>verse</w></ab></div></div>' + xmlTail);
 }, 200000);
 
@@ -498,7 +498,7 @@ test('lection, book and chapter', async () => {
   const menuFrameHandle2 = await page.$('div[id="mceu_40"] > div > div > iframe');
   const menuFrame2 = await menuFrameHandle2.contentFrame();
   await menuFrame2.click('input#insertBookRadio');
-  await menuFrame2.type('input#insertBookNumber', '4');
+  await menuFrame2.type('input#insertBookNumber', 'John');
   await menuFrame2.click('input#insert');
   await page.waitForSelector('div[id="mceu_40"]', {hidden: true});
 
@@ -515,9 +515,9 @@ test('lection, book and chapter', async () => {
   await frame.type('body#tinymce', 'The content of my chapter');
 
   const htmlData = await page.evaluate(`getData()`);
-  expect(htmlData).toBe('<span class=\"lection_number mceNonEditable\" wce=\"__t=lection_number&amp;__n=&amp;number=R12\"> Lec</span> <span class=\"book_number mceNonEditable\" wce=\"__t=book_number\" id=\"book1\"> 4</span> <span class=\"chapter_number mceNonEditable\" wce=\"__t=chapter_number\" id=\"chap2\"> 1</span> The content of my chapter');
+  expect(htmlData).toBe('<span class=\"lection_number mceNonEditable\" wce=\"__t=lection_number&amp;__n=&amp;number=R12\"> Lec</span> <span class=\"book_number mceNonEditable\" wce=\"__t=book_number\" id=\"book1\"> John</span> <span class=\"chapter_number mceNonEditable\" wce=\"__t=chapter_number\" id=\"chap2\"> 1</span> The content of my chapter');
   const xmlData = await page.evaluate(`getTEI()`);
-  expect(xmlData).toBe(xmlHead + '<div type="lection" n="R12"><div type="book" n="B04"><div type="chapter" n="B04K1">' +
+  expect(xmlData).toBe(xmlHead + '<div type="lection" n="R12"><div type="book" n="John"><div type="chapter" n="John.1">' +
                        '<w>The</w><w>content</w><w>of</w><w>my</w><w>chapter</w></div></div></div>' + xmlTail);
 }, 200000);
 
@@ -531,7 +531,7 @@ test('book and inscriptio divs', async () => {
   const menuFrameHandle = await page.$('div[id="mceu_39"] > div > div > iframe');
   const menuFrame = await menuFrameHandle.contentFrame();
   await menuFrame.click('input#insertBookRadio');
-  await menuFrame.type('input#insertBookNumber', '4');
+  await menuFrame.type('input#insertBookNumber', 'John');
   await menuFrame.click('input#insert');
   await page.click('button#mceu_18-open');
   await page.keyboard.press('ArrowDown');
@@ -550,9 +550,9 @@ test('book and inscriptio divs', async () => {
   await frame.type('body#tinymce', 'inscriptio text');
 
   const htmlData = await page.evaluate(`getData()`);
-  expect(htmlData).toBe('<span class=\"book_number mceNonEditable\" wce=\"__t=book_number\" id=\"book1\"> 4</span> <span class=\"chapter_number mceNonEditable\" wce=\"__t=chapter_number\">Inscriptio</span> <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\"></span>inscriptio text');
+  expect(htmlData).toBe('<span class=\"book_number mceNonEditable\" wce=\"__t=book_number\" id=\"book1\"> John</span> <span class=\"chapter_number mceNonEditable\" wce=\"__t=chapter_number\">Inscriptio</span> <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\"></span>inscriptio text');
   const xmlData = await page.evaluate(`getTEI()`);
-  expect(xmlData).toBe(xmlHead + '<div type="book" n="B04"><div type="incipit" n="B04incipit"><ab><w>inscriptio</w><w>text</w></ab></div></div>' + xmlTail);
+  expect(xmlData).toBe(xmlHead + '<div type="book" n="John"><div type="inscriptio"><ab n="John.inscriptio"><w>inscriptio</w><w>text</w></ab></div></div>' + xmlTail);
 }, 200000);
 
 // book and subscriptio
@@ -564,7 +564,7 @@ test('book and subscriptio divs', async () => {
   const menuFrameHandle = await page.$('div[id="mceu_39"] > div > div > iframe');
   const menuFrame = await menuFrameHandle.contentFrame();
   await menuFrame.click('input#insertBookRadio');
-  await menuFrame.type('input#insertBookNumber', '4');
+  await menuFrame.type('input#insertBookNumber', 'John');
   await menuFrame.click('input#insert');
   await page.click('button#mceu_18-open');
   await page.keyboard.press('ArrowDown');
@@ -583,9 +583,9 @@ test('book and subscriptio divs', async () => {
   await frame.type('body#tinymce', 'subscriptio text');
 
   const htmlData = await page.evaluate(`getData()`);
-  expect(htmlData).toBe('<span class=\"book_number mceNonEditable\" wce=\"__t=book_number\" id=\"book1\"> 4</span> <span class=\"chapter_number mceNonEditable\" wce=\"__t=chapter_number\">Subscriptio</span> <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\"></span>subscriptio text');
+  expect(htmlData).toBe('<span class=\"book_number mceNonEditable\" wce=\"__t=book_number\" id=\"book1\"> John</span> <span class=\"chapter_number mceNonEditable\" wce=\"__t=chapter_number\">Subscriptio</span> <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\"></span>subscriptio text');
   const xmlData = await page.evaluate(`getTEI()`);
-  expect(xmlData).toBe(xmlHead + '<div type="book" n="B04"><div type="explicit" n="B04explicit"><ab><w>subscriptio</w><w>text</w></ab></div></div>' + xmlTail);
+  expect(xmlData).toBe(xmlHead + '<div type="book" n="John"><div type="subscriptio"><ab n="John.subscriptio"><w>subscriptio</w><w>text</w></ab></div></div>' + xmlTail);
 }, 200000);
 
 // gaps
@@ -1219,7 +1219,7 @@ test('a local note', async () => {
   const htmlData = await page.evaluate(`getData()`);
   expect(htmlData).toBe('a note<span class=\"note\" wce_orig=\"\" wce=\"__t=note&amp;__n=&amp;help=Help&amp;note_type=local&amp;note_type_other=&amp;newHand=&amp;note_text=my%20new%20local%20note\"><span class=\"format_start mceNonEditable\">‹</span>Note<span class=\"format_end mceNonEditable\">›</span></span>');
   const xmlData = await page.evaluate(`getTEI()`);
-  expect(xmlData).toBe(xmlHead + '<w>a</w><w>note</w><note type="local" xml:id="BKV--2">my new local note</note>' + xmlTail);
+  expect(xmlData).toBe(xmlHead + '<w>a</w><w>note</w><note type="local" xml:id="..--2">my new local note</note>' + xmlTail);
 }, 200000);
 
 test('a handShift note', async () => {
@@ -1239,7 +1239,7 @@ test('a handShift note', async () => {
   const htmlData = await page.evaluate(`getData()`);
   expect(htmlData).toBe('a note<span class=\"note\" wce_orig=\"\" wce=\"__t=note&amp;__n=&amp;help=Help&amp;note_type=changeOfHand&amp;note_type_other=&amp;newHand=&amp;note_text=\"><span class=\"format_start mceNonEditable\">‹</span>Note<span class=\"format_end mceNonEditable\">›</span></span>');
   const xmlData = await page.evaluate(`getTEI()`);
-  expect(xmlData).toBe(xmlHead + '<w>a</w><w>note</w><note type="editorial" xml:id="BKV--2"><handshift/></note>' + xmlTail);
+  expect(xmlData).toBe(xmlHead + '<w>a</w><w>note</w><note type="editorial" xml:id="..--2"><handshift/></note>' + xmlTail);
 }, 200000);
 
 test('a handShift note with new hand', async () => {
@@ -1260,7 +1260,7 @@ test('a handShift note with new hand', async () => {
   const htmlData = await page.evaluate(`getData()`);
   expect(htmlData).toBe('a note<span class=\"note\" wce_orig=\"\" wce=\"__t=note&amp;__n=&amp;help=Help&amp;note_type=changeOfHand&amp;note_type_other=&amp;newHand=new%20hand&amp;note_text=\"><span class=\"format_start mceNonEditable\">‹</span>Note<span class=\"format_end mceNonEditable\">›</span></span>');
   const xmlData = await page.evaluate(`getTEI()`);
-  expect(xmlData).toBe(xmlHead + '<w>a</w><w>note</w><note type="editorial" xml:id="BKV--2"><handshift scribe="new hand"/></note>' + xmlTail);
+  expect(xmlData).toBe(xmlHead + '<w>a</w><w>note</w><note type="editorial" xml:id="..--2"><handshift scribe="new hand"/></note>' + xmlTail);
 }, 200000);
 
 test('1 line of commentary text note', async () => {
