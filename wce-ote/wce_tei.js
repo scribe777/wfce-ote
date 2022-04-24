@@ -55,7 +55,7 @@ function zeigeFehler(Fehler) {
 		@returns {object}
 */
 
-function getHtmlByTei(inputString) {
+function getHtmlByTei(inputString, args) {
 	var $newDoc, $newRoot, $newRoot;
 	var $formatStart, $formatEnd;
 
@@ -722,7 +722,7 @@ function getHtmlByTei(inputString) {
 			var $booknumber = $teiNode.getAttribute('n');
 			// legacy support
 			if ($booknumber.match(/B\d+/)) {
-				$booknumber = getBookName($booknumber);
+				$booknumber = getBookName($booknumber, args);
 			}
 			// Cat commented out while changing referencing to OSIS - delete when done #15
 			// var $booknumber = $teiNode.getAttribute('n').substring(1);
@@ -760,7 +760,7 @@ function getHtmlByTei(inputString) {
 				// legacy support (ingest only)
 				if (nValue.indexOf('.') == -1) {
 					var nValueArray = nValue.split('K')
-					g_bookNumber = getBookName(nValueArray[0]);
+					g_bookNumber = getBookName(nValueArray[0], args);
 					g_chapterNumber = nValueArray[1];
 					nodeAddText($newNode, g_chapterNumber);
 				} else {
@@ -811,9 +811,16 @@ function getHtmlByTei(inputString) {
 		// 	}
 		// }
 		if (nValue && nValue != '') {
-			var nValueArray = nValue.split('.');
-			g_verseNumber = nValueArray[2];
-			nodeAddText($newNode, g_verseNumber);
+			// legacy support
+			if (nValue.indexOf('.') == -1) {
+				var nValueArray = nValue.split('V')
+				g_verseNumber = nValueArray[1];
+				nodeAddText($newNode, g_verseNumber);
+			} else {
+				var nValueArray = nValue.split('.');
+				g_verseNumber = nValueArray[2];
+				nodeAddText($newNode, g_verseNumber);
+			}
 		}
 		var partValue = $teiNode.getAttribute('part');
 		if (partValue && (partValue === 'F' || partValue === 'M')){
@@ -4467,8 +4474,8 @@ function removeArrows(str) {
 	return out;
 };
 
-function getBookName(bookRef) {
-	return tinymce.bookLookup[bookRef];
+function getBookName(bookRef, args) {
+	return args.book_lookup[bookRef];
 };
 
 var removeBlankNode=function ($root){//remove blank node,

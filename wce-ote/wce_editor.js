@@ -32,18 +32,16 @@
     Programm erhalten haben. Wenn nicht, siehe <http://www.gnu.org/licenses/>.
 */
 
-const NT_lookup = {'B04': 'John'}
+const NTLookup = {"B01": "Matt", "B02": "Mark", "B03": "Luke", "B04": "John", "B05": "Acts",
+									"B06": "Rom", "B07": "1Cor", "B08": "2Cor", "B09": "Gal", "B10": "Eph", "B11": "Phil", "B12": "Col",
+									"B13": "1Thess", "B14": "2Thess", "B15": "1Tim", "B16": "2Tim", "B17": "Titus", "B18": "Phlm",
+									"B19": "Heb", "B20": "Jas", "B21": "1Pet", "B22": "2Pet", "B23": "1John", "B24": "2John",
+									"B25": "3John", "B26": "Jude", "B27": "Rev"};
 
 function setWceEditor(_id, rtl, finishCallback, lang, myBaseURL, getWitness, getWitnessLang, bookLookup) {
 	if (myBaseURL && typeof myBaseURL != "undefined" && myBaseURL !== '') {
 		tinymce.baseURL = myBaseURL;
 		tinymce.baseURI = new tinymce.util.URI(tinymce.baseURL);
-	}
-
-	if (bookLookup !== undefined) {
-		tinymce.bookLookup = bookLookup;
-	} else {
-		tinymce.bookLookup = NT_lookup;
 	}
 
 	tinymce.init({
@@ -67,6 +65,7 @@ function setWceEditor(_id, rtl, finishCallback, lang, myBaseURL, getWitness, get
 		directionality : (rtl) ? "rtl" : "ltr",
 		language : (lang) ? (lang.indexOf('de') == 0 ? "de" : "en") : "en",
 		//book : (getBook) ? getBook : "",
+		book_lookup : bookLookup !== undefined ? bookLookup : NTLookup,
 		witness : (getWitness) ? getWitness : "",
 		manuscriptLang : (getWitnessLang) ? getWitnessLang : "",
 		// invalid_elements:'p',
@@ -98,8 +97,6 @@ function setWceEditor(_id, rtl, finishCallback, lang, myBaseURL, getWitness, get
 					finishCallback();
 			});
 		}
-		// ,
-		// book_lookup : NT_lookup,
 	});
 }
 
@@ -168,7 +165,7 @@ function getTEI() {
  @param {String} teiStringInput - the xml string to display for editing
 */
 function setTEI(teiStringInput) {
-	var result = getHtmlByTei(teiStringInput);
+	var result = getHtmlByTei(teiStringInput, tinyMCE.activeEditor.settings);
 	if (result) {
 		var htmlContent = result['htmlString'];
 		if (htmlContent)
@@ -367,4 +364,12 @@ if (( typeof Range !== "undefined") && !Range.prototype.createContextualFragment
 		div.outerHTML = html;
 		return frag;
 	};
+}
+
+try {
+	module.exports = {
+		NTLookup
+	};
+} catch (e) {
+	// nodejs is not available which is fine as long as we are not running tests.
 }

@@ -4,7 +4,9 @@
 
 window.$ = require('../wce-ote/jquery');
 const wce_tei = require('../wce-ote/wce_tei');
-
+const tinymce_settings = require('../wce-ote/wce_editor');
+// use the NTLookup data (to save repeating it here)
+const args = {'book_lookup': tinymce_settings.NTLookup};
 
 // store the top and tail of the js so the tests can reuse and only focus on the content of the <body> tag
 const xmlHead = '<?xml  version="1.0" encoding="utf-8"?><!DOCTYPE TEI [<!ENTITY om ""><!ENTITY lac ""><!ENTITY lacorom "">]>' +
@@ -587,7 +589,7 @@ for (let i=0; i<testDataMaps.length; i+=1) {
 			let testInput, expectedOutput, html;
 			testInput = xmlHead + value[0] + xmlTail;
 			expectedOutput = '<TEMP>' + value[1] + '</TEMP>';
-			html = wce_tei.getHtmlByTei(testInput);
+			html = wce_tei.getHtmlByTei(testInput, args);
 			expect(html.htmlString).toBe(expectedOutput);
 		});
 	  test('HTML2TEI: ' + key, () => {
@@ -665,7 +667,7 @@ hiRendOptions.forEach((value, key, map) => {
 		let testInput, expectedOutput, html;
 		testInput = xmlFormat;
 		expectedOutput = '<TEMP>' + htmlFormat + '</TEMP>';
-		html = wce_tei.getHtmlByTei(testInput);
+		html = wce_tei.getHtmlByTei(testInput, args);
 		expect(html.htmlString).toBe(expectedOutput);
 	});
   test('HTML2TEI: ' + key, () => {
@@ -899,7 +901,7 @@ manuscriptPageStructure.forEach((value, key, map) => {
     idRegex = /id="(.)b_(\d)_\d+"/g;
 		testInput = xmlHead + value[0] + xmlTail;
 		expectedOutput = '<TEMP>' + value[1] + '</TEMP>';
-		html = wce_tei.getHtmlByTei(testInput);
+		html = wce_tei.getHtmlByTei(testInput, args);
     modifiedHtml = html.htmlString.replace(idRegex, 'id="$1b_$2_MATH.RAND"');
 		expect(modifiedHtml).toBe(expectedOutput);
 	});
@@ -1000,11 +1002,9 @@ const teiToHtmlAndBackWithChange = new Map([
       ]
     ],
 		// legacy support for referencing system
-		[ 'book, chapter and verse',
+		[ 'book, chapter and verse (legacy)',
 	    [ '<div type="book" n="B04"><div type="chapter" n="B04K1"><ab n="B04K1V1"><w>first</w><w>verse</w></ab></div></div>',
-	      ' <span class="book_number mceNonEditable" wce="__t=book_number" id="1">John</span>  ' +
-	      '<span class="chapter_number mceNonEditable" wce="__t=chapter_number">Inscriptio</span> ' +
-	      '<span class="verse_number mceNonEditable" wce="__t=verse_number"/> inscriptio text ',
+	      ' <span class=\"book_number mceNonEditable\" wce=\"__t=book_number\" id=\"1\">John</span>  <span class=\"chapter_number mceNonEditable\" wce=\"__t=chapter_number\" id=\"2\">1</span> <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">1</span> first verse ',
 				'<div type="book" n="John"><div type="chapter" n="John.1"><ab n="John.1.1"><w>first</w><w>verse</w></ab></div></div>'
 	    ]
 	  ],
@@ -1032,7 +1032,7 @@ teiToHtmlAndBackWithChange.forEach((value, key, map) => {
 		let testInput, expectedOutput, html;
 		testInput = xmlHead + value[0] + xmlTail;
 		expectedOutput = '<TEMP>' + value[1] + '</TEMP>';
-		html = wce_tei.getHtmlByTei(testInput);
+		html = wce_tei.getHtmlByTei(testInput, args);
 		expect(html.htmlString).toBe(expectedOutput);
 	});
   test('HTML2TEI: ' + key, () => {
@@ -1060,7 +1060,7 @@ test ('test export of abbr where supplied and overline need flipping', () => {
 // Might need to mock window.alert of the error function for this [issue #19]
 test('Invalid XML gives error', () => {
   jest.spyOn(window, 'alert').mockImplementation(() => {});
-  html = wce_tei.getHtmlByTei('<w>broken<w>');
+  html = wce_tei.getHtmlByTei('<w>broken<w>', args);
   expect(window.alert).toBeCalledWith('Error:\n XML parser 1:12: unclosed tag: w\nundefined\nundefined');
 });
 
