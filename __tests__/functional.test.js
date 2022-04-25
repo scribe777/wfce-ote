@@ -13,9 +13,9 @@ const xmlHead = '<?xml  version="1.0" encoding="utf-8"?><!DOCTYPE TEI [<!ENTITY 
 								'</fileDesc></teiHeader><text><body>';
 const xmlTail = '</body></text></TEI>';
 
+jest.setTimeout(200000);
 
 beforeAll(async () => {
-  jest.setTimeout(200000);
   browser = await puppeteer.launch({
     // for local testing
     // headless: false,
