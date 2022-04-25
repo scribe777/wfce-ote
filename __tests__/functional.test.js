@@ -13,9 +13,9 @@ const xmlHead = '<?xml  version="1.0" encoding="utf-8"?><!DOCTYPE TEI [<!ENTITY 
 								'</fileDesc></teiHeader><text><body>';
 const xmlTail = '</body></text></TEI>';
 
+jest.setTimeout(5000000);
 
 beforeAll(async () => {
-  jest.setTimeout(200000);
   browser = await puppeteer.launch({
     // for local testing
     headless: false,
@@ -30,10 +30,16 @@ beforeAll(async () => {
 });
 
 beforeEach(async () => {
+	let frameHandle;
+	jest.setTimeout(5000000);
   page = await browser.newPage();
   await page.goto(`file:${path.join(__dirname, '..', 'wce-ote', 'index.html')}`);
-  let frameHandle = await page.$("iframe[id='wce_editor_ifr']");
-  frame = await frameHandle.contentFrame();
+	page.waitForSelector("#wce_editor_ifr");
+	frameHandle = null;
+	while (frameHandle === null) {
+		frameHandle = await page.$("iframe[id='wce_editor_ifr']");
+	}
+	frame = await frameHandle.contentFrame();
 });
 
 afterAll(async () => {
