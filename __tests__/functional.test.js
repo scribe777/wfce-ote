@@ -18,14 +18,14 @@ jest.setTimeout(5000000);
 beforeAll(async () => {
   browser = await puppeteer.launch({
     // for local testing
-    headless: false,
-    slowMo: 80,
-    args: ['--window-size=1920,1080', '--disable-web-security']
+    // headless: false,
+    // slowMo: 80,
+    // args: ['--window-size=1920,1080', '--disable-web-security']
 
     // for online testing (only ever commit these)
-     // headless: true,
-     // slowMo: 80,
-     // args: ['--disable-web-security']
+     headless: true,
+     slowMo: 80,
+     args: ['--disable-web-security']
    });
 });
 
@@ -43,7 +43,7 @@ beforeEach(async () => {
 });
 
 afterAll(async () => {
-  // await browser.close();
+  await browser.close();
 });
 
 test('test basic words', async () => {
