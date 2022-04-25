@@ -1,6 +1,6 @@
-<!-- 
+<!--
 	Copyright (C) 2012-2016 Trier Center for Digital Humanities, Trier (Germany)
-	
+
 	This file is part of the Online Transcription Editor (OTE).
 
     OTE is free software: you can redistribute it and/or modify
@@ -87,10 +87,10 @@
 		var _ed = parent.tinymce.activeEditor;
 		ed=_ed;
 		translate();
-		setConstants(); 
+		setConstants();
 		init();
-	});	
-	
+	});
+
 	function translate() {
 		var c=document.body.innerHTML;
 		var d=document.title;
@@ -107,9 +107,9 @@
 		});
 		if(a!=d){document.title=d=a}
 	}
-		
+
 	function init() {
-		comboBindReturnEvent('insert'); 
+		comboBindReturnEvent('insert');
 		wceInfoInit('abbr');
 		readWceNodeInfo();
 		checkstatus_abbrtype();
@@ -123,9 +123,9 @@
 			document.getElementById('abbr_type_other').style.backgroundColor = "#CCCCCC";
 		}
 	}
-	
+
 	function testOther() {
-		if (document.abbrinfo.abbr_type.options[2].selected == true && document.getElementById('abbr_type_other').value == '') 
+		if (document.abbrinfo.abbr_type.options[2].selected == true && document.getElementById('abbr_type_other').value == '')
 			return false;
 	return true;
 	}
