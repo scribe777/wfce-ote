@@ -8,7 +8,7 @@ css
 images
 tests
 node_modules
-js
+/js
 TinyMCE-changelog.txt
 TinyMCE-LICENSE.TXT
 TinyMCE-readme.md

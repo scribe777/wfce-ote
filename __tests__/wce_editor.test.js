@@ -181,11 +181,17 @@ const pageLayout = new Map([
 	[ 'mid-word linebreak',
 		'<pb n="1v" type="folio" xml:id="P1v-"/><cb n="P1vC1-"/><lb n="P1vC1L-"/><w>my</w><w>first</w><w>li' +
 		'<lb n="P1vC1L-" break="no"/>ne</w><w>my</w><w>second</w><w>line</w>'
-	]
+	],
+	// [ 'lone quire break',
+	// 	'<gb n="3"/>'
+	// ],
+	// [ 'quire break with all the rest',
+	//   '<gb n="3"/><pb n="1r" type="folio" xml:id="P1r-"/><cb n="P1rC1-"/><lb n="P1rC1L-"/>'
+	// ],
 ]);
 
 pageLayout.forEach((value, key, map) => {
-	test('rountrip: ' + key, () => {
+	test('roundtrip: ' + key, () => {
 		let testInput, tei;
 		testInput = xmlHead + value + xmlTail;
 		testDOM.window.eval(`setTEI('${testInput}');`);

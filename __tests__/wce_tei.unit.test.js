@@ -19,6 +19,31 @@ test('replaces arrows with x and y at end of Papyri sigla', () => {
   expect(wce_tei.removeArrows('P↑45')).toBe('P↑45');
 });
 
+// startHasSpace
+test ('string starts with a space', () => {
+  expect(wce_tei.startHasSpace(' string')).toBe(true);
+  expect(wce_tei.startHasSpace(' string ')).toBe(true);
+  expect(wce_tei.startHasSpace('string')).toBe(undefined);
+  expect(wce_tei.startHasSpace('st ring')).toBe(undefined);
+  expect(wce_tei.startHasSpace('string ')).toBe(undefined);
+
+});
+
+// endHasSpace
+test ('string ends with a space', () => {
+  expect(wce_tei.endHasSpace('string ')).toBe(true);
+  expect(wce_tei.endHasSpace(' string ')).toBe(true);
+  expect(wce_tei.endHasSpace('string')).toBe(undefined);
+  expect(wce_tei.endHasSpace('st ring')).toBe(undefined);
+  expect(wce_tei.endHasSpace(' string')).toBe(undefined);
+});
+
+// test ('string to array', () => {
+//   const array = wce_tei.getTeiByHtml.strToArray('string&this');
+//   console.log(array)
+// });
+
+
 //NOT WORKING MAY NEED A MOCK can't find alert
 // error handling (this one needs to change because code needs to change)
 // test('errors are handled', () => {

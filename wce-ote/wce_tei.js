@@ -2555,6 +2555,7 @@ function getTeiByHtml(inputString, args) {
 		}
 	};
 
+	// Cat says this is not used as the alternative is in use.
 	//or use function handleSupliedInAbbr
 	//supplied in abbr //ticket #1762
 	var handleSupliedInAbbr2 = function ($node){
@@ -4240,8 +4241,11 @@ function getTeiByHtml(inputString, args) {
 //*********************************************************************************************************************
 // globals start here
 
-/*
- * Compare two node by nodeName and attribute, but not textContent
+/** Compare two node using node name, node type and attributes but not the content
+
+ 		@param {node} $n1 - The first node for comparison.
+		@param {node} $n2 - The second node for comparison.
+ 		@returns {boolean} - true if the nodes match, false if they don't.
  */
 var compareNodes =function ($n1, $n2){
 		if(!$n1 || !$n2){
@@ -4253,13 +4257,13 @@ var compareNodes =function ($n1, $n2){
 		if($n1.nodeName!=$n2.nodeName){
 			return false;
 		}
-
+		// this is not working as it should be I don't think. Maybe this should use .length == 0
 		var atts1=$n1.attributes;
 		var atts2=$n2.attributes;
 		if(!atts1 && !atts2){
 			return true;
 		}
-
+		// this is also not working as expected and should use length
 		if((atts1 && !atts2) || (!atts1 && atts2)){
 			return false;
 		}
@@ -4321,7 +4325,7 @@ function loadXMLString(txt) {
 	return xmlDoc;
 }
 
-/*
+/* Cat thinks this is never used
  * Read xml file to generate the DOM object
  */
 function loadXMLDoc(dname) {
@@ -4465,7 +4469,7 @@ var removeBlankNode=function ($root){//remove blank node,
 		return $root;
 	};
 
-// NOT-USED: seems to only call itself recursively but never called from outside this function
+// Cat thinks NOT-USED: seems to only call itself recursively but never called from outside this function
 var removeSpaceAfterLb=function ($node){
 		var nodeName=$node.nodeName;
 		if(nodeName && nodeName=='lb'){
@@ -4513,7 +4517,8 @@ var removeSpaceAfterLb=function ($node){
 
 	try {
 		module.exports = {
-		  addArrows, removeArrows, loadXMLString, getHtmlByTei, getTeiByHtml, Fehlerbehandlung, zeigeFehler
+		  startHasSpace, endHasSpace, addArrows, removeArrows, loadXMLString, getHtmlByTei,
+			getTeiByHtml, Fehlerbehandlung, zeigeFehler, compareNodes
 		};
 	} catch (e) {
 		// nodejs is not available which is fine as long as we are not running tests.
