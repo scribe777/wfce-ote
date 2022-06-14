@@ -961,7 +961,8 @@ function getHtmlByTei(inputString) {
 		var $newNode = $newDoc.createElement('span');
 		var rendValue = $teiNode.getAttribute('rend');
 		if (!rendValue) {
-			return null;
+			nodeAddText($htmlParent, $teiNode.text);
+			return $htmlParent;
 		}
 
 		switch (rendValue) {
