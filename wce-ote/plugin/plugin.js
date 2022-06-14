@@ -2915,7 +2915,7 @@
 						);
 
 						if(lid){
-							$('#'+lid).change(function(){
+							$('#'+lid).on('change', function(){
 								ed.execCommand('wceShowLineNumber',this.checked);
 							});
 							ed.execCommand('wceShowLineNumber',ed.settings.show_linenumber);
@@ -4151,4 +4151,3 @@
 	tinymce.PluginManager.add('wce', tinymce.plugins.wceplugin);
 
 })();
-
