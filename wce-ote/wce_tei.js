@@ -39,7 +39,15 @@
 var wceNodeInsideW=["hi","unclear","gap","supplied", "w", "abbr", "ex"];//TODO: more type?
 
 function Fehlerbehandlung(Nachricht, Datei, Zeile) {
-	Fehler = "Error:\n" + Nachricht + "\n" + Datei + "\n" + Zeile;
+	if (Datei === undefined && Zeile === undefined) {
+		Fehler = "Error:\n" + Nachricht;
+	} else if (Datei === undefined) {
+		Fehler = "Error:\n" + Nachricht + "\n" + Datei;
+	} else if (Zeile === undefined) {
+		Fehler = "Error:\n" + Nachricht + "\n" + Zeile;
+	} else {
+		Fehler = "Error:\n" + Nachricht + "\n" + Datei + "\n" + Zeile;
+	}
 	zeigeFehler(Fehler);
 	return true;
 }
