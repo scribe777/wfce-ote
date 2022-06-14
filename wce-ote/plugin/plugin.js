@@ -3609,7 +3609,7 @@
 					},
 					{ text : '; (semicolon)',
 						onclick : function() {
-							ed.execCommand('mceAdd_pc', '&semicolon;');
+							ed.execCommand('mceAdd_pc', ';');
 						}
 					},
 					{ text : '\u203B	(cross with dots)',
