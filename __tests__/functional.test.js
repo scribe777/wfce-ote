@@ -13,7 +13,9 @@ const xmlHead = '<?xml  version="1.0" encoding="utf-8"?><!DOCTYPE TEI [<!ENTITY 
 								'</fileDesc></teiHeader><text><body>';
 const xmlTail = '</body></text></TEI>';
 
+
 jest.setTimeout(5000000);
+
 
 beforeAll(async () => {
   browser = await puppeteer.launch({
