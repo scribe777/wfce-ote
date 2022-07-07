@@ -249,6 +249,7 @@ test('test pc with menu', async () => {
                         '<span class=\"format_end mceNonEditable\">›</span></span>');
   const xmlData = await page.evaluate(`getTEI()`);
   expect(xmlData).toBe(xmlHead + '<w>my</w><w>words</w><pc>-</pc>' + xmlTail);
+}, 200000);
 
 // pc with menu
 test('test pc with menu (semicolon as I changed the code for that)', async () => {
