@@ -29,10 +29,10 @@ tinymce.PluginManager.add('wcelinenumber', function(ed) {
 		sidebar.style.position = "relative";
 		sidebar.style.overflow = "hidden";
 		ct.insertBefore(sidebar, iframe);
-		$(ed.getWin()).scroll(function(e) {
+		$(ed.getWin()).on('scroll', function(e) {
 			_drawLineNumber();
 		});
-		$(ed.getWin()).resize(function() {
+		$(ed.getWin()).on('resize', function() {
 			_drawLineNumber();
 		});
 		ed.on("ResizeEditor", function(e) {

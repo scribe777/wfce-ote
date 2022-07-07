@@ -2915,7 +2915,7 @@
 						);
 
 						if(lid){
-							$('#'+lid).change(function(){
+							$('#'+lid).on('change', function(){
 								ed.execCommand('wceShowLineNumber',this.checked);
 							});
 							ed.execCommand('wceShowLineNumber',ed.settings.show_linenumber);
@@ -3609,7 +3609,7 @@
 					},
 					{ text : '; (semicolon)',
 						onclick : function() {
-							ed.execCommand('mceAdd_pc', '&semicolon;');
+							ed.execCommand('mceAdd_pc', ';');
 						}
 					},
 					{ text : '\u203B	(cross with dots)',

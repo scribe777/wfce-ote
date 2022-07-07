@@ -72,6 +72,12 @@ const basicAnnotation = new Map([
       '<span class="format_end mceNonEditable">›</span></span> ' //space at end is important
  		],
 	],
+	[ 'a semicolon simple <pc> tag',
+	  [ '<pc>;</pc>',
+	 		'<span class="pc" wce="__t=pc"><span class="format_start mceNonEditable">‹</span>;' +
+      '<span class="format_end mceNonEditable">›</span></span> ' //space at end is important
+ 		],
+	],
 	// abbr
 	[ 'nomen sacrum abbreviation with overline',
 		[ '<w>a</w><w><abbr type="nomSac"><hi rend="overline">ns</hi></abbr></w><w>abbreviation</w>',
@@ -479,7 +485,7 @@ const notes = new Map([
   ],
   // a handshift note - needs to be changed to handShift [issue #12]
   [ 'a handShift note',
-    [ '<w>a</w><w>note</w><note type="editorial" xml:id="BKV-undefined-2"><handshift/></note>',
+    [ '<w>a</w><w>note</w><note type="editorial" xml:id="BKV-undefined-2"><handShift/></note>',
       'a note<span class="note" wce="__t=note&amp;__n=&amp;note_text=&amp;note_type=changeOfHand&amp;' +
       'note_type_other=&amp;newHand="><span class="format_start mceNonEditable">‹</span>Note' +
       '<span class="format_end mceNonEditable">›</span></span>'
@@ -487,7 +493,7 @@ const notes = new Map([
   ],
   // spaces added in attribute should be replaced with _ [issue #13]
   [ 'a handShift note with new hand',
-    [ '<w>a</w><w>note</w><note type="editorial" xml:id="BKV-undefined-2"><handshift scribe="new hand"/></note>',
+    [ '<w>a</w><w>note</w><note type="editorial" xml:id="BKV-undefined-2"><handShift scribe="new hand"/></note>',
       'a note<span class="note" wce="__t=note&amp;__n=&amp;note_text=&amp;note_type=changeOfHand&amp;' +
       'note_type_other=&amp;newHand=new%20hand"><span class="format_start mceNonEditable">‹</span>Note' +
       '<span class="format_end mceNonEditable">›</span></span>'
@@ -947,9 +953,27 @@ const teiToHtmlAndBackWithChange = new Map([
         'a note<span class="note" wce="__t=note&amp;__n=&amp;note_text=&amp;note_type=changeOfHand&amp;' +
         'note_type_other=&amp;newHand=new%20hand"><span class="format_start mceNonEditable">‹</span>Note' +
         '<span class="format_end mceNonEditable">›</span></span>',
-        '<w>a</w><w>note</w><note type="editorial" xml:id="BKV-undefined-2"><handshift scribe="new hand"/></note>'
+        '<w>a</w><w>note</w><note type="editorial" xml:id="BKV-undefined-2"><handShift scribe="new hand"/></note>'
       ]
     ],
+		// legacy support
+	  [ 'a handShift note',
+	    [ '<w>a</w><w>note</w><note type="editorial" xml:id="BKV-undefined-2"><handshift/></note>',
+	      'a note<span class="note" wce="__t=note&amp;__n=&amp;note_text=&amp;note_type=changeOfHand&amp;' +
+	      'note_type_other=&amp;newHand="><span class="format_start mceNonEditable">‹</span>Note' +
+	      '<span class="format_end mceNonEditable">›</span></span>',
+				'<w>a</w><w>note</w><note type="editorial" xml:id="BKV-undefined-2"><handShift/></note>'
+	    ]
+	  ],
+	  // spaces added in attribute should be replaced with _ [issue #13]
+	  [ 'a handShift note with new hand',
+	    [ '<w>a</w><w>note</w><note type="editorial" xml:id="BKV-undefined-2"><handshift scribe="new hand"/></note>',
+	      'a note<span class="note" wce="__t=note&amp;__n=&amp;note_text=&amp;note_type=changeOfHand&amp;' +
+	      'note_type_other=&amp;newHand=new%20hand"><span class="format_start mceNonEditable">‹</span>Note' +
+	      '<span class="format_end mceNonEditable">›</span></span>',
+				'<w>a</w><w>note</w><note type="editorial" xml:id="BKV-undefined-2"><handShift scribe="new hand"/></note>',
+	    ]
+	  ],
     [ 'hi rend ol as legacy support for overline',
       [ '<w>test</w><w><hi rend="ol">for</hi></w><w>rendering</w>',
         'test <span class="formatting_overline" wce="__t=formatting_overline" wce_orig="for">' +
@@ -964,26 +988,35 @@ const teiToHtmlAndBackWithChange = new Map([
         '<div type="book" n="B04"><w>The</w><w>content</w><w>of</w><w>my</w><w>chapter</w></div>'
    		],
   	],
+		// next two tests test fix for issue #16
 		[ 'whole word <ex> tag (no w wrapper and only one word in total)',
 		  [ '<ex rend="÷">word</ex>',
 				'<span class="part_abbr" wce="__t=part_abbr&amp;__n=&amp;exp_rend_other=&amp;exp_rend=%C3%B7">' +
 	      '<span class="format_start mceNonEditable">‹</span>(word)<span class="format_end mceNonEditable">›</span>' +
-	      '</span>',
+	      '</span> ',
 				'<w><ex rend="÷">word</ex></w>'
 	 		]
+		],
+		[ 'whole word <ex> tag (no w wrapper and words either side)',
+			[ '<w>first</w><ex rend="÷">word</ex><w>last</w>',
+				'first <span class="part_abbr" wce="__t=part_abbr&amp;__n=&amp;exp_rend_other=&amp;exp_rend=%C3%B7">' +
+				'<span class="format_start mceNonEditable">‹</span>(word)<span class="format_end mceNonEditable">›</span>' +
+				'</span> last ',
+				'<w>first</w><w><ex rend="÷">word</ex></w><w>last</w>'
+			]
 		],
     // not sure the next two are desireable behaviour but it is the current behaviour
     // fix this and at least keep the word [issue #14]
     [ 'hi with no rend attribute removes the word with the hi tag',
       [ '<w>test</w><w><hi>for</hi></w><w>rendering</w>',
-        'test  rendering ',
-        '<w>test</w><w>rendering</w>'
+        'test for rendering ',
+        '<w>test</w><w>for</w><w>rendering</w>'
       ]
     ],
     [ 'hi with empty rend attribute removes the word with the hi tag',
       [ '<w>test</w><w><hi rend="">for</hi></w><w>rendering</w>',
-        'test  rendering ',
-        '<w>test</w><w>rendering</w>'
+        'test for rendering ',
+        '<w>test</w><w>for</w><w>rendering</w>'
       ]
     ],
     // legacy commentary notes (rend attribute - for number of lines covered - now converted to line breaks)
@@ -1035,7 +1068,7 @@ test ('test export of abbr where supplied and overline need flipping', () => {
 test('Invalid XML gives error', () => {
   jest.spyOn(window, 'alert').mockImplementation(() => {});
   html = wce_tei.getHtmlByTei('<w>broken<w>');
-  expect(window.alert).toBeCalledWith('Error:\n XML parser 1:12: unclosed tag: w\nundefined\nundefined');
+  expect(window.alert).toBeCalledWith('Error:\n XML parser 1:12: unclosed tag: w');
 });
 
 
@@ -1049,4 +1082,16 @@ test ('node comparison', () => {
   expect(wce_tei.compareNodes(childList[3], childList[4])).toBe(true);
   expect(wce_tei.compareNodes(childList[4], childList[5])).toBe(false);
   expect(wce_tei.compareNodes(childList[0], childList[6])).toBe(false);
+});
+
+test ('hasWAncestor', () => {
+  const dom = wce_tei.loadXMLString('<text><body><w>word</w><ex>expansion</ex><w>pa<ex>rt</ex></w><w><unclear>unclear</unclear></w></body></text>');
+  const root = dom.documentElement;
+  const body = root.childNodes[0];
+	const childList = body.childNodes;
+  expect(wce_tei.hasWAncestor(childList[0])).toBe(true);
+	expect(wce_tei.hasWAncestor(childList[1])).toBe(false);
+	expect(wce_tei.hasWAncestor(childList[2])).toBe(true);
+	expect(wce_tei.hasWAncestor(childList[2])).toBe(true);
+	expect(wce_tei.hasWAncestor(body)).toBe(false);
 });

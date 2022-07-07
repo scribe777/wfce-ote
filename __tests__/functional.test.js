@@ -14,8 +14,10 @@ const xmlHead = '<?xml  version="1.0" encoding="utf-8"?><!DOCTYPE TEI [<!ENTITY 
 const xmlTail = '</body></text></TEI>';
 
 
+jest.setTimeout(5000000);
+
+
 beforeAll(async () => {
-  jest.setTimeout(200000);
   browser = await puppeteer.launch({
     // for local testing
     // headless: false,
@@ -30,10 +32,16 @@ beforeAll(async () => {
 });
 
 beforeEach(async () => {
+	let frameHandle;
+	jest.setTimeout(5000000);
   page = await browser.newPage();
   await page.goto(`file:${path.join(__dirname, '..', 'wce-ote', 'index.html')}`);
-  let frameHandle = await page.$("iframe[id='wce_editor_ifr']");
-  frame = await frameHandle.contentFrame();
+	page.waitForSelector("#wce_editor_ifr");
+	frameHandle = null;
+	while (frameHandle === null) {
+		frameHandle = await page.$("iframe[id='wce_editor_ifr']");
+	}
+	frame = await frameHandle.contentFrame();
 });
 
 afterAll(async () => {
@@ -190,7 +198,6 @@ test('test pc typed', async () => {
   expect(xmlData).toBe(xmlHead + '<w>my</w><w>words</w><pc>.</pc>' + xmlTail);
 }, 200000);
 
-// check what semicolon on the punctuation menu is doing cause its weird when used in a test [issue #17]
 // pc with menu
 test('test pc with menu', async () => {
   await frame.type('body#tinymce', 'my words');
@@ -217,6 +224,7 @@ test('test pc with menu', async () => {
   expect(xmlData).toBe(xmlHead + '<w>my</w><w>words</w><pc>?</pc>' + xmlTail);
 }, 200000);
 
+
 // check other punctuation option [issue #25]
 // pc with menu
 test('test pc with menu', async () => {
@@ -241,6 +249,32 @@ test('test pc with menu', async () => {
                         '<span class=\"format_end mceNonEditable\">›</span></span>');
   const xmlData = await page.evaluate(`getTEI()`);
   expect(xmlData).toBe(xmlHead + '<w>my</w><w>words</w><pc>-</pc>' + xmlTail);
+
+// pc with menu
+test('test pc with menu (semicolon as I changed the code for that)', async () => {
+  await frame.type('body#tinymce', 'my words');
+  // open P menu
+  await page.click('button#mceu_17-open');
+  // navigate to question mark on submenu
+  await page.keyboard.press('ArrowDown');
+  await page.keyboard.press('ArrowRight');
+  await page.keyboard.press('ArrowDown');
+  await page.keyboard.press('ArrowDown');
+  await page.keyboard.press('ArrowDown');
+  await page.keyboard.press('ArrowDown');
+  await page.keyboard.press('ArrowDown');
+  await page.keyboard.press('ArrowDown');
+  await page.keyboard.press('ArrowDown');
+  await page.keyboard.press('ArrowDown');
+	await page.keyboard.press('ArrowDown');
+  await page.keyboard.press('Enter');
+
+  const htmlData = await page.evaluate(`getData()`);
+  expect(htmlData).toBe('my words<span class=\"pc\" wce_orig=\"\" wce=\"__t=pc\">' +
+                        '<span class=\"format_start mceNonEditable\">‹</span>;' +
+                        '<span class=\"format_end mceNonEditable\">›</span></span>');
+  const xmlData = await page.evaluate(`getTEI()`);
+  expect(xmlData).toBe(xmlHead + '<w>my</w><w>words</w><pc>;</pc>' + xmlTail);
 }, 200000);
 
 // abbr
@@ -903,7 +937,7 @@ test('a simple correction with visible firsthand', async () => {
   await menuFrame.click('input#insert');
 
   const htmlData = await page.evaluate(`getData()`);
-  expect(htmlData).toBe('a <span class=\"corr\" wce_orig=\"smple\" wce=\"__t=corr&amp;__n=corrector&amp;help=Help&amp;original_firsthand_reading=smple&amp;common_firsthand_partial=&amp;reading=corr&amp;corrector_name=corrector&amp;corrector_name_other=&amp;place_corr=&amp;place_corr_other=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_deletion_hooks=0&amp;deletion_transposition_marks=0&amp;deletion_other=0&amp;deletion=null&amp;firsthand_partial=&amp;partial=&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;corrector_text=simple\"><span class=\"format_start mceNonEditable\">‹</span>smple<span class=\"format_end mceNonEditable\">›</span></span> correction');
+  expect(htmlData).toBe('a <span class=\"corr\" wce_orig=\"smple\" wce=\"__t=corr&amp;__n=corrector&amp;help=Help&amp;original_firsthand_reading=smple&amp;common_firsthand_partial=&amp;reading=corr&amp;corrector_name=corrector&amp;corrector_name_other=&amp;place_corr=&amp;place_corr_other=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_deletion_hooks=0&amp;deletion_transposition_marks=0&amp;deletion_other=0&amp;deletion=&amp;firsthand_partial=&amp;partial=&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;corrector_text=simple\"><span class=\"format_start mceNonEditable\">‹</span>smple<span class=\"format_end mceNonEditable\">›</span></span> correction');
   const xmlData = await page.evaluate(`getTEI()`);
   expect(xmlData).toBe(xmlHead + '<w>a</w><app><rdg type="orig" hand="firsthand"><w>smple</w></rdg><rdg type="corr" hand="corrector">' +
                        '<w>simple</w></rdg></app><w>correction</w>' + xmlTail);
@@ -1060,7 +1094,7 @@ test('an addition (correction)', async () => {
   await menuFrame.click('input#insert');
 
   const htmlData = await page.evaluate(`getData()`);
-  expect(htmlData).toBe('an <span class=\"corr_blank_firsthand\" wce_orig=\"\" wce=\"__t=corr&amp;__n=corrector&amp;help=Help&amp;original_firsthand_reading=&amp;common_firsthand_partial=&amp;reading=corr&amp;blank_firsthand=on&amp;corrector_name=corrector&amp;corrector_name_other=&amp;place_corr=&amp;place_corr_other=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_deletion_hooks=0&amp;deletion_transposition_marks=0&amp;deletion_other=0&amp;deletion=null&amp;firsthand_partial=&amp;partial=&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;corrector_text=addition\"><span class=\"format_start mceNonEditable\">‹</span>T<span class=\"format_end mceNonEditable\">›</span></span> correction');
+  expect(htmlData).toBe('an <span class=\"corr_blank_firsthand\" wce_orig=\"\" wce=\"__t=corr&amp;__n=corrector&amp;help=Help&amp;original_firsthand_reading=&amp;common_firsthand_partial=&amp;reading=corr&amp;blank_firsthand=on&amp;corrector_name=corrector&amp;corrector_name_other=&amp;place_corr=&amp;place_corr_other=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_deletion_hooks=0&amp;deletion_transposition_marks=0&amp;deletion_other=0&amp;deletion=&amp;firsthand_partial=&amp;partial=&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;corrector_text=addition\"><span class=\"format_start mceNonEditable\">‹</span>T<span class=\"format_end mceNonEditable\">›</span></span> correction');
   const xmlData = await page.evaluate(`getTEI()`);
   expect(xmlData).toBe(xmlHead + '<w>an</w><app><rdg type="orig" hand="firsthand"></rdg><rdg type="corr" hand="corrector">' +
     '<w>addition</w></rdg></app><w>correction</w>' + xmlTail);
@@ -1111,7 +1145,7 @@ test('consecutive corrections', async () => {
   await menuFrame2.click('input#insert');
 
   const htmlData = await page.evaluate(`getData()`);
-  expect(htmlData).toBe('<span class=\"corr\" wce_orig=\"consecutive\" wce=\"__t=corr&amp;__n=corrector&amp;help=Help&amp;original_firsthand_reading=consecutive&amp;common_firsthand_partial=&amp;reading=corr&amp;corrector_name=corrector&amp;corrector_name_other=&amp;blank_correction=on&amp;place_corr=&amp;place_corr_other=&amp;deletion_erased=0&amp;deletion_underline=1&amp;deletion_underdot=0&amp;deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_deletion_hooks=0&amp;deletion_transposition_marks=0&amp;deletion_other=0&amp;deletion=underline&amp;firsthand_partial=&amp;partial=&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;corrector_text=consecutive\"><span class=\"format_start mceNonEditable\">‹</span>consecutive<span class=\"format_end mceNonEditable\">›</span></span> <span class=\"corr\" wce_orig=\"corrections\" wce=\"__t=corr&amp;__n=corrector&amp;help=Help&amp;original_firsthand_reading=corrections&amp;common_firsthand_partial=&amp;reading=corr&amp;corrector_name=corrector&amp;corrector_name_other=&amp;place_corr=&amp;place_corr_other=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_deletion_hooks=0&amp;deletion_transposition_marks=0&amp;deletion_other=0&amp;deletion=null&amp;firsthand_partial=&amp;partial=&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;corrector_text=correction\"><span class=\"format_start mceNonEditable\">‹</span>corrections<span class=\"format_end mceNonEditable\">›</span></span>');
+  expect(htmlData).toBe('<span class=\"corr\" wce_orig=\"consecutive\" wce=\"__t=corr&amp;__n=corrector&amp;help=Help&amp;original_firsthand_reading=consecutive&amp;common_firsthand_partial=&amp;reading=corr&amp;corrector_name=corrector&amp;corrector_name_other=&amp;blank_correction=on&amp;place_corr=&amp;place_corr_other=&amp;deletion_erased=0&amp;deletion_underline=1&amp;deletion_underdot=0&amp;deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_deletion_hooks=0&amp;deletion_transposition_marks=0&amp;deletion_other=0&amp;deletion=underline&amp;firsthand_partial=&amp;partial=&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;corrector_text=consecutive\"><span class=\"format_start mceNonEditable\">‹</span>consecutive<span class=\"format_end mceNonEditable\">›</span></span> <span class=\"corr\" wce_orig=\"corrections\" wce=\"__t=corr&amp;__n=corrector&amp;help=Help&amp;original_firsthand_reading=corrections&amp;common_firsthand_partial=&amp;reading=corr&amp;corrector_name=corrector&amp;corrector_name_other=&amp;place_corr=&amp;place_corr_other=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_deletion_hooks=0&amp;deletion_transposition_marks=0&amp;deletion_other=0&amp;deletion=&amp;firsthand_partial=&amp;partial=&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;corrector_text=correction\"><span class=\"format_start mceNonEditable\">‹</span>corrections<span class=\"format_end mceNonEditable\">›</span></span>');
   const xmlData = await page.evaluate(`getTEI()`);
   expect(xmlData).toBe(xmlHead + '<app><rdg type="orig" hand="firsthand"><w>consecutive</w></rdg>' +
                        '<rdg type="corr" hand="corrector" rend="underline"></rdg></app><app>' +
@@ -1144,7 +1178,7 @@ test('firsthand ut videtur', async () => {
   await menuFrame.click('input#insert');
 
   const htmlData = await page.evaluate(`getData()`);
-  expect(htmlData).toBe('a <span class=\"corr\" wce_orig=\"smple\" wce=\"__t=corr&amp;__n=corrector&amp;help=Help&amp;original_firsthand_reading=smple&amp;common_firsthand_partial=&amp;reading=corr&amp;ut_videtur_firsthand=on&amp;corrector_name=corrector&amp;corrector_name_other=&amp;place_corr=&amp;place_corr_other=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_deletion_hooks=0&amp;deletion_transposition_marks=0&amp;deletion_other=0&amp;deletion=null&amp;firsthand_partial=&amp;partial=&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;corrector_text=simple\"><span class=\"format_start mceNonEditable\">‹</span>smple<span class=\"format_end mceNonEditable\">›</span></span> correction');
+  expect(htmlData).toBe('a <span class=\"corr\" wce_orig=\"smple\" wce=\"__t=corr&amp;__n=corrector&amp;help=Help&amp;original_firsthand_reading=smple&amp;common_firsthand_partial=&amp;reading=corr&amp;ut_videtur_firsthand=on&amp;corrector_name=corrector&amp;corrector_name_other=&amp;place_corr=&amp;place_corr_other=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_deletion_hooks=0&amp;deletion_transposition_marks=0&amp;deletion_other=0&amp;deletion=&amp;firsthand_partial=&amp;partial=&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;corrector_text=simple\"><span class=\"format_start mceNonEditable\">‹</span>smple<span class=\"format_end mceNonEditable\">›</span></span> correction');
   const xmlData = await page.evaluate(`getTEI()`);
   expect(xmlData).toBe(xmlHead + '<w>a</w><app><rdg type="orig" hand="firsthandV"><w>smple</w></rdg>' +
                        '<rdg type="corr" hand="corrector"><w>simple</w></rdg></app><w>correction</w>' + xmlTail);
@@ -1175,7 +1209,7 @@ test('corrector ut videtur', async () => {
   await menuFrame.click('input#insert');
 
   const htmlData = await page.evaluate(`getData()`);
-  expect(htmlData).toBe('a <span class=\"corr\" wce_orig=\"smple\" wce=\"__t=corr&amp;__n=corrector&amp;help=Help&amp;original_firsthand_reading=smple&amp;common_firsthand_partial=&amp;reading=corr&amp;corrector_name=corrector&amp;corrector_name_other=&amp;ut_videtur_corr=on&amp;place_corr=&amp;place_corr_other=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_deletion_hooks=0&amp;deletion_transposition_marks=0&amp;deletion_other=0&amp;deletion=null&amp;firsthand_partial=&amp;partial=&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;corrector_text=simple\"><span class=\"format_start mceNonEditable\">‹</span>smple<span class=\"format_end mceNonEditable\">›</span></span> correction');
+  expect(htmlData).toBe('a <span class=\"corr\" wce_orig=\"smple\" wce=\"__t=corr&amp;__n=corrector&amp;help=Help&amp;original_firsthand_reading=smple&amp;common_firsthand_partial=&amp;reading=corr&amp;corrector_name=corrector&amp;corrector_name_other=&amp;ut_videtur_corr=on&amp;place_corr=&amp;place_corr_other=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_deletion_hooks=0&amp;deletion_transposition_marks=0&amp;deletion_other=0&amp;deletion=&amp;firsthand_partial=&amp;partial=&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;corrector_text=simple\"><span class=\"format_start mceNonEditable\">‹</span>smple<span class=\"format_end mceNonEditable\">›</span></span> correction');
   const xmlData = await page.evaluate(`getTEI()`);
   expect(xmlData).toBe(xmlHead + '<w>a</w><app><rdg type="orig" hand="firsthand"><w>smple</w></rdg><rdg type="corr" hand="correctorV">' +
                        '<w>simple</w></rdg></app><w>correction</w>' + xmlTail);
@@ -1265,7 +1299,7 @@ test('a handShift note', async () => {
   const htmlData = await page.evaluate(`getData()`);
   expect(htmlData).toBe('a note<span class=\"note\" wce_orig=\"\" wce=\"__t=note&amp;__n=&amp;help=Help&amp;note_type=changeOfHand&amp;note_type_other=&amp;newHand=&amp;note_text=\"><span class=\"format_start mceNonEditable\">‹</span>Note<span class=\"format_end mceNonEditable\">›</span></span>');
   const xmlData = await page.evaluate(`getTEI()`);
-  expect(xmlData).toBe(xmlHead + '<w>a</w><w>note</w><note type="editorial" xml:id="BKV--2"><handshift/></note>' + xmlTail);
+  expect(xmlData).toBe(xmlHead + '<w>a</w><w>note</w><note type="editorial" xml:id="BKV--2"><handShift/></note>' + xmlTail);
 }, 200000);
 
 test('a handShift note with new hand', async () => {
@@ -1286,7 +1320,7 @@ test('a handShift note with new hand', async () => {
   const htmlData = await page.evaluate(`getData()`);
   expect(htmlData).toBe('a note<span class=\"note\" wce_orig=\"\" wce=\"__t=note&amp;__n=&amp;help=Help&amp;note_type=changeOfHand&amp;note_type_other=&amp;newHand=new%20hand&amp;note_text=\"><span class=\"format_start mceNonEditable\">‹</span>Note<span class=\"format_end mceNonEditable\">›</span></span>');
   const xmlData = await page.evaluate(`getTEI()`);
-  expect(xmlData).toBe(xmlHead + '<w>a</w><w>note</w><note type="editorial" xml:id="BKV--2"><handshift scribe="new hand"/></note>' + xmlTail);
+  expect(xmlData).toBe(xmlHead + '<w>a</w><w>note</w><note type="editorial" xml:id="BKV--2"><handShift scribe="new hand"/></note>' + xmlTail);
 }, 200000);
 
 test('1 line of commentary text note', async () => {
@@ -1889,4 +1923,174 @@ test('quire break', async () => {
   expect(modifiedHtml).toBe('<span class=\"mceNonEditable brea\" wce=\"__t=brea&amp;__n=&amp;hasBreak=no&amp;help=Help&amp;break_type=gb&amp;number=3&amp;rv=&amp;fibre_type=&amp;lb_alignment=&amp;facs=\" id=\"qb_4_MATH.RAND\"><span class=\"format_start mceNonEditable\">‹</span><br />QB<span class=\"format_end mceNonEditable\">›</span></span><span class=\"mceNonEditable brea\" wce=\"__t=brea&amp;__n=&amp;break_type=pb&amp;number=1&amp;rv=r&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment=\" id=\"pb_4_MATH.RAND\"><span class=\"format_start mceNonEditable\">‹</span><br />PB 1r<span class=\"format_end mceNonEditable\">›</span></span><span class=\"mceNonEditable brea\" wce=\"__t=brea&amp;__n=&amp;break_type=cb&amp;number=1&amp;rv=&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment=\" id=\"cb_4_MATH.RAND\"><span class=\"format_start mceNonEditable\">‹</span><br />CB 1<span class=\"format_end mceNonEditable\">›</span></span><span class=\"mceNonEditable brea\" wce=\"__t=brea&amp;__n=&amp;hasBreak=no&amp;break_type=lb&amp;number=&amp;rv=&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment=\" id=\"lb_4_MATH.RAND\"><span class=\"format_start mceNonEditable\">‹</span><br />↵<span class=\"format_end mceNonEditable\">›</span></span>');
   const xmlData = await page.evaluate(`getTEI()`);
   expect(xmlData).toBe(xmlHead + '<gb n="3"/><pb n="1r" type="folio" xml:id="P1r-"/><cb n="P1rC1-"/><lb n="P1rC1L-"/>' + xmlTail);
+}, 200000);
+
+// tests for deletion structure (need to start with data to delete)
+test('delete verse 1', async () => {
+	// load data
+	const data = xmlHead + '<div type="book" n="B04"><div type="chapter" n="B04K1">' +
+							 '<ab n="B04K1V1"><w>first</w><w>verse</w></ab><ab n="B04K1V2"><w>second</w><w>verse</w></ab>' +
+							 '<ab n="B04K1V3"><w>third</w><w>verse</w></ab></div>' +
+							 '<div type="chapter" n="B04K2"><ab n="B04K2V1"><w>first</w><w>verse</w></ab>' +
+							 '<ab n="B04K2V2"><w>second</w><w>verse</w></ab><ab n="B04K2V3"><w>third</w><w>verse</w></ab></div>' +
+							 '<div type="chapter" n="B04K3"><ab n="B04K3V1"><w>first</w><w>verse</w></ab>' +
+							 '<ab n="B04K3V2"><w>second</w><w>verse</w></ab><ab n="B04K3V3"><w>third</w><w>verse</w></ab>' +
+							 '<ab n="B04K3V4"><w>fourth</w><w>verse</w></ab></div></div>' + xmlTail;
+	await page.evaluate(`setTEI('${data}');`);
+	await page.click('button#mceu_18-open');
+  await page.keyboard.press('ArrowDown');
+	await page.keyboard.press('ArrowDown');
+  await page.keyboard.press('Enter');
+
+	const menuFrameHandle = await page.$('div[id="mceu_39"] > div > div > iframe');
+	const menuFrame = await menuFrameHandle.contentFrame();
+	await menuFrame.click('input[value="4.1.1"]');
+	await menuFrame.click('input#insert');
+
+	const htmlData = await page.evaluate(`getData()`);
+	expect(htmlData).toBe('<span class=\"book_number mceNonEditable\" wce=\"__t=book_number\" id=\"1\">4</span> <span class=\"chapter_number mceNonEditable\" wce=\"__t=chapter_number\" id=\"2\">1</span> <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">2</span> second verse <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">3</span> third verse <span class=\"chapter_number mceNonEditable\" wce=\"__t=chapter_number\" id=\"3\">2</span> <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">1</span> first verse <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">2</span> second verse <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">3</span> third verse <span class=\"chapter_number mceNonEditable\" wce=\"__t=chapter_number\" id=\"4\">3</span> <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">1</span> first verse <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">2</span> second verse <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">3</span> third verse <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">4</span> fourth verse');
+	const xmlData = await page.evaluate(`getTEI()`);
+	expect(xmlData).toBe(xmlHead + '<div type="book" n="B04"><div type="chapter" n="B04K1">' +
+											 '<ab n="B04K1V2"><w>second</w><w>verse</w></ab><ab n="B04K1V3"><w>third</w><w>verse</w></ab></div>' +
+											 '<div type="chapter" n="B04K2"><ab n="B04K2V1"><w>first</w><w>verse</w></ab>' +
+											 '<ab n="B04K2V2"><w>second</w><w>verse</w></ab><ab n="B04K2V3"><w>third</w><w>verse</w></ab></div>' +
+											 '<div type="chapter" n="B04K3"><ab n="B04K3V1"><w>first</w><w>verse</w></ab>' +
+											 '<ab n="B04K3V2"><w>second</w><w>verse</w></ab><ab n="B04K3V3"><w>third</w><w>verse</w></ab>' +
+											 '<ab n="B04K3V4"><w>fourth</w><w>verse</w></ab></div></div>' + xmlTail);
+
+}, 200000);
+
+test('delete verse 2', async () => {
+	// load data
+	const data = xmlHead + '<div type="book" n="B04"><div type="chapter" n="B04K1">' +
+							 '<ab n="B04K1V1"><w>first</w><w>verse</w></ab><ab n="B04K1V2"><w>second</w><w>verse</w></ab>' +
+							 '<ab n="B04K1V3"><w>third</w><w>verse</w></ab></div>' +
+							 '<div type="chapter" n="B04K2"><ab n="B04K2V1"><w>first</w><w>verse</w></ab>' +
+							 '<ab n="B04K2V2"><w>second</w><w>verse</w></ab><ab n="B04K2V3"><w>third</w><w>verse</w></ab></div>' +
+							 '<div type="chapter" n="B04K3"><ab n="B04K3V1"><w>first</w><w>verse</w></ab>' +
+							 '<ab n="B04K3V2"><w>second</w><w>verse</w></ab><ab n="B04K3V3"><w>third</w><w>verse</w></ab>' +
+							 '<ab n="B04K3V4"><w>fourth</w><w>verse</w></ab></div></div>' + xmlTail;
+	await page.evaluate(`setTEI('${data}');`);
+	await page.click('button#mceu_18-open');
+  await page.keyboard.press('ArrowDown');
+	await page.keyboard.press('ArrowDown');
+  await page.keyboard.press('Enter');
+
+	const menuFrameHandle = await page.$('div[id="mceu_39"] > div > div > iframe');
+	const menuFrame = await menuFrameHandle.contentFrame();
+	await menuFrame.click('input[value="4.1.2"]');
+	await menuFrame.click('input#insert');
+
+	const htmlData = await page.evaluate(`getData()`);
+	expect(htmlData).toBe('<span class=\"book_number mceNonEditable\" wce=\"__t=book_number\" id=\"1\">4</span> <span class=\"chapter_number mceNonEditable\" wce=\"__t=chapter_number\" id=\"2\">1</span> <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">1</span> first verse <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">3</span> third verse <span class=\"chapter_number mceNonEditable\" wce=\"__t=chapter_number\" id=\"3\">2</span> <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">1</span> first verse <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">2</span> second verse <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">3</span> third verse <span class=\"chapter_number mceNonEditable\" wce=\"__t=chapter_number\" id=\"4\">3</span> <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">1</span> first verse <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">2</span> second verse <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">3</span> third verse <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">4</span> fourth verse');
+	const xmlData = await page.evaluate(`getTEI()`);
+	expect(xmlData).toBe(xmlHead + '<div type="book" n="B04"><div type="chapter" n="B04K1">' +
+											 '<ab n="B04K1V1"><w>first</w><w>verse</w></ab><ab n="B04K1V3"><w>third</w><w>verse</w></ab></div>' +
+											 '<div type="chapter" n="B04K2"><ab n="B04K2V1"><w>first</w><w>verse</w></ab>' +
+											 '<ab n="B04K2V2"><w>second</w><w>verse</w></ab><ab n="B04K2V3"><w>third</w><w>verse</w></ab></div>' +
+											 '<div type="chapter" n="B04K3"><ab n="B04K3V1"><w>first</w><w>verse</w></ab>' +
+											 '<ab n="B04K3V2"><w>second</w><w>verse</w></ab><ab n="B04K3V3"><w>third</w><w>verse</w></ab>' +
+											 '<ab n="B04K3V4"><w>fourth</w><w>verse</w></ab></div></div>' + xmlTail);
+
+}, 200000);
+
+test('delete verse 3', async () => {
+	// load data
+	const data = xmlHead + '<div type="book" n="B04"><div type="chapter" n="B04K1">' +
+							 '<ab n="B04K1V1"><w>first</w><w>verse</w></ab><ab n="B04K1V2"><w>second</w><w>verse</w></ab>' +
+							 '<ab n="B04K1V3"><w>third</w><w>verse</w></ab></div>' +
+							 '<div type="chapter" n="B04K2"><ab n="B04K2V1"><w>first</w><w>verse</w></ab>' +
+							 '<ab n="B04K2V2"><w>second</w><w>verse</w></ab><ab n="B04K2V3"><w>third</w><w>verse</w></ab></div>' +
+							 '<div type="chapter" n="B04K3"><ab n="B04K3V1"><w>first</w><w>verse</w></ab>' +
+							 '<ab n="B04K3V2"><w>second</w><w>verse</w></ab><ab n="B04K3V3"><w>third</w><w>verse</w></ab>' +
+							 '<ab n="B04K3V4"><w>fourth</w><w>verse</w></ab></div></div>' + xmlTail;
+	await page.evaluate(`setTEI('${data}');`);
+	await page.click('button#mceu_18-open');
+  await page.keyboard.press('ArrowDown');
+	await page.keyboard.press('ArrowDown');
+  await page.keyboard.press('Enter');
+
+	const menuFrameHandle = await page.$('div[id="mceu_39"] > div > div > iframe');
+	const menuFrame = await menuFrameHandle.contentFrame();
+	await menuFrame.click('input[value="4.1.3"]');
+	await menuFrame.click('input#insert');
+
+	const htmlData = await page.evaluate(`getData()`);
+	expect(htmlData).toBe('<span class=\"book_number mceNonEditable\" wce=\"__t=book_number\" id=\"1\">4</span> <span class=\"chapter_number mceNonEditable\" wce=\"__t=chapter_number\" id=\"2\">1</span> <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">1</span> first verse <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">2</span> second verse <span class=\"chapter_number mceNonEditable\" wce=\"__t=chapter_number\" id=\"3\">2</span> <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">1</span> first verse <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">2</span> second verse <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">3</span> third verse <span class=\"chapter_number mceNonEditable\" wce=\"__t=chapter_number\" id=\"4\">3</span> <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">1</span> first verse <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">2</span> second verse <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">3</span> third verse <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">4</span> fourth verse');
+	const xmlData = await page.evaluate(`getTEI()`);
+	expect(xmlData).toBe(xmlHead + '<div type="book" n="B04"><div type="chapter" n="B04K1">' +
+											 '<ab n="B04K1V1"><w>first</w><w>verse</w></ab><ab n="B04K1V2"><w>second</w><w>verse</w></ab></div>' +
+											 '<div type="chapter" n="B04K2"><ab n="B04K2V1"><w>first</w><w>verse</w></ab>' +
+											 '<ab n="B04K2V2"><w>second</w><w>verse</w></ab><ab n="B04K2V3"><w>third</w><w>verse</w></ab></div>' +
+											 '<div type="chapter" n="B04K3"><ab n="B04K3V1"><w>first</w><w>verse</w></ab>' +
+											 '<ab n="B04K3V2"><w>second</w><w>verse</w></ab><ab n="B04K3V3"><w>third</w><w>verse</w></ab>' +
+											 '<ab n="B04K3V4"><w>fourth</w><w>verse</w></ab></div></div>' + xmlTail);
+
+}, 200000);
+
+// NB chapter reference only is deleted not the verses in it
+test('delete chapter 2', async () => {
+	// load data
+	const data = xmlHead + '<div type="book" n="B04"><div type="chapter" n="B04K1">' +
+							 '<ab n="B04K1V1"><w>first</w><w>verse</w></ab><ab n="B04K1V2"><w>second</w><w>verse</w></ab>' +
+							 '<ab n="B04K1V3"><w>third</w><w>verse</w></ab></div>' +
+							 '<div type="chapter" n="B04K2"><ab n="B04K2V1"><w>first</w><w>verse</w></ab>' +
+							 '<ab n="B04K2V2"><w>second</w><w>verse</w></ab><ab n="B04K2V3"><w>third</w><w>verse</w></ab></div>' +
+							 '<div type="chapter" n="B04K3"><ab n="B04K3V1"><w>first</w><w>verse</w></ab>' +
+							 '<ab n="B04K3V2"><w>second</w><w>verse</w></ab><ab n="B04K3V3"><w>third</w><w>verse</w></ab>' +
+							 '<ab n="B04K3V4"><w>fourth</w><w>verse</w></ab></div></div>' + xmlTail;
+	await page.evaluate(`setTEI('${data}');`);
+	await page.click('button#mceu_18-open');
+  await page.keyboard.press('ArrowDown');
+	await page.keyboard.press('ArrowDown');
+  await page.keyboard.press('Enter');
+
+	const menuFrameHandle = await page.$('div[id="mceu_39"] > div > div > iframe');
+	const menuFrame = await menuFrameHandle.contentFrame();
+	await menuFrame.click('input#deleteChapterRadio');
+	await menuFrame.click('input[value="4.2"]');
+	await menuFrame.click('input#insert');
+
+	const htmlData = await page.evaluate(`getData()`);
+	expect(htmlData).toBe('<span class=\"book_number mceNonEditable\" wce=\"__t=book_number\" id=\"1\">4</span> <span class=\"chapter_number mceNonEditable\" wce=\"__t=chapter_number\" id=\"2\">1</span> <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">1</span> first verse <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">2</span> second verse <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">3</span> third verse <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">1</span> first verse <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">2</span> second verse <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">3</span> third verse <span class=\"chapter_number mceNonEditable\" wce=\"__t=chapter_number\" id=\"4\">3</span> <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">1</span> first verse <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">2</span> second verse <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">3</span> third verse <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">4</span> fourth verse');
+	const xmlData = await page.evaluate(`getTEI()`);
+	expect(xmlData).toBe(xmlHead + '<div type="book" n="B04"><div type="chapter" n="B04K1">' +
+											 '<ab n="B04K1V1"><w>first</w><w>verse</w></ab><ab n="B04K1V2"><w>second</w><w>verse</w></ab>' +
+											 '<ab n="B04K1V3"><w>third</w><w>verse</w></ab>' +
+											 '<ab n="B04K1V1"><w>first</w><w>verse</w></ab><ab n="B04K1V2"><w>second</w><w>verse</w></ab>' +
+											 '<ab n="B04K1V3"><w>third</w><w>verse</w></ab></div>' +
+											 '<div type="chapter" n="B04K3"><ab n="B04K3V1"><w>first</w><w>verse</w></ab>' +
+											 '<ab n="B04K3V2"><w>second</w><w>verse</w></ab><ab n="B04K3V3"><w>third</w><w>verse</w></ab>' +
+											 '<ab n="B04K3V4"><w>fourth</w><w>verse</w></ab></div></div>' + xmlTail);
+
+}, 200000);
+
+// NB deleting the book just deletes the reference and leaves all the content such as chapters and verses
+test('delete book', async () => {
+	// load data
+	const data = xmlHead + '<div type="book" n="B04"><div type="chapter" n="B04K1">' +
+							 '<ab n="B04K1V1"><w>first</w><w>verse</w></ab><ab n="B04K1V2"><w>second</w><w>verse</w></ab>' +
+							 '<ab n="B04K1V3"><w>third</w><w>verse</w></ab></div>' +
+							 '<div type="chapter" n="B04K2"><ab n="B04K2V1"><w>first</w><w>verse</w></ab>' +
+							 '<ab n="B04K2V2"><w>second</w><w>verse</w></ab><ab n="B04K2V3"><w>third</w><w>verse</w></ab></div>' +
+							 '<div type="chapter" n="B04K3"><ab n="B04K3V1"><w>first</w><w>verse</w></ab>' +
+							 '<ab n="B04K3V2"><w>second</w><w>verse</w></ab><ab n="B04K3V3"><w>third</w><w>verse</w></ab>' +
+							 '<ab n="B04K3V4"><w>fourth</w><w>verse</w></ab></div></div>' + xmlTail;
+	await page.evaluate(`setTEI('${data}');`);
+	await page.click('button#mceu_18-open');
+  await page.keyboard.press('ArrowDown');
+	await page.keyboard.press('ArrowDown');
+  await page.keyboard.press('Enter');
+
+	const menuFrameHandle = await page.$('div[id="mceu_39"] > div > div > iframe');
+	const menuFrame = await menuFrameHandle.contentFrame();
+	await menuFrame.click('input#deleteBookRadio');
+	await menuFrame.click('input[value="4"]');
+	await menuFrame.click('input#insert');
+
+	const htmlData = await page.evaluate(`getData()`);
+	expect(htmlData).toBe('<span class=\"chapter_number mceNonEditable\" wce=\"__t=chapter_number\" id=\"2\">1</span> <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">1</span> first verse <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">2</span> second verse <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">3</span> third verse <span class=\"chapter_number mceNonEditable\" wce=\"__t=chapter_number\" id=\"3\">2</span> <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">1</span> first verse <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">2</span> second verse <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">3</span> third verse <span class=\"chapter_number mceNonEditable\" wce=\"__t=chapter_number\" id=\"4\">3</span> <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">1</span> first verse <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">2</span> second verse <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">3</span> third verse <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">4</span> fourth verse');
+	const xmlData = await page.evaluate(`getTEI()`);
+	expect(xmlData).toBe(xmlHead + '<div type=\"chapter\" n=\"BK1\"><ab n=\"BK1V1\"><w>first</w><w>verse</w></ab><ab n=\"BK1V2\"><w>second</w><w>verse</w></ab><ab n=\"BK1V3\"><w>third</w><w>verse</w></ab></div><div type=\"chapter\" n=\"BK2\"><ab n=\"BK2V1\"><w>first</w><w>verse</w></ab><ab n=\"BK2V2\"><w>second</w><w>verse</w></ab><ab n=\"BK2V3\"><w>third</w><w>verse</w></ab></div><div type=\"chapter\" n=\"BK3\"><ab n=\"BK3V1\"><w>first</w><w>verse</w></ab><ab n=\"BK3V2\"><w>second</w><w>verse</w></ab><ab n=\"BK3V3\"><w>third</w><w>verse</w></ab><ab n=\"BK3V4\"><w>fourth</w><w>verse</w></ab></div>' + xmlTail);
+
 }, 200000);
