@@ -3641,6 +3641,11 @@
 						onclick : function() {
 							ed.execCommand('mceAdd_pc', '\u030B');
 						}
+					},
+					{ text : 'Other',
+						onclick : function() {
+							ed.execCommand('mceAdd_punctuation_other');
+						}
 					}
 					],
 				},
@@ -3894,6 +3899,11 @@
 				} else {
 					ed.execCommand('mceAddNote');
 				}
+			});
+
+			// Add punctuation other
+			ed.addCommand('mceAdd_punctuation_other', function() {
+				doWithDialog(ed, url, '/pc_other.htm', 480, 320, 1, true, tinymce.translate('title_other_punctuation'));
 			});
 
 			// Add Ornamentation  other /*********/

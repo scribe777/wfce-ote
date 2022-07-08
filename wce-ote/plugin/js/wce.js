@@ -289,6 +289,12 @@ function writeWceNodeInfo(val) {
 				//selected_content = '&nbsp;';
 				new_content = '<span wce="' + newWceAttr + '"' + wceClass + '>' + startFormatHtml + 'sp' + endFormatHtml + '</span>';
 				break;
+
+			case 'pc_other':
+				var pc_char = document.getElementById('pc_char').value;
+				new_content = '<span wce="__t=pc" class="pc">' + startFormatHtml + pc_char + endFormatHtml + '</span> ';
+				break;
+
 			case 'paratext':
 				// default
 				if (document.getElementById('fw_type').value == "commentary") {
