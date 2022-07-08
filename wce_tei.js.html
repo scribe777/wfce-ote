@@ -24,7 +24,7 @@
 <label for="nav-trigger" class="overlay"></label>
 
 <nav>
-    <li class="nav-link nav-home-link"><a href="index.html">Home</a></li><li class="nav-heading"><a href="global.html">Globals</a></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#addArrows">addArrows</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#compareNodes">compareNodes</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#getHtmlByTei">getHtmlByTei</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#getTEI">getTEI</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#hasWAncestor">hasWAncestor</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#removeArrows">removeArrows</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#resetCounter">resetCounter</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#saveDataToDB">saveDataToDB</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#setPreferredFontFamily">setPreferredFontFamily</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#setTEI">setTEI</a></span></li>
+    <li class="nav-link nav-home-link"><a href="index.html">Home</a></li><li class="nav-heading"><a href="global.html">Globals</a></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#addArrows">addArrows</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#compareNodes">compareNodes</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#endHasSpace">endHasSpace</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#getHtmlByTei">getHtmlByTei</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#getTEI">getTEI</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#hasWAncestor">hasWAncestor</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#removeArrows">removeArrows</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#resetCounter">resetCounter</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#saveDataToDB">saveDataToDB</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#setPreferredFontFamily">setPreferredFontFamily</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#setTEI">setTEI</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#startHasSpace">startHasSpace</a></span></li>
 </nav>
 
 <div id="main">
@@ -556,8 +556,8 @@ function getHtmlByTei(inputString) {
 				return Tei2Html_space($htmlParent, $teiNode);
 			// spaces
 
-			case 'qb':
-				return Tei2Html_break($htmlParent, $teiNode, 'qb');
+			case 'gb':
+				return Tei2Html_break($htmlParent, $teiNode, 'gb');
 			// Quire break
 
 			case 'pb':
@@ -1333,7 +1333,7 @@ function getHtmlByTei(inputString) {
 			case 'gb':
 				wceAttr += '&amp;number=';
 				if ($teiNode.getAttribute('n')) {
-					n = parseInt($teiNode.getAttribute('n'));
+					number = parseInt($teiNode.getAttribute('n'));
 				}
 				wceAttr += number;
 				g_quireNumber = number;
@@ -1357,7 +1357,7 @@ function getHtmlByTei(inputString) {
 		$newNode.setAttribute('wce', wceAttr);
 
 		switch (type) {
-			case 'qb':
+			case 'gb':
 				var $br = $newDoc.createElement('br');
 				$newNode.appendChild($br);
 				nodeAddText($newNode, 'QB');
@@ -4341,18 +4341,24 @@ var compareNodes =function ($n1, $n2){
 		return true;
 };
 
-/*
- * Is the string begins with a space
- */
+/** Check if the string starts with a space.
+ * 
+@param {string} str - The string to test.
+@returns {boolean} - true if the string starts with a space or undefined if not
+
+*/
 var startHasSpace = function(str) {
 	if (str.match(/^\s+/)) {
 		return true;
 	}
 };
 
-/*
- * Is the string end with a space
- */
+/** Check if the string ends with a space.
+
+@param {string} str - The string to test.
+@returns {boolean} - true if the string ends with a space or undefined if not
+
+*/
 var endHasSpace = function(str) {
 	if (str.match(/\s+$/)) {
 		return true;
@@ -4489,7 +4495,7 @@ function hasWAncestor($node) {
 var removeBlankNode=function ($root){//remove blank node,
 		var _remove=function($node){
 			var nodeName=$node.nodeName;
-			var notNames=['lb','pb','qb','cb','gap'];
+			var notNames=['lb','pb','gb','cb','gap'];
 			if($node.nodeType!=3 &amp;&amp; !$node.firstChild &amp;&amp; $.inArray(nodeName,notNames)&lt;0){
 				var parent=$node.parentNode;
 				if (parent) {
@@ -4609,7 +4615,7 @@ var removeSpaceAfterLb=function ($node){
 <br class="clear">
 
 <footer>
-    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.10</a> on Fri Jul 08 2022 13:21:49 GMT+0000 (Coordinated Universal Time) using the Minami theme.
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.10</a> on Fri Jul 08 2022 13:26:01 GMT+0000 (Coordinated Universal Time) using the Minami theme.
 </footer>
 
 <script>prettyPrint();</script>
