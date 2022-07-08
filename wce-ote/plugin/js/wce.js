@@ -341,10 +341,6 @@ function writeWceNodeInfo(val) {
 				wceClass = ' class="formatting_ornamentation_other"';
 				break;
 
-			case 'formatting_puncutation_other':
-				wceClass = ' class="formatting_punctuationn_other"';
-				break;
-
 			default:
 				break;
 
