@@ -50,7 +50,6 @@ function setWceEditor(_id, rtl, finishCallback, lang, myBaseURL, getWitness, get
 		force_br_newlines : true,
 		force_p_newlines : false,
 		entity_encoding : "raw",
-		//entities : "62,diple,8224,obelus",
 		theme_advanced_path : false,
 		execcommand_callback : 'wceExecCommandHandler',
 		save_onsavecallback : function() {
@@ -58,14 +57,11 @@ function setWceEditor(_id, rtl, finishCallback, lang, myBaseURL, getWitness, get
 		},
 		directionality : (rtl) ? "rtl" : "ltr",
 		language : (lang) ? (lang.indexOf('de') == 0 ? "de" : "en") : "en",
-		//book : (getBook) ? getBook : "",
 		witness : (getWitness) ? getWitness : "",
 		manuscriptLang : (getWitnessLang) ? getWitnessLang : "",
-		// invalid_elements:'p',
 		plugins : "pagebreak,save,print,contextmenu,fullscreen,wordcount,autosave,paste,charmap,code,noneditable",
 		contextmenu: 'cut copy paste',
 		charmap : charmap_greek.concat(charmap_latin).concat(charmap_slavistic),
-//		plugins : "compat3x,pagebreak,save,layer,print,contextmenu,fullscreen,wordcount,autosave,paste",
 		external_plugins: {
 			'wce' : '../../wce-ote/plugin/plugin.js',
 			'wcelinenumber': '../../wce-ote/plugin/js/line_number.js'
