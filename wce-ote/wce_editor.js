@@ -32,11 +32,25 @@
     Programm erhalten haben. Wenn nicht, siehe <http://www.gnu.org/licenses/>.
 */
 
-function setWceEditor(_id, rtl, finishCallback, lang, myBaseURL, getWitness, getWitnessLang) {
-	if (myBaseURL && typeof myBaseURL != "undefined" && myBaseURL !== '') {
-		tinymce.baseURL = myBaseURL;
+// required: _id
+// optional with default: rtl, lang, getWitness, getWitnessLang
+// optional no default needed: myBaseURL?, finishCallback
+// ones to make optional with default: toolbar, 
+// ones to make optional without default: save_onsavecallback (required is save in toolbar)
+
+function setWceEditor(_id, finishCallback, getWitness, getWitnessLang, options) {
+	if (typeof options === 'undefined') {
+		options = {};
+	}
+
+	if (options.myBaseURL && typeof options.myBaseURL != "undefined" && options.myBaseURL !== '') {
+		tinymce.baseURL = options.myBaseURL;
 		tinymce.baseURI = new tinymce.util.URI(tinymce.baseURL);
 	}
+	
+	console.log(options);
+	let test = (options.rtl) ? "rtl" : "ltr";
+	console.log(test);
 
 	tinymce.init({
 		// General options
@@ -55,8 +69,8 @@ function setWceEditor(_id, rtl, finishCallback, lang, myBaseURL, getWitness, get
 		save_onsavecallback : function() {
 			if (saveDataToDB) saveDataToDB(true);
 		},
-		directionality : (rtl) ? "rtl" : "ltr",
-		language : (lang) ? (lang.indexOf('de') == 0 ? "de" : "en") : "en",
+		directionality : (options.rtl) ? "rtl" : "ltr",
+		language : (options.language) ? (options.language.indexOf('de') == 0 ? "de" : "en") : "en",
 		witness : (getWitness) ? getWitness : "",
 		manuscriptLang : (getWitnessLang) ? getWitnessLang : "",
 		plugins : "pagebreak,save,print,contextmenu,fullscreen,wordcount,autosave,paste,charmap,code,noneditable",
@@ -79,13 +93,14 @@ function setWceEditor(_id, rtl, finishCallback, lang, myBaseURL, getWitness, get
 		theme_advanced_statusbar_location : "bottom",
 		theme_advanced_resizing : false,
 		setup : function(ed) {
+			
 			ed.on('change', wceOnContentsChange);
 			ed.on('init', function(e) {// Once initialized, tell the editor to go fullscreen
 				addMenuItems(tinyMCE.activeEditor);
 				if (finishCallback)
 					finishCallback();
 			});
-		}
+		}	
 	});
 }
 
@@ -170,8 +185,11 @@ function setTEI(teiStringInput) {
 
 /**
 	NTVMR specific function to save straight to the NTVMR database
+
+	Cat: Therefore is should be in the NTVMR code not here.
 */
 function saveDataToDB() {
+	console.log('trying to save to NTVMR')
 	if (!tinyMCE.activeEditor.isDirty())
 		return;
 
