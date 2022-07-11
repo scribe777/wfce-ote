@@ -38,7 +38,14 @@
 // ones to make optional with default: toolbar, 
 // ones to make optional without default: save_onsavecallback (required is save in toolbar)
 
-function setWceEditor(_id, finishCallback, getWitness, getWitnessLang, options) {
+
+/** Initialises the editor
+
+@param {string} _id - The html id value of the text area to transform into the editor.
+@param {object} options - the optional settings to use when initialising the editor.
+
+*/
+function setWceEditor(_id, options) {
 	if (typeof options === 'undefined') {
 		options = {};
 	}
@@ -49,7 +56,7 @@ function setWceEditor(_id, finishCallback, getWitness, getWitnessLang, options) 
 	}
 	
 	console.log(options);
-	let test = (options.rtl) ? "rtl" : "ltr";
+	let test = (options.witnessLang) ? options.witnessLang : "";
 	console.log(test);
 
 	tinymce.init({
@@ -71,8 +78,8 @@ function setWceEditor(_id, finishCallback, getWitness, getWitnessLang, options) 
 		},
 		directionality : (options.rtl) ? "rtl" : "ltr",
 		language : (options.language) ? (options.language.indexOf('de') == 0 ? "de" : "en") : "en",
-		witness : (getWitness) ? getWitness : "",
-		manuscriptLang : (getWitnessLang) ? getWitnessLang : "",
+		witness : (options.witnessSiglum) ? options.witnessSiglum : "",
+		manuscriptLang : (options.witnessLang) ? options.witnessLang : "",
 		plugins : "pagebreak,save,print,contextmenu,fullscreen,wordcount,autosave,paste,charmap,code,noneditable",
 		contextmenu: 'cut copy paste',
 		charmap : charmap_greek.concat(charmap_latin).concat(charmap_slavistic),
@@ -95,10 +102,10 @@ function setWceEditor(_id, finishCallback, getWitness, getWitnessLang, options) 
 		setup : function(ed) {
 			
 			ed.on('change', wceOnContentsChange);
-			ed.on('init', function(e) {// Once initialized, tell the editor to go fullscreen
+			ed.on('init', function(e) {  // Once initialized, tell the editor to go fullscreen
 				addMenuItems(tinyMCE.activeEditor);
-				if (finishCallback)
-					finishCallback();
+				if (options.finishCallback)
+					options.finishCallback();
 			});
 		}	
 	});
