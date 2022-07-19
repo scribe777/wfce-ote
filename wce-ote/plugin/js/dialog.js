@@ -17,5 +17,4 @@ var ExampleDialog = {
 	}
 };
 
-//当popup初始化完毕的时候触发 tinyMCEPopup.onInit.add(SomeObject.init, SomeObject);
 tinyMCEPopup.onInit.add(ExampleDialog.init, ExampleDialog);

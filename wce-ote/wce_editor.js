@@ -65,7 +65,6 @@ function setWceEditor(_id, rtl, finishCallback, lang, myBaseURL, getWitness, get
 		plugins : "pagebreak,save,print,contextmenu,fullscreen,wordcount,autosave,paste,charmap,code,noneditable",
 		contextmenu: 'cut copy paste',
 		charmap : charmap_greek.concat(charmap_latin).concat(charmap_slavistic),
-//		plugins : "compat3x,pagebreak,save,layer,print,contextmenu,fullscreen,wordcount,autosave,paste",
 		external_plugins: {
 			'wce' : '../../wce-ote/plugin/plugin.js',
 			'wcelinenumber': '../../wce-ote/plugin/js/line_number.js'
@@ -117,32 +116,6 @@ function setData(msg) {
 function getData() {
 	return tinyMCE.activeEditor.getContent();
 }
-/*
-// The following parameters should be set before tei-output:
-// @param {String} bookNumber: book number, default 00;
-// @param {Number} pageNumber: page start number, default 0,
-// @param {Number} chapterNumber: chapter number, default 0, only use the if htmlInput not start with chapter/verse;
-// @param {Number} verseNumber: verseNumber, default 0, only use the if if htmlInput not start with chapter/verse;
-// @param {Number} wordNumber: word start number for <w>, default 0, only use the if htmlInput not start with chapter/verse;
-// @param {Number} columnNumber: column number, defualt 0
-// @param {Number} witValue: value for wit, defualt 0
-function setTeiIndexData(bookNumber, witValue, manuscriptLang) {
-	var wid = getTeiIndexData();
-	if (bookNumber) {
-		wid['bookNumber'] = bookNumber;
-	}
-	if (witValue) {
-		wid['witValue'] = witValue;
-	}
-	if (manuscriptLang) {
-		wid['manuscriptLang'] = manuscriptLang;
-	}
-}
-
-function getTeiIndexData() {
-	return tinyMCE.activeEditor.teiIndexData;
-}
-*/
 
 /** Get TEI String from editor html content
 */
@@ -164,10 +137,6 @@ function setTEI(teiStringInput) {
 		if (htmlContent)
 			setData(htmlContent);
 	}
-	/*var teiIndexData = result['teiIndexData'];
-	if (teiIndexData) {
-		tinyMCE.activeEditor.teiIndexData = teiIndexData;
-	}*/
 	resetCounter(); //for resetting the counter each time this method is called
 	return 0;
 }
@@ -252,7 +221,6 @@ function addMenuItems(ed) {
 		if (this.settings.context == 'contextmenu') contextMenu = this;
 	}} ];
 
-	console.log('fix context menu');
 	ed.on('contextmenu', function(event) {
 		var ed = $(this)[0];
 		var items = contextMenu.items();
@@ -264,7 +232,6 @@ function addMenuItems(ed) {
 
 		// added my options
 		if (ed.selection.getNode().getAttribute('wce') != null && ed.selection.getNode().getAttribute('wce').substring(4, 16) == 'verse_number') {
-			//wceAttr = ed.selection.getNode().getAttribute('wce');
 			menu.add({ text : '|'});
 			menu.add({
 				text : tinymce.translate('initial_portion'),

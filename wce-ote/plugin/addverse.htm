@@ -268,7 +268,6 @@
             return;
         } else if ($('#insertLectionRadio').is(':checked')) {
             var newLectionNr = $('#insertLectionNumber').val().trim();
-            //newLectionNr = newLectionNr.replace(/\D/g,'');
             if (newLectionNr != '') {
                 ed.insertContent('<span class="lection_number mceNonEditable" wce="__t=lection_number&__n=&number=' + newLectionNr + '"> ' + 'Lec' + '</span> ');
             }
