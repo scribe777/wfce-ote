@@ -1896,6 +1896,11 @@ function getTeiByHtml(inputString, args) {
 
 		// DOM to String
 		var str = xml2String($newRoot);
+
+		if (args.add_newline_for_breaks === true) {
+			str = add_linebreaks(str);
+		}		
+
 		if (!str)
 			return '';
 
@@ -1906,6 +1911,11 @@ function getTeiByHtml(inputString, args) {
 			str = str.replace("<text>", '<text xml:lang="' + g_manuscriptLang + '">');
 		str = str.replace("</TEI>", "</body></text></TEI>");
 		str = str.replace(/OMISSION/g, "");
+		return str;
+	};
+
+	var add_linebreaks = function(str) {
+		str = str.replace(/(<[g|p|c|l]b)/g, '\n$1');
 		return str;
 	};
 

@@ -73,6 +73,7 @@ function setWceEditor(_id, rtl, finishCallback, lang, myBaseURL, getWitness, get
 		show_linenumber:true,//default false,
 		ignoreShiftNotEn: [188, 190],
 		keyboardDebug: true,
+		add_newline_for_breaks: true,
 		init_instance_callback : "wceReload",
 		// Theme options
 		toolbar : "undo redo charmap | code | save print contextmenu cut copy pastetext pasteword fullscreen | "+
