@@ -32,7 +32,7 @@
     Programm erhalten haben. Wenn nicht, siehe <http://www.gnu.org/licenses/>.
 */
 
-function setWceEditor(_id, rtl, finishCallback, lang, myBaseURL, getWitness, getWitnessLang) {
+function setWceEditor(_id, rtl, finishCallback, lang, myBaseURL, getWitness, getWitnessLang, addSpaces) {
 	if (myBaseURL && typeof myBaseURL != "undefined" && myBaseURL !== '') {
 		tinymce.baseURL = myBaseURL;
 		tinymce.baseURI = new tinymce.util.URI(tinymce.baseURL);
@@ -73,6 +73,7 @@ function setWceEditor(_id, rtl, finishCallback, lang, myBaseURL, getWitness, get
 		show_linenumber:true,//default false,
 		ignoreShiftNotEn: [188, 190],
 		keyboardDebug: true,
+		add_spaces: (addSpaces) ? addSpaces : true,
 		init_instance_callback : "wceReload",
 		// Theme options
 		toolbar : "undo redo charmap | code | save print contextmenu cut copy pastetext pasteword fullscreen | "+

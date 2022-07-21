@@ -1896,6 +1896,11 @@ function getTeiByHtml(inputString, args) {
 
 		// DOM to String
 		var str = xml2String($newRoot);
+
+		if (args.add_spaces === true) {
+			str = add_spaces(str);
+		}
+
 		if (!str)
 			return '';
 
@@ -1906,6 +1911,32 @@ function getTeiByHtml(inputString, args) {
 			str = str.replace("<text>", '<text xml:lang="' + g_manuscriptLang + '">');
 		str = str.replace("</TEI>", "</body></text></TEI>");
 		str = str.replace(/OMISSION/g, "");
+		return str;
+	};
+
+	var add_spaces = function (str) {
+		str = str.replace(/<\/w><w>/g, '</w> <w>');
+		str = str.replace(/<\/w><w/g, '</w> <w');
+		str = str.replace(/<\/pc><w>/g, '</pc> <w>');
+		str = str.replace(/<\/pc><w/g, '</pc> <w');
+		// we shouldn't need the next two because the whole word ex is fixed
+		//str = str.replace(/<\/pc><ex/g, '</pc> <ex');
+		//str = str.replace(/<\/ex><w>/g, '</ex> <w>');
+		str = str.replace(/<\/seg><w>/g, '</seg> <w>');
+		str = str.replace(/<\/pc><app>/g, '</pc> <app>');
+		str = str.replace(/<\/note><w>/g, '</note> <w>');
+		str = str.replace(/<\/note><\/ab><ab/g, '</note></ab> <ab');
+		str = str.replace(/<\/w><\/ab><ab/g, '</w></ab> <ab');
+		str = str.replace(/<\/note><app/g, '</note> <app');
+		str = str.replace(/<\/app><w>/g, '</app> <w>');
+		str = str.replace(/<\/w><app/g, '</w> <app');
+		str = str.replace(/<\/w><space/g, '</w> <space');
+		str = str.replace(/<\/w><gap /g, '</w> <gap ');
+		str = str.replace(/ <\/ab><ab/g, '</ab> <ab');
+		str = str.replace(/<\/ab><ab/g, '</ab> <ab');
+		str = str.replace(/(<gap [^>]*\/>)<w>/g, '$1 <w>');
+		str = str.replace(/<\/w><\/ab><\/div>([^ ])/g, '</w></ab></div> $1');
+		str = str.replace(/<\/pc><\/ab><\/div>([^ ])/g, '</pc></ab></div> $1');
 		return str;
 	};
 
