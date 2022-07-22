@@ -1915,21 +1915,22 @@ function getTeiByHtml(inputString, args) {
 	};
 
 	var add_spaces = function (str) {
-		str = str.replace(/<\/w><w>/g, '</w> <w>');
-		str = str.replace(/<\/w><w/g, '</w> <w');
-		str = str.replace(/<\/pc><w>/g, '</pc> <w>');
-		str = str.replace(/<\/pc><w/g, '</pc> <w');
+		str = str.replace(/<\/w><w([>| ])/g, '</w> <w$1');
+		str = str.replace(/<\/pc><w([>| ])/g, '</pc> <w$1');
+		str = str.replace(/<\/seg><w([>| ])/g, '</seg> <w$1');
+		str = str.replace(/<\/w><app([>| ])/g, '</w> <app$1');
+		str = str.replace(/<\/app><w([>| ])/g, '</app> <w$1');
+		str = str.replace(/<\/pc><app([>| ])/g, '</pc> <app$1');
+
 		// we shouldn't need the next two because the whole word ex is fixed
 		//str = str.replace(/<\/pc><ex/g, '</pc> <ex');
 		//str = str.replace(/<\/ex><w>/g, '</ex> <w>');
-		str = str.replace(/<\/seg><w>/g, '</seg> <w>');
-		str = str.replace(/<\/pc><app>/g, '</pc> <app>');
+		
+		
 		str = str.replace(/<\/note><w>/g, '</note> <w>');
 		str = str.replace(/<\/note><\/ab><ab/g, '</note></ab> <ab');
 		str = str.replace(/<\/w><\/ab><ab/g, '</w></ab> <ab');
 		str = str.replace(/<\/note><app/g, '</note> <app');
-		str = str.replace(/<\/app><w>/g, '</app> <w>');
-		str = str.replace(/<\/w><app/g, '</w> <app');
 		str = str.replace(/<\/w><space/g, '</w> <space');
 		str = str.replace(/<\/w><gap /g, '</w> <gap ');
 		str = str.replace(/ <\/ab><ab/g, '</ab> <ab');

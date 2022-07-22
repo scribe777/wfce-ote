@@ -1051,6 +1051,85 @@ teiToHtmlAndBackWithChange.forEach((value, key, map) => {
 	});
 });
 
+// test layout of export (word spaces)
+const exportSpaces = new Map([
+  [ 'test spaces are added to export w and pc',
+    ['<w>test</w><w>word</w>spaces<w></w><pc>.</pc><w>with</w><w>punctuation</w><pc>.</pc>',
+     'test word spaces <span class=\"pc\" wce=\"__t=pc\"><span class=\"format_start mceNonEditable\">‹</span>.' +
+     '<span class=\"format_end mceNonEditable\">›</span></span> with punctuation <span class=\"pc\" wce=\"__t=pc\">' +
+     '<span class=\"format_start mceNonEditable\">‹</span>.<span class=\"format_end mceNonEditable\">›</span></span> ',
+     '<w>test</w> <w>word</w> <w>spaces</w><pc>.</pc> <w>with</w> <w>punctuation</w><pc>.</pc>'
+    ]
+  ],
+  [ 'test spaces can be uploaded and exported without problems w and pc',
+    ['<w>test</w> <w>word</w> <w>spaces</w><pc>.</pc> <w>with</w> <w>punctuation</w><pc>.</pc>',
+     'test word spaces <span class=\"pc\" wce=\"__t=pc\"><span class=\"format_start mceNonEditable\">‹</span>.' +
+     '<span class=\"format_end mceNonEditable\">›</span></span> with punctuation <span class=\"pc\" wce=\"__t=pc\">' +
+     '<span class=\"format_start mceNonEditable\">‹</span>.<span class=\"format_end mceNonEditable\">›</span></span> ',
+     '<w>test</w> <w>word</w> <w>spaces</w><pc>.</pc> <w>with</w> <w>punctuation</w><pc>.</pc>'
+    ]
+  ],
+  [ 'test spaces are added to export seg and w',
+    ['<w>test</w><w>a</w><w>seg</w><seg type="margin" subtype="pageright"><w>seg</w><w>content</w></seg><w>with</w>' +
+     '<w>spaces</w>',
+     'test a seg <span class=\"paratext\" wce=\"__t=paratext&amp;__n=&amp;marginals_text=seg%20content%20' +
+     '&amp;fw_type=isolated&amp;fw_type_other=&amp;paratext_position=pageright&amp;paratext_position_other=\">' +
+     '<span class=\"format_start mceNonEditable\">‹</span>fw<span class=\"format_end mceNonEditable\">›</span>' +
+     '</span>with spaces ',
+     '<w>test</w> <w>a</w> <w>seg</w><seg type="margin" subtype="pageright"><w>seg</w> <w>content</w></seg> ' +
+     '<w>with</w> <w>spaces</w>'
+    ]
+  ],
+  [ 'test spaces are added to export app and w combinations',
+    ['<w>test</w><w>spaces</w><app><rdg type="orig" hand="firsthand"><w>arround</w></rdg>' +
+    '<rdg type="corr" hand="corrector"><w>around</w></rdg></app><w>corrections</w>',
+     'test spaces <span class=\"corr\" wce_orig=\"arround\" wce=\"__t=corr&amp;__n=corrector' +
+     '&amp;corrector_name_other=&amp;corrector_name=corrector&amp;reading=corr&amp;' +
+     'original_firsthand_reading=arround&amp;common_firsthand_partial=&amp;deletion_erased=0&amp;' +
+     'deletion_underline=0&amp;deletion_underdot=0&amp;deletion_strikethrough=0&amp;deletion_vertical_line=0' +
+     '&amp;deletion_deletion_hooks=0&amp;deletion_transposition_marks=0&amp;deletion_other=0&amp;deletion=null' +
+     '&amp;firsthand_partial=&amp;partial=&amp;corrector_text=around%20&amp;place_corr=\">' +
+     '<span class=\"format_start mceNonEditable\">‹</span>arround<span class=\"format_end mceNonEditable\">›</span>' +
+     '</span> corrections ',
+     '<w>test</w> <w>spaces</w> <app><rdg type="orig" hand="firsthand"><w>arround</w></rdg>' +
+     '<rdg type="corr" hand="corrector"><w>around</w></rdg></app> <w>corrections</w>'
+    ]
+  ],
+  [ 'test spaces are added to export app and pc combination',
+    ['<w>test</w><w>spaces</w><pc>.</pc><app><rdg type="orig" hand="firsthand"><w>arround</w></rdg>' +
+     '<rdg type="corr" hand="corrector"><w>around</w></rdg></app><w>corrections</w>',
+     'test spaces <span class=\"pc\" wce=\"__t=pc\"><span class=\"format_start mceNonEditable\">‹</span>.' +
+     '<span class=\"format_end mceNonEditable\">›</span></span> <span class=\"corr\" wce_orig=\"arround\" ' +
+     'wce=\"__t=corr&amp;__n=corrector&amp;corrector_name_other=&amp;corrector_name=corrector&amp;reading=corr' +
+     '&amp;original_firsthand_reading=arround&amp;common_firsthand_partial=&amp;deletion_erased=0&amp;' +
+     'deletion_underline=0&amp;deletion_underdot=0&amp;deletion_strikethrough=0&amp;deletion_vertical_line=0' +
+     '&amp;deletion_deletion_hooks=0&amp;deletion_transposition_marks=0&amp;deletion_other=0&amp;deletion=null' +
+     '&amp;firsthand_partial=&amp;partial=&amp;corrector_text=around%20&amp;place_corr=\">' +
+     '<span class=\"format_start mceNonEditable\">‹</span>arround<span class=\"format_end mceNonEditable\">›</span>' +
+     '</span> corrections ',
+     '<w>test</w> <w>spaces</w><pc>.</pc> <app><rdg type="orig" hand="firsthand"><w>arround</w></rdg>' +
+     '<rdg type="corr" hand="corrector"><w>around</w></rdg></app> <w>corrections</w>'
+    ]
+  ],
+]);
+
+exportSpaces.forEach((value, key, map) => {
+	test('TEI2HTML: ' + key, () => {
+		let testInput, expectedOutput, html;
+		testInput = xmlHead + value[0] + xmlTail;
+		expectedOutput = '<TEMP>' + value[1] + '</TEMP>';
+		html = wce_tei.getHtmlByTei(testInput);
+		expect(html.htmlString).toBe(expectedOutput);
+	});
+  test('HTML2TEI: ' + key, () => {
+		let testInput, expectedOutput, xml;
+		testInput = value[1];
+		expectedOutput = xmlHead + value[2] + xmlTail;
+		xml = wce_tei.getTeiByHtml(testInput, {'add_spaces': true});
+		expect(xml).toBe(expectedOutput);
+	});
+});
+
 
 // this does not test what I was hoping it would
 test ('test export of abbr where supplied and overline need flipping', () => {
