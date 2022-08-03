@@ -1915,7 +1915,7 @@ function getTeiByHtml(inputString, args) {
 	};
 
 	var add_linebreaks = function(str) {
-		str = str.replace(/(<[g|p|c|l]b)/g, '\n$1');
+		str = str.replace(/(<[g|p|c|l]b )/g, '\n$1');
 		return str;
 	};
 
