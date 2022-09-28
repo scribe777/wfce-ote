@@ -1812,7 +1812,6 @@ function getTeiByHtml(inputString, clientOptions) {
 		return str;
 	};
 
-<<<<<<< HEAD
 	var add_spaces = function (str) {
 		str = str.replace(/<\/w><w([>| ])/g, '</w> <w$1');
 		str = str.replace(/<\/pc><w([>| ])/g, '</pc> <w$1');
@@ -1829,10 +1828,11 @@ function getTeiByHtml(inputString, clientOptions) {
 		str = str.replace(/(<gap [^>]*\/>)<w([>| ])/g, '$1 <w$2');
 		str = str.replace(/<\/w><\/ab><\/div>([^ ])/g, '</w></ab></div> $1');
 		str = str.replace(/<\/pc><\/ab><\/div>([^ ])/g, '</pc></ab></div> $1');
-=======
+		return str;
+	};
+
 	var add_linebreaks = function(str) {
 		str = str.replace(/(<[g|p|c|l]b )/g, '\n$1');
->>>>>>> master
 		return str;
 	};
 
