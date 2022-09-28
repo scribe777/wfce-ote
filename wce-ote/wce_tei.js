@@ -1693,13 +1693,13 @@ function getHtmlByTei(inputString) {
  */
 
 // getTEIXml
-function getTeiByHtml(inputString, args) {
+function getTeiByHtml(inputString, clientOptions) {
 
 	if (!inputString || $.trim(inputString) == '') {
 		return '';
 	}
 
-	if (!args) {
+	if (!clientOptions) {
 		return '';
 	}
 
@@ -1707,8 +1707,8 @@ function getTeiByHtml(inputString, args) {
 	// g_bookNumber, g_pageNumber, g_chapterNumber, g_verseNumber, g_wordNumber, g_columnNumber, g_witValue,
 	//TODO: Check, if those values really have to be stored in an array. Aren't they just coming from the export routine directly (except for book, witness and manuscript language)
 	var g_bookNumber = '';
-	var g_witValue = args.witness;
-	var g_manuscriptLang = args.manuscriptLang;
+	var g_witValue = clientOptions.getWitness;
+	var g_manuscriptLang = clientOptions.getWitnessLang;
 
 	if(g_witValue && (g_witValue instanceof Function || typeof g_witValue == "function" || typeof g_witValue == "Function")){
 		g_witValue=g_witValue();
@@ -1791,6 +1791,11 @@ function getTeiByHtml(inputString, args) {
 
 		// DOM to String
 		var str = xml2String($newRoot);
+
+		if (clientOptions.addLineBreaks) {
+			str = add_linebreaks(str);
+		}		
+
 		if (!str)
 			return '';
 
@@ -1801,6 +1806,11 @@ function getTeiByHtml(inputString, args) {
 			str = str.replace("<text>", '<text xml:lang="' + g_manuscriptLang + '">');
 		str = str.replace("</TEI>", "</body></text></TEI>");
 		str = str.replace(/OMISSION/g, "");
+		return str;
+	};
+
+	var add_linebreaks = function(str) {
+		str = str.replace(/(<[g|p|c|l]b )/g, '\n$1');
 		return str;
 	};
 
