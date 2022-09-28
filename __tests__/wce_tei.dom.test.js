@@ -1192,12 +1192,76 @@ exportSpaces.forEach((value, key, map) => {
 		expectedOutput = '<TEMP>' + value[1] + '</TEMP>';
 		html = wce_tei.getHtmlByTei(testInput);
 		expect(html.htmlString).toBe(expectedOutput);
-	});
+  });
   test('HTML2TEI: ' + key, () => {
 		let testInput, expectedOutput, xml;
 		testInput = value[1];
 		expectedOutput = xmlHead + value[2] + xmlTail;
 		xml = wce_tei.getTeiByHtml(testInput, {'add_spaces': true});
+		expect(xml).toBe(expectedOutput);
+	});
+});
+
+
+// test layout of export (linebreaks)
+const exportLayout = new Map([
+  [ 'test input without linebreaks in XML get them added on export',
+    ['<pb n="1r" type="folio" xml:id="P1r-"/><cb n="P1rC1-"/><lb n="P1rC1L-"/><w>test</w><w>that</w><w>line</w>' +
+     '<w>breaks</w><lb n="P1rC1L-"/><w>are</w><w>added</w><w>in</w><w>XML</w>',
+     '<span class=\"mceNonEditable brea\" id=\"pb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;' +
+     'break_type=pb&amp;number=1&amp;rv=r&amp;fibre_type=&amp;facs=&amp;lb_alignment=&amp;hasBreak=no\">' +
+     '<span class=\"format_start mceNonEditable\">‹</span><br/>PB 1r<span class=\"format_end mceNonEditable\">›</span>' +
+     '</span><span class=\"mceNonEditable brea\" id=\"cb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;' +
+     'break_type=cb&amp;number=1&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
+     '<span class=\"format_start mceNonEditable\">‹</span><br/>CB 1<span class=\"format_end mceNonEditable\">›</span>' +
+     '</span><span class=\"mceNonEditable brea\" id=\"lb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;break_type=lb&amp;' +
+     'number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
+     '<span class=\"format_start mceNonEditable\">‹</span><br/>↵ <span class=\"format_end mceNonEditable\">›</span>' +
+     '</span> test that line breaks <span class=\"mceNonEditable brea\" wce=\"__t=brea&amp;__n=&amp;' +
+     'break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
+     '<span class=\"format_start mceNonEditable\">‹</span><br/>↵ <span class=\"format_end mceNonEditable\">›</span>' +
+     '</span> are added in XML ',
+     '\n<pb n="1r" type="folio" xml:id="P1r-undefined"/>\n<cb n="P1rC1-undefined"/>\n<lb n="P1rC1L-undefined"/><w>test</w><w>that</w><w>line</w>' +
+     '<w>breaks</w>\n<lb n="P1rC1L-undefined"/><w>are</w><w>added</w><w>in</w><w>XML</w>'
+    ]
+  ],
+  [ 'test input with linebreaks in XML still has them on export',
+    ['\n<pb n="1r" type="folio" xml:id="P1r-"/>\n<cb n="P1rC1-"/>\n<lb n="P1rC1L-"/><w>test</w><w>that</w><w>line</w>' +
+      '<w>breaks</w>\n<lb n="P1rC1L-"/><w>are</w><w>added</w><w>in</w><w>XML</w>',
+      '<span class=\"mceNonEditable brea\" id=\"pb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;' +
+      'break_type=pb&amp;number=1&amp;rv=r&amp;fibre_type=&amp;facs=&amp;lb_alignment=&amp;hasBreak=no\">' +
+      '<span class=\"format_start mceNonEditable\">‹</span><br/>PB 1r<span class=\"format_end mceNonEditable\">›</span>' +
+      '</span><span class=\"mceNonEditable brea\" id=\"cb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;' +
+      'break_type=cb&amp;number=1&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
+      '<span class=\"format_start mceNonEditable\">‹</span><br/>CB 1<span class=\"format_end mceNonEditable\">›</span>' +
+      '</span><span class=\"mceNonEditable brea\" id=\"lb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;break_type=lb&amp;' +
+      'number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
+      '<span class=\"format_start mceNonEditable\">‹</span><br/>↵ <span class=\"format_end mceNonEditable\">›</span>' +
+      '</span> test that line breaks <span class=\"mceNonEditable brea\" wce=\"__t=brea&amp;__n=&amp;' +
+      'break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
+      '<span class=\"format_start mceNonEditable\">‹</span><br/>↵ <span class=\"format_end mceNonEditable\">›</span>' +
+      '</span> are added in XML ',
+      '\n<pb n="1r" type="folio" xml:id="P1r-undefined"/>\n<cb n="P1rC1-undefined"/>\n<lb n="P1rC1L-undefined"/><w>test</w><w>that</w><w>line</w>' +
+      '<w>breaks</w>\n<lb n="P1rC1L-undefined"/><w>are</w><w>added</w><w>in</w><w>XML</w>'
+    ]
+  ]
+]);
+
+exportLayout.forEach((value, key, map) => {
+	test('TEI2HTML: ' + key, () => {
+		let testInput, expectedOutput, html, idRegex;
+		testInput = xmlHead + value[0] + xmlTail;
+    idRegex = /id="(.)b_(\d)_\d+"/g;
+		expectedOutput = '<TEMP>' + value[1] + '</TEMP>';
+		html = wce_tei.getHtmlByTei(testInput);
+    modifiedHtml = html.htmlString.replace(idRegex, 'id="$1b_$2_MATH.RAND"');
+		expect(modifiedHtml).toBe(expectedOutput);
+	});
+  test('HTML2TEI: ' + key, () => {
+		let testInput, expectedOutput, xml;
+		testInput = value[1];
+		expectedOutput = xmlHead + value[2] + xmlTail;
+		xml = wce_tei.getTeiByHtml(testInput, {'addLineBreaks': true});
 		expect(xml).toBe(expectedOutput);
 	});
 });
