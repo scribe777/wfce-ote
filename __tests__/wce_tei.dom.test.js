@@ -1197,7 +1197,7 @@ exportSpaces.forEach((value, key, map) => {
 		let testInput, expectedOutput, xml;
 		testInput = value[1];
 		expectedOutput = xmlHead + value[2] + xmlTail;
-		xml = wce_tei.getTeiByHtml(testInput, {'add_spaces': true});
+		xml = wce_tei.getTeiByHtml(testInput, {'addSpaces': true});
 		expect(xml).toBe(expectedOutput);
 	});
 });
