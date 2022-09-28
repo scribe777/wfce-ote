@@ -240,16 +240,7 @@
 				internal_editor: true,
 				toolbar : "undo redo charmap | code removeformat | print contextmenu paste fullscreen | "+
 					"breaks illegible decoration abbreviation paratext punctuation",
-/*
 
-				// Theme options
-				theme_advanced_buttons1 : "undo,redo,charmap,|,code,removeformat,|,print,contextmenu,paste,fullscreen,|,breaks,illegible,decoration,abbreviation,paratext,punctuation",
-				theme_advanced_buttons2 : "",
-				theme_advanced_toolbar_location : "top",
-				theme_advanced_toolbar_align : "left",
-				theme_advanced_statusbar_location : "bottom",
-				theme_advanced_resizing : false,
-*/
 				setup : function(ed) {
 					ed.on('change', saveCurrCorrector);
 				}
@@ -279,7 +270,7 @@
 						$('#firsthand_reading').html($('#original_firsthand_reading').val());
 					}
 
-					$(':input').change(function() {
+					$(':input').on('change', function() {
 						saveCurrCorrector();
 					});
 
@@ -505,7 +496,6 @@
 
 			$('#correction_ul').append('<li id="' + _id + '" ><img title="Delete" onclick="delCorrector(\'' + _id + '\');" src="img/del.gif" style="cursor:pointer; width:10px; height:10px; margin-right:10px" border="1"  /> <a href="javascript:void(0)" style="text-decoration:none" title="' + _id + '" onclick="selectCorrItem(\'' + _id + '\');">' + corrector_name + '</a></li>');
 
-			//$('#content_fieldset').attr('disabled', false);
 			checkstatus_firsthand();
 			checkstatus_correction();
 			checkstatus_corr_position();

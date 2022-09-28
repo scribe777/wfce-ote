@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	<title>{#metadata_title}</title>
-	<script type="text/javascript" src="../jquery.js"></script>  
+	<script type="text/javascript" src="../jquery.js"></script>
 	<script type="text/javascript" src="../../utils/mctabs.js"></script>
 	<script type="text/javascript" src="../../utils/form_utils.js"></script>
 	<script type="text/javascript" src="js/wce.js"></script>
@@ -24,14 +24,14 @@
 			<div id="title_panel" class="panel current" style="height:auto">
 				<fieldset>
 				<legend>{#meta_title_data}</legend>
-				
+
 					<!-- <titleStmt>
 					<div id="titleStmtBox">
 					<div id="titleStmt_tr">
 					<span>{#meta_title}</span>
 					</div>
-					
-					
+
+
 					</div> -->
 					<table  id="titleStmt_table" border="0" cellpadding="4" cellspacing="0" width="100%">
 					<!-- <titleStmt>
@@ -80,7 +80,7 @@
 					<td>
 						<input id="meta_title_number" xmlValue="n" name="meta_title_number" type="text" value="" size="5" maxlength="" class="required number min1 mceFocus" />
 					</td>
-					</tr> 
+					</tr>
 					</table>
 				</fieldset>
 				<br/>
@@ -152,7 +152,7 @@
 					<!-- </editionStmt> -->
 				</table>
 			</fieldset>
-			<br/>			
+			<br/>
 					<!-- <publicationStmt -->
 					<!-- <publisher> -->
 			<fieldset>
@@ -171,9 +171,9 @@
 							<option value="org">Organisation</option>
 							<option value="person">Person</option>
 						</select> <input type="button" value="+" onclick="boxCopy(this,'meta_publisher_box');" /> <input type="button" value="x" style="color: red; display:none" onclick="boxRemove(this);" />
-					</td> 
+					</td>
 					</tr>
-					 
+
 					<!-- <date> -->
 					<tr id="meta_publication_date_box">
 					<td>
@@ -253,7 +253,7 @@
 					<td>
 						<input xmlValue="_text_" id="meta_msDesc_msName" name="meta_msDesc_msName" type="text" value="" size="30" maxlength="" class="required number min1 mceFocus" />
 					</td>
-					 
+
 					<td>
 						<label>{#language}</label>
 					</td>
@@ -325,7 +325,7 @@
 						<label id="meta_revisionDesc_label" for="meta_revisionDesc">{#meta_revisionDesc}</label>
 					</td>
 					<td>
-						<input xmlValue="_text_" id="meta_revisionDesc" name="meta_revisionDesc" ></input>						
+						<input xmlValue="_text_" id="meta_revisionDesc" name="meta_revisionDesc" ></input>
 					</td>
 					</tr>
 					<!-- </revisionDesc> -->
@@ -349,9 +349,9 @@
 						<label id="meta_TEI_attributes_label" for="meta_TEI_attributes">TEI attributes</label>
 					</td>
 					<td>
-						<textarea id="meta_TEI_attributes" name="meta_TEI_attributes" wrap="off" rows="5" cols="50" placeholder="Enter the attributes you want to set for <TEI>">xmlns="http://www.tei-c.org/ns/1.0" 
-xmlns:xml="http://www.w3.org/XML/1998/namespace" 
-xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+						<textarea id="meta_TEI_attributes" name="meta_TEI_attributes" wrap="off" rows="5" cols="50" placeholder="Enter the attributes you want to set for <TEI>">xmlns="http://www.tei-c.org/ns/1.0"
+xmlns:xml="http://www.w3.org/XML/1998/namespace"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 xsi:schemaLocation="http://www.tei-c.org/ns/1.0 TEI-NTMSS.xsd"</textarea>
 					</td>
 					</tr>
@@ -359,22 +359,22 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 TEI-NTMSS.xsd"</textarea>
 				</fieldset>
 			</div>
 		</div>  </form>
-		<div class="mceActionPanel"> 
+		<div class="mceActionPanel">
 			<input type="button"  name="insert" value="{#insert}" onclick="writeWceMetaData();" />
 			<input type="button"  name="cancel" value="{#cancel}" onclick="tinyMCEPopup.close();" />
 		</div>
 
 <!--<textarea id="tempDiv" rows="15" style="width:100%;height:100%"></textarea>-->
-<script type="text/javascript"> 
+<script type="text/javascript">
 	tinyMCEPopup.onInit.add(function(_ed){
 		ed=_ed;
-		setConstants(); 
+		setConstants();
 		init();
 	});
-		
-	
+
+
 function init() {
-	wce_type = 'wce_metatata'; 
+	wce_type = 'wce_metatata';
 	headerXmlTree = createheaderXmlTree();
 	readMetaData();
 }
@@ -382,19 +382,19 @@ function init() {
 function readMetaData() {
 	var xmlString = ed.wceMetaData;
 	var $xml;
- 	
+
 	if (xmlString) {
-		try { 
+		try {
 			$xml = $($.parseXML(xmlString));
 		} catch (err) {
 
-		} 
+		}
 	}
 
 	if (!$xml) {
 		xmlString = xmlInit();
 		$xml = $($.parseXML(xmlString));
-	} 
+	}
 
 //	 $('#tempDiv').val(xmlString);
 	readXmlToForm($xml);
@@ -407,24 +407,24 @@ function readXmlToForm($xml) {
 			currNode = xTree[currName];
 			if (currName.match(/^_/))
 				continue;
- 
+
 			// wenn _do hat, do
-			if (currNode['_do']) { 
-				$elem = $xml.find(currName); 
+			if (currNode['_do']) {
+				$elem = $xml.find(currName);
 				if (!$elem)
 					continue;
-				
+
 				elememtToForm($elem, currNode);
 			}
 
 			if(currName=='TEI'){
-				$elem = $xml.find(currName)[0];  
+				$elem = $xml.find(currName)[0];
 				var xmlID=$elem.getAttribute('xml:id');
 				if(xmlID){
 					$('#meta_xmlID').val(xmlID);
 				}
 			}
-			
+
 			if (currNode) {
 				readTree(currNode);
 			}
@@ -441,10 +441,10 @@ function elememtToForm($parentElem, xt) {
 			continue;
 
 		$elems = $parentElem.find(currName);
-		currNode = xt[currName]; 
+		currNode = xt[currName];
 
 		boxId = currNode['_box'];
-		if ($elems && boxId) { 
+		if ($elems && boxId) {
 			// templeate Node for copy
 			var templateNode = $('#' + boxId);
 			var tn = templateNode[0].tagName;
@@ -454,17 +454,17 @@ function elememtToForm($parentElem, xt) {
 
 			for ( var i = 0, len = $elems.length; i < len; i++) {
 				$elem = $elems[i]; // xml element titleStmt->title,
-				 
+
 				if($elem.parentNode!=$parentElem[0]) continue;
-				
+
 				// respStmt, ...
 				if (i > 0) {
 					templateNode = $(templateOuthtml);
 					$('#' + boxId).after(templateNode);
 				}
- 
-				$(templateNode).find('[xmlValue]').each(function() {  
-					var tagAttri = $(this).attr('xmlValue'); 
+
+				$(templateNode).find('[xmlValue]').each(function() {
+					var tagAttri = $(this).attr('xmlValue');
 
 					// Ausname bei mata_title
 					if (tagAttri == '?' && boxId == 'meta_title_box') {
@@ -481,11 +481,11 @@ function elememtToForm($parentElem, xt) {
 					} else {
 						textValue = $elem.getAttribute(tagAttri);
 					}
-			  		 
+
 					if (textValue) {
 						if ($(this).tagName == 'label') {
 							$(this).html(textValue);
-						} else { 
+						} else {
 							$(this).val(textValue);
 						}
 					}
@@ -510,7 +510,7 @@ function _getTitleStmtTitleType(i){
 		return ' type="short" ';
 	default:
 		return '';
-	} 
+	}
 }
 
 function _getTitleStmtTitle(i) {
@@ -528,7 +528,7 @@ function _getTitleStmtTitle(i) {
 	default:
 		return '';
 	}
-} 
+}
 
 
 
@@ -540,7 +540,7 @@ function writeWceMetaData() {
 
 			if (!nodeName || nodeName.match(/^_/))
 				continue;
-				
+
 			box = null;
 			var b = true;
 			currNode = xmlNode[nodeName];
@@ -548,11 +548,11 @@ function writeWceMetaData() {
 			if (boxId) {
 				box = $('#' + boxId);
 			}
- 
+
 			while (b) {
 				i++;
 				tmp = '<' + nodeName;
-				
+
 				// attribute or text
 				if (box) {
 					$(box).find('[xmlValue]').each(
@@ -589,7 +589,7 @@ function writeWceMetaData() {
 					// tmp +=' xsi:schemaLocation="http://www.tei-c.org/ns/1.0
 					// TEI-NTMSS.xsd" ';
 				}
- 
+
 				tmp += '>' + textValue;
 				tmp += xmlTreeToStr(currNode);
 				tmp += '</' + nodeName + '>';
@@ -600,7 +600,7 @@ function writeWceMetaData() {
 		return out;
 	}
 	ed.wceMetaData = xmlTreeToStr(headerXmlTree);
-	ed.isNotDirty = 0;  
+	ed.isNotDirty = 0;
 	tinyMCEPopup.close();
 }
 
@@ -618,24 +618,24 @@ function xmlInit() {
 			tmp = '<' + nodeName;
 			currNode = xmlNode[nodeName];
 			boxId=currNode['_box'];
-			
+
 			// add attribute
-			attri = currNode['_attribute']; 
+			attri = currNode['_attribute'];
 			if (attri instanceof Array) {
 				for ( var i = 0, len = attri.length; i < len; i++) {
-					//tmp += " " + attri[i] + '="a" '; //TEST 
+					//tmp += " " + attri[i] + '="a" '; //TEST
 						tmp += " " + attri[i] + '="" ';
 				}
-			} 
-			
+			}
+
 			 //TODO
 			if(nodeName=='TEI'){
 					//tmp +=' xmlns="http://www.tei-c.org/ns/1.0" ';
 					//tmp +=' xmlns:xml="http://www.w3.org/XML/1998/namespace" ';
 					//tmp +=' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ;
-					//tmp +=' xsi:schemaLocation="http://www.tei-c.org/ns/1.0 TEI-NTMSS.xsd" ';  
+					//tmp +=' xsi:schemaLocation="http://www.tei-c.org/ns/1.0 TEI-NTMSS.xsd" ';
 			}
-			 
+
 
 			//tmp += '>' + nodeName; //TEST
 		 	tmp += '>';
@@ -643,24 +643,24 @@ function xmlInit() {
 			tmp += '</' + nodeName + '>';
 
 			//Ausnahme
-			if(boxId && boxId=='meta_title_box'){ 
+			if(boxId && boxId=='meta_title_box'){
 				out +=tmp.replace(/type="[^"]*"/, '');
 			}else{
-				out += tmp;			
+				out += tmp;
 			}
-		
+
 			// count
 			count = currNode['_count'];
 			if (count) {
 				for ( var j = 1; j < count; j++) {
-					if(boxId && boxId=='meta_title_box'){ 
+					if(boxId && boxId=='meta_title_box'){
 						out +=tmp.replace(/type="[^"]*"/, _getTitleStmtTitleType(j));
 					}else {
-						out += tmp; 
+						out += tmp;
 					}
 				}
 			}
-			
+
 		}
 		return out;
 	}
@@ -668,37 +668,37 @@ function xmlInit() {
 }
 
 
-function boxCopy(elem, boxId){ 
-	var parentElem=elem.parentNode,na,_id; 
-	while(parentElem){  
-		na=$(parentElem).attr('xmlCopyId');    
-		if(na){  
+function boxCopy(elem, boxId){
+	var parentElem=elem.parentNode,na,_id;
+	while(parentElem){
+		na=$(parentElem).attr('xmlCopyId');
+		if(na){
 			 var tn =$(parentElem)[0].tagName;
 			 var outhtml = '<' + tn + ' xmlCopyId="'+boxId+'">' + $(parentElem).html()
 								+ '</' + tn + '> ';
-				outhtml=outhtml.replace(/none/,'display'); 
-				$(parentElem).after(outhtml); 
+				outhtml=outhtml.replace(/none/,'display');
+				$(parentElem).after(outhtml);
 			return;
-		} 
+		}
 		parentElem=parentElem.parentNode;
-	} 
- 
+	}
+
 }
 
 function boxRemove(elem){
-	var parentElem=elem.parentNode,na;  
-	while(parentElem){  
-		na=$(parentElem).attr('xmlCopyId');  
-		if(na){ 
+	var parentElem=elem.parentNode,na;
+	while(parentElem){
+		na=$(parentElem).attr('xmlCopyId');
+		if(na){
 			$(parentElem).remove();
 			return;
-		} 
+		}
 		parentElem=parentElem.parentNode;
-	} 
+	}
 }
 
 /*
-* "_do : true" nur f¨¹r eindeutige Element
+* "_do : true" nur fÂ¨Â¹r eindeutige Element
 *
 <TEI xml:id="" xmlns="http://www.tei-c.org/ns/1.0">
 	<teiHeader>
@@ -742,7 +742,7 @@ function boxRemove(elem){
 						<msName xml:lang=""></msName>
 						<altIdentifier type="" xml:lang="">
 							<idno></idno>
-						</altIdentifier> 
+						</altIdentifier>
 					</msIdentifier>
 					<msContents>
 						<msItem>

@@ -14,8 +14,10 @@ const xmlHead = '<?xml  version="1.0" encoding="utf-8"?><!DOCTYPE TEI [<!ENTITY 
 const xmlTail = '</body></text></TEI>';
 
 
+jest.setTimeout(5000000);
+
+
 beforeAll(async () => {
-  jest.setTimeout(200000);
   browser = await puppeteer.launch({
     // for local testing
     // headless: false,
@@ -30,10 +32,16 @@ beforeAll(async () => {
 });
 
 beforeEach(async () => {
+	let frameHandle;
+	jest.setTimeout(5000000);
   page = await browser.newPage();
   await page.goto(`file:${path.join(__dirname, '..', 'wce-ote', 'index.html')}`);
-  let frameHandle = await page.$("iframe[id='wce_editor_ifr']");
-  frame = await frameHandle.contentFrame();
+	page.waitForSelector("#wce_editor_ifr");
+	frameHandle = null;
+	while (frameHandle === null) {
+		frameHandle = await page.$("iframe[id='wce_editor_ifr']");
+	}
+	frame = await frameHandle.contentFrame();
 });
 
 afterAll(async () => {
@@ -190,7 +198,6 @@ test('test pc typed', async () => {
   expect(xmlData).toBe(xmlHead + '<w>my</w><w>words</w><pc>.</pc>' + xmlTail);
 }, 200000);
 
-// check what semicolon on the punctuation menu is doing cause its weird when used in a test [issue #17]
 // pc with menu
 test('test pc with menu', async () => {
   await frame.type('body#tinymce', 'my words');
@@ -215,6 +222,60 @@ test('test pc with menu', async () => {
                         '<span class=\"format_end mceNonEditable\">›</span></span>');
   const xmlData = await page.evaluate(`getTEI()`);
   expect(xmlData).toBe(xmlHead + '<w>my</w><w>words</w><pc>?</pc>' + xmlTail);
+}, 200000);
+
+
+// check other punctuation option [issue #25]
+// pc with menu
+test('test pc with menu', async () => {
+  await frame.type('body#tinymce', 'my words');
+  // open P menu
+  await page.click('button#mceu_17-open');
+  // navigate to the Other option on submenu (quicker to go up!)
+  await page.keyboard.press('ArrowDown');
+  await page.keyboard.press('ArrowRight');
+  await page.keyboard.press('ArrowUp');
+  await page.keyboard.press('Enter');
+
+	const menuFrameHandle = await page.$('div[id="mceu_58"] > div > div > iframe');
+  const menuFrame = await menuFrameHandle.contentFrame();
+	await menuFrame.type('input#pc_char', '-');
+  await menuFrame.click('input#insert');
+  await page.waitForSelector('div[id="mceu_58"]', {hidden: true});
+
+  const htmlData = await page.evaluate(`getData()`);
+  expect(htmlData).toBe('my words<span class=\"pc\" wce=\"__t=pc\">' +
+                        '<span class=\"format_start mceNonEditable\">‹</span>-' +
+                        '<span class=\"format_end mceNonEditable\">›</span></span>');
+  const xmlData = await page.evaluate(`getTEI()`);
+  expect(xmlData).toBe(xmlHead + '<w>my</w><w>words</w><pc>-</pc>' + xmlTail);
+}, 200000);
+
+// pc with menu
+test('test pc with menu (semicolon as I changed the code for that)', async () => {
+  await frame.type('body#tinymce', 'my words');
+  // open P menu
+  await page.click('button#mceu_17-open');
+  // navigate to question mark on submenu
+  await page.keyboard.press('ArrowDown');
+  await page.keyboard.press('ArrowRight');
+  await page.keyboard.press('ArrowDown');
+  await page.keyboard.press('ArrowDown');
+  await page.keyboard.press('ArrowDown');
+  await page.keyboard.press('ArrowDown');
+  await page.keyboard.press('ArrowDown');
+  await page.keyboard.press('ArrowDown');
+  await page.keyboard.press('ArrowDown');
+  await page.keyboard.press('ArrowDown');
+	await page.keyboard.press('ArrowDown');
+  await page.keyboard.press('Enter');
+
+  const htmlData = await page.evaluate(`getData()`);
+  expect(htmlData).toBe('my words<span class=\"pc\" wce_orig=\"\" wce=\"__t=pc\">' +
+                        '<span class=\"format_start mceNonEditable\">‹</span>;' +
+                        '<span class=\"format_end mceNonEditable\">›</span></span>');
+  const xmlData = await page.evaluate(`getTEI()`);
+  expect(xmlData).toBe(xmlHead + '<w>my</w><w>words</w><pc>;</pc>' + xmlTail);
 }, 200000);
 
 // abbr
@@ -877,7 +938,7 @@ test('a simple correction with visible firsthand', async () => {
   await menuFrame.click('input#insert');
 
   const htmlData = await page.evaluate(`getData()`);
-  expect(htmlData).toBe('a <span class=\"corr\" wce_orig=\"smple\" wce=\"__t=corr&amp;__n=corrector&amp;help=Help&amp;original_firsthand_reading=smple&amp;common_firsthand_partial=&amp;reading=corr&amp;corrector_name=corrector&amp;corrector_name_other=&amp;place_corr=&amp;place_corr_other=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_deletion_hooks=0&amp;deletion_transposition_marks=0&amp;deletion_other=0&amp;deletion=null&amp;firsthand_partial=&amp;partial=&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;corrector_text=simple\"><span class=\"format_start mceNonEditable\">‹</span>smple<span class=\"format_end mceNonEditable\">›</span></span> correction');
+  expect(htmlData).toBe('a <span class=\"corr\" wce_orig=\"smple\" wce=\"__t=corr&amp;__n=corrector&amp;help=Help&amp;original_firsthand_reading=smple&amp;common_firsthand_partial=&amp;reading=corr&amp;corrector_name=corrector&amp;corrector_name_other=&amp;place_corr=&amp;place_corr_other=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_deletion_hooks=0&amp;deletion_transposition_marks=0&amp;deletion_other=0&amp;deletion=&amp;firsthand_partial=&amp;partial=&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;corrector_text=simple\"><span class=\"format_start mceNonEditable\">‹</span>smple<span class=\"format_end mceNonEditable\">›</span></span> correction');
   const xmlData = await page.evaluate(`getTEI()`);
   expect(xmlData).toBe(xmlHead + '<w>a</w><app><rdg type="orig" hand="firsthand"><w>smple</w></rdg><rdg type="corr" hand="corrector">' +
                        '<w>simple</w></rdg></app><w>correction</w>' + xmlTail);
@@ -1034,7 +1095,7 @@ test('an addition (correction)', async () => {
   await menuFrame.click('input#insert');
 
   const htmlData = await page.evaluate(`getData()`);
-  expect(htmlData).toBe('an <span class=\"corr_blank_firsthand\" wce_orig=\"\" wce=\"__t=corr&amp;__n=corrector&amp;help=Help&amp;original_firsthand_reading=&amp;common_firsthand_partial=&amp;reading=corr&amp;blank_firsthand=on&amp;corrector_name=corrector&amp;corrector_name_other=&amp;place_corr=&amp;place_corr_other=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_deletion_hooks=0&amp;deletion_transposition_marks=0&amp;deletion_other=0&amp;deletion=null&amp;firsthand_partial=&amp;partial=&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;corrector_text=addition\"><span class=\"format_start mceNonEditable\">‹</span>T<span class=\"format_end mceNonEditable\">›</span></span> correction');
+  expect(htmlData).toBe('an <span class=\"corr_blank_firsthand\" wce_orig=\"\" wce=\"__t=corr&amp;__n=corrector&amp;help=Help&amp;original_firsthand_reading=&amp;common_firsthand_partial=&amp;reading=corr&amp;blank_firsthand=on&amp;corrector_name=corrector&amp;corrector_name_other=&amp;place_corr=&amp;place_corr_other=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_deletion_hooks=0&amp;deletion_transposition_marks=0&amp;deletion_other=0&amp;deletion=&amp;firsthand_partial=&amp;partial=&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;corrector_text=addition\"><span class=\"format_start mceNonEditable\">‹</span>T<span class=\"format_end mceNonEditable\">›</span></span> correction');
   const xmlData = await page.evaluate(`getTEI()`);
   expect(xmlData).toBe(xmlHead + '<w>an</w><app><rdg type="orig" hand="firsthand"></rdg><rdg type="corr" hand="corrector">' +
     '<w>addition</w></rdg></app><w>correction</w>' + xmlTail);
@@ -1085,7 +1146,7 @@ test('consecutive corrections', async () => {
   await menuFrame2.click('input#insert');
 
   const htmlData = await page.evaluate(`getData()`);
-  expect(htmlData).toBe('<span class=\"corr\" wce_orig=\"consecutive\" wce=\"__t=corr&amp;__n=corrector&amp;help=Help&amp;original_firsthand_reading=consecutive&amp;common_firsthand_partial=&amp;reading=corr&amp;corrector_name=corrector&amp;corrector_name_other=&amp;blank_correction=on&amp;place_corr=&amp;place_corr_other=&amp;deletion_erased=0&amp;deletion_underline=1&amp;deletion_underdot=0&amp;deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_deletion_hooks=0&amp;deletion_transposition_marks=0&amp;deletion_other=0&amp;deletion=underline&amp;firsthand_partial=&amp;partial=&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;corrector_text=consecutive\"><span class=\"format_start mceNonEditable\">‹</span>consecutive<span class=\"format_end mceNonEditable\">›</span></span> <span class=\"corr\" wce_orig=\"corrections\" wce=\"__t=corr&amp;__n=corrector&amp;help=Help&amp;original_firsthand_reading=corrections&amp;common_firsthand_partial=&amp;reading=corr&amp;corrector_name=corrector&amp;corrector_name_other=&amp;place_corr=&amp;place_corr_other=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_deletion_hooks=0&amp;deletion_transposition_marks=0&amp;deletion_other=0&amp;deletion=null&amp;firsthand_partial=&amp;partial=&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;corrector_text=correction\"><span class=\"format_start mceNonEditable\">‹</span>corrections<span class=\"format_end mceNonEditable\">›</span></span>');
+  expect(htmlData).toBe('<span class=\"corr\" wce_orig=\"consecutive\" wce=\"__t=corr&amp;__n=corrector&amp;help=Help&amp;original_firsthand_reading=consecutive&amp;common_firsthand_partial=&amp;reading=corr&amp;corrector_name=corrector&amp;corrector_name_other=&amp;blank_correction=on&amp;place_corr=&amp;place_corr_other=&amp;deletion_erased=0&amp;deletion_underline=1&amp;deletion_underdot=0&amp;deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_deletion_hooks=0&amp;deletion_transposition_marks=0&amp;deletion_other=0&amp;deletion=underline&amp;firsthand_partial=&amp;partial=&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;corrector_text=consecutive\"><span class=\"format_start mceNonEditable\">‹</span>consecutive<span class=\"format_end mceNonEditable\">›</span></span> <span class=\"corr\" wce_orig=\"corrections\" wce=\"__t=corr&amp;__n=corrector&amp;help=Help&amp;original_firsthand_reading=corrections&amp;common_firsthand_partial=&amp;reading=corr&amp;corrector_name=corrector&amp;corrector_name_other=&amp;place_corr=&amp;place_corr_other=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_deletion_hooks=0&amp;deletion_transposition_marks=0&amp;deletion_other=0&amp;deletion=&amp;firsthand_partial=&amp;partial=&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;corrector_text=correction\"><span class=\"format_start mceNonEditable\">‹</span>corrections<span class=\"format_end mceNonEditable\">›</span></span>');
   const xmlData = await page.evaluate(`getTEI()`);
   expect(xmlData).toBe(xmlHead + '<app><rdg type="orig" hand="firsthand"><w>consecutive</w></rdg>' +
                        '<rdg type="corr" hand="corrector" rend="underline"></rdg></app><app>' +
@@ -1118,7 +1179,7 @@ test('firsthand ut videtur', async () => {
   await menuFrame.click('input#insert');
 
   const htmlData = await page.evaluate(`getData()`);
-  expect(htmlData).toBe('a <span class=\"corr\" wce_orig=\"smple\" wce=\"__t=corr&amp;__n=corrector&amp;help=Help&amp;original_firsthand_reading=smple&amp;common_firsthand_partial=&amp;reading=corr&amp;ut_videtur_firsthand=on&amp;corrector_name=corrector&amp;corrector_name_other=&amp;place_corr=&amp;place_corr_other=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_deletion_hooks=0&amp;deletion_transposition_marks=0&amp;deletion_other=0&amp;deletion=null&amp;firsthand_partial=&amp;partial=&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;corrector_text=simple\"><span class=\"format_start mceNonEditable\">‹</span>smple<span class=\"format_end mceNonEditable\">›</span></span> correction');
+  expect(htmlData).toBe('a <span class=\"corr\" wce_orig=\"smple\" wce=\"__t=corr&amp;__n=corrector&amp;help=Help&amp;original_firsthand_reading=smple&amp;common_firsthand_partial=&amp;reading=corr&amp;ut_videtur_firsthand=on&amp;corrector_name=corrector&amp;corrector_name_other=&amp;place_corr=&amp;place_corr_other=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_deletion_hooks=0&amp;deletion_transposition_marks=0&amp;deletion_other=0&amp;deletion=&amp;firsthand_partial=&amp;partial=&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;corrector_text=simple\"><span class=\"format_start mceNonEditable\">‹</span>smple<span class=\"format_end mceNonEditable\">›</span></span> correction');
   const xmlData = await page.evaluate(`getTEI()`);
   expect(xmlData).toBe(xmlHead + '<w>a</w><app><rdg type="orig" hand="firsthandV"><w>smple</w></rdg>' +
                        '<rdg type="corr" hand="corrector"><w>simple</w></rdg></app><w>correction</w>' + xmlTail);
@@ -1149,7 +1210,7 @@ test('corrector ut videtur', async () => {
   await menuFrame.click('input#insert');
 
   const htmlData = await page.evaluate(`getData()`);
-  expect(htmlData).toBe('a <span class=\"corr\" wce_orig=\"smple\" wce=\"__t=corr&amp;__n=corrector&amp;help=Help&amp;original_firsthand_reading=smple&amp;common_firsthand_partial=&amp;reading=corr&amp;corrector_name=corrector&amp;corrector_name_other=&amp;ut_videtur_corr=on&amp;place_corr=&amp;place_corr_other=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_deletion_hooks=0&amp;deletion_transposition_marks=0&amp;deletion_other=0&amp;deletion=null&amp;firsthand_partial=&amp;partial=&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;corrector_text=simple\"><span class=\"format_start mceNonEditable\">‹</span>smple<span class=\"format_end mceNonEditable\">›</span></span> correction');
+  expect(htmlData).toBe('a <span class=\"corr\" wce_orig=\"smple\" wce=\"__t=corr&amp;__n=corrector&amp;help=Help&amp;original_firsthand_reading=smple&amp;common_firsthand_partial=&amp;reading=corr&amp;corrector_name=corrector&amp;corrector_name_other=&amp;ut_videtur_corr=on&amp;place_corr=&amp;place_corr_other=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_deletion_hooks=0&amp;deletion_transposition_marks=0&amp;deletion_other=0&amp;deletion=&amp;firsthand_partial=&amp;partial=&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;corrector_text=simple\"><span class=\"format_start mceNonEditable\">‹</span>smple<span class=\"format_end mceNonEditable\">›</span></span> correction');
   const xmlData = await page.evaluate(`getTEI()`);
   expect(xmlData).toBe(xmlHead + '<w>a</w><app><rdg type="orig" hand="firsthand"><w>smple</w></rdg><rdg type="corr" hand="correctorV">' +
                        '<w>simple</w></rdg></app><w>correction</w>' + xmlTail);

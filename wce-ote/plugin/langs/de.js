@@ -320,7 +320,9 @@ tinymce.addI18n('de',{
 	clipboard_note : 'Bitte nutzen Sie Ctrl+C bzw. Cmd+C, um das XML sicher in die Zwischenablage zu kopieren.',
 	other_ornamentation : 'Verzierungsart',
 	title_other_ornamentation : 'Andere Verzierung',
-	insert : 'Insert', /*TODO: someone needs to translate these into German*/
+	other_punctuation : 'Punctuation character', /*TODO: someone needs to translate these into German*/
+	title_other_punctuation : 'Other punctuation character',
+	insert : 'Insert',
 	cancel : 'Cancel',
 	new_hand: 'New',
 	close : 'Close',

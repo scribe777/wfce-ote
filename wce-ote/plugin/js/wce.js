@@ -165,10 +165,6 @@ function writeWceNodeInfo(val) {
 		// default style
 		var wceClass = ' class="' + wce_type + '"';
 
-		/*	if (isCombination) {
-		$(wce_node).remove();
-		}*/
-
 		// new content
 		var new_content;
 		var original_text = ' wce_orig="' + encodeURIComponent(selected_content) + '" ';
@@ -253,7 +249,6 @@ function writeWceNodeInfo(val) {
 				break;
 
 			case 'unclear':
-				//if (selected_content.indexOf('span class="spaces"') == -1) { // take care of spaces element
 				if (selected_content.indexOf('<span') == -1) { // take care of spaces element
 					var unclear_text = "";
 					for (var i = 0; i < selected_content.length; i++) {
@@ -270,7 +265,6 @@ function writeWceNodeInfo(val) {
 			case 'note':
 				new_content = selected_content + '<span wce="' + newWceAttr + '"' + original_text + wceClass + '>' + startFormatHtml + 'Note' + endFormatHtml + '</span>';
 				if (ed.WCE_VAR.isInBE) {
-					// wceUtils.insertSpace(ed,32);
 					//move cursor outside of BE
 					wceUtils.insertSpace(ed);
 				}
@@ -285,10 +279,14 @@ function writeWceNodeInfo(val) {
 				selected_content = "(" + selected_content + ")";
 				break;
 			case 'spaces':
-				// default
-				//selected_content = '&nbsp;';
 				new_content = '<span wce="' + newWceAttr + '"' + wceClass + '>' + startFormatHtml + 'sp' + endFormatHtml + '</span>';
 				break;
+
+			case 'pc_other':
+				var pc_char = document.getElementById('pc_char').value;
+				new_content = '<span wce="__t=pc" class="pc">' + startFormatHtml + pc_char + endFormatHtml + '</span> ';
+				break;
+
 			case 'paratext':
 				// default
 				if (document.getElementById('fw_type').value == "commentary") {
@@ -345,9 +343,6 @@ function writeWceNodeInfo(val) {
 			new_content = '<span wce="' + newWceAttr + '"' + wceID + wceClass + original_text + '>' + startFormatHtml + selected_content + endFormatHtml + '</span>';
 		}
 
-		//var marker = ed.dom.get('_marker'); //Does not work; intended for editing breaks
-		//ed.selection.select(marker, false);
-
 		//Fixed: if the selection range is collapsed and the caret is at the end of a element,
 		//then the new element will appear inside of current element and not after the element
 		//when one adds a new element via the menu
@@ -379,10 +374,6 @@ function writeWceNodeInfo(val) {
 				ed.selection.setContent(wceUtils.getBreakHtml(ed, 'pb', null, null, null, gap_id));
 			}
 
-			/*if (document.getElementById('unit').value == "line")
-			 ed.execCommand('mceAdd_brea', 'lb', 0);
-			 else if (document.getElementById('unit').value == "page")
-			 ed.execCommand('mceAdd_brea', 'pb', 0);*/
 		}
 
 		if (wceUtils) {
@@ -427,54 +418,6 @@ function writeWceNodeInfo(val) {
 				selected_content=wceUtils.wceDelNode(ed, true);
 				add_new_wce_node = true;
 				return writeWceNodeInfo(val);
-				/*
-				// TODO: Additional break at the end is still missing.
-				if (document.getElementById('mark_as_supplied').checked == true) {// supplied text
-					wce_node.textContent = '[' + wce_node.getAttribute('wce_orig') + ']';
-				} else {
-					wce_node.removeChild(wce_node.firstChild);
-					// remove old content
-					if (document.getElementById('unit').value == "char") {
-						if (document.getElementById('extent').value != '')
-							wce_node.textContent = '[' + document.getElementById('extent').value + ']';
-						else
-							wce_node.textContent = '[...]';
-					} else if (document.getElementById('unit').value == "line") {
-						for (var i = 0; i < document.getElementById('extent').value; i++) {// generate new content
-							$br = document.createElement('br');
-							wce_node.appendChild($br);
-							$text = document.createTextNode('\u21B5[...]');
-							wce_node.appendChild($text);
-						}
-						wceUtils.addToCounter(ed, 'lb', document.getElementById('extent').value);
-					} else if (document.getElementById('unit').value == "page") {
-						for (var i = 0; i < document.getElementById('extent').value; i++) {
-							$br = document.createElement('br');
-							wce_node.appendChild($br);
-							$text = document.createTextNode('PB');
-							wce_node.appendChild($text);
-							$br = document.createElement('br');
-							wce_node.appendChild($br);
-							$text = document.createTextNode('[...]');
-							wce_node.appendChild($text);
-						}
-						wceUtils.addToCounter(ed, 'pb', document.getElementById('extent').value);
-					} else if (document.getElementById('unit').value == "quire") {
-						for (var i = 0; i < document.getElementById('extent').value; i++) {
-							$br = document.createElement('br');
-							wce_node.appendChild($br);
-							$text = document.createTextNode('QB');
-							wce_node.appendChild($text);
-							$br = document.createElement('br');
-							wce_node.appendChild($br);
-							$text = document.createTextNode('[...]');
-							wce_node.appendChild($text);
-						}
-						wceUtils.addToCounter(ed, 'gb', document.getElementById('extent').value);
-					} else {
-						wce_node.textContent = '[...]';
-					}
-				}*/
 			}
 			wce_node.setAttribute('wce', newWceAttr);
 		}

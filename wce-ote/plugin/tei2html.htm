@@ -31,16 +31,13 @@
 				var htmlContent=result['htmlString'];
 				if(htmlContent){
 					x.value=htmlContent;
-				} 
-				/*var teiIndexData = result['teiIndexData'];
-				if (teiIndexData) {
-					//_ed.teiIndexData = teiIndexData;
-				}*/
+				}
 			}
 		}
 		var activeEditorSettings=_ed.settings;
 		
-			corrector_text_editor=new tinymce.Editor('tei2htmlOuputContainer',{
+		corrector_text_editor=new tinymce.Editor('tei2htmlOuputContainer', {
+			clientOptions : activeEditorSettings.clientOptions,
 			mode : "textareas", 
 			theme : "modern",
 			skin_url: "../skin/",
@@ -53,8 +50,6 @@
 			directionality : activeEditorSettings.ltr,
 			language : activeEditorSettings.language,
 			book : activeEditorSettings.book,
-			witness : activeEditorSettings.witness,
-			manuscriptLang : activeEditorSettings.manuscriptLang,
 			plugins : "compat3x,pagebreak,print,paste",
 			external_plugins: { 'wce' : '../../wce-ote/plugin/plugin.js' },
 			toolbar : "undo redo charmap | code removeformat | print contextmenu paste fullscreen | "+

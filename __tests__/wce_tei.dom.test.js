@@ -74,6 +74,12 @@ const basicAnnotation = new Map([
       '<span class="format_end mceNonEditable">›</span></span> ' //space at end is important
  		],
 	],
+	[ 'a semicolon simple <pc> tag',
+	  [ '<pc>;</pc>',
+	 		'<span class="pc" wce="__t=pc"><span class="format_start mceNonEditable">‹</span>;' +
+      '<span class="format_end mceNonEditable">›</span></span> ' //space at end is important
+ 		],
+	],
 	// abbr
 	[ 'nomen sacrum abbreviation with overline',
 		[ '<w>a</w><w><abbr type="nomSac"><hi rend="overline">ns</hi></abbr></w><w>abbreviation</w>',
@@ -877,22 +883,22 @@ const manuscriptPageStructure = new Map([
       '</span>ne my second line '
     ],
   ],
-  // [ 'quire break',
-  //   [ '<gb n="3"/><pb n="1r" type="folio" xml:id="P1r-undefined"/><cb n="P1rC1-undefined"/><lb n="P1rC1L-undefined"/>',
-  //     '<span class=\"mceNonEditable brea\" wce=\"__t=brea&amp;__n=&amp;break_type=gb&amp;number=3&amp;' +
-	// 		'lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
-	// 		'<span class=\"format_start mceNonEditable\">‹</span><br/>QB<span class=\"format_end mceNonEditable\">›</span>' +
-	// 		'</span><span class=\"mceNonEditable brea\" id=\"pb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;' +
-	// 		'break_type=pb&amp;number=1&amp;rv=r&amp;fibre_type=&amp;facs=&amp;lb_alignment=&amp;hasBreak=no\">' +
-	// 		'<span class=\"format_start mceNonEditable\">‹</span><br/>PB 1r<span class=\"format_end mceNonEditable\">›</span>' +
-	// 		'</span><span class=\"mceNonEditable brea\" id=\"cb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;' +
-	// 		'break_type=cb&amp;number=1&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
-	// 		'<span class=\"format_start mceNonEditable\">‹</span><br/>CB 1<span class=\"format_end mceNonEditable\">›</span>' +
-	// 		'</span><span class=\"mceNonEditable brea\" id=\"lb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;' +
-	// 		'break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
-	// 		'<span class=\"format_start mceNonEditable\">‹</span><br/>↵ <span class=\"format_end mceNonEditable\">›</span></span>'
-  //   ]
-  // ]
+  [ 'quire break',
+    [ '<gb n="3"/><pb n="1r" type="folio" xml:id="P1r-undefined"/><cb n="P1rC1-undefined"/><lb n="P1rC1L-undefined"/>',
+      '<span class=\"mceNonEditable brea\" wce=\"__t=brea&amp;__n=&amp;break_type=gb&amp;number=3&amp;' +
+			'lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
+			'<span class=\"format_start mceNonEditable\">‹</span><br/>QB<span class=\"format_end mceNonEditable\">›</span>' +
+			'</span><span class=\"mceNonEditable brea\" id=\"pb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;' +
+			'break_type=pb&amp;number=1&amp;rv=r&amp;fibre_type=&amp;facs=&amp;lb_alignment=&amp;hasBreak=no\">' +
+			'<span class=\"format_start mceNonEditable\">‹</span><br/>PB 1r<span class=\"format_end mceNonEditable\">›</span>' +
+			'</span><span class=\"mceNonEditable brea\" id=\"cb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;' +
+			'break_type=cb&amp;number=1&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
+			'<span class=\"format_start mceNonEditable\">‹</span><br/>CB 1<span class=\"format_end mceNonEditable\">›</span>' +
+			'</span><span class=\"mceNonEditable brea\" id=\"lb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;' +
+			'break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
+			'<span class=\"format_start mceNonEditable\">‹</span><br/>↵ <span class=\"format_end mceNonEditable\">›</span></span>'
+    ]
+  ]
 ]);
 
 manuscriptPageStructure.forEach((value, key, map) => {
@@ -952,6 +958,24 @@ const teiToHtmlAndBackWithChange = new Map([
         '<w>a</w><w>note</w><note type="editorial" xml:id="..-undefined-2"><handshift scribe="new hand"/></note>'
       ]
     ],
+		// legacy support
+	  [ 'a handShift note',
+	    [ '<w>a</w><w>note</w><note type="editorial" xml:id="BKV-undefined-2"><handshift/></note>',
+	      'a note<span class="note" wce="__t=note&amp;__n=&amp;note_text=&amp;note_type=changeOfHand&amp;' +
+	      'note_type_other=&amp;newHand="><span class="format_start mceNonEditable">‹</span>Note' +
+	      '<span class="format_end mceNonEditable">›</span></span>',
+				'<w>a</w><w>note</w><note type="editorial" xml:id="BKV-undefined-2"><handShift/></note>'
+	    ]
+	  ],
+	  // spaces added in attribute should be replaced with _ [issue #13]
+	  [ 'a handShift note with new hand',
+	    [ '<w>a</w><w>note</w><note type="editorial" xml:id="BKV-undefined-2"><handshift scribe="new hand"/></note>',
+	      'a note<span class="note" wce="__t=note&amp;__n=&amp;note_text=&amp;note_type=changeOfHand&amp;' +
+	      'note_type_other=&amp;newHand=new%20hand"><span class="format_start mceNonEditable">‹</span>Note' +
+	      '<span class="format_end mceNonEditable">›</span></span>',
+				'<w>a</w><w>note</w><note type="editorial" xml:id="BKV-undefined-2"><handShift scribe="new hand"/></note>',
+	    ]
+	  ],
     [ 'hi rend ol as legacy support for overline',
       [ '<w>test</w><w><hi rend="ol">for</hi></w><w>rendering</w>',
         'test <span class="formatting_overline" wce="__t=formatting_overline" wce_orig="for">' +
@@ -966,26 +990,35 @@ const teiToHtmlAndBackWithChange = new Map([
         '<div type="book" n="John"><w>The</w><w>content</w><w>of</w><w>my</w><w>chapter</w></div>'
    		],
   	],
+		// next two tests test fix for issue #16
 		[ 'whole word <ex> tag (no w wrapper and only one word in total)',
 		  [ '<ex rend="÷">word</ex>',
 				'<span class="part_abbr" wce="__t=part_abbr&amp;__n=&amp;exp_rend_other=&amp;exp_rend=%C3%B7">' +
 	      '<span class="format_start mceNonEditable">‹</span>(word)<span class="format_end mceNonEditable">›</span>' +
-	      '</span>',
+	      '</span> ',
 				'<w><ex rend="÷">word</ex></w>'
 	 		]
+		],
+		[ 'whole word <ex> tag (no w wrapper and words either side)',
+			[ '<w>first</w><ex rend="÷">word</ex><w>last</w>',
+				'first <span class="part_abbr" wce="__t=part_abbr&amp;__n=&amp;exp_rend_other=&amp;exp_rend=%C3%B7">' +
+				'<span class="format_start mceNonEditable">‹</span>(word)<span class="format_end mceNonEditable">›</span>' +
+				'</span> last ',
+				'<w>first</w><w><ex rend="÷">word</ex></w><w>last</w>'
+			]
 		],
     // not sure the next two are desireable behaviour but it is the current behaviour
     // fix this and at least keep the word [issue #14]
     [ 'hi with no rend attribute removes the word with the hi tag',
       [ '<w>test</w><w><hi>for</hi></w><w>rendering</w>',
-        'test  rendering ',
-        '<w>test</w><w>rendering</w>'
+        'test for rendering ',
+        '<w>test</w><w>for</w><w>rendering</w>'
       ]
     ],
     [ 'hi with empty rend attribute removes the word with the hi tag',
       [ '<w>test</w><w><hi rend="">for</hi></w><w>rendering</w>',
-        'test  rendering ',
-        '<w>test</w><w>rendering</w>'
+        'test for rendering ',
+        '<w>test</w><w>for</w><w>rendering</w>'
       ]
     ],
     // legacy commentary notes (rend attribute - for number of lines covered - now converted to line breaks)
@@ -1044,6 +1077,71 @@ teiToHtmlAndBackWithChange.forEach((value, key, map) => {
 	});
 });
 
+// test layout of export (linebreaks)
+const exportLayout = new Map([
+  [ 'test input without linebreaks in XML get them added on export',
+    ['<pb n="1r" type="folio" xml:id="P1r-"/><cb n="P1rC1-"/><lb n="P1rC1L-"/><w>test</w><w>that</w><w>line</w>' +
+     '<w>breaks</w><lb n="P1rC1L-"/><w>are</w><w>added</w><w>in</w><w>XML</w>',
+     '<span class=\"mceNonEditable brea\" id=\"pb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;' +
+     'break_type=pb&amp;number=1&amp;rv=r&amp;fibre_type=&amp;facs=&amp;lb_alignment=&amp;hasBreak=no\">' +
+     '<span class=\"format_start mceNonEditable\">‹</span><br/>PB 1r<span class=\"format_end mceNonEditable\">›</span>' +
+     '</span><span class=\"mceNonEditable brea\" id=\"cb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;' +
+     'break_type=cb&amp;number=1&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
+     '<span class=\"format_start mceNonEditable\">‹</span><br/>CB 1<span class=\"format_end mceNonEditable\">›</span>' +
+     '</span><span class=\"mceNonEditable brea\" id=\"lb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;break_type=lb&amp;' +
+     'number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
+     '<span class=\"format_start mceNonEditable\">‹</span><br/>↵ <span class=\"format_end mceNonEditable\">›</span>' +
+     '</span> test that line breaks <span class=\"mceNonEditable brea\" wce=\"__t=brea&amp;__n=&amp;' +
+     'break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
+     '<span class=\"format_start mceNonEditable\">‹</span><br/>↵ <span class=\"format_end mceNonEditable\">›</span>' +
+     '</span> are added in XML ',
+     '\n<pb n="1r" type="folio" xml:id="P1r-undefined"/>\n<cb n="P1rC1-undefined"/>\n<lb n="P1rC1L-undefined"/><w>test</w><w>that</w><w>line</w>' +
+     '<w>breaks</w>\n<lb n="P1rC1L-undefined"/><w>are</w><w>added</w><w>in</w><w>XML</w>'
+    ]
+  ],
+  [ 'test input with linebreaks in XML still has them on export',
+    ['\n<pb n="1r" type="folio" xml:id="P1r-"/>\n<cb n="P1rC1-"/>\n<lb n="P1rC1L-"/><w>test</w><w>that</w><w>line</w>' +
+      '<w>breaks</w>\n<lb n="P1rC1L-"/><w>are</w><w>added</w><w>in</w><w>XML</w>',
+      '<span class=\"mceNonEditable brea\" id=\"pb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;' +
+      'break_type=pb&amp;number=1&amp;rv=r&amp;fibre_type=&amp;facs=&amp;lb_alignment=&amp;hasBreak=no\">' +
+      '<span class=\"format_start mceNonEditable\">‹</span><br/>PB 1r<span class=\"format_end mceNonEditable\">›</span>' +
+      '</span><span class=\"mceNonEditable brea\" id=\"cb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;' +
+      'break_type=cb&amp;number=1&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
+      '<span class=\"format_start mceNonEditable\">‹</span><br/>CB 1<span class=\"format_end mceNonEditable\">›</span>' +
+      '</span><span class=\"mceNonEditable brea\" id=\"lb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;break_type=lb&amp;' +
+      'number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
+      '<span class=\"format_start mceNonEditable\">‹</span><br/>↵ <span class=\"format_end mceNonEditable\">›</span>' +
+      '</span> test that line breaks <span class=\"mceNonEditable brea\" wce=\"__t=brea&amp;__n=&amp;' +
+      'break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
+      '<span class=\"format_start mceNonEditable\">‹</span><br/>↵ <span class=\"format_end mceNonEditable\">›</span>' +
+      '</span> are added in XML ',
+      '\n<pb n="1r" type="folio" xml:id="P1r-undefined"/>\n<cb n="P1rC1-undefined"/>\n<lb n="P1rC1L-undefined"/><w>test</w><w>that</w><w>line</w>' +
+      '<w>breaks</w>\n<lb n="P1rC1L-undefined"/><w>are</w><w>added</w><w>in</w><w>XML</w>'
+    ]
+  ]
+]);
+
+exportLayout.forEach((value, key, map) => {
+	test('TEI2HTML: ' + key, () => {
+		let testInput, expectedOutput, html, idRegex;
+		testInput = xmlHead + value[0] + xmlTail;
+    idRegex = /id="(.)b_(\d)_\d+"/g;
+		expectedOutput = '<TEMP>' + value[1] + '</TEMP>';
+		html = wce_tei.getHtmlByTei(testInput);
+    modifiedHtml = html.htmlString.replace(idRegex, 'id="$1b_$2_MATH.RAND"');
+		expect(modifiedHtml).toBe(expectedOutput);
+	});
+  test('HTML2TEI: ' + key, () => {
+		let testInput, expectedOutput, xml;
+		testInput = value[1];
+		expectedOutput = xmlHead + value[2] + xmlTail;
+		xml = wce_tei.getTeiByHtml(testInput, {'addLineBreaks': true});
+		expect(xml).toBe(expectedOutput);
+	});
+});
+
+
+
 
 // this does not test what I was hoping it would
 test ('test export of abbr where supplied and overline need flipping', () => {
@@ -1075,4 +1173,16 @@ test ('node comparison', () => {
   expect(wce_tei.compareNodes(childList[3], childList[4])).toBe(true);
   expect(wce_tei.compareNodes(childList[4], childList[5])).toBe(false);
   expect(wce_tei.compareNodes(childList[0], childList[6])).toBe(false);
+});
+
+test ('hasWAncestor', () => {
+  const dom = wce_tei.loadXMLString('<text><body><w>word</w><ex>expansion</ex><w>pa<ex>rt</ex></w><w><unclear>unclear</unclear></w></body></text>');
+  const root = dom.documentElement;
+  const body = root.childNodes[0];
+	const childList = body.childNodes;
+  expect(wce_tei.hasWAncestor(childList[0])).toBe(true);
+	expect(wce_tei.hasWAncestor(childList[1])).toBe(false);
+	expect(wce_tei.hasWAncestor(childList[2])).toBe(true);
+	expect(wce_tei.hasWAncestor(childList[2])).toBe(true);
+	expect(wce_tei.hasWAncestor(body)).toBe(false);
 });
