@@ -314,14 +314,6 @@
 		} else {
 			document.getElementById('edit_number').disabled = false;
 			checkstatus_number();
-			/*if (document.paratextinfo.edit_number.checked == true) {
-				document.paratextinfo.number.disabled = true;
-				document.getElementById('number').style.backgroundColor = "#CCCCCC";
-			} else {
-				document.paratextinfo.number.disabled = false;
-				document.getElementById('number').style.backgroundColor = "white";
-			}
-			setnumber();*/
 			document.paratextinfo.covered.disabled = true;
 			document.getElementById('covered').style.backgroundColor = "#CCCCCC";
 			$('#marginals_text').attr('disabled', false);
@@ -425,8 +417,6 @@
 				Zeichen_Wert_alt = Zeichen_Wert;
 			}
 			document.paratextinfo.number.value = dezimalz;
-			//document.paratextinfo.number.disabled = true;
-			//document.getElementById('number').style.backgroundColor = "#CCCCCC";
 		} else {
 			var res = greek2arab(eing.toLowerCase());
 			if (res == '') {
@@ -554,8 +544,6 @@
 			// Pruefung mehr als 3 gleiche Zeichen hintereinander
 			if (Zeichen == Zeichen_alt) {
 				Zeichen_zaehl++;
-				//if (Zeichen_zaehl > 3) //Deactivated test, because many manuscripts use IIII etc.
-					//fehler++;
 			} else {
 				Zeichen_zaehl = 1;
 			}
@@ -565,7 +553,6 @@
 		}
 
 		// Pruefung, ob Zeichen zu oft vorkamen
-		//if (anz_Zeichen_I > 3 || anz_Zeichen_V > 1 || anz_Zeichen_X > 4 || anz_Zeichen_L > 1 || anz_Zeichen_C > 4 || anz_Zeichen_D > 1 || anz_Zeichen_M > 3) {
 		if (anz_Zeichen_V > 1 || anz_Zeichen_X > 4 || anz_Zeichen_L > 1 || anz_Zeichen_C > 4 || anz_Zeichen_D > 1 || anz_Zeichen_M > 3) {
 			fehler++;
 		}
