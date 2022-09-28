@@ -45,23 +45,19 @@
 @param {object} options - the optional settings to use when initialising the editor.
 
 */
-function setWceEditor(_id, options) {
-	if (typeof options === 'undefined') {
-		options = {};
+function setWceEditor(_id, clientOptions, baseURL) {
+	if (typeof clientOptions === 'undefined') {
+		clientOptions = {};
 	}
 
-	if (options.myBaseURL && typeof options.myBaseURL != "undefined" && options.myBaseURL !== '') {
-		tinymce.baseURL = options.myBaseURL;
+	if (baseURL && typeof baseURL != "undefined" && baseURL !== '') {
+		tinymce.baseURL = baseURL;
 		tinymce.baseURI = new tinymce.util.URI(tinymce.baseURL);
 	}
-	
-	console.log(options);
-	let test = (options.witnessLang) ? options.witnessLang : "";
-	console.log(test);
 
 	tinymce.init({
 		// General options
-		clientOptions: options,
+		clientOptions: clientOptions,
 		mode : "exact",
 		selector : '#'+_id,
 		theme : "modern",
@@ -77,10 +73,10 @@ function setWceEditor(_id, options) {
 		save_onsavecallback : function() {
 			if (saveDataToDB) saveDataToDB(true);
 		},
-		directionality : (options.rtl) ? "rtl" : "ltr",
-		language : (options.language) ? (options.language.indexOf('de') == 0 ? "de" : "en") : "en",
-		witness : (options.witnessSiglum) ? options.witnessSiglum : "",
-		manuscriptLang : (options.witnessLang) ? options.witnessLang : "",
+		directionality : (clientOptions.rtl) ? "rtl" : "ltr",
+		language : (clientOptions.language) ? (clientOptions.language.indexOf('de') == 0 ? "de" : "en") : "en",
+		witness : (clientOptions.witnessSiglum) ? clientOptions.witnessSiglum : "",
+		manuscriptLang : (clientOptions.witnessLang) ? clientOptions.witnessLang : "",
 		plugins : "pagebreak,save,print,contextmenu,fullscreen,wordcount,autosave,paste,charmap,code,noneditable",
 		contextmenu: 'cut copy paste',
 		charmap : charmap_greek.concat(charmap_latin).concat(charmap_slavistic),
@@ -105,8 +101,8 @@ function setWceEditor(_id, options) {
 			ed.on('change', wceOnContentsChange);
 			ed.on('init', function(e) {  // Once initialized, tell the editor to go fullscreen
 				addMenuItems(tinyMCE.activeEditor);
-				if (options.finishCallback)
-					options.finishCallback();
+				if (clientOptions.finishCallback)
+					clientOptions.finishCallback();
 			});
 		}	
 	});
