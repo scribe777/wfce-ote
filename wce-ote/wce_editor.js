@@ -61,6 +61,7 @@ function setWceEditor(_id, options) {
 
 	tinymce.init({
 		// General options
+		clientOptions: options,
 		mode : "exact",
 		selector : '#'+_id,
 		theme : "modern",
