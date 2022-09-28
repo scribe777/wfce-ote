@@ -45,7 +45,7 @@
 @param {object} options - the optional settings to use when initialising the editor.
 
 */
-function setWceEditor(_id, clientOptions, baseURL) {
+function setWceEditor(_id, clientOptions, baseURL, callback) {
 	if (typeof clientOptions === 'undefined') {
 		clientOptions = {};
 	}
@@ -101,8 +101,9 @@ function setWceEditor(_id, clientOptions, baseURL) {
 			ed.on('change', wceOnContentsChange);
 			ed.on('init', function(e) {  // Once initialized, tell the editor to go fullscreen
 				addMenuItems(tinyMCE.activeEditor);
-				if (clientOptions.finishCallback)
-					clientOptions.finishCallback();
+				if (callback) {
+					callback();
+				}	
 			});
 		}	
 	});
