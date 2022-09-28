@@ -1109,7 +1109,7 @@ exportLayout.forEach((value, key, map) => {
 		let testInput, expectedOutput, xml;
 		testInput = value[1];
 		expectedOutput = xmlHead + value[2] + xmlTail;
-		xml = wce_tei.getTeiByHtml(testInput, {'add_newline_for_breaks': true});
+		xml = wce_tei.getTeiByHtml(testInput, {'addLineBreaks': true});
 		expect(xml).toBe(expectedOutput);
 	});
 });
