@@ -190,33 +190,6 @@ function setTEI(teiStringInput) {
 	return 0;
 }
 
-/**
-	NTVMR specific function to save straight to the NTVMR database
-
-	Cat: Therefore is should be in the NTVMR code not here.
-*/
-function saveDataToDB() {
-	console.log('trying to save to NTVMR')
-	if (!tinyMCE.activeEditor.isDirty())
-		return;
-
-	// currently we grab the HTML span formatted data, but eventually we'd like to grab the TEI
-	var transcriptionData = getData();
-
-	// currently we store to the portal user's personal data store, but eventually we'd like to
-	// store to the transcription repository
-	var req = opensocial.newDataRequest();
-	req.add(req.newUpdatePersonAppDataRequest("VIEWER", 'trans-' + lastPage.docid + '-' + lastPage.pageid, encodeURIComponent(transcriptionData)));
-	req.send(function(data) {
-		if (data.hadError()) {
-			alert(data.getErrorMessage());
-			return;
-		}
-		alert("Changes are saved.");
-		if (gadgets.util.hasFeature('pubsub-2'))
-			gadgets.Hub.publish("interedition.transcription.saved", null);
-	});
-}
 
 /**
 	Set the font family to use for the editor contents
