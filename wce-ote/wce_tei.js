@@ -1792,7 +1792,7 @@ function getTeiByHtml(inputString, clientOptions) {
 		// DOM to String
 		var str = xml2String($newRoot);
 
-		if (clientOptions.addLinebreaks) {
+		if (clientOptions.addLineBreaks) {
 			str = add_linebreaks(str);
 		}		
 
