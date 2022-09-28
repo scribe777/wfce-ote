@@ -32,14 +32,34 @@
     Programm erhalten haben. Wenn nicht, siehe <http://www.gnu.org/licenses/>.
 */
 
-function setWceEditor(_id, rtl, finishCallback, lang, myBaseURL, getWitness, getWitnessLang) {
-	if (myBaseURL && typeof myBaseURL != "undefined" && myBaseURL !== '') {
-		tinymce.baseURL = myBaseURL;
+// required: _id
+// optional with default: rtl, lang, getWitness, getWitnessLang
+// optional no default needed: myBaseURL?, finishCallback
+// ones to make optional with default: toolbar, 
+// ones to make optional without default: save_onsavecallback (required is save in toolbar)
+
+
+/** Initialises the editor
+
+@param {string} _id - The html id value of the text area to transform into the editor.
+@param {object} options - The client settings to use when initialising the editor.
+@param {baseURL} string - Explicitly sets TinyMCE's base URL.
+@param {callback} function - The function to call once the editor is loaded.
+
+*/
+function setWceEditor(_id, clientOptions, baseURL, callback) {
+	if (typeof clientOptions === 'undefined') {
+		clientOptions = {};
+	}
+
+	if (baseURL && typeof baseURL != "undefined" && baseURL !== '') {
+		tinymce.baseURL = baseURL;
 		tinymce.baseURI = new tinymce.util.URI(tinymce.baseURL);
 	}
 
 	tinymce.init({
 		// General options
+		clientOptions: clientOptions,
 		mode : "exact",
 		selector : '#'+_id,
 		theme : "modern",
@@ -50,18 +70,15 @@ function setWceEditor(_id, rtl, finishCallback, lang, myBaseURL, getWitness, get
 		force_br_newlines : true,
 		force_p_newlines : false,
 		entity_encoding : "raw",
-		//entities : "62,diple,8224,obelus",
 		theme_advanced_path : false,
 		execcommand_callback : 'wceExecCommandHandler',
 		save_onsavecallback : function() {
 			if (saveDataToDB) saveDataToDB(true);
 		},
-		directionality : (rtl) ? "rtl" : "ltr",
-		language : (lang) ? (lang.indexOf('de') == 0 ? "de" : "en") : "en",
-		//book : (getBook) ? getBook : "",
-		witness : (getWitness) ? getWitness : "",
-		manuscriptLang : (getWitnessLang) ? getWitnessLang : "",
-		// invalid_elements:'p',
+		directionality : (clientOptions.rtl) ? "rtl" : "ltr",
+		language : (clientOptions.language) ? (clientOptions.language.indexOf('de') == 0 ? "de" : "en") : "en",
+		witness : (clientOptions.getWitness) ? clientOptions.getWitness : "",
+		manuscriptLang : (clientOptions.getWitnessLang) ? clientOptions.getWitnessLang : "",
 		plugins : "pagebreak,save,print,contextmenu,fullscreen,wordcount,autosave,paste,charmap,code,noneditable",
 		contextmenu: 'cut copy paste',
 		charmap : charmap_greek.concat(charmap_latin).concat(charmap_slavistic),
@@ -82,13 +99,15 @@ function setWceEditor(_id, rtl, finishCallback, lang, myBaseURL, getWitness, get
 		theme_advanced_statusbar_location : "bottom",
 		theme_advanced_resizing : false,
 		setup : function(ed) {
+			
 			ed.on('change', wceOnContentsChange);
-			ed.on('init', function(e) {// Once initialized, tell the editor to go fullscreen
+			ed.on('init', function(e) {  // Once initialized, tell the editor to go fullscreen
 				addMenuItems(tinyMCE.activeEditor);
-				if (finishCallback)
-					finishCallback();
+				if (callback) {
+					callback();
+				}	
 			});
-		}
+		}	
 	});
 }
 
@@ -141,30 +160,6 @@ function setTEI(teiStringInput) {
 	return 0;
 }
 
-/**
-	NTVMR specific function to save straight to the NTVMR database
-*/
-function saveDataToDB() {
-	if (!tinyMCE.activeEditor.isDirty())
-		return;
-
-	// currently we grab the HTML span formatted data, but eventually we'd like to grab the TEI
-	var transcriptionData = getData();
-
-	// currently we store to the portal user's personal data store, but eventually we'd like to
-	// store to the transcription repository
-	var req = opensocial.newDataRequest();
-	req.add(req.newUpdatePersonAppDataRequest("VIEWER", 'trans-' + lastPage.docid + '-' + lastPage.pageid, encodeURIComponent(transcriptionData)));
-	req.send(function(data) {
-		if (data.hadError()) {
-			alert(data.getErrorMessage());
-			return;
-		}
-		alert("Changes are saved.");
-		if (gadgets.util.hasFeature('pubsub-2'))
-			gadgets.Hub.publish("interedition.transcription.saved", null);
-	});
-}
 
 /**
 	Set the font family to use for the editor contents
