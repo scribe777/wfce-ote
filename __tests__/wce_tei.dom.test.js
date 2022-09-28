@@ -1051,6 +1051,158 @@ teiToHtmlAndBackWithChange.forEach((value, key, map) => {
 	});
 });
 
+// test layout of export (word spaces)
+const exportSpaces = new Map([
+  [ 'test spaces are added to export w and pc',
+    ['<w>test</w><w>word</w>spaces<w></w><pc>.</pc><w>with</w><w>punctuation</w><pc>.</pc>',
+     'test word spaces <span class=\"pc\" wce=\"__t=pc\"><span class=\"format_start mceNonEditable\">‹</span>.' +
+     '<span class=\"format_end mceNonEditable\">›</span></span> with punctuation <span class=\"pc\" wce=\"__t=pc\">' +
+     '<span class=\"format_start mceNonEditable\">‹</span>.<span class=\"format_end mceNonEditable\">›</span></span> ',
+     '<w>test</w> <w>word</w> <w>spaces</w><pc>.</pc> <w>with</w> <w>punctuation</w><pc>.</pc>'
+    ]
+  ],
+  [ 'test spaces can be uploaded and exported without problems w and pc',
+    ['<w>test</w> <w>word</w> <w>spaces</w><pc>.</pc> <w>with</w> <w>punctuation</w><pc>.</pc>',
+     'test word spaces <span class=\"pc\" wce=\"__t=pc\"><span class=\"format_start mceNonEditable\">‹</span>.' +
+     '<span class=\"format_end mceNonEditable\">›</span></span> with punctuation <span class=\"pc\" wce=\"__t=pc\">' +
+     '<span class=\"format_start mceNonEditable\">‹</span>.<span class=\"format_end mceNonEditable\">›</span></span> ',
+     '<w>test</w> <w>word</w> <w>spaces</w><pc>.</pc> <w>with</w> <w>punctuation</w><pc>.</pc>'
+    ]
+  ],
+  [ 'test spaces are added to export seg and w',
+    ['<w>test</w><w>a</w><w>seg</w><seg type="margin" subtype="pageright"><w>seg</w><w>content</w></seg><w>with</w>' +
+     '<w>spaces</w>',
+     'test a seg <span class=\"paratext\" wce=\"__t=paratext&amp;__n=&amp;marginals_text=seg%20content%20' +
+     '&amp;fw_type=isolated&amp;fw_type_other=&amp;paratext_position=pageright&amp;paratext_position_other=\">' +
+     '<span class=\"format_start mceNonEditable\">‹</span>fw<span class=\"format_end mceNonEditable\">›</span>' +
+     '</span>with spaces ',
+     '<w>test</w> <w>a</w> <w>seg</w><seg type="margin" subtype="pageright"><w>seg</w> <w>content</w></seg> ' +
+     '<w>with</w> <w>spaces</w>'
+    ]
+  ],
+  [ 'test spaces are added to export app and w combinations',
+    ['<w>test</w><w>spaces</w><app><rdg type="orig" hand="firsthand"><w>arround</w></rdg>' +
+    '<rdg type="corr" hand="corrector"><w>around</w></rdg></app><w>corrections</w>',
+     'test spaces <span class=\"corr\" wce_orig=\"arround\" wce=\"__t=corr&amp;__n=corrector' +
+     '&amp;corrector_name_other=&amp;corrector_name=corrector&amp;reading=corr&amp;' +
+     'original_firsthand_reading=arround&amp;common_firsthand_partial=&amp;deletion_erased=0&amp;' +
+     'deletion_underline=0&amp;deletion_underdot=0&amp;deletion_strikethrough=0&amp;deletion_vertical_line=0' +
+     '&amp;deletion_deletion_hooks=0&amp;deletion_transposition_marks=0&amp;deletion_other=0&amp;deletion=null' +
+     '&amp;firsthand_partial=&amp;partial=&amp;corrector_text=around%20&amp;place_corr=\">' +
+     '<span class=\"format_start mceNonEditable\">‹</span>arround<span class=\"format_end mceNonEditable\">›</span>' +
+     '</span> corrections ',
+     '<w>test</w> <w>spaces</w> <app><rdg type="orig" hand="firsthand"><w>arround</w></rdg>' +
+     '<rdg type="corr" hand="corrector"><w>around</w></rdg></app> <w>corrections</w>'
+    ]
+  ],
+  [ 'test spaces are added to export app and pc combination',
+    ['<w>test</w><w>spaces</w><pc>.</pc><app><rdg type="orig" hand="firsthand"><w>arround</w></rdg>' +
+     '<rdg type="corr" hand="corrector"><w>around</w></rdg></app><w>corrections</w>',
+     'test spaces <span class=\"pc\" wce=\"__t=pc\"><span class=\"format_start mceNonEditable\">‹</span>.' +
+     '<span class=\"format_end mceNonEditable\">›</span></span> <span class=\"corr\" wce_orig=\"arround\" ' +
+     'wce=\"__t=corr&amp;__n=corrector&amp;corrector_name_other=&amp;corrector_name=corrector&amp;reading=corr' +
+     '&amp;original_firsthand_reading=arround&amp;common_firsthand_partial=&amp;deletion_erased=0&amp;' +
+     'deletion_underline=0&amp;deletion_underdot=0&amp;deletion_strikethrough=0&amp;deletion_vertical_line=0' +
+     '&amp;deletion_deletion_hooks=0&amp;deletion_transposition_marks=0&amp;deletion_other=0&amp;deletion=null' +
+     '&amp;firsthand_partial=&amp;partial=&amp;corrector_text=around%20&amp;place_corr=\">' +
+     '<span class=\"format_start mceNonEditable\">‹</span>arround<span class=\"format_end mceNonEditable\">›</span>' +
+     '</span> corrections ',
+     '<w>test</w> <w>spaces</w><pc>.</pc> <app><rdg type="orig" hand="firsthand"><w>arround</w></rdg>' +
+     '<rdg type="corr" hand="corrector"><w>around</w></rdg></app> <w>corrections</w>'
+    ]
+  ],
+  [ 'test spaces are added after notes between words',
+    ['<w>test</w><w>note</w><note type="local" xml:id="BKV--2">my test note</note><w>between</w><w>words</w>',
+     'test note<span class=\"note\" wce=\"__t=note&amp;__n=&amp;note_text=my%20test%20note&amp;' +
+     'note_type=local&amp;newhand=\"><span class=\"format_start mceNonEditable\">‹</span>Note' +
+     '<span class=\"format_end mceNonEditable\">›</span></span> between words ',
+     '<w>test</w> <w>note</w><note type="local" xml:id="BKV-undefined-2">my test note</note> <w>between</w> <w>words</w>'
+    ]
+  ],
+  [ 'test spaces are added after notes before app',
+    ['<w>test</w><w>note</w><note type="local" xml:id="BKV--2">my test note</note><app>' +
+     '<rdg type="orig" hand="firsthand"><w>before</w><w>app</w></rdg><rdg type="corr" hand="corrector"></rdg></app>',
+     'test note<span class=\"note\" wce=\"__t=note&amp;__n=&amp;note_text=my%20test%20note&amp;note_type=local&amp;' +
+     'newhand=\"><span class=\"format_start mceNonEditable\">‹</span>Note<span class=\"format_end mceNonEditable\">›' +
+     '</span></span> <span class=\"corr\" wce_orig=\"before%20app\" wce=\"__t=corr&amp;__n=corrector&amp;' +
+     'corrector_name_other=&amp;corrector_name=corrector&amp;reading=corr&amp;original_firsthand_reading=' +
+     'before%20app&amp;common_firsthand_partial=&amp;deletion_erased=0&amp;deletion_underline=0&amp;' +
+     'deletion_underdot=0&amp;deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_deletion_hooks=0' +
+     '&amp;deletion_transposition_marks=0&amp;deletion_other=0&amp;deletion=null&amp;firsthand_partial=&amp;partial=' +
+     '&amp;corrector_text=&amp;blank_correction=on&amp;place_corr=\"><span class=\"format_start mceNonEditable\">‹' +
+     '</span>before app<span class=\"format_end mceNonEditable\">›</span></span>',
+     '<w>test</w> <w>note</w><note type="local" xml:id="BKV-undefined-2">my test note</note> <app>' +
+     '<rdg type="orig" hand="firsthand"><w>before</w> <w>app</w></rdg><rdg type="corr" hand="corrector"></rdg></app>'
+    ]
+  ],
+  [ 'test spaces are added between verses',
+    ['<div type="book" n="B01"><div type="chapter" n="B01K1"><ab n="B01K1V1"><w>test</w><w>spaces</w></ab>' +
+     '<ab n="B01K1V2"><w>between</w><w>verses</w></ab></div></div>',
+     ' <span class=\"book_number mceNonEditable\" wce=\"__t=book_number\" id=\"1\">1</span>  ' +
+     '<span class=\"chapter_number mceNonEditable\" wce=\"__t=chapter_number\" id=\"2\">1</span> ' +
+     '<span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">1</span> test spaces ' +
+     '<span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">2</span> between verses ',
+     '<div type="book" n="B01"><div type="chapter" n="B01K1"><ab n="B01K1V1"><w>test</w> <w>spaces</w></ab> ' +
+     '<ab n="B01K1V2"><w>between</w> <w>verses</w></ab></div> </div>'
+    ]
+  ],
+  [ 'test spaces are added between word and space',
+    ['<w>word</w><w>then</w><w>space</w><space unit="char" extent="5"/><w>and</w><w>more</w><w>words</w>',
+     'word then space <span class=\"spaces\" wce=\"__t=spaces&amp;__n=&amp;sp_unit_other=&amp;sp_unit=char&amp;' +
+     'sp_extent=5\"><span class=\"format_start mceNonEditable\">‹</span>sp' +
+     '<span class=\"format_end mceNonEditable\">›</span></span>and more words ',
+     '<w>word</w> <w>then</w> <w>space</w> <space unit="char" extent="5"/><w>and</w> <w>more</w> <w>words</w>'
+    ]
+  ],
+  [ 'test spaces are added between word and gap and word',
+    ['<w>word</w><w>then</w><w>gap</w><gap reason="illegible" unit="char" extent="5"/><w>and</w><w>more</w><w>words</w>',
+     'word then gap <span class=\"gap\" wce=\"__t=gap&amp;__n=&amp;gap_reason_dummy_lacuna=lacuna&amp;' +
+     'gap_reason_dummy_illegible=illegible&amp;gap_reason_dummy_unspecified=unspecified&amp;' +
+     'gap_reason_dummy_inferredPage=inferredPage&amp;gap_reason=illegible&amp;unit_other=&amp;' +
+     'unit=char&amp;extent=5\"><span class=\"format_start mceNonEditable\">‹</span>[5]' +
+     '<span class=\"format_end mceNonEditable\">›</span></span> and more words ',
+     '<w>word</w> <w>then</w> <w>gap</w> <gap reason="illegible" unit="char" extent="5"/> <w>and</w> <w>more</w> <w>words</w>'
+    ]
+  ],
+  [ 'test space is added after chapter when ending with w',
+    ['<div type="book" n="B01"><div type="chapter" n="B01K1"><ab n="B01K1V1"><w>space</w><w>after</w><w>chapter</w>' +
+     '</ab></div><div type="chapter" n="B01K2"><ab n="B01K2V1"><w>next</w><w>chapter</w></ab></div></div>',
+     ' <span class=\"book_number mceNonEditable\" wce=\"__t=book_number\" id=\"1\">1</span>  <span class=\"chapter_number mceNonEditable\" wce=\"__t=chapter_number\" id=\"2\">1</span> <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">1</span> space after chapter  <span class=\"chapter_number mceNonEditable\" wce=\"__t=chapter_number\" id=\"3\">2</span> <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">1</span> next chapter ',
+     '<div type="book" n="B01"><div type="chapter" n="B01K1"><ab n="B01K1V1"><w>space</w> <w>after</w> <w>chapter</w>' +
+     '</ab></div> <div type="chapter" n="B01K2"><ab n="B01K2V1"><w>next</w> <w>chapter</w></ab></div> </div>'
+    ]
+  ],
+  [ 'test space is added after chapter when ending with pc',
+    ['<div type="book" n="B01"><div type="chapter" n="B01K1"><ab n="B01K1V1"><w>space</w><w>after</w><w>chapter</w>' +
+     '<w>with</w><w>pc</w><pc>.</pc></ab></div><div type="chapter" n="B01K2"><ab n="B01K2V1"><w>next</w>' +
+     '<w>chapter</w></ab></div></div>',
+     ' <span class=\"book_number mceNonEditable\" wce=\"__t=book_number\" id=\"1\">1</span>  <span class=\"chapter_number mceNonEditable\" wce=\"__t=chapter_number\" id=\"2\">1</span> <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">1</span> space after chapter with pc <span class=\"pc\" wce=\"__t=pc\"><span class=\"format_start mceNonEditable\">‹</span>.<span class=\"format_end mceNonEditable\">›</span></span>  <span class=\"chapter_number mceNonEditable\" wce=\"__t=chapter_number\" id=\"3\">2</span> <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">1</span> next chapter ',
+     '<div type="book" n="B01"><div type="chapter" n="B01K1"><ab n="B01K1V1"><w>space</w> <w>after</w> ' +
+     '<w>chapter</w> <w>with</w> <w>pc</w><pc>.</pc></ab></div> <div type="chapter" n="B01K2"><ab n="B01K2V1">' +
+     '<w>next</w> <w>chapter</w></ab></div> </div>'
+    ]
+  ],
+
+]);
+
+exportSpaces.forEach((value, key, map) => {
+	test('TEI2HTML: ' + key, () => {
+		let testInput, expectedOutput, html;
+		testInput = xmlHead + value[0] + xmlTail;
+		expectedOutput = '<TEMP>' + value[1] + '</TEMP>';
+		html = wce_tei.getHtmlByTei(testInput);
+		expect(html.htmlString).toBe(expectedOutput);
+  });
+  test('HTML2TEI: ' + key, () => {
+		let testInput, expectedOutput, xml;
+		testInput = value[1];
+		expectedOutput = xmlHead + value[2] + xmlTail;
+		xml = wce_tei.getTeiByHtml(testInput, {'addSpaces': true});
+		expect(xml).toBe(expectedOutput);
+	});
+});
+
+
 // test layout of export (linebreaks)
 const exportLayout = new Map([
   [ 'test input without linebreaks in XML get them added on export',
@@ -1113,8 +1265,6 @@ exportLayout.forEach((value, key, map) => {
 		expect(xml).toBe(expectedOutput);
 	});
 });
-
-
 
 
 // this does not test what I was hoping it would

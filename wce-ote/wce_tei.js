@@ -1792,6 +1792,9 @@ function getTeiByHtml(inputString, clientOptions) {
 		// DOM to String
 		var str = xml2String($newRoot);
 
+		if (clientOptions.addSpaces) {
+			str = add_spaces(str);
+		}
 		if (clientOptions.addLineBreaks) {
 			str = add_linebreaks(str);
 		}		
@@ -1806,6 +1809,25 @@ function getTeiByHtml(inputString, clientOptions) {
 			str = str.replace("<text>", '<text xml:lang="' + g_manuscriptLang + '">');
 		str = str.replace("</TEI>", "</body></text></TEI>");
 		str = str.replace(/OMISSION/g, "");
+		return str;
+	};
+
+	var add_spaces = function (str) {
+		str = str.replace(/<\/w><w([>| ])/g, '</w> <w$1');
+		str = str.replace(/<\/pc><w([>| ])/g, '</pc> <w$1');
+		str = str.replace(/<\/seg><w([>| ])/g, '</seg> <w$1');
+		str = str.replace(/<\/w><app([>| ])/g, '</w> <app$1');
+		str = str.replace(/<\/app><w([>| ])/g, '</app> <w$1');
+		str = str.replace(/<\/pc><app([>| ])/g, '</pc> <app$1');
+		str = str.replace(/<\/note><w([>| ])/g, '</note> <w$1');
+		str = str.replace(/<\/note><app([>| ])/g, '</note> <app$1');
+		str = str.replace(/ <\/ab><ab/g, '</ab> <ab'); //can't recreate this in the editor, is it needed on export?
+		str = str.replace(/<\/ab><ab/g, '</ab> <ab');
+		str = str.replace(/<\/w><space/g, '</w> <space');
+		str = str.replace(/<\/w><gap /g, '</w> <gap ');
+		str = str.replace(/(<gap [^>]*\/>)<w([>| ])/g, '$1 <w$2');
+		str = str.replace(/<\/w><\/ab><\/div>([^ ])/g, '</w></ab></div> $1');
+		str = str.replace(/<\/pc><\/ab><\/div>([^ ])/g, '</pc></ab></div> $1');
 		return str;
 	};
 
