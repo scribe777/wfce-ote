@@ -58,6 +58,14 @@ function setWceEditor(_id, clientOptions, baseURL, callback) {
 		tinymce.baseURI = new tinymce.util.URI(tinymce.baseURL);
 	}
 
+	if (!clientOptions.getWitness) {
+		clientOptions.getWitness = "";
+	}
+
+	if (!clientOptions.getWitnessLang) {
+		clientOptions.getWitnessLang = "";
+	}
+
 	tinymce.init({
 		// General options
 		clientOptions: clientOptions,
@@ -78,8 +86,6 @@ function setWceEditor(_id, clientOptions, baseURL, callback) {
 		},
 		directionality : (clientOptions.rtl) ? "rtl" : "ltr",
 		language : (clientOptions.language) ? (clientOptions.language.indexOf('de') == 0 ? "de" : "en") : "en",
-		witness : (clientOptions.getWitness) ? clientOptions.getWitness : "",
-		manuscriptLang : (clientOptions.getWitnessLang) ? clientOptions.getWitnessLang : "",
 		plugins : "pagebreak,save,print,contextmenu,fullscreen,wordcount,autosave,paste,charmap,code,noneditable",
 		contextmenu: 'cut copy paste',
 		charmap : charmap_greek.concat(charmap_latin).concat(charmap_slavistic),
@@ -90,7 +96,6 @@ function setWceEditor(_id, clientOptions, baseURL, callback) {
 		show_linenumber:true,//default false,
 		ignoreShiftNotEn: [188, 190],
 		keyboardDebug: true,
-		add_newline_for_breaks: (addLinebreaks) ? addLinebreaks : false,
 		init_instance_callback : "wceReload",
 		// Theme options
 		toolbar : "undo redo charmap | code | save print contextmenu cut copy pastetext pasteword fullscreen | "+
@@ -144,7 +149,7 @@ function getTEI() {
 	//teiIndexData[0] = tinymce.get(tinyMCE.activeEditor.id).settings.book;
 	//teiIndexData[1] = tinymce.get(tinyMCE.activeEditor.id).settings.witness;
 	//teiIndexData[2] = tinymce.get(tinyMCE.activeEditor.id).settings.manuscriptLang;
-	return getTeiByHtml(getData(), tinyMCE.activeEditor.settings);
+	return getTeiByHtml(getData(), tinyMCE.activeEditor.settings.clientOptions);
 }
 
 /** Set editor html content from tei input
