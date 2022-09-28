@@ -1,6 +1,6 @@
-<!-- 
-	Copyright (C) 2012-2016 Trier Center for Digital Humanities, Trier (Germany)
-	
+<!--
+	Copyright (C) 2012-2018 Trier Center for Digital Humanities, Trier (Germany)
+
 	This file is part of the Online Transcription Editor (OTE).
 
     OTE is free software: you can redistribute it and/or modify
@@ -18,19 +18,20 @@
 
     Diese Datei ist Teil des Online-Transkriptions-Editor (OTE).
 
-    OTE ist Freie Software: Sie k�nnen es unter den Bedingungen
+    OTE ist Freie Software: Sie können es unter den Bedingungen
     der GNU Lesser General Public License, wie von der Free Software Foundation,
-    Version 2.1 der Lizenz oder (nach Ihrer Wahl) jeder sp�teren
-    ver�ffentlichten Version, weiterverbreiten und/oder modifizieren.
+    Version 2.1 der Lizenz oder (nach Ihrer Wahl) jeder späteren
+    veröffentlichten Version, weiterverbreiten und/oder modifizieren.
 
-    OTE wird in der Hoffnung, dass es n�tzlich sein wird, aber
-    OHNE JEDE GEW�HRLEISTUNG, bereitgestellt; sogar ohne die implizite
-    Gew�hrleistung der MARKTF�HIGKEIT oder EIGNUNG F�R EINEN BESTIMMTEN ZWECK.
-    Siehe die GNU Lesser General Public License f�r weitere Details.
+    OTE wird in der Hoffnung, dass es nützlich sein wird, aber
+    OHNE JEDE GEWÄHRLEISTUNG, bereitgestellt; sogar ohne die implizite
+    Gewährleistung der MARKTFÄHIGKEIT oder EIGNUNG FÜR EINEN BESTIMMTEN ZWECK.
+    Siehe die GNU Lesser General Public License für weitere Details.
 
     Sie sollten eine Kopie der GNU Lesser General Public License zusammen mit diesem
     Programm erhalten haben. Wenn nicht, siehe <http://www.gnu.org/licenses/>.
 -->
+
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -154,7 +155,6 @@
 			qsParm['quire'] = parseInt(v.qcnt) + 1;
 			qsParm['page'] = parseInt(v.pcnt) + 1
 			qsParm['column'] = parseInt(v.ccnt) + 1;
-			//qsParm['line'] = parseInt(v.lcnt) + 1;
 			qsParm['rectoverso'] = v.rectoverso;
 
 			comboBindReturnEvent('insert');
@@ -163,7 +163,7 @@
 			old_break_type = document.breakinfo.break_type.value;
 			//qs();
 			if (qsParm['mode'] == 'new') {// first call, no former value
-				//document.breakinfo.number.value = qsParm['line'];
+				// squelch
 			} else {// edit mode => number not empty
 				switch (old_break_type) {
 					case 'gb':
@@ -181,8 +181,7 @@
 				}
 			}
 			checkstatus_break();
-			//setstatus_hyphen();
-			//checkstatus_ghostpage();
+
 		}
 
 		function setBreakValue() {
@@ -196,8 +195,6 @@
 				break_indention = "";
 
 			if (!add_new_wce_node) { //edit mode
-				// set hasBreak attribute
-				// checkstatus_hyphen();
 				if ($('#hasBreak').val() == 'yes')
 					break_lbpos = 'lbm';
 				else
@@ -216,7 +213,6 @@
 			if (document.breakinfo.break_type.options[0].selected == true) {//LB
 				document.breakinfo.lb_alignment.disabled = false;
 				document.getElementById('lb_alignment').style.backgroundColor = "white";
-				//document.breakinfo.number.value = qsParm['line'];
 			} else {
 				document.breakinfo.lb_alignment.disabled = true;
 				document.getElementById('lb_alignment').style.backgroundColor = "#CCCCCC";
@@ -268,7 +264,7 @@
 		}
 
 		function testNumber() {
-			if (document.getElementById('number').value == '') // && !document.breakinfo.pb_ghostpage.checked)
+			if (document.getElementById('number').value == '')
 				return false;
 			return true;
 		}
