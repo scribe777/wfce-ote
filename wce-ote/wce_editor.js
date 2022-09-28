@@ -42,7 +42,9 @@
 /** Initialises the editor
 
 @param {string} _id - The html id value of the text area to transform into the editor.
-@param {object} options - the optional settings to use when initialising the editor.
+@param {object} options - The client settings to use when initialising the editor.
+@param {baseURL} string - Explicitly sets TinyMCE's base URL.
+@param {callback} function - The function to call once the editor is loaded.
 
 */
 function setWceEditor(_id, clientOptions, baseURL, callback) {
@@ -75,8 +77,8 @@ function setWceEditor(_id, clientOptions, baseURL, callback) {
 		},
 		directionality : (clientOptions.rtl) ? "rtl" : "ltr",
 		language : (clientOptions.language) ? (clientOptions.language.indexOf('de') == 0 ? "de" : "en") : "en",
-		witness : (clientOptions.witnessSiglum) ? clientOptions.witnessSiglum : "",
-		manuscriptLang : (clientOptions.witnessLang) ? clientOptions.witnessLang : "",
+		witness : (clientOptions.getWitness) ? clientOptions.getWitness : "",
+		manuscriptLang : (clientOptions.getWitnessLang) ? clientOptions.getWitnessLang : "",
 		plugins : "pagebreak,save,print,contextmenu,fullscreen,wordcount,autosave,paste,charmap,code,noneditable",
 		contextmenu: 'cut copy paste',
 		charmap : charmap_greek.concat(charmap_latin).concat(charmap_slavistic),
