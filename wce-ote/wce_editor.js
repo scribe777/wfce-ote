@@ -72,6 +72,10 @@ function setWceEditor(_id, clientOptions, baseURL, callback) {
 		clientOptions.getWitnessLang = "";
 	}
 
+	if (!clientOptions.bookLookup || clientOptions.bookLookup === undefined) {
+		clientOptions.bookLookup = NTLookup;
+	}
+
 	tinymce.init({
 		// General options
 		clientOptions: clientOptions,
@@ -92,7 +96,6 @@ function setWceEditor(_id, clientOptions, baseURL, callback) {
 		},
 		directionality : (clientOptions.rtl) ? "rtl" : "ltr",
 		language : (clientOptions.language) ? (clientOptions.language.indexOf('de') == 0 ? "de" : "en") : "en",
-		book_lookup : bookLookup !== undefined ? bookLookup : NTLookup,
 		plugins : "pagebreak,save,print,contextmenu,fullscreen,wordcount,autosave,paste,charmap,code,noneditable",
 		contextmenu: 'cut copy paste',
 		charmap : charmap_greek.concat(charmap_latin).concat(charmap_slavistic),

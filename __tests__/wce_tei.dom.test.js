@@ -6,7 +6,7 @@ window.$ = require('../wce-ote/jquery');
 const wce_tei = require('../wce-ote/wce_tei');
 const tinymce_settings = require('../wce-ote/wce_editor');
 // use the NTLookup data (to save repeating it here)
-const args = {'book_lookup': tinymce_settings.NTLookup};
+const clientOptions = {'bookLookup': tinymce_settings.NTLookup};
 
 // store the top and tail of the js so the tests can reuse and only focus on the content of the <body> tag
 const xmlHead = '<?xml  version="1.0" encoding="utf-8"?><!DOCTYPE TEI [<!ENTITY om ""><!ENTITY lac ""><!ENTITY lacorom "">]>' +
@@ -487,7 +487,7 @@ const notes = new Map([
   ],
   // a handshift note - needs to be changed to handShift [issue #12]
   [ 'a handShift note',
-    [ '<w>a</w><w>note</w><note type="editorial" xml:id="..-undefined-2"><handshift/></note>',
+    [ '<w>a</w><w>note</w><note type="editorial" xml:id="..-undefined-2"><handShift/></note>',
       'a note<span class="note" wce="__t=note&amp;__n=&amp;note_text=&amp;note_type=changeOfHand&amp;' +
       'note_type_other=&amp;newHand="><span class="format_start mceNonEditable">‹</span>Note' +
       '<span class="format_end mceNonEditable">›</span></span>'
@@ -495,7 +495,7 @@ const notes = new Map([
   ],
   // spaces added in attribute should be replaced with _ [issue #13]
   [ 'a handShift note with new hand',
-    [ '<w>a</w><w>note</w><note type="editorial" xml:id="..-undefined-2"><handshift scribe="new hand"/></note>',
+    [ '<w>a</w><w>note</w><note type="editorial" xml:id="..-undefined-2"><handShift scribe="new hand"/></note>',
       'a note<span class="note" wce="__t=note&amp;__n=&amp;note_text=&amp;note_type=changeOfHand&amp;' +
       'note_type_other=&amp;newHand=new%20hand"><span class="format_start mceNonEditable">‹</span>Note' +
       '<span class="format_end mceNonEditable">›</span></span>'
@@ -595,7 +595,7 @@ for (let i=0; i<testDataMaps.length; i+=1) {
 			let testInput, expectedOutput, html;
 			testInput = xmlHead + value[0] + xmlTail;
 			expectedOutput = '<TEMP>' + value[1] + '</TEMP>';
-			html = wce_tei.getHtmlByTei(testInput, args);
+			html = wce_tei.getHtmlByTei(testInput, clientOptions);
 			expect(html.htmlString).toBe(expectedOutput);
 		});
 	  test('HTML2TEI: ' + key, () => {
@@ -673,7 +673,7 @@ hiRendOptions.forEach((value, key, map) => {
 		let testInput, expectedOutput, html;
 		testInput = xmlFormat;
 		expectedOutput = '<TEMP>' + htmlFormat + '</TEMP>';
-		html = wce_tei.getHtmlByTei(testInput, args);
+		html = wce_tei.getHtmlByTei(testInput, clientOptions);
 		expect(html.htmlString).toBe(expectedOutput);
 	});
   test('HTML2TEI: ' + key, () => {
@@ -907,7 +907,7 @@ manuscriptPageStructure.forEach((value, key, map) => {
     idRegex = /id="(.)b_(\d)_\d+"/g;
 		testInput = xmlHead + value[0] + xmlTail;
 		expectedOutput = '<TEMP>' + value[1] + '</TEMP>';
-		html = wce_tei.getHtmlByTei(testInput, args);
+		html = wce_tei.getHtmlByTei(testInput, clientOptions);
     modifiedHtml = html.htmlString.replace(idRegex, 'id="$1b_$2_MATH.RAND"');
 		expect(modifiedHtml).toBe(expectedOutput);
 	});
@@ -955,7 +955,7 @@ const teiToHtmlAndBackWithChange = new Map([
         'a note<span class="note" wce="__t=note&amp;__n=&amp;note_text=&amp;note_type=changeOfHand&amp;' +
         'note_type_other=&amp;newHand=new%20hand"><span class="format_start mceNonEditable">‹</span>Note' +
         '<span class="format_end mceNonEditable">›</span></span>',
-        '<w>a</w><w>note</w><note type="editorial" xml:id="..-undefined-2"><handshift scribe="new hand"/></note>'
+        '<w>a</w><w>note</w><note type="editorial" xml:id="..-undefined-2"><handShift scribe="new hand"/></note>'
       ]
     ],
 		// legacy support
@@ -964,7 +964,7 @@ const teiToHtmlAndBackWithChange = new Map([
 	      'a note<span class="note" wce="__t=note&amp;__n=&amp;note_text=&amp;note_type=changeOfHand&amp;' +
 	      'note_type_other=&amp;newHand="><span class="format_start mceNonEditable">‹</span>Note' +
 	      '<span class="format_end mceNonEditable">›</span></span>',
-				'<w>a</w><w>note</w><note type="editorial" xml:id="BKV-undefined-2"><handShift/></note>'
+				'<w>a</w><w>note</w><note type="editorial" xml:id="..-undefined-2"><handShift/></note>'
 	    ]
 	  ],
 	  // spaces added in attribute should be replaced with _ [issue #13]
@@ -973,7 +973,7 @@ const teiToHtmlAndBackWithChange = new Map([
 	      'a note<span class="note" wce="__t=note&amp;__n=&amp;note_text=&amp;note_type=changeOfHand&amp;' +
 	      'note_type_other=&amp;newHand=new%20hand"><span class="format_start mceNonEditable">‹</span>Note' +
 	      '<span class="format_end mceNonEditable">›</span></span>',
-				'<w>a</w><w>note</w><note type="editorial" xml:id="BKV-undefined-2"><handShift scribe="new hand"/></note>',
+				'<w>a</w><w>note</w><note type="editorial" xml:id="..-undefined-2"><handShift scribe="new hand"/></note>',
 	    ]
 	  ],
     [ 'hi rend ol as legacy support for overline',
@@ -1065,7 +1065,7 @@ teiToHtmlAndBackWithChange.forEach((value, key, map) => {
 		let testInput, expectedOutput, html;
 		testInput = xmlHead + value[0] + xmlTail;
 		expectedOutput = '<TEMP>' + value[1] + '</TEMP>';
-		html = wce_tei.getHtmlByTei(testInput, args);
+		html = wce_tei.getHtmlByTei(testInput, clientOptions);
 		expect(html.htmlString).toBe(expectedOutput);
 	});
   test('HTML2TEI: ' + key, () => {
@@ -1158,8 +1158,8 @@ test ('test export of abbr where supplied and overline need flipping', () => {
 // Might need to mock window.alert of the error function for this [issue #19]
 test('Invalid XML gives error', () => {
   jest.spyOn(window, 'alert').mockImplementation(() => {});
-  html = wce_tei.getHtmlByTei('<w>broken<w>', args);
-  expect(window.alert).toBeCalledWith('Error:\n XML parser 1:12: unclosed tag: w\nundefined\nundefined');
+  html = wce_tei.getHtmlByTei('<w>broken<w>', clientOptions);
+  expect(window.alert).toBeCalledWith('Error:\n XML parser 1:12: unclosed tag: w');
 });
 
 

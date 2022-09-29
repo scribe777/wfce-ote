@@ -705,7 +705,7 @@ function getHtmlByTei(inputString, clientOptions) {
 				// legacy support (ingest only)
 				if (nValue.indexOf('.') == -1) {
 					var nValueArray = nValue.split('K')
-					g_bookNumber = getBookName(nValueArray[0], args);
+					g_bookNumber = getBookName(nValueArray[0], clientOptions);
 					g_chapterNumber = nValueArray[1];
 					nodeAddText($newNode, g_chapterNumber);
 				} else {
@@ -3834,7 +3834,7 @@ function removeArrows(str) {
 }
 
 function getBookName(bookRef, clientOptions) {
-	return clientOptions.book_lookup[bookRef];
+	return clientOptions.bookLookup[bookRef];
 }
 
 /** Recursive function to check if the given element has a <w> tag as an ancestor.
