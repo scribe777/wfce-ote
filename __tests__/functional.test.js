@@ -1300,7 +1300,7 @@ test('a handShift note', async () => {
   const htmlData = await page.evaluate(`getData()`);
   expect(htmlData).toBe('a note<span class=\"note\" wce_orig=\"\" wce=\"__t=note&amp;__n=&amp;help=Help&amp;note_type=changeOfHand&amp;note_type_other=&amp;newHand=&amp;note_text=\"><span class=\"format_start mceNonEditable\">‹</span>Note<span class=\"format_end mceNonEditable\">›</span></span>');
   const xmlData = await page.evaluate(`getTEI()`);
-  expect(xmlData).toBe(xmlHead + '<w>a</w><w>note</w><note type="editorial" xml:id="..--2"><handshift/></note>' + xmlTail);
+  expect(xmlData).toBe(xmlHead + '<w>a</w><w>note</w><note type="editorial" xml:id="..--2"><handShift/></note>' + xmlTail);
 }, 200000);
 
 test('a handShift note with new hand', async () => {
@@ -1321,7 +1321,7 @@ test('a handShift note with new hand', async () => {
   const htmlData = await page.evaluate(`getData()`);
   expect(htmlData).toBe('a note<span class=\"note\" wce_orig=\"\" wce=\"__t=note&amp;__n=&amp;help=Help&amp;note_type=changeOfHand&amp;note_type_other=&amp;newHand=new%20hand&amp;note_text=\"><span class=\"format_start mceNonEditable\">‹</span>Note<span class=\"format_end mceNonEditable\">›</span></span>');
   const xmlData = await page.evaluate(`getTEI()`);
-  expect(xmlData).toBe(xmlHead + '<w>a</w><w>note</w><note type="editorial" xml:id="..--2"><handshift scribe="new hand"/></note>' + xmlTail);
+  expect(xmlData).toBe(xmlHead + '<w>a</w><w>note</w><note type="editorial" xml:id="..--2"><handShift scribe="new hand"/></note>' + xmlTail);
 }, 200000);
 
 test('1 line of commentary text note', async () => {
