@@ -667,14 +667,8 @@ function getHtmlByTei(inputString, clientOptions) {
 			var $booknumber = $teiNode.getAttribute('n');
 			// legacy support
 			if ($booknumber.match(/B\d+/)) {
-				$booknumber = getBookName($booknumber, clientOptions);
+				$booknumber = clientOptions.getBookNameFromBKV($booknumber);
 			}
-			// Cat commented out while changing referencing to OSIS - delete when done #15
-			// var $booknumber = $teiNode.getAttribute('n').substring(1);
-			// // get rid of the "B"
-			// if ($booknumber.charAt(0) == '0')
-			// 	$booknumber = $booknumber.substring(1);
-			// get rid of "0"
 			nodeAddText($newNode, $booknumber);
 		} else if (divType == 'chapter') {
 			var $newNode = $newDoc.createElement('span');
@@ -682,34 +676,15 @@ function getHtmlByTei(inputString, clientOptions) {
 			$newNode.setAttribute('wce', '__t=chapter_number');
 			$newNode.setAttribute('id', ++gid);
 			var nValue = $teiNode.getAttribute('n');
-			// Cat commented this out while switching references - no longer needed #15
-			// BXXK(Y)Y
-			// if (nValue && nValue != '') {
-			// 	var indexK = nValue.indexOf('K');
-			// 	var indexB = nValue.indexOf('B');
-			// 	if (indexB + 1 > -1 && indexK - 1 > 0) {//TODO: Do we need this, if the book number is passed to the editor at run-time? Maybe just a fallback?
-			// 		var bookValue = nValue.substr(indexB + 1, indexK - 1);
-			// 		// we store the book number as it is, maybe with leading "0"
-			// 		//if (bookValue.length == 2 && bookValue.charAt(0) == '0' //if bookValue is a two-digit number and starts with "0"
-			// 		//	bookValue = bookValue.substring(1);
-			// 		g_bookNumber = bookValue;
-			// 	}
-			// 	indexK++;
-			// 	if (indexK > 0 && indexK < nValue.length) {
-			// 		nValue = nValue.substr(indexK);
-			// 		g_chapterNumber = nValue;
-			// 		nodeAddText($newNode, g_chapterNumber);
-			// 	}
-			// }
 			if (nValue && nValue != '') {
 				// legacy support (ingest only)
 				if (nValue.indexOf('.') == -1) {
-					var nValueArray = nValue.split('K')
-					g_bookNumber = getBookName(nValueArray[0], clientOptions);
+					var nValueArray = nValue.split('K');
+					g_bookNumber = clientOptions.getBookNameFromBKV(nValue);
 					g_chapterNumber = nValueArray[1];
 					nodeAddText($newNode, g_chapterNumber);
 				} else {
-					var nValueArray = nValue.split('.')
+					var nValueArray = nValue.split('.');
 					g_bookNumber = nValueArray[0];
 					g_chapterNumber = nValueArray[1];
 					nodeAddText($newNode, g_chapterNumber);
@@ -719,11 +694,6 @@ function getHtmlByTei(inputString, clientOptions) {
 			var $newNode = $newDoc.createElement('span');
 			$newNode.setAttribute('class', 'chapter_number mceNonEditable');
 			$newNode.setAttribute('wce', '__t=chapter_number');
-			// Cat commented ths out while changing references - no longer needed #15
-			// if ($teiNode.getAttribute("type") === "incipit")
-			// 	nodeAddText($newNode, "Inscriptio");
-			// else if ($teiNode.getAttribute("type") === "explicit")
-			// 	nodeAddText($newNode, "Subscriptio");
 			if ($teiNode.getAttribute("type") === "inscriptio" || $teiNode.getAttribute("type") === "incipit")
 				nodeAddText($newNode, "Inscriptio");
 			else if ($teiNode.getAttribute("type") === "subscriptio" || $teiNode.getAttribute("type") === "explicit")
@@ -745,20 +715,10 @@ function getHtmlByTei(inputString, clientOptions) {
 		var $newNode = $newDoc.createElement('span');
 		$newNode.setAttribute('class', 'verse_number mceNonEditable');
 		var nValue = $teiNode.getAttribute('n');
-		// Cat commented this out while switching references - no longer needed #15
-		// if (nValue && nValue != '') {
-		// 	var indexV = nValue.indexOf('V');
-		// 	indexV++;
-		// 	if (indexV > 0 && indexV < nValue.length) {
-		// 		nValue = nValue.substr(indexV);
-		// 		g_verseNumber = nValue;
-		// 		nodeAddText($newNode, g_verseNumber);
-		// 	}
-		// }
 		if (nValue && nValue != '') {
 			// legacy support
 			if (nValue.indexOf('.') == -1) {
-				var nValueArray = nValue.split('V')
+				var nValueArray = nValue.split('V');
 				g_verseNumber = nValueArray[1];
 				nodeAddText($newNode, g_verseNumber);
 			} else {
@@ -2533,11 +2493,6 @@ function getTeiByHtml(inputString, clientOptions) {
 
 		// If there is no special <div type="book"> element, the passed number from the Workspace is used.
 		// We check, if it is in the correct format.
-		// Cat commented this out while working on new referencing - no longer needed #15
-		// if (g_bookNumber.length == 1) {// add "0"
-		// 	g_bookNumber = '0' + g_bookNumber;
-		// }
-
 		wceAttrValue = $htmlNode.getAttribute('wce');
 		if (!wceAttrValue) {
 			if ($($htmlNode).hasClass('verse_number')) {
@@ -2570,8 +2525,6 @@ function getTeiByHtml(inputString, clientOptions) {
 					g_verseNumber = g_verseNumber.substring(0, cont_index);
 				g_verseNumber = $.trim(g_verseNumber);
 				g_verseNode = $newDoc.createElement('ab');
-				// Cat commented this out while working on new referencing - no longer needed #15
-				//g_verseNode.setAttribute('n', 'B' + g_bookNumber + 'K' + g_chapterNumber + 'V' + g_verseNumber);
 				g_verseNode.setAttribute('n', g_bookNumber + '.' + g_chapterNumber + '.' + g_verseNumber);
 
 				if (partial_index > -1){// node contains information about partial
@@ -2611,18 +2564,6 @@ function getTeiByHtml(inputString, clientOptions) {
 				g_chapterNumber = textNode.nodeValue;
 				g_chapterNumber = $.trim(g_chapterNumber);
 					old_chapterNumber = g_chapterNumber;
-					// Cat commented this out while working on new referencing - no longer needed #15
-					// g_chapterNode = $newDoc.createElement('div');
-					// if (g_chapterNumber === 'Inscriptio') {
-					// 	g_chapterNode.setAttribute('type', 'incipit');
-					// 	g_chapterNode.setAttribute('n', 'B' + g_bookNumber + 'incipit');
-					// } else if (g_chapterNumber === 'Subscriptio') {
-					// 	g_chapterNode.setAttribute('type', 'explicit');
-					// 	g_chapterNode.setAttribute('n', 'B' + g_bookNumber + 'explicit');
-					// } else {
-					// 	g_chapterNode.setAttribute('type', 'chapter');
-					// 	g_chapterNode.setAttribute('n', 'B' + g_bookNumber + 'K' + g_chapterNumber);
-					// }
 					g_chapterNode = $newDoc.createElement('div');
 					if (g_chapterNumber === 'Inscriptio') {
 						g_chapterNode.setAttribute('type', 'inscriptio');
@@ -2650,10 +2591,6 @@ function getTeiByHtml(inputString, clientOptions) {
 				g_bookNumber = $.trim(g_bookNumber);
 				g_bookNode = $newDoc.createElement('div');
 				g_bookNode.setAttribute('type', 'book');
-				// Cat commented this out while working on new referencing - no longer needed #15
-				// if (g_bookNumber.length == 1)// add "0" if necessary
-				// 	g_bookNumber = '0' + g_bookNumber;
-				// g_bookNode.setAttribute('n', 'B' + g_bookNumber);
 				g_bookNode.setAttribute('n', g_bookNumber);
 				if (g_lectionNode)
 					g_lectionNode.appendChild(g_bookNode);
@@ -3317,8 +3254,6 @@ function getTeiByHtml(inputString, clientOptions) {
 			note++;
 		} else // this is important for notes being inserted directly after the verse number
 			note = 1;
-		// Cat commented this out while working on new references - no longer needed #15
-		// var xml_id = 'B' + g_bookNumber + 'K' + g_chapterNumber + 'V' + g_verseNumber + '-' + g_witValue + '-' + note;
 		var xml_id = g_bookNumber + '.' + g_chapterNumber + '.' + g_verseNumber + '-' + g_witValue + '-' + note;
 		var temp='';
 		var i=65;
@@ -3831,10 +3766,6 @@ function removeArrows(str) {
 	else if (str.indexOf("↓") == str.length-1 || str.indexOf("↑") == str.length-1) // Second one is just for compatibility
 		out = str.substring(0, str.length-1) + "y";
 	return out;
-}
-
-function getBookName(bookRef, clientOptions) {
-	return clientOptions.bookLookup[bookRef];
 }
 
 /** Recursive function to check if the given element has a <w> tag as an ancestor.

@@ -33,17 +33,24 @@
 */
 
 
-const NTLookup = {"B01": "Matt", "B02": "Mark", "B03": "Luke", "B04": "John", "B05": "Acts",
-									"B06": "Rom", "B07": "1Cor", "B08": "2Cor", "B09": "Gal", "B10": "Eph", "B11": "Phil", "B12": "Col",
-									"B13": "1Thess", "B14": "2Thess", "B15": "1Tim", "B16": "2Tim", "B17": "Titus", "B18": "Phlm",
-									"B19": "Heb", "B20": "Jas", "B21": "1Pet", "B22": "2Pet", "B23": "1John", "B24": "2John",
-									"B25": "3John", "B26": "Jude", "B27": "Rev"};
-
 // required: _id
 // optional with default: rtl, lang, getWitness, getWitnessLang
 // optional no default needed: myBaseURL?, finishCallback
 // ones to make optional with default: toolbar, 
 // ones to make optional without default: save_onsavecallback (required is save in toolbar)
+
+
+function getBookNameFromBKV(ref) {
+	let bookRef;
+	let NTLookup = {"B01": "Matt", "B02": "Mark", "B03": "Luke", "B04": "John", "B05": "Acts",
+					"B06": "Rom", "B07": "1Cor", "B08": "2Cor", "B09": "Gal", "B10": "Eph", "B11": "Phil", "B12": "Col",
+					"B13": "1Thess", "B14": "2Thess", "B15": "1Tim", "B16": "2Tim", "B17": "Titus", "B18": "Phlm",
+					"B19": "Heb", "B20": "Jas", "B21": "1Pet", "B22": "2Pet", "B23": "1John", "B24": "2John",
+					"B25": "3John", "B26": "Jude", "B27": "Rev"};
+	bookRef = ref.split('K')[0];
+	return NTLookup[bookRef];
+}
+
 
 
 /** Initialises the editor
@@ -72,8 +79,8 @@ function setWceEditor(_id, clientOptions, baseURL, callback) {
 		clientOptions.getWitnessLang = "";
 	}
 
-	if (!clientOptions.bookLookup || clientOptions.bookLookup === undefined) {
-		clientOptions.bookLookup = NTLookup;
+	if (!clientOptions.getBookNameFromBKV) {
+		clientOptions.getBookNameFromBKV = getBookNameFromBKV;
 	}
 
 	tinymce.init({
@@ -127,6 +134,7 @@ function setWceEditor(_id, clientOptions, baseURL, callback) {
 		}	
 	});
 }
+
 
 // wenn brower reload, set editor blank
 function wceReload() {
@@ -340,7 +348,7 @@ if (( typeof Range !== "undefined") && !Range.prototype.createContextualFragment
 
 try {
 	module.exports = {
-		NTLookup
+		getBookNameFromBKV
 	};
 } catch (e) {
 	// nodejs is not available which is fine as long as we are not running tests.
