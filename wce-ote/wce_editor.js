@@ -164,7 +164,7 @@ function getTEI() {
  @param {String} teiStringInput - the xml string to display for editing
 */
 function setTEI(teiStringInput) {
-	var result = getHtmlByTei(teiStringInput, tinyMCE.activeEditor.settings);
+	var result = getHtmlByTei(teiStringInput, tinyMCE.activeEditor.settings.clientOptions);
 	if (result) {
 		var htmlContent = result['htmlString'];
 		if (htmlContent)

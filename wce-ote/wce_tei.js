@@ -61,7 +61,7 @@ function zeigeFehler(Fehler) {
 		@returns {object}
 */
 
-function getHtmlByTei(inputString, args) {
+function getHtmlByTei(inputString, clientOptions) {
 	var $newDoc, $newRoot, $newRoot;
 	var $formatStart, $formatEnd;
 
@@ -667,7 +667,7 @@ function getHtmlByTei(inputString, args) {
 			var $booknumber = $teiNode.getAttribute('n');
 			// legacy support
 			if ($booknumber.match(/B\d+/)) {
-				$booknumber = getBookName($booknumber, args);
+				$booknumber = getBookName($booknumber, clientOptions);
 			}
 			// Cat commented out while changing referencing to OSIS - delete when done #15
 			// var $booknumber = $teiNode.getAttribute('n').substring(1);
@@ -3815,7 +3815,7 @@ function addArrows(str) {
 	else if (str.indexOf("y") == str.length-1)
 		out = str.substring(0, str.length-1)+"↓";
 	return out;
-};
+}
 
 /** Replaces a right pointing arrow at the end of a string with an x and down arrow (and for legacy purposes an up
 arrow) at the end of a string with a y.
@@ -3831,13 +3831,12 @@ function removeArrows(str) {
 	else if (str.indexOf("↓") == str.length-1 || str.indexOf("↑") == str.length-1) // Second one is just for compatibility
 		out = str.substring(0, str.length-1) + "y";
 	return out;
-};
+}
 
-<<<<<<< HEAD
-function getBookName(bookRef, args) {
-	return args.book_lookup[bookRef];
-};
-=======
+function getBookName(bookRef, clientOptions) {
+	return clientOptions.book_lookup[bookRef];
+}
+
 /** Recursive function to check if the given element has a <w> tag as an ancestor.
 
 @param {$node} element - The dom element node to check.
@@ -3856,7 +3855,6 @@ function hasWAncestor($node) {
 	}
 	return false;
 }
->>>>>>> master
 
 var removeBlankNode=function ($root){//remove blank node,
 		var _remove=function($node){
