@@ -1129,7 +1129,7 @@ exportLayout.forEach((value, key, map) => {
 		testInput = xmlHead + value[0] + xmlTail;
     idRegex = /id="(.)b_(\d)_\d+"/g;
 		expectedOutput = '<TEMP>' + value[1] + '</TEMP>';
-		html = wce_tei.getHtmlByTei(testInput);
+		html = wce_tei.getHtmlByTei(testInput, clientOptions);
     modifiedHtml = html.htmlString.replace(idRegex, 'id="$1b_$2_MATH.RAND"');
 		expect(modifiedHtml).toBe(expectedOutput);
 	});
