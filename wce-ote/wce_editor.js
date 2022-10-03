@@ -69,16 +69,7 @@ function setWceEditor(_id, clientOptions, baseURL, callback) {
 	}
 
 	if (!clientOptions.getBookNameFromBKV) {
-		clientOptions.getBookNameFromBKV = function getBookNameFromBKV(ref) {
-			let bookRef;
-			let NTLookup = {"B01": "Matt", "B02": "Mark", "B03": "Luke", "B04": "John", "B05": "Acts",
-							"B06": "Rom", "B07": "1Cor", "B08": "2Cor", "B09": "Gal", "B10": "Eph", "B11": "Phil", "B12": "Col",
-							"B13": "1Thess", "B14": "2Thess", "B15": "1Tim", "B16": "2Tim", "B17": "Titus", "B18": "Phlm",
-							"B19": "Heb", "B20": "Jas", "B21": "1Pet", "B22": "2Pet", "B23": "1John", "B24": "2John",
-							"B25": "3John", "B26": "Jude", "B27": "Rev"};
-			bookRef = ref.split('K')[0];
-			return NTLookup[bookRef];
-		}
+		clientOptions.getBookNameFromBKV = getBookNameFromBKV;
 	}
 
 	tinymce.init({

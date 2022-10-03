@@ -6,7 +6,9 @@ window.$ = require('../wce-ote/jquery');
 const wce_tei = require('../wce-ote/wce_tei');
 const tinymce_settings = require('../wce-ote/wce_editor');
 console.log(tinymce_settings)
+console.log(tinymce_settings.getBookNameFromBKV('B04K1'))
 const clientOptions = {'getBookNameFromBKV': tinymce_settings.getBookNameFromBKV};
+
 
 // store the top and tail of the js so the tests can reuse and only focus on the content of the <body> tag
 const xmlHead = '<?xml  version="1.0" encoding="utf-8"?><!DOCTYPE TEI [<!ENTITY om ""><!ENTITY lac ""><!ENTITY lacorom "">]>' +
