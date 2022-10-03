@@ -40,6 +40,8 @@
 // ones to make optional without default: save_onsavecallback (required is save in toolbar)
 
 
+
+
 /** Initialises the editor
 
 @param {string} _id - The html id value of the text area to transform into the editor.
@@ -64,6 +66,10 @@ function setWceEditor(_id, clientOptions, baseURL, callback) {
 
 	if (!clientOptions.getWitnessLang) {
 		clientOptions.getWitnessLang = "";
+	}
+
+	if (!clientOptions.getBookNameFromBKV) {
+		clientOptions.getBookNameFromBKV = getBookNameFromBKV;
 	}
 
 	tinymce.init({
@@ -118,6 +124,18 @@ function setWceEditor(_id, clientOptions, baseURL, callback) {
 	});
 }
 
+function getBookNameFromBKV(ref) {
+	let bookRef;
+	let NTLookup = {"B01": "Matt", "B02": "Mark", "B03": "Luke", "B04": "John", "B05": "Acts",
+					"B06": "Rom", "B07": "1Cor", "B08": "2Cor", "B09": "Gal", "B10": "Eph", "B11": "Phil", "B12": "Col",
+					"B13": "1Thess", "B14": "2Thess", "B15": "1Tim", "B16": "2Tim", "B17": "Titus", "B18": "Phlm",
+					"B19": "Heb", "B20": "Jas", "B21": "1Pet", "B22": "2Pet", "B23": "1John", "B24": "2John",
+					"B25": "3John", "B26": "Jude", "B27": "Rev"};
+	bookRef = ref.split('K')[0];
+	return NTLookup[bookRef];
+}
+
+
 // wenn brower reload, set editor blank
 function wceReload() {
 	// for test
@@ -157,7 +175,7 @@ function getTEI() {
  @param {String} teiStringInput - the xml string to display for editing
 */
 function setTEI(teiStringInput) {
-	var result = getHtmlByTei(teiStringInput);
+	var result = getHtmlByTei(teiStringInput, tinyMCE.activeEditor.settings.clientOptions);
 	if (result) {
 		var htmlContent = result['htmlString'];
 		if (htmlContent)
@@ -326,4 +344,12 @@ if (( typeof Range !== "undefined") && !Range.prototype.createContextualFragment
 		div.outerHTML = html;
 		return frag;
 	};
+}
+
+try {
+	module.exports = {
+		getBookNameFromBKV
+	};
+} catch (e) {
+	// nodejs is not available which is fine as long as we are not running tests.
 }

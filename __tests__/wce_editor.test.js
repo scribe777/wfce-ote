@@ -132,13 +132,13 @@ generalAnnotation2.forEach((value, key, map) => {
 // Book/chapter/verse structure tests where nothing in the XML should change
 const textStructure = new Map([
 	[ 'Standard structure single verse',
-		'<div type="book" n="B04"><div type="chapter" n="B04K3">' +
-		'<ab n="B04K3V2"><w>the</w><w>second</w><w>verse</w><w>of</w><w>chapter</w><w>three</w></ab></div></div>'
+		'<div type="book" n="John"><div type="chapter" n="John.3">' +
+		'<ab n="John.3.2"><w>the</w><w>second</w><w>verse</w><w>of</w><w>chapter</w><w>three</w></ab></div></div>'
 	],
 	[ 'Standard structure multiple verses',
-		'<div type="book" n="B04"><div type="chapter" n="B04K3">' +
-		'<ab n="B04K3V2"><w>the</w><w>second</w><w>verse</w><w>of</w><w>chapter</w><w>one</w></ab>' +
-		'<ab n="B04K3V3"><w>third</w><w>verse</w><w>of</w><w>chapter</w><w>3</w></ab></div></div>'
+		'<div type="book" n="John"><div type="chapter" n="John.3">' +
+		'<ab n="John.3.2"><w>the</w><w>second</w><w>verse</w><w>of</w><w>chapter</w><w>one</w></ab>' +
+		'<ab n="John.3.3"><w>third</w><w>verse</w><w>of</w><w>chapter</w><w>3</w></ab></div></div>'
 	],
 ]);
 

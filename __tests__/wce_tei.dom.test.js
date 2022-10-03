@@ -4,6 +4,8 @@
 
 window.$ = require('../wce-ote/jquery');
 const wce_tei = require('../wce-ote/wce_tei');
+const tinymce_settings = require('../wce-ote/wce_editor');
+let clientOptions = {'getBookNameFromBKV': tinymce_settings.getBookNameFromBKV};
 
 
 // store the top and tail of the js so the tests can reuse and only focus on the content of the <body> tag
@@ -136,33 +138,33 @@ const textStructureDivs = new Map([
   // divs
   // these will need to change when references change [issue #15]
   [ 'book div',
-	  [ '<div type="book" n="B04"><w>The</w><w>content</w><w>of</w><w>my</w><w>book</w></div>',
-	 		' <span class="book_number mceNonEditable" wce="__t=book_number" id="1">4</span> The content of my book ' //spaces at beg and end are important
+	  [ '<div type="book" n="John"><w>The</w><w>content</w><w>of</w><w>my</w><w>book</w></div>',
+	 		' <span class="book_number mceNonEditable" wce="__t=book_number" id="1">John</span> The content of my book ' //spaces at beg and end are important
  		],
 	],
   [ 'chapter div', // note that book value is empty until we combine them
-	  [ '<div type="chapter" n="BK1"><w>The</w><w>content</w><w>of</w><w>my</w><w>chapter</w></div>',
+	  [ '<div type="chapter" n=".1"><w>The</w><w>content</w><w>of</w><w>my</w><w>chapter</w></div>',
 	 		' <span class="chapter_number mceNonEditable" wce="__t=chapter_number" id="1">1</span> The content of my chapter ' //spaces at beg and end are important
  		],
 	],
   [ 'book and chapter div',
-	  [ '<div type="book" n="B04"><div type="chapter" n="B04K1"><w>The</w><w>content</w><w>of</w><w>my</w><w>chapter</w></div></div>',
-	 		' <span class="book_number mceNonEditable" wce="__t=book_number" id="1">4</span>  ' +
+	  [ '<div type="book" n="John"><div type="chapter" n="John.1"><w>The</w><w>content</w><w>of</w><w>my</w><w>chapter</w></div></div>',
+	 		' <span class="book_number mceNonEditable" wce="__t=book_number" id="1">John</span>  ' +
       '<span class="chapter_number mceNonEditable" wce="__t=chapter_number" id="2">1</span> The content of my chapter ' //spaces at beg and end are important
  		],
 	],
   [ 'book, chapter and verse',
-	  [ '<div type="book" n="B04"><div type="chapter" n="B04K1"><ab n="B04K1V2"><w>The</w><w>content</w><w>of</w>' +
+	  [ '<div type="book" n="John"><div type="chapter" n="John.1"><ab n="John.1.2"><w>The</w><w>content</w><w>of</w>' +
       '<w>my</w><w>verse</w></ab></div></div>',
-	 		' <span class="book_number mceNonEditable" wce="__t=book_number" id="1">4</span>  ' +
+	 		' <span class="book_number mceNonEditable" wce="__t=book_number" id="1">John</span>  ' +
       '<span class="chapter_number mceNonEditable" wce="__t=chapter_number" id="2">1</span> ' +
       '<span class="verse_number mceNonEditable" wce="__t=verse_number">2</span> The content of my verse ' //spaces at beg and end are important
  		],
 	],
   [ 'book, chapter and verse (verse continues from previous page, part="F")',
-	  [ '<div type="book" n="B04"><div type="chapter" n="B04K1"><ab n="B04K1V2" part="F"><w>continuation</w>' +
+	  [ '<div type="book" n="John"><div type="chapter" n="John.1"><ab n="John.1.2" part="F"><w>continuation</w>' +
       '<w>of</w><w>my</w><w>verse</w></ab></div></div>',
-	 		' <span class="book_number mceNonEditable" wce="__t=book_number" id="1">4</span>  ' +
+	 		' <span class="book_number mceNonEditable" wce="__t=book_number" id="1">John</span>  ' +
       '<span class="chapter_number mceNonEditable" wce="__t=chapter_number" id="2">1</span> ' +
       '<span class="verse_number mceNonEditable" wce="__t=verse_number&amp;partial=F">2 Cont.</span> continuation of my verse ' //spaces at beg and end are important
  		],
@@ -173,23 +175,23 @@ const textStructureDivs = new Map([
  		],
 	],
   [ 'lection, book and chapter div',
-    [ '<div type="lection" n="R12"><div type="book" n="B04"><div type="chapter" n="B04K1">' +
+    [ '<div type="lection" n="R12"><div type="book" n="John"><div type="chapter" n="John.1">' +
       '<w>The</w><w>content</w><w>of</w><w>my</w><w>chapter</w></div></div></div>',
       ' <span class="lection_number mceNonEditable" wce="__t=lection_number&amp;number=R12" id="1">Lec</span>  ' +
-      '<span class="book_number mceNonEditable" wce="__t=book_number" id="2">4</span>  '+
+      '<span class="book_number mceNonEditable" wce="__t=book_number" id="2">John</span>  '+
       '<span class="chapter_number mceNonEditable" wce="__t=chapter_number" id="3">1</span> The content of my chapter ' //spaces at beg and end are important
     ],
   ],
   [ 'book and inscriptio divs',
-    [ '<div type="book" n="B04"><div type="incipit" n="B04incipit"><ab><w>inscriptio</w><w>text</w></ab></div></div>',
-      ' <span class="book_number mceNonEditable" wce="__t=book_number" id="1">4</span>  ' +
+    [ '<div type="book" n="John"><div type="inscriptio"><ab n="John.inscriptio"><w>inscriptio</w><w>text</w></ab></div></div>',
+      ' <span class="book_number mceNonEditable" wce="__t=book_number" id="1">John</span>  ' +
       '<span class="chapter_number mceNonEditable" wce="__t=chapter_number">Inscriptio</span> ' +
       '<span class="verse_number mceNonEditable" wce="__t=verse_number"/> inscriptio text '
     ]
   ],
   [ 'book and subscriptio div',
-    [ '<div type="book" n="B04"><div type="explicit" n="B04explicit"><ab><w>subscriptio</w><w>text</w></ab></div></div>',
-      ' <span class="book_number mceNonEditable" wce="__t=book_number" id="1">4</span>  ' +
+    [ '<div type="book" n="John"><div type="subscriptio"><ab n="John.subscriptio"><w>subscriptio</w><w>text</w></ab></div></div>',
+      ' <span class="book_number mceNonEditable" wce="__t=book_number" id="1">John</span>  ' +
       '<span class="chapter_number mceNonEditable" wce="__t=chapter_number">Subscriptio</span> ' +
       '<span class="verse_number mceNonEditable" wce="__t=verse_number"/> subscriptio text '
     ]
@@ -477,7 +479,7 @@ const notes = new Map([
   // notes
   // another undefined issue
   [ 'a local note',
-    [ '<w>a</w><w>note</w><note type="local" xml:id="BKV-undefined-2">my new local note</note>',
+    [ '<w>a</w><w>note</w><note type="local" xml:id="..-undefined-2">my new local note</note>',
       'a note<span class="note" wce="__t=note&amp;__n=&amp;note_text=my%20new%20local%20note&amp;' +
       'note_type=local&amp;newhand="><span class="format_start mceNonEditable">‹</span>Note' +
       '<span class="format_end mceNonEditable">›</span></span>'
@@ -485,7 +487,7 @@ const notes = new Map([
   ],
   // a handshift note - needs to be changed to handShift [issue #12]
   [ 'a handShift note',
-    [ '<w>a</w><w>note</w><note type="editorial" xml:id="BKV-undefined-2"><handShift/></note>',
+    [ '<w>a</w><w>note</w><note type="editorial" xml:id="..-undefined-2"><handShift/></note>',
       'a note<span class="note" wce="__t=note&amp;__n=&amp;note_text=&amp;note_type=changeOfHand&amp;' +
       'note_type_other=&amp;newHand="><span class="format_start mceNonEditable">‹</span>Note' +
       '<span class="format_end mceNonEditable">›</span></span>'
@@ -493,7 +495,7 @@ const notes = new Map([
   ],
   // spaces added in attribute should be replaced with _ [issue #13]
   [ 'a handShift note with new hand',
-    [ '<w>a</w><w>note</w><note type="editorial" xml:id="BKV-undefined-2"><handShift scribe="new hand"/></note>',
+    [ '<w>a</w><w>note</w><note type="editorial" xml:id="..-undefined-2"><handShift scribe="new hand"/></note>',
       'a note<span class="note" wce="__t=note&amp;__n=&amp;note_text=&amp;note_type=changeOfHand&amp;' +
       'note_type_other=&amp;newHand=new%20hand"><span class="format_start mceNonEditable">‹</span>Note' +
       '<span class="format_end mceNonEditable">›</span></span>'
@@ -593,7 +595,7 @@ for (let i=0; i<testDataMaps.length; i+=1) {
 			let testInput, expectedOutput, html;
 			testInput = xmlHead + value[0] + xmlTail;
 			expectedOutput = '<TEMP>' + value[1] + '</TEMP>';
-			html = wce_tei.getHtmlByTei(testInput);
+			html = wce_tei.getHtmlByTei(testInput, clientOptions);
 			expect(html.htmlString).toBe(expectedOutput);
 		});
 	  test('HTML2TEI: ' + key, () => {
@@ -671,7 +673,7 @@ hiRendOptions.forEach((value, key, map) => {
 		let testInput, expectedOutput, html;
 		testInput = xmlFormat;
 		expectedOutput = '<TEMP>' + htmlFormat + '</TEMP>';
-		html = wce_tei.getHtmlByTei(testInput);
+		html = wce_tei.getHtmlByTei(testInput, clientOptions);
 		expect(html.htmlString).toBe(expectedOutput);
 	});
   test('HTML2TEI: ' + key, () => {
@@ -905,7 +907,7 @@ manuscriptPageStructure.forEach((value, key, map) => {
     idRegex = /id="(.)b_(\d)_\d+"/g;
 		testInput = xmlHead + value[0] + xmlTail;
 		expectedOutput = '<TEMP>' + value[1] + '</TEMP>';
-		html = wce_tei.getHtmlByTei(testInput);
+		html = wce_tei.getHtmlByTei(testInput, clientOptions);
     modifiedHtml = html.htmlString.replace(idRegex, 'id="$1b_$2_MATH.RAND"');
 		expect(modifiedHtml).toBe(expectedOutput);
 	});
@@ -949,11 +951,11 @@ const teiToHtmlAndBackWithChange = new Map([
       ]
     ],
     [ 'a handShift note with new hand, legacy for when new hand was in n attribute',
-      [ '<w>a</w><w>note</w><note type="editorial" xml:id="BKV-undefined-2"><handshift n="new hand"/></note>',
+      [ '<w>a</w><w>note</w><note type="editorial" xml:id="..-undefined-2"><handshift n="new hand"/></note>',
         'a note<span class="note" wce="__t=note&amp;__n=&amp;note_text=&amp;note_type=changeOfHand&amp;' +
         'note_type_other=&amp;newHand=new%20hand"><span class="format_start mceNonEditable">‹</span>Note' +
         '<span class="format_end mceNonEditable">›</span></span>',
-        '<w>a</w><w>note</w><note type="editorial" xml:id="BKV-undefined-2"><handShift scribe="new hand"/></note>'
+        '<w>a</w><w>note</w><note type="editorial" xml:id="..-undefined-2"><handShift scribe="new hand"/></note>'
       ]
     ],
 		// legacy support
@@ -962,7 +964,7 @@ const teiToHtmlAndBackWithChange = new Map([
 	      'a note<span class="note" wce="__t=note&amp;__n=&amp;note_text=&amp;note_type=changeOfHand&amp;' +
 	      'note_type_other=&amp;newHand="><span class="format_start mceNonEditable">‹</span>Note' +
 	      '<span class="format_end mceNonEditable">›</span></span>',
-				'<w>a</w><w>note</w><note type="editorial" xml:id="BKV-undefined-2"><handShift/></note>'
+				'<w>a</w><w>note</w><note type="editorial" xml:id="..-undefined-2"><handShift/></note>'
 	    ]
 	  ],
 	  // spaces added in attribute should be replaced with _ [issue #13]
@@ -971,7 +973,7 @@ const teiToHtmlAndBackWithChange = new Map([
 	      'a note<span class="note" wce="__t=note&amp;__n=&amp;note_text=&amp;note_type=changeOfHand&amp;' +
 	      'note_type_other=&amp;newHand=new%20hand"><span class="format_start mceNonEditable">‹</span>Note' +
 	      '<span class="format_end mceNonEditable">›</span></span>',
-				'<w>a</w><w>note</w><note type="editorial" xml:id="BKV-undefined-2"><handShift scribe="new hand"/></note>',
+				'<w>a</w><w>note</w><note type="editorial" xml:id="..-undefined-2"><handShift scribe="new hand"/></note>',
 	    ]
 	  ],
     [ 'hi rend ol as legacy support for overline',
@@ -983,9 +985,9 @@ const teiToHtmlAndBackWithChange = new Map([
       ]
     ],
     [ 'book and chapter div if chapter has no type then it is removed',
-  	  [ '<div type="book" n="B04"><div n="B04K1"><w>The</w><w>content</w><w>of</w><w>my</w><w>chapter</w></div></div>',
-  	 		' <span class="book_number mceNonEditable" wce="__t=book_number" id="1">4</span> The content of my chapter ',
-        '<div type="book" n="B04"><w>The</w><w>content</w><w>of</w><w>my</w><w>chapter</w></div>'
+  	  [ '<div type="book" n="John"><div n="John.1"><w>The</w><w>content</w><w>of</w><w>my</w><w>chapter</w></div></div>',
+  	 		' <span class="book_number mceNonEditable" wce="__t=book_number" id="1">John</span> The content of my chapter ',
+        '<div type="book" n="John"><w>The</w><w>content</w><w>of</w><w>my</w><w>chapter</w></div>'
    		],
   	],
 		// next two tests test fix for issue #16
@@ -1031,7 +1033,31 @@ const teiToHtmlAndBackWithChange = new Map([
         'in line lectionary<span class=\"paratext\" wce=\"__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=3&amp;text=&amp;number=&amp;edit_number=on&amp;paratext_position=pagetop&amp;paratext_position_other=&amp;paratext_alignment=left\"><span class=\"format_start mceNonEditable\">‹</span><br/>↵[<span class=\"lectionary-other\" wce=\"__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=3\">lect</span>]<br/>↵[<span class=\"lectionary-other\" wce=\"__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=3\">lect</span>]<br/>↵[<span class=\"lectionary-other\" wce=\"__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=3\">lect</span>]<span class=\"format_end mceNonEditable\">›</span></span>',
         '<w>in</w><w>line</w><w>lectionary</w><lb/><note type=\"lectionary-other\">One line of untranscribed lectionary text</note><lb/><note type=\"lectionary-other\">One line of untranscribed lectionary text</note><lb/><note type=\"lectionary-other\">One line of untranscribed lectionary text</note>'
       ]
-    ]
+    ],
+		// legacy support for referencing system
+		[ 'book, chapter and verse (legacy)',
+	    [ '<div type="book" n="B04"><div type="chapter" n="B04K1"><ab n="B04K1V1"><w>first</w><w>verse</w></ab></div></div>',
+	      ' <span class=\"book_number mceNonEditable\" wce=\"__t=book_number\" id=\"1\">John</span>  <span class=\"chapter_number mceNonEditable\" wce=\"__t=chapter_number\" id=\"2\">1</span> <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">1</span> first verse ',
+				'<div type="book" n="John"><div type="chapter" n="John.1"><ab n="John.1.1"><w>first</w><w>verse</w></ab></div></div>'
+	    ]
+	  ],
+		// legacy support for incipit and explicit (already having updated book which will need to be handled separately)
+		[ 'book and incipit divs',
+	    [ '<div type="book" n="B04"><div type="incipit" n="B04incipit"><ab><w>inscriptio</w><w>text</w></ab></div></div>',
+	      ' <span class="book_number mceNonEditable" wce="__t=book_number" id="1">John</span>  ' +
+	      '<span class="chapter_number mceNonEditable" wce="__t=chapter_number">Inscriptio</span> ' +
+	      '<span class="verse_number mceNonEditable" wce="__t=verse_number"/> inscriptio text ',
+				'<div type="book" n="John"><div type="inscriptio"><ab n="John.inscriptio"><w>inscriptio</w><w>text</w></ab></div></div>'
+	    ]
+	  ],
+	  [ 'book and explicit div',
+	    [ '<div type="book" n="B04"><div type="explicit" n="B04explicit"><ab><w>subscriptio</w><w>text</w></ab></div></div>',
+	      ' <span class="book_number mceNonEditable" wce="__t=book_number" id="1">John</span>  ' +
+	      '<span class="chapter_number mceNonEditable" wce="__t=chapter_number">Subscriptio</span> ' +
+	      '<span class="verse_number mceNonEditable" wce="__t=verse_number"/> subscriptio text ',
+				'<div type="book" n="John"><div type="subscriptio"><ab n="John.subscriptio"><w>subscriptio</w><w>text</w></ab></div></div>'
+	    ]
+	  ]
 ]);
 
 teiToHtmlAndBackWithChange.forEach((value, key, map) => {
@@ -1039,7 +1065,7 @@ teiToHtmlAndBackWithChange.forEach((value, key, map) => {
 		let testInput, expectedOutput, html;
 		testInput = xmlHead + value[0] + xmlTail;
 		expectedOutput = '<TEMP>' + value[1] + '</TEMP>';
-		html = wce_tei.getHtmlByTei(testInput);
+		html = wce_tei.getHtmlByTei(testInput, clientOptions);
 		expect(html.htmlString).toBe(expectedOutput);
 	});
   test('HTML2TEI: ' + key, () => {
@@ -1112,15 +1138,15 @@ const exportSpaces = new Map([
     ]
   ],
   [ 'test spaces are added after notes between words',
-    ['<w>test</w><w>note</w><note type="local" xml:id="BKV--2">my test note</note><w>between</w><w>words</w>',
+    ['<w>test</w><w>note</w><note type="local" xml:id="..--2">my test note</note><w>between</w><w>words</w>',
      'test note<span class=\"note\" wce=\"__t=note&amp;__n=&amp;note_text=my%20test%20note&amp;' +
      'note_type=local&amp;newhand=\"><span class=\"format_start mceNonEditable\">‹</span>Note' +
      '<span class=\"format_end mceNonEditable\">›</span></span> between words ',
-     '<w>test</w> <w>note</w><note type="local" xml:id="BKV-undefined-2">my test note</note> <w>between</w> <w>words</w>'
+     '<w>test</w> <w>note</w><note type="local" xml:id="..-undefined-2">my test note</note> <w>between</w> <w>words</w>'
     ]
   ],
   [ 'test spaces are added after notes before app',
-    ['<w>test</w><w>note</w><note type="local" xml:id="BKV--2">my test note</note><app>' +
+    ['<w>test</w><w>note</w><note type="local" xml:id="..--2">my test note</note><app>' +
      '<rdg type="orig" hand="firsthand"><w>before</w><w>app</w></rdg><rdg type="corr" hand="corrector"></rdg></app>',
      'test note<span class=\"note\" wce=\"__t=note&amp;__n=&amp;note_text=my%20test%20note&amp;note_type=local&amp;' +
      'newhand=\"><span class=\"format_start mceNonEditable\">‹</span>Note<span class=\"format_end mceNonEditable\">›' +
@@ -1131,19 +1157,19 @@ const exportSpaces = new Map([
      '&amp;deletion_transposition_marks=0&amp;deletion_other=0&amp;deletion=null&amp;firsthand_partial=&amp;partial=' +
      '&amp;corrector_text=&amp;blank_correction=on&amp;place_corr=\"><span class=\"format_start mceNonEditable\">‹' +
      '</span>before app<span class=\"format_end mceNonEditable\">›</span></span>',
-     '<w>test</w> <w>note</w><note type="local" xml:id="BKV-undefined-2">my test note</note> <app>' +
+     '<w>test</w> <w>note</w><note type="local" xml:id="..-undefined-2">my test note</note> <app>' +
      '<rdg type="orig" hand="firsthand"><w>before</w> <w>app</w></rdg><rdg type="corr" hand="corrector"></rdg></app>'
     ]
   ],
   [ 'test spaces are added between verses',
-    ['<div type="book" n="B01"><div type="chapter" n="B01K1"><ab n="B01K1V1"><w>test</w><w>spaces</w></ab>' +
-     '<ab n="B01K1V2"><w>between</w><w>verses</w></ab></div></div>',
-     ' <span class=\"book_number mceNonEditable\" wce=\"__t=book_number\" id=\"1\">1</span>  ' +
+    ['<div type="book" n="Matt"><div type="chapter" n="Matt.1"><ab n="Matt.1.1"><w>test</w><w>spaces</w></ab>' +
+     '<ab n="Matt.1.2"><w>between</w><w>verses</w></ab></div></div>',
+     ' <span class=\"book_number mceNonEditable\" wce=\"__t=book_number\" id=\"1\">Matt</span>  ' +
      '<span class=\"chapter_number mceNonEditable\" wce=\"__t=chapter_number\" id=\"2\">1</span> ' +
      '<span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">1</span> test spaces ' +
      '<span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">2</span> between verses ',
-     '<div type="book" n="B01"><div type="chapter" n="B01K1"><ab n="B01K1V1"><w>test</w> <w>spaces</w></ab> ' +
-     '<ab n="B01K1V2"><w>between</w> <w>verses</w></ab></div> </div>'
+     '<div type="book" n="Matt"><div type="chapter" n="Matt.1"><ab n="Matt.1.1"><w>test</w> <w>spaces</w></ab> ' +
+     '<ab n="Matt.1.2"><w>between</w> <w>verses</w></ab></div> </div>'
     ]
   ],
   [ 'test spaces are added between word and space',
@@ -1165,20 +1191,20 @@ const exportSpaces = new Map([
     ]
   ],
   [ 'test space is added after chapter when ending with w',
-    ['<div type="book" n="B01"><div type="chapter" n="B01K1"><ab n="B01K1V1"><w>space</w><w>after</w><w>chapter</w>' +
-     '</ab></div><div type="chapter" n="B01K2"><ab n="B01K2V1"><w>next</w><w>chapter</w></ab></div></div>',
-     ' <span class=\"book_number mceNonEditable\" wce=\"__t=book_number\" id=\"1\">1</span>  <span class=\"chapter_number mceNonEditable\" wce=\"__t=chapter_number\" id=\"2\">1</span> <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">1</span> space after chapter  <span class=\"chapter_number mceNonEditable\" wce=\"__t=chapter_number\" id=\"3\">2</span> <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">1</span> next chapter ',
-     '<div type="book" n="B01"><div type="chapter" n="B01K1"><ab n="B01K1V1"><w>space</w> <w>after</w> <w>chapter</w>' +
-     '</ab></div> <div type="chapter" n="B01K2"><ab n="B01K2V1"><w>next</w> <w>chapter</w></ab></div> </div>'
+    ['<div type="book" n="Matt"><div type="chapter" n="Matt.1"><ab n="Matt.1.1"><w>space</w><w>after</w><w>chapter</w>' +
+     '</ab></div><div type="chapter" n="Matt.2"><ab n="Matt.2.1"><w>next</w><w>chapter</w></ab></div></div>',
+     ' <span class=\"book_number mceNonEditable\" wce=\"__t=book_number\" id=\"1\">Matt</span>  <span class=\"chapter_number mceNonEditable\" wce=\"__t=chapter_number\" id=\"2\">1</span> <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">1</span> space after chapter  <span class=\"chapter_number mceNonEditable\" wce=\"__t=chapter_number\" id=\"3\">2</span> <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">1</span> next chapter ',
+     '<div type="book" n="Matt"><div type="chapter" n="Matt.1"><ab n="Matt.1.1"><w>space</w> <w>after</w> <w>chapter</w>' +
+     '</ab></div> <div type="chapter" n="Matt.2"><ab n="Matt.2.1"><w>next</w> <w>chapter</w></ab></div> </div>'
     ]
   ],
   [ 'test space is added after chapter when ending with pc',
-    ['<div type="book" n="B01"><div type="chapter" n="B01K1"><ab n="B01K1V1"><w>space</w><w>after</w><w>chapter</w>' +
-     '<w>with</w><w>pc</w><pc>.</pc></ab></div><div type="chapter" n="B01K2"><ab n="B01K2V1"><w>next</w>' +
+    ['<div type="book" n="Matt"><div type="chapter" n="Matt.1"><ab n="Matt.1.1"><w>space</w><w>after</w><w>chapter</w>' +
+     '<w>with</w><w>pc</w><pc>.</pc></ab></div><div type="chapter" n="Matt.2"><ab n="Matt.2.1"><w>next</w>' +
      '<w>chapter</w></ab></div></div>',
-     ' <span class=\"book_number mceNonEditable\" wce=\"__t=book_number\" id=\"1\">1</span>  <span class=\"chapter_number mceNonEditable\" wce=\"__t=chapter_number\" id=\"2\">1</span> <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">1</span> space after chapter with pc <span class=\"pc\" wce=\"__t=pc\"><span class=\"format_start mceNonEditable\">‹</span>.<span class=\"format_end mceNonEditable\">›</span></span>  <span class=\"chapter_number mceNonEditable\" wce=\"__t=chapter_number\" id=\"3\">2</span> <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">1</span> next chapter ',
-     '<div type="book" n="B01"><div type="chapter" n="B01K1"><ab n="B01K1V1"><w>space</w> <w>after</w> ' +
-     '<w>chapter</w> <w>with</w> <w>pc</w><pc>.</pc></ab></div> <div type="chapter" n="B01K2"><ab n="B01K2V1">' +
+     ' <span class=\"book_number mceNonEditable\" wce=\"__t=book_number\" id=\"1\">Matt</span>  <span class=\"chapter_number mceNonEditable\" wce=\"__t=chapter_number\" id=\"2\">1</span> <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">1</span> space after chapter with pc <span class=\"pc\" wce=\"__t=pc\"><span class=\"format_start mceNonEditable\">‹</span>.<span class=\"format_end mceNonEditable\">›</span></span>  <span class=\"chapter_number mceNonEditable\" wce=\"__t=chapter_number\" id=\"3\">2</span> <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">1</span> next chapter ',
+     '<div type="book" n="Matt"><div type="chapter" n="Matt.1"><ab n="Matt.1.1"><w>space</w> <w>after</w> ' +
+     '<w>chapter</w> <w>with</w> <w>pc</w><pc>.</pc></ab></div> <div type="chapter" n="Matt.2"><ab n="Matt.2.1">' +
      '<w>next</w> <w>chapter</w></ab></div> </div>'
     ]
   ],
@@ -1197,7 +1223,8 @@ exportSpaces.forEach((value, key, map) => {
 		let testInput, expectedOutput, xml;
 		testInput = value[1];
 		expectedOutput = xmlHead + value[2] + xmlTail;
-		xml = wce_tei.getTeiByHtml(testInput, {'addSpaces': true});
+    clientOptions.addSpaces = true;
+		xml = wce_tei.getTeiByHtml(testInput, clientOptions);
 		expect(xml).toBe(expectedOutput);
 	});
 });
@@ -1253,7 +1280,7 @@ exportLayout.forEach((value, key, map) => {
 		testInput = xmlHead + value[0] + xmlTail;
     idRegex = /id="(.)b_(\d)_\d+"/g;
 		expectedOutput = '<TEMP>' + value[1] + '</TEMP>';
-		html = wce_tei.getHtmlByTei(testInput);
+		html = wce_tei.getHtmlByTei(testInput, clientOptions);
     modifiedHtml = html.htmlString.replace(idRegex, 'id="$1b_$2_MATH.RAND"');
 		expect(modifiedHtml).toBe(expectedOutput);
 	});
@@ -1282,7 +1309,7 @@ test ('test export of abbr where supplied and overline need flipping', () => {
 // Might need to mock window.alert of the error function for this [issue #19]
 test('Invalid XML gives error', () => {
   jest.spyOn(window, 'alert').mockImplementation(() => {});
-  html = wce_tei.getHtmlByTei('<w>broken<w>');
+  html = wce_tei.getHtmlByTei('<w>broken<w>', clientOptions);
   expect(window.alert).toBeCalledWith('Error:\n XML parser 1:12: unclosed tag: w');
 });
 
