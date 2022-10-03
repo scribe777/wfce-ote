@@ -5,9 +5,7 @@
 window.$ = require('../wce-ote/jquery');
 const wce_tei = require('../wce-ote/wce_tei');
 const tinymce_settings = require('../wce-ote/wce_editor');
-console.log(tinymce_settings)
-console.log(tinymce_settings.getBookNameFromBKV('B04K1'))
-const clientOptions = {'getBookNameFromBKV': tinymce_settings.getBookNameFromBKV};
+let clientOptions = {'getBookNameFromBKV': tinymce_settings.getBookNameFromBKV};
 
 
 // store the top and tail of the js so the tests can reuse and only focus on the content of the <body> tag
@@ -1140,15 +1138,15 @@ const exportSpaces = new Map([
     ]
   ],
   [ 'test spaces are added after notes between words',
-    ['<w>test</w><w>note</w><note type="local" xml:id="BKV--2">my test note</note><w>between</w><w>words</w>',
+    ['<w>test</w><w>note</w><note type="local" xml:id="..--2">my test note</note><w>between</w><w>words</w>',
      'test note<span class=\"note\" wce=\"__t=note&amp;__n=&amp;note_text=my%20test%20note&amp;' +
      'note_type=local&amp;newhand=\"><span class=\"format_start mceNonEditable\">‹</span>Note' +
      '<span class=\"format_end mceNonEditable\">›</span></span> between words ',
-     '<w>test</w> <w>note</w><note type="local" xml:id="BKV-undefined-2">my test note</note> <w>between</w> <w>words</w>'
+     '<w>test</w> <w>note</w><note type="local" xml:id="..-undefined-2">my test note</note> <w>between</w> <w>words</w>'
     ]
   ],
   [ 'test spaces are added after notes before app',
-    ['<w>test</w><w>note</w><note type="local" xml:id="BKV--2">my test note</note><app>' +
+    ['<w>test</w><w>note</w><note type="local" xml:id="..--2">my test note</note><app>' +
      '<rdg type="orig" hand="firsthand"><w>before</w><w>app</w></rdg><rdg type="corr" hand="corrector"></rdg></app>',
      'test note<span class=\"note\" wce=\"__t=note&amp;__n=&amp;note_text=my%20test%20note&amp;note_type=local&amp;' +
      'newhand=\"><span class=\"format_start mceNonEditable\">‹</span>Note<span class=\"format_end mceNonEditable\">›' +
@@ -1159,19 +1157,19 @@ const exportSpaces = new Map([
      '&amp;deletion_transposition_marks=0&amp;deletion_other=0&amp;deletion=null&amp;firsthand_partial=&amp;partial=' +
      '&amp;corrector_text=&amp;blank_correction=on&amp;place_corr=\"><span class=\"format_start mceNonEditable\">‹' +
      '</span>before app<span class=\"format_end mceNonEditable\">›</span></span>',
-     '<w>test</w> <w>note</w><note type="local" xml:id="BKV-undefined-2">my test note</note> <app>' +
+     '<w>test</w> <w>note</w><note type="local" xml:id="..-undefined-2">my test note</note> <app>' +
      '<rdg type="orig" hand="firsthand"><w>before</w> <w>app</w></rdg><rdg type="corr" hand="corrector"></rdg></app>'
     ]
   ],
   [ 'test spaces are added between verses',
-    ['<div type="book" n="B01"><div type="chapter" n="B01K1"><ab n="B01K1V1"><w>test</w><w>spaces</w></ab>' +
-     '<ab n="B01K1V2"><w>between</w><w>verses</w></ab></div></div>',
-     ' <span class=\"book_number mceNonEditable\" wce=\"__t=book_number\" id=\"1\">1</span>  ' +
+    ['<div type="book" n="Matt"><div type="chapter" n="Matt.1"><ab n="Matt.1.1"><w>test</w><w>spaces</w></ab>' +
+     '<ab n="Matt.1.2"><w>between</w><w>verses</w></ab></div></div>',
+     ' <span class=\"book_number mceNonEditable\" wce=\"__t=book_number\" id=\"1\">Matt</span>  ' +
      '<span class=\"chapter_number mceNonEditable\" wce=\"__t=chapter_number\" id=\"2\">1</span> ' +
      '<span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">1</span> test spaces ' +
      '<span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">2</span> between verses ',
-     '<div type="book" n="B01"><div type="chapter" n="B01K1"><ab n="B01K1V1"><w>test</w> <w>spaces</w></ab> ' +
-     '<ab n="B01K1V2"><w>between</w> <w>verses</w></ab></div> </div>'
+     '<div type="book" n="Matt"><div type="chapter" n="Matt.1"><ab n="Matt.1.1"><w>test</w> <w>spaces</w></ab> ' +
+     '<ab n="Matt.1.2"><w>between</w> <w>verses</w></ab></div> </div>'
     ]
   ],
   [ 'test spaces are added between word and space',
@@ -1193,20 +1191,20 @@ const exportSpaces = new Map([
     ]
   ],
   [ 'test space is added after chapter when ending with w',
-    ['<div type="book" n="B01"><div type="chapter" n="B01K1"><ab n="B01K1V1"><w>space</w><w>after</w><w>chapter</w>' +
-     '</ab></div><div type="chapter" n="B01K2"><ab n="B01K2V1"><w>next</w><w>chapter</w></ab></div></div>',
-     ' <span class=\"book_number mceNonEditable\" wce=\"__t=book_number\" id=\"1\">1</span>  <span class=\"chapter_number mceNonEditable\" wce=\"__t=chapter_number\" id=\"2\">1</span> <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">1</span> space after chapter  <span class=\"chapter_number mceNonEditable\" wce=\"__t=chapter_number\" id=\"3\">2</span> <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">1</span> next chapter ',
-     '<div type="book" n="B01"><div type="chapter" n="B01K1"><ab n="B01K1V1"><w>space</w> <w>after</w> <w>chapter</w>' +
-     '</ab></div> <div type="chapter" n="B01K2"><ab n="B01K2V1"><w>next</w> <w>chapter</w></ab></div> </div>'
+    ['<div type="book" n="Matt"><div type="chapter" n="Matt.1"><ab n="Matt.1.1"><w>space</w><w>after</w><w>chapter</w>' +
+     '</ab></div><div type="chapter" n="Matt.2"><ab n="Matt.2.1"><w>next</w><w>chapter</w></ab></div></div>',
+     ' <span class=\"book_number mceNonEditable\" wce=\"__t=book_number\" id=\"1\">Matt</span>  <span class=\"chapter_number mceNonEditable\" wce=\"__t=chapter_number\" id=\"2\">1</span> <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">1</span> space after chapter  <span class=\"chapter_number mceNonEditable\" wce=\"__t=chapter_number\" id=\"3\">2</span> <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">1</span> next chapter ',
+     '<div type="book" n="Matt"><div type="chapter" n="Matt.1"><ab n="Matt.1.1"><w>space</w> <w>after</w> <w>chapter</w>' +
+     '</ab></div> <div type="chapter" n="Matt.2"><ab n="Matt.2.1"><w>next</w> <w>chapter</w></ab></div> </div>'
     ]
   ],
   [ 'test space is added after chapter when ending with pc',
-    ['<div type="book" n="B01"><div type="chapter" n="B01K1"><ab n="B01K1V1"><w>space</w><w>after</w><w>chapter</w>' +
-     '<w>with</w><w>pc</w><pc>.</pc></ab></div><div type="chapter" n="B01K2"><ab n="B01K2V1"><w>next</w>' +
+    ['<div type="book" n="Matt"><div type="chapter" n="Matt.1"><ab n="Matt.1.1"><w>space</w><w>after</w><w>chapter</w>' +
+     '<w>with</w><w>pc</w><pc>.</pc></ab></div><div type="chapter" n="Matt.2"><ab n="Matt.2.1"><w>next</w>' +
      '<w>chapter</w></ab></div></div>',
-     ' <span class=\"book_number mceNonEditable\" wce=\"__t=book_number\" id=\"1\">1</span>  <span class=\"chapter_number mceNonEditable\" wce=\"__t=chapter_number\" id=\"2\">1</span> <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">1</span> space after chapter with pc <span class=\"pc\" wce=\"__t=pc\"><span class=\"format_start mceNonEditable\">‹</span>.<span class=\"format_end mceNonEditable\">›</span></span>  <span class=\"chapter_number mceNonEditable\" wce=\"__t=chapter_number\" id=\"3\">2</span> <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">1</span> next chapter ',
-     '<div type="book" n="B01"><div type="chapter" n="B01K1"><ab n="B01K1V1"><w>space</w> <w>after</w> ' +
-     '<w>chapter</w> <w>with</w> <w>pc</w><pc>.</pc></ab></div> <div type="chapter" n="B01K2"><ab n="B01K2V1">' +
+     ' <span class=\"book_number mceNonEditable\" wce=\"__t=book_number\" id=\"1\">Matt</span>  <span class=\"chapter_number mceNonEditable\" wce=\"__t=chapter_number\" id=\"2\">1</span> <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">1</span> space after chapter with pc <span class=\"pc\" wce=\"__t=pc\"><span class=\"format_start mceNonEditable\">‹</span>.<span class=\"format_end mceNonEditable\">›</span></span>  <span class=\"chapter_number mceNonEditable\" wce=\"__t=chapter_number\" id=\"3\">2</span> <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">1</span> next chapter ',
+     '<div type="book" n="Matt"><div type="chapter" n="Matt.1"><ab n="Matt.1.1"><w>space</w> <w>after</w> ' +
+     '<w>chapter</w> <w>with</w> <w>pc</w><pc>.</pc></ab></div> <div type="chapter" n="Matt.2"><ab n="Matt.2.1">' +
      '<w>next</w> <w>chapter</w></ab></div> </div>'
     ]
   ],
@@ -1225,7 +1223,8 @@ exportSpaces.forEach((value, key, map) => {
 		let testInput, expectedOutput, xml;
 		testInput = value[1];
 		expectedOutput = xmlHead + value[2] + xmlTail;
-		xml = wce_tei.getTeiByHtml(testInput, {'addSpaces': true});
+    clientOptions.addSpaces = true;
+		xml = wce_tei.getTeiByHtml(testInput, clientOptions);
 		expect(xml).toBe(expectedOutput);
 	});
 });
