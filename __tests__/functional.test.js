@@ -2106,51 +2106,51 @@ describe('testing with default client settings', () => {
 
 });
 
-describe('testing with different client settings', () => {
+// describe('testing with different client settings', () => {
 
-  beforeEach(async () => {
-    let frameHandle;
-    jest.setTimeout(5000000);
-    page = await browser.newPage();
-    await page.goto(`file:${path.join(__dirname, 'test_index_page.html')}`);
-    await page.evaluate(`setWceEditor('wce_editor', {bookNames: ['John', 'Gal']})`);
-    page.waitForSelector("#wce_editor_ifr");
-    frameHandle = null;
-    while (frameHandle === null) {
-      frameHandle = await page.$("iframe[id='wce_editor_ifr']");
-    }
-    frame = await frameHandle.contentFrame();
+//   beforeEach(async () => {
+//     let frameHandle;
+//     jest.setTimeout(5000000);
+//     page = await browser.newPage();
+//     await page.goto(`file:${path.join(__dirname, 'test_index_page.html')}`);
+//     await page.evaluate(`setWceEditor('wce_editor', {bookNames: ['John', 'Gal']})`);
+//     page.waitForSelector("#wce_editor_ifr");
+//     frameHandle = null;
+//     while (frameHandle === null) {
+//       frameHandle = await page.$("iframe[id='wce_editor_ifr']");
+//     }
+//     frame = await frameHandle.contentFrame();
 
-  });
+//   });
 
-  // Starting here the functional tests to test the new option to provide a list of books a select in the V menu
+//   // Starting here the functional tests to test the new option to provide a list of books a select in the V menu
 
-  // book
-  test('book div', async () => {
-    // open V menu
-    await page.click('button#mceu_18-open');
-    await page.keyboard.press('ArrowDown');
-    await page.keyboard.press('Enter');
-    const menuFrameHandle = await page.$('div[id="mceu_39"] > div > div > iframe');
-    const menuFrame = await menuFrameHandle.contentFrame();
-    await menuFrame.click('input#insertBookRadio');
-    await menuFrame.waitForSelector('select#insertBookNumber');
-    // check there are 2 options
-    const optionCount = await menuFrame.$$eval('select#insertBookNumber > option' , element => element.length);
-    expect(optionCount).toBe(2);
-    // select Galatians
-    await menuFrame.select('select#insertBookNumber', 'Gal');
-    await menuFrame.click('input#insert');
-    await page.waitForSelector('div[id="mceu_39"]', {hidden: true});
-    await frame.type('body#tinymce', 'The content of my book');
-    const htmlData = await page.evaluate(`getData()`);
-    expect(htmlData).toBe('<span class=\"book_number mceNonEditable\" wce=\"__t=book_number\" id=\"book1\"> Gal</span>The content of my book');
-    const xmlData = await page.evaluate(`getTEI()`);
-    expect(xmlData).toBe(xmlHead + '<div type="book" n="Gal"><w>The</w><w>content</w><w>of</w><w>my</w><w>book</w></div>' + xmlTail);
-  }, 200000);
+//   // book
+//   test('book div', async () => {
+//     // open V menu
+//     await page.click('button#mceu_18-open');
+//     await page.keyboard.press('ArrowDown');
+//     await page.keyboard.press('Enter');
+//     const menuFrameHandle = await page.$('div[id="mceu_39"] > div > div > iframe');
+//     const menuFrame = await menuFrameHandle.contentFrame();
+//     await menuFrame.click('input#insertBookRadio');
+//     await menuFrame.waitForSelector('select#insertBookNumber');
+//     // check there are 2 options
+//     const optionCount = await menuFrame.$$eval('select#insertBookNumber > option' , element => element.length);
+//     expect(optionCount).toBe(2);
+//     // select Galatians
+//     await menuFrame.select('select#insertBookNumber', 'Gal');
+//     await menuFrame.click('input#insert');
+//     await page.waitForSelector('div[id="mceu_39"]', {hidden: true});
+//     await frame.type('body#tinymce', 'The content of my book');
+//     const htmlData = await page.evaluate(`getData()`);
+//     expect(htmlData).toBe('<span class=\"book_number mceNonEditable\" wce=\"__t=book_number\" id=\"book1\"> Gal</span>The content of my book');
+//     const xmlData = await page.evaluate(`getTEI()`);
+//     expect(xmlData).toBe(xmlHead + '<div type="book" n="Gal"><w>The</w><w>content</w><w>of</w><w>my</w><w>book</w></div>' + xmlTail);
+//   }, 200000);
 
 
 
-  // Ending here the functional tests to test the new option to provide a list of books a select in the V menu
+//   // Ending here the functional tests to test the new option to provide a list of books a select in the V menu
 
-});
+// });
