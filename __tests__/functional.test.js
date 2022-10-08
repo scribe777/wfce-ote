@@ -55,6 +55,36 @@ describe('testing with default client settings', () => {
   });
 
 
+  test('check correct editing buttons appear', async () => {
+    let BButton, CButton, DButton, OButton, AButton, MButton, NButton, PButton, VButton;
+    BButton = await page.$eval('#mceu_10 > button > i', element=> element.getAttribute('style'));
+    expect(BButton).toContain('button_B.png');
+
+    CButton = await page.$eval('#mceu_11 > button > i', element=> element.getAttribute('style'));
+    expect(CButton).toContain('button_C.png');
+
+    DButton = await page.$eval('#mceu_12 > button > i', element=> element.getAttribute('style'));
+    expect(DButton).toContain('button_D.png');
+
+    OButton = await page.$eval('#mceu_13 > button > i', element=> element.getAttribute('style'));
+    expect(OButton).toContain('button_O.png');
+
+    AButton = await page.$eval('#mceu_14 > button > i', element=> element.getAttribute('style'));
+    expect(AButton).toContain('button_A.png');
+
+    MButton = await page.$eval('#mceu_15 > button > i', element=> element.getAttribute('style'));
+    expect(MButton).toContain('button_M.png');
+
+    NButton = await page.$eval('#mceu_16 > button > i', element=> element.getAttribute('style'));
+    expect(NButton).toContain('button_N.png');
+
+    PButton = await page.$eval('#mceu_17 > button > i', element=> element.getAttribute('style'));
+    expect(PButton).toContain('button_P.png');
+
+    VButton = await page.$eval('#mceu_18 > button > i', element=> element.getAttribute('style'));
+    expect(VButton).toContain('button_V.png');
+    
+  });
 
   test('test basic words', async () => {
     await frame.type('body#tinymce', 'my words');
@@ -1508,6 +1538,79 @@ describe('testing with default client settings', () => {
     expect(xmlData).toBe(xmlHead + '<w>this</w><w>is</w><w>a</w><w>chapter</w><w>number</w><w>in</w><w>the</w><w>margin</w>' +
                         '<seg type="margin" subtype="colleft" n="@PC-"><num type="chapNum">12</num></seg>' + xmlTail);
   }, 200000);
+
+  test('The correct buttons appear in the submenu for marginalia', async () => {
+      let BButton, DButton, OButton, AButton, PButton;
+
+      await frame.type('body#tinymce', 'this is a chapter number in the margin');
+
+      // open M menu
+      await page.click('button#mceu_15-open');
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('Enter');
+
+
+      const menuFrameHandle = await page.$('div[id="mceu_39"] > div > div > iframe');
+      const menuFrame = await menuFrameHandle.contentFrame();
+      await menuFrame.select('select[id="fw_type"]', 'runTitle');
+
+      const menuFrameHandle2 = await menuFrame.$('iframe[id="marginals_text_ifr"]');
+      const menuFrame2 = await menuFrameHandle2.contentFrame();
+
+      BButton = await menuFrame.$eval('#mceu_5 > button > i', element=> element.getAttribute('style'));
+      expect(BButton).toContain('button_B.png');
+
+      DButton = await menuFrame.$eval('#mceu_6 > button > i', element=> element.getAttribute('style'));
+      expect(DButton).toContain('button_D.png');
+
+      OButton = await menuFrame.$eval('#mceu_7 > button > i', element=> element.getAttribute('style'));
+      expect(OButton).toContain('button_O.png');
+
+      AButton = await menuFrame.$eval('#mceu_8 > button > i', element=> element.getAttribute('style'));
+      expect(AButton).toContain('button_A.png');
+
+      NButton = await menuFrame.$eval('#mceu_9 > button > i', element=> element.getAttribute('style'));
+      expect(NButton).toContain('button_N.png');
+
+      PButton = await menuFrame.$eval('#mceu_10 > button > i', element=> element.getAttribute('style'));
+      expect(PButton).toContain('button_P.png');
+
+    }, 200000);
+
+  test('The note menu can be used in marginalia subeditor (note menu was added in 2022)', async () => {
+    await frame.type('body#tinymce', 'this is a title with a note');
+
+    // open M menu
+    await page.click('button#mceu_15-open');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('Enter');
+
+    const menuFrameHandle = await page.$('div[id="mceu_39"] > div > div > iframe');
+    const menuFrame = await menuFrameHandle.contentFrame();
+    await menuFrame.select('select[id="fw_type"]', 'runTitle');
+
+    const menuFrameHandle2 = await menuFrame.$('iframe[id="marginals_text_ifr"]');
+    const menuFrame2 = await menuFrameHandle2.contentFrame(); 
+    
+    await menuFrame2.type('body#tinymce', 'Title is here');
+  
+    // open inner note menu and add a note
+    await menuFrame.click('button#mceu_9-open');
+    await menuFrame.click('div#menu-note-add');
+    const menuFrameHandle3 = await menuFrame.$('div[id="mceu_24"] > div > div > iframe');
+    const menuFrame3 = await menuFrameHandle3.contentFrame();
+    await menuFrame3.type('textarea#note_text', 'My note');
+    await menuFrame3.click('input#insert');
+
+    // add the fw
+    await menuFrame.click('input#insert');
+    const htmlData = await page.evaluate(`getData()`);
+    expect(htmlData).toBe('this is a title with a note<span class="paratext" wce_orig="" wce="__t=paratext&amp;__n=&amp;help=Help&amp;fw_type=runTitle&amp;fw_type_other=&amp;covered=0&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;marginals_text=Title%20is%20here%3Cspan%20class%3D%22note%22%20wce_orig%3D%22%22%20wce%3D%22__t%3Dnote%26amp%3B__n%3D%26amp%3Bhelp%3DHelp%26amp%3Bnote_type%3Dlocal%26amp%3Bnote_type_other%3D%26amp%3BnewHand%3D%26amp%3Bnote_text%3DMy%2520note%22%3E%3Cspan%20class%3D%22format_start%20mceNonEditable%22%3E%E2%80%B9%3C%2Fspan%3ENote%3Cspan%20class%3D%22format_end%20mceNonEditable%22%3E%E2%80%BA%3C%2Fspan%3E%3C%2Fspan%3E&amp;number=&amp;paratext_position=&amp;paratext_position_other=&amp;paratext_alignment="><span class="format_start mceNonEditable">‹</span>fw<span class="format_end mceNonEditable">›</span></span>');
+    const xmlData = await page.evaluate(`getTEI()`);
+    expect(xmlData).toBe(xmlHead + '<w>this</w><w>is</w><w>a</w><w>title</w><w>with</w><w>a</w><w>note</w><fw type="runTitle"><w>Title</w><w>is</w><w>here</w><note type="local" xml:id="..--2">My note</note></fw>' + xmlTail);
+
+  });
+
 
   // BREAKS
 

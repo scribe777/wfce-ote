@@ -587,7 +587,25 @@ const fw = new Map([
 ]);
 
 
-const testDataMaps = [basicAnnotation, textStructureDivs, gapAndSupplied, corrections, notes, fw];
+const embeddedMenuData = new Map([
+  // running title in centre of top margin
+  [ 'running title (fw) in centre top margin (seg)',
+    [ '<w>This</w><w>is</w><w>a</w><w>title</w><w>with</w><w>a</w><w>note</w><fw type="runTitle"><w>my</w>' +
+      '<w>title</w><note type="local" xml:id="..--2">My note</note></fw>',
+      'This is a title with a note <span class=\"paratext\" wce=\"__t=paratext&amp;__n=&amp;marginals_text=' +
+      'my%20title%3Cspan%20class%3D%22note%22%20wce%3D%22__t%3Dnote%26amp%3B__n%3D%26amp%3Bnote_text%3DMy%2520' +
+      'note%26amp%3Bnote_type%3Dlocal%26amp%3Bnewhand%3D%22%3E%3Cspan%20class%3D%22format_start%20mceNonEditable' +
+      '%22%3E%E2%80%B9%3C%2Fspan%3ENote%3Cspan%20class%3D%22format_end%20mceNonEditable%22%3E%E2%80%BA%3C%2Fspan' +
+      '%3E%3C%2Fspan%3E&amp;fw_type=runTitle&amp;paratext_position=&amp;paratext_position_other=\">' +
+      '<span class=\"format_start mceNonEditable\">‹</span>fw<span class=\"format_end mceNonEditable\">›</span></span>'
+    ]
+  ]
+]);
+
+
+
+
+const testDataMaps = [basicAnnotation, textStructureDivs, gapAndSupplied, corrections, notes, fw, embeddedMenuData];
 
 for (let i=0; i<testDataMaps.length; i+=1) {
 	testDataMaps[i].forEach((value, key, map) => {
