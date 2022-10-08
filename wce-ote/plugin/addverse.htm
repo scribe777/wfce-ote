@@ -229,16 +229,18 @@
     }
 
     function init() {
-        let html = [];
+        let input, select, html;
         if (ed.settings.clientOptions.bookNames) {
             let bookNames = ed.settings.clientOptions.bookNames;
-            html.push('<select id="insertBookNumber">');
+            input = document.getElementById('insertBookNumber');
+            select = document.createElement('select');
+            select.id = 'insertBookNumber';
+            html = [];
             for (let i = 0; i < bookNames.length; i += 1) {
                 html.push('<option value="' + bookNames[i] + '">' + bookNames[i] + '</option>');
             }
-            html.push('</select>');
-            td = document.getElementById('insertBookNumber').parentElement;
-            td.innerHTML = html.join('');
+            select.innerHTML = html.join('');
+            input.parentNode.replaceChild(select, input);
         }
         canInsertVerse();
         if (wce_node) {
