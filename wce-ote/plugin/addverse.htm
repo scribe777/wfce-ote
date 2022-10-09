@@ -229,6 +229,19 @@
     }
 
     function init() {
+        let input, select, html;
+        if (ed.settings.clientOptions.bookNames) {
+            let bookNames = ed.settings.clientOptions.bookNames;
+            input = document.getElementById('insertBookNumber');
+            select = document.createElement('select');
+            select.id = 'insertBookNumber';
+            html = [];
+            for (let i = 0; i < bookNames.length; i += 1) {
+                html.push('<option value="' + bookNames[i] + '">' + bookNames[i] + '</option>');
+            }
+            select.innerHTML = html.join('');
+            input.parentNode.replaceChild(select, input);
+        }
         canInsertVerse();
         if (wce_node) {
             if (wce_node.nodeName.toLowerCase() == 'span') {
@@ -261,8 +274,6 @@
             return;
         } else if ($('#insertBookRadio').is(':checked')) {
             var newBookNr = $('#insertBookNumber').val().trim();
-            // Cat commented this out while switching references #15
-            // newBookNr = newBookNr.replace(/\D/g, '');
             if (newBookNr != '') {
                 ed.insertContent('<span class="book_number mceNonEditable" wce="__t=book_number" id="' + ed.dom.uniqueId('book') + '"> ' + newBookNr + '</span> ');
             }

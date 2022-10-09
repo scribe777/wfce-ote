@@ -3920,3 +3920,4 @@ var removeSpaceAfterLb=function ($node){
 	} catch (e) {
 		// nodejs is not available which is fine as long as we are not running tests.
 	}
+	
