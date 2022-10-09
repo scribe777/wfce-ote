@@ -1,0 +1,49 @@
+<!DOCTYPE html
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=8" />
+		<script type="text/javascript" src="../wce-ote/jquery.js"></script>
+		<script type="text/javascript" src="../wce-ote/wce_tei.js"></script>
+		<script type="text/javascript" src="../wce-ote/wce_callback.js"></script>
+		<script type="text/javascript" src="..//js/tinymce/tinymce.js"></script>
+		<script type="text/javascript" src="../wce-ote/wce_editor.js"></script>
+		<script type="text/javascript" src="../wce-ote/wce_charmap.js"></script>
+		<title>Workspace for Collaborative Editing</title>
+		<style type="text/css">
+
+		</style>
+
+	</head>
+
+	<body>
+		<form method="post" id="wce_form" action=".">
+			<div id="user_toolbar"></div>
+			<div style="margin: 10px 0px 10px 0px">
+				<textarea id="wce_editor" rows="28" cols="80" style="width: 100%;"></textarea>
+			</div>
+		</form>
+		<button id="setTEIControl" onclick="setTEI($('#textControl').val()); return false;">setTEI()</button>
+		<button onclick="$('#textControl').val(getTEI()); return false;">getTEI()</button>
+		<span><a href="#" onmouseover="$(this).attr('href', document.location.origin+document.location.pathname+'?tei='+encodeURIComponent($('#textControl').val()))" target="_blank" id="returnLink" title="External link to this TEI">🔗</a></span>
+		<textarea id="textControl" rows="12" cols="80" style="width:100%;"></textarea>
+		<!-- <script type="text/javascript">
+			$(document).ready(function() {
+				setWceEditor('wce_editor', {}, '', function() {
+				//	setTEI('<!DOCTYPE TEI [<!ENTITY om ""><!ENTITY lac ""><!ENTITY lacorom "">]><?xml-model href="TEI-NTMSS.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?><TEI xmlns="http://www.tei-c.org/ns/1.0"><teiHeader><fileDesc><titleStmt><title>A transcription of Galatians in test</title><title type="document" n="test">test</title></titleStmt><publicationStmt><p>Temporary PublicationStmt for validation</p></publicationStmt><sourceDesc><p>Temporary sourceDesc for validation</p></sourceDesc></fileDesc></teiHeader><text xml:lang="GRC"><body><div type="book" n="B09"><div type="chapter" n="B09K6"><ab n="B09K6V18"><w>η</w><w>χαρις</w><w>του</w><w><abbr type="nomSac"><hi rend="overline">κυ</hi></abbr></w><w>ημων</w><w><abbr type="nomSac"><hi rend="overline">ιυ</hi></abbr></w><w><abbr type="nomSac"><hi rend="overline">χυ</hi></abbr></w><w>μετα</w><w>του</w><w><abbr type="nomSac"><hi rend="overline">πνς</hi></abbr></w><w>υμων</w><w>αδελφοι</w><w>αμην</w></ab></div><div type="explicit" n="B09explicit"><ab><w>προς</w><w>γαλατας</w><w>εγραφη</w><w>απο</w><w>ρωμης</w></ab></div></div></body></text></TEI>');
+					if (document.location.search.startsWith('?tei=')) {
+						$('#textControl').val(decodeURIComponent(document.location.search.substring(5)));
+						$('#setTEIControl').click();
+					}
+					try {
+						if (window.onModulesLoaded) window.onModulesLoaded();
+					} catch {}
+				});
+			});
+		</script> -->
+	</body>
+
+</html>
