@@ -175,7 +175,7 @@ var spanValue_old = '';
 		}
 	}
 
-	function getVerseList(node){
+	function getVerseList(node, currentPage) {
 		var out="";
 		bookNr = (bookNr) ? bookNr : '';
 		chapterNr = (chapterNr) ? chapterNr : '';
@@ -188,7 +188,10 @@ var spanValue_old = '';
 		for (var i=0,len=list.length; i<len; i++) {
 			var n=list[i];
 			if (n.nodeType == 1) {
-				out += getVerseList(n);
+				if (n.id.startsWith('pb_') && ed.settings.clientOptions.includePageNumbersInDeleteMenu) {
+					currentPage = n.textContent.slice(1, -1).replace('PB ','');
+				}
+				out += getVerseList(n, currentPage);
 			}
 		}
 
@@ -206,15 +209,26 @@ var spanValue_old = '';
 			}
 		} else if ($(node).hasClass('verse_number')) {
 			var v = $.trim(node.innerHTML);
+			var vValue;
 			if (v && v!='') {
-				if (v_old == v)
+				// subverse is actually a repeated verse and -a -b etc get appended using the ascii char from the number
+				// this is not visible to the user and only used in the checkbox value field to ensure uniqueness I 
+				// assume. Comment added by Cat in Oct 2022 after trying to work out what this was for.
+				if (v_old == v) {
 					subverse++;
-				else
+				} else {
 					subverse = 96;
-				if (subverse == 96)
-					out += '<input type="checkbox" value="' + bookNr + '.' + chapterNr + '.' + v + '">Verse ' + bookNr + '.' + chapterNr + '.' + v + '</input><br />';
-				else
-					out += '<input type="checkbox" value="' + bookNr + '.' + chapterNr + '.' + v + '-' + String.fromCharCode(subverse) + '">Verse ' + bookNr + '.' + chapterNr + '.' + v + '</input><br />';
+				}	
+				if (subverse == 96) { // set the value we will but in the value attribute
+					vValue = v;
+				} else {
+					vValue = v + '-' + String.fromCharCode(subverse);
+				}
+				if (currentPage !== undefined) {
+					out += '<input type="checkbox" value="' + bookNr + '.' + chapterNr + '.' + vValue + '|' + currentPage + '">Verse ' + bookNr + '.' + chapterNr + '.' + v + ' (' + currentPage + ')</input><br />';
+				} else {
+					out += '<input type="checkbox" value="' + bookNr + '.' + chapterNr + '.' + vValue + '">Verse ' + bookNr + '.' + chapterNr + '.' + v + '</input><br />';
+				}
 				v_old = v;
 			}
 		}
@@ -319,11 +333,11 @@ var spanValue_old = '';
 					var pos=$(cb).val().indexOf('.');// usually bookNr.chapterNr.verseNr
 					if (pos == -1) {//Inscriptio or Subscriptio found
 						var bookNr = '';
-						var chapterNr = $(cb).val().trim();
+						var chapterNr = $(cb).val().split('|')[0].trim();
 						var verseNr = '';
 					} else {
-						var bookNr=$(cb).val().substr(0,pos);
-						var cbnew = $(cb).val().substr(pos+1);// chapterNr.verseNr
+						var bookNr=$(cb).val().split('|')[0].substr(0,pos);
+						var cbnew = $(cb).val().split('|')[0].substr(pos+1);// chapterNr.verseNr
 						pos = cbnew.indexOf('.');
 						var chapterNr=cbnew.substr(0,pos);
 						var verseNr=cbnew.substr(pos+1);
