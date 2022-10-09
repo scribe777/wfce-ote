@@ -221,7 +221,7 @@ var spanValue_old = '';
 		return out;
 	}
 
-	function getChapterList(node){
+	function getChapterList(node, currentPage){
 		var out="";
 		if (!node || node.nodeType != 1) {
 			return out;
@@ -231,7 +231,10 @@ var spanValue_old = '';
 		for (var i=0,len=list.length; i<len; i++) {
 			var n=list[i];
 			if (n.nodeType==1) {
-				out+=getChapterList(n);
+				if (n.id.startsWith('pb_') && ed.settings.clientOptions.includePageNumbersInDeleteMenu) {
+					currentPage = n.textContent.slice(1, -1).replace('PB ','');
+				}
+				out+=getChapterList(n, currentPage);
 			}
 		}
 
@@ -240,31 +243,45 @@ var spanValue_old = '';
 		} else if ($(node).hasClass('chapter_number') && $.trim(node.innerHTML) !== 'Inscriptio' && $.trim(node.innerHTML) !== 'Subscriptio') {
 			var v = $.trim(node.innerHTML);
 			var id = node.getAttribute('id');
-			if (v && v!='')
-				out += '<input type="checkbox" value="' + bookNr + '.' + v + '" id="' + id + '">Chapter ' + bookNr + '.' + v + '</input><br />';
+			if (v && v!='') {
+				if (currentPage !== undefined) {
+					out += '<input type="checkbox" value="' + bookNr + '.' + v + '|' + currentPage + '" id="' + id + '">Chapter ' + bookNr + '.' + v + ' (' + currentPage + ')</input><br />';
+				} else {
+					out += '<input type="checkbox" value="' + bookNr + '.' + v + '" id="' + id + '">Chapter ' + bookNr + '.' + v + '</input><br />';
+				}
+			}
 		}
 		return out;
 	}
 
-	function getBookList(node){
+	function getBookList(node, currentPage){
 		var out="";
 		if(!node || node.nodeType != 1){
 			return out;
 		}
 
 		var list=node.childNodes;
+		
 		for(var i=0,len=list.length; i<len; i++){
 			var n=list[i];
 			if(n.nodeType==1){
-				out+=getBookList(n);
+				if (n.id.startsWith('pb_') && ed.settings.clientOptions.includePageNumbersInDeleteMenu) {
+					currentPage = n.textContent.slice(1, -1).replace('PB ','');
+				}
+				out+=getBookList(n, currentPage);
 			}
 		}
 
 		if ($(node).hasClass('book_number')) {
 			var v=$.trim(node.innerHTML);
 			var id = node.getAttribute('id');
-			if(v && v!='')
-				out+='<input type="checkbox" value="' + v + '" id="' + id + '">Book ' + v + '</input><br />';
+			if(v && v!='') {
+				if (currentPage !== undefined) {
+					out+='<input type="checkbox" value="' + v + '|' + currentPage + '" id="' + id + '">Book ' + v + ' (' + currentPage + ')</input><br />';
+				} else {
+					out+='<input type="checkbox" value="' + v + '" id="' + id + '">Book ' + v + '</input><br />';
+				}	
+			}	
 		}
 		return out;
 	}
@@ -364,8 +381,8 @@ var spanValue_old = '';
 				var cb=chapterList[i];
 				if ($(cb).is(':checked')){
 					var id=$(cb).attr('id');
-					var pos=$(cb).val().indexOf('.');
-					var chapterNr=$(cb).val().substr(pos+1);// bookNr.chapterNr
+					var pos=$(cb).val().indexOf('.');			
+					var chapterNr=$(cb).val().split('|')[0].substr(pos+1);// bookNr.chapterNr|pageNumber
 					var startNode=null,endNode=null;
 					var spanList=$(contentWithVerse).find('span');
 					// Loop through all <span> elements
@@ -385,7 +402,7 @@ var spanValue_old = '';
 				var cb=bookList[i];
 				if ($(cb).is(':checked')){
 					var id=$(cb).attr('id');
-					var bookNr=$(cb).val();
+					var bookNr=$(cb).val().split('|')[0];
 					var startNode=null,endNode=null;
 					var spanList=$(contentWithVerse).find('span');
 					// Loop through all <span> elements
