@@ -45,6 +45,10 @@
 	<form onsubmit="return false;" action="#">
 		<input type="button" id="help" name="help" value="{#help}"
 				onclick="wce_openWindow('docu.htm#verse')" style="margin-bottom:100px" />
+		<div id="pageSelectionDiv" style="display:none">
+			<label for="pageSelect">Filter by page: </label>
+			<select id="pageSelect" onchange="updateOptions();"></select>
+		</div>
 		<div id="deleteVerseDiv" style="margin-top:10px">
 			<div>
 				<input type="radio" id="deleteVerseRadio" onclick="canDeleteVerse();" name="versemodify"/>{#verse_remove}
@@ -164,10 +168,13 @@ var spanValue_old = '';
 	function init() {
 		canDeleteVerse();
 		contentWithVerse=$('<div/>').html(ed.getContent())[0]; //selects everything starting the complete chapter
-		$('#verseList').html(getVerseList(contentWithVerse));
-		$('#chapterList').html(getChapterList(contentWithVerse));
-		$('#bookList').html(getBookList(contentWithVerse));
-		$('#lectionList').html(getLectionList(contentWithVerse));
+		if (ed.settings.clientOptions.includePageNumbersInDeleteMenu) {
+			$('#pageSelect').html(getPageList(contentWithVerse));
+		}
+		$('#verseList').html(getVerseList(contentWithVerse, 'all'));
+		$('#chapterList').html(getChapterList(contentWithVerse, 'all'));
+		$('#bookList').html(getBookList(contentWithVerse, 'all'));
+		$('#lectionList').html(getLectionList(contentWithVerse, 'all'));
 		if (wce_node) {
 		   if (wce_node.nodeName.toLowerCase()=='span') {
 		       $('#insertDiv input').prop('disabled', true);
@@ -175,7 +182,42 @@ var spanValue_old = '';
 		}
 	}
 
-	function getVerseList(node, currentPage) {
+	function updateOptions() {
+		var targetPage = document.getElementById('pageSelect').value;
+		$('#verseList').html(getVerseList(contentWithVerse, targetPage));
+		$('#chapterList').html(getChapterList(contentWithVerse, targetPage));
+		$('#bookList').html(getBookList(contentWithVerse, targetPage));
+		$('#lectionList').html(getLectionList(contentWithVerse, targetPage));
+	}
+
+	function getPageList(node, pageList) {
+		if (pageList === undefined) {
+			pageList = [];
+		}
+		if(!node || node.nodeType != 1){
+			if (pageList.length > 0) {
+				var html = ['<option value="all">All</option>'];
+				document.getElementById('pageSelectionDiv').style.display = 'block';
+				for (let i = 0; i < pageList.length; i += 1) {
+					html.push('<option value="' + pageList[i] + '">' + pageList[i] + '</option>')
+				}
+				return html;
+			}
+			return '';
+		}
+		var list=node.childNodes;
+		for(var i=0,len=list.length; i<len; i++){
+			var n=list[i];
+			if(n.nodeType==1){
+				if (n.id.startsWith('pb_')) {
+					pageList.push(n.textContent.slice(1, -1).replace('PB ',''));
+				}
+			}
+		}
+		return getPageList(n, pageList);
+	}
+
+	function getVerseList(node, targetPage, currentPage) {
 		var out="";
 		bookNr = (bookNr) ? bookNr : '';
 		chapterNr = (chapterNr) ? chapterNr : '';
@@ -191,7 +233,7 @@ var spanValue_old = '';
 				if (n.id.startsWith('pb_') && ed.settings.clientOptions.includePageNumbersInDeleteMenu) {
 					currentPage = n.textContent.slice(1, -1).replace('PB ','');
 				}
-				out += getVerseList(n, currentPage);
+				out += getVerseList(n, targetPage, currentPage);
 			}
 		}
 
@@ -202,10 +244,17 @@ var spanValue_old = '';
 			v_old = '';
 			var v = $.trim(node.innerHTML);
 			if (v) {
-				if (v === 'Inscriptio' || v === 'Subscriptio') //Special handling for Inscriptio and Subscriptio
-					out += '<input type="checkbox" value="'+v+'">'+v+'</input><br />';
-				else
+				if (v === 'Inscriptio' || v === 'Subscriptio') { //Special handling for Inscriptio and Subscriptio
+					if (currentPage !== undefined) {
+						if (targetPage === 'all' || currentPage === targetPage) {
+							out += '<input type="checkbox" value="' + v + '|' + currentPage + '">' + v + ' (' + currentPage + ')</input><br />';
+						}
+					} else {
+						out += '<input type="checkbox" value="' + v + '">' + v + '</input><br />';
+					}
+				} else {
 					chapterNr = v;
+				}
 			}
 		} else if ($(node).hasClass('verse_number')) {
 			var v = $.trim(node.innerHTML);
@@ -225,7 +274,9 @@ var spanValue_old = '';
 					vValue = v + '-' + String.fromCharCode(subverse);
 				}
 				if (currentPage !== undefined) {
-					out += '<input type="checkbox" value="' + bookNr + '.' + chapterNr + '.' + vValue + '|' + currentPage + '">Verse ' + bookNr + '.' + chapterNr + '.' + v + ' (' + currentPage + ')</input><br />';
+					if (targetPage === 'all' || currentPage === targetPage) {
+						out += '<input type="checkbox" value="' + bookNr + '.' + chapterNr + '.' + vValue + '|' + currentPage + '">Verse ' + bookNr + '.' + chapterNr + '.' + v + ' (' + currentPage + ')</input><br />';
+					}
 				} else {
 					out += '<input type="checkbox" value="' + bookNr + '.' + chapterNr + '.' + vValue + '">Verse ' + bookNr + '.' + chapterNr + '.' + v + '</input><br />';
 				}
@@ -235,7 +286,7 @@ var spanValue_old = '';
 		return out;
 	}
 
-	function getChapterList(node, currentPage){
+	function getChapterList(node, targetPage, currentPage){
 		var out="";
 		if (!node || node.nodeType != 1) {
 			return out;
@@ -248,7 +299,7 @@ var spanValue_old = '';
 				if (n.id.startsWith('pb_') && ed.settings.clientOptions.includePageNumbersInDeleteMenu) {
 					currentPage = n.textContent.slice(1, -1).replace('PB ','');
 				}
-				out+=getChapterList(n, currentPage);
+				out+=getChapterList(n, targetPage, currentPage);
 			}
 		}
 
@@ -259,7 +310,9 @@ var spanValue_old = '';
 			var id = node.getAttribute('id');
 			if (v && v!='') {
 				if (currentPage !== undefined) {
-					out += '<input type="checkbox" value="' + bookNr + '.' + v + '|' + currentPage + '" id="' + id + '">Chapter ' + bookNr + '.' + v + ' (' + currentPage + ')</input><br />';
+					if (targetPage === 'all' || currentPage === targetPage) {
+						out += '<input type="checkbox" value="' + bookNr + '.' + v + '|' + currentPage + '" id="' + id + '">Chapter ' + bookNr + '.' + v + ' (' + currentPage + ')</input><br />';
+					}
 				} else {
 					out += '<input type="checkbox" value="' + bookNr + '.' + v + '" id="' + id + '">Chapter ' + bookNr + '.' + v + '</input><br />';
 				}
@@ -268,7 +321,7 @@ var spanValue_old = '';
 		return out;
 	}
 
-	function getBookList(node, currentPage){
+	function getBookList(node, targetPage, currentPage){
 		var out="";
 		if(!node || node.nodeType != 1){
 			return out;
@@ -282,7 +335,7 @@ var spanValue_old = '';
 				if (n.id.startsWith('pb_') && ed.settings.clientOptions.includePageNumbersInDeleteMenu) {
 					currentPage = n.textContent.slice(1, -1).replace('PB ','');
 				}
-				out+=getBookList(n, currentPage);
+				out+=getBookList(n, targetPage, currentPage);
 			}
 		}
 
@@ -291,7 +344,9 @@ var spanValue_old = '';
 			var id = node.getAttribute('id');
 			if(v && v!='') {
 				if (currentPage !== undefined) {
-					out+='<input type="checkbox" value="' + v + '|' + currentPage + '" id="' + id + '">Book ' + v + ' (' + currentPage + ')</input><br />';
+					if (targetPage === 'all' || currentPage === targetPage) {
+						out+='<input type="checkbox" value="' + v + '|' + currentPage + '" id="' + id + '">Book ' + v + ' (' + currentPage + ')</input><br />';
+					}
 				} else {
 					out+='<input type="checkbox" value="' + v + '" id="' + id + '">Book ' + v + '</input><br />';
 				}	
@@ -300,7 +355,7 @@ var spanValue_old = '';
 		return out;
 	}
 
-	function getLectionList(node){
+	function getLectionList(node, targetPage, currentPage){
 		var out="";
 		if(!node || node.nodeType != 1){
 			return out;
@@ -310,15 +365,24 @@ var spanValue_old = '';
 		for (var i=0,len=list.length; i<len; i++) {
 			var n=list[i];
 			if (n.nodeType==1) {
-				out+=getLectionList(n);
+				if (n.id.startsWith('pb_') && ed.settings.clientOptions.includePageNumbersInDeleteMenu) {
+					currentPage = n.textContent.slice(1, -1).replace('PB ','');
+				}
+				out+=getLectionList(n, targetPage, currentPage);
 			}
 		}
 
 		if ($(node).hasClass('lection_number')) {
-			//var v=$.trim(node.innerHTML);
 			var v=$.trim(node.getAttribute('wce').substring(node.getAttribute('wce').lastIndexOf("=")+1));
-			if (v && v!='')
-				out+='<input type="checkbox" value="'+v+'">Lection '+v+'</input><br />';
+			if (v && v!='') {
+				if (currentPage !== undefined) {
+					if (targetPage === 'all' || currentPage === targetPage) {
+						out+='<input type="checkbox" value="' + v + '|' + currentPage + '">Lection ' + v + ' (' + currentPage + ')</input><br />';
+					}
+				} else {
+					out+='<input type="checkbox" value="' + v + '">Lection ' + v + '</input><br />';
+				}		
+			}
 		}
 		return out;
 	}
@@ -431,11 +495,16 @@ var spanValue_old = '';
 				}
 			}
 		} else if ($('#deleteLectionRadio').is(':checked')){
+			// NB if two lections have the same lection identifier eg R15, S12W4D8 then they will both be deleted by 
+			// this code. This was discovered in testing something else by Cat in Oct 2022 and as has always been the 
+			// case and has not been reported by anyone as a problem and in theory it should never happen anyway
+			// it has been left for now but perhaps it needs treating in a similar way to subverse in the verse menu 
+			// in the longer term
 			var lectionList=$('#lectionList').find('input:checkbox');
 			for (var i=0,len=lectionList.length; i<len; i++){
 				var cb=lectionList[i];
 				if ($(cb).is(':checked')){
-					var lectionNr=$(cb).val();
+					var lectionNr=$(cb).val().split('|')[0];
 					var startNode=null,endNode=null;
 					var spanList=$(contentWithVerse).find('span');
 					// Loop through all <span> elements
@@ -454,12 +523,12 @@ var spanValue_old = '';
 	}
 
 	function getCursorPositionInTextOf(element) {
-    var range = document.createRange(),
-        curRange = window.getSelection().getRangeAt(0);
-    range.setStart(element, 0);
-    range.setEnd(curRange.startContainer, curRange.startOffset);
-    //Measure the length of the text from the start of the given element to the start of the current range (position of the cursor)
-    return document.createElement("div").appendChild(range.cloneContents()).textContent.length;
+		var range = document.createRange(),
+			curRange = window.getSelection().getRangeAt(0);
+		range.setStart(element, 0);
+		range.setEnd(curRange.startContainer, curRange.startOffset);
+		//Measure the length of the text from the start of the given element to the start of the current range (position of the cursor)
+		return document.createElement("div").appendChild(range.cloneContents()).textContent.length;
 	}
 
 	function delVerse(startNode,endNode){

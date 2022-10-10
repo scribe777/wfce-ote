@@ -2510,8 +2510,121 @@ describe('testing with non-default deletion settings', () => {
     
   }, 200000);
 
+  // test delete inscriptio with page reference (only one as unlikely to be multiple)
+  test('Delete inscriptio with page reference', async () => {
+    // load data
+    const data = xmlHead + '<pb n="1r" type="folio" xml:id="P1r-"/><cb n="P1rC1-"/><lb n="P1rC1L-"/><div type="book" n="Gal"><div type="inscriptio"><ab n="Gal.inscriptio"><w>PLACE</w><w>THE</w><w>INSCRIPTIO</w><w>HERE!</w></ab></div><div type="chapter" n="Gal.1"><ab n="Gal.1.1"><w>this</w><w>is</w><w>my</w><w>first</w><lb n="P1rC1L-"/><w>verse</w></ab><ab n="Gal.1.2"><w>This</w><w>is</w><w>my</w><w>second</w><w>verse</w><lb n="P1rC1L-"/></ab></div><div type="subscriptio"><ab n="Gal.subscriptio"><w>PLACE</w><w>THE</w><w>SUBSCRIPTIO</w><w>HERE!</w></ab></div></div>' + xmlTail;
+    await page.evaluate(`setTEI('${data}');`);
+    await page.click('button#mceu_18-open');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('Enter');
+
+    const menuFrameHandle = await page.$('div[id="mceu_39"] > div > div > iframe');
+    const menuFrame = await menuFrameHandle.contentFrame();
+    await menuFrame.click('input#deleteVerseRadio');
+    
+    await menuFrame.click('input[value="Inscriptio|1r"]');
+    await menuFrame.click('input#insert');
+    // NB no test for internal structure because it is already tested with the other settings and the break tags require MATHRAND to be used
+    const xmlData = await page.evaluate(`getTEI()`);
+    expect(xmlData).toBe(xmlHead + '<pb n="1r" type="folio" xml:id="P1r-"/><cb n="P1rC1-"/><lb n="P1rC1L-"/><div type="book" n="Gal"><div type="chapter" n="Gal.1"><ab n="Gal.1.1"><w>this</w><w>is</w><w>my</w><w>first</w><lb n="P1rC1L-"/><w>verse</w></ab><ab n="Gal.1.2"><w>This</w><w>is</w><w>my</w><w>second</w><w>verse</w><lb n="P1rC1L-"/></ab></div><div type="subscriptio"><ab n="Gal.subscriptio"><w>PLACE</w><w>THE</w><w>SUBSCRIPTIO</w><w>HERE!</w></ab></div></div>' + xmlTail);
+    
+  }, 200000);
+
+  // test delete subscriptio with page reference (only one as unlikely to be multiple)
+  test('Delete subscriptio with page reference', async () => {
+    // load data
+    const data = xmlHead + '<pb n="1r" type="folio" xml:id="P1r-"/><cb n="P1rC1-"/><lb n="P1rC1L-"/><div type="book" n="Gal"><div type="inscriptio"><ab n="Gal.inscriptio"><w>PLACE</w><w>THE</w><w>INSCRIPTIO</w><w>HERE!</w></ab></div><div type="chapter" n="Gal.1"><ab n="Gal.1.1"><w>this</w><w>is</w><w>my</w><w>first</w><lb n="P1rC1L-"/><w>verse</w></ab><ab n="Gal.1.2"><w>This</w><w>is</w><w>my</w><w>second</w><w>verse</w><lb n="P1rC1L-"/></ab></div><div type="subscriptio"><ab n="Gal.subscriptio"><w>PLACE</w><w>THE</w><w>SUBSCRIPTIO</w><w>HERE!</w></ab></div></div>' + xmlTail;
+    await page.evaluate(`setTEI('${data}');`);
+    await page.click('button#mceu_18-open');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('Enter');
+
+    const menuFrameHandle = await page.$('div[id="mceu_39"] > div > div > iframe');
+    const menuFrame = await menuFrameHandle.contentFrame();
+    await menuFrame.click('input#deleteVerseRadio');
+    
+    await menuFrame.click('input[value="Subscriptio|1r"]');
+    await menuFrame.click('input#insert');
+    // NB no test for internal structure because it is already tested with the other settings and the break tags require MATHRAND to be used
+    const xmlData = await page.evaluate(`getTEI()`);
+    expect(xmlData).toBe(xmlHead + '<pb n="1r" type="folio" xml:id="P1r-"/><cb n="P1rC1-"/><lb n="P1rC1L-"/><div type="book" n="Gal"><div type="inscriptio"><ab n="Gal.inscriptio"><w>PLACE</w><w>THE</w><w>INSCRIPTIO</w><w>HERE!</w></ab></div><div type="chapter" n="Gal.1"><ab n="Gal.1.1"><w>this</w><w>is</w><w>my</w><w>first</w><lb n="P1rC1L-"/><w>verse</w></ab><ab n="Gal.1.2"><w>This</w><w>is</w><w>my</w><w>second</w><w>verse</w><lb n="P1rC1L-"/></ab></div></div>' + xmlTail);
+    
+  }, 200000);
+
+  // test delete Lection with page reference
+  test('Delete Lection with page reference', async () => {
+    // load data
+    const data = xmlHead + '<pb n="62v" type="folio" xml:id="P62v-"/><cb n="P62vC2-"/><lb n="P62vC2L-"/><div type="lection" n="S2W14D4"><div type="book" n="Gal"><div type="chapter" n="Gal.1"><ab n="Gal.1.20"><w>verse</w><w>twenty</w><lb n="P62vC2L-"/></ab><ab n="Gal.1.21"><w>verse</w><w>twentyone</w></ab></div><div type="chapter" n="Gal.2"><ab n="Gal.2.1"><w>verse</w><w>one</w><lb n="P62vC2L-"/></ab><ab n="Gal.2.2"><w>verse</w><lb n="P62vC2L-"/><w>two</w><pb n="63r" type="folio" xml:id="P63r-"/><cb n="P63rC1-"/><lb n="P63rC1L-"/><w>continues</w></ab></div></div></div><div type="lection" n="S2W14D5"><div type="book" n="Gal"><div type="chapter" n="Gal.1"><ab n="Gal.1.20"><w>verse</w><w>twenty</w><w>a<lb n="P63rC1L-" break="no"/>gain</w><lb n="P63rC1L-"/></ab><ab n="Gal.1.21"><w>verse</w><w>twenty-one</w><w>again</w></ab></div><div type="chapter" n="Gal.2"><ab n="Gal.2.1"><w>verse</w><w>one</w><lb n="P63rC1L-"/><w>again</w></ab><ab n="Gal.2.2"><w>verse</w><w>two</w><lb n="P63rC1L-"/><pb n="63v" type="folio" xml:id="P63v-"/><cb n="P63vC1-"/><lb n="P63vC1L-"/><w>again</w></ab></div></div></div>' + xmlTail;
+    await page.evaluate(`setTEI('${data}');`);
+    await page.click('button#mceu_18-open');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('Enter');
+
+    const menuFrameHandle = await page.$('div[id="mceu_39"] > div > div > iframe');
+    const menuFrame = await menuFrameHandle.contentFrame();
+    await menuFrame.click('input#deleteLectionRadio');
+    
+    await menuFrame.click('input[value="S2W14D5|63r"]');
+    await menuFrame.click('input#insert');
+    // NB no test for internal structure because it is already tested with the other settings and the break tags require MATHRAND to be used
+    const xmlData = await page.evaluate(`getTEI()`);
+    expect(xmlData).toBe(xmlHead + '<pb n="62v" type="folio" xml:id="P62v-"/><cb n="P62vC2-"/><lb n="P62vC2L-"/><div type="lection" n="S2W14D4"><div type="book" n="Gal"><div type="chapter" n="Gal.1"><ab n="Gal.1.20"><w>verse</w><w>twenty</w><lb n="P62vC2L-"/></ab><ab n="Gal.1.21"><w>verse</w><w>twentyone</w></ab></div><div type="chapter" n="Gal.2"><ab n="Gal.2.1"><w>verse</w><w>one</w><lb n="P62vC2L-"/></ab><ab n="Gal.2.2"><w>verse</w><lb n="P62vC2L-"/><w>two</w><pb n="63r" type="folio" xml:id="P63r-"/><cb n="P63rC1-"/><lb n="P63rC1L-"/><w>continues</w></ab></div></div><div type="book" n="Gal"><div type="chapter" n="Gal.1"><ab n="Gal.1.20"><w>verse</w><w>twenty</w><w>a<lb n="P63rC1L-" break="no"/>gain</w><lb n="P63rC1L-"/></ab><ab n="Gal.1.21"><w>verse</w><w>twenty-one</w><w>again</w></ab></div><div type="chapter" n="Gal.2"><ab n="Gal.2.1"><w>verse</w><w>one</w><lb n="P63rC1L-"/><w>again</w></ab><ab n="Gal.2.2"><w>verse</w><w>two</w><lb n="P63rC1L-"/><pb n="63v" type="folio" xml:id="P63v-"/><cb n="P63vC1-"/><lb n="P63vC1L-"/><w>again</w></ab></div></div></div>' + xmlTail);
+    
+  }, 200000);
+
+  // test drop down page select
+  test('Page filter function', async () => {
+    // load data
+    const data = xmlHead + '<pb n="62v" type="folio" xml:id="P62v-"/><cb n="P62vC2-"/><lb n="P62vC2L-"/><div type="lection" n="S2W14D4"><div type="book" n="Gal"><div type="chapter" n="Gal.1"><ab n="Gal.1.20"><w>verse</w><w>twenty</w><lb n="P62vC2L-"/></ab><ab n="Gal.1.21"><w>verse</w><w>twentyone</w></ab></div><div type="chapter" n="Gal.2"><ab n="Gal.2.1"><w>verse</w><w>one</w><lb n="P62vC2L-"/></ab><ab n="Gal.2.2"><w>verse</w><lb n="P62vC2L-"/><w>two</w><pb n="63r" type="folio" xml:id="P63r-"/><cb n="P63rC1-"/><lb n="P63rC1L-"/><w>continues</w></ab></div></div></div><div type="lection" n="S2W14D5"><div type="book" n="Gal"><div type="chapter" n="Gal.1"><ab n="Gal.1.20"><w>verse</w><w>twenty</w><w>a<lb n="P63rC1L-" break="no"/>gain</w><lb n="P63rC1L-"/></ab><ab n="Gal.1.21"><w>verse</w><w>twenty-one</w><w>again</w></ab></div><div type="chapter" n="Gal.2"><ab n="Gal.2.1"><w>verse</w><w>one</w><lb n="P63rC1L-"/><w>again</w></ab><ab n="Gal.2.2"><w>verse</w><w>two</w><lb n="P63rC1L-"/><pb n="63v" type="folio" xml:id="P63v-"/><cb n="P63vC1-"/><lb n="P63vC1L-"/><w>again</w></ab></div></div></div>' + xmlTail;
+    await page.evaluate(`setTEI('${data}');`);
+    await page.click('button#mceu_18-open');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('Enter');
+
+    const menuFrameHandle = await page.$('div[id="mceu_39"] > div > div > iframe');
+    const menuFrame = await menuFrameHandle.contentFrame();
+    
+    await menuFrame.select('select[id="pageSelect"]', '63r');
+    expect(await menuFrame.$('input[value="S2W14D4|62v"]')).toBeNull();
+    expect(await menuFrame.$('input[value="S2W14D5|63r"]')).not.toBeNull();
+    expect(await menuFrame.$('input[value="Gal|62v"]')).toBeNull();
+    expect(await menuFrame.$('input[value="Gal|63r"]')).not.toBeNull();
+    expect(await menuFrame.$('input[value="Gal.1|62v"]')).toBeNull();
+    expect(await menuFrame.$('input[value="Gal.1|63r"]')).not.toBeNull();
+    expect(await menuFrame.$('input[value="Gal.1.20|62v"]')).toBeNull();
+    expect(await menuFrame.$('input[value="Gal.1.20|63r"]')).not.toBeNull();
+
+    await menuFrame.select('select[id="pageSelect"]', '62v');
+    expect(await menuFrame.$('input[value="S2W14D4|62v"]')).not.toBeNull();
+    expect(await menuFrame.$('input[value="S2W14D5|63r"]')).toBeNull();
+    expect(await menuFrame.$('input[value="Gal|62v"]')).not.toBeNull();
+    expect(await menuFrame.$('input[value="Gal|63r"]')).toBeNull();
+    expect(await menuFrame.$('input[value="Gal.1|62v"]')).not.toBeNull();
+    expect(await menuFrame.$('input[value="Gal.1|63r"]')).toBeNull();
+    expect(await menuFrame.$('input[value="Gal.1.20|62v"]')).not.toBeNull();
+    expect(await menuFrame.$('input[value="Gal.1.20|63r"]')).toBeNull();
+
+    await menuFrame.select('select[id="pageSelect"]', 'all');
+    expect(await menuFrame.$('input[value="S2W14D4|62v"]')).not.toBeNull();
+    expect(await menuFrame.$('input[value="S2W14D5|63r"]')).not.toBeNull();
+    expect(await menuFrame.$('input[value="Gal|62v"]')).not.toBeNull();
+    expect(await menuFrame.$('input[value="Gal|63r"]')).not.toBeNull();
+    expect(await menuFrame.$('input[value="Gal.1|62v"]')).not.toBeNull();
+    expect(await menuFrame.$('input[value="Gal.1|63r"]')).not.toBeNull();
+    expect(await menuFrame.$('input[value="Gal.1.20|62v"]')).not.toBeNull();
+    expect(await menuFrame.$('input[value="Gal.1.20|63r"]')).not.toBeNull();
+
+  }, 200000);
+
+
 
 });
+
 
 
 
