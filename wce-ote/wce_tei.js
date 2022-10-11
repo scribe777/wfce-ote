@@ -1097,6 +1097,7 @@ function getHtmlByTei(inputString, clientOptions) {
 			&& (($teiNode.nextSibling.getAttribute('type') === 'lectionary-other'
 				|| $teiNode.nextSibling.getAttribute('type') === 'commentary')
 				&& !$teiNode.nextSibling.textContent.startsWith('Untranscribed'))) { // ignore <lb/> added for untranscribed text if at least one line is completely covered
+				console.log('I am in the while loop now')
 				cl++; //step counter
 				paratexttype = $teiNode.nextSibling.getAttribute('type'); // remember latest type for correct value below
 				$temp = ($teiNode.nextSibling.nextSibling) ? $teiNode.nextSibling.nextSibling : null;
@@ -1381,9 +1382,10 @@ function getHtmlByTei(inputString, clientOptions) {
 		var $newNode = $newDoc.createElement('span');
 
 		if ($teiNode.getAttribute('type') === 'commentary') {// commentary text without <lb/> => old document (compatibility mode) or no covered lines
+			console.log('dealing with commentary note');
 			$newNode.setAttribute('class', 'paratext');
 			var cl = ($teiNode.getAttribute('rend')) ? $teiNode.getAttribute('rend') : 0; //if new document, but no covered lines set cl=0
-
+			console.log(cl)
 			var wceAttr = '__t=paratext&__n=&fw_type=commentary&covered=' + cl + '&text=&number=&edit_number=on&paratext_position=pagetop&paratext_position_other=&paratext_alignment=left';
 			$newNode.setAttribute('wce', wceAttr);
 			if (cl > 0) {
@@ -1401,7 +1403,7 @@ function getHtmlByTei(inputString, clientOptions) {
 				nodeAddText($newNode, '[');
 				$span = $newDoc.createElement('span');
 				$span.setAttribute('class', 'commentary');
-				$span.setAttribute('wce', '__t=paratext&__n=&fw_type=commentary&covered=0');
+				$span.setAttribute('wce', '__t=paratext&__n=&fw_type=commentary&covered=' + cl);
 				nodeAddText($span, 'comm');
 				$newNode.appendChild($span);
 				nodeAddText($newNode, ']');
