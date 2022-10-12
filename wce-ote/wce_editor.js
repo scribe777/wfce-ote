@@ -72,10 +72,9 @@ function setWceEditor(_id, clientOptions, baseURL, callback) {
 		clientOptions.getBookNameFromBKV = getBookNameFromBKV;
 	}
 
-	if (!clientOptions.showCommentaryNotesAsSingleEntry) {
-		clientOptions.showCommentaryNotesAsSingleEntry = false;
+	if (!clientOptions.showMultilineNotesAsSingleEntry) {
+		clientOptions.showMultilineNotesAsSingleEntry = false;
 	}
-	console.log(clientOptions)
 
 	tinymce.init({
 		// General options

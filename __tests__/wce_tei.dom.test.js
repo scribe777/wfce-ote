@@ -83,16 +83,16 @@ const basicAnnotation = new Map([
 	// abbr
 	[ 'nomen sacrum abbreviation with overline',
 		[ '<w>a</w><w><abbr type="nomSac"><hi rend="overline">ns</hi></abbr></w><w>abbreviation</w>',
-			'a <span class=\"abbr_add_overline\" wce=\"__t=abbr&amp;__n=&amp;original_abbr_text=&amp;' +
-			'add_overline=overline&amp;abbr_type_other=&amp;abbr_type=nomSac\" wce_orig=\"ns\">' +
-			'<span class=\"format_start mceNonEditable\">‹</span>ns<span class=\"format_end mceNonEditable\">›</span>' +
+			'a <span class="abbr_add_overline" wce="__t=abbr&amp;__n=&amp;original_abbr_text=&amp;' +
+			'add_overline=overline&amp;abbr_type_other=&amp;abbr_type=nomSac" wce_orig="ns">' +
+			'<span class="format_start mceNonEditable">‹</span>ns<span class="format_end mceNonEditable">›</span>' +
 			'</span> abbreviation '
 		]
 	],
 	// // supplied in abbr - this isn't hitting what I expected
 	// [ 'supplied text in nomsac',
 	//   [ '<w>supplied</w><w>text</w><w>in</w><w><abbr type="nomSac"><hi rend="overline">nom<supplied source="transcriber" reason="illegible">sac</supplied></hi></abbr></w>',
-	//     'supplied text in <span class=\"abbr_add_overline\" wce=\"__t=abbr&amp;__n=&amp;original_abbr_text=&amp;add_overline=overline&amp;abbr_type_other=&amp;abbr_type=nomSac\" wce_orig=\"nom%3Cspan%20class%3D%22gap%22%20wce_orig%3D%22sac%22%20wce%3D%22__t%3Dgap%26amp%3B__n%3D%26amp%3Bgap_reason_dummy_lacuna%3Dlacuna%26amp%3Bgap_reason_dummy_illegible%3Dillegible%26amp%3Bgap_reason_dummy_unspecified%3Dunspecified%26amp%3Bgap_reason_dummy_inferredPage%3DinferredPage%26amp%3Bsupplied_source_other%3D%26amp%3Bsupplied_source%3Dtranscriber%26amp%3Bgap_reason%3Dillegible%26amp%3Bunit_other%3D%26amp%3Bunit%3D%26amp%3Bmark_as_supplied%3Dsupplied%22%3E%3Cspan%20class%3D%22format_start%20mceNonEditable%22%3E%E2%80%B9%3C%2Fspan%3E%5Bsac%5D%3Cspan%20class%3D%22format_end%20mceNonEditable%22%3E%E2%80%BA%3C%2Fspan%3E%3C%2Fspan%3E\"><span class=\"format_start mceNonEditable\">‹</span>nom<span class=\"gap\" wce_orig=\"sac\" wce=\"__t=gap&amp;__n=&amp;gap_reason_dummy_lacuna=lacuna&amp;gap_reason_dummy_illegible=illegible&amp;gap_reason_dummy_unspecified=unspecified&amp;gap_reason_dummy_inferredPage=inferredPage&amp;supplied_source_other=&amp;supplied_source=transcriber&amp;gap_reason=illegible&amp;unit_other=&amp;unit=&amp;mark_as_supplied=supplied\"><span class=\"format_start mceNonEditable\">‹</span>[sac]<span class=\"format_end mceNonEditable\">›</span></span><span class=\"format_end mceNonEditable\">›</span></span> '
+	//     'supplied text in <span class="abbr_add_overline" wce="__t=abbr&amp;__n=&amp;original_abbr_text=&amp;add_overline=overline&amp;abbr_type_other=&amp;abbr_type=nomSac" wce_orig="nom%3Cspan%20class%3D%22gap%22%20wce_orig%3D%22sac%22%20wce%3D%22__t%3Dgap%26amp%3B__n%3D%26amp%3Bgap_reason_dummy_lacuna%3Dlacuna%26amp%3Bgap_reason_dummy_illegible%3Dillegible%26amp%3Bgap_reason_dummy_unspecified%3Dunspecified%26amp%3Bgap_reason_dummy_inferredPage%3DinferredPage%26amp%3Bsupplied_source_other%3D%26amp%3Bsupplied_source%3Dtranscriber%26amp%3Bgap_reason%3Dillegible%26amp%3Bunit_other%3D%26amp%3Bunit%3D%26amp%3Bmark_as_supplied%3Dsupplied%22%3E%3Cspan%20class%3D%22format_start%20mceNonEditable%22%3E%E2%80%B9%3C%2Fspan%3E%5Bsac%5D%3Cspan%20class%3D%22format_end%20mceNonEditable%22%3E%E2%80%BA%3C%2Fspan%3E%3C%2Fspan%3E"><span class="format_start mceNonEditable">‹</span>nom<span class="gap" wce_orig="sac" wce="__t=gap&amp;__n=&amp;gap_reason_dummy_lacuna=lacuna&amp;gap_reason_dummy_illegible=illegible&amp;gap_reason_dummy_unspecified=unspecified&amp;gap_reason_dummy_inferredPage=inferredPage&amp;supplied_source_other=&amp;supplied_source=transcriber&amp;gap_reason=illegible&amp;unit_other=&amp;unit=&amp;mark_as_supplied=supplied"><span class="format_start mceNonEditable">‹</span>[sac]<span class="format_end mceNonEditable">›</span></span><span class="format_end mceNonEditable">›</span></span> '
 	//   ]
 	// ],
 	// this seems like overkill in the html doesn't it?
@@ -100,25 +100,25 @@ const basicAnnotation = new Map([
 		[ '<w><supplied source="na28" reason="illegible">a</supplied></w><w><supplied source="na28" reason="illegible">' +
 			'<abbr type="nomSac"><hi rend="overline">ns</hi></abbr></supplied></w>' +
 			'<w><supplied source="na28" reason="illegible">abbreviation</supplied></w>',
-			'<span class=\"gap\" wce_orig=\"a%20%3Cspan%20class%3D%22abbr_add_overline%22%20wce%3D%22__t%3Dabbr%26amp%' +
+			'<span class="gap" wce_orig="a%20%3Cspan%20class%3D%22abbr_add_overline%22%20wce%3D%22__t%3Dabbr%26amp%' +
 			'3B__n%3D%26amp%3Boriginal_abbr_text%3D%26amp%3Badd_overline%3Doverline%26amp%3Babbr_type_other%3D%26amp%3B' +
 			'abbr_type%3DnomSac%22%20wce_orig%3D%22ns%22%3E%3Cspan%20class%3D%22format_start%20mceNonEditable' +
 			'%22%3E%E2%80%B9%3C%2Fspan%3Ens%3Cspan%20class%3D%22format_end%20mceNonEditable%22%3E%E2%80%BA%3C%2Fspan' +
-			'%3E%3C%2Fspan%3E%20abbreviation\" wce=\"__t=gap&amp;__n=&amp;gap_reason_dummy_lacuna=lacuna&amp;' +
+			'%3E%3C%2Fspan%3E%20abbreviation" wce="__t=gap&amp;__n=&amp;gap_reason_dummy_lacuna=lacuna&amp;' +
 			'gap_reason_dummy_illegible=illegible&amp;gap_reason_dummy_unspecified=unspecified&amp;' +
 			'gap_reason_dummy_inferredPage=inferredPage&amp;supplied_source_other=&amp;supplied_source=na28&amp;' +
-			'gap_reason=illegible&amp;unit_other=&amp;unit=&amp;mark_as_supplied=supplied\">' +
-			'<span class=\"format_start mceNonEditable\">‹</span>[a <span class=\"abbr_add_overline\" wce=\"__t=abbr&amp;' +
+			'gap_reason=illegible&amp;unit_other=&amp;unit=&amp;mark_as_supplied=supplied">' +
+			'<span class="format_start mceNonEditable">‹</span>[a <span class="abbr_add_overline" wce="__t=abbr&amp;' +
 			'__n=&amp;original_abbr_text=&amp;add_overline=overline&amp;abbr_type_other=&amp;' +
-			'abbr_type=nomSac\" wce_orig=\"ns\"><span class=\"format_start mceNonEditable\">‹</span>ns' +
-			'<span class=\"format_end mceNonEditable\">›</span></span> abbreviation]<span class=\"format_end mceNonEditable\">›</span></span> '
+			'abbr_type=nomSac" wce_orig="ns"><span class="format_start mceNonEditable">‹</span>ns' +
+			'<span class="format_end mceNonEditable">›</span></span> abbreviation]<span class="format_end mceNonEditable">›</span></span> '
 		]
 	],
 	// special his with extra details not covered in separate simpler tests below
   [ 'capitals',
     [ '<w><hi rend="cap" height="3">I</hi>nitial</w><w>capital</w>',
-      '<span class=\"formatting_capitals\" wce=\"__t=formatting_capitals&amp;__n=&amp;capitals_height=3\" wce_orig=\"I\">' +
-      '<span class=\"format_start mceNonEditable\">‹</span>I<span class=\"format_end mceNonEditable\">›</span>' +
+      '<span class="formatting_capitals" wce="__t=formatting_capitals&amp;__n=&amp;capitals_height=3" wce_orig="I">' +
+      '<span class="format_start mceNonEditable">‹</span>I<span class="format_end mceNonEditable">›</span>' +
       '</span>nitial capital '
     ]
   ],
@@ -213,10 +213,10 @@ const gapAndSupplied = new Map([
   ],
   [ 'gap between words no details given',
     [ '<w>this</w><gap/><w>continues</w>',
-      'this <span class=\"gap\" wce=\"__t=gap&amp;__n=&amp;gap_reason_dummy_lacuna=lacuna&amp;' +
+      'this <span class="gap" wce="__t=gap&amp;__n=&amp;gap_reason_dummy_lacuna=lacuna&amp;' +
       'gap_reason_dummy_illegible=illegible&amp;gap_reason_dummy_unspecified=unspecified&amp;' +
-      'gap_reason_dummy_inferredPage=inferredPage&amp;unit_other=&amp;unit=\">' +
-      '<span class=\"format_start mceNonEditable\">‹</span>[...]<span class=\"format_end mceNonEditable\">›</span>' +
+      'gap_reason_dummy_inferredPage=inferredPage&amp;unit_other=&amp;unit=">' +
+      '<span class="format_start mceNonEditable">‹</span>[...]<span class="format_end mceNonEditable">›</span>' +
       '</span> continues '
     ]
   ],
@@ -230,43 +230,43 @@ const gapAndSupplied = new Map([
   ],
   [ 'gap within word no unit given',
     [ '<w>wo<gap reason="illegible"/></w>',
-      'wo<span class=\"gap\" wce=\"__t=gap&amp;__n=&amp;gap_reason_dummy_lacuna=lacuna&amp;' +
+      'wo<span class="gap" wce="__t=gap&amp;__n=&amp;gap_reason_dummy_lacuna=lacuna&amp;' +
       'gap_reason_dummy_illegible=illegible&amp;gap_reason_dummy_unspecified=unspecified&amp;' +
-      'gap_reason_dummy_inferredPage=inferredPage&amp;gap_reason=illegible&amp;unit_other=&amp;unit=\">' +
-      '<span class=\"format_start mceNonEditable\">‹</span>[...]<span class=\"format_end mceNonEditable\">›</span></span> '
+      'gap_reason_dummy_inferredPage=inferredPage&amp;gap_reason=illegible&amp;unit_other=&amp;unit=">' +
+      '<span class="format_start mceNonEditable">‹</span>[...]<span class="format_end mceNonEditable">›</span></span> '
     ]
   ],
   [ 'gap with unit char and no extent given',
     [ '<w>wo<gap reason="illegible" unit="char"/></w>',
-      'wo<span class=\"gap\" wce=\"__t=gap&amp;__n=&amp;gap_reason_dummy_lacuna=lacuna&amp;' +
+      'wo<span class="gap" wce="__t=gap&amp;__n=&amp;gap_reason_dummy_lacuna=lacuna&amp;' +
 			'gap_reason_dummy_illegible=illegible&amp;gap_reason_dummy_unspecified=unspecified&amp;' +
-			'gap_reason_dummy_inferredPage=inferredPage&amp;gap_reason=illegible&amp;unit_other=&amp;unit=char\">' +
-			'<span class=\"format_start mceNonEditable\">‹</span>[...]<span class=\"format_end mceNonEditable\">›</span></span> '
+			'gap_reason_dummy_inferredPage=inferredPage&amp;gap_reason=illegible&amp;unit_other=&amp;unit=char">' +
+			'<span class="format_start mceNonEditable">‹</span>[...]<span class="format_end mceNonEditable">›</span></span> '
     ]
   ],
   [ 'gap with unit line and no extent given',
     [ '<w>missing</w><w>line</w><gap reason="illegible" unit="line"/>',
-      'missing line <span class=\"gap\" wce=\"__t=gap&amp;__n=&amp;gap_reason_dummy_lacuna=lacuna&amp;' +
+      'missing line <span class="gap" wce="__t=gap&amp;__n=&amp;gap_reason_dummy_lacuna=lacuna&amp;' +
 			'gap_reason_dummy_illegible=illegible&amp;gap_reason_dummy_unspecified=unspecified&amp;' +
-			'gap_reason_dummy_inferredPage=inferredPage&amp;gap_reason=illegible&amp;unit_other=&amp;unit=line\"/>'
+			'gap_reason_dummy_inferredPage=inferredPage&amp;gap_reason=illegible&amp;unit_other=&amp;unit=line"/>'
     ]
   ],
   [ 'gap with unit line and extent part',
     [ '<w>missing</w><w>line</w><gap reason="illegible" unit="line" extent="part"/>',
-      'missing line <span class=\"gap\" wce=\"__t=gap&amp;__n=&amp;gap_reason_dummy_lacuna=lacuna&amp;' +
+      'missing line <span class="gap" wce="__t=gap&amp;__n=&amp;gap_reason_dummy_lacuna=lacuna&amp;' +
 			'gap_reason_dummy_illegible=illegible&amp;gap_reason_dummy_unspecified=unspecified&amp;' +
 			'gap_reason_dummy_inferredPage=inferredPage&amp;gap_reason=illegible&amp;unit_other=&amp;unit=line&amp;' +
-			'extent=part\"><span class=\"format_start mceNonEditable\">‹</span>[...]' +
-			'<span class=\"format_end mceNonEditable\">›</span></span>'
+			'extent=part"><span class="format_start mceNonEditable">‹</span>[...]' +
+			'<span class="format_end mceNonEditable">›</span></span>'
     ]
   ],
   [ 'gap with unit line and extent unspecified',
     [ '<w>missing</w><w>line</w><gap reason="illegible" unit="line" extent="unspecified"/>',
-      'missing line <span class=\"gap\" wce=\"__t=gap&amp;__n=&amp;gap_reason_dummy_lacuna=lacuna&amp;' +
+      'missing line <span class="gap" wce="__t=gap&amp;__n=&amp;gap_reason_dummy_lacuna=lacuna&amp;' +
 			'gap_reason_dummy_illegible=illegible&amp;gap_reason_dummy_unspecified=unspecified&amp;' +
 			'gap_reason_dummy_inferredPage=inferredPage&amp;gap_reason=illegible&amp;unit_other=&amp;unit=line&amp;' +
-			'extent=unspecified\"><span class=\"format_start mceNonEditable\">‹</span>[...]' +
-			'<span class=\"format_end mceNonEditable\">›</span></span>'
+			'extent=unspecified"><span class="format_start mceNonEditable">‹</span>[...]' +
+			'<span class="format_end mceNonEditable">›</span></span>'
     ]
   ],
   [ 'missing quire',
@@ -504,9 +504,8 @@ const notes = new Map([
   // commentary
   // This tests the paratext function but there is also code relating to commentary left in note function
   // which probably needs to be removed as I can't see any way it would be used in the interface. [issue #18]
-  [ '1 line of commentary text note',
-    [ '<w>some</w><w>commentary</w><lb/><note type="commentary">One line of untranscribed commentary text</note>' +
-      '<lb n="PCL-undefined"/><w>in</w><w>here</w>',
+  [ '1 line of commentary text note (allow multiline)',
+    [ '<w>some</w><w>commentary</w><lb/><note type="commentary">One line of untranscribed commentary text</note><lb n="PCL-undefined"/><w>in</w><w>here</w>',
       'some commentary <span class="paratext" wce="__t=paratext&amp;__n=&amp;fw_type=commentary&amp;covered=1&amp;' +
       'text=&amp;number=&amp;edit_number=on&amp;paratext_position=pagetop&amp;paratext_position_other=&amp;' +
       'paratext_alignment=left"><span class="format_start mceNonEditable">‹</span><br/>↵[' +
@@ -518,7 +517,28 @@ const notes = new Map([
       '</span> in here '
     ]
   ],
-  [ 'commentary in line',
+  [ 'multiple lines of commentary text note (allow multiline)',
+    [ '<w>some</w><w>commentary</w><lb/><note type="commentary">One line of untranscribed commentary text</note><lb/><note type="commentary">One line of untranscribed commentary text</note><lb/><note type="commentary">One line of untranscribed commentary text</note><lb n="PCL-undefined"/><w>in</w><w>here</w>',
+      'some commentary <span class="paratext" wce="__t=paratext&amp;__n=&amp;fw_type=commentary&amp;covered=3&amp;text=&amp;number=&amp;edit_number=on&amp;paratext_position=pagetop&amp;paratext_position_other=&amp;paratext_alignment=left"><span class="format_start mceNonEditable">‹</span><br/>↵[<span class="commentary" wce="__t=paratext&amp;__n=&amp;fw_type=commentary&amp;covered=3">comm</span>]<br/>↵[<span class="commentary" wce="__t=paratext&amp;__n=&amp;fw_type=commentary&amp;covered=3">comm</span>]<br/>↵[<span class="commentary" wce="__t=paratext&amp;__n=&amp;fw_type=commentary&amp;covered=3">comm</span>]<span class="format_end mceNonEditable">›</span></span><span class="mceNonEditable brea" wce="__t=brea&amp;__n=&amp;break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no"><span class="format_start mceNonEditable">‹</span><br/>↵ <span class="format_end mceNonEditable">›</span></span> in here '
+    ]
+  ],
+  // the next three tests all trigger the code in the TEI2HTML_note function but the HTML2TEI_paratext function
+  [ 'commentary in middle of line (allow multiline)',
+    [ '<lb n="PCL-undefined"/><w>in</w><w>line</w><w>commentary</w><note type="commentary">Untranscribed commentary text within the line</note><w>here</w><lb n="PCL-undefined"/>',
+      '<span class="mceNonEditable brea" wce="__t=brea&amp;__n=&amp;break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no"><span class="format_start mceNonEditable">‹</span><br/>↵ <span class="format_end mceNonEditable">›</span></span> in line commentary<span class="paratext" wce="__t=paratext&amp;__n=&amp;fw_type=commentary&amp;covered=0&amp;text=&amp;number=&amp;edit_number=on&amp;paratext_position=pagetop&amp;paratext_position_other=&amp;paratext_alignment=left"><span class="format_start mceNonEditable">‹</span>[<span class="commentary" wce="__t=paratext&amp;__n=&amp;fw_type=commentary&amp;covered=0">comm</span>]<span class="format_end mceNonEditable">›</span></span> here <span class="mceNonEditable brea" wce="__t=brea&amp;__n=&amp;break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no"><span class="format_start mceNonEditable">‹</span><br/>↵ <span class="format_end mceNonEditable">›</span></span>'
+    ]
+  ],
+  [ 'commentary at end of line (allow multiline)',
+    [ '<lb n="PCL-undefined"/><w>in</w><w>line</w><w>commentary</w><note type="commentary">Untranscribed commentary text within the line</note><lb n="PCL-undefined"/>',
+      '<span class="mceNonEditable brea" wce="__t=brea&amp;__n=&amp;break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no"><span class="format_start mceNonEditable">‹</span><br/>↵ <span class="format_end mceNonEditable">›</span></span> in line commentary<span class="paratext" wce="__t=paratext&amp;__n=&amp;fw_type=commentary&amp;covered=0&amp;text=&amp;number=&amp;edit_number=on&amp;paratext_position=pagetop&amp;paratext_position_other=&amp;paratext_alignment=left"><span class="format_start mceNonEditable">‹</span>[<span class="commentary" wce="__t=paratext&amp;__n=&amp;fw_type=commentary&amp;covered=0">comm</span>]<span class="format_end mceNonEditable">›</span></span><span class="mceNonEditable brea" wce="__t=brea&amp;__n=&amp;break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no"><span class="format_start mceNonEditable">‹</span><br/>↵ <span class="format_end mceNonEditable">›</span></span>'
+    ]
+  ],
+  [ 'commentary at start of line (allow multiline)',
+    [ '<lb n="PCL-undefined"/><note type="commentary">Untranscribed commentary text within the line</note><w>in</w><w>line</w><w>commentary</w><lb n="PCL-undefined"/>',
+      '<span class="mceNonEditable brea" wce="__t=brea&amp;__n=&amp;break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no"><span class="format_start mceNonEditable">‹</span><br/>↵ <span class="format_end mceNonEditable">›</span></span><span class="paratext" wce="__t=paratext&amp;__n=&amp;fw_type=commentary&amp;covered=0&amp;text=&amp;number=&amp;edit_number=on&amp;paratext_position=pagetop&amp;paratext_position_other=&amp;paratext_alignment=left"><span class="format_start mceNonEditable">‹</span>[<span class="commentary" wce="__t=paratext&amp;__n=&amp;fw_type=commentary&amp;covered=0">comm</span>]<span class="format_end mceNonEditable">›</span></span> in line commentary <span class="mceNonEditable brea" wce="__t=brea&amp;__n=&amp;break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no"><span class="format_start mceNonEditable">‹</span><br/>↵ <span class="format_end mceNonEditable">›</span></span>'
+    ]
+  ],
+  [ 'commentary in line (allow multiline)',
     [ '<w>in</w><w>line</w><w>commentary</w><note type="commentary">Untranscribed commentary text within the line</note>',
       'in line commentary<span class="paratext" wce="__t=paratext&amp;__n=&amp;fw_type=commentary&amp;covered=0&amp;' +
       'text=&amp;number=&amp;edit_number=on&amp;paratext_position=pagetop&amp;paratext_position_other=&amp;' +
@@ -527,27 +547,36 @@ const notes = new Map([
       '<span class="format_end mceNonEditable">›</span></span>'
     ]
   ],
-  // lectionary
-  // again there is code for this in the note function but this seems to use the paratext one (notes stuff claims to be legacy)
-  [ 'lectionary in line',
-    [ '<w>in</w><w>line</w><w>lectionary</w><note type="lectionary-other">Untranscribed lectionary text within the line</note>',
-      'in line lectionary<span class=\"paratext\" wce=\"__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;' +
-			'covered=0&amp;text=&amp;number=&amp;edit_number=on&amp;paratext_position=pagetop&amp;' +
-			'paratext_position_other=&amp;paratext_alignment=left\"><span class=\"format_start mceNonEditable\">‹</span>' +
-			'[<span class=\"lectionary-other\" wce=\"__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;' +
-			'covered=0\">lect</span>]<span class=\"format_end mceNonEditable\">›</span></span>'
+  // lectionary version of commentary notes (probably uneccesary but I am changing code so lets just make sure)
+  [ '1 line of lectionary text note (allow multiline)',
+    [ '<w>some</w><w>lectionary</w><lb/><note type="lectionary-other">One line of untranscribed lectionary text</note><lb n="PCL-undefined"/><w>in</w><w>here</w>',
+      'some lectionary <span class="paratext" wce="__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=1&amp;text=&amp;number=&amp;edit_number=on&amp;paratext_position=pagetop&amp;paratext_position_other=&amp;paratext_alignment=left"><span class="format_start mceNonEditable">‹</span><br/>↵[<span class="lectionary-other" wce="__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=1">lect</span>]<span class="format_end mceNonEditable">›</span></span><span class="mceNonEditable brea" wce="__t=brea&amp;__n=&amp;break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no"><span class="format_start mceNonEditable">‹</span><br/>↵ <span class="format_end mceNonEditable">›</span></span> in here '
     ]
   ],
-  [ '2 lines of untranscribed lectionary text',
-    [ '<w>lection</w><w>text</w><w>next</w><lb/>' +
-      '<note type="lectionary-other">One line of untranscribed lectionary text</note><lb/>' +
-      '<note type="lectionary-other">One line of untranscribed lectionary text</note>',
-      'lection text next <span class="paratext" wce="__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;' +
-      'covered=2&amp;text=&amp;number=&amp;edit_number=on&amp;paratext_position=pagetop&amp;' +
-      'paratext_position_other=&amp;paratext_alignment=left"><span class="format_start mceNonEditable">‹</span>' +
-      '<br/>↵[<span class="lectionary-other" wce="__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;' +
-      'covered=2">lect</span>]<br/>↵[<span class="lectionary-other" wce="__t=paratext&amp;__n=&amp;' +
-      'fw_type=lectionary-other&amp;covered=2">lect</span>]<span class="format_end mceNonEditable">›</span></span>'
+  [ 'multiple lines of lectionary text note (allow multiline)',
+    [ '<w>some</w><w>lectionary</w><lb/><note type="lectionary-other">One line of untranscribed lectionary text</note><lb/><note type="lectionary-other">One line of untranscribed lectionary text</note><lb/><note type="lectionary-other">One line of untranscribed lectionary text</note><lb n="PCL-undefined"/><w>in</w><w>here</w>',
+      'some lectionary <span class="paratext" wce="__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=3&amp;text=&amp;number=&amp;edit_number=on&amp;paratext_position=pagetop&amp;paratext_position_other=&amp;paratext_alignment=left"><span class="format_start mceNonEditable">‹</span><br/>↵[<span class="lectionary-other" wce="__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=3">lect</span>]<br/>↵[<span class="lectionary-other" wce="__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=3">lect</span>]<br/>↵[<span class="lectionary-other" wce="__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=3">lect</span>]<span class="format_end mceNonEditable">›</span></span><span class="mceNonEditable brea" wce="__t=brea&amp;__n=&amp;break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no"><span class="format_start mceNonEditable">‹</span><br/>↵ <span class="format_end mceNonEditable">›</span></span> in here '
+    ]
+  ],
+  // the next three tests all trigger the code in the TEI2HTML_note function but the HTML2TEI_paratext function
+  [ 'lectionary in middle of line (allow multiline)',
+    [ '<lb n="PCL-undefined"/><w>in</w><w>line</w><w>lectionary</w><note type="lectionary-other">Untranscribed lectionary text within the line</note><w>here</w><lb n="PCL-undefined"/>',
+      '<span class="mceNonEditable brea" wce="__t=brea&amp;__n=&amp;break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no"><span class="format_start mceNonEditable">‹</span><br/>↵ <span class="format_end mceNonEditable">›</span></span> in line lectionary<span class="paratext" wce="__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=0&amp;text=&amp;number=&amp;edit_number=on&amp;paratext_position=pagetop&amp;paratext_position_other=&amp;paratext_alignment=left"><span class="format_start mceNonEditable">‹</span>[<span class="lectionary-other" wce="__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=0">lect</span>]<span class="format_end mceNonEditable">›</span></span> here <span class="mceNonEditable brea" wce="__t=brea&amp;__n=&amp;break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no"><span class="format_start mceNonEditable">‹</span><br/>↵ <span class="format_end mceNonEditable">›</span></span>'
+    ]
+  ],
+  [ 'lectionary at end of line (allow multiline)',
+    [ '<lb n="PCL-undefined"/><w>in</w><w>line</w><w>lectionary</w><note type="lectionary-other">Untranscribed lectionary text within the line</note><lb n="PCL-undefined"/>',
+      '<span class="mceNonEditable brea" wce="__t=brea&amp;__n=&amp;break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no"><span class="format_start mceNonEditable">‹</span><br/>↵ <span class="format_end mceNonEditable">›</span></span> in line lectionary<span class="paratext" wce="__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=0&amp;text=&amp;number=&amp;edit_number=on&amp;paratext_position=pagetop&amp;paratext_position_other=&amp;paratext_alignment=left"><span class="format_start mceNonEditable">‹</span>[<span class="lectionary-other" wce="__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=0">lect</span>]<span class="format_end mceNonEditable">›</span></span><span class="mceNonEditable brea" wce="__t=brea&amp;__n=&amp;break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no"><span class="format_start mceNonEditable">‹</span><br/>↵ <span class="format_end mceNonEditable">›</span></span>'
+    ]
+  ],
+  [ 'lectionary at start of line (allow multiline)',
+    [ '<lb n="PCL-undefined"/><note type="lectionary-other">Untranscribed lectionary text within the line</note><w>in</w><w>line</w><w>lectionary</w><lb n="PCL-undefined"/>',
+      '<span class="mceNonEditable brea" wce="__t=brea&amp;__n=&amp;break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no"><span class="format_start mceNonEditable">‹</span><br/>↵ <span class="format_end mceNonEditable">›</span></span><span class="paratext" wce="__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=0&amp;text=&amp;number=&amp;edit_number=on&amp;paratext_position=pagetop&amp;paratext_position_other=&amp;paratext_alignment=left"><span class="format_start mceNonEditable">‹</span>[<span class="lectionary-other" wce="__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=0">lect</span>]<span class="format_end mceNonEditable">›</span></span> in line lectionary <span class="mceNonEditable brea" wce="__t=brea&amp;__n=&amp;break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no"><span class="format_start mceNonEditable">‹</span><br/>↵ <span class="format_end mceNonEditable">›</span></span>'
+    ]
+  ],
+  [ 'lectionary in line (allow multiline)',
+    [ '<w>in</w><w>line</w><w>lectionary</w><note type="lectionary-other">Untranscribed lectionary text within the line</note>',
+      'in line lectionary<span class="paratext" wce="__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=0&amp;text=&amp;number=&amp;edit_number=on&amp;paratext_position=pagetop&amp;paratext_position_other=&amp;paratext_alignment=left"><span class="format_start mceNonEditable">‹</span>[<span class="lectionary-other" wce="__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=0">lect</span>]<span class="format_end mceNonEditable">›</span></span>'
     ]
   ],
   // ews
@@ -562,8 +591,6 @@ const notes = new Map([
     ]
   ]
 ]);
-
-
 
 const fw = new Map([
   // running title in centre of top margin
@@ -608,6 +635,114 @@ for (let i=0; i<testDataMaps.length; i+=1) {
 	});
 }
 
+
+// tests without the showMultilineNotesAsSingleEntry set to true
+const specialCommentary = new Map([
+  // commentary
+  [ '1 line of commentary text note (replace multiline)',
+    [ '<w>some</w><w>commentary</w><lb/><note type="commentary">One line of untranscribed commentary text</note>' +
+      '<lb n="PCL-undefined"/><w>in</w><w>here</w>',
+      'some commentary <span class="paratext" wce="__t=paratext&amp;__n=&amp;fw_type=commentary&amp;covered=1&amp;' +
+      'text=&amp;number=&amp;edit_number=on&amp;paratext_position=pagetop&amp;paratext_position_other=&amp;' +
+      'paratext_alignment=left"><span class="format_start mceNonEditable">‹</span><br/>↵[' +
+      '<span class="commentary" wce="__t=paratext&amp;__n=&amp;fw_type=commentary&amp;covered=1">comm</span>]' +
+      '<span class="format_end mceNonEditable">›</span></span>' +
+      '<span class="mceNonEditable brea" wce="__t=brea&amp;__n=&amp;break_type=lb&amp;number=&amp;' +
+      'lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no">' +
+      '<span class="format_start mceNonEditable">‹</span><br/>↵ <span class="format_end mceNonEditable">›</span>' +
+      '</span> in here '
+    ]
+  ],
+  [ 'multiple lines of commentary text note (replace multiline)',
+    [ '<w>some</w><w>commentary</w><lb/><note type="commentary">One line of untranscribed commentary text</note><lb/><note type="commentary">One line of untranscribed commentary text</note><lb/><note type="commentary">One line of untranscribed commentary text</note><lb n="PCL-undefined"/><w>in</w><w>here</w>',
+      'some commentary <span class="paratext" wce="__t=paratext&amp;__n=&amp;fw_type=commentary&amp;covered=3&amp;text=&amp;number=&amp;edit_number=on&amp;paratext_position=pagetop&amp;paratext_position_other=&amp;paratext_alignment=left"><span class="format_start mceNonEditable">‹</span><br/>↵[<span class="commentary" wce="__t=paratext&amp;__n=&amp;fw_type=commentary&amp;covered=3">3 lines comm</span>]<span class="format_end mceNonEditable">›</span></span><span class="mceNonEditable brea" wce="__t=brea&amp;__n=&amp;break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no"><span class="format_start mceNonEditable">‹</span><br/>↵ <span class="format_end mceNonEditable">›</span></span> in here '
+    ]
+  ],
+  // the next three tests all trigger the code in the TEI2HTML_note function but the HTML2TEI_paratext function
+  [ 'commentary in middle of line (replace multiline)',
+    [ '<lb n="PCL-undefined"/><w>in</w><w>line</w><w>commentary</w><note type="commentary">Untranscribed commentary text within the line</note><w>here</w><lb n="PCL-undefined"/>',
+      '<span class="mceNonEditable brea" wce="__t=brea&amp;__n=&amp;break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no"><span class="format_start mceNonEditable">‹</span><br/>↵ <span class="format_end mceNonEditable">›</span></span> in line commentary<span class="paratext" wce="__t=paratext&amp;__n=&amp;fw_type=commentary&amp;covered=0&amp;text=&amp;number=&amp;edit_number=on&amp;paratext_position=pagetop&amp;paratext_position_other=&amp;paratext_alignment=left"><span class="format_start mceNonEditable">‹</span>[<span class="commentary" wce="__t=paratext&amp;__n=&amp;fw_type=commentary&amp;covered=0">comm</span>]<span class="format_end mceNonEditable">›</span></span> here <span class="mceNonEditable brea" wce="__t=brea&amp;__n=&amp;break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no"><span class="format_start mceNonEditable">‹</span><br/>↵ <span class="format_end mceNonEditable">›</span></span>'
+    ]
+  ],
+  [ 'commentary at end of line (replace multiline)',
+    [ '<lb n="PCL-undefined"/><w>in</w><w>line</w><w>commentary</w><note type="commentary">Untranscribed commentary text within the line</note><lb n="PCL-undefined"/>',
+      '<span class="mceNonEditable brea" wce="__t=brea&amp;__n=&amp;break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no"><span class="format_start mceNonEditable">‹</span><br/>↵ <span class="format_end mceNonEditable">›</span></span> in line commentary<span class="paratext" wce="__t=paratext&amp;__n=&amp;fw_type=commentary&amp;covered=0&amp;text=&amp;number=&amp;edit_number=on&amp;paratext_position=pagetop&amp;paratext_position_other=&amp;paratext_alignment=left"><span class="format_start mceNonEditable">‹</span>[<span class="commentary" wce="__t=paratext&amp;__n=&amp;fw_type=commentary&amp;covered=0">comm</span>]<span class="format_end mceNonEditable">›</span></span><span class="mceNonEditable brea" wce="__t=brea&amp;__n=&amp;break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no"><span class="format_start mceNonEditable">‹</span><br/>↵ <span class="format_end mceNonEditable">›</span></span>'
+    ]
+  ],
+  [ 'commentary at start of line (replace multiline)',
+    [ '<lb n="PCL-undefined"/><note type="commentary">Untranscribed commentary text within the line</note><w>in</w><w>line</w><w>commentary</w><lb n="PCL-undefined"/>',
+      '<span class="mceNonEditable brea" wce="__t=brea&amp;__n=&amp;break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no"><span class="format_start mceNonEditable">‹</span><br/>↵ <span class="format_end mceNonEditable">›</span></span><span class="paratext" wce="__t=paratext&amp;__n=&amp;fw_type=commentary&amp;covered=0&amp;text=&amp;number=&amp;edit_number=on&amp;paratext_position=pagetop&amp;paratext_position_other=&amp;paratext_alignment=left"><span class="format_start mceNonEditable">‹</span>[<span class="commentary" wce="__t=paratext&amp;__n=&amp;fw_type=commentary&amp;covered=0">comm</span>]<span class="format_end mceNonEditable">›</span></span> in line commentary <span class="mceNonEditable brea" wce="__t=brea&amp;__n=&amp;break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no"><span class="format_start mceNonEditable">‹</span><br/>↵ <span class="format_end mceNonEditable">›</span></span>'
+    ]
+  ],
+  [ 'commentary in line (replace multiline)',
+    [ '<w>in</w><w>line</w><w>commentary</w><note type="commentary">Untranscribed commentary text within the line</note>',
+      'in line commentary<span class="paratext" wce="__t=paratext&amp;__n=&amp;fw_type=commentary&amp;covered=0&amp;' +
+      'text=&amp;number=&amp;edit_number=on&amp;paratext_position=pagetop&amp;paratext_position_other=&amp;' +
+      'paratext_alignment=left"><span class="format_start mceNonEditable">‹</span>[' +
+      '<span class="commentary" wce="__t=paratext&amp;__n=&amp;fw_type=commentary&amp;covered=0">comm</span>]' +
+      '<span class="format_end mceNonEditable">›</span></span>'
+    ]
+  ]
+]);
+
+const specialLectionary = new Map([
+  // lectionary
+  [ '1 line of lectionary text note (replace multiline)',
+    [ '<w>some</w><w>lectionary</w><lb/><note type="lectionary-other">One line of untranscribed lectionary text</note><lb n="PCL-undefined"/><w>in</w><w>here</w>',
+      'some lectionary <span class="paratext" wce="__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=1&amp;text=&amp;number=&amp;edit_number=on&amp;paratext_position=pagetop&amp;paratext_position_other=&amp;paratext_alignment=left"><span class="format_start mceNonEditable">‹</span><br/>↵[<span class="lectionary-other" wce="__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=1">lect</span>]<span class="format_end mceNonEditable">›</span></span><span class="mceNonEditable brea" wce="__t=brea&amp;__n=&amp;break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no"><span class="format_start mceNonEditable">‹</span><br/>↵ <span class="format_end mceNonEditable">›</span></span> in here '
+    ]
+  ],
+  [ 'multiple lines of lectionary text note (replace multiline)',
+    [ '<w>some</w><w>lectionary</w><lb/><note type="lectionary-other">One line of untranscribed lectionary text</note><lb/><note type="lectionary-other">One line of untranscribed lectionary text</note><lb/><note type="lectionary-other">One line of untranscribed lectionary text</note><lb n="PCL-undefined"/><w>in</w><w>here</w>',
+      'some lectionary <span class="paratext" wce="__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=3&amp;text=&amp;number=&amp;edit_number=on&amp;paratext_position=pagetop&amp;paratext_position_other=&amp;paratext_alignment=left"><span class="format_start mceNonEditable">‹</span><br/>↵[<span class="lectionary-other" wce="__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=3">3 lines lect</span>]<span class="format_end mceNonEditable">›</span></span><span class="mceNonEditable brea" wce="__t=brea&amp;__n=&amp;break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no"><span class="format_start mceNonEditable">‹</span><br/>↵ <span class="format_end mceNonEditable">›</span></span> in here '
+    ]
+  ],
+  // the next three tests all trigger the code in the TEI2HTML_note function but the HTML2TEI_paratext function
+  [ 'lectionary in middle of line (replace multiline)',
+    [ '<lb n="PCL-undefined"/><w>in</w><w>line</w><w>lectionary</w><note type="lectionary-other">Untranscribed lectionary text within the line</note><w>here</w><lb n="PCL-undefined"/>',
+      '<span class="mceNonEditable brea" wce="__t=brea&amp;__n=&amp;break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no"><span class="format_start mceNonEditable">‹</span><br/>↵ <span class="format_end mceNonEditable">›</span></span> in line lectionary<span class="paratext" wce="__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=0&amp;text=&amp;number=&amp;edit_number=on&amp;paratext_position=pagetop&amp;paratext_position_other=&amp;paratext_alignment=left"><span class="format_start mceNonEditable">‹</span>[<span class="lectionary-other" wce="__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=0">lect</span>]<span class="format_end mceNonEditable">›</span></span> here <span class="mceNonEditable brea" wce="__t=brea&amp;__n=&amp;break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no"><span class="format_start mceNonEditable">‹</span><br/>↵ <span class="format_end mceNonEditable">›</span></span>'
+    ]
+  ],
+  [ 'lectionary at end of line (replace multiline)',
+    [ '<lb n="PCL-undefined"/><w>in</w><w>line</w><w>commentary</w><note type="commentary">Untranscribed commentary text within the line</note><lb n="PCL-undefined"/>',
+      '<span class="mceNonEditable brea" wce="__t=brea&amp;__n=&amp;break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no"><span class="format_start mceNonEditable">‹</span><br/>↵ <span class="format_end mceNonEditable">›</span></span> in line commentary<span class="paratext" wce="__t=paratext&amp;__n=&amp;fw_type=commentary&amp;covered=0&amp;text=&amp;number=&amp;edit_number=on&amp;paratext_position=pagetop&amp;paratext_position_other=&amp;paratext_alignment=left"><span class="format_start mceNonEditable">‹</span>[<span class="commentary" wce="__t=paratext&amp;__n=&amp;fw_type=commentary&amp;covered=0">comm</span>]<span class="format_end mceNonEditable">›</span></span><span class="mceNonEditable brea" wce="__t=brea&amp;__n=&amp;break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no"><span class="format_start mceNonEditable">‹</span><br/>↵ <span class="format_end mceNonEditable">›</span></span>'
+    ]
+  ],
+  [ 'lectionary at start of line (replace multiline)',
+    [ '<lb n="PCL-undefined"/><note type="lectionary-other">Untranscribed lectionary text within the line</note><w>in</w><w>line</w><w>lectionary</w><lb n="PCL-undefined"/>',
+      '<span class="mceNonEditable brea" wce="__t=brea&amp;__n=&amp;break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no"><span class="format_start mceNonEditable">‹</span><br/>↵ <span class="format_end mceNonEditable">›</span></span><span class="paratext" wce="__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=0&amp;text=&amp;number=&amp;edit_number=on&amp;paratext_position=pagetop&amp;paratext_position_other=&amp;paratext_alignment=left"><span class="format_start mceNonEditable">‹</span>[<span class="lectionary-other" wce="__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=0">lect</span>]<span class="format_end mceNonEditable">›</span></span> in line lectionary <span class="mceNonEditable brea" wce="__t=brea&amp;__n=&amp;break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no"><span class="format_start mceNonEditable">‹</span><br/>↵ <span class="format_end mceNonEditable">›</span></span>'
+    ]
+  ],
+  [ 'lectionary in line (replace multiline)',
+    [ '<w>in</w><w>line</w><w>lectionary</w><note type="lectionary-other">Untranscribed lectionary text within the line</note>',
+      'in line lectionary<span class="paratext" wce="__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=0&amp;text=&amp;number=&amp;edit_number=on&amp;paratext_position=pagetop&amp;paratext_position_other=&amp;paratext_alignment=left"><span class="format_start mceNonEditable">‹</span>[<span class="lectionary-other" wce="__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=0">lect</span>]<span class="format_end mceNonEditable">›</span></span>'
+    ]
+  ]
+]);
+
+
+const specialSettingsMap = [specialCommentary, specialLectionary];
+
+
+for (let i=0; i<specialSettingsMap.length; i+=1) {
+
+  specialSettingsMap[i].forEach((value, key, map) => {
+      test('TEI2HTML: ' + key, () => {
+          let testInput, expectedOutput, html;
+          testInput = xmlHead + value[0] + xmlTail;
+          expectedOutput = '<TEMP>' + value[1] + '</TEMP>';
+          html = wce_tei.getHtmlByTei(testInput, {showMultilineNotesAsSingleEntry: true});
+          expect(html.htmlString).toBe(expectedOutput);
+      });
+    test('HTML2TEI: ' + key, () => {
+          let testInput, expectedOutput, xml;
+          testInput = value[1];
+          expectedOutput = xmlHead + value[0] + xmlTail;
+          xml = wce_tei.getTeiByHtml(testInput, {showMultilineNotesAsSingleEntry: true});
+          expect(xml).toBe(expectedOutput);
+      });
+  });
+}
 
 // special test for all branches of of the hi switch statement
 const hiRendOptions = new Map([
@@ -692,60 +827,60 @@ const manuscriptPageStructure = new Map([
   [ 'initial page, using type=folio',
     [ '<pb n="1r" type="folio" xml:id="P1r-undefined"/><cb n="P1rC1-undefined"/>' +
       '<lb n="P1rC1L-undefined"/><w>my</w><w>first</w><w>page</w>',
-      '<span class=\"mceNonEditable brea\" id=\"pb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;break_type=pb&amp;' +
-      'number=1&amp;rv=r&amp;fibre_type=&amp;facs=&amp;lb_alignment=&amp;hasBreak=no\">' +
-      '<span class=\"format_start mceNonEditable\">‹</span><br/>PB 1r<span class=\"format_end mceNonEditable\">›</span>' +
-      '</span><span class=\"mceNonEditable brea\" id=\"cb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;' +
-      'break_type=cb&amp;number=1&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
-      '<span class=\"format_start mceNonEditable\">‹</span><br/>CB 1<span class=\"format_end mceNonEditable\">›</span>' +
-      '</span><span class=\"mceNonEditable brea\" id=\"lb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;' +
-      'break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
-      '<span class=\"format_start mceNonEditable\">‹</span><br/>↵ <span class=\"format_end mceNonEditable\">›</span>' +
+      '<span class="mceNonEditable brea" id="pb_3_MATH.RAND" wce="__t=brea&amp;__n=&amp;break_type=pb&amp;' +
+      'number=1&amp;rv=r&amp;fibre_type=&amp;facs=&amp;lb_alignment=&amp;hasBreak=no">' +
+      '<span class="format_start mceNonEditable">‹</span><br/>PB 1r<span class="format_end mceNonEditable">›</span>' +
+      '</span><span class="mceNonEditable brea" id="cb_3_MATH.RAND" wce="__t=brea&amp;__n=&amp;' +
+      'break_type=cb&amp;number=1&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no">' +
+      '<span class="format_start mceNonEditable">‹</span><br/>CB 1<span class="format_end mceNonEditable">›</span>' +
+      '</span><span class="mceNonEditable brea" id="lb_3_MATH.RAND" wce="__t=brea&amp;__n=&amp;' +
+      'break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no">' +
+      '<span class="format_start mceNonEditable">‹</span><br/>↵ <span class="format_end mceNonEditable">›</span>' +
       '</span> my first page '
     ]
   ],
   [ 'initial page, using type=folio, with facsimile',
     [ '<pb n="1r" type="folio" facs="http://thelibrary/image7.jpg" xml:id="P1r-undefined"/><cb n="P1rC1-undefined"/>' +
       '<lb n="P1rC1L-undefined"/><w>my</w><w>first</w><w>page</w>',
-      '<span class=\"mceNonEditable brea\" id=\"pb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;break_type=pb&amp;' +
-      'number=1&amp;rv=r&amp;fibre_type=&amp;facs=http://thelibrary/image7.jpg&amp;lb_alignment=&amp;hasBreak=no\">' +
-      '<span class=\"format_start mceNonEditable\">‹</span><br/>PB 1r<span class=\"format_end mceNonEditable\">›</span>' +
-      '</span><span class=\"mceNonEditable brea\" id=\"cb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;' +
-      'break_type=cb&amp;number=1&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
-      '<span class=\"format_start mceNonEditable\">‹</span><br/>CB 1<span class=\"format_end mceNonEditable\">›</span>' +
-      '</span><span class=\"mceNonEditable brea\" id=\"lb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;' +
-      'break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
-      '<span class=\"format_start mceNonEditable\">‹</span><br/>↵ <span class=\"format_end mceNonEditable\">›</span>' +
+      '<span class="mceNonEditable brea" id="pb_3_MATH.RAND" wce="__t=brea&amp;__n=&amp;break_type=pb&amp;' +
+      'number=1&amp;rv=r&amp;fibre_type=&amp;facs=http://thelibrary/image7.jpg&amp;lb_alignment=&amp;hasBreak=no">' +
+      '<span class="format_start mceNonEditable">‹</span><br/>PB 1r<span class="format_end mceNonEditable">›</span>' +
+      '</span><span class="mceNonEditable brea" id="cb_3_MATH.RAND" wce="__t=brea&amp;__n=&amp;' +
+      'break_type=cb&amp;number=1&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no">' +
+      '<span class="format_start mceNonEditable">‹</span><br/>CB 1<span class="format_end mceNonEditable">›</span>' +
+      '</span><span class="mceNonEditable brea" id="lb_3_MATH.RAND" wce="__t=brea&amp;__n=&amp;' +
+      'break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no">' +
+      '<span class="format_start mceNonEditable">‹</span><br/>↵ <span class="format_end mceNonEditable">›</span>' +
       '</span> my first page '
     ]
   ],
   [ 'mid-text page, using type=page',
     [ '<w>end</w><w>of</w><w>page</w><pb n="1" type="page" xml:id="P1-undefined"/><cb n="P1C1-undefined"/>' +
       '<lb n="P1C1L-undefined"/><w>my</w><w>second</w><w>page</w>',
-      'end of page <span class=\"mceNonEditable brea\" id=\"pb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;' +
-      'break_type=pb&amp;number=1&amp;rv=&amp;fibre_type=&amp;facs=&amp;lb_alignment=&amp;hasBreak=no\">' +
-      '<span class=\"format_start mceNonEditable\">‹</span><br/>PB 1<span class=\"format_end mceNonEditable\">›</span>' +
-      '</span><span class=\"mceNonEditable brea\" id=\"cb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;' +
-      'break_type=cb&amp;number=1&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
-      '<span class=\"format_start mceNonEditable\">‹</span><br/>CB 1<span class=\"format_end mceNonEditable\">›</span>' +
-      '</span><span class=\"mceNonEditable brea\" id=\"lb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;' +
-      'break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
-      '<span class=\"format_start mceNonEditable\">‹</span><br/>↵ <span class=\"format_end mceNonEditable\">›</span>' +
+      'end of page <span class="mceNonEditable brea" id="pb_3_MATH.RAND" wce="__t=brea&amp;__n=&amp;' +
+      'break_type=pb&amp;number=1&amp;rv=&amp;fibre_type=&amp;facs=&amp;lb_alignment=&amp;hasBreak=no">' +
+      '<span class="format_start mceNonEditable">‹</span><br/>PB 1<span class="format_end mceNonEditable">›</span>' +
+      '</span><span class="mceNonEditable brea" id="cb_3_MATH.RAND" wce="__t=brea&amp;__n=&amp;' +
+      'break_type=cb&amp;number=1&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no">' +
+      '<span class="format_start mceNonEditable">‹</span><br/>CB 1<span class="format_end mceNonEditable">›</span>' +
+      '</span><span class="mceNonEditable brea" id="lb_3_MATH.RAND" wce="__t=brea&amp;__n=&amp;' +
+      'break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no">' +
+      '<span class="format_start mceNonEditable">‹</span><br/>↵ <span class="format_end mceNonEditable">›</span>' +
       '</span> my second page '
     ]
   ],
   [ 'mid-word page, for papyri (type=page and y)',
     [ '<w>half</w><w>of</w><w>wo<pb n="1↓" type="page" xml:id="P1y-undefined" break="no"/><cb n="P1yC1-undefined"/>' +
       '<lb n="P1yC1L-undefined"/>rd</w><w>on</w><w>second</w><w>page</w>',
-      'half of wo<span class=\"mceNonEditable brea\" id=\"pb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;' +
-      'break_type=pb&amp;number=1&amp;rv=&amp;fibre_type=y&amp;facs=&amp;lb_alignment=&amp;hasBreak=yes\">' +
-      '<span class=\"format_start mceNonEditable\">‹</span>-<br/>PB 1y<span class=\"format_end mceNonEditable\">›</span>' +
-      '</span><span class=\"mceNonEditable brea\" id=\"cb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;' +
-      'break_type=cb&amp;number=1&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
-      '<span class=\"format_start mceNonEditable\">‹</span><br/>CB 1<span class=\"format_end mceNonEditable\">›</span>' +
-      '</span><span class=\"mceNonEditable brea\" id=\"lb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;' +
-      'break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
-      '<span class=\"format_start mceNonEditable\">‹</span><br/>↵ <span class=\"format_end mceNonEditable\">›</span>' +
+      'half of wo<span class="mceNonEditable brea" id="pb_3_MATH.RAND" wce="__t=brea&amp;__n=&amp;' +
+      'break_type=pb&amp;number=1&amp;rv=&amp;fibre_type=y&amp;facs=&amp;lb_alignment=&amp;hasBreak=yes">' +
+      '<span class="format_start mceNonEditable">‹</span>-<br/>PB 1y<span class="format_end mceNonEditable">›</span>' +
+      '</span><span class="mceNonEditable brea" id="cb_3_MATH.RAND" wce="__t=brea&amp;__n=&amp;' +
+      'break_type=cb&amp;number=1&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no">' +
+      '<span class="format_start mceNonEditable">‹</span><br/>CB 1<span class="format_end mceNonEditable">›</span>' +
+      '</span><span class="mceNonEditable brea" id="lb_3_MATH.RAND" wce="__t=brea&amp;__n=&amp;' +
+      'break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no">' +
+      '<span class="format_start mceNonEditable">‹</span><br/>↵ <span class="format_end mceNonEditable">›</span>' +
       '</span>rd on second page '
     ]
   ],
@@ -753,21 +888,21 @@ const manuscriptPageStructure = new Map([
     [ '<pb n="1v" type="folio" xml:id="P1v-undefined"/><cb n="P1vC1-undefined"/><lb n="P1vC1L-undefined"/>' +
       '<w>my</w><w>first</w><w>column</w><cb n="P1vC2-undefined"/><lb n="P1vC2L-undefined"/>' +
       '<w>my</w><w>second</w><w>column</w>',
-      '<span class=\"mceNonEditable brea\" id=\"pb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;break_type=pb&amp;' +
-      'number=1&amp;rv=v&amp;fibre_type=&amp;facs=&amp;lb_alignment=&amp;hasBreak=no\">' +
-      '<span class=\"format_start mceNonEditable\">‹</span><br/>PB 1v<span class=\"format_end mceNonEditable\">›</span>' +
-      '</span><span class=\"mceNonEditable brea\" id=\"cb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;' +
-      'break_type=cb&amp;number=1&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
-      '<span class=\"format_start mceNonEditable\">‹</span><br/>CB 1<span class=\"format_end mceNonEditable\">›</span>' +
-      '</span><span class=\"mceNonEditable brea\" id=\"lb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;' +
-      'break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
-      '<span class=\"format_start mceNonEditable\">‹</span><br/>↵ <span class=\"format_end mceNonEditable\">›</span>' +
-      '</span> my first column <span class=\"mceNonEditable brea\" id=\"cb_2_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;' +
-      'break_type=cb&amp;number=2&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
-      '<span class=\"format_start mceNonEditable\">‹</span><br/>CB 2<span class=\"format_end mceNonEditable\">›</span>' +
-      '</span><span class=\"mceNonEditable brea\" id=\"lb_2_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;' +
-      'break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
-      '<span class=\"format_start mceNonEditable\">‹</span><br/>↵ <span class=\"format_end mceNonEditable\">›</span>' +
+      '<span class="mceNonEditable brea" id="pb_3_MATH.RAND" wce="__t=brea&amp;__n=&amp;break_type=pb&amp;' +
+      'number=1&amp;rv=v&amp;fibre_type=&amp;facs=&amp;lb_alignment=&amp;hasBreak=no">' +
+      '<span class="format_start mceNonEditable">‹</span><br/>PB 1v<span class="format_end mceNonEditable">›</span>' +
+      '</span><span class="mceNonEditable brea" id="cb_3_MATH.RAND" wce="__t=brea&amp;__n=&amp;' +
+      'break_type=cb&amp;number=1&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no">' +
+      '<span class="format_start mceNonEditable">‹</span><br/>CB 1<span class="format_end mceNonEditable">›</span>' +
+      '</span><span class="mceNonEditable brea" id="lb_3_MATH.RAND" wce="__t=brea&amp;__n=&amp;' +
+      'break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no">' +
+      '<span class="format_start mceNonEditable">‹</span><br/>↵ <span class="format_end mceNonEditable">›</span>' +
+      '</span> my first column <span class="mceNonEditable brea" id="cb_2_MATH.RAND" wce="__t=brea&amp;__n=&amp;' +
+      'break_type=cb&amp;number=2&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no">' +
+      '<span class="format_start mceNonEditable">‹</span><br/>CB 2<span class="format_end mceNonEditable">›</span>' +
+      '</span><span class="mceNonEditable brea" id="lb_2_MATH.RAND" wce="__t=brea&amp;__n=&amp;' +
+      'break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no">' +
+      '<span class="format_start mceNonEditable">‹</span><br/>↵ <span class="format_end mceNonEditable">›</span>' +
       '</span> my second column '
     ]
   ],
@@ -775,128 +910,128 @@ const manuscriptPageStructure = new Map([
     [ '<pb n="1v" type="folio" xml:id="P1v-undefined"/><cb n="P1vC1-undefined"/><lb n="P1vC1L-undefined"/>' +
       '<w>my</w><w>first</w><w>colu<cb n="P1vC2-undefined" break="no"/><lb n="P1vC2L-undefined"/>mn</w>' +
       '<w>my</w><w>second</w><w>column</w>',
-      '<span class=\"mceNonEditable brea\" id=\"pb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;break_type=pb&amp;' +
-      'number=1&amp;rv=v&amp;fibre_type=&amp;facs=&amp;lb_alignment=&amp;hasBreak=no\">' +
-      '<span class=\"format_start mceNonEditable\">‹</span><br/>PB 1v<span class=\"format_end mceNonEditable\">›</span>' +
-      '</span><span class=\"mceNonEditable brea\" id=\"cb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;' +
-      'break_type=cb&amp;number=1&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
-      '<span class=\"format_start mceNonEditable\">‹</span><br/>CB 1<span class=\"format_end mceNonEditable\">›</span>' +
-      '</span><span class=\"mceNonEditable brea\" id=\"lb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;' +
-      'break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
-      '<span class=\"format_start mceNonEditable\">‹</span><br/>↵ <span class=\"format_end mceNonEditable\">›</span>' +
-      '</span> my first colu<span class=\"mceNonEditable brea\" id=\"cb_2_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;' +
-      'break_type=cb&amp;number=2&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=yes\">' +
-      '<span class=\"format_start mceNonEditable\">‹</span>-<br/>CB 2<span class=\"format_end mceNonEditable\">›</span>' +
-      '</span><span class=\"mceNonEditable brea\" id=\"lb_2_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;' +
-      'break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
-      '<span class=\"format_start mceNonEditable\">‹</span><br/>↵ <span class=\"format_end mceNonEditable\">›</span>' +
+      '<span class="mceNonEditable brea" id="pb_3_MATH.RAND" wce="__t=brea&amp;__n=&amp;break_type=pb&amp;' +
+      'number=1&amp;rv=v&amp;fibre_type=&amp;facs=&amp;lb_alignment=&amp;hasBreak=no">' +
+      '<span class="format_start mceNonEditable">‹</span><br/>PB 1v<span class="format_end mceNonEditable">›</span>' +
+      '</span><span class="mceNonEditable brea" id="cb_3_MATH.RAND" wce="__t=brea&amp;__n=&amp;' +
+      'break_type=cb&amp;number=1&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no">' +
+      '<span class="format_start mceNonEditable">‹</span><br/>CB 1<span class="format_end mceNonEditable">›</span>' +
+      '</span><span class="mceNonEditable brea" id="lb_3_MATH.RAND" wce="__t=brea&amp;__n=&amp;' +
+      'break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no">' +
+      '<span class="format_start mceNonEditable">‹</span><br/>↵ <span class="format_end mceNonEditable">›</span>' +
+      '</span> my first colu<span class="mceNonEditable brea" id="cb_2_MATH.RAND" wce="__t=brea&amp;__n=&amp;' +
+      'break_type=cb&amp;number=2&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=yes">' +
+      '<span class="format_start mceNonEditable">‹</span>-<br/>CB 2<span class="format_end mceNonEditable">›</span>' +
+      '</span><span class="mceNonEditable brea" id="lb_2_MATH.RAND" wce="__t=brea&amp;__n=&amp;' +
+      'break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no">' +
+      '<span class="format_start mceNonEditable">‹</span><br/>↵ <span class="format_end mceNonEditable">›</span>' +
       '</span>mn my second column '
     ]
   ],
   [ 'between-word linebreak',
     [ '<pb n="1" type="page" xml:id="P1-undefined"/><cb n="P1C1-undefined"/><lb n="P1C1L-undefined"/>' +
       '<w>my</w><w>first</w><w>line</w><lb n="P1C1L-undefined"/><w>my</w><w>second</w><w>line</w>',
-      '<span class=\"mceNonEditable brea\" id=\"pb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;break_type=pb&amp;' +
-      'number=1&amp;rv=&amp;fibre_type=&amp;facs=&amp;lb_alignment=&amp;hasBreak=no\">' +
-      '<span class=\"format_start mceNonEditable\">‹</span><br/>PB 1<span class=\"format_end mceNonEditable\">›</span>' +
-      '</span><span class=\"mceNonEditable brea\" id=\"cb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;' +
-      'break_type=cb&amp;number=1&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
-      '<span class=\"format_start mceNonEditable\">‹</span><br/>CB 1<span class=\"format_end mceNonEditable\">›</span>' +
-      '</span><span class=\"mceNonEditable brea\" id=\"lb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;' +
-      'break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
-      '<span class=\"format_start mceNonEditable\">‹</span><br/>↵ <span class=\"format_end mceNonEditable\">›</span>' +
-      '</span> my first line <span class=\"mceNonEditable brea\" wce=\"__t=brea&amp;__n=&amp;' +
-      'break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
-      '<span class=\"format_start mceNonEditable\">‹</span><br/>↵ <span class=\"format_end mceNonEditable\">›</span>' +
+      '<span class="mceNonEditable brea" id="pb_3_MATH.RAND" wce="__t=brea&amp;__n=&amp;break_type=pb&amp;' +
+      'number=1&amp;rv=&amp;fibre_type=&amp;facs=&amp;lb_alignment=&amp;hasBreak=no">' +
+      '<span class="format_start mceNonEditable">‹</span><br/>PB 1<span class="format_end mceNonEditable">›</span>' +
+      '</span><span class="mceNonEditable brea" id="cb_3_MATH.RAND" wce="__t=brea&amp;__n=&amp;' +
+      'break_type=cb&amp;number=1&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no">' +
+      '<span class="format_start mceNonEditable">‹</span><br/>CB 1<span class="format_end mceNonEditable">›</span>' +
+      '</span><span class="mceNonEditable brea" id="lb_3_MATH.RAND" wce="__t=brea&amp;__n=&amp;' +
+      'break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no">' +
+      '<span class="format_start mceNonEditable">‹</span><br/>↵ <span class="format_end mceNonEditable">›</span>' +
+      '</span> my first line <span class="mceNonEditable brea" wce="__t=brea&amp;__n=&amp;' +
+      'break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no">' +
+      '<span class="format_start mceNonEditable">‹</span><br/>↵ <span class="format_end mceNonEditable">›</span>' +
       '</span> my second line '
     ]
   ],
   [ 'between-word linebreak, hanging line',
     [ '<pb n="1" type="page" xml:id="P1-undefined"/><cb n="P1C1-undefined"/><lb n="P1C1L-undefined"/>' +
       '<w>my</w><w>first</w><w>line</w><lb n="P1C1L-undefined" rend="hang"/><w>my</w><w>second</w><w>line</w>',
-      '<span class=\"mceNonEditable brea\" id=\"pb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;break_type=pb&amp;' +
-      'number=1&amp;rv=&amp;fibre_type=&amp;facs=&amp;lb_alignment=&amp;hasBreak=no\">' +
-      '<span class=\"format_start mceNonEditable\">‹</span><br/>PB 1<span class=\"format_end mceNonEditable\">›</span>' +
-      '</span><span class=\"mceNonEditable brea\" id=\"cb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;' +
-      'break_type=cb&amp;number=1&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
-      '<span class=\"format_start mceNonEditable\">‹</span><br/>CB 1<span class=\"format_end mceNonEditable\">›</span>' +
-      '</span><span class=\"mceNonEditable brea\" id=\"lb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;' +
-      'break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
-      '<span class=\"format_start mceNonEditable\">‹</span><br/>↵ <span class=\"format_end mceNonEditable\">›</span>' +
-      '</span> my first line <span class=\"mceNonEditable brea\" wce=\"__t=brea&amp;__n=&amp;break_type=lb&amp;' +
-      'number=&amp;lb_alignment=hang&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
-      '<span class=\"format_start mceNonEditable\">‹</span><br/>↵← <span class=\"format_end mceNonEditable\">›</span>' +
+      '<span class="mceNonEditable brea" id="pb_3_MATH.RAND" wce="__t=brea&amp;__n=&amp;break_type=pb&amp;' +
+      'number=1&amp;rv=&amp;fibre_type=&amp;facs=&amp;lb_alignment=&amp;hasBreak=no">' +
+      '<span class="format_start mceNonEditable">‹</span><br/>PB 1<span class="format_end mceNonEditable">›</span>' +
+      '</span><span class="mceNonEditable brea" id="cb_3_MATH.RAND" wce="__t=brea&amp;__n=&amp;' +
+      'break_type=cb&amp;number=1&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no">' +
+      '<span class="format_start mceNonEditable">‹</span><br/>CB 1<span class="format_end mceNonEditable">›</span>' +
+      '</span><span class="mceNonEditable brea" id="lb_3_MATH.RAND" wce="__t=brea&amp;__n=&amp;' +
+      'break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no">' +
+      '<span class="format_start mceNonEditable">‹</span><br/>↵ <span class="format_end mceNonEditable">›</span>' +
+      '</span> my first line <span class="mceNonEditable brea" wce="__t=brea&amp;__n=&amp;break_type=lb&amp;' +
+      'number=&amp;lb_alignment=hang&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no">' +
+      '<span class="format_start mceNonEditable">‹</span><br/>↵← <span class="format_end mceNonEditable">›</span>' +
       '</span> my second line '
     ]
   ],
   [ 'between-word linebreak, indented line',
     [ '<pb n="1" type="page" xml:id="P1-undefined"/><cb n="P1C1-undefined"/><lb n="P1C1L-undefined"/>' +
       '<w>my</w><w>first</w><w>line</w><lb n="P1C1L-undefined" rend="indent"/><w>my</w><w>second</w><w>line</w>',
-      '<span class=\"mceNonEditable brea\" id=\"pb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;break_type=pb&amp;' +
-      'number=1&amp;rv=&amp;fibre_type=&amp;facs=&amp;lb_alignment=&amp;hasBreak=no\">' +
-      '<span class=\"format_start mceNonEditable\">‹</span><br/>PB 1<span class=\"format_end mceNonEditable\">›</span>' +
-      '</span><span class=\"mceNonEditable brea\" id=\"cb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;' +
-      'break_type=cb&amp;number=1&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
-      '<span class=\"format_start mceNonEditable\">‹</span><br/>CB 1<span class=\"format_end mceNonEditable\">›</span>' +
-      '</span><span class=\"mceNonEditable brea\" id=\"lb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;' +
-      'break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
-      '<span class=\"format_start mceNonEditable\">‹</span><br/>↵ <span class=\"format_end mceNonEditable\">›</span>' +
-      '</span> my first line <span class=\"mceNonEditable brea\" wce=\"__t=brea&amp;__n=&amp;break_type=lb&amp;' +
-      'number=&amp;lb_alignment=indent&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
-      '<span class=\"format_start mceNonEditable\">‹</span><br/>↵→ <span class=\"format_end mceNonEditable\">›</span>' +
+      '<span class="mceNonEditable brea" id="pb_3_MATH.RAND" wce="__t=brea&amp;__n=&amp;break_type=pb&amp;' +
+      'number=1&amp;rv=&amp;fibre_type=&amp;facs=&amp;lb_alignment=&amp;hasBreak=no">' +
+      '<span class="format_start mceNonEditable">‹</span><br/>PB 1<span class="format_end mceNonEditable">›</span>' +
+      '</span><span class="mceNonEditable brea" id="cb_3_MATH.RAND" wce="__t=brea&amp;__n=&amp;' +
+      'break_type=cb&amp;number=1&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no">' +
+      '<span class="format_start mceNonEditable">‹</span><br/>CB 1<span class="format_end mceNonEditable">›</span>' +
+      '</span><span class="mceNonEditable brea" id="lb_3_MATH.RAND" wce="__t=brea&amp;__n=&amp;' +
+      'break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no">' +
+      '<span class="format_start mceNonEditable">‹</span><br/>↵ <span class="format_end mceNonEditable">›</span>' +
+      '</span> my first line <span class="mceNonEditable brea" wce="__t=brea&amp;__n=&amp;break_type=lb&amp;' +
+      'number=&amp;lb_alignment=indent&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no">' +
+      '<span class="format_start mceNonEditable">‹</span><br/>↵→ <span class="format_end mceNonEditable">›</span>' +
       '</span> my second line '
     ]
   ],
   [ 'mid-word linebreak',
     [ '<pb n="1v" type="folio" xml:id="P1v-undefined"/><cb n="P1vC1-undefined"/><lb n="P1vC1L-undefined"/><w>my</w><w>first</w><w>li' +
       '<lb n="P1vC1L-undefined" break="no"/>ne</w><w>my</w><w>second</w><w>line</w>',
-      '<span class=\"mceNonEditable brea\" id=\"pb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;break_type=pb&amp;' +
-      'number=1&amp;rv=v&amp;fibre_type=&amp;facs=&amp;lb_alignment=&amp;hasBreak=no\">' +
-      '<span class=\"format_start mceNonEditable\">‹</span><br/>PB 1v<span class=\"format_end mceNonEditable\">›</span>' +
-      '</span><span class=\"mceNonEditable brea\" id=\"cb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;' +
-      'break_type=cb&amp;number=1&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
-      '<span class=\"format_start mceNonEditable\">‹</span><br/>CB 1<span class=\"format_end mceNonEditable\">›</span>' +
-      '</span><span class=\"mceNonEditable brea\" id=\"lb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;' +
-      'break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
-      '<span class=\"format_start mceNonEditable\">‹</span><br/>↵ <span class=\"format_end mceNonEditable\">›</span>' +
-      '</span> my first li<span class=\"mceNonEditable brea\" wce=\"__t=brea&amp;__n=&amp;break_type=lb&amp;' +
-      'number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=yes\">' +
-      '<span class=\"format_start mceNonEditable\">‹</span>-<br/>↵ <span class=\"format_end mceNonEditable\">›</span>' +
+      '<span class="mceNonEditable brea" id="pb_3_MATH.RAND" wce="__t=brea&amp;__n=&amp;break_type=pb&amp;' +
+      'number=1&amp;rv=v&amp;fibre_type=&amp;facs=&amp;lb_alignment=&amp;hasBreak=no">' +
+      '<span class="format_start mceNonEditable">‹</span><br/>PB 1v<span class="format_end mceNonEditable">›</span>' +
+      '</span><span class="mceNonEditable brea" id="cb_3_MATH.RAND" wce="__t=brea&amp;__n=&amp;' +
+      'break_type=cb&amp;number=1&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no">' +
+      '<span class="format_start mceNonEditable">‹</span><br/>CB 1<span class="format_end mceNonEditable">›</span>' +
+      '</span><span class="mceNonEditable brea" id="lb_3_MATH.RAND" wce="__t=brea&amp;__n=&amp;' +
+      'break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no">' +
+      '<span class="format_start mceNonEditable">‹</span><br/>↵ <span class="format_end mceNonEditable">›</span>' +
+      '</span> my first li<span class="mceNonEditable brea" wce="__t=brea&amp;__n=&amp;break_type=lb&amp;' +
+      'number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=yes">' +
+      '<span class="format_start mceNonEditable">‹</span>-<br/>↵ <span class="format_end mceNonEditable">›</span>' +
       '</span>ne my second line '
     ]
   ],
   [ 'mid-word linebreak with rend attribute',
     [ '<pb n="1v" type="folio" xml:id="P1v-undefined"/><cb n="P1vC1-undefined"/><lb n="P1vC1L-undefined"/><w>my</w><w>first</w><w>li' +
       '<lb n="P1vC1L-undefined" rend="hang" break="no"/>ne</w><w>my</w><w>second</w><w>line</w>',
-      '<span class=\"mceNonEditable brea\" id=\"pb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;break_type=pb&amp;' +
-      'number=1&amp;rv=v&amp;fibre_type=&amp;facs=&amp;lb_alignment=&amp;hasBreak=no\">' +
-      '<span class=\"format_start mceNonEditable\">‹</span><br/>PB 1v<span class=\"format_end mceNonEditable\">›</span>' +
-      '</span><span class=\"mceNonEditable brea\" id=\"cb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;' +
-      'break_type=cb&amp;number=1&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
-      '<span class=\"format_start mceNonEditable\">‹</span><br/>CB 1<span class=\"format_end mceNonEditable\">›</span>' +
-      '</span><span class=\"mceNonEditable brea\" id=\"lb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;' +
-      'break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
-      '<span class=\"format_start mceNonEditable\">‹</span><br/>↵ <span class=\"format_end mceNonEditable\">›</span>' +
-      '</span> my first li<span class=\"mceNonEditable brea\" wce=\"__t=brea&amp;__n=&amp;break_type=lb&amp;' +
-      'number=&amp;lb_alignment=hang&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=yes\">' +
-      '<span class=\"format_start mceNonEditable\">‹</span>-<br/>↵← <span class=\"format_end mceNonEditable\">›</span>' +
+      '<span class="mceNonEditable brea" id="pb_3_MATH.RAND" wce="__t=brea&amp;__n=&amp;break_type=pb&amp;' +
+      'number=1&amp;rv=v&amp;fibre_type=&amp;facs=&amp;lb_alignment=&amp;hasBreak=no">' +
+      '<span class="format_start mceNonEditable">‹</span><br/>PB 1v<span class="format_end mceNonEditable">›</span>' +
+      '</span><span class="mceNonEditable brea" id="cb_3_MATH.RAND" wce="__t=brea&amp;__n=&amp;' +
+      'break_type=cb&amp;number=1&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no">' +
+      '<span class="format_start mceNonEditable">‹</span><br/>CB 1<span class="format_end mceNonEditable">›</span>' +
+      '</span><span class="mceNonEditable brea" id="lb_3_MATH.RAND" wce="__t=brea&amp;__n=&amp;' +
+      'break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no">' +
+      '<span class="format_start mceNonEditable">‹</span><br/>↵ <span class="format_end mceNonEditable">›</span>' +
+      '</span> my first li<span class="mceNonEditable brea" wce="__t=brea&amp;__n=&amp;break_type=lb&amp;' +
+      'number=&amp;lb_alignment=hang&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=yes">' +
+      '<span class="format_start mceNonEditable">‹</span>-<br/>↵← <span class="format_end mceNonEditable">›</span>' +
       '</span>ne my second line '
     ],
   ],
   [ 'quire break',
     [ '<gb n="3"/><pb n="1r" type="folio" xml:id="P1r-undefined"/><cb n="P1rC1-undefined"/><lb n="P1rC1L-undefined"/>',
-      '<span class=\"mceNonEditable brea\" wce=\"__t=brea&amp;__n=&amp;break_type=gb&amp;number=3&amp;' +
-			'lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
-			'<span class=\"format_start mceNonEditable\">‹</span><br/>QB<span class=\"format_end mceNonEditable\">›</span>' +
-			'</span><span class=\"mceNonEditable brea\" id=\"pb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;' +
-			'break_type=pb&amp;number=1&amp;rv=r&amp;fibre_type=&amp;facs=&amp;lb_alignment=&amp;hasBreak=no\">' +
-			'<span class=\"format_start mceNonEditable\">‹</span><br/>PB 1r<span class=\"format_end mceNonEditable\">›</span>' +
-			'</span><span class=\"mceNonEditable brea\" id=\"cb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;' +
-			'break_type=cb&amp;number=1&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
-			'<span class=\"format_start mceNonEditable\">‹</span><br/>CB 1<span class=\"format_end mceNonEditable\">›</span>' +
-			'</span><span class=\"mceNonEditable brea\" id=\"lb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;' +
-			'break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
-			'<span class=\"format_start mceNonEditable\">‹</span><br/>↵ <span class=\"format_end mceNonEditable\">›</span></span>'
+      '<span class="mceNonEditable brea" wce="__t=brea&amp;__n=&amp;break_type=gb&amp;number=3&amp;' +
+			'lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no">' +
+			'<span class="format_start mceNonEditable">‹</span><br/>QB<span class="format_end mceNonEditable">›</span>' +
+			'</span><span class="mceNonEditable brea" id="pb_3_MATH.RAND" wce="__t=brea&amp;__n=&amp;' +
+			'break_type=pb&amp;number=1&amp;rv=r&amp;fibre_type=&amp;facs=&amp;lb_alignment=&amp;hasBreak=no">' +
+			'<span class="format_start mceNonEditable">‹</span><br/>PB 1r<span class="format_end mceNonEditable">›</span>' +
+			'</span><span class="mceNonEditable brea" id="cb_3_MATH.RAND" wce="__t=brea&amp;__n=&amp;' +
+			'break_type=cb&amp;number=1&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no">' +
+			'<span class="format_start mceNonEditable">‹</span><br/>CB 1<span class="format_end mceNonEditable">›</span>' +
+			'</span><span class="mceNonEditable brea" id="lb_3_MATH.RAND" wce="__t=brea&amp;__n=&amp;' +
+			'break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no">' +
+			'<span class="format_start mceNonEditable">‹</span><br/>↵ <span class="format_end mceNonEditable">›</span></span>'
     ]
   ]
 ]);
@@ -1030,14 +1165,14 @@ const teiToHtmlAndBackWithChange = new Map([
     ],
     [ 'lectionary in line with rend attribute',
       [ '<w>in</w><w>line</w><w>lectionary</w><note type="lectionary-other" rend="3">Lectionary text within the line</note>',
-        'in line lectionary<span class=\"paratext\" wce=\"__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=3&amp;text=&amp;number=&amp;edit_number=on&amp;paratext_position=pagetop&amp;paratext_position_other=&amp;paratext_alignment=left\"><span class=\"format_start mceNonEditable\">‹</span><br/>↵[<span class=\"lectionary-other\" wce=\"__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=3\">lect</span>]<br/>↵[<span class=\"lectionary-other\" wce=\"__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=3\">lect</span>]<br/>↵[<span class=\"lectionary-other\" wce=\"__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=3\">lect</span>]<span class=\"format_end mceNonEditable\">›</span></span>',
-        '<w>in</w><w>line</w><w>lectionary</w><lb/><note type=\"lectionary-other\">One line of untranscribed lectionary text</note><lb/><note type=\"lectionary-other\">One line of untranscribed lectionary text</note><lb/><note type=\"lectionary-other\">One line of untranscribed lectionary text</note>'
+        'in line lectionary<span class="paratext" wce="__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=3&amp;text=&amp;number=&amp;edit_number=on&amp;paratext_position=pagetop&amp;paratext_position_other=&amp;paratext_alignment=left"><span class="format_start mceNonEditable">‹</span><br/>↵[<span class="lectionary-other" wce="__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=3">lect</span>]<br/>↵[<span class="lectionary-other" wce="__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=3">lect</span>]<br/>↵[<span class="lectionary-other" wce="__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=3">lect</span>]<span class="format_end mceNonEditable">›</span></span>',
+        '<w>in</w><w>line</w><w>lectionary</w><lb/><note type="lectionary-other">One line of untranscribed lectionary text</note><lb/><note type="lectionary-other">One line of untranscribed lectionary text</note><lb/><note type="lectionary-other">One line of untranscribed lectionary text</note>'
       ]
     ],
 		// legacy support for referencing system
 		[ 'book, chapter and verse (legacy)',
 	    [ '<div type="book" n="B04"><div type="chapter" n="B04K1"><ab n="B04K1V1"><w>first</w><w>verse</w></ab></div></div>',
-	      ' <span class=\"book_number mceNonEditable\" wce=\"__t=book_number\" id=\"1\">John</span>  <span class=\"chapter_number mceNonEditable\" wce=\"__t=chapter_number\" id=\"2\">1</span> <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">1</span> first verse ',
+	      ' <span class="book_number mceNonEditable" wce="__t=book_number" id="1">John</span>  <span class="chapter_number mceNonEditable" wce="__t=chapter_number" id="2">1</span> <span class="verse_number mceNonEditable" wce="__t=verse_number">1</span> first verse ',
 				'<div type="book" n="John"><div type="chapter" n="John.1"><ab n="John.1.1"><w>first</w><w>verse</w></ab></div></div>'
 	    ]
 	  ],
@@ -1081,26 +1216,26 @@ teiToHtmlAndBackWithChange.forEach((value, key, map) => {
 const exportSpaces = new Map([
   [ 'test spaces are added to export w and pc',
     ['<w>test</w><w>word</w>spaces<w></w><pc>.</pc><w>with</w><w>punctuation</w><pc>.</pc>',
-     'test word spaces <span class=\"pc\" wce=\"__t=pc\"><span class=\"format_start mceNonEditable\">‹</span>.' +
-     '<span class=\"format_end mceNonEditable\">›</span></span> with punctuation <span class=\"pc\" wce=\"__t=pc\">' +
-     '<span class=\"format_start mceNonEditable\">‹</span>.<span class=\"format_end mceNonEditable\">›</span></span> ',
+     'test word spaces <span class="pc" wce="__t=pc"><span class="format_start mceNonEditable">‹</span>.' +
+     '<span class="format_end mceNonEditable">›</span></span> with punctuation <span class="pc" wce="__t=pc">' +
+     '<span class="format_start mceNonEditable">‹</span>.<span class="format_end mceNonEditable">›</span></span> ',
      '<w>test</w> <w>word</w> <w>spaces</w><pc>.</pc> <w>with</w> <w>punctuation</w><pc>.</pc>'
     ]
   ],
   [ 'test spaces can be uploaded and exported without problems w and pc',
     ['<w>test</w> <w>word</w> <w>spaces</w><pc>.</pc> <w>with</w> <w>punctuation</w><pc>.</pc>',
-     'test word spaces <span class=\"pc\" wce=\"__t=pc\"><span class=\"format_start mceNonEditable\">‹</span>.' +
-     '<span class=\"format_end mceNonEditable\">›</span></span> with punctuation <span class=\"pc\" wce=\"__t=pc\">' +
-     '<span class=\"format_start mceNonEditable\">‹</span>.<span class=\"format_end mceNonEditable\">›</span></span> ',
+     'test word spaces <span class="pc" wce="__t=pc"><span class="format_start mceNonEditable">‹</span>.' +
+     '<span class="format_end mceNonEditable">›</span></span> with punctuation <span class="pc" wce="__t=pc">' +
+     '<span class="format_start mceNonEditable">‹</span>.<span class="format_end mceNonEditable">›</span></span> ',
      '<w>test</w> <w>word</w> <w>spaces</w><pc>.</pc> <w>with</w> <w>punctuation</w><pc>.</pc>'
     ]
   ],
   [ 'test spaces are added to export seg and w',
     ['<w>test</w><w>a</w><w>seg</w><seg type="margin" subtype="pageright"><w>seg</w><w>content</w></seg><w>with</w>' +
      '<w>spaces</w>',
-     'test a seg <span class=\"paratext\" wce=\"__t=paratext&amp;__n=&amp;marginals_text=seg%20content%20' +
-     '&amp;fw_type=isolated&amp;fw_type_other=&amp;paratext_position=pageright&amp;paratext_position_other=\">' +
-     '<span class=\"format_start mceNonEditable\">‹</span>fw<span class=\"format_end mceNonEditable\">›</span>' +
+     'test a seg <span class="paratext" wce="__t=paratext&amp;__n=&amp;marginals_text=seg%20content%20' +
+     '&amp;fw_type=isolated&amp;fw_type_other=&amp;paratext_position=pageright&amp;paratext_position_other=">' +
+     '<span class="format_start mceNonEditable">‹</span>fw<span class="format_end mceNonEditable">›</span>' +
      '</span>with spaces ',
      '<w>test</w> <w>a</w> <w>seg</w><seg type="margin" subtype="pageright"><w>seg</w> <w>content</w></seg> ' +
      '<w>with</w> <w>spaces</w>'
@@ -1109,13 +1244,13 @@ const exportSpaces = new Map([
   [ 'test spaces are added to export app and w combinations',
     ['<w>test</w><w>spaces</w><app><rdg type="orig" hand="firsthand"><w>arround</w></rdg>' +
     '<rdg type="corr" hand="corrector"><w>around</w></rdg></app><w>corrections</w>',
-     'test spaces <span class=\"corr\" wce_orig=\"arround\" wce=\"__t=corr&amp;__n=corrector' +
+     'test spaces <span class="corr" wce_orig="arround" wce="__t=corr&amp;__n=corrector' +
      '&amp;corrector_name_other=&amp;corrector_name=corrector&amp;reading=corr&amp;' +
      'original_firsthand_reading=arround&amp;common_firsthand_partial=&amp;deletion_erased=0&amp;' +
      'deletion_underline=0&amp;deletion_underdot=0&amp;deletion_strikethrough=0&amp;deletion_vertical_line=0' +
      '&amp;deletion_deletion_hooks=0&amp;deletion_transposition_marks=0&amp;deletion_other=0&amp;deletion=null' +
-     '&amp;firsthand_partial=&amp;partial=&amp;corrector_text=around%20&amp;place_corr=\">' +
-     '<span class=\"format_start mceNonEditable\">‹</span>arround<span class=\"format_end mceNonEditable\">›</span>' +
+     '&amp;firsthand_partial=&amp;partial=&amp;corrector_text=around%20&amp;place_corr=">' +
+     '<span class="format_start mceNonEditable">‹</span>arround<span class="format_end mceNonEditable">›</span>' +
      '</span> corrections ',
      '<w>test</w> <w>spaces</w> <app><rdg type="orig" hand="firsthand"><w>arround</w></rdg>' +
      '<rdg type="corr" hand="corrector"><w>around</w></rdg></app> <w>corrections</w>'
@@ -1124,14 +1259,14 @@ const exportSpaces = new Map([
   [ 'test spaces are added to export app and pc combination',
     ['<w>test</w><w>spaces</w><pc>.</pc><app><rdg type="orig" hand="firsthand"><w>arround</w></rdg>' +
      '<rdg type="corr" hand="corrector"><w>around</w></rdg></app><w>corrections</w>',
-     'test spaces <span class=\"pc\" wce=\"__t=pc\"><span class=\"format_start mceNonEditable\">‹</span>.' +
-     '<span class=\"format_end mceNonEditable\">›</span></span> <span class=\"corr\" wce_orig=\"arround\" ' +
-     'wce=\"__t=corr&amp;__n=corrector&amp;corrector_name_other=&amp;corrector_name=corrector&amp;reading=corr' +
+     'test spaces <span class="pc" wce="__t=pc"><span class="format_start mceNonEditable">‹</span>.' +
+     '<span class="format_end mceNonEditable">›</span></span> <span class="corr" wce_orig="arround" ' +
+     'wce="__t=corr&amp;__n=corrector&amp;corrector_name_other=&amp;corrector_name=corrector&amp;reading=corr' +
      '&amp;original_firsthand_reading=arround&amp;common_firsthand_partial=&amp;deletion_erased=0&amp;' +
      'deletion_underline=0&amp;deletion_underdot=0&amp;deletion_strikethrough=0&amp;deletion_vertical_line=0' +
      '&amp;deletion_deletion_hooks=0&amp;deletion_transposition_marks=0&amp;deletion_other=0&amp;deletion=null' +
-     '&amp;firsthand_partial=&amp;partial=&amp;corrector_text=around%20&amp;place_corr=\">' +
-     '<span class=\"format_start mceNonEditable\">‹</span>arround<span class=\"format_end mceNonEditable\">›</span>' +
+     '&amp;firsthand_partial=&amp;partial=&amp;corrector_text=around%20&amp;place_corr=">' +
+     '<span class="format_start mceNonEditable">‹</span>arround<span class="format_end mceNonEditable">›</span>' +
      '</span> corrections ',
      '<w>test</w> <w>spaces</w><pc>.</pc> <app><rdg type="orig" hand="firsthand"><w>arround</w></rdg>' +
      '<rdg type="corr" hand="corrector"><w>around</w></rdg></app> <w>corrections</w>'
@@ -1139,24 +1274,24 @@ const exportSpaces = new Map([
   ],
   [ 'test spaces are added after notes between words',
     ['<w>test</w><w>note</w><note type="local" xml:id="..--2">my test note</note><w>between</w><w>words</w>',
-     'test note<span class=\"note\" wce=\"__t=note&amp;__n=&amp;note_text=my%20test%20note&amp;' +
-     'note_type=local&amp;newhand=\"><span class=\"format_start mceNonEditable\">‹</span>Note' +
-     '<span class=\"format_end mceNonEditable\">›</span></span> between words ',
+     'test note<span class="note" wce="__t=note&amp;__n=&amp;note_text=my%20test%20note&amp;' +
+     'note_type=local&amp;newhand="><span class="format_start mceNonEditable">‹</span>Note' +
+     '<span class="format_end mceNonEditable">›</span></span> between words ',
      '<w>test</w> <w>note</w><note type="local" xml:id="..-undefined-2">my test note</note> <w>between</w> <w>words</w>'
     ]
   ],
   [ 'test spaces are added after notes before app',
     ['<w>test</w><w>note</w><note type="local" xml:id="..--2">my test note</note><app>' +
      '<rdg type="orig" hand="firsthand"><w>before</w><w>app</w></rdg><rdg type="corr" hand="corrector"></rdg></app>',
-     'test note<span class=\"note\" wce=\"__t=note&amp;__n=&amp;note_text=my%20test%20note&amp;note_type=local&amp;' +
-     'newhand=\"><span class=\"format_start mceNonEditable\">‹</span>Note<span class=\"format_end mceNonEditable\">›' +
-     '</span></span> <span class=\"corr\" wce_orig=\"before%20app\" wce=\"__t=corr&amp;__n=corrector&amp;' +
+     'test note<span class="note" wce="__t=note&amp;__n=&amp;note_text=my%20test%20note&amp;note_type=local&amp;' +
+     'newhand="><span class="format_start mceNonEditable">‹</span>Note<span class="format_end mceNonEditable">›' +
+     '</span></span> <span class="corr" wce_orig="before%20app" wce="__t=corr&amp;__n=corrector&amp;' +
      'corrector_name_other=&amp;corrector_name=corrector&amp;reading=corr&amp;original_firsthand_reading=' +
      'before%20app&amp;common_firsthand_partial=&amp;deletion_erased=0&amp;deletion_underline=0&amp;' +
      'deletion_underdot=0&amp;deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_deletion_hooks=0' +
      '&amp;deletion_transposition_marks=0&amp;deletion_other=0&amp;deletion=null&amp;firsthand_partial=&amp;partial=' +
-     '&amp;corrector_text=&amp;blank_correction=on&amp;place_corr=\"><span class=\"format_start mceNonEditable\">‹' +
-     '</span>before app<span class=\"format_end mceNonEditable\">›</span></span>',
+     '&amp;corrector_text=&amp;blank_correction=on&amp;place_corr="><span class="format_start mceNonEditable">‹' +
+     '</span>before app<span class="format_end mceNonEditable">›</span></span>',
      '<w>test</w> <w>note</w><note type="local" xml:id="..-undefined-2">my test note</note> <app>' +
      '<rdg type="orig" hand="firsthand"><w>before</w> <w>app</w></rdg><rdg type="corr" hand="corrector"></rdg></app>'
     ]
@@ -1164,36 +1299,36 @@ const exportSpaces = new Map([
   [ 'test spaces are added between verses',
     ['<div type="book" n="Matt"><div type="chapter" n="Matt.1"><ab n="Matt.1.1"><w>test</w><w>spaces</w></ab>' +
      '<ab n="Matt.1.2"><w>between</w><w>verses</w></ab></div></div>',
-     ' <span class=\"book_number mceNonEditable\" wce=\"__t=book_number\" id=\"1\">Matt</span>  ' +
-     '<span class=\"chapter_number mceNonEditable\" wce=\"__t=chapter_number\" id=\"2\">1</span> ' +
-     '<span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">1</span> test spaces ' +
-     '<span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">2</span> between verses ',
+     ' <span class="book_number mceNonEditable" wce="__t=book_number" id="1">Matt</span>  ' +
+     '<span class="chapter_number mceNonEditable" wce="__t=chapter_number" id="2">1</span> ' +
+     '<span class="verse_number mceNonEditable" wce="__t=verse_number">1</span> test spaces ' +
+     '<span class="verse_number mceNonEditable" wce="__t=verse_number">2</span> between verses ',
      '<div type="book" n="Matt"><div type="chapter" n="Matt.1"><ab n="Matt.1.1"><w>test</w> <w>spaces</w></ab> ' +
      '<ab n="Matt.1.2"><w>between</w> <w>verses</w></ab></div> </div>'
     ]
   ],
   [ 'test spaces are added between word and space',
     ['<w>word</w><w>then</w><w>space</w><space unit="char" extent="5"/><w>and</w><w>more</w><w>words</w>',
-     'word then space <span class=\"spaces\" wce=\"__t=spaces&amp;__n=&amp;sp_unit_other=&amp;sp_unit=char&amp;' +
-     'sp_extent=5\"><span class=\"format_start mceNonEditable\">‹</span>sp' +
-     '<span class=\"format_end mceNonEditable\">›</span></span>and more words ',
+     'word then space <span class="spaces" wce="__t=spaces&amp;__n=&amp;sp_unit_other=&amp;sp_unit=char&amp;' +
+     'sp_extent=5"><span class="format_start mceNonEditable">‹</span>sp' +
+     '<span class="format_end mceNonEditable">›</span></span>and more words ',
      '<w>word</w> <w>then</w> <w>space</w> <space unit="char" extent="5"/><w>and</w> <w>more</w> <w>words</w>'
     ]
   ],
   [ 'test spaces are added between word and gap and word',
     ['<w>word</w><w>then</w><w>gap</w><gap reason="illegible" unit="char" extent="5"/><w>and</w><w>more</w><w>words</w>',
-     'word then gap <span class=\"gap\" wce=\"__t=gap&amp;__n=&amp;gap_reason_dummy_lacuna=lacuna&amp;' +
+     'word then gap <span class="gap" wce="__t=gap&amp;__n=&amp;gap_reason_dummy_lacuna=lacuna&amp;' +
      'gap_reason_dummy_illegible=illegible&amp;gap_reason_dummy_unspecified=unspecified&amp;' +
      'gap_reason_dummy_inferredPage=inferredPage&amp;gap_reason=illegible&amp;unit_other=&amp;' +
-     'unit=char&amp;extent=5\"><span class=\"format_start mceNonEditable\">‹</span>[5]' +
-     '<span class=\"format_end mceNonEditable\">›</span></span> and more words ',
+     'unit=char&amp;extent=5"><span class="format_start mceNonEditable">‹</span>[5]' +
+     '<span class="format_end mceNonEditable">›</span></span> and more words ',
      '<w>word</w> <w>then</w> <w>gap</w> <gap reason="illegible" unit="char" extent="5"/> <w>and</w> <w>more</w> <w>words</w>'
     ]
   ],
   [ 'test space is added after chapter when ending with w',
     ['<div type="book" n="Matt"><div type="chapter" n="Matt.1"><ab n="Matt.1.1"><w>space</w><w>after</w><w>chapter</w>' +
      '</ab></div><div type="chapter" n="Matt.2"><ab n="Matt.2.1"><w>next</w><w>chapter</w></ab></div></div>',
-     ' <span class=\"book_number mceNonEditable\" wce=\"__t=book_number\" id=\"1\">Matt</span>  <span class=\"chapter_number mceNonEditable\" wce=\"__t=chapter_number\" id=\"2\">1</span> <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">1</span> space after chapter  <span class=\"chapter_number mceNonEditable\" wce=\"__t=chapter_number\" id=\"3\">2</span> <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">1</span> next chapter ',
+     ' <span class="book_number mceNonEditable" wce="__t=book_number" id="1">Matt</span>  <span class="chapter_number mceNonEditable" wce="__t=chapter_number" id="2">1</span> <span class="verse_number mceNonEditable" wce="__t=verse_number">1</span> space after chapter  <span class="chapter_number mceNonEditable" wce="__t=chapter_number" id="3">2</span> <span class="verse_number mceNonEditable" wce="__t=verse_number">1</span> next chapter ',
      '<div type="book" n="Matt"><div type="chapter" n="Matt.1"><ab n="Matt.1.1"><w>space</w> <w>after</w> <w>chapter</w>' +
      '</ab></div> <div type="chapter" n="Matt.2"><ab n="Matt.2.1"><w>next</w> <w>chapter</w></ab></div> </div>'
     ]
@@ -1202,7 +1337,7 @@ const exportSpaces = new Map([
     ['<div type="book" n="Matt"><div type="chapter" n="Matt.1"><ab n="Matt.1.1"><w>space</w><w>after</w><w>chapter</w>' +
      '<w>with</w><w>pc</w><pc>.</pc></ab></div><div type="chapter" n="Matt.2"><ab n="Matt.2.1"><w>next</w>' +
      '<w>chapter</w></ab></div></div>',
-     ' <span class=\"book_number mceNonEditable\" wce=\"__t=book_number\" id=\"1\">Matt</span>  <span class=\"chapter_number mceNonEditable\" wce=\"__t=chapter_number\" id=\"2\">1</span> <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">1</span> space after chapter with pc <span class=\"pc\" wce=\"__t=pc\"><span class=\"format_start mceNonEditable\">‹</span>.<span class=\"format_end mceNonEditable\">›</span></span>  <span class=\"chapter_number mceNonEditable\" wce=\"__t=chapter_number\" id=\"3\">2</span> <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">1</span> next chapter ',
+     ' <span class="book_number mceNonEditable" wce="__t=book_number" id="1">Matt</span>  <span class="chapter_number mceNonEditable" wce="__t=chapter_number" id="2">1</span> <span class="verse_number mceNonEditable" wce="__t=verse_number">1</span> space after chapter with pc <span class="pc" wce="__t=pc"><span class="format_start mceNonEditable">‹</span>.<span class="format_end mceNonEditable">›</span></span>  <span class="chapter_number mceNonEditable" wce="__t=chapter_number" id="3">2</span> <span class="verse_number mceNonEditable" wce="__t=verse_number">1</span> next chapter ',
      '<div type="book" n="Matt"><div type="chapter" n="Matt.1"><ab n="Matt.1.1"><w>space</w> <w>after</w> ' +
      '<w>chapter</w> <w>with</w> <w>pc</w><pc>.</pc></ab></div> <div type="chapter" n="Matt.2"><ab n="Matt.2.1">' +
      '<w>next</w> <w>chapter</w></ab></div> </div>'
@@ -1235,18 +1370,18 @@ const exportLayout = new Map([
   [ 'test input without linebreaks in XML get them added on export',
     ['<pb n="1r" type="folio" xml:id="P1r-"/><cb n="P1rC1-"/><lb n="P1rC1L-"/><w>test</w><w>that</w><w>line</w>' +
      '<w>breaks</w><lb n="P1rC1L-"/><w>are</w><w>added</w><w>in</w><w>XML</w>',
-     '<span class=\"mceNonEditable brea\" id=\"pb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;' +
-     'break_type=pb&amp;number=1&amp;rv=r&amp;fibre_type=&amp;facs=&amp;lb_alignment=&amp;hasBreak=no\">' +
-     '<span class=\"format_start mceNonEditable\">‹</span><br/>PB 1r<span class=\"format_end mceNonEditable\">›</span>' +
-     '</span><span class=\"mceNonEditable brea\" id=\"cb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;' +
-     'break_type=cb&amp;number=1&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
-     '<span class=\"format_start mceNonEditable\">‹</span><br/>CB 1<span class=\"format_end mceNonEditable\">›</span>' +
-     '</span><span class=\"mceNonEditable brea\" id=\"lb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;break_type=lb&amp;' +
-     'number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
-     '<span class=\"format_start mceNonEditable\">‹</span><br/>↵ <span class=\"format_end mceNonEditable\">›</span>' +
-     '</span> test that line breaks <span class=\"mceNonEditable brea\" wce=\"__t=brea&amp;__n=&amp;' +
-     'break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
-     '<span class=\"format_start mceNonEditable\">‹</span><br/>↵ <span class=\"format_end mceNonEditable\">›</span>' +
+     '<span class="mceNonEditable brea" id="pb_3_MATH.RAND" wce="__t=brea&amp;__n=&amp;' +
+     'break_type=pb&amp;number=1&amp;rv=r&amp;fibre_type=&amp;facs=&amp;lb_alignment=&amp;hasBreak=no">' +
+     '<span class="format_start mceNonEditable">‹</span><br/>PB 1r<span class="format_end mceNonEditable">›</span>' +
+     '</span><span class="mceNonEditable brea" id="cb_3_MATH.RAND" wce="__t=brea&amp;__n=&amp;' +
+     'break_type=cb&amp;number=1&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no">' +
+     '<span class="format_start mceNonEditable">‹</span><br/>CB 1<span class="format_end mceNonEditable">›</span>' +
+     '</span><span class="mceNonEditable brea" id="lb_3_MATH.RAND" wce="__t=brea&amp;__n=&amp;break_type=lb&amp;' +
+     'number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no">' +
+     '<span class="format_start mceNonEditable">‹</span><br/>↵ <span class="format_end mceNonEditable">›</span>' +
+     '</span> test that line breaks <span class="mceNonEditable brea" wce="__t=brea&amp;__n=&amp;' +
+     'break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no">' +
+     '<span class="format_start mceNonEditable">‹</span><br/>↵ <span class="format_end mceNonEditable">›</span>' +
      '</span> are added in XML ',
      '\n<pb n="1r" type="folio" xml:id="P1r-undefined"/>\n<cb n="P1rC1-undefined"/>\n<lb n="P1rC1L-undefined"/><w>test</w><w>that</w><w>line</w>' +
      '<w>breaks</w>\n<lb n="P1rC1L-undefined"/><w>are</w><w>added</w><w>in</w><w>XML</w>'
@@ -1255,18 +1390,18 @@ const exportLayout = new Map([
   [ 'test input with linebreaks in XML still has them on export',
     ['\n<pb n="1r" type="folio" xml:id="P1r-"/>\n<cb n="P1rC1-"/>\n<lb n="P1rC1L-"/><w>test</w><w>that</w><w>line</w>' +
       '<w>breaks</w>\n<lb n="P1rC1L-"/><w>are</w><w>added</w><w>in</w><w>XML</w>',
-      '<span class=\"mceNonEditable brea\" id=\"pb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;' +
-      'break_type=pb&amp;number=1&amp;rv=r&amp;fibre_type=&amp;facs=&amp;lb_alignment=&amp;hasBreak=no\">' +
-      '<span class=\"format_start mceNonEditable\">‹</span><br/>PB 1r<span class=\"format_end mceNonEditable\">›</span>' +
-      '</span><span class=\"mceNonEditable brea\" id=\"cb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;' +
-      'break_type=cb&amp;number=1&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
-      '<span class=\"format_start mceNonEditable\">‹</span><br/>CB 1<span class=\"format_end mceNonEditable\">›</span>' +
-      '</span><span class=\"mceNonEditable brea\" id=\"lb_3_MATH.RAND\" wce=\"__t=brea&amp;__n=&amp;break_type=lb&amp;' +
-      'number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
-      '<span class=\"format_start mceNonEditable\">‹</span><br/>↵ <span class=\"format_end mceNonEditable\">›</span>' +
-      '</span> test that line breaks <span class=\"mceNonEditable brea\" wce=\"__t=brea&amp;__n=&amp;' +
-      'break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no\">' +
-      '<span class=\"format_start mceNonEditable\">‹</span><br/>↵ <span class=\"format_end mceNonEditable\">›</span>' +
+      '<span class="mceNonEditable brea" id="pb_3_MATH.RAND" wce="__t=brea&amp;__n=&amp;' +
+      'break_type=pb&amp;number=1&amp;rv=r&amp;fibre_type=&amp;facs=&amp;lb_alignment=&amp;hasBreak=no">' +
+      '<span class="format_start mceNonEditable">‹</span><br/>PB 1r<span class="format_end mceNonEditable">›</span>' +
+      '</span><span class="mceNonEditable brea" id="cb_3_MATH.RAND" wce="__t=brea&amp;__n=&amp;' +
+      'break_type=cb&amp;number=1&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no">' +
+      '<span class="format_start mceNonEditable">‹</span><br/>CB 1<span class="format_end mceNonEditable">›</span>' +
+      '</span><span class="mceNonEditable brea" id="lb_3_MATH.RAND" wce="__t=brea&amp;__n=&amp;break_type=lb&amp;' +
+      'number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no">' +
+      '<span class="format_start mceNonEditable">‹</span><br/>↵ <span class="format_end mceNonEditable">›</span>' +
+      '</span> test that line breaks <span class="mceNonEditable brea" wce="__t=brea&amp;__n=&amp;' +
+      'break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no">' +
+      '<span class="format_start mceNonEditable">‹</span><br/>↵ <span class="format_end mceNonEditable">›</span>' +
       '</span> are added in XML ',
       '\n<pb n="1r" type="folio" xml:id="P1r-undefined"/>\n<cb n="P1rC1-undefined"/>\n<lb n="P1rC1L-undefined"/><w>test</w><w>that</w><w>line</w>' +
       '<w>breaks</w>\n<lb n="P1rC1L-undefined"/><w>are</w><w>added</w><w>in</w><w>XML</w>'
