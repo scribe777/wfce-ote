@@ -33,19 +33,24 @@
 */
 
 
-// required: _id
-// optional with default: rtl, lang, getWitness, getWitnessLang
-// optional no default needed: myBaseURL?, finishCallback
-// ones to make optional with default: toolbar, 
-// ones to make optional without default: save_onsavecallback (required is save in toolbar)
-
-
-
+/**
+ * @typedef {{getWitness: function,
+ * 			  getWitnessLang: function,
+ * 			  language: string (en|de),
+ * 			  rtl: boolean,
+ * 			  getBookNameFromBKV: function,
+ * 			  bookNames: Array,
+ * 			  showMultilineNotesAsSingleEntry: boolean,
+ * 		      addSpaces: boolean,
+ * 			  addLineBreaks: boolean,
+ * 			 }
+ * 			} clientOptions
+ */
 
 /** Initialises the editor
 
 @param {string} _id - The html id value of the text area to transform into the editor.
-@param {object} options - The client settings to use when initialising the editor.
+@param {clientOptions} options - The client settings to use when initialising the editor.
 @param {baseURL} string - Explicitly sets TinyMCE's base URL.
 @param {callback} function - The function to call once the editor is loaded.
 
