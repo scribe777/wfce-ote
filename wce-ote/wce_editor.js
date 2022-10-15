@@ -33,19 +33,18 @@
 */
 
 
-// required: _id
-// optional with default: rtl, lang, getWitness, getWitnessLang
-// optional no default needed: myBaseURL?, finishCallback
-// ones to make optional with default: toolbar, 
-// ones to make optional without default: save_onsavecallback (required is save in toolbar)
-
-
-
-
 /** Initialises the editor
 
 @param {string} _id - The html id value of the text area to transform into the editor.
-@param {object} options - The client settings to use when initialising the editor.
+@param {clientOptions} clientOptions - The client settings to use when initialising the editor.
+@param {string} clientOptions.language - The language to use for the interface (en|de). The default is English.
+@param {boolean} clientOptions.rtl - This should be set to true for transcribing right to left languages. The default is false.
+@param {function} clientOptions.getWitness - An optional function to get the value of the current witness.
+@param {function} clientOptions.getWitnessLang - An optional function to get the language of the current witness.
+@param {function} clientOptions.getBookNameFromBKV - A function to switch BKV references to OSIS (only used for book and chapter)
+@param {array} clientOptions.bookNames - A list of OSIS book abbreviations to use in the select of the V menu. If this list is not supplied the form will have a text box for manual entry.
+@param {boolean} clientOptions.addLineBreaks - Add line breaks in the XML before every pc, cb and lb in the transcription. Default is false.
+@param {boolean} clientOptions.addSpaces - Add spaces into the XML of the transcription between tags to make the text readable if all the tags are removed. Default is false.
 @param {baseURL} string - Explicitly sets TinyMCE's base URL.
 @param {callback} function - The function to call once the editor is loaded.
 
