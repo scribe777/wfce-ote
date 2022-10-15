@@ -364,7 +364,7 @@ describe('testing with default client settings', () => {
     await page.keyboard.up('Shift');
     // open O menu
     await page.click('button#mceu_13-open');
-    // open apitals menu
+    // open capitals menu
     await page.keyboard.press('ArrowDown');
     await page.keyboard.press('ArrowRight');
     await page.keyboard.press('ArrowDown');
