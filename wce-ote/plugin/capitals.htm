@@ -59,6 +59,10 @@
 		comboBindReturnEvent('insert'); 
 		wceInfoInit('formatting_capitals');
 		readWceNodeInfo();
+		if (ed.settings.clientOptions.hasOwnProperty('defaultHeightForCapitals') && 
+				!isNaN(parseInt(ed.settings.clientOptions.defaultHeightForCapitals))) {
+			document.getElementById('capitals_height').value = ed.settings.clientOptions.defaultHeightForCapitals;
+		}
 	}
 </script>
 </html>

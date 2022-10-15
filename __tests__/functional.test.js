@@ -344,6 +344,9 @@ describe('testing with default client settings', () => {
     // use defaults
     const menuFrameHandle = await page.$('div[id="mceu_41"] > div > div > iframe');
     const menuFrame = await menuFrameHandle.contentFrame();
+    // test that the height is not prepopulated (because there is now a setting that will do that)
+    expect(await menuFrame.$eval('#capitals_height', el => el.value)).toBe('');
+
     await menuFrame.type('input#capitals_height', '3');
     await menuFrame.click('input#insert');
     await page.waitForSelector('div[id="mceu_41"]', {hidden: true});
@@ -2152,5 +2155,197 @@ describe('testing with different client settings', () => {
 
 
   // Ending here the functional tests to test the new option to provide a list of books a select in the V menu
+
+});
+
+
+describe('testing with defaultHeightForCapitals setting', () => {
+
+  beforeEach(async () => {
+    let frameHandle;
+    jest.setTimeout(5000000);
+    page = await browser.newPage();
+    await page.goto(`file:${path.join(__dirname, 'test_index_page.html')}`);
+    await page.evaluate(`setWceEditor('wce_editor', {defaultHeightForCapitals: 2})`);
+    page.waitForSelector("#wce_editor_ifr");
+    frameHandle = null;
+    while (frameHandle === null) {
+      frameHandle = await page.$("iframe[id='wce_editor_ifr']");
+    }
+    frame = await frameHandle.contentFrame();
+
+  });
+
+  test('capitals use default height', async () => {
+    await frame.type('body#tinymce', 'Initial capital');
+
+    for (let i = 0; i < 'nitial capital'.length; i++) {
+      await page.keyboard.press('ArrowLeft');
+    }
+    await page.keyboard.down('Shift');
+    for (let i = 0; i < 'I'.length; i++) {
+      await page.keyboard.press('ArrowLeft');
+    }
+    await page.keyboard.up('Shift');
+    // open O menu
+    await page.click('button#mceu_13-open');
+    // open abbreviation menu
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('Enter');
+    // use defaults
+    const menuFrameHandle = await page.$('div[id="mceu_41"] > div > div > iframe');
+    const menuFrame = await menuFrameHandle.contentFrame();
+    // test that the height is prepopulated with the correct default value
+    expect(await menuFrame.$eval('#capitals_height', el => el.value)).toBe('2');
+
+    await menuFrame.click('input#insert');
+    await page.waitForSelector('div[id="mceu_41"]', {hidden: true});
+
+    const htmlData = await page.evaluate(`getData()`);
+    expect(htmlData).toBe('<span class="formatting_capitals" wce_orig="I" wce="__t=formatting_capitals&amp;__n=&amp;capitals_height=2"><span class="format_start mceNonEditable">‹</span>I<span class="format_end mceNonEditable">›</span></span>nitial capital');
+    const xmlData = await page.evaluate(`getTEI()`);
+    expect(xmlData).toBe(xmlHead + '<w><hi rend="cap" height="2">I</hi>nitial</w><w>capital</w>' + xmlTail);
+  }, 200000);
+
+
+  test('capitals height can still be changed if default provided', async () => {
+    await frame.type('body#tinymce', 'Initial capital');
+
+    for (let i = 0; i < 'nitial capital'.length; i++) {
+      await page.keyboard.press('ArrowLeft');
+    }
+    await page.keyboard.down('Shift');
+    for (let i = 0; i < 'I'.length; i++) {
+      await page.keyboard.press('ArrowLeft');
+    }
+    await page.keyboard.up('Shift');
+    // open O menu
+    await page.click('button#mceu_13-open');
+    // open abbreviation menu
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('Enter');
+    // use defaults
+    const menuFrameHandle = await page.$('div[id="mceu_41"] > div > div > iframe');
+    const menuFrame = await menuFrameHandle.contentFrame();
+    // test that the height is prepopulated with the correct default value
+    expect(await menuFrame.$eval('#capitals_height', el => el.value)).toBe('2');
+    await menuFrame.click('input#capitals_height');
+    await page.keyboard.press('Backspace');
+    await menuFrame.type('input#capitals_height', '3');
+    await menuFrame.click('input#insert');
+    await page.waitForSelector('div[id="mceu_41"]', {hidden: true});
+
+    const htmlData = await page.evaluate(`getData()`);
+    expect(htmlData).toBe('<span class="formatting_capitals" wce_orig="I" wce="__t=formatting_capitals&amp;__n=&amp;capitals_height=3"><span class="format_start mceNonEditable">‹</span>I<span class="format_end mceNonEditable">›</span></span>nitial capital');
+    const xmlData = await page.evaluate(`getTEI()`);
+    expect(xmlData).toBe(xmlHead + '<w><hi rend="cap" height="3">I</hi>nitial</w><w>capital</w>' + xmlTail);
+  }, 200000);
+
+});
+
+
+describe('testing with defaultHeightForCapitals setting if invalid value provided', () => {
+
+  beforeEach(async () => {
+    let frameHandle;
+    jest.setTimeout(5000000);
+    page = await browser.newPage();
+    await page.goto(`file:${path.join(__dirname, 'test_index_page.html')}`);
+    await page.evaluate(`setWceEditor('wce_editor', {defaultHeightForCapitals: true})`);
+    page.waitForSelector("#wce_editor_ifr");
+    frameHandle = null;
+    while (frameHandle === null) {
+      frameHandle = await page.$("iframe[id='wce_editor_ifr']");
+    }
+    frame = await frameHandle.contentFrame();
+
+  });
+
+  test('capitals use default height', async () => {
+    await frame.type('body#tinymce', 'Initial capital');
+
+    for (let i = 0; i < 'nitial capital'.length; i++) {
+      await page.keyboard.press('ArrowLeft');
+    }
+    await page.keyboard.down('Shift');
+    for (let i = 0; i < 'I'.length; i++) {
+      await page.keyboard.press('ArrowLeft');
+    }
+    await page.keyboard.up('Shift');
+    // open O menu
+    await page.click('button#mceu_13-open');
+    // open abbreviation menu
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('Enter');
+    // use defaults
+    const menuFrameHandle = await page.$('div[id="mceu_41"] > div > div > iframe');
+    const menuFrame = await menuFrameHandle.contentFrame();
+    // test that the height is prepopulated with the correct default value
+    expect(await menuFrame.$eval('#capitals_height', el => el.value)).toBe('');
+
+    await menuFrame.click('input#insert');
+    await page.waitForSelector('div[id="mceu_41"]', {hidden: true});
+
+    const htmlData = await page.evaluate(`getData()`);
+    expect(htmlData).toBe('<span class="formatting_capitals" wce_orig="I" wce="__t=formatting_capitals&amp;__n=&amp;capitals_height="><span class="format_start mceNonEditable">‹</span>I<span class="format_end mceNonEditable">›</span></span>nitial capital');
+    const xmlData = await page.evaluate(`getTEI()`);
+    expect(xmlData).toBe(xmlHead + '<w><hi rend="cap">I</hi>nitial</w><w>capital</w>' + xmlTail);
+  }, 200000);
+
+
+  test('capitals height can still be changed if default provided', async () => {
+    await frame.type('body#tinymce', 'Initial capital');
+
+    for (let i = 0; i < 'nitial capital'.length; i++) {
+      await page.keyboard.press('ArrowLeft');
+    }
+    await page.keyboard.down('Shift');
+    for (let i = 0; i < 'I'.length; i++) {
+      await page.keyboard.press('ArrowLeft');
+    }
+    await page.keyboard.up('Shift');
+    // open O menu
+    await page.click('button#mceu_13-open');
+    // open abbreviation menu
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('Enter');
+    // use defaults
+    const menuFrameHandle = await page.$('div[id="mceu_41"] > div > div > iframe');
+    const menuFrame = await menuFrameHandle.contentFrame();
+    // test that the height is prepopulated with the correct default value
+    expect(await menuFrame.$eval('#capitals_height', el => el.value)).toBe('');
+    await menuFrame.type('input#capitals_height', '3');
+    await menuFrame.click('input#insert');
+    await page.waitForSelector('div[id="mceu_41"]', {hidden: true});
+
+    const htmlData = await page.evaluate(`getData()`);
+    expect(htmlData).toBe('<span class="formatting_capitals" wce_orig="I" wce="__t=formatting_capitals&amp;__n=&amp;capitals_height=3"><span class="format_start mceNonEditable">‹</span>I<span class="format_end mceNonEditable">›</span></span>nitial capital');
+    const xmlData = await page.evaluate(`getTEI()`);
+    expect(xmlData).toBe(xmlHead + '<w><hi rend="cap" height="3">I</hi>nitial</w><w>capital</w>' + xmlTail);
+  }, 200000);
 
 });
