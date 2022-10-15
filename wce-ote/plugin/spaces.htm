@@ -114,6 +114,15 @@
 		comboBindReturnEvent('insert'); 
 		wceInfoInit('spaces');
 		readWceNodeInfo();
+		if (ed.settings.clientOptions.hasOwnProperty('defaultValuesForSpaceMenu')) {
+			if (ed.settings.clientOptions.defaultValuesForSpaceMenu.hasOwnProperty('unit')) {
+				document.getElementById('sp_unit').value = ed.settings.clientOptions.defaultValuesForSpaceMenu.unit;
+			}
+			if (ed.settings.clientOptions.defaultValuesForSpaceMenu.hasOwnProperty('extent') &&
+					!isNaN(parseInt(ed.settings.clientOptions.defaultValuesForSpaceMenu.extent))) {
+				document.getElementById('sp_extent').value = ed.settings.clientOptions.defaultValuesForSpaceMenu.extent;
+			}
+		}
 		setstatus_spaces();
 	}
 	function checkstatus_spacesunit() {
