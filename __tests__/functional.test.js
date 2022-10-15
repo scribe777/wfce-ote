@@ -130,9 +130,11 @@ describe('testing with default client settings', () => {
     await page.keyboard.press('ArrowDown');
     await page.keyboard.press('ArrowRight');
     await page.keyboard.press('Enter');
-    // access mnu window and make selection
+    // access menu window and make selection
     const menuFrameHandle = await page.$('div[id="mceu_40"] > div > div > iframe');
     const menuFrame = await menuFrameHandle.contentFrame();
+    // test no default is selected because we have a setting that does that
+    expect(await menuFrame.$eval('#unclear_text_reason', el => el.value)).toBe('');
     await menuFrame.click('input#insert');
     await page.waitForSelector('div[id="mceu_40"]', {hidden: true});
     const htmlData = await page.evaluate(`getData()`);
@@ -158,6 +160,7 @@ describe('testing with default client settings', () => {
     // access menu window and make selection
     const menuFrameHandle = await page.$('div[id="mceu_40"] > div > div > iframe');
     const menuFrame = await menuFrameHandle.contentFrame();
+    expect(await menuFrame.$eval('#unclear_text_reason', el => el.value)).toBe('');
     await menuFrame.select('select[id="unclear_text_reason"]', 'damage to page');
     await menuFrame.click('input#insert');
     await page.waitForSelector('div[id="mceu_40"]', {hidden: true});
@@ -2152,5 +2155,83 @@ describe('testing with different client settings', () => {
 
 
   // Ending here the functional tests to test the new option to provide a list of books a select in the V menu
+
+});
+
+describe('testing with defaultReasonForUnclearText', () => {
+
+  beforeEach(async () => {
+    let frameHandle;
+    jest.setTimeout(5000000);
+    page = await browser.newPage();
+    await page.goto(`file:${path.join(__dirname, 'test_index_page.html')}`);
+    await page.evaluate(`setWceEditor('wce_editor', {defaultReasonForUnclearText: 'damage to page'})`);
+    page.waitForSelector("#wce_editor_ifr");
+    frameHandle = null;
+    while (frameHandle === null) {
+      frameHandle = await page.$("iframe[id='wce_editor_ifr']");
+    }
+    frame = await frameHandle.contentFrame();
+  
+  });
+
+  test('part word unclear with default reason', async () => {
+    await frame.type('body#tinymce', 'my words');
+    await page.keyboard.down('Shift');
+    for (let i = 0; i < 'rds'.length; i++) {
+      await page.keyboard.press('ArrowLeft');
+    }
+    await page.keyboard.up('Shift');
+    // open D menu
+    await page.click('button#mceu_12-open');
+    // navigate submenu
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('Enter');
+    // access menu window and make selection
+    const menuFrameHandle = await page.$('div[id="mceu_40"] > div > div > iframe');
+    const menuFrame = await menuFrameHandle.contentFrame();
+    expect(await menuFrame.$eval('#unclear_text_reason', el => el.value)).toBe('damage to page');
+
+    await menuFrame.click('input#insert');
+    await page.waitForSelector('div[id="mceu_40"]', {hidden: true});
+    const htmlData = await page.evaluate(`getData()`);
+    expect(htmlData).toBe('my wo<span class="unclear" wce_orig="rds" wce="__t=unclear&amp;__n=&amp;help=Help' +
+                          '&amp;unclear_text_reason=damage%20to%20page&amp;unclear_text_reason_other=">' +
+                          '<span class="format_start mceNonEditable">‹</span>ṛḍṣ' +
+                          '<span class="format_end mceNonEditable">›</span></span>');
+    const xmlData = await page.evaluate(`getTEI()`);
+    expect(xmlData).toBe(xmlHead + '<w>my</w><w>wo<unclear reason="damage to page">rds</unclear></w>' + xmlTail);
+  }, 200000);
+
+  test('whole word unclear with reason that has been changed from default', async () => {
+    await frame.type('body#tinymce', 'my words');
+    await page.keyboard.down('Shift');
+    for (let i = 0; i < 'words'.length; i++) {
+      await page.keyboard.press('ArrowLeft');
+    }
+    await page.keyboard.up('Shift');
+    // open D menu
+    await page.click('button#mceu_12-open');
+    // navigate submenu
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('Enter');
+    // access menu window and make selection
+    const menuFrameHandle = await page.$('div[id="mceu_40"] > div > div > iframe');
+    const menuFrame = await menuFrameHandle.contentFrame();
+    // test default is selected
+    expect(await menuFrame.$eval('#unclear_text_reason', el => el.value)).toBe('damage to page');
+    // check the value can still be changed
+    await menuFrame.select('select[id="unclear_text_reason"]', '');
+    await menuFrame.click('input#insert');
+    await page.waitForSelector('div[id="mceu_40"]', {hidden: true});
+    const htmlData = await page.evaluate(`getData()`);
+    expect(htmlData).toBe('my <span class=\"unclear\" wce_orig=\"words\" wce=\"__t=unclear&amp;__n=&amp;' +
+                          'help=Help&amp;unclear_text_reason=&amp;unclear_text_reason_other=\">' +
+                          '<span class=\"format_start mceNonEditable\">‹</span>ẉọṛḍṣ' +
+                          '<span class=\"format_end mceNonEditable\">›</span></span>');
+  }, 200000);
+
 
 });
