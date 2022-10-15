@@ -1097,6 +1097,7 @@ function getHtmlByTei(inputString, clientOptions) {
 			&& (($teiNode.nextSibling.getAttribute('type') === 'lectionary-other'
 				|| $teiNode.nextSibling.getAttribute('type') === 'commentary')
 				&& !$teiNode.nextSibling.textContent.startsWith('Untranscribed'))) { // ignore <lb/> added for untranscribed text if at least one line is completely covered
+				console.log('I am in the while loop now')
 				cl++; //step counter
 				paratexttype = $teiNode.nextSibling.getAttribute('type'); // remember latest type for correct value below
 				$temp = ($teiNode.nextSibling.nextSibling) ? $teiNode.nextSibling.nextSibling : null;
@@ -1113,33 +1114,19 @@ function getHtmlByTei(inputString, clientOptions) {
 			var wceAttr = '__t=paratext&__n=&fw_type=' + paratexttype + '&covered=' + cl + '&text=&number=&edit_number=on&paratext_position=pagetop&' +
 			'paratext_position_other=&paratext_alignment=left';
 			$newNode.setAttribute('wce', wceAttr);
-			if (clientOptions.showMultilineNotesAsSingleEntry == true && cl > 1) {
+			for (var i = 0; i < cl; i++) {
 				$newNode.appendChild($newDoc.createElement('br'));
-					nodeAddText($newNode, '\u21b5[');
-					$span = $newDoc.createElement('span');
-					$span.setAttribute('class', paratexttype);
-					$span.setAttribute('wce', '__t=paratext&__n=&fw_type=' + paratexttype + '&covered=' + cl);
-					if (paratexttype == "commentary")
-						nodeAddText($span, cl + ' lines comm');
-					else
-						nodeAddText($span, cl + ' lines lect');
-					$newNode.appendChild($span);
-					nodeAddText($newNode, ']');
-			} else {
-				for (var i = 0; i < cl; i++) {
-					$newNode.appendChild($newDoc.createElement('br'));
-					nodeAddText($newNode, '\u21b5[');
-					$span = $newDoc.createElement('span');
-					$span.setAttribute('class', paratexttype);
-					$span.setAttribute('wce', '__t=paratext&__n=&fw_type=' + paratexttype + '&covered=' + cl);
-					if (paratexttype == "commentary")
-						nodeAddText($span, 'comm');
-					else
-						nodeAddText($span, 'lect');
-					$newNode.appendChild($span);
-					nodeAddText($newNode, ']');
-				}
-			}	
+				nodeAddText($newNode, '\u21b5[');
+				$span = $newDoc.createElement('span');
+				$span.setAttribute('class', paratexttype);
+				$span.setAttribute('wce', '__t=paratext&__n=&fw_type=' + paratexttype + '&covered=' + cl);
+				if (paratexttype == "commentary")
+					nodeAddText($span, 'comm');
+				else
+					nodeAddText($span, 'lect');
+				$newNode.appendChild($span);
+				nodeAddText($newNode, ']');
+			}
 			addFormatElement($newNode);
 			$htmlParent.appendChild($newNode);
 
@@ -1395,8 +1382,10 @@ function getHtmlByTei(inputString, clientOptions) {
 		var $newNode = $newDoc.createElement('span');
 
 		if ($teiNode.getAttribute('type') === 'commentary') {// commentary text without <lb/> => old document (compatibility mode) or no covered lines
+			console.log('dealing with commentary note');
 			$newNode.setAttribute('class', 'paratext');
 			var cl = ($teiNode.getAttribute('rend')) ? $teiNode.getAttribute('rend') : 0; //if new document, but no covered lines set cl=0
+			console.log(cl)
 			var wceAttr = '__t=paratext&__n=&fw_type=commentary&covered=' + cl + '&text=&number=&edit_number=on&paratext_position=pagetop&paratext_position_other=&paratext_alignment=left';
 			$newNode.setAttribute('wce', wceAttr);
 			if (cl > 0) {

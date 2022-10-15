@@ -292,30 +292,26 @@ function writeWceNodeInfo(val) {
 				if (document.getElementById('fw_type').value == "commentary") {
 					selected_content = '';
 					var cl = document.getElementById('covered').value ? document.getElementById('covered').value : -1;
-					if (cl > 0 && ed.settings.clientOptions.showMultilineNotesAsSingleEntry == false) {
+					if (cl > 0) {
 						for (var i = 0; i < cl; i++) {
 							selected_content += '<br/>&crarr;[<span class="commentary" ' + 'wce="__t=paratext&__n=&fw_type=commentary&covered=' + cl + '">comm</span>]';
 						}
 						wceUtils.addToCounter(ed, 'lb', document.getElementById('covered').value);
                     } else if (cl == 0) {
                         selected_content += '[<span class="commentary" ' + 'wce="__t=paratext&__n=&fw_type=commentary&covered=0">comm</span>]';
-					} else if (cl > 0 && ed.settings.clientOptions.showMultilineNotesAsSingleEntry == true) {
-						selected_content += '<br/>&crarr;[<span class="commentary" ' + 'wce="__t=paratext&__n=&fw_type=commentary&covered=' + cl + '">comm</span>]';	
                     } else {// no value given for covered lines
 						selected_content += '[<span class="commentary" ' + 'wce="__t=paratext&__n=&fw_type=commentary&covered=">comm</span>]';
 					}
 				} else if (document.getElementById('fw_type').value == "lectionary-other") {
 					selected_content = '';
 					var cl = document.getElementById('covered').value ? document.getElementById('covered').value : -1;
-					if (cl > 0 && ed.settings.clientOptions.showMultilineNotesAsSingleEntry == false) {
+					if (cl > 0) {
 						for (var i = 0; i < cl; i++) {
 							selected_content += '<br/>&crarr;[<span class="lectionary-other" ' + 'wce="__t=paratext&__n=&fw_type=lectionary-other&covered=' + cl + '">lect</span>]';
 						}
 						wceUtils.addToCounter(ed, 'lb', document.getElementById('covered').value);
                     } else if (cl == 0) {
                         selected_content += '[<span class="lectionary-other" ' + 'wce="__t=paratext&__n=&fw_type=lectionary-other&covered=0">lect</span>]';
-					} else if (cl > 0 && ed.settings.clientOptions.showMultilineNotesAsSingleEntry == true) {
-						selected_content += '<br/>&crarr;[<span class="lectionary-other" ' + 'wce="__t=paratext&__n=&fw_type=lectionary-other&covered=' + cl + '">lect</span>]';
 					} else {// no value given for covered lines
 						selected_content += '[<span class="lectionary-other" ' + 'wce="__t=paratext&__n=&fw_type=lectionary-other&covered=">lect</span>]';
 					}
