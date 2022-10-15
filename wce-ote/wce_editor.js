@@ -45,6 +45,9 @@
 @param {array} clientOptions.bookNames - A list of OSIS book abbreviations to use in the select of the V menu. If this list is not supplied the form will have a text box for manual entry.
 @param {boolean} clientOptions.addLineBreaks - Add line breaks in the XML before every pc, cb and lb in the transcription. Default is false.
 @param {boolean} clientOptions.addSpaces - Add spaces into the XML of the transcription between tags to make the text readable if all the tags are removed. Default is false.
+@param {defaultValuesForSpaceMenu} clientOptions.defaultValuesForSpaceMenu - The default settings to use to pre-poulate the spaces menu. Default does not pre-populate anything but does select first option on the unit list.
+@param {string} clientOptions.defaultValuesForSpaceMenu.unit - The unit value to preselect.
+@param {number} clientOptions.defaultValuesForSpaceMenu.extent - The extent number to preselect.
 @param {baseURL} string - Explicitly sets TinyMCE's base URL.
 @param {callback} function - The function to call once the editor is loaded.
 
