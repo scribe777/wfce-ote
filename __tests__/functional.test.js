@@ -316,7 +316,8 @@ describe('testing with default client settings', () => {
     expect(xmlData).toBe(xmlHead + '<w>my</w><w>words</w><pc>;</pc>' + xmlTail);
   }, 200000);
 
-  // abbr
+  //abbr
+  // nomsac without overline
   test('test abbr', async () => {
     await frame.type('body#tinymce', 'a ns abbreviation');
 
@@ -337,6 +338,37 @@ describe('testing with default client settings', () => {
     // use defaults
     const menuFrameHandle = await page.$('div[id="mceu_40"] > div > div > iframe');
     const menuFrame = await menuFrameHandle.contentFrame();
+    await menuFrame.click('input#insert');
+    await page.waitForSelector('div[id="mceu_40"]', {hidden: true});
+
+    const htmlData = await page.evaluate(`getData()`);
+    expect(htmlData).toBe('a <span class=\"abbr\" wce_orig=\"ns\" wce=\"__t=abbr&amp;__n=&amp;original_abbr_text=&amp;help=Help&amp;abbr_type=nomSac&amp;abbr_type_other=\"><span class=\"format_start mceNonEditable\">‹</span>ns<span class=\"format_end mceNonEditable\">›</span></span> abbreviation');
+    const xmlData = await page.evaluate(`getTEI()`);
+    expect(xmlData).toBe(xmlHead + '<w>a</w><w><abbr type="nomSac">ns</abbr></w><w>abbreviation</w>' + xmlTail);
+  }, 200000);
+
+  // nomsac with overline
+  test('test abbr', async () => {
+    await frame.type('body#tinymce', 'a ns abbreviation');
+
+    for (let i = 0; i < ' abbreviation'.length; i++) {
+      await page.keyboard.press('ArrowLeft');
+    }
+    await page.keyboard.down('Shift');
+    for (let i = 0; i < 'ns'.length; i++) {
+      await page.keyboard.press('ArrowLeft');
+    }
+    await page.keyboard.up('Shift');
+    // open A menu
+    await page.click('button#mceu_14-open');
+    // open abbreviation menu
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('Enter');
+    // use defaults
+    const menuFrameHandle = await page.$('div[id="mceu_40"] > div > div > iframe');
+    const menuFrame = await menuFrameHandle.contentFrame();
+    await menuFrame.click('#add_overline');
     await menuFrame.click('input#insert');
     await page.waitForSelector('div[id="mceu_40"]', {hidden: true});
 
@@ -362,7 +394,7 @@ describe('testing with default client settings', () => {
     await page.keyboard.up('Shift');
     // open O menu
     await page.click('button#mceu_13-open');
-    // open abbreviation menu
+    // open capitals menu
     await page.keyboard.press('ArrowDown');
     await page.keyboard.press('ArrowRight');
     await page.keyboard.press('ArrowDown');
@@ -398,7 +430,7 @@ describe('testing with default client settings', () => {
     await page.keyboard.up('Shift');
     // open O menu
     await page.click('button#mceu_13-open');
-    // open abbreviation menu
+    // open other menu
     await page.keyboard.press('ArrowDown');
     await page.keyboard.press('ArrowDown');
     await page.keyboard.press('ArrowDown');
@@ -2255,3 +2287,58 @@ describe('testing with different client settings', () => {
   // Ending here the functional tests to test the new option to provide a list of books a select in the V menu
 
 });
+
+// tests using the checkOverlineForAbbr setting
+
+describe('testing with checkOverlineForAbbr client settings', () => {
+
+  beforeEach(async () => {
+    let frameHandle;
+    jest.setTimeout(5000000);
+    page = await browser.newPage();
+    await page.goto(`file:${path.join(__dirname, 'test_index_page.html')}`);
+    await page.evaluate(`setWceEditor('wce_editor', {checkOverlineForAbbr: true})`);
+    page.waitForSelector("#wce_editor_ifr");
+    frameHandle = null;
+    while (frameHandle === null) {
+      frameHandle = await page.$("iframe[id='wce_editor_ifr']");
+    }
+    frame = await frameHandle.contentFrame();
+
+  });
+
+  // nomsac with overline checked by default
+  test('test abbr', async () => {
+    await frame.type('body#tinymce', 'a ns abbreviation');
+
+    for (let i = 0; i < ' abbreviation'.length; i++) {
+      await page.keyboard.press('ArrowLeft');
+    }
+    await page.keyboard.down('Shift');
+    for (let i = 0; i < 'ns'.length; i++) {
+      await page.keyboard.press('ArrowLeft');
+    }
+    await page.keyboard.up('Shift');
+    // open A menu
+    await page.click('button#mceu_14-open');
+    // open abbreviation menu
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('Enter');
+    // use defaults
+    const menuFrameHandle = await page.$('div[id="mceu_40"] > div > div > iframe');
+    const menuFrame = await menuFrameHandle.contentFrame();
+    const addOverlineCheckbox = await menuFrame.$('#add_overline');
+    expect(await (await addOverlineCheckbox.getProperty('checked')).jsonValue()).toBeTruthy();
+    await menuFrame.click('input#insert');
+    await page.waitForSelector('div[id="mceu_40"]', {hidden: true});
+
+    const htmlData = await page.evaluate(`getData()`);
+    expect(htmlData).toBe('a <span class="abbr_add_overline" wce_orig="ns" wce="__t=abbr&amp;__n=&amp;original_abbr_text=&amp;help=Help&amp;abbr_type=nomSac&amp;abbr_type_other=&amp;add_overline=overline"><span class="format_start mceNonEditable">‹</span>ns<span class="format_end mceNonEditable">›</span></span> abbreviation');
+    const xmlData = await page.evaluate(`getTEI()`);
+    expect(xmlData).toBe(xmlHead + '<w>a</w><w><abbr type="nomSac"><hi rend="overline">ns</hi></abbr></w><w>abbreviation</w>' + xmlTail);
+  }, 200000);
+
+ 
+});
+
