@@ -720,6 +720,45 @@ describe('testing with default client settings', () => {
   }, 200000);
 
   // gaps
+  test('test all the default preselects and the interface behaviour', async () => {
+    await frame.type('body#tinymce', 'this  continues');
+    for (let i = 0; i < ' continues'.length; i++) {
+      await page.keyboard.press('ArrowLeft');
+    }
+
+    // open D menu
+    await page.click('button#mceu_12-open');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('Enter');
+    const menuFrameHandle = await page.$('div[id="mceu_40"] > div > div > iframe');
+    const menuFrame = await menuFrameHandle.contentFrame();
+    // check the gap reason pre-select is correct
+
+    // check the non-dummy value agrees
+
+    // check the drop down menu for supplied_source is the right length and has the right options
+
+    // check the default select supplied_source is correct
+
+    // check when other is selected for supplied_source the box to type the value options
+
+    // check that the right boxes are activated when the various options for unit are selected
+
+    // no need to output here as we are only testing the interface
+  });
+
+  test('test that when data already exists the menu loading is correct', async () => {
+
+
+  });
+
+  test('test that the default settings produce the correct output', async () => {
+
+
+  });
+
   test('gap between words', async () => {
     await frame.type('body#tinymce', 'this  continues');
     for (let i = 0; i < ' continues'.length; i++) {
