@@ -188,7 +188,7 @@ tinymce.addI18n('en',{
 	supplied_source_title : "Please specify the supplied source",
 	supplied_source_data : "Information about the supplied source",
 	supplied_source : "Supplied source",
-	na27 : "NA28",
+	na28 : "NA28",
 	TR : "Textus Receptus",
 	transcriber : "Transcriber",
 	paratext : "Marginalia",
