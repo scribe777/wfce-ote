@@ -204,6 +204,9 @@
 			comboBindReturnEvent('insert');
 			wceInfoInit('gap');
 			readWceNodeInfo();
+			// set defaults
+			document.getElementById('gap_reason_dummy_' + ed.settings.clientOptions.optionsForGapMenu.reason).checked = true;
+			document.getElementById('supplied_source').value = ed.settings.clientOptions.optionsForGapMenu.suppliedSource;
 			
 			setstatus_gapreason();
 			checkstatus_gapreason();
@@ -280,7 +283,8 @@
 				return;
 			}
 			
-			if (document.gapinfo.unit.options[document.gapinfo.unit.selectedIndex].value == 'other') { //other unit
+			if (document.gapinfo.unit.selectedIndex != -1 && 
+					document.gapinfo.unit.options[document.gapinfo.unit.selectedIndex].value == 'other') { //other unit
 				document.gapinfo.unit_other.disabled = false;
 				document.getElementById('unit_other').style.backgroundColor = "white";
 			} else {
@@ -288,7 +292,8 @@
 				document.getElementById('unit_other').style.backgroundColor = "#CCCCCC";
 			}
 
-			if (document.gapinfo.unit.options[document.gapinfo.unit.selectedIndex].value == '') { // no unit given
+			if (document.gapinfo.unit.selectedIndex != -1 &&
+					document.gapinfo.unit.options[document.gapinfo.unit.selectedIndex].value == '') { // no unit given
 				document.gapinfo.extent.disabled = true;
 				document.getElementById('extent').style.backgroundColor = "#CCCCCC";
 				document.gapinfo.extent_unspecified.disabled = true;
@@ -305,7 +310,9 @@
 
 			if (!ed.WCE_VAR.isc || !add_new_wce_node) { //real selection or edit mode
 				var unitSelect = document.gapinfo.unit;
-				if (unitSelect.options[unitSelect.selectedIndex].value == 'char' || unitSelect.options[unitSelect.selectedIndex].value == 'line') {// char or line
+				if (unitSelect.selectedIndex != -1 && 
+						(unitSelect.options[unitSelect.selectedIndex].value == 'char' || 
+						 unitSelect.options[unitSelect.selectedIndex].value == 'line')) {// char or line
 					document.gapinfo.mark_as_supplied.disabled = false;
 					if (document.gapinfo.mark_as_supplied.checked == true) {
 						document.gapinfo.supplied_source.disabled = false;
@@ -314,7 +321,9 @@
 						document.gapinfo.supplied_source.disabled = true;
 						document.gapinfo.supplied_source_other.disabled = true;
 					}
-				} else if (unitSelect.options[unitSelect.selectedIndex].value == 'page' || unitSelect.options[unitSelect.selectedIndex].value == 'quire') {//page or quire
+				} else if (unitSelect.selectedIndex != -1 && 
+						(unitSelect.options[unitSelect.selectedIndex].value == 'page' || 
+						 unitSelect.options[unitSelect.selectedIndex].value == 'quire')) {//page or quire
 					document.gapinfo.mark_as_supplied.checked = false;
 					document.gapinfo.mark_as_supplied.disabled = true;
 					document.gapinfo.supplied_source.disabled = true;
@@ -366,8 +375,9 @@
 					document.getElementById('supplied_source_other').style.backgroundColor = "white";
 				}
 			}
-			var suppliedSourceSelect = document.gapinfo.supplied_source;
-			if (suppliedSourceSelect.options[suppliedSourceSelect.selectedIndex].value == 'other') {
+			var suppliedSourceSelect = document.getElementById('supplied_source');
+			if (suppliedSourceSelect.selectedIndex != -1 &&
+					suppliedSourceSelect.options[suppliedSourceSelect.selectedIndex].value == 'other') {
 				document.gapinfo.supplied_source_other.disabled = false;
 				document.getElementById('supplied_source_other').style.backgroundColor = "white";
 			} else {
@@ -380,11 +390,13 @@
 		function testOther() {
 
 			if (document.gapinfo.mark_as_supplied.checked && 
+					document.gapinfo.supplied_source.selectedIndex != -1 &&
 					document.gapinfo.supplied_source.options[document.gapinfo.supplied_source.selectedIndex].value == 'other' && 
 						document.getElementById('supplied_source_other').value == '') {
 				return false;
 			}
-			if (document.gapinfo.unit.options[document.gapinfo.unit.selectedIndex].value == 'other' && 
+			if (document.gapinfo.unit.selectedIndex != -1 &&
+					document.gapinfo.unit.options[document.gapinfo.unit.selectedIndex].value == 'other' && 
 					document.getElementById('unit_other').value == '') {
 				return false;
 			}

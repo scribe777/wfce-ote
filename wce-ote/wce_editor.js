@@ -51,7 +51,7 @@
 @param {optionsForGapMenu} clientOptions.optionsForGapMenu - The options used to create and to set defaults in the gap menu.
 @param {string} clientOptions.optionsForGapMenu.reason - The option to select by default for the reason for the gap (illegible|lacuna|unspecified|inferredPage).
 @param {string} clientOptions.optionsForGapMenu.suppliedSource - The option to use for the source of the supplied text.
-@param {Array.<sourceOptions>} clientOptions.optionsForGapMenu.sourceOptions - An optional list of sources to use for the supplied source dropdown (default are most relevant to Greek new Testament).
+@param {Array.<sourceOptions>} clientOptions.optionsForGapMenu.sourceOptions - An optional list of sources to use for the supplied source dropdown. None and other are always present and cannot be changed by this setting the remaining default are most relevant to Greek New Testament.
 @param {string} clientOptions.optionsForGapMenu.sourceOptions.value - The value to record in the XML for this supplied source.
 @param {string} clientOptions.optionsForGapMenu.sourceOptions.labelEn - The visible label to use for this entry in the English interface.
 @param {string} clientOptions.optionsForGapMenu.sourceOptions.labelDe - The visible label to use for this entry in the German interface.
