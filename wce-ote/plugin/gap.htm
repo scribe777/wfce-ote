@@ -124,11 +124,11 @@
                         <td>
                         <select id="supplied_source" name="supplied_source"
                         onclick="checkstatus_supplied_source()">
-                            <option value="na28">{#na28}</option>
+                            <!--<option value="na28">{#na28}</option>
                             <option value="transcriber">{#transcriber}</option>
                             <option value="tr">{#TR}</option>
 							<option value="none">{#none}</option>
-                            <option value="other">{#other}</option>
+                            <option value="other">{#other}</option>-->
                         </select></td>
                         <td colspan="2">
                         <input id="supplied_source_other"
@@ -149,12 +149,39 @@
     <script type="text/javascript">
 		$(document).ready(function() {
 			ed=parent.tinymce.activeEditor;
+			buildSuppliedSourceDropDown();
 			translate();
 			setConstants(); 
 			init();
 		});
 
 		var info = false;
+
+		function buildSuppliedSourceDropDown() {
+			var option, optionSettings;
+			// we use the setting for the default values in the init so there will always be a setting
+			var select = document.getElementById('supplied_source');
+			for (let i = 0; i < ed.settings.clientOptions.optionsForGapMenu.sourceOptions.length; i += 1) {
+				optionSettings = ed.settings.clientOptions.optionsForGapMenu.sourceOptions[i];
+				option = document.createElement('option');
+				option.setAttribute('value', optionSettings.value);
+				if (ed.settings.language == 'de') {
+					option.textContent = optionSettings.labelDe; 
+				} else {
+					option.textContent = optionSettings.labelEn; 
+				}
+				select.appendChild(option);
+			}
+			// add the ones we always want
+			option = document.createElement('option');
+			option.setAttribute('value', 'none');
+			option.textContent = '{#none}';
+			select.appendChild(option);
+			option = document.createElement('option');
+			option.setAttribute('value', 'other');
+			option.textContent = '{#other}';
+			select.appendChild(option);
+		}
 
 		function translate() {
 			var c=document.body.innerHTML;
@@ -253,7 +280,7 @@
 				return;
 			}
 			
-			if (document.gapinfo.unit.options[10].selected == true) { //other unit
+			if (document.gapinfo.unit.options[document.gapinfo.unit.selectedIndex].value == 'other') { //other unit
 				document.gapinfo.unit_other.disabled = false;
 				document.getElementById('unit_other').style.backgroundColor = "white";
 			} else {
@@ -261,7 +288,7 @@
 				document.getElementById('unit_other').style.backgroundColor = "#CCCCCC";
 			}
 
-			if (document.gapinfo.unit.options[0].selected == true) { // no unit given
+			if (document.gapinfo.unit.options[document.gapinfo.unit.selectedIndex].value == '') { // no unit given
 				document.gapinfo.extent.disabled = true;
 				document.getElementById('extent').style.backgroundColor = "#CCCCCC";
 				document.gapinfo.extent_unspecified.disabled = true;
@@ -277,7 +304,8 @@
 
 
 			if (!ed.WCE_VAR.isc || !add_new_wce_node) { //real selection or edit mode
-				if (document.gapinfo.unit.options[1].selected == true || document.gapinfo.unit.options[2].selected == true) {// char or line
+				var unitSelect = document.gapinfo.unit;
+				if (unitSelect.options[unitSelect.selectedIndex].value == 'char' || unitSelect.options[unitSelect.selectedIndex].value == 'line') {// char or line
 					document.gapinfo.mark_as_supplied.disabled = false;
 					if (document.gapinfo.mark_as_supplied.checked == true) {
 						document.gapinfo.supplied_source.disabled = false;
@@ -286,7 +314,7 @@
 						document.gapinfo.supplied_source.disabled = true;
 						document.gapinfo.supplied_source_other.disabled = true;
 					}
-				} else if (document.gapinfo.unit.options[3].selected == true || document.gapinfo.unit.options[4].selected == true) {//page or quire
+				} else if (unitSelect.options[unitSelect.selectedIndex].value == 'page' || unitSelect.options[unitSelect.selectedIndex].value == 'quire') {//page or quire
 					document.gapinfo.mark_as_supplied.checked = false;
 					document.gapinfo.mark_as_supplied.disabled = true;
 					document.gapinfo.supplied_source.disabled = true;
@@ -338,8 +366,8 @@
 					document.getElementById('supplied_source_other').style.backgroundColor = "white";
 				}
 			}
-			
-			if (document.gapinfo.supplied_source.options[4].selected == true) {
+			var suppliedSourceSelect = document.gapinfo.supplied_source;
+			if (suppliedSourceSelect.options[suppliedSourceSelect.selectedIndex].value == 'other') {
 				document.gapinfo.supplied_source_other.disabled = false;
 				document.getElementById('supplied_source_other').style.backgroundColor = "white";
 			} else {
@@ -351,10 +379,13 @@
 
 		function testOther() {
 
-			if (document.gapinfo.mark_as_supplied.checked && document.gapinfo.supplied_source.options[4].selected == true && document.getElementById('supplied_source_other').value == '') {
+			if (document.gapinfo.mark_as_supplied.checked && 
+					document.gapinfo.supplied_source.options[document.gapinfo.supplied_source.selectedIndex].value == 'other' && 
+						document.getElementById('supplied_source_other').value == '') {
 				return false;
 			}
-			if (document.gapinfo.unit.options[10].selected == true && document.getElementById('unit_other').value == '') {
+			if (document.gapinfo.unit.options[document.gapinfo.unit.selectedIndex].value == 'other' && 
+					document.getElementById('unit_other').value == '') {
 				return false;
 			}
 			return true;
