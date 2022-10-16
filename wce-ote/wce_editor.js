@@ -48,6 +48,13 @@
 @param {boolean} clientOptions.addSpaces - Add spaces into the XML of the transcription between tags to make the text readable if all the tags are removed. Default is false.
 @param {boolean} clientOptions.showMultilineNotesAsSingleEntry - If set to true this combines multiline untranscribed commentary and lectionary notes into a single line (does not change the XML output). Default is false.
 @param {boolean} clientOptions.checkOverlineForAbbr - If set to true this will check the 'add overline' option in the abbreviation form when it is loaded. Default is false.
+@param {optionsForGapMenu} clientOptions.optionsForGapMenu - The options used to create and to set defaults in the gap menu.
+@param {string} clientOptions.optionsForGapMenu.reason - The option to select by default for the reason for the gap (illegible|lacuna|unspecified|inferredPage).
+@param {string} clientOptions.optionsForGapMenu.suppliedSource - The option to use for the source of the supplied text.
+@param {sourceOptions} clientOptions.optionsForGapMenu.sourceOptions - An optional list of sources to use for the supplied source dropdown (default are most relevant to Greek new Testament).
+@param {string} clientOptions.optionsForGapMenu.sourceOptions.value - The value to record in the XML for this supplied source.
+@param {string} clientOptions.optionsForGapMenu.sourceOptions.labelEn - The visible label to use for this entry in the English interface.
+@param {string} clientOptions.optionsForGapMenu.sourceOptions.labelDe - The visible label to use for this entry in the German interface.
 @param {baseURL} string - Explicitly sets TinyMCE's base URL.
 @param {callback} function - The function to call once the editor is loaded.
 
