@@ -719,7 +719,7 @@ describe('testing with default client settings', () => {
     expect(xmlData).toBe(xmlHead + '<div type="book" n="John"><div type="subscriptio"><ab n="John.subscriptio"><w>subscriptio</w><w>text</w></ab></div></div>' + xmlTail);
   }, 200000);
 
-  gaps
+  // gaps
   test('test non-supplied all the default preselects and the interface behaviour', async () => {
     await frame.type('body#tinymce', 'this  continues');
     for (let i = 0; i < ' continues'.length; i++) {
