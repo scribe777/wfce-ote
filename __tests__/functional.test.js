@@ -720,6 +720,235 @@ describe('testing with default client settings', () => {
   }, 200000);
 
   // gaps
+  test('test non-supplied all the default preselects and the interface behaviour', async () => {
+    await frame.type('body#tinymce', 'this  continues');
+    for (let i = 0; i < ' continues'.length; i++) {
+      await page.keyboard.press('ArrowLeft');
+    }
+
+    // open D menu
+    await page.click('button#mceu_12-open');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('Enter');
+    const menuFrameHandle = await page.$('div[id="mceu_40"] > div > div > iframe');
+    const menuFrame = await menuFrameHandle.contentFrame();
+    // check the gap reason pre-select is correct
+    expect(await menuFrame.$eval('#gap_reason_dummy_illegible', el => el.checked)).toBe(true);
+
+    // check the non-dummy value agrees
+    expect(await menuFrame.$eval('#gap_reason', el => el.value)).toBe('illegible');
+ 
+    // check the drop down menu for supplied_source is the right length 
+    expect(await menuFrame.$eval('#supplied_source', el => el.options.length)).toBe(5);
+
+    // check the 'mark as supplied' box is unchecked
+    expect(await menuFrame.$eval('#mark_as_supplied', el => el.checked)).toBe(false);
+
+    // check the default select supplied_source is correct but inactive (because this is not supplied text)
+    expect(await menuFrame.$eval('#supplied_source', el => el.value)).toBe('na28');
+    expect(await menuFrame.$eval('#supplied_source', el => el.disabled)).toBe(true);
+    
+    // check the boxes only used for other are not enabled when it is not selected as unit
+    expect(await menuFrame.$eval('#unit', el => el.value)).toBe('');
+    expect(await menuFrame.$eval('#unit_other', el => el.disabled)).toBe(true);
+    expect(await menuFrame.$eval('#extent', el => el.disabled)).toBe(true);
+
+    // check that when unit is set to other the correct boxes are activated
+    await menuFrame.select('select[id="unit"]', 'other');
+    expect(await menuFrame.$eval('#unit', el => el.value)).toBe('other');
+    expect(await menuFrame.$eval('#unit_other', el => el.disabled)).toBe(false);
+    expect(await menuFrame.$eval('#extent', el => el.disabled)).toBe(false);
+
+    // check that when we select an option other than other is selected 
+    await menuFrame.select('select[id="unit"]', 'line');
+    expect(await menuFrame.$eval('#unit', el => el.value)).toBe('line');
+    expect(await menuFrame.$eval('#unit_other', el => el.disabled)).toBe(true);
+    expect(await menuFrame.$eval('#extent', el => el.disabled)).toBe(false);
+
+    // no need to output here as we are only testing the interface behaviour
+
+  });
+
+  test('test supplied text all the default preselects and the interface behaviour', async () => {
+    await frame.type('body#tinymce', 'this is supplied');
+    await page.keyboard.down('Shift');
+    for (let i = 0; i < 'supplied'.length; i++) {
+      await page.keyboard.press('ArrowLeft');
+    }
+    await page.keyboard.up('Shift');
+
+    // open D menu
+    await page.click('button#mceu_12-open');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('Enter');
+    const menuFrameHandle = await page.$('div[id="mceu_40"] > div > div > iframe');
+    const menuFrame = await menuFrameHandle.contentFrame();
+    // check the gap reason pre-select is correct
+    expect(await menuFrame.$eval('#gap_reason_dummy_illegible', el => el.checked)).toBe(true);
+
+    // check the non-dummy value agrees
+    expect(await menuFrame.$eval('#gap_reason', el => el.value)).toBe('illegible');
+ 
+    // check the drop down menu for supplied_source is the right length
+    expect(await menuFrame.$eval('#supplied_source', el => el.options.length)).toBe(5);
+
+    // check unit is not prepopulated and all relevant boxes are inactive
+    expect(await menuFrame.$eval('#unit', el => el.value)).toBe('');
+    expect(await menuFrame.$eval('#unit', el => el.disabled)).toBe(true);
+    expect(await menuFrame.$eval('#unit_other', el => el.disabled)).toBe(true);
+    expect(await menuFrame.$eval('#extent', el => el.disabled)).toBe(true);
+
+    // check the 'mark as supplied' box is checked
+    expect(await menuFrame.$eval('#mark_as_supplied', el => el.checked)).toBe(true);
+
+     // check the default select supplied_source is correct and active and the 'other' box is inactive
+     expect(await menuFrame.$eval('#supplied_source', el => el.value)).toBe('na28');
+     expect(await menuFrame.$eval('#supplied_source', el => el.disabled)).toBe(false);
+     expect(await menuFrame.$eval('#supplied_source_other', el => el.disabled)).toBe(true);
+
+    // check when other is selected for supplied_source the box to type the value options
+    await menuFrame.select('select[id="supplied_source"]', 'other');
+    expect(await menuFrame.$eval('#supplied_source', el => el.value)).toBe('other');
+    // NB need to click on this because the function is onclick not onchange (need to understand why before changing it)
+    await menuFrame.click('#supplied_source');
+    expect(await menuFrame.$eval('#supplied_source_other', el => el.disabled)).toBe(false);
+
+    // check when a non-other option is selected the 'other' input is disabled
+    await menuFrame.select('select[id="supplied_source"]', 'transcriber');
+    expect(await menuFrame.$eval('#supplied_source', el => el.value)).toBe('transcriber');
+    // NB need to click on this because the function is onclick not onchange (need to understand why before changing it)
+    await menuFrame.click('#supplied_source');
+    expect(await menuFrame.$eval('#supplied_source_other', el => el.disabled)).toBe(true);
+
+    // no need to output here as we are only testing the interface
+  });
+  
+
+  test('test that when data already exists the menu loading is correct', async () => {
+    // preload the data
+    const data = xmlHead + '<w>this</w><w>is</w><w><supplied source="transcriber" reason="lacuna">supplied</supplied></w>' + xmlTail;
+    await page.evaluate(`setTEI('${data}');`);
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowRight');
+    
+    // open D menu
+    await page.click('button#mceu_12-open');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('Enter');
+    const menuFrameHandle = await page.$('div[id="mceu_40"] > div > div > iframe');
+    const menuFrame = await menuFrameHandle.contentFrame();
+
+    // check reason is correctly populated and does not use default
+    expect(await menuFrame.$eval('#gap_reason_dummy_illegible', el => el.checked)).toBe(false);
+    expect(await menuFrame.$eval('#gap_reason_dummy_lacuna', el => el.checked)).toBe(true);
+
+    // check the non-dummy value agrees
+    expect(await menuFrame.$eval('#gap_reason', el => el.value)).toBe('lacuna');
+ 
+    // check the drop down menu for supplied_source is the right length
+    expect(await menuFrame.$eval('#supplied_source', el => el.options.length)).toBe(5);
+
+    // check unit is not prepopulated and all relevant boxes are inactive
+    expect(await menuFrame.$eval('#unit', el => el.value)).toBe('');
+    expect(await menuFrame.$eval('#unit', el => el.disabled)).toBe(true);
+    expect(await menuFrame.$eval('#unit_other', el => el.disabled)).toBe(true);
+    expect(await menuFrame.$eval('#extent', el => el.disabled)).toBe(true);
+
+    // check the 'mark as supplied' box is checked
+    expect(await menuFrame.$eval('#mark_as_supplied', el => el.checked)).toBe(true);
+
+     // check the default select supplied_source is correct and active and the 'other' box is inactive
+     expect(await menuFrame.$eval('#supplied_source', el => el.value)).toBe('transcriber');
+     expect(await menuFrame.$eval('#supplied_source', el => el.disabled)).toBe(false);
+     expect(await menuFrame.$eval('#supplied_source_other', el => el.disabled)).toBe(true);
+
+     // reconfirm the data and check the output
+     await menuFrame.click('input#insert');
+     await page.waitForSelector('div[id="mceu_40"]', {hidden: true});
+
+     const xmlData = await page.evaluate(`getTEI()`);
+     expect(xmlData).toBe(xmlHead + '<w>this</w><w>is</w><w><supplied source="transcriber" reason="lacuna">supplied</supplied></w>' + xmlTail);
+
+  });
+
+  test('test that when data already exists the menu loading is correct', async () => {
+    // preload the data
+    const data = xmlHead + '<w>this</w><w>is</w><w><supplied source="nonsense" reason="unspecified">supplied</supplied></w>' + xmlTail;
+    await page.evaluate(`setTEI('${data}');`);
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowRight');
+    
+    // open D menu
+    await page.click('button#mceu_12-open');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('Enter');
+    const menuFrameHandle = await page.$('div[id="mceu_40"] > div > div > iframe');
+    const menuFrame = await menuFrameHandle.contentFrame();
+    await page.waitForTimeout(50000)
+    // check reason is correctly populated and does not use default
+    expect(await menuFrame.$eval('#gap_reason_dummy_illegible', el => el.checked)).toBe(false);
+    expect(await menuFrame.$eval('#gap_reason_dummy_unspecified', el => el.checked)).toBe(true);
+
+    // check the non-dummy value agrees
+    expect(await menuFrame.$eval('#gap_reason', el => el.value)).toBe('unspecified');
+ 
+    // check the drop down menu for supplied_source is the right length
+    expect(await menuFrame.$eval('#supplied_source', el => el.options.length)).toBe(5);
+
+    // check unit is not prepopulated and all relevant boxes are inactive
+    expect(await menuFrame.$eval('#unit', el => el.value)).toBe('');
+    expect(await menuFrame.$eval('#unit', el => el.disabled)).toBe(true);
+    expect(await menuFrame.$eval('#unit_other', el => el.disabled)).toBe(true);
+    expect(await menuFrame.$eval('#extent', el => el.disabled)).toBe(true);
+
+    // check the 'mark as supplied' box is checked
+    expect(await menuFrame.$eval('#mark_as_supplied', el => el.checked)).toBe(true);
+
+    await page.waitForTimeout(90000);
+
+     // check the default select supplied_source is correct and active and the 'other' box is inactive
+     expect(await menuFrame.$eval('#supplied_source', el => el.value)).toBe('other');
+     expect(await menuFrame.$eval('#supplied_source', el => el.disabled)).toBe(false);
+     expect(await menuFrame.$eval('#supplied_source_other', el => el.disabled)).toBe(false);
+     expect(await menuFrame.$eval('#supplied_source_other', el => el.disabled)).toBe('nonsense');
+
+
+
+     // reconfirm the data and check the output
+     await menuFrame.click('input#insert');
+     await page.waitForSelector('div[id="mceu_40"]', {hidden: true});
+
+     const xmlData = await page.evaluate(`getTEI()`);
+     expect(xmlData).toBe(xmlHead + '<w>this</w><w>is</w><w><supplied source="nonsense" reason="unspecified">supplied</supplied></w>' + xmlTail);
+
+  });
+
   test('gap between words', async () => {
     await frame.type('body#tinymce', 'this  continues');
     for (let i = 0; i < ' continues'.length; i++) {
