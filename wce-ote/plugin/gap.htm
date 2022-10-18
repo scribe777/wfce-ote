@@ -201,12 +201,12 @@
 		}
 
 		function init() {
+			// set defaults early so they don't overwrite any settings when editing
+			document.getElementById('gap_reason_dummy_' + ed.settings.clientOptions.optionsForGapMenu.reason).checked = true;
+			document.getElementById('supplied_source').value = ed.settings.clientOptions.optionsForGapMenu.suppliedSource;
 			comboBindReturnEvent('insert');
 			wceInfoInit('gap');
 			readWceNodeInfo();
-			// set defaults
-			document.getElementById('gap_reason_dummy_' + ed.settings.clientOptions.optionsForGapMenu.reason).checked = true;
-			document.getElementById('supplied_source').value = ed.settings.clientOptions.optionsForGapMenu.suppliedSource;
 			
 			setstatus_gapreason();
 			checkstatus_gapreason();
