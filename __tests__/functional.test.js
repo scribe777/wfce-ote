@@ -828,7 +828,7 @@ describe('testing with default client settings', () => {
   });
   
 
-  test('test that when data already exists the menu loading is correct', async () => {
+  test('test that when data already exists the menu loading is correct (standard options)', async () => {
     // preload the data
     const data = xmlHead + '<w>this</w><w>is</w><w><supplied source="transcriber" reason="lacuna">supplied</supplied></w>' + xmlTail;
     await page.evaluate(`setTEI('${data}');`);
@@ -886,7 +886,7 @@ describe('testing with default client settings', () => {
 
   });
 
-  test('test that when data already exists the menu loading is correct', async () => {
+  test('test that when data already exists the menu loading is correct (inlcuding \'other\')', async () => {
     // preload the data
     const data = xmlHead + '<w>this</w><w>is</w><w><supplied source="nonsense" reason="unspecified">supplied</supplied></w>' + xmlTail;
     await page.evaluate(`setTEI('${data}');`);
@@ -930,15 +930,11 @@ describe('testing with default client settings', () => {
     // check the 'mark as supplied' box is checked
     expect(await menuFrame.$eval('#mark_as_supplied', el => el.checked)).toBe(true);
 
-    await page.waitForTimeout(90000);
-
      // check the default select supplied_source is correct and active and the 'other' box is inactive
      expect(await menuFrame.$eval('#supplied_source', el => el.value)).toBe('other');
      expect(await menuFrame.$eval('#supplied_source', el => el.disabled)).toBe(false);
      expect(await menuFrame.$eval('#supplied_source_other', el => el.disabled)).toBe(false);
      expect(await menuFrame.$eval('#supplied_source_other', el => el.value)).toBe('nonsense');
-
-
 
      // reconfirm the data and check the output
      await menuFrame.click('input#insert');
