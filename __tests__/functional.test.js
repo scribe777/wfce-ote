@@ -936,7 +936,7 @@ describe('testing with default client settings', () => {
      expect(await menuFrame.$eval('#supplied_source', el => el.value)).toBe('other');
      expect(await menuFrame.$eval('#supplied_source', el => el.disabled)).toBe(false);
      expect(await menuFrame.$eval('#supplied_source_other', el => el.disabled)).toBe(false);
-     expect(await menuFrame.$eval('#supplied_source_other', el => el.disabled)).toBe('nonsense');
+     expect(await menuFrame.$eval('#supplied_source_other', el => el.value)).toBe('nonsense');
 
 
 
