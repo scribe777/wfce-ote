@@ -124,11 +124,6 @@
                         <td>
                         <select id="supplied_source" name="supplied_source"
                         onclick="checkstatus_supplied_source()">
-                            <!--<option value="na28">{#na28}</option>
-                            <option value="transcriber">{#transcriber}</option>
-                            <option value="tr">{#TR}</option>
-							<option value="none">{#none}</option>
-                            <option value="other">{#other}</option>-->
                         </select></td>
                         <td colspan="2">
                         <input id="supplied_source_other"
@@ -201,9 +196,13 @@
 		}
 
 		function init() {
-			// set defaults early so they don't overwrite any settings when editing
-			document.getElementById('gap_reason_dummy_' + ed.settings.clientOptions.optionsForGapMenu.reason).checked = true;
-			document.getElementById('supplied_source').value = ed.settings.clientOptions.optionsForGapMenu.suppliedSource;
+			// set this default early so it doesn't overwrite real data when editing (the reason is done in setstatus_gapreason())
+			var suppliedSource = document.getElementById('supplied_source');
+			suppliedSource.value = ed.settings.clientOptions.optionsForGapMenu.suppliedSource;
+			if (suppliedSource.selectedIndex == -1) {
+				suppliedSource.value = 'other';
+				document.getElementById('supplied_source_other').value = ed.settings.clientOptions.optionsForGapMenu.suppliedSource;
+			}
 			comboBindReturnEvent('insert');
 			wceInfoInit('gap');
 			readWceNodeInfo();
@@ -262,14 +261,20 @@
 		}
 
 		function setstatus_gapreason() {
-			if (document.gapinfo.gap_reason.value == "lacuna")
+			if (document.gapinfo.gap_reason.value == "lacuna") {
 				document.gapinfo.gap_reason_dummy_lacuna.checked = true;
-			else if (document.gapinfo.gap_reason.value == "unspecified")
-				document.gapinfo.gap_reason_dummy_unspecified.checked = true;
-			else if (document.gapinfo.gap_reason.value == "inferredPage")
-				document.gapinfo.gap_reason_dummy_inferredPage.checked = true;	
-			else //default
+			} else if (document.gapinfo.gap_reason.value == "illegible") {
 				document.gapinfo.gap_reason_dummy_illegible.checked = true;
+			} else if (document.gapinfo.gap_reason.value == "unspecified") {
+				document.gapinfo.gap_reason_dummy_unspecified.checked = true;
+			} else if (document.gapinfo.gap_reason.value == "inferredPage") {
+				document.gapinfo.gap_reason_dummy_inferredPage.checked = true;
+			} else if (document.getElementById('gap_reason_dummy_' + ed.settings.clientOptions.optionsForGapMenu.reason)) {
+				document.getElementById('gap_reason_dummy_' + ed.settings.clientOptions.optionsForGapMenu.reason).checked = true;
+			} else {
+				//default (should never be needed as we set the default in the editor init of no value provided)
+				document.gapinfo.gap_reason_dummy_illegible.checked = true;
+			}
 		}
 
 		function checkstatus_gapunit() {
