@@ -910,7 +910,7 @@ describe('testing with default client settings', () => {
     await page.keyboard.press('Enter');
     const menuFrameHandle = await page.$('div[id="mceu_40"] > div > div > iframe');
     const menuFrame = await menuFrameHandle.contentFrame();
-    await page.waitForTimeout(50000)
+
     // check reason is correctly populated and does not use default
     expect(await menuFrame.$eval('#gap_reason_dummy_illegible', el => el.checked)).toBe(false);
     expect(await menuFrame.$eval('#gap_reason_dummy_unspecified', el => el.checked)).toBe(true);
@@ -930,15 +930,11 @@ describe('testing with default client settings', () => {
     // check the 'mark as supplied' box is checked
     expect(await menuFrame.$eval('#mark_as_supplied', el => el.checked)).toBe(true);
 
-    await page.waitForTimeout(90000);
-
      // check the default select supplied_source is correct and active and the 'other' box is inactive
      expect(await menuFrame.$eval('#supplied_source', el => el.value)).toBe('other');
      expect(await menuFrame.$eval('#supplied_source', el => el.disabled)).toBe(false);
      expect(await menuFrame.$eval('#supplied_source_other', el => el.disabled)).toBe(false);
      expect(await menuFrame.$eval('#supplied_source_other', el => el.value)).toBe('nonsense');
-
-
 
      // reconfirm the data and check the output
      await menuFrame.click('input#insert');
