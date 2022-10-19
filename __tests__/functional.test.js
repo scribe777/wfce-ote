@@ -85,6 +85,36 @@ describe('testing editor appearance', () => {
 
 });
 
+  test('check correct editing buttons appear', async () => {
+    let BButton, CButton, DButton, OButton, AButton, MButton, NButton, PButton, VButton;
+    BButton = await page.$eval('#mceu_10 > button > i', element=> element.getAttribute('style'));
+    expect(BButton).toContain('button_B.png');
+
+    CButton = await page.$eval('#mceu_11 > button > i', element=> element.getAttribute('style'));
+    expect(CButton).toContain('button_C.png');
+
+    DButton = await page.$eval('#mceu_12 > button > i', element=> element.getAttribute('style'));
+    expect(DButton).toContain('button_D.png');
+
+    OButton = await page.$eval('#mceu_13 > button > i', element=> element.getAttribute('style'));
+    expect(OButton).toContain('button_O.png');
+
+    AButton = await page.$eval('#mceu_14 > button > i', element=> element.getAttribute('style'));
+    expect(AButton).toContain('button_A.png');
+
+    MButton = await page.$eval('#mceu_15 > button > i', element=> element.getAttribute('style'));
+    expect(MButton).toContain('button_M.png');
+
+    NButton = await page.$eval('#mceu_16 > button > i', element=> element.getAttribute('style'));
+    expect(NButton).toContain('button_N.png');
+
+    PButton = await page.$eval('#mceu_17 > button > i', element=> element.getAttribute('style'));
+    expect(PButton).toContain('button_P.png');
+
+    VButton = await page.$eval('#mceu_18 > button > i', element=> element.getAttribute('style'));
+    expect(VButton).toContain('button_V.png');
+    
+  });
 
 describe('testing basic word/pc level functions', () => {
 
@@ -1955,7 +1985,7 @@ describe('testing marginalia menu', () => {
 
     const menuFrameHandle2 = await menuFrame.$('iframe[id="marginals_text_ifr"]');
     const menuFrame2 = await menuFrameHandle2.contentFrame(); 
-
+    
     await menuFrame2.type('body#tinymce', 'Title is here');
   
     // open inner note menu and add a note
@@ -2576,3 +2606,5 @@ describe('testing delete structure menu', () => {
     expect(xmlData).toBe(xmlHead + '<div type=\"chapter\" n=\".1\"><ab n=\".1.1\"><w>first</w><w>verse</w></ab><ab n=\".1.2\"><w>second</w><w>verse</w></ab><ab n=\".1.3\"><w>third</w><w>verse</w></ab></div><div type=\"chapter\" n=\".2\"><ab n=\".2.1\"><w>first</w><w>verse</w></ab><ab n=\".2.2\"><w>second</w><w>verse</w></ab><ab n=\".2.3\"><w>third</w><w>verse</w></ab></div><div type=\"chapter\" n=\".3\"><ab n=\".3.1\"><w>first</w><w>verse</w></ab><ab n=\".3.2\"><w>second</w><w>verse</w></ab><ab n=\".3.3\"><w>third</w><w>verse</w></ab><ab n=\".3.4\"><w>fourth</w><w>verse</w></ab></div>' + xmlTail);
 
   }, 200000);
+
+});
