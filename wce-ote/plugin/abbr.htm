@@ -109,13 +109,15 @@
 	}
 
 	function init() {
+		// do this early so it doesn't overwrite the editing
+		if (ed.settings.clientOptions.checkOverlineForAbbr) {
+			document.getElementById('add_overline').checked = true;
+		}
 		comboBindReturnEvent('insert');
 		wceInfoInit('abbr');
 		readWceNodeInfo();
 		checkstatus_abbrtype();
-		if (ed.settings.clientOptions.checkOverlineForAbbr) {
-			document.getElementById('add_overline').checked = true;
-		}
+		
 	}
 	function checkstatus_abbrtype() {
 		if (document.abbrinfo.abbr_type.options[2].selected == true) {
