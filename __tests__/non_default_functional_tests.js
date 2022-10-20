@@ -151,7 +151,7 @@ describe('testing Structure entry with bookNames setting', () => {
     }, 200000);
 
 
-    test('test that if the default can be overwridden', async () => {
+    test('test that if the default can be overwritten', async () => {
 
         await frame.type('body#tinymce', 'a ns abbreviation');
     
