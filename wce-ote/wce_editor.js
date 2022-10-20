@@ -33,6 +33,7 @@
 */
 
 
+
 /** Initialises the editor
 
 @param {string} _id - The html id value of the text area to transform into the editor.
@@ -46,6 +47,8 @@
 @param {boolean} clientOptions.addLineBreaks - Add line breaks in the XML before every pc, cb and lb in the transcription. Default is false.
 @param {boolean} clientOptions.addSpaces - Add spaces into the XML of the transcription between tags to make the text readable if all the tags are removed. Default is false.
 @param {number} clientOptions.defaultHeightForCapitals - If a number is supplied with this settings then it is used to prepopulate the height box in the O > capitals submenu. If it is not supplied then the box is not prepopulated.
+@param {boolean} clientOptions.showMultilineNotesAsSingleEntry - If set to true this combines multiline untranscribed commentary and lectionary notes into a single line (does not change the XML output). Default is false.
+@param {boolean} clientOptions.checkOverlineForAbbr - If set to true this will check the 'add overline' option in the abbreviation form when it is loaded. Default is false.
 @param {baseURL} string - Explicitly sets TinyMCE's base URL.
 @param {callback} function - The function to call once the editor is loaded.
 
