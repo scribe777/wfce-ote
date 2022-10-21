@@ -68,7 +68,7 @@
 				</tr>
 				<tr>
 					<td colspan="2"><input type="checkbox" name="overline"
-						id="add_overline" value="overline" checked="checked">{#abbr_addOverline}
+						id="add_overline" value="overline">{#abbr_addOverline}
 					</td>
 				</tr>
 			</table>
@@ -113,6 +113,9 @@
 		wceInfoInit('abbr');
 		readWceNodeInfo();
 		checkstatus_abbrtype();
+		if (ed.settings.clientOptions.checkOverlineForAbbr) {
+			document.getElementById('add_overline').checked = true;
+		}
 	}
 	function checkstatus_abbrtype() {
 		if (document.abbrinfo.abbr_type.options[2].selected == true) {
