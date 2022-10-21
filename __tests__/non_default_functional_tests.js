@@ -151,64 +151,63 @@ describe('testing Structure entry with bookNames setting', () => {
     }, 200000);
 
 
-    test('test that if the default can be overwridden', async () => {
+    // test('test that if the default can be overwritten', async () => {
 
-        await frame.type('body#tinymce', 'a ns abbreviation');
+    //     await frame.type('body#tinymce', 'a ns abbreviation');
     
-        for (let i = 0; i < ' abbreviation'.length; i++) {
-            await page.keyboard.press('ArrowLeft');
-        }
-        await page.keyboard.down('Shift');
-        for (let i = 0; i < 'ns'.length; i++) {
-            await page.keyboard.press('ArrowLeft');
-        }
-        await page.keyboard.up('Shift');
-        // open A menu
-        await page.click('button#mceu_14-open');
-        // open abbreviation menu
-        await page.keyboard.press('ArrowDown');
-        await page.keyboard.press('ArrowRight');
-        await page.keyboard.press('Enter');
-        // use defaults
-        let menuFrameHandle = await page.$('div[id="mceu_40"] > div > div > iframe');
-        let menuFrame = await menuFrameHandle.contentFrame();
-        expect(await menuFrame.$eval('#add_overline', el => el.checked)).toBe(true);
-        // uncheck the overline box
-        await menuFrame.click('#add_overline');
-        expect(await menuFrame.$eval('#add_overline', el => el.checked)).toBe(false);
+    //     for (let i = 0; i < ' abbreviation'.length; i++) {
+    //         await page.keyboard.press('ArrowLeft');
+    //     }
+    //     await page.keyboard.down('Shift');
+    //     for (let i = 0; i < 'ns'.length; i++) {
+    //         await page.keyboard.press('ArrowLeft');
+    //     }
+    //     await page.keyboard.up('Shift');
+    //     // open A menu
+    //     await page.click('button#mceu_14-open');
+    //     // open abbreviation menu
+    //     await page.keyboard.press('ArrowDown');
+    //     await page.keyboard.press('ArrowRight');
+    //     await page.keyboard.press('Enter');
+    //     // use defaults
+    //     let menuFrameHandle = await page.$('div[id="mceu_40"] > div > div > iframe');
+    //     let menuFrame = await menuFrameHandle.contentFrame();
+    //     expect(await menuFrame.$eval('#add_overline', el => el.checked)).toBe(true);
+    //     // uncheck the overline box
+    //     await menuFrame.click('#add_overline');
+    //     expect(await menuFrame.$eval('#add_overline', el => el.checked)).toBe(false);
 
-        await menuFrame.click('input#insert');
-        await page.waitForSelector('div[id="mceu_40"]', {hidden: true});
+    //     await menuFrame.click('input#insert');
+    //     await page.waitForSelector('div[id="mceu_40"]', {hidden: true});
     
-        let htmlData = await page.evaluate(`getData()`);
-        expect(htmlData).toBe('a <span class="abbr" wce_orig="ns" wce="__t=abbr&amp;__n=&amp;original_abbr_text=&amp;help=Help&amp;abbr_type=nomSac&amp;abbr_type_other="><span class="format_start mceNonEditable">‹</span>ns<span class="format_end mceNonEditable">›</span></span> abbreviation');
-        let xmlData = await page.evaluate(`getTEI()`);
-        expect(xmlData).toBe(xmlHead + '<w>a</w><w><abbr type="nomSac">ns</abbr></w><w>abbreviation</w>' + xmlTail);
+    //     let htmlData = await page.evaluate(`getData()`);
+    //     expect(htmlData).toBe('a <span class="abbr" wce_orig="ns" wce="__t=abbr&amp;__n=&amp;original_abbr_text=&amp;help=Help&amp;abbr_type=nomSac&amp;abbr_type_other="><span class="format_start mceNonEditable">‹</span>ns<span class="format_end mceNonEditable">›</span></span> abbreviation');
+    //     let xmlData = await page.evaluate(`getTEI()`);
+    //     expect(xmlData).toBe(xmlHead + '<w>a</w><w><abbr type="nomSac">ns</abbr></w><w>abbreviation</w>' + xmlTail);
 
-        // add check for reloading the menu
-        await page.keyboard.press('ArrowLeft');
-        await page.keyboard.press('ArrowLeft');
-        await page.keyboard.press('ArrowLeft');
-        // open A menu
-        await page.click('button#mceu_14-open');
-        // open abbreviation menu for editing
-        await page.keyboard.press('ArrowDown');
-        await page.keyboard.press('ArrowRight');
-        await page.keyboard.press('ArrowDown');
-        await page.keyboard.press('Enter');
+    //     // add check for reloading the menu
+    //     await page.keyboard.press('ArrowLeft');
+    //     await page.keyboard.press('ArrowLeft');
+    //     await page.keyboard.press('ArrowLeft');
+    //     // open A menu
+    //     await page.click('button#mceu_14-open');
+    //     // open abbreviation menu for editing
+    //     await page.keyboard.press('ArrowDown');
+    //     await page.keyboard.press('ArrowRight');
+    //     await page.keyboard.press('ArrowDown');
+    //     await page.keyboard.press('Enter');
 
-        menuFrameHandle = await page.$('div[id="mceu_41"] > div > div > iframe');
-        menuFrame = await menuFrameHandle.contentFrame();
-        expect(await menuFrame.$eval('#add_overline', el => el.checked)).toBe(false);
+    //     menuFrameHandle = await page.$('div[id="mceu_41"] > div > div > iframe');
+    //     menuFrame = await menuFrameHandle.contentFrame();
+    //     expect(await menuFrame.$eval('#add_overline', el => el.checked)).toBe(false);
 
-        await menuFrame.click('input#insert');
-        await page.waitForSelector('div[id="mceu_41"]', {hidden: true});
+    //     await menuFrame.click('input#insert');
+    //     await page.waitForSelector('div[id="mceu_41"]', {hidden: true});
     
-        xmlData = await page.evaluate(`getTEI()`);
-        expect(xmlData).toBe(xmlHead + '<w>a</w><w><abbr type="nomSac">ns</abbr></w><w>abbreviation</w>' + xmlTail);
+    //     xmlData = await page.evaluate(`getTEI()`);
+    //     expect(xmlData).toBe(xmlHead + '<w>a</w><w><abbr type="nomSac">ns</abbr></w><w>abbreviation</w>' + xmlTail);
 
-    });
-  
+    // });
   });
 
   describe('testing with defaultHeightForCapitals setting', () => {
@@ -263,9 +262,9 @@ describe('testing Structure entry with bookNames setting', () => {
       expect(htmlData).toBe('<span class="formatting_capitals" wce_orig="I" wce="__t=formatting_capitals&amp;__n=&amp;capitals_height=2"><span class="format_start mceNonEditable">‹</span>I<span class="format_end mceNonEditable">›</span></span>nitial capital');
       const xmlData = await page.evaluate(`getTEI()`);
       expect(xmlData).toBe(xmlHead + '<w><hi rend="cap" height="2">I</hi>nitial</w><w>capital</w>' + xmlTail);
-    }, 200000);
+    }, 200000); 
   
-  
+
     test('capitals height can still be changed if default provided', async () => {
       await frame.type('body#tinymce', 'Initial capital');
   
@@ -303,12 +302,67 @@ describe('testing Structure entry with bookNames setting', () => {
       expect(htmlData).toBe('<span class="formatting_capitals" wce_orig="I" wce="__t=formatting_capitals&amp;__n=&amp;capitals_height=3"><span class="format_start mceNonEditable">‹</span>I<span class="format_end mceNonEditable">›</span></span>nitial capital');
       const xmlData = await page.evaluate(`getTEI()`);
       expect(xmlData).toBe(xmlHead + '<w><hi rend="cap" height="3">I</hi>nitial</w><w>capital</w>' + xmlTail);
+
+      // test that the capitals data can be edited
+      await page.keyboard.press('ArrowLeft');
+      await page.keyboard.press('ArrowLeft');
+      await page.keyboard.press('ArrowLeft');
+      await page.keyboard.down('Shift');
+      await page.keyboard.press('ArrowLeft');
+      await page.keyboard.up('Shift');
+
+      // open O menu
+      await page.click('button#mceu_13-open');
+      // open abbreviation menu
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('ArrowRight');
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('ArrowRight');
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('Enter');
+
+      const menuFrameHandle2 = await page.$('div[id="mceu_42"] > div > div > iframe');
+      const menuFrame2 = await menuFrameHandle2.contentFrame();
+      // test that the height is prepopulated with the correct default value
+      expect(await menuFrame2.$eval('#capitals_height', el => el.value)).toBe('3');
+
+      // insert and check the data
+      await menuFrame2.click('input#insert');
+      await page.waitForSelector('div[id="mceu_42"]', {hidden: true});
+  
+      const htmlData2 = await page.evaluate(`getData()`);
+      expect(htmlData2).toBe('<span class="formatting_capitals" wce_orig="I" wce="__t=formatting_capitals&amp;__n=&amp;capitals_height=3"><span class="format_start mceNonEditable">‹</span>I<span class="format_end mceNonEditable">›</span></span>nitial capital');
+      const xmlData2 = await page.evaluate(`getTEI()`);
+      expect(xmlData2).toBe(xmlHead + '<w><hi rend="cap" height="3">I</hi>nitial</w><w>capital</w>' + xmlTail);
+
+      // test that the capitals can be deleted
+      // the letter will still be highlighted
+      // open O menu
+      await page.click('button#mceu_13-open');
+      // open abbreviation menu
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('ArrowRight');
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('ArrowRight');
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('Enter');
+
+      const xmlData3 = await page.evaluate(`getTEI()`);
+      expect(xmlData3).toBe(xmlHead + '<w>Initial</w><w>capital</w>' + xmlTail);
+
+
     }, 200000);
   
   });
-  
-  
-  describe('testing with defaultHeightForCapitals setting if invalid value provided', () => {
+
+    describe('testing with defaultHeightForCapitals setting if invalid value provided', () => {
   
     beforeEach(async () => {
       let frameHandle;
@@ -361,45 +415,7 @@ describe('testing Structure entry with bookNames setting', () => {
       const xmlData = await page.evaluate(`getTEI()`);
       expect(xmlData).toBe(xmlHead + '<w><hi rend="cap">I</hi>nitial</w><w>capital</w>' + xmlTail);
     }, 200000);
-  
-  
-    test('capitals height can still be changed if default provided', async () => {
-      await frame.type('body#tinymce', 'Initial capital');
-  
-      for (let i = 0; i < 'nitial capital'.length; i++) {
-        await page.keyboard.press('ArrowLeft');
-      }
-      await page.keyboard.down('Shift');
-      for (let i = 0; i < 'I'.length; i++) {
-        await page.keyboard.press('ArrowLeft');
-      }
-      await page.keyboard.up('Shift');
-      // open O menu
-      await page.click('button#mceu_13-open');
-      // open abbreviation menu
-      await page.keyboard.press('ArrowDown');
-      await page.keyboard.press('ArrowRight');
-      await page.keyboard.press('ArrowDown');
-      await page.keyboard.press('ArrowDown');
-      await page.keyboard.press('ArrowDown');
-      await page.keyboard.press('ArrowDown');
-      await page.keyboard.press('ArrowRight');
-      await page.keyboard.press('Enter');
-      // use defaults
-      const menuFrameHandle = await page.$('div[id="mceu_41"] > div > div > iframe');
-      const menuFrame = await menuFrameHandle.contentFrame();
-      // test that the height is prepopulated with the correct default value
-      expect(await menuFrame.$eval('#capitals_height', el => el.value)).toBe('');
-      await menuFrame.type('input#capitals_height', '3');
-      await menuFrame.click('input#insert');
-      await page.waitForSelector('div[id="mceu_41"]', {hidden: true});
-  
-      const htmlData = await page.evaluate(`getData()`);
-      expect(htmlData).toBe('<span class="formatting_capitals" wce_orig="I" wce="__t=formatting_capitals&amp;__n=&amp;capitals_height=3"><span class="format_start mceNonEditable">‹</span>I<span class="format_end mceNonEditable">›</span></span>nitial capital');
-      const xmlData = await page.evaluate(`getTEI()`);
-      expect(xmlData).toBe(xmlHead + '<w><hi rend="cap" height="3">I</hi>nitial</w><w>capital</w>' + xmlTail);
-    }, 200000);
-  
-  });
+
+});
   
   

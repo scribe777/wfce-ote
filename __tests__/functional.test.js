@@ -384,10 +384,10 @@ describe('testing basic word/pc level functions', () => {
 
 });
 
-describe('testing ornamentationmenu', () => {
+describe('testing ornamentation menu', () => {
 
   // capitals
-  test('capitals', async () => {
+  test('capitals for entry, editing and deletion', async () => {
     await frame.type('body#tinymce', 'Initial capital');
 
     for (let i = 0; i < 'nitial capital'.length; i++) {
@@ -420,7 +420,121 @@ describe('testing ornamentationmenu', () => {
     expect(htmlData).toBe('<span class="formatting_capitals" wce_orig="I" wce="__t=formatting_capitals&amp;__n=&amp;capitals_height=3"><span class="format_start mceNonEditable">‹</span>I<span class="format_end mceNonEditable">›</span></span>nitial capital');
     const xmlData = await page.evaluate(`getTEI()`);
     expect(xmlData).toBe(xmlHead + '<w><hi rend="cap" height="3">I</hi>nitial</w><w>capital</w>' + xmlTail);
+
+    // test that the capitals data can be edited
+    await page.keyboard.press('ArrowLeft');
+    await page.keyboard.press('ArrowLeft');
+    await page.keyboard.press('ArrowLeft');
+    await page.keyboard.down('Shift');
+    await page.keyboard.press('ArrowLeft');
+    await page.keyboard.up('Shift');
+
+    // open O menu
+    await page.click('button#mceu_13-open');
+    // open abbreviation menu
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('Enter');
+
+    const menuFrameHandle2 = await page.$('div[id="mceu_42"] > div > div > iframe');
+    const menuFrame2 = await menuFrameHandle2.contentFrame();
+    // test that the height is prepopulated with the correct default value
+    expect(await menuFrame2.$eval('#capitals_height', el => el.value)).toBe('3');
+
+    // insert and check the data
+    await menuFrame2.click('input#insert');
+    await page.waitForSelector('div[id="mceu_42"]', {hidden: true});
+
+    const htmlData2 = await page.evaluate(`getData()`);
+    expect(htmlData2).toBe('<span class="formatting_capitals" wce_orig="I" wce="__t=formatting_capitals&amp;__n=&amp;capitals_height=3"><span class="format_start mceNonEditable">‹</span>I<span class="format_end mceNonEditable">›</span></span>nitial capital');
+    const xmlData2 = await page.evaluate(`getTEI()`);
+    expect(xmlData2).toBe(xmlHead + '<w><hi rend="cap" height="3">I</hi>nitial</w><w>capital</w>' + xmlTail);
+
+    // test that the capitals can be deleted
+    // the letter will still be highlighted
+    // open O menu
+    await page.click('button#mceu_13-open');
+    // open abbreviation menu
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('Enter');
+
+    const xmlData3 = await page.evaluate(`getTEI()`);
+    expect(xmlData3).toBe(xmlHead + '<w>Initial</w><w>capital</w>' + xmlTail);
   }, 200000);
+
+  test('test capitals can be edited and deleted if setTEI is used', async () => {
+    // await frame.type('body#tinymce', 'Initial capital');
+    const data = xmlHead + '<w><hi rend="cap" height="3">I</hi>nitial</w><w>capital</w>' + xmlTail;
+    await page.evaluate(`setTEI('${data}');`);
+
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.down('Shift');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.up('Shift');
+
+    // open O menu
+    await page.click('button#mceu_13-open');
+    // open abbreviation menu
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('Enter');
+
+    const menuFrameHandle = await page.$('div[id="mceu_41"] > div > div > iframe');
+    const menuFrame = await menuFrameHandle.contentFrame();
+    // test that the height is prepopulated with the correct default value
+    expect(await menuFrame.$eval('#capitals_height', el => el.value)).toBe('3');
+
+    // insert and check the data
+    await menuFrame.click('input#insert');
+    await page.waitForSelector('div[id="mceu_41"]', {hidden: true});
+
+    const htmlData = await page.evaluate(`getData()`);
+    expect(htmlData).toBe('<span class="formatting_capitals" wce_orig="I" wce="__t=formatting_capitals&amp;__n=&amp;capitals_height=3"><span class="format_start mceNonEditable">‹</span>I<span class="format_end mceNonEditable">›</span></span>nitial capital');
+    const xmlData = await page.evaluate(`getTEI()`);
+    expect(xmlData).toBe(xmlHead + '<w><hi rend="cap" height="3">I</hi>nitial</w><w>capital</w>' + xmlTail);
+
+    // test that the capitals can be deleted
+    // the letter will still be highlighted
+    // open O menu
+    await page.click('button#mceu_13-open');
+    // open abbreviation menu
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('Enter');
+
+    const xmlData3 = await page.evaluate(`getTEI()`);
+    expect(xmlData3).toBe(xmlHead + '<w>Initial</w><w>capital</w>' + xmlTail);
+  }, 200000);
+
 
   // other ornamentation
   test('other ornamentation', async () => {
