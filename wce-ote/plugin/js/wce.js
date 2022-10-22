@@ -436,30 +436,34 @@ function writeWceNodeInfo(val) {
 function formUnserialize(str) {
 	$('input:checkbox').prop('checked', false);
 
-	if (str == null || str == '')
+	if (str == null || str == '') {
 		return;
+	}
 
 	var arr = str.split('&');
 	var kv, k, v;
 
 	for (var i = 2; i < arr.length; i++) {
-		kv = arr[i].split('=');
-		k = kv[0];
-		v = kv[1] == null ? '' : kv[1];
-		v = v.replace(/\+/g, ' ');
-
-		if ($('#' + k).attr('type') == 'checkbox') {
-			$('#' + k).prop('checked', true);
-		} else {
-			if (!v)
-				continue;
-			var dec_v = decodeURIComponent(v);
-			if (k == 'corrector_text' && corrector_text_editor) {
-				corrector_text_editor.setContent(dec_v);
-			} else if (k == 'marginals_text' && marginals_text_editor) {
-				marginals_text_editor.setContent(dec_v);
+		if (arr[i] !== '') {
+			kv = arr[i].split('=');
+			k = kv[0];
+			v = kv[1] == null ? '' : kv[1];
+			v = v.replace(/\+/g, ' ');
+	
+			if ($('#' + k).attr('type') == 'checkbox') {
+				$('#' + k).prop('checked', true);
+			} else {
+				if (!v) {
+					continue;
+				}
+				var dec_v = decodeURIComponent(v);
+				if (k == 'corrector_text' && corrector_text_editor) {
+					corrector_text_editor.setContent(dec_v);
+				} else if (k == 'marginals_text' && marginals_text_editor) {
+					marginals_text_editor.setContent(dec_v);
+				}
+				$('#' + k).val(dec_v);
 			}
-			$('#' + k).val(dec_v);
 		}
 	}
 }
