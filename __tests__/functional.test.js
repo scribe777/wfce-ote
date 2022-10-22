@@ -301,7 +301,7 @@ describe('testing basic word/pc level functions', () => {
       const menuFrameHandle = await page.$('div[id="mceu_41"] > div > div > iframe');
       const menuFrame = await menuFrameHandle.contentFrame();
       // check extent is populated correctly
-      expect(await menuFrame2.$eval('#sp_extent', el => el.value)).toBe('5');
+      expect(await menuFrame.$eval('#sp_extent', el => el.value)).toBe('5');
       await menuFrame.select('select[id="sp_unit"]', 'line');
       await menuFrame.type('input#sp_extent', '4');
       await page.keyboard.press('ArrowLeft');
