@@ -33,28 +33,60 @@ afterAll(async () => {
   await browser.close();
 });
 
+beforeEach(async () => {
+  let frameHandle;
+  jest.setTimeout(5000000);
+  page = await browser.newPage();
+  // await page.goto(`file:${path.join(__dirname, '..', 'wce-ote', 'index.html')}`);
+  await page.goto(`file:${path.join(__dirname, 'test_index_page.html')}`);
+  await page.evaluate(`setWceEditor('wce_editor', {})`);
+  page.waitForSelector("#wce_editor_ifr");
+  frameHandle = null;
+  while (frameHandle === null) {
+    frameHandle = await page.$("iframe[id='wce_editor_ifr']");
+  }
+  frame = await frameHandle.contentFrame();
+
+});
+
+describe('testing editor appearance', () => {
 
 
-describe('testing with default client settings', () => {
+  test('check correct editing buttons appear', async () => {
+    let BButton, CButton, DButton, OButton, AButton, MButton, NButton, PButton, VButton;
+    BButton = await page.$eval('#mceu_10 > button > i', element=> element.getAttribute('style'));
+    expect(BButton).toContain('button_B.png');
 
+    CButton = await page.$eval('#mceu_11 > button > i', element=> element.getAttribute('style'));
+    expect(CButton).toContain('button_C.png');
 
-  beforeEach(async () => {
-    let frameHandle;
-    jest.setTimeout(5000000);
-    page = await browser.newPage();
-    // await page.goto(`file:${path.join(__dirname, '..', 'wce-ote', 'index.html')}`);
-    await page.goto(`file:${path.join(__dirname, 'test_index_page.html')}`);
-    await page.evaluate(`setWceEditor('wce_editor', {})`);
-    page.waitForSelector("#wce_editor_ifr");
-    frameHandle = null;
-    while (frameHandle === null) {
-      frameHandle = await page.$("iframe[id='wce_editor_ifr']");
-    }
-    frame = await frameHandle.contentFrame();
+    DButton = await page.$eval('#mceu_12 > button > i', element=> element.getAttribute('style'));
+    expect(DButton).toContain('button_D.png');
 
+    OButton = await page.$eval('#mceu_13 > button > i', element=> element.getAttribute('style'));
+    expect(OButton).toContain('button_O.png');
+
+    AButton = await page.$eval('#mceu_14 > button > i', element=> element.getAttribute('style'));
+    expect(AButton).toContain('button_A.png');
+
+    MButton = await page.$eval('#mceu_15 > button > i', element=> element.getAttribute('style'));
+    expect(MButton).toContain('button_M.png');
+
+    NButton = await page.$eval('#mceu_16 > button > i', element=> element.getAttribute('style'));
+    expect(NButton).toContain('button_N.png');
+
+    PButton = await page.$eval('#mceu_17 > button > i', element=> element.getAttribute('style'));
+    expect(PButton).toContain('button_P.png');
+
+    VButton = await page.$eval('#mceu_18 > button > i', element=> element.getAttribute('style'));
+    expect(VButton).toContain('button_V.png');
+    
   });
 
+});
 
+
+describe('testing basic word/pc level functions', () => {
 
   test('test basic words', async () => {
     await frame.type('body#tinymce', 'my words');
@@ -170,126 +202,127 @@ describe('testing with default client settings', () => {
     expect(xmlData).toBe(xmlHead + '<w>my</w><w>wo<unclear reason="damage to page">rds</unclear></w>' + xmlTail);
   }, 200000);
 
-  // space
-  test('space between words', async () => {
-    await frame.type('body#tinymce', 'space between  words');
-    for (let i = 0; i < ' words'.length; i++) {
-      await page.keyboard.press('ArrowLeft');
-    }
-    // open P menu
-    await page.click('button#mceu_17-open');
-    // navigate submenu
-    await page.keyboard.press('ArrowDown');
-    await page.keyboard.press('ArrowDown');
-    await page.keyboard.press('ArrowRight');
-    await page.keyboard.press('Enter');
-    // access menu window and make selection
-    const menuFrameHandle = await page.$('div[id="mceu_41"] > div > div > iframe');
-    const menuFrame = await menuFrameHandle.contentFrame();
-    // check extent is not populated (since we have a setting for that now)
-    expect(await menuFrame.$eval('#sp_extent', el => el.value)).toBe('');
-    await menuFrame.type('input#sp_extent', '5');
-    //NB the selected input will be char as that is at the top of the list and there is no empty select option
-    await menuFrame.click('input#insert');
-    await page.waitForSelector('div[id="mceu_41"]', {hidden: true});
-    const htmlData = await page.evaluate(`getData()`);
-    expect(htmlData).toBe('space between <span class=\"spaces\" wce=\"__t=spaces&amp;__n=&amp;original_spaces_text=&amp;help=Help&amp;sp_unit=char&amp;sp_unit_other=&amp;sp_extent=5\"><span class=\"format_start mceNonEditable\">‹</span>sp<span class=\"format_end mceNonEditable\">›</span></span> words');
-    const xmlData = await page.evaluate(`getTEI()`);
-    expect(xmlData).toBe(xmlHead + '<w>space</w><w>between</w><space unit="char" extent="5"/><w>words</w>' + xmlTail);
-  }, 200000);
+    // space
+    test('space between words', async () => {
+      await frame.type('body#tinymce', 'space between  words');
+      for (let i = 0; i < ' words'.length; i++) {
+        await page.keyboard.press('ArrowLeft');
+      }
+      // open P menu
+      await page.click('button#mceu_17-open');
+      // navigate submenu
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('ArrowRight');
+      await page.keyboard.press('Enter');
+      // access menu window and make selection
+      const menuFrameHandle = await page.$('div[id="mceu_41"] > div > div > iframe');
+      const menuFrame = await menuFrameHandle.contentFrame();
+      // check extent is not populated (since we have a setting for that now)
+      expect(await menuFrame.$eval('#sp_extent', el => el.value)).toBe('');
+      await menuFrame.type('input#sp_extent', '5');
+      //NB the selected input will be char as that is at the top of the list and there is no empty select option
+      await menuFrame.click('input#insert');
+      await page.waitForSelector('div[id="mceu_41"]', {hidden: true});
+      const htmlData = await page.evaluate(`getData()`);
+      expect(htmlData).toBe('space between <span class=\"spaces\" wce=\"__t=spaces&amp;__n=&amp;original_spaces_text=&amp;help=Help&amp;sp_unit=char&amp;sp_unit_other=&amp;sp_extent=5\"><span class=\"format_start mceNonEditable\">‹</span>sp<span class=\"format_end mceNonEditable\">›</span></span> words');
+      const xmlData = await page.evaluate(`getTEI()`);
+      expect(xmlData).toBe(xmlHead + '<w>space</w><w>between</w><space unit="char" extent="5"/><w>words</w>' + xmlTail);
+    }, 200000);
+  
+    // pc typed in
+    test('test pc typed', async () => {
+      await frame.type('body#tinymce', 'my words.');
+      const htmlData = await page.evaluate(`getData()`);
+      expect(htmlData).toBe('my words<span class=\"pc\" wce_orig=\"\" wce=\"__t=pc\">' +
+                            '<span class=\"format_start mceNonEditable\">‹</span>.' +
+                            '<span class=\"format_end mceNonEditable\">›</span></span>');
+      const xmlData = await page.evaluate(`getTEI()`);
+      expect(xmlData).toBe(xmlHead + '<w>my</w><w>words</w><pc>.</pc>' + xmlTail);
+    }, 200000);
+  
+    // pc with menu
+    test('test pc with menu', async () => {
+      await frame.type('body#tinymce', 'my words');
+      // open P menu
+      await page.click('button#mceu_17-open');
+      // navigate to question mark on submenu
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('ArrowRight');
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('Enter');
+  
+      const htmlData = await page.evaluate(`getData()`);
+      expect(htmlData).toBe('my words<span class=\"pc\" wce_orig=\"\" wce=\"__t=pc\">' +
+                            '<span class=\"format_start mceNonEditable\">‹</span>?' +
+                            '<span class=\"format_end mceNonEditable\">›</span></span>');
+      const xmlData = await page.evaluate(`getTEI()`);
+      expect(xmlData).toBe(xmlHead + '<w>my</w><w>words</w><pc>?</pc>' + xmlTail);
+    }, 200000);
+  
+  
+    // check other punctuation option [issue #25]
+    // pc with menu
+    test('test pc with menu', async () => {
+      await frame.type('body#tinymce', 'my words');
+      // open P menu
+      await page.click('button#mceu_17-open');
+      // navigate to the Other option on submenu (quicker to go up!)
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('ArrowRight');
+      await page.keyboard.press('ArrowUp');
+      await page.keyboard.press('Enter');
+  
+      const menuFrameHandle = await page.$('div[id="mceu_58"] > div > div > iframe');
+      const menuFrame = await menuFrameHandle.contentFrame();
+      await menuFrame.type('input#pc_char', '-');
+      await menuFrame.click('input#insert');
+      await page.waitForSelector('div[id="mceu_58"]', {hidden: true});
+  
+      const htmlData = await page.evaluate(`getData()`);
+      expect(htmlData).toBe('my words<span class=\"pc\" wce=\"__t=pc\">' +
+                            '<span class=\"format_start mceNonEditable\">‹</span>-' +
+                            '<span class=\"format_end mceNonEditable\">›</span></span>');
+      const xmlData = await page.evaluate(`getTEI()`);
+      expect(xmlData).toBe(xmlHead + '<w>my</w><w>words</w><pc>-</pc>' + xmlTail);
+    }, 200000);
+  
+    // pc with menu
+    test('test pc with menu (semicolon as I changed the code for that)', async () => {
+      await frame.type('body#tinymce', 'my words');
+      // open P menu
+      await page.click('button#mceu_17-open');
+      // navigate to question mark on submenu
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('ArrowRight');
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('Enter');
+  
+      const htmlData = await page.evaluate(`getData()`);
+      expect(htmlData).toBe('my words<span class=\"pc\" wce_orig=\"\" wce=\"__t=pc\">' +
+                            '<span class=\"format_start mceNonEditable\">‹</span>;' +
+                            '<span class=\"format_end mceNonEditable\">›</span></span>');
+      const xmlData = await page.evaluate(`getTEI()`);
+      expect(xmlData).toBe(xmlHead + '<w>my</w><w>words</w><pc>;</pc>' + xmlTail);
+    }, 200000);
 
-  // pc typed in
-  test('test pc typed', async () => {
-    await frame.type('body#tinymce', 'my words.');
-    const htmlData = await page.evaluate(`getData()`);
-    expect(htmlData).toBe('my words<span class=\"pc\" wce_orig=\"\" wce=\"__t=pc\">' +
-                          '<span class=\"format_start mceNonEditable\">‹</span>.' +
-                          '<span class=\"format_end mceNonEditable\">›</span></span>');
-    const xmlData = await page.evaluate(`getTEI()`);
-    expect(xmlData).toBe(xmlHead + '<w>my</w><w>words</w><pc>.</pc>' + xmlTail);
-  }, 200000);
-
-  // pc with menu
-  test('test pc with menu', async () => {
-    await frame.type('body#tinymce', 'my words');
-    // open P menu
-    await page.click('button#mceu_17-open');
-    // navigate to question mark on submenu
-    await page.keyboard.press('ArrowDown');
-    await page.keyboard.press('ArrowRight');
-    await page.keyboard.press('ArrowDown');
-    await page.keyboard.press('ArrowDown');
-    await page.keyboard.press('ArrowDown');
-    await page.keyboard.press('ArrowDown');
-    await page.keyboard.press('ArrowDown');
-    await page.keyboard.press('ArrowDown');
-    await page.keyboard.press('ArrowDown');
-    await page.keyboard.press('ArrowDown');
-    await page.keyboard.press('Enter');
-
-    const htmlData = await page.evaluate(`getData()`);
-    expect(htmlData).toBe('my words<span class=\"pc\" wce_orig=\"\" wce=\"__t=pc\">' +
-                          '<span class=\"format_start mceNonEditable\">‹</span>?' +
-                          '<span class=\"format_end mceNonEditable\">›</span></span>');
-    const xmlData = await page.evaluate(`getTEI()`);
-    expect(xmlData).toBe(xmlHead + '<w>my</w><w>words</w><pc>?</pc>' + xmlTail);
-  }, 200000);
-
-
-  // check other punctuation option [issue #25]
-  // pc with menu
-  test('test pc with menu', async () => {
-    await frame.type('body#tinymce', 'my words');
-    // open P menu
-    await page.click('button#mceu_17-open');
-    // navigate to the Other option on submenu (quicker to go up!)
-    await page.keyboard.press('ArrowDown');
-    await page.keyboard.press('ArrowRight');
-    await page.keyboard.press('ArrowUp');
-    await page.keyboard.press('Enter');
-
-    const menuFrameHandle = await page.$('div[id="mceu_58"] > div > div > iframe');
-    const menuFrame = await menuFrameHandle.contentFrame();
-    await menuFrame.type('input#pc_char', '-');
-    await menuFrame.click('input#insert');
-    await page.waitForSelector('div[id="mceu_58"]', {hidden: true});
-
-    const htmlData = await page.evaluate(`getData()`);
-    expect(htmlData).toBe('my words<span class=\"pc\" wce=\"__t=pc\">' +
-                          '<span class=\"format_start mceNonEditable\">‹</span>-' +
-                          '<span class=\"format_end mceNonEditable\">›</span></span>');
-    const xmlData = await page.evaluate(`getTEI()`);
-    expect(xmlData).toBe(xmlHead + '<w>my</w><w>words</w><pc>-</pc>' + xmlTail);
-  }, 200000);
-
-  // pc with menu
-  test('test pc with menu (semicolon as I changed the code for that)', async () => {
-    await frame.type('body#tinymce', 'my words');
-    // open P menu
-    await page.click('button#mceu_17-open');
-    // navigate to question mark on submenu
-    await page.keyboard.press('ArrowDown');
-    await page.keyboard.press('ArrowRight');
-    await page.keyboard.press('ArrowDown');
-    await page.keyboard.press('ArrowDown');
-    await page.keyboard.press('ArrowDown');
-    await page.keyboard.press('ArrowDown');
-    await page.keyboard.press('ArrowDown');
-    await page.keyboard.press('ArrowDown');
-    await page.keyboard.press('ArrowDown');
-    await page.keyboard.press('ArrowDown');
-    await page.keyboard.press('ArrowDown');
-    await page.keyboard.press('Enter');
-
-    const htmlData = await page.evaluate(`getData()`);
-    expect(htmlData).toBe('my words<span class=\"pc\" wce_orig=\"\" wce=\"__t=pc\">' +
-                          '<span class=\"format_start mceNonEditable\">‹</span>;' +
-                          '<span class=\"format_end mceNonEditable\">›</span></span>');
-    const xmlData = await page.evaluate(`getTEI()`);
-    expect(xmlData).toBe(xmlHead + '<w>my</w><w>words</w><pc>;</pc>' + xmlTail);
-  }, 200000);
-
-  // abbr
+      //abbr
+  // nomsac without overline
   test('test abbr', async () => {
     await frame.type('body#tinymce', 'a ns abbreviation');
 
@@ -314,12 +347,47 @@ describe('testing with default client settings', () => {
     await page.waitForSelector('div[id="mceu_40"]', {hidden: true});
 
     const htmlData = await page.evaluate(`getData()`);
+    expect(htmlData).toBe('a <span class=\"abbr\" wce_orig=\"ns\" wce=\"__t=abbr&amp;__n=&amp;original_abbr_text=&amp;help=Help&amp;abbr_type=nomSac&amp;abbr_type_other=\"><span class=\"format_start mceNonEditable\">‹</span>ns<span class=\"format_end mceNonEditable\">›</span></span> abbreviation');
+    const xmlData = await page.evaluate(`getTEI()`);
+    expect(xmlData).toBe(xmlHead + '<w>a</w><w><abbr type="nomSac">ns</abbr></w><w>abbreviation</w>' + xmlTail);
+  }, 200000);
+
+  // nomsac with overline
+  test('test abbr', async () => {
+    await frame.type('body#tinymce', 'a ns abbreviation');
+
+    for (let i = 0; i < ' abbreviation'.length; i++) {
+      await page.keyboard.press('ArrowLeft');
+    }
+    await page.keyboard.down('Shift');
+    for (let i = 0; i < 'ns'.length; i++) {
+      await page.keyboard.press('ArrowLeft');
+    }
+    await page.keyboard.up('Shift');
+    // open A menu
+    await page.click('button#mceu_14-open');
+    // open abbreviation menu
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('Enter');
+    // use defaults
+    const menuFrameHandle = await page.$('div[id="mceu_40"] > div > div > iframe');
+    const menuFrame = await menuFrameHandle.contentFrame();
+    await menuFrame.click('#add_overline');
+    await menuFrame.click('input#insert');
+    await page.waitForSelector('div[id="mceu_40"]', {hidden: true});
+
+    const htmlData = await page.evaluate(`getData()`);
     expect(htmlData).toBe('a <span class="abbr_add_overline" wce_orig="ns" wce="__t=abbr&amp;__n=&amp;original_abbr_text=&amp;help=Help&amp;abbr_type=nomSac&amp;abbr_type_other=&amp;add_overline=overline"><span class="format_start mceNonEditable">‹</span>ns<span class="format_end mceNonEditable">›</span></span> abbreviation');
     const xmlData = await page.evaluate(`getTEI()`);
     expect(xmlData).toBe(xmlHead + '<w>a</w><w><abbr type="nomSac"><hi rend="overline">ns</hi></abbr></w><w>abbreviation</w>' + xmlTail);
   }, 200000);
 
   // TODO: add more tests on different abbr structures here?
+
+});
+
+describe('testing ornamentationmenu', () => {
 
   // capitals
   test('capitals', async () => {
@@ -335,7 +403,7 @@ describe('testing with default client settings', () => {
     await page.keyboard.up('Shift');
     // open O menu
     await page.click('button#mceu_13-open');
-    // open abbreviation menu
+    // open capitals menu
     await page.keyboard.press('ArrowDown');
     await page.keyboard.press('ArrowRight');
     await page.keyboard.press('ArrowDown');
@@ -371,7 +439,7 @@ describe('testing with default client settings', () => {
     await page.keyboard.up('Shift');
     // open O menu
     await page.click('button#mceu_13-open');
-    // open abbreviation menu
+    // open other menu
     await page.keyboard.press('ArrowDown');
     await page.keyboard.press('ArrowDown');
     await page.keyboard.press('ArrowDown');
@@ -418,6 +486,10 @@ describe('testing with default client settings', () => {
     const xmlData = await page.evaluate(`getTEI()`);
     expect(xmlData).toBe(xmlHead + '<w>test</w><w><hi rend="yellow">for</hi></w><w>rendering</w>' + xmlTail);
   }, 200000);
+
+});
+
+describe('testing structure menu', () => {
 
   // STRUCTURE DIVS
 
@@ -660,8 +732,13 @@ describe('testing with default client settings', () => {
     expect(xmlData).toBe(xmlHead + '<div type="book" n="John"><div type="subscriptio"><ab n="John.subscriptio"><w>subscriptio</w><w>text</w></ab></div></div>' + xmlTail);
   }, 200000);
 
+});
+
+
+describe('testing gap menu', () => {
+
   // gaps
-  test('gap between words', async () => {
+  test('test non-supplied all the default preselects and the interface behaviour', async () => {
     await frame.type('body#tinymce', 'this  continues');
     for (let i = 0; i < ' continues'.length; i++) {
       await page.keyboard.press('ArrowLeft');
@@ -675,15 +752,319 @@ describe('testing with default client settings', () => {
     await page.keyboard.press('Enter');
     const menuFrameHandle = await page.$('div[id="mceu_40"] > div > div > iframe');
     const menuFrame = await menuFrameHandle.contentFrame();
+    // check the gap reason pre-select is correct
+    expect(await menuFrame.$eval('#gap_reason_dummy_illegible', el => el.checked)).toBe(true);
+
+    // check the non-dummy value agrees
+    expect(await menuFrame.$eval('#gap_reason', el => el.value)).toBe('illegible');
+ 
+    // check the drop down menu for supplied_source is the right length 
+    expect(await menuFrame.$eval('#supplied_source', el => el.options.length)).toBe(5);
+
+    // check the 'mark as supplied' box is unchecked
+    expect(await menuFrame.$eval('#mark_as_supplied', el => el.checked)).toBe(false);
+
+    // check the default select supplied_source is correct but inactive (because this is not supplied text)
+    expect(await menuFrame.$eval('#supplied_source', el => el.value)).toBe('na28');
+    expect(await menuFrame.$eval('#supplied_source', el => el.disabled)).toBe(true);
+    
+    // check the boxes only used for other are not enabled when it is not selected as unit
+    expect(await menuFrame.$eval('#unit', el => el.value)).toBe('');
+    expect(await menuFrame.$eval('#unit_other', el => el.disabled)).toBe(true);
+    expect(await menuFrame.$eval('#extent', el => el.disabled)).toBe(true);
+
+    // check that when unit is set to other the correct boxes are activated
+    await menuFrame.select('select[id="unit"]', 'other');
+    expect(await menuFrame.$eval('#unit', el => el.value)).toBe('other');
+    expect(await menuFrame.$eval('#unit_other', el => el.disabled)).toBe(false);
+    expect(await menuFrame.$eval('#extent', el => el.disabled)).toBe(false);
+
+    // check that when we select an option other than other is selected 
+    await menuFrame.select('select[id="unit"]', 'line');
+    expect(await menuFrame.$eval('#unit', el => el.value)).toBe('line');
+    expect(await menuFrame.$eval('#unit_other', el => el.disabled)).toBe(true);
+    expect(await menuFrame.$eval('#extent', el => el.disabled)).toBe(false);
+
+    // no need to output here as we are only testing the interface behaviour
+
+  });
+
+  test('test supplied text all the default preselects and the interface behaviour', async () => {
+    await frame.type('body#tinymce', 'this is supplied');
+    await page.keyboard.down('Shift');
+    for (let i = 0; i < 'supplied'.length; i++) {
+      await page.keyboard.press('ArrowLeft');
+    }
+    await page.keyboard.up('Shift');
+
+    // open D menu
+    await page.click('button#mceu_12-open');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('Enter');
+    const menuFrameHandle = await page.$('div[id="mceu_40"] > div > div > iframe');
+    const menuFrame = await menuFrameHandle.contentFrame();
+    // check the gap reason pre-select is correct
+    expect(await menuFrame.$eval('#gap_reason_dummy_illegible', el => el.checked)).toBe(true);
+
+    // check the non-dummy value agrees
+    expect(await menuFrame.$eval('#gap_reason', el => el.value)).toBe('illegible');
+ 
+    // check the drop down menu for supplied_source is the right length
+    expect(await menuFrame.$eval('#supplied_source', el => el.options.length)).toBe(5);
+
+    // check unit is not prepopulated and all relevant boxes are inactive
+    expect(await menuFrame.$eval('#unit', el => el.value)).toBe('');
+    expect(await menuFrame.$eval('#unit', el => el.disabled)).toBe(true);
+    expect(await menuFrame.$eval('#unit_other', el => el.disabled)).toBe(true);
+    expect(await menuFrame.$eval('#extent', el => el.disabled)).toBe(true);
+
+    // check the 'mark as supplied' box is checked
+    expect(await menuFrame.$eval('#mark_as_supplied', el => el.checked)).toBe(true);
+
+     // check the default select supplied_source is correct and active and the 'other' box is inactive
+     expect(await menuFrame.$eval('#supplied_source', el => el.value)).toBe('na28');
+     expect(await menuFrame.$eval('#supplied_source', el => el.disabled)).toBe(false);
+     expect(await menuFrame.$eval('#supplied_source_other', el => el.disabled)).toBe(true);
+
+    // check when other is selected for supplied_source the box to type the value options
+    await menuFrame.select('select[id="supplied_source"]', 'other');
+    expect(await menuFrame.$eval('#supplied_source', el => el.value)).toBe('other');
+    // NB need to click on this because the function is onclick not onchange (need to understand why before changing it)
+    await menuFrame.click('#supplied_source');
+    expect(await menuFrame.$eval('#supplied_source_other', el => el.disabled)).toBe(false);
+
+    // check when a non-other option is selected the 'other' input is disabled
+    await menuFrame.select('select[id="supplied_source"]', 'transcriber');
+    expect(await menuFrame.$eval('#supplied_source', el => el.value)).toBe('transcriber');
+    // NB need to click on this because the function is onclick not onchange (need to understand why before changing it)
+    await menuFrame.click('#supplied_source');
+    expect(await menuFrame.$eval('#supplied_source_other', el => el.disabled)).toBe(true);
+
+    // no need to output here as we are only testing the interface
+  });
+  
+
+  test('test that when data already exists the menu loading is correct (standard options)', async () => {
+    // preload the data
+    const data = xmlHead + '<w>this</w><w>is</w><w><supplied source="transcriber" reason="lacuna">supplied</supplied></w>' + xmlTail;
+    await page.evaluate(`setTEI('${data}');`);
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowRight');
+    
+    // open D menu
+    await page.click('button#mceu_12-open');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('Enter');
+    const menuFrameHandle = await page.$('div[id="mceu_40"] > div > div > iframe');
+    const menuFrame = await menuFrameHandle.contentFrame();
+
+    // check reason is correctly populated and does not use default
+    expect(await menuFrame.$eval('#gap_reason_dummy_illegible', el => el.checked)).toBe(false);
+    expect(await menuFrame.$eval('#gap_reason_dummy_lacuna', el => el.checked)).toBe(true);
+
+    // check the non-dummy value agrees
+    expect(await menuFrame.$eval('#gap_reason', el => el.value)).toBe('lacuna');
+ 
+    // check the drop down menu for supplied_source is the right length
+    expect(await menuFrame.$eval('#supplied_source', el => el.options.length)).toBe(5);
+
+    // check unit is not prepopulated and all relevant boxes are inactive
+    expect(await menuFrame.$eval('#unit', el => el.value)).toBe('');
+    expect(await menuFrame.$eval('#unit', el => el.disabled)).toBe(true);
+    expect(await menuFrame.$eval('#unit_other', el => el.disabled)).toBe(true);
+    expect(await menuFrame.$eval('#extent', el => el.disabled)).toBe(true);
+
+    // check the 'mark as supplied' box is checked
+    expect(await menuFrame.$eval('#mark_as_supplied', el => el.checked)).toBe(true);
+
+     // check the default select supplied_source is correct and active and the 'other' box is inactive
+     expect(await menuFrame.$eval('#supplied_source', el => el.value)).toBe('transcriber');
+     expect(await menuFrame.$eval('#supplied_source', el => el.disabled)).toBe(false);
+     expect(await menuFrame.$eval('#supplied_source_other', el => el.disabled)).toBe(true);
+
+     // reconfirm the data and check the output
+     await menuFrame.click('input#insert');
+     await page.waitForSelector('div[id="mceu_40"]', {hidden: true});
+
+     const xmlData = await page.evaluate(`getTEI()`);
+     expect(xmlData).toBe(xmlHead + '<w>this</w><w>is</w><w><supplied source="transcriber" reason="lacuna">supplied</supplied></w>' + xmlTail);
+
+  });
+
+  test('test that when data already exists the menu loading is correct (including \'other\')', async () => {
+    // preload the data
+    const data = xmlHead + '<w>this</w><w>is</w><w><supplied source="nonsense" reason="unspecified">supplied</supplied></w>' + xmlTail;
+    await page.evaluate(`setTEI('${data}');`);
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowRight');
+    
+    // open D menu
+    await page.click('button#mceu_12-open');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('Enter');
+    const menuFrameHandle = await page.$('div[id="mceu_40"] > div > div > iframe');
+    const menuFrame = await menuFrameHandle.contentFrame();
+
+    // check reason is correctly populated and does not use default
+    expect(await menuFrame.$eval('#gap_reason_dummy_illegible', el => el.checked)).toBe(false);
+    expect(await menuFrame.$eval('#gap_reason_dummy_unspecified', el => el.checked)).toBe(true);
+
+    // check the non-dummy value agrees
+    expect(await menuFrame.$eval('#gap_reason', el => el.value)).toBe('unspecified');
+ 
+    // check the drop down menu for supplied_source is the right length
+    expect(await menuFrame.$eval('#supplied_source', el => el.options.length)).toBe(5);
+
+    // check unit is not prepopulated and all relevant boxes are inactive
+    expect(await menuFrame.$eval('#unit', el => el.value)).toBe('');
+    expect(await menuFrame.$eval('#unit', el => el.disabled)).toBe(true);
+    expect(await menuFrame.$eval('#unit_other', el => el.disabled)).toBe(true);
+    expect(await menuFrame.$eval('#extent', el => el.disabled)).toBe(true);
+
+    // check the 'mark as supplied' box is checked
+    expect(await menuFrame.$eval('#mark_as_supplied', el => el.checked)).toBe(true);
+
+     // check the default select supplied_source is correct and active and the 'other' box is inactive
+     expect(await menuFrame.$eval('#supplied_source', el => el.value)).toBe('other');
+     expect(await menuFrame.$eval('#supplied_source', el => el.disabled)).toBe(false);
+     expect(await menuFrame.$eval('#supplied_source_other', el => el.disabled)).toBe(false);
+     expect(await menuFrame.$eval('#supplied_source_other', el => el.value)).toBe('nonsense');
+
+     // reconfirm the data and check the output
+     await menuFrame.click('input#insert');
+     await page.waitForSelector('div[id="mceu_40"]', {hidden: true});
+
+     const xmlData = await page.evaluate(`getTEI()`);
+     expect(xmlData).toBe(xmlHead + '<w>this</w><w>is</w><w><supplied source="nonsense" reason="unspecified">supplied</supplied></w>' + xmlTail);
+
+  });
+
+  test('gap between words', async () => {
+    await frame.type('body#tinymce', 'this  continues');
+    for (let i = 0; i < ' continues'.length; i++) {
+      await page.keyboard.press('ArrowLeft');
+    }
+
+    // open D menu
+    await page.click('button#mceu_12-open');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('Enter');
+    var menuFrameHandle = await page.$('div[id="mceu_40"] > div > div > iframe');
+    var menuFrame = await menuFrameHandle.contentFrame();
+
+    // check the form is properly set up for gaps (not supplied)
+    // check the 'mark as supplied' box is not checked
+    expect(await menuFrame.$eval('#mark_as_supplied', el => el.checked)).toBe(false);
+    expect(await menuFrame.$eval('#supplied_source', el => el.disabled)).toBe(true);
+
+    // check the gap reason pre-select is correct
+    expect(await menuFrame.$eval('#gap_reason_dummy_illegible', el => el.checked)).toBe(true);
+    // check the non-dummy value agrees
+    expect(await menuFrame.$eval('#gap_reason', el => el.value)).toBe('illegible');
+
+    expect(await menuFrame.$eval('#unit', el => el.value)).toBe('');
+    expect(await menuFrame.$eval('#unit', el => el.disabled)).toBe(false);
+
     await menuFrame.select('select[id="unit"]', 'char');
     await menuFrame.type('input#extent', '10');
     await menuFrame.click('input#insert');
     await page.waitForSelector('div[id="mceu_40"]', {hidden: true});
 
-    const htmlData = await page.evaluate(`getData()`);
+    var htmlData = await page.evaluate(`getData()`);
     expect(htmlData).toBe('this <span class=\"gap\" wce_orig=\"\" wce=\"__t=gap&amp;__n=&amp;original_gap_text=&amp;help=Help&amp;gap_reason_dummy_lacuna=lacuna&amp;gap_reason_dummy_illegible=illegible&amp;gap_reason_dummy_unspecified=unspecified&amp;gap_reason_dummy_inferredPage=inferredPage&amp;gap_reason=illegible&amp;unit=char&amp;unit_other=&amp;extent=10&amp;extent_unspecified=Extent%3DUnspecified&amp;extent_part=Extent%3DPart&amp;supplied_source=na28&amp;supplied_source_other=\"><span class=\"format_start mceNonEditable\">‹</span>[10]<span class=\"format_end mceNonEditable\">›</span></span> continues');
-    const xmlData = await page.evaluate(`getTEI()`);
+    var xmlData = await page.evaluate(`getTEI()`);
     expect(xmlData).toBe(xmlHead + '<w>this</w><gap reason="illegible" unit="char" extent="10"/><w>continues</w>' + xmlTail);
+
+    // now check that we can edit it 
+    await page.keyboard.press('ArrowLeft');
+    await page.keyboard.press('ArrowLeft');
+    await page.keyboard.press('ArrowLeft');
+
+    await page.click('button#mceu_12-open');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('Enter');
+    menuFrameHandle = await page.$('div[id="mceu_41"] > div > div > iframe');
+
+    menuFrame = await menuFrameHandle.contentFrame();
+
+    expect(await menuFrame.$eval('#unit', el => el.value)).toBe('char');
+    expect(await menuFrame.$eval('#unit', el => el.disabled)).toBe(false);
+    expect(await menuFrame.$eval('input#extent', el => el.value)).toBe('10');
+    expect(await menuFrame.$eval('#gap_reason_dummy_illegible', el => el.checked)).toBe(true);
+    expect(await menuFrame.$eval('#gap_reason', el => el.value)).toBe('illegible');
+
+    await menuFrame.click('input#insert');
+    await page.waitForSelector('div[id="mceu_41"]', {hidden: true});
+
+    xmlData = await page.evaluate(`getTEI()`);
+    expect(xmlData).toBe(xmlHead + '<w>this</w><gap reason="illegible" unit="char" extent="10"/><w>continues</w>' + xmlTail);
+
+  }, 200000);
+
+  test('test that the gap created can be edited properly if the data is loaded with setTEI', async () => {
+    // preload the data
+    const data = xmlHead + '<w>this</w><gap reason="illegible" unit="char" extent="10"/><w>continues</w>' + xmlTail;
+    await page.evaluate(`setTEI('${data}');`);
+
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowRight');
+
+    // open D menu
+    await page.click('button#mceu_12-open');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('Enter');
+    var menuFrameHandle = await page.$('div[id="mceu_40"] > div > div > iframe');
+    var menuFrame = await menuFrameHandle.contentFrame();
+
+    expect(await menuFrame.$eval('#unit', el => el.value)).toBe('char');
+    expect(await menuFrame.$eval('#unit', el => el.disabled)).toBe(false);
+    expect(await menuFrame.$eval('input#extent', el => el.value)).toBe('10');
+    expect(await menuFrame.$eval('#gap_reason_dummy_illegible', el => el.checked)).toBe(true);
+    expect(await menuFrame.$eval('#gap_reason', el => el.value)).toBe('illegible');
+
+    await menuFrame.click('input#insert');
+    await page.waitForSelector('div[id="mceu_40"]', {hidden: true});
+
+    xmlData = await page.evaluate(`getTEI()`);
+    expect(xmlData).toBe(xmlHead + '<w>this</w><gap reason="illegible" unit="char" extent="10"/><w>continues</w>' + xmlTail);
+
   }, 200000);
 
   test('gap between words no details given', async () => {
@@ -922,6 +1303,10 @@ describe('testing with default client settings', () => {
     const xmlData = await page.evaluate(`getTEI()`);
     expect(xmlData).toBe(xmlHead + '<w>a</w><w><supplied reason="illegible">supplied</supplied></w><w><supplied reason="illegible">wo</supplied>rd</w>' + xmlTail);
   }, 200000);
+
+});
+
+describe('testing correction menu', () => {
 
   // CORRECTIONS
 
@@ -1271,6 +1656,11 @@ describe('testing with default client settings', () => {
                         '<rdg type="alt" hand="corrector" rend="other"><w>basic</w></rdg></app><w>correction</w>' + xmlTail);
   }, 200000);
 
+});
+
+
+describe('testing notes menu', () => {
+
   // NOTES
 
   test('a local note', async () => {
@@ -1335,6 +1725,10 @@ describe('testing with default client settings', () => {
     expect(xmlData).toBe(xmlHead + '<w>a</w><w>note</w><note type="editorial" xml:id="..--2"><handShift scribe="new hand"/></note>' + xmlTail);
   }, 200000);
 
+});
+
+describe('testing marginalia menu', () => {
+
   test('1 line of commentary text note', async () => {
     await frame.type('body#tinymce', 'some commentary ');
     await page.keyboard.press('Enter');
@@ -1359,7 +1753,7 @@ describe('testing with default client settings', () => {
     await menuFrame.click('input#insert');
 
     const htmlData = await page.evaluate(`getData()`);
-    expect(htmlData).toBe('some commentary<span class=\"paratext\" wce_orig=\"\" wce=\"__t=paratext&amp;__n=&amp;help=Help&amp;fw_type=commentary&amp;fw_type_other=&amp;covered=1&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;marginals_text=&amp;number=&amp;edit_number=on&amp;paratext_position=&amp;paratext_position_other=&amp;paratext_alignment=\"><span class=\"format_start mceNonEditable\">‹</span><br />↵[<span class=\"commentary\" wce=\"__t=paratext&amp;__n=&amp;fw_type=commentary&amp;covered=1\">comm</span>]<span class=\"format_end mceNonEditable\">›</span></span><span class=\"mceNonEditable brea\" wce=\"__t=brea&amp;__n=&amp;hasBreak=no&amp;break_type=lb&amp;number=&amp;rv=&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment=\"><span class=\"format_start mceNonEditable\">‹</span><br />↵<span class=\"format_end mceNonEditable\">›</span></span> in here');
+    expect(htmlData).toBe('some commentary<span class=\"paratext\" wce_orig=\"\" wce=\"__t=paratext&amp;__n=&amp;help=Help&amp;fw_type=commentary&amp;fw_type_other=&amp;covered=1&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;marginals_text=&amp;number=&amp;edit_number=on&amp;paratext_position=&amp;paratext_position_other=&amp;paratext_alignment=\"><span class=\"format_start mceNonEditable\">‹</span><br />↵[<span class=\"commentary\" wce=\"__t=paratext&amp;__n=&amp;fw_type=commentary&amp;covered=1\">comm</span>]<span class=\"format_end mceNonEditable\">›</span></span><span class=\"mceNonEditable brea\" wce=\"__t=brea&amp;__n=&amp;hasBreak=no&amp;break_type=lb&amp;number=&amp;rv=&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment=\"><span class=\"format_start mceNonEditable\">‹</span><br />↵<span class=\"format_end mceNonEditable\">›</span></span> in here');
     const xmlData = await page.evaluate(`getTEI()`);
     expect(xmlData).toBe(xmlHead + '<w>some</w><w>commentary</w><lb/><note type="commentary">One line of untranscribed commentary text</note>' +
                         '<lb n="PCL-"/><w>in</w><w>here</w>' + xmlTail);
@@ -1381,7 +1775,7 @@ describe('testing with default client settings', () => {
     await menuFrame.click('input#insert');
 
     const htmlData = await page.evaluate(`getData()`);
-    expect(htmlData).toBe('in line commentary<span class=\"paratext\" wce_orig=\"\" wce=\"__t=paratext&amp;__n=&amp;help=Help&amp;fw_type=commentary&amp;fw_type_other=&amp;covered=0&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;marginals_text=&amp;number=&amp;edit_number=on&amp;paratext_position=&amp;paratext_position_other=&amp;paratext_alignment=\"><span class=\"format_start mceNonEditable\">‹</span>[<span class=\"commentary\" wce=\"__t=paratext&amp;__n=&amp;fw_type=commentary&amp;covered=0\">comm</span>]<span class=\"format_end mceNonEditable\">›</span></span>');
+    expect(htmlData).toBe('in line commentary<span class=\"paratext\" wce_orig=\"\" wce=\"__t=paratext&amp;__n=&amp;help=Help&amp;fw_type=commentary&amp;fw_type_other=&amp;covered=0&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;marginals_text=&amp;number=&amp;edit_number=on&amp;paratext_position=&amp;paratext_position_other=&amp;paratext_alignment=\"><span class=\"format_start mceNonEditable\">‹</span>[<span class=\"commentary\" wce=\"__t=paratext&amp;__n=&amp;fw_type=commentary&amp;covered=0\">comm</span>]<span class=\"format_end mceNonEditable\">›</span></span>');
     const xmlData = await page.evaluate(`getTEI()`);
     expect(xmlData).toBe(xmlHead + '<w>in</w><w>line</w><w>commentary</w><note type="commentary">Untranscribed commentary text within the line</note>' + xmlTail);
   }, 200000);
@@ -1402,7 +1796,7 @@ describe('testing with default client settings', () => {
     await menuFrame.click('input#insert');
 
     const htmlData = await page.evaluate(`getData()`);
-    expect(htmlData).toBe('in line lectionary<span class=\"paratext\" wce_orig=\"\" wce=\"__t=paratext&amp;__n=&amp;help=Help&amp;fw_type=lectionary-other&amp;fw_type_other=&amp;covered=0&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;marginals_text=&amp;number=&amp;edit_number=on&amp;paratext_position=&amp;paratext_position_other=&amp;paratext_alignment=\"><span class=\"format_start mceNonEditable\">‹</span>[<span class=\"lectionary-other\" wce=\"__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=0\">lect</span>]<span class=\"format_end mceNonEditable\">›</span></span>');
+    expect(htmlData).toBe('in line lectionary<span class=\"paratext\" wce_orig=\"\" wce=\"__t=paratext&amp;__n=&amp;help=Help&amp;fw_type=lectionary-other&amp;fw_type_other=&amp;covered=0&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;marginals_text=&amp;number=&amp;edit_number=on&amp;paratext_position=&amp;paratext_position_other=&amp;paratext_alignment=\"><span class=\"format_start mceNonEditable\">‹</span>[<span class=\"lectionary-other\" wce=\"__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=0\">lect</span>]<span class=\"format_end mceNonEditable\">›</span></span>');
     const xmlData = await page.evaluate(`getTEI()`);
     expect(xmlData).toBe(xmlHead + '<w>in</w><w>line</w><w>lectionary</w><note type="lectionary-other">Untranscribed lectionary text within the line</note>' + xmlTail);
   }, 200000);
@@ -1426,7 +1820,7 @@ describe('testing with default client settings', () => {
     await menuFrame.click('input#insert');
 
     const htmlData = await page.evaluate(`getData()`);
-    expect(htmlData).toBe('lection text next<span class=\"paratext\" wce_orig=\"\" wce=\"__t=paratext&amp;__n=&amp;help=Help&amp;fw_type=lectionary-other&amp;fw_type_other=&amp;covered=2&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;marginals_text=&amp;number=&amp;edit_number=on&amp;paratext_position=&amp;paratext_position_other=&amp;paratext_alignment=\"><span class=\"format_start mceNonEditable\">‹</span><br />↵[<span class=\"lectionary-other\" wce=\"__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=2\">lect</span>]<br />↵[<span class=\"lectionary-other\" wce=\"__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=2\">lect</span>]<span class=\"format_end mceNonEditable\">›</span></span>');
+    expect(htmlData).toBe('lection text next<span class=\"paratext\" wce_orig=\"\" wce=\"__t=paratext&amp;__n=&amp;help=Help&amp;fw_type=lectionary-other&amp;fw_type_other=&amp;covered=2&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;marginals_text=&amp;number=&amp;edit_number=on&amp;paratext_position=&amp;paratext_position_other=&amp;paratext_alignment=\"><span class=\"format_start mceNonEditable\">‹</span><br />↵[<span class=\"lectionary-other\" wce=\"__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=2\">lect</span>]<br />↵[<span class=\"lectionary-other\" wce=\"__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=2\">lect</span>]<span class=\"format_end mceNonEditable\">›</span></span>');
     const xmlData = await page.evaluate(`getTEI()`);
     expect(xmlData).toBe(xmlHead + '<w>lection</w><w>text</w><w>next</w><lb/>' +
                         '<note type="lectionary-other">One line of untranscribed lectionary text</note><lb/>' +
@@ -1448,7 +1842,7 @@ describe('testing with default client settings', () => {
     await menuFrame.click('input#insert');
 
     const htmlData = await page.evaluate(`getData()`);
-    expect(htmlData).toBe('abbreviated commentary<span class=\"paratext\" wce_orig=\"\" wce=\"__t=paratext&amp;__n=&amp;help=Help&amp;fw_type=ews&amp;fw_type_other=&amp;covered=0&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;marginals_text=&amp;number=&amp;edit_number=on&amp;paratext_position=&amp;paratext_position_other=&amp;paratext_alignment=\"><span class=\"format_start mceNonEditable\">‹</span>[<span class=\"ews\">ews</span>]<span class=\"format_end mceNonEditable\">›</span></span>');
+    expect(htmlData).toBe('abbreviated commentary<span class=\"paratext\" wce_orig=\"\" wce=\"__t=paratext&amp;__n=&amp;help=Help&amp;fw_type=ews&amp;fw_type_other=&amp;covered=0&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;marginals_text=&amp;number=&amp;edit_number=on&amp;paratext_position=&amp;paratext_position_other=&amp;paratext_alignment=\"><span class=\"format_start mceNonEditable\">‹</span>[<span class=\"ews\">ews</span>]<span class=\"format_end mceNonEditable\">›</span></span>');
     const xmlData = await page.evaluate(`getTEI()`);
     expect(xmlData).toBe(xmlHead + '<w>abbreviated</w><w>commentary</w><note type="editorial" subtype="ews"/><gap unit="verse" extent="rest"/>' + xmlTail);
   }, 200000);
@@ -1476,7 +1870,7 @@ describe('testing with default client settings', () => {
     await menuFrame.click('input#insert');
 
     const htmlData = await page.evaluate(`getData()`);
-    expect(htmlData).toBe('<span class=\"paratext\" wce_orig=\"\" wce=\"__t=paratext&amp;__n=&amp;help=Help&amp;fw_type=runTitle&amp;fw_type_other=&amp;covered=0&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;marginals_text=running%20title&amp;number=&amp;paratext_position=pagetop&amp;paratext_position_other=&amp;paratext_alignment=center\"><span class=\"format_start mceNonEditable\">‹</span>fw<span class=\"format_end mceNonEditable\">›</span></span>');
+    expect(htmlData).toBe('<span class=\"paratext\" wce_orig=\"\" wce=\"__t=paratext&amp;__n=&amp;help=Help&amp;fw_type=runTitle&amp;fw_type_other=&amp;covered=0&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;marginals_text=running%20title&amp;number=&amp;paratext_position=pagetop&amp;paratext_position_other=&amp;paratext_alignment=center\"><span class=\"format_start mceNonEditable\">‹</span>fw<span class=\"format_end mceNonEditable\">›</span></span>');
     const xmlData = await page.evaluate(`getTEI()`);
     expect(xmlData).toBe(xmlHead + '<seg type="margin" subtype="pagetop" n="@P-"><fw type="runTitle" rend="center">' +
                         '<w>running</w><w>title</w></fw></seg>' + xmlTail);
@@ -1506,13 +1900,88 @@ describe('testing with default client settings', () => {
     await menuFrame.click('input#insert');
 
     const htmlData = await page.evaluate(`getData()`);
-    expect(htmlData).toBe('this is a chapter number in the margin<span class=\"paratext\" wce_orig=\"\" wce=\"__t=paratext&amp;__n=&amp;help=Help&amp;fw_type=chapNum&amp;fw_type_other=&amp;covered=0&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;marginals_text=12&amp;number=&amp;paratext_position=colleft&amp;paratext_position_other=&amp;paratext_alignment=\"><span class=\"format_start mceNonEditable\">‹</span>fw<span class=\"format_end mceNonEditable\">›</span></span>');
+    expect(htmlData).toBe('this is a chapter number in the margin<span class=\"paratext\" wce_orig=\"\" wce=\"__t=paratext&amp;__n=&amp;help=Help&amp;fw_type=chapNum&amp;fw_type_other=&amp;covered=0&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;marginals_text=12&amp;number=&amp;paratext_position=colleft&amp;paratext_position_other=&amp;paratext_alignment=\"><span class=\"format_start mceNonEditable\">‹</span>fw<span class=\"format_end mceNonEditable\">›</span></span>');
     const xmlData = await page.evaluate(`getTEI()`);
     expect(xmlData).toBe(xmlHead + '<w>this</w><w>is</w><w>a</w><w>chapter</w><w>number</w><w>in</w><w>the</w><w>margin</w>' +
                         '<seg type="margin" subtype="colleft" n="@PC-"><num type="chapNum">12</num></seg>' + xmlTail);
   }, 200000);
 
-  // BREAKS
+  test('The correct buttons appear in the submenu for marginalia', async () => {
+      let BButton, DButton, OButton, AButton, PButton;
+
+      await frame.type('body#tinymce', 'this is a chapter number in the margin');
+
+      // open M menu
+      await page.click('button#mceu_15-open');
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('Enter');
+
+
+      const menuFrameHandle = await page.$('div[id="mceu_39"] > div > div > iframe');
+      const menuFrame = await menuFrameHandle.contentFrame();
+      await menuFrame.select('select[id="fw_type"]', 'runTitle');
+
+      const menuFrameHandle2 = await menuFrame.$('iframe[id="marginals_text_ifr"]');
+      const menuFrame2 = await menuFrameHandle2.contentFrame();
+
+      BButton = await menuFrame.$eval('#mceu_5 > button > i', element=> element.getAttribute('style'));
+      expect(BButton).toContain('button_B.png');
+
+      DButton = await menuFrame.$eval('#mceu_6 > button > i', element=> element.getAttribute('style'));
+      expect(DButton).toContain('button_D.png');
+
+      OButton = await menuFrame.$eval('#mceu_7 > button > i', element=> element.getAttribute('style'));
+      expect(OButton).toContain('button_O.png');
+
+      AButton = await menuFrame.$eval('#mceu_8 > button > i', element=> element.getAttribute('style'));
+      expect(AButton).toContain('button_A.png');
+
+      NButton = await menuFrame.$eval('#mceu_9 > button > i', element=> element.getAttribute('style'));
+      expect(NButton).toContain('button_N.png');
+
+      PButton = await menuFrame.$eval('#mceu_10 > button > i', element=> element.getAttribute('style'));
+      expect(PButton).toContain('button_P.png');
+
+    }, 200000);
+
+  test('The note menu can be used in marginalia subeditor (note menu was added in 2022)', async () => {
+    await frame.type('body#tinymce', 'this is a title with a note');
+
+    // open M menu
+    await page.click('button#mceu_15-open');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('Enter');
+
+    const menuFrameHandle = await page.$('div[id="mceu_39"] > div > div > iframe');
+    const menuFrame = await menuFrameHandle.contentFrame();
+    await menuFrame.select('select[id="fw_type"]', 'runTitle');
+
+    const menuFrameHandle2 = await menuFrame.$('iframe[id="marginals_text_ifr"]');
+    const menuFrame2 = await menuFrameHandle2.contentFrame(); 
+
+    await menuFrame2.type('body#tinymce', 'Title is here');
+  
+    // open inner note menu and add a note
+    await menuFrame.click('button#mceu_9-open');
+    await menuFrame.click('div#menu-note-add');
+    const menuFrameHandle3 = await menuFrame.$('div[id="mceu_24"] > div > div > iframe');
+    const menuFrame3 = await menuFrameHandle3.contentFrame();
+    await menuFrame3.type('textarea#note_text', 'My note');
+    await menuFrame3.click('input#insert');
+
+    // add the fw
+    await menuFrame.click('input#insert');
+    const htmlData = await page.evaluate(`getData()`);
+    expect(htmlData).toBe('this is a title with a note<span class="paratext" wce_orig="" wce="__t=paratext&amp;__n=&amp;help=Help&amp;fw_type=runTitle&amp;fw_type_other=&amp;covered=0&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;marginals_text=Title%20is%20here%3Cspan%20class%3D%22note%22%20wce_orig%3D%22%22%20wce%3D%22__t%3Dnote%26amp%3B__n%3D%26amp%3Bhelp%3DHelp%26amp%3Bnote_type%3Dlocal%26amp%3Bnote_type_other%3D%26amp%3BnewHand%3D%26amp%3Bnote_text%3DMy%2520note%22%3E%3Cspan%20class%3D%22format_start%20mceNonEditable%22%3E%E2%80%B9%3C%2Fspan%3ENote%3Cspan%20class%3D%22format_end%20mceNonEditable%22%3E%E2%80%BA%3C%2Fspan%3E%3C%2Fspan%3E&amp;number=&amp;paratext_position=&amp;paratext_position_other=&amp;paratext_alignment="><span class="format_start mceNonEditable">‹</span>fw<span class="format_end mceNonEditable">›</span></span>');
+    const xmlData = await page.evaluate(`getTEI()`);
+    expect(xmlData).toBe(xmlHead + '<w>this</w><w>is</w><w>a</w><w>title</w><w>with</w><w>a</w><w>note</w><fw type="runTitle"><w>Title</w><w>is</w><w>here</w><note type="local" xml:id="..--2">My note</note></fw>' + xmlTail);
+
+  });
+
+});
+
+describe('testing B menu - breaks', () => {
+
 
   test('initial page, using type=folio', async () => {
 
@@ -1937,6 +2406,10 @@ describe('testing with default client settings', () => {
     expect(xmlData).toBe(xmlHead + '<gb n="3"/><pb n="1r" type="folio" xml:id="P1r-"/><cb n="P1rC1-"/><lb n="P1rC1L-"/>' + xmlTail);
   }, 200000);
 
+});
+
+describe('testing delete structure menu', () => {
+
   // tests for deletion structure (need to start with data to delete)
   test('delete verse 1', async () => {
     // load data
@@ -2109,179 +2582,5 @@ describe('testing with default client settings', () => {
 
 });
 
-describe('testing with different client settings', () => {
-
-  beforeEach(async () => {
-    let frameHandle;
-    jest.setTimeout(5000000);
-    page = await browser.newPage();
-    await page.goto(`file:${path.join(__dirname, 'test_index_page.html')}`);
-    await page.evaluate(`setWceEditor('wce_editor', {bookNames: ['John', 'Gal']})`);
-    page.waitForSelector("#wce_editor_ifr");
-    frameHandle = null;
-    while (frameHandle === null) {
-      frameHandle = await page.$("iframe[id='wce_editor_ifr']");
-    }
-    frame = await frameHandle.contentFrame();
-
-  });
-
-  // Starting here the functional tests to test the new option to provide a list of books a select in the V menu
-
-  // book
-  test('book div', async () => {
-    // open V menu
-    await page.click('button#mceu_18-open');
-    await page.keyboard.press('ArrowDown');
-    await page.keyboard.press('Enter');
-    const menuFrameHandle = await page.$('div[id="mceu_39"] > div > div > iframe');
-    const menuFrame = await menuFrameHandle.contentFrame();
-    await menuFrame.click('input#insertBookRadio');
-    await menuFrame.waitForSelector('select#insertBookNumber');
-    // check there are 2 options
-    const optionCount = await menuFrame.$$eval('select#insertBookNumber > option' , element => element.length);
-    expect(optionCount).toBe(2);
-    // select Galatians
-    await menuFrame.select('select#insertBookNumber', 'Gal');
-    await menuFrame.click('input#insert');
-    await page.waitForSelector('div[id="mceu_39"]', {hidden: true});
-    await frame.type('body#tinymce', 'The content of my book');
-    const htmlData = await page.evaluate(`getData()`);
-    expect(htmlData).toBe('<span class=\"book_number mceNonEditable\" wce=\"__t=book_number\" id=\"book1\"> Gal</span>The content of my book');
-    const xmlData = await page.evaluate(`getTEI()`);
-    expect(xmlData).toBe(xmlHead + '<div type="book" n="Gal"><w>The</w><w>content</w><w>of</w><w>my</w><w>book</w></div>' + xmlTail);
-  }, 200000);
 
 
-
-  // Ending here the functional tests to test the new option to provide a list of books a select in the V menu
-
-});
-
-describe('testing with defaultValuesForSpaceMenu setting', () => {
-
-  beforeEach(async () => {
-    let frameHandle;
-    jest.setTimeout(5000000);
-    page = await browser.newPage();
-    await page.goto(`file:${path.join(__dirname, 'test_index_page.html')}`);
-    // because char is the first option in the select it is always populated with that so I'm using line instead
-    await page.evaluate(`setWceEditor('wce_editor', {defaultValuesForSpaceMenu: {'unit': 'line', 'extent': 5}})`);
-    page.waitForSelector("#wce_editor_ifr");
-    frameHandle = null;
-    while (frameHandle === null) {
-      frameHandle = await page.$("iframe[id='wce_editor_ifr']");
-    }
-    frame = await frameHandle.contentFrame();
-
-  });
-
-  test('test default space options', async () => {
-    await frame.type('body#tinymce', 'space between  words');
-    for (let i = 0; i < ' words'.length; i++) {
-      await page.keyboard.press('ArrowLeft');
-    }
-    // open P menu
-    await page.click('button#mceu_17-open');
-    // navigate submenu
-    await page.keyboard.press('ArrowDown');
-    await page.keyboard.press('ArrowDown');
-    await page.keyboard.press('ArrowRight');
-    await page.keyboard.press('Enter');
-    // access menu window and make selection
-    const menuFrameHandle = await page.$('div[id="mceu_41"] > div > div > iframe');
-    const menuFrame = await menuFrameHandle.contentFrame();
-    // check extent is pre-populated 
-    expect(await menuFrame.$eval('#sp_extent', el => el.value)).toBe('5');
-    //check unit is pre-populated
-    expect(await menuFrame.$eval('#sp_unit', el => el.value)).toBe('line');
-    await menuFrame.click('input#insert');
-    await page.waitForSelector('div[id="mceu_41"]', {hidden: true});
-    const htmlData = await page.evaluate(`getData()`);
-    expect(htmlData).toBe('space between <span class=\"spaces\" wce=\"__t=spaces&amp;__n=&amp;original_spaces_text=&amp;help=Help&amp;sp_unit=line&amp;sp_unit_other=&amp;sp_extent=5\"><span class=\"format_start mceNonEditable\">‹</span>sp<span class=\"format_end mceNonEditable\">›</span></span> words');
-    const xmlData = await page.evaluate(`getTEI()`);
-    expect(xmlData).toBe(xmlHead + '<w>space</w><w>between</w><space unit="line" extent="5"/><w>words</w>' + xmlTail);
-  }, 200000);
-
-  test('test default space options can be overriden', async () => {
-    await frame.type('body#tinymce', 'space between  words');
-    for (let i = 0; i < ' words'.length; i++) {
-      await page.keyboard.press('ArrowLeft');
-    }
-    // open P menu
-    await page.click('button#mceu_17-open');
-    // navigate submenu
-    await page.keyboard.press('ArrowDown');
-    await page.keyboard.press('ArrowDown');
-    await page.keyboard.press('ArrowRight');
-    await page.keyboard.press('Enter');
-    // access menu window and make selection
-    const menuFrameHandle = await page.$('div[id="mceu_41"] > div > div > iframe');
-    const menuFrame = await menuFrameHandle.contentFrame();
-    // check extent is not populated (since we have a setting for that now)
-    expect(await menuFrame.$eval('#sp_extent', el => el.value)).toBe('5');
-    await menuFrame.click('input#sp_extent');
-    await page.keyboard.press('Backspace');
-    await menuFrame.type('input#sp_extent', '4');
-    //check unit is pre-populated
-    expect(await menuFrame.$eval('#sp_unit', el => el.value)).toBe('line');
-    await menuFrame.select('select[id="sp_unit"]', 'char');
-    await menuFrame.click('input#insert');
-    await page.waitForSelector('div[id="mceu_41"]', {hidden: true});
-    const htmlData = await page.evaluate(`getData()`);
-    expect(htmlData).toBe('space between <span class=\"spaces\" wce=\"__t=spaces&amp;__n=&amp;original_spaces_text=&amp;help=Help&amp;sp_unit=char&amp;sp_unit_other=&amp;sp_extent=4\"><span class=\"format_start mceNonEditable\">‹</span>sp<span class=\"format_end mceNonEditable\">›</span></span> words');
-    const xmlData = await page.evaluate(`getTEI()`);
-    expect(xmlData).toBe(xmlHead + '<w>space</w><w>between</w><space unit="char" extent="4"/><w>words</w>' + xmlTail);
-  }, 200000);
-
-});
-
-describe('testing with invalid defaultValuesForSpaceMenu settings', () => {
-
-  beforeEach(async () => {
-    let frameHandle;
-    jest.setTimeout(5000000);
-    page = await browser.newPage();
-    await page.goto(`file:${path.join(__dirname, 'test_index_page.html')}`);
-    // because char is the first option in the select it is always populated with that so I'm using line instead
-    await page.evaluate(`setWceEditor('wce_editor', {defaultValuesForSpaceMenu: {'unit': 'nonsense', 'extent': 'five'}})`);
-    page.waitForSelector("#wce_editor_ifr");
-    frameHandle = null;
-    while (frameHandle === null) {
-      frameHandle = await page.$("iframe[id='wce_editor_ifr']");
-    }
-    frame = await frameHandle.contentFrame();
-
-  });
-
-  test('test incorrect default behaviour and that they can still be overridden by user actions', async () => {
-    await frame.type('body#tinymce', 'space between  words');
-    for (let i = 0; i < ' words'.length; i++) {
-      await page.keyboard.press('ArrowLeft');
-    }
-    // open P menu
-    await page.click('button#mceu_17-open');
-    // navigate submenu
-    await page.keyboard.press('ArrowDown');
-    await page.keyboard.press('ArrowDown');
-    await page.keyboard.press('ArrowRight');
-    await page.keyboard.press('Enter');
-    // access menu window and make selection
-    const menuFrameHandle = await page.$('div[id="mceu_41"] > div > div > iframe');
-    const menuFrame = await menuFrameHandle.contentFrame();
-    // check extent is not pre-populated because the value supplied was not a number 
-    expect(await menuFrame.$eval('#sp_extent', el => el.value)).toBe('');
-    await menuFrame.click('input#sp_extent');
-    await menuFrame.type('input#sp_extent', '5');
-    //check unit is not pre-populated because the requested value isn't in the option list (it will be empty even though there is no 'empty' option)
-    expect(await menuFrame.$eval('#sp_unit', el => el.value)).toBe('');
-    await menuFrame.select('select[id="sp_unit"]', 'line');
-    await menuFrame.click('input#insert');
-    await page.waitForSelector('div[id="mceu_41"]', {hidden: true});
-    const htmlData = await page.evaluate(`getData()`);
-    expect(htmlData).toBe('space between <span class=\"spaces\" wce=\"__t=spaces&amp;__n=&amp;original_spaces_text=&amp;help=Help&amp;sp_unit=line&amp;sp_unit_other=&amp;sp_extent=5\"><span class=\"format_start mceNonEditable\">‹</span>sp<span class=\"format_end mceNonEditable\">›</span></span> words');
-    const xmlData = await page.evaluate(`getTEI()`);
-    expect(xmlData).toBe(xmlHead + '<w>space</w><w>between</w><space unit="line" extent="5"/><w>words</w>' + xmlTail);
-  }, 200000);
-
-});
