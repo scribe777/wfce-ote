@@ -33,6 +33,7 @@
 */
 
 
+
 /** Initialises the editor
 
 @param {string} _id - The html id value of the text area to transform into the editor.
@@ -48,6 +49,8 @@
 @param {defaultValuesForSpaceMenu} clientOptions.defaultValuesForSpaceMenu - The default settings to use to pre-poulate the spaces menu. Default does not pre-populate anything but does select first option on the unit list.
 @param {string} clientOptions.defaultValuesForSpaceMenu.unit - The unit value to preselect.
 @param {number} clientOptions.defaultValuesForSpaceMenu.extent - The extent number to preselect.
+@param {boolean} clientOptions.showMultilineNotesAsSingleEntry - If set to true this combines multiline untranscribed commentary and lectionary notes into a single line (does not change the XML output). Default is false.
+@param {boolean} clientOptions.checkOverlineForAbbr - If set to true this will check the 'add overline' option in the abbreviation form when it is loaded. Default is false.
 @param {baseURL} string - Explicitly sets TinyMCE's base URL.
 @param {callback} function - The function to call once the editor is loaded.
 
