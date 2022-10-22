@@ -111,22 +111,29 @@
 	}
 		
 	function init() {
-		comboBindReturnEvent('insert'); 
-		wceInfoInit('spaces');
-		readWceNodeInfo();
-		if (ed.settings.clientOptions.hasOwnProperty('defaultValuesForSpaceMenu')) {
-			if (ed.settings.clientOptions.defaultValuesForSpaceMenu.hasOwnProperty('unit')) {
-				document.getElementById('sp_unit').value = ed.settings.clientOptions.defaultValuesForSpaceMenu.unit;
+		// set defaults early so they don't overwrite the real data when editing
+		if (ed.settings.clientOptions.defaultValuesForSpaceMenu) {
+			if (ed.settings.clientOptions.defaultValuesForSpaceMenu.unit) {
+				let spUnit = document.getElementById('sp_unit');
+				spUnit.value = ed.settings.clientOptions.defaultValuesForSpaceMenu.unit;
+				if (spUnit.selectedIndex === -1) {
+					spUnit.value = 'other';
+					document.getElementById('sp_unit_other').value = ed.settings.clientOptions.defaultValuesForSpaceMenu.unit;
+				}
 			}
 			if (ed.settings.clientOptions.defaultValuesForSpaceMenu.hasOwnProperty('extent') &&
 					!isNaN(parseInt(ed.settings.clientOptions.defaultValuesForSpaceMenu.extent))) {
 				document.getElementById('sp_extent').value = ed.settings.clientOptions.defaultValuesForSpaceMenu.extent;
 			}
 		}
+		comboBindReturnEvent('insert'); 
+		wceInfoInit('spaces');
+		readWceNodeInfo();
 		setstatus_spaces();
 	}
 	function checkstatus_spacesunit() {
-		if (document.spacesinfo.sp_unit.options[2].selected == true) {
+		if (document.spacesinfo.sp_unit.selectedIndex !== -1 &&
+				document.spacesinfo.sp_unit.options[document.spacesinfo.sp_unit.selectedIndex].value == 'other') {
 			document.spacesinfo.sp_unit_other.disabled = false;
 			document.getElementById('sp_unit_other').style.backgroundColor = "white";
 		} else {
@@ -152,8 +159,11 @@
 	}
 	
 	function testOther() {
-		if (document.spacesinfo.sp_unit.options[2].selected == true && document.getElementById('sp_unit_other').value == '') 
+		if (document.spacesinfo.sp_unit.selectedIndex !== -1 &&
+				document.spacesinfo.sp_unit.options[document.spacesinfo.sp_unit.selectedIndex].value == 'other' && 
+					document.getElementById('sp_unit_other').value == '') { 
 			return false;
+		}
 	return true;
 	}
 	

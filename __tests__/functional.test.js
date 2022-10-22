@@ -228,6 +228,212 @@ describe('testing basic word/pc level functions', () => {
       expect(htmlData).toBe('space between <span class=\"spaces\" wce=\"__t=spaces&amp;__n=&amp;original_spaces_text=&amp;help=Help&amp;sp_unit=char&amp;sp_unit_other=&amp;sp_extent=5\"><span class=\"format_start mceNonEditable\">‹</span>sp<span class=\"format_end mceNonEditable\">›</span></span> words');
       const xmlData = await page.evaluate(`getTEI()`);
       expect(xmlData).toBe(xmlHead + '<w>space</w><w>between</w><space unit="char" extent="5"/><w>words</w>' + xmlTail);
+
+      // test editing
+      await page.keyboard.press('ArrowLeft');
+      await page.keyboard.press('ArrowLeft');
+      await page.keyboard.press('ArrowLeft');
+      await page.keyboard.press('ArrowLeft');
+      // open P menu
+      await page.click('button#mceu_17-open');
+      // navigate submenu
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('ArrowRight');
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('Enter');
+      // access menu window and make selection
+      const menuFrameHandle2 = await page.$('div[id="mceu_42"] > div > div > iframe');
+      const menuFrame2 = await menuFrameHandle2.contentFrame();
+      // check extent is populated correctly
+      expect(await menuFrame2.$eval('#sp_extent', el => el.value)).toBe('5');
+      
+      await menuFrame2.type('input#sp_extent', '4');
+      await page.keyboard.press('ArrowLeft');
+      await page.keyboard.press('Backspace');
+
+      //NB the selected input will be char as that is at the top of the list and there is no empty select option
+      await menuFrame2.click('input#insert');
+      await page.waitForSelector('div[id="mceu_42"]', {hidden: true});
+      const htmlData2 = await page.evaluate(`getData()`);
+      expect(htmlData2).toBe('space between <span class=\"spaces\" wce=\"__t=spaces&amp;__n=&amp;original_spaces_text=&amp;help=Help&amp;sp_unit=char&amp;sp_unit_other=&amp;sp_extent=4\"><span class=\"format_start mceNonEditable\">‹</span>sp<span class=\"format_end mceNonEditable\">›</span></span> words');
+      const xmlData2 = await page.evaluate(`getTEI()`);
+      expect(xmlData2).toBe(xmlHead + '<w>space</w><w>between</w><space unit="char" extent="4"/><w>words</w>' + xmlTail);
+
+      // test deletion
+      // open P menu
+      await page.click('button#mceu_17-open');
+      // navigate submenu
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('ArrowRight');
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('Enter');
+
+      const xmlData3 = await page.evaluate(`getTEI()`);
+      expect(xmlData3).toBe(xmlHead + '<w>space</w><w>between</w><w>words</w>' + xmlTail);
+
+    }, 200000);
+
+    test('test that editing and deletion works if data is loaded with setTEI', async () => {
+
+      // preload the data
+      const data = xmlHead + '<w>space</w><w>between</w><space unit="char" extent="5"/><w>words</w>' + xmlTail;
+      await page.evaluate(`setTEI('${data}');`);
+
+      // test editing
+      for (let i = 0; i < 'space between '.length; i += 1) {
+        await page.keyboard.press('ArrowRight');
+      } 
+      await page.keyboard.press('ArrowRight');
+      await page.keyboard.press('ArrowRight');
+
+      // open P menu
+      await page.click('button#mceu_17-open');
+      // navigate submenu
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('ArrowRight');
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('Enter');
+      // access menu window and make selection
+      const menuFrameHandle = await page.$('div[id="mceu_41"] > div > div > iframe');
+      const menuFrame = await menuFrameHandle.contentFrame();
+      // check extent is populated correctly
+      expect(await menuFrame2.$eval('#sp_extent', el => el.value)).toBe('5');
+      await menuFrame.select('select[id="sp_unit"]', 'line');
+      await menuFrame.type('input#sp_extent', '4');
+      await page.keyboard.press('ArrowLeft');
+      await page.keyboard.press('Backspace');
+
+      //NB the selected input will be char as that is at the top of the list and there is no empty select option
+      await menuFrame.click('input#insert');
+      await page.waitForSelector('div[id="mceu_41"]', {hidden: true});
+      const htmlData = await page.evaluate(`getData()`);
+      expect(htmlData).toBe('space between <span class=\"spaces\" wce=\"__t=spaces&amp;__n=&amp;original_spaces_text=&amp;help=Help&amp;sp_unit=line&amp;sp_unit_other=&amp;sp_extent=4\"><span class=\"format_start mceNonEditable\">‹</span>sp<span class=\"format_end mceNonEditable\">›</span></span>words');
+      const xmlData = await page.evaluate(`getTEI()`);
+      expect(xmlData).toBe(xmlHead + '<w>space</w><w>between</w><space unit="line" extent="4"/><w>words</w>' + xmlTail);
+
+      // test deletion
+      // open P menu
+      await page.click('button#mceu_17-open');
+      // navigate submenu
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('ArrowRight');
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('Enter');
+
+      const xmlData2 = await page.evaluate(`getTEI()`);
+      expect(xmlData2).toBe(xmlHead + '<w>space</w><w>between</w><w>words</w>' + xmlTail);
+
+    }, 200000);
+
+    test('test that editing and deletion works if data is loaded with setTEI and the \'other\' option is required', async () => {
+      // preload the data
+      const data = xmlHead + '<w>space</w><w>between</w><space unit="millimetres" extent="5"/><w>words</w>' + xmlTail;
+      await page.evaluate(`setTEI('${data}');`);
+
+      // test editing
+      for (let i = 0; i < 'space between '.length; i += 1) {
+        await page.keyboard.press('ArrowRight');
+      } 
+      await page.keyboard.press('ArrowRight');
+      await page.keyboard.press('ArrowRight');
+
+      // open P menu
+      await page.click('button#mceu_17-open');
+      // navigate submenu
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('ArrowRight');
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('Enter');
+      // access menu window and make selection
+      const menuFrameHandle = await page.$('div[id="mceu_41"] > div > div > iframe');
+      const menuFrame = await menuFrameHandle.contentFrame();
+      // check form is populated correctly
+      expect(await menuFrame.$eval('#sp_extent', el => el.value)).toBe('5');
+      expect(await menuFrame.$eval('#sp_unit', el => el.value)).toBe('other');
+      expect(await menuFrame.$eval('#sp_unit_other', el => el.disabled)).toBe(false);
+      expect(await menuFrame.$eval('#sp_unit_other', el => el.value)).toBe('millimetres');
+
+      await menuFrame.click('input#insert');
+      await page.waitForSelector('div[id="mceu_41"]', {hidden: true});
+      const htmlData = await page.evaluate(`getData()`);
+      expect(htmlData).toBe('space between <span class=\"spaces\" wce=\"__t=spaces&amp;__n=&amp;original_spaces_text=&amp;help=Help&amp;sp_unit=other&amp;sp_unit_other=millimetres&amp;sp_extent=5\"><span class=\"format_start mceNonEditable\">‹</span>sp<span class=\"format_end mceNonEditable\">›</span></span>words');
+      const xmlData = await page.evaluate(`getTEI()`);
+      expect(xmlData).toBe(xmlHead + '<w>space</w><w>between</w><space unit="millimetres" extent="5"/><w>words</w>' + xmlTail);
+
+      // test deletion
+      // open P menu
+      await page.click('button#mceu_17-open');
+      // navigate submenu
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('ArrowRight');
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('Enter');
+
+      const xmlData2 = await page.evaluate(`getTEI()`);
+      expect(xmlData2).toBe(xmlHead + '<w>space</w><w>between</w><w>words</w>' + xmlTail);
+    }, 200000);
+
+    test('test the form behaves correctly for \'other\' selection', async () => {
+
+      await frame.type('body#tinymce', 'space between  words');
+      for (let i = 0; i < ' words'.length; i++) {
+        await page.keyboard.press('ArrowLeft');
+      }
+      // open P menu
+      await page.click('button#mceu_17-open');
+      // navigate submenu
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('ArrowRight');
+      await page.keyboard.press('Enter');
+      // access menu window and make selection
+      const menuFrameHandle = await page.$('div[id="mceu_41"] > div > div > iframe');
+      const menuFrame = await menuFrameHandle.contentFrame();
+      // check the selections and disabled input
+      expect(await menuFrame.$eval('#sp_extent', el => el.value)).toBe('');
+      //NB the selected input will be char as that is at the top of the list and there is no empty select option
+      expect(await menuFrame.$eval('#sp_unit', el => el.value)).toBe('char');
+      expect(await menuFrame.$eval('#sp_unit_other', el => el.value)).toBe('');
+      expect(await menuFrame.$eval('#sp_unit_other', el => el.disabled)).toBe(true);
+
+      // test that selecting other undisabled the correct input box
+      await menuFrame.select('select[id="sp_unit"]', 'other');
+      // NB need to click on this because the function is onclick not onchange (need to understand why before changing it)
+      await menuFrame.click('#sp_unit');
+      expect(await menuFrame.$eval('#sp_unit_other', el => el.disabled)).toBe(false);
+
+      // check that deselecting other disables the other box
+      await menuFrame.select('select[id="sp_unit"]', 'char');
+      // NB need to click on this because the function is onclick not onchange (need to understand why before changing it)
+      await menuFrame.click('#sp_unit');
+      expect(await menuFrame.$eval('#sp_unit_other', el => el.disabled)).toBe(true);
+
+      // check that the other option works
+      await menuFrame.select('select[id="sp_unit"]', 'other');
+      // NB need to click on this because the function is onclick not onchange (need to understand why before changing it)
+      await menuFrame.click('#sp_unit');
+      expect(await menuFrame.$eval('#sp_unit_other', el => el.disabled)).toBe(false);
+      await menuFrame.type('input#sp_unit_other', 'millimetres');
+      await menuFrame.type('input#sp_extent', '4');
+
+      await menuFrame.click('input#insert');
+      await page.waitForSelector('div[id="mceu_41"]', {hidden: true});
+
+      const xmlData = await page.evaluate(`getTEI()`);
+      expect(xmlData).toBe(xmlHead + '<w>space</w><w>between</w><space unit="millimetres" extent="4"/><w>words</w>' + xmlTail);
+
+
+
+
     }, 200000);
   
     // pc typed in
@@ -1958,11 +2164,6 @@ describe('testing marginalia menu', () => {
 
     const menuFrameHandle2 = await menuFrame.$('iframe[id="marginals_text_ifr"]');
     const menuFrame2 = await menuFrameHandle2.contentFrame(); 
-<<<<<<< HEAD
-
-=======
-    
->>>>>>> 5becdf447371c99c511be4a580aca5a593da7aa3
     await menuFrame2.type('body#tinymce', 'Title is here');
   
     // open inner note menu and add a note
@@ -1982,15 +2183,10 @@ describe('testing marginalia menu', () => {
 
   });
 
-<<<<<<< HEAD
 });
 
 describe('testing B menu - breaks', () => {
 
-=======
-
-  // BREAKS
->>>>>>> 5becdf447371c99c511be4a580aca5a593da7aa3
 
   test('initial page, using type=folio', async () => {
 
