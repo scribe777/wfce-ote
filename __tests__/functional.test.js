@@ -962,6 +962,7 @@ describe('testing gap menu', () => {
     // check the 'mark as supplied' box is checked
     expect(await menuFrame.$eval('#mark_as_supplied', el => el.checked)).toBe(true);
 
+
     // check the default select supplied_source is correct and active and the 'other' box is inactive
     expect(await menuFrame.$eval('#supplied_source', el => el.value)).toBe('other');
     expect(await menuFrame.$eval('#supplied_source', el => el.disabled)).toBe(false);
