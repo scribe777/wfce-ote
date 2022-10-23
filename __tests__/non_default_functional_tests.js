@@ -76,7 +76,7 @@ describe('testing Structure entry with bookNames setting', () => {
   
   });
   
-  tests using the checkOverlineForAbbr setting
+  // tests using the checkOverlineForAbbr setting
   
   describe('testing with checkOverlineForAbbr client settings', () => {
   
