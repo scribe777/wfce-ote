@@ -887,17 +887,34 @@ describe('testing gap menu', () => {
     // check the 'mark as supplied' box is checked
     expect(await menuFrame.$eval('#mark_as_supplied', el => el.checked)).toBe(true);
 
-     // check the default select supplied_source is correct and active and the 'other' box is inactive
-     expect(await menuFrame.$eval('#supplied_source', el => el.value)).toBe('transcriber');
-     expect(await menuFrame.$eval('#supplied_source', el => el.disabled)).toBe(false);
-     expect(await menuFrame.$eval('#supplied_source_other', el => el.disabled)).toBe(true);
+    // check the default select supplied_source is correct and active and the 'other' box is inactive
+    expect(await menuFrame.$eval('#supplied_source', el => el.value)).toBe('transcriber');
+    expect(await menuFrame.$eval('#supplied_source', el => el.disabled)).toBe(false);
+    expect(await menuFrame.$eval('#supplied_source_other', el => el.disabled)).toBe(true);
 
-     // reconfirm the data and check the output
-     await menuFrame.click('input#insert');
-     await page.waitForSelector('div[id="mceu_40"]', {hidden: true});
+    // reconfirm the data and check the output
+    await menuFrame.click('input#insert');
+    await page.waitForSelector('div[id="mceu_40"]', {hidden: true});
 
-     const xmlData = await page.evaluate(`getTEI()`);
-     expect(xmlData).toBe(xmlHead + '<w>this</w><w>is</w><w><supplied source="transcriber" reason="lacuna">supplied</supplied></w>' + xmlTail);
+    const xmlData = await page.evaluate(`getTEI()`);
+    expect(xmlData).toBe(xmlHead + '<w>this</w><w>is</w><w><supplied source="transcriber" reason="lacuna">supplied</supplied></w>' + xmlTail);
+
+    // test it can be deleted
+    await page.keyboard.press('ArrowLeft');
+    await page.keyboard.press('ArrowLeft');
+    await page.keyboard.press('ArrowLeft');
+
+    // open D menu
+    await page.click('button#mceu_12-open');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('Enter');
+
+    const xmlData2 = await page.evaluate(`getTEI()`);
+    expect(xmlData2).toBe(xmlHead + '<w>this</w><w>is</w><w>supplied</w>' + xmlTail);
 
   });
 
@@ -915,7 +932,7 @@ describe('testing gap menu', () => {
     await page.keyboard.press('ArrowRight');
     await page.keyboard.press('ArrowRight');
     await page.keyboard.press('ArrowRight');
-    
+
     // open D menu
     await page.click('button#mceu_12-open');
     await page.keyboard.press('ArrowDown');
@@ -932,7 +949,7 @@ describe('testing gap menu', () => {
 
     // check the non-dummy value agrees
     expect(await menuFrame.$eval('#gap_reason', el => el.value)).toBe('unspecified');
- 
+
     // check the drop down menu for supplied_source is the right length
     expect(await menuFrame.$eval('#supplied_source', el => el.options.length)).toBe(5);
 
@@ -945,18 +962,35 @@ describe('testing gap menu', () => {
     // check the 'mark as supplied' box is checked
     expect(await menuFrame.$eval('#mark_as_supplied', el => el.checked)).toBe(true);
 
-     // check the default select supplied_source is correct and active and the 'other' box is inactive
-     expect(await menuFrame.$eval('#supplied_source', el => el.value)).toBe('other');
-     expect(await menuFrame.$eval('#supplied_source', el => el.disabled)).toBe(false);
-     expect(await menuFrame.$eval('#supplied_source_other', el => el.disabled)).toBe(false);
-     expect(await menuFrame.$eval('#supplied_source_other', el => el.value)).toBe('nonsense');
+    // check the default select supplied_source is correct and active and the 'other' box is inactive
+    expect(await menuFrame.$eval('#supplied_source', el => el.value)).toBe('other');
+    expect(await menuFrame.$eval('#supplied_source', el => el.disabled)).toBe(false);
+    expect(await menuFrame.$eval('#supplied_source_other', el => el.disabled)).toBe(false);
+    expect(await menuFrame.$eval('#supplied_source_other', el => el.value)).toBe('nonsense');
 
-     // reconfirm the data and check the output
-     await menuFrame.click('input#insert');
-     await page.waitForSelector('div[id="mceu_40"]', {hidden: true});
+    // reconfirm the data and check the output
+    await menuFrame.click('input#insert');
+    await page.waitForSelector('div[id="mceu_40"]', {hidden: true});
 
-     const xmlData = await page.evaluate(`getTEI()`);
-     expect(xmlData).toBe(xmlHead + '<w>this</w><w>is</w><w><supplied source="nonsense" reason="unspecified">supplied</supplied></w>' + xmlTail);
+    const xmlData = await page.evaluate(`getTEI()`);
+    expect(xmlData).toBe(xmlHead + '<w>this</w><w>is</w><w><supplied source="nonsense" reason="unspecified">supplied</supplied></w>' + xmlTail);
+
+    // test it can be deleted
+    await page.keyboard.press('ArrowLeft');
+    await page.keyboard.press('ArrowLeft');
+    await page.keyboard.press('ArrowLeft');
+
+      // open D menu
+    await page.click('button#mceu_12-open');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('Enter');
+
+    const xmlData2 = await page.evaluate(`getTEI()`);
+    expect(xmlData2).toBe(xmlHead + '<w>this</w><w>is</w><w>supplied</w>' + xmlTail);
 
   });
 
@@ -972,8 +1006,8 @@ describe('testing gap menu', () => {
     await page.keyboard.press('ArrowDown');
     await page.keyboard.press('ArrowRight');
     await page.keyboard.press('Enter');
-    var menuFrameHandle = await page.$('div[id="mceu_40"] > div > div > iframe');
-    var menuFrame = await menuFrameHandle.contentFrame();
+    const menuFrameHandle = await page.$('div[id="mceu_40"] > div > div > iframe');
+    const menuFrame = await menuFrameHandle.contentFrame();
 
     // check the form is properly set up for gaps (not supplied)
     // check the 'mark as supplied' box is not checked
@@ -993,9 +1027,9 @@ describe('testing gap menu', () => {
     await menuFrame.click('input#insert');
     await page.waitForSelector('div[id="mceu_40"]', {hidden: true});
 
-    var htmlData = await page.evaluate(`getData()`);
+    const htmlData = await page.evaluate(`getData()`);
     expect(htmlData).toBe('this <span class=\"gap\" wce_orig=\"\" wce=\"__t=gap&amp;__n=&amp;original_gap_text=&amp;help=Help&amp;gap_reason_dummy_lacuna=lacuna&amp;gap_reason_dummy_illegible=illegible&amp;gap_reason_dummy_unspecified=unspecified&amp;gap_reason_dummy_inferredPage=inferredPage&amp;gap_reason=illegible&amp;unit=char&amp;unit_other=&amp;extent=10&amp;extent_unspecified=Extent%3DUnspecified&amp;extent_part=Extent%3DPart&amp;supplied_source=na28&amp;supplied_source_other=\"><span class=\"format_start mceNonEditable\">‹</span>[10]<span class=\"format_end mceNonEditable\">›</span></span> continues');
-    var xmlData = await page.evaluate(`getTEI()`);
+    const xmlData = await page.evaluate(`getTEI()`);
     expect(xmlData).toBe(xmlHead + '<w>this</w><gap reason="illegible" unit="char" extent="10"/><w>continues</w>' + xmlTail);
 
     // now check that we can edit it 
@@ -1003,27 +1037,44 @@ describe('testing gap menu', () => {
     await page.keyboard.press('ArrowLeft');
     await page.keyboard.press('ArrowLeft');
 
+    // open D menu
     await page.click('button#mceu_12-open');
     await page.keyboard.press('ArrowDown');
     await page.keyboard.press('ArrowDown');
     await page.keyboard.press('ArrowRight');
     await page.keyboard.press('ArrowDown');
     await page.keyboard.press('Enter');
-    menuFrameHandle = await page.$('div[id="mceu_41"] > div > div > iframe');
+    const menuFrameHandle2 = await page.$('div[id="mceu_41"] > div > div > iframe');
+    const menuFrame2 = await menuFrameHandle2.contentFrame();
 
-    menuFrame = await menuFrameHandle.contentFrame();
+    expect(await menuFrame2.$eval('#unit', el => el.value)).toBe('char');
+    expect(await menuFrame2.$eval('#unit', el => el.disabled)).toBe(false);
+    expect(await menuFrame2.$eval('input#extent', el => el.value)).toBe('10');
+    expect(await menuFrame2.$eval('#gap_reason_dummy_illegible', el => el.checked)).toBe(true);
+    expect(await menuFrame2.$eval('#gap_reason', el => el.value)).toBe('illegible');
 
-    expect(await menuFrame.$eval('#unit', el => el.value)).toBe('char');
-    expect(await menuFrame.$eval('#unit', el => el.disabled)).toBe(false);
-    expect(await menuFrame.$eval('input#extent', el => el.value)).toBe('10');
-    expect(await menuFrame.$eval('#gap_reason_dummy_illegible', el => el.checked)).toBe(true);
-    expect(await menuFrame.$eval('#gap_reason', el => el.value)).toBe('illegible');
-
-    await menuFrame.click('input#insert');
+    await menuFrame2.click('input#insert');
     await page.waitForSelector('div[id="mceu_41"]', {hidden: true});
 
-    xmlData = await page.evaluate(`getTEI()`);
-    expect(xmlData).toBe(xmlHead + '<w>this</w><gap reason="illegible" unit="char" extent="10"/><w>continues</w>' + xmlTail);
+    const xmlData2 = await page.evaluate(`getTEI()`);
+    expect(xmlData2).toBe(xmlHead + '<w>this</w><gap reason="illegible" unit="char" extent="10"/><w>continues</w>' + xmlTail);
+
+    // check it can be deleted
+    await page.keyboard.press('ArrowLeft');
+    await page.keyboard.press('ArrowLeft');
+    await page.keyboard.press('ArrowLeft');
+
+    // open D menu
+    await page.click('button#mceu_12-open');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('Enter');
+
+    const xmlData3 = await page.evaluate(`getTEI()`);
+    expect(xmlData3).toBe(xmlHead + '<w>this</w><w>continues</w>' + xmlTail);
 
   }, 200000);
 
@@ -1047,8 +1098,8 @@ describe('testing gap menu', () => {
     await page.keyboard.press('ArrowRight');
     await page.keyboard.press('ArrowDown');
     await page.keyboard.press('Enter');
-    var menuFrameHandle = await page.$('div[id="mceu_40"] > div > div > iframe');
-    var menuFrame = await menuFrameHandle.contentFrame();
+    const menuFrameHandle = await page.$('div[id="mceu_40"] > div > div > iframe');
+    const menuFrame = await menuFrameHandle.contentFrame();
 
     expect(await menuFrame.$eval('#unit', el => el.value)).toBe('char');
     expect(await menuFrame.$eval('#unit', el => el.disabled)).toBe(false);
@@ -1059,8 +1110,25 @@ describe('testing gap menu', () => {
     await menuFrame.click('input#insert');
     await page.waitForSelector('div[id="mceu_40"]', {hidden: true});
 
-    xmlData = await page.evaluate(`getTEI()`);
+    const xmlData = await page.evaluate(`getTEI()`);
     expect(xmlData).toBe(xmlHead + '<w>this</w><gap reason="illegible" unit="char" extent="10"/><w>continues</w>' + xmlTail);
+
+    // check it can be deleted
+    await page.keyboard.press('ArrowLeft');
+    await page.keyboard.press('ArrowLeft');
+    await page.keyboard.press('ArrowLeft');
+    await page.keyboard.press('ArrowLeft');
+    // open D menu
+    await page.click('button#mceu_12-open');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('Enter');
+
+    const xmlData2 = await page.evaluate(`getTEI()`);
+    expect(xmlData2).toBe(xmlHead + '<w>this</w><w>continues</w>' + xmlTail);
 
   }, 200000);
 
@@ -1201,6 +1269,50 @@ describe('testing gap menu', () => {
     expect(htmlData).toBe('missing <span class=\"gap\" wce_orig=\"\" wce=\"__t=gap&amp;__n=&amp;original_gap_text=&amp;help=Help&amp;gap_reason_dummy_lacuna=lacuna&amp;gap_reason_dummy_illegible=illegible&amp;gap_reason_dummy_unspecified=unspecified&amp;gap_reason_dummy_inferredPage=inferredPage&amp;gap_reason=lacuna&amp;unit=quire&amp;unit_other=&amp;extent=1&amp;extent_unspecified=Extent%3DUnspecified&amp;extent_part=Extent%3DPart&amp;supplied_source=na28&amp;supplied_source_other=\"><span class=\"format_start mceNonEditable\">‹</span><br />QB<br />[...]<span class=\"format_end mceNonEditable\">›</span></span> quire');
     const xmlData = await page.evaluate(`getTEI()`);
     expect(xmlData).toBe(xmlHead + '<w>missing</w><gap reason="lacuna" unit="quire" extent="1"/><w>quire</w>' + xmlTail);
+
+    // check editing
+    await page.keyboard.press('ArrowLeft');
+    await page.keyboard.press('ArrowLeft');
+    await page.keyboard.press('ArrowLeft');
+
+    // open D menu
+    await page.click('button#mceu_12-open');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('Enter');
+    const menuFrameHandle2 = await page.$('div[id="mceu_41"] > div > div > iframe');
+    const menuFrame2 = await menuFrameHandle2.contentFrame();
+
+    expect(await menuFrame2.$eval('#unit', el => el.value)).toBe('quire');
+    expect(await menuFrame2.$eval('#unit', el => el.disabled)).toBe(false);
+    expect(await menuFrame2.$eval('input#extent', el => el.value)).toBe('1');
+    expect(await menuFrame2.$eval('#gap_reason_dummy_lacuna', el => el.checked)).toBe(true);
+    expect(await menuFrame2.$eval('#gap_reason', el => el.value)).toBe('lacuna');
+
+    await menuFrame2.click('input#insert');
+    await page.waitForSelector('div[id="mceu_41"]', {hidden: true});
+
+    const xmlData2 = await page.evaluate(`getTEI()`);
+    expect(xmlData2).toBe(xmlHead + '<w>missing</w><gap reason="lacuna" unit="quire" extent="1"/><w>quire</w>' + xmlTail);
+
+    // check deleting
+    await page.keyboard.press('ArrowLeft');
+    await page.keyboard.press('ArrowLeft');
+    await page.keyboard.press('ArrowLeft');
+
+    // open D menu
+    await page.click('button#mceu_12-open');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('Enter');
+    const xmlData3 = await page.evaluate(`getTEI()`);
+    expect(xmlData3).toBe(xmlHead + '<w>missing</w><w>quire</w>' + xmlTail);
+
   }, 200000);
 
   test('missing pages', async () => {
@@ -1227,6 +1339,61 @@ describe('testing gap menu', () => {
     const xmlData = await page.evaluate(`getTEI()`);
     // NB when created in the editor the XML is different compared to this test starting from XML input (page, col and line breaks added here for last page)
     expect(xmlData).toBe(xmlHead + '<w>missing</w><gap reason="lacuna" unit="page" extent="2"/><pb n="1r" type="folio" xml:id="P1r-"/><cb n="P1rC1-"/><lb n="P1rC1L-"/><w>pages</w>' + xmlTail);
+
+   // check editing
+   await page.keyboard.press('ArrowUp');
+   await page.keyboard.press('ArrowUp');
+   await page.keyboard.press('ArrowUp');
+
+   await page.keyboard.press('ArrowLeft');
+   await page.keyboard.press('ArrowLeft');
+   await page.keyboard.press('ArrowLeft');
+
+   // open D menu
+   await page.click('button#mceu_12-open');
+   await page.keyboard.press('ArrowDown');
+   await page.keyboard.press('ArrowDown');
+   await page.keyboard.press('ArrowRight');
+   await page.keyboard.press('ArrowDown');
+   await page.keyboard.press('Enter');
+   const menuFrameHandle2 = await page.$('div[id="mceu_41"] > div > div > iframe');
+   const menuFrame2 = await menuFrameHandle2.contentFrame();
+
+   expect(await menuFrame2.$eval('#unit', el => el.value)).toBe('page');
+   expect(await menuFrame2.$eval('#unit', el => el.disabled)).toBe(false);
+   expect(await menuFrame2.$eval('input#extent', el => el.value)).toBe('2');
+   expect(await menuFrame2.$eval('#gap_reason_dummy_lacuna', el => el.checked)).toBe(true);
+   expect(await menuFrame2.$eval('#gap_reason', el => el.value)).toBe('lacuna');
+
+   await menuFrame2.click('input#insert');
+   await page.waitForSelector('div[id="mceu_41"]', {hidden: true});
+
+   const xmlData2 = await page.evaluate(`getTEI()`);
+   // TODO: change behaviour so pages are not renumbered on edit
+   // NB: this test current behaviour but not the desired bahviour. the page numbers are changed on edit (No idea why)
+   expect(xmlData2).toBe(xmlHead + '<w>missing</w><gap reason="lacuna" unit="page" extent="2"/><pb n="2v" type="folio" xml:id="P2v-"/><cb n="P2vC1-"/><lb n="P2vC1L-"/><w>pages</w>' + xmlTail);
+
+
+   // check deleting
+   await page.keyboard.press('ArrowUp');
+   await page.keyboard.press('ArrowUp');
+   await page.keyboard.press('ArrowUp');
+
+   await page.keyboard.press('ArrowLeft');
+   await page.keyboard.press('ArrowLeft');
+   await page.keyboard.press('ArrowLeft');
+
+   // open D menu
+   await page.click('button#mceu_12-open');
+   await page.keyboard.press('ArrowDown');
+   await page.keyboard.press('ArrowDown');
+   await page.keyboard.press('ArrowRight');
+   await page.keyboard.press('ArrowDown');
+   await page.keyboard.press('ArrowDown');
+   await page.keyboard.press('Enter');
+   const xmlData3 = await page.evaluate(`getTEI()`);
+   expect(xmlData3).toBe(xmlHead + '<w>missing</w><w>pages</w>' + xmlTail);
+
   }, 200000);
 
   test('gap witness end', async () => {

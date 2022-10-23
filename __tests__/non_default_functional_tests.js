@@ -76,7 +76,7 @@ describe('testing Structure entry with bookNames setting', () => {
   
   });
   
-  // tests using the checkOverlineForAbbr setting
+  tests using the checkOverlineForAbbr setting
   
   describe('testing with checkOverlineForAbbr client settings', () => {
   
@@ -210,6 +210,86 @@ describe('testing Structure entry with bookNames setting', () => {
   
       const xmlData = await page.evaluate(`getTEI()`);
       expect(xmlData).toBe(xmlHead + '<w>this</w><w>is</w><w><supplied source="transcriber" reason="lacuna">supplied</supplied></w>' + xmlTail);
+
+    });
+
+
+    test('test supplied text non-default optional pre-selects can be overwritten and edited', async () => {
+      await frame.type('body#tinymce', 'this is supplied');
+      await page.keyboard.down('Shift');
+      for (let i = 0; i < 'supplied'.length; i++) {
+        await page.keyboard.press('ArrowLeft');
+      }
+      await page.keyboard.up('Shift');
+  
+      // open D menu
+      await page.click('button#mceu_12-open');
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('ArrowRight');
+      await page.keyboard.press('Enter');
+      const menuFrameHandle = await page.$('div[id="mceu_40"] > div > div > iframe');
+      const menuFrame = await menuFrameHandle.contentFrame();
+  
+      // check the gap reason pre-select is correct
+      expect(await menuFrame.$eval('#gap_reason_dummy_lacuna', el => el.checked)).toBe(true);
+
+      // check the non-dummy value agrees
+      expect(await menuFrame.$eval('#gap_reason', el => el.value)).toBe('lacuna');
+      // change the value
+      await menuFrame.click('input#gap_reason_dummy_illegible');
+      expect(await menuFrame.$eval('#gap_reason', el => el.value)).toBe('illegible');
+
+      // check the 'mark as supplied' box is checked
+      expect(await menuFrame.$eval('#mark_as_supplied', el => el.checked)).toBe(true);
+  
+      // check the default select supplied_source is correct and active and the 'other' box is inactive
+      expect(await menuFrame.$eval('#supplied_source', el => el.value)).toBe('transcriber');
+      expect(await menuFrame.$eval('#supplied_source', el => el.disabled)).toBe(false);
+      expect(await menuFrame.$eval('#supplied_source_other', el => el.disabled)).toBe(true);
+  
+      // check when other is selected for supplied_source the box to type the value options
+      await menuFrame.select('select[id="supplied_source"]', 'other');
+      expect(await menuFrame.$eval('#supplied_source', el => el.value)).toBe('other');
+      // NB need to click on this because the function is onclick not onchange (need to understand why before changing it)
+      await menuFrame.click('#supplied_source');
+      expect(await menuFrame.$eval('#supplied_source_other', el => el.disabled)).toBe(false);
+      await menuFrame.type('input[id="supplied_source_other"]', 'basetext');
+  
+      await menuFrame.click('input#insert');
+  
+      const xmlData = await page.evaluate(`getTEI()`);
+      expect(xmlData).toBe(xmlHead + '<w>this</w><w>is</w><w><supplied source="basetext" reason="illegible">supplied</supplied></w>' + xmlTail);
+
+      // test editing (ensure defaults don't override data)
+      await page.keyboard.press('ArrowLeft');
+      await page.keyboard.press('ArrowLeft');
+      await page.keyboard.press('ArrowLeft');
+
+      // open D menu
+      await page.click('button#mceu_12-open');
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('ArrowRight');
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('Enter');
+
+      const menuFrameHandle2 = await page.$('div[id="mceu_41"] > div > div > iframe');
+      await page.waitForTimeout(5000)
+      const menuFrame2 = await menuFrameHandle2.contentFrame();
+
+      // check the data is correct
+      expect(await menuFrame2.$eval('#gap_reason_dummy_illegible', el => el.checked)).toBe(true);
+      expect(await menuFrame2.$eval('#gap_reason', el => el.value)).toBe('illegible');
+      expect(await menuFrame2.$eval('#mark_as_supplied', el => el.checked)).toBe(true);
+      expect(await menuFrame2.$eval('#supplied_source', el => el.value)).toBe('other');
+      expect(await menuFrame2.$eval('#supplied_source_other', el => el.disabled)).toBe(false);
+      expect(await menuFrame2.$eval('#supplied_source_other', el => el.value)).toBe('basetext');
+      await menuFrame2.click('input#insert');
+
+      const xmlData2 = await page.evaluate(`getTEI()`);
+      expect(xmlData2).toBe(xmlHead + '<w>this</w><w>is</w><w><supplied source="basetext" reason="illegible">supplied</supplied></w>' + xmlTail);
+
     });
     
   });
