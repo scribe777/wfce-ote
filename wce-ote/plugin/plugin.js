@@ -2654,6 +2654,7 @@
 					var bID = wceNode.getAttribute('id');
 					if (!bID) {
 						ed.selection.select(wceNode);
+
 						ed.insertContent("");
 						//$(wceNode).remove();
 					} else {
@@ -2689,8 +2690,7 @@
 					}
 					isDel=true;
 				}
-
-				if ((originalText && originalText != 'null') || originalText=='') {
+				if ((originalText && originalText != 'null' && originalText != 'undefined') || originalText=='') {
 					if(notAddOriginal){
 					}else{
 						 ed.selection.setContent('');
