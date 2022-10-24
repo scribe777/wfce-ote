@@ -48,7 +48,7 @@
 @param {boolean} clientOptions.addSpaces - Add spaces into the XML of the transcription between tags to make the text readable if all the tags are removed. Default is false.
 @param {boolean} clientOptions.showMultilineNotesAsSingleEntry - If set to true this combines multiline untranscribed commentary and lectionary notes into a single line (does not change the XML output). Default is false.
 @param {boolean} clientOptions.checkOverlineForAbbr - If set to true this will check the 'add overline' option in the abbreviation form when it is loaded. Default is false.
-@param {string} clientOptions.transcriptionCSS - The css to use for the transcription in the editor. Choices are currently coptic and greek. Default is greek.
+@param {string} clientOptions.transcriptionLanguage - The css to use for the transcription in the editor. Choices are currently coptic and greek. Default is greek.
 @param {baseURL} string - Explicitly sets TinyMCE's base URL.
 @param {callback} function - The function to call once the editor is loaded.
 
@@ -90,7 +90,7 @@ function setWceEditor(_id, clientOptions, baseURL, callback) {
 		entity_encoding : "raw",
 		theme_advanced_path : false,
 		execcommand_callback : 'wceExecCommandHandler',
-		content_css: (clientOptions.transcriptionCSS == 'coptic') ? tinymce.baseURL + '../../../wce-ote/custom-css/coptic.css' : tinymce.baseURL + '../../../wce-ote/custom-css/greek.css',
+		content_css: (clientOptions.transcriptionLanguage == 'coptic') ? tinymce.baseURL + '../../../wce-ote/custom-css/coptic.css' : tinymce.baseURL + '../../../wce-ote/custom-css/greek.css',
 		save_onsavecallback : function() {
 			if (saveDataToDB) saveDataToDB(true);
 		},
@@ -104,7 +104,7 @@ function setWceEditor(_id, clientOptions, baseURL, callback) {
 			'wcelinenumber': '../../wce-ote/plugin/js/line_number.js'
 		},
 		show_linenumber:true,//default false,
-		ignoreShiftNotEn: [188, 190],
+		ignoreShiftNotEn: (clientOptions.transcriptionLanguage == 'coptic') ? [] : [188, 190],
 		keyboardDebug: true,
 		init_instance_callback : "wceReload",
 		// Theme options
