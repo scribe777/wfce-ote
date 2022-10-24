@@ -90,7 +90,7 @@ function setWceEditor(_id, clientOptions, baseURL, callback) {
 		entity_encoding : "raw",
 		theme_advanced_path : false,
 		execcommand_callback : 'wceExecCommandHandler',
-		content_css: (clientOptions.transcriptionCSS == 'coptic') ? 'custom-css/coptic.css' : 'custom-css/greek.css',
+		content_css: (clientOptions.transcriptionCSS == 'coptic') ? tinymce.baseURL + '../../../wce-ote/custom-css/coptic.css' : tinymce.baseURL + '../../../wce-ote/custom-css/greek.css',
 		save_onsavecallback : function() {
 			if (saveDataToDB) saveDataToDB(true);
 		},
