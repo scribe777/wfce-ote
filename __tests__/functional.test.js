@@ -1909,8 +1909,10 @@ describe('testing marginalia menu', () => {
 
     const menuFrameHandle = await page.$('div[id="mceu_39"] > div > div > iframe');
     const menuFrame = await menuFrameHandle.contentFrame();
-    // commentary is default option
+
+    await menuFrame.select('select[id="fw_type"]', 'commentary');
     await menuFrame.type('input#covered', '1');
+
     await page.keyboard.press('ArrowRight');
     await page.keyboard.press('Backspace');
 
@@ -1933,7 +1935,8 @@ describe('testing marginalia menu', () => {
 
     const menuFrameHandle = await page.$('div[id="mceu_39"] > div > div > iframe');
     const menuFrame = await menuFrameHandle.contentFrame();
-    // commentary is default option
+
+    await menuFrame.select('select[id="fw_type"]', 'commentary');
     // 0 is default option for lines
 
     await menuFrame.click('input#insert');
