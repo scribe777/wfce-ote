@@ -1344,7 +1344,7 @@ function getHtmlByTei(inputString, clientOptions) {
 				'n' : '&number=',
 				'rend' : '&paratext_alignment=',
 				'type' : {
-					'0' : '@commentary@ews@runTitle@chapNum@chapTitle@lectTitle@lectionary-other@colophon@quireSig@AmmSec@EusCan@euthaliana@gloss@stichoi@pageNum@andrew@orn',
+					'0' : '@commentary@ews@runTitle@chapNum@chapTitle@lectTitle@lectBibRef@lectInstruct@lectionary-other@colophon@quireSig@AmmSec@EusCan@euthaliana@gloss@stichoi@pageNum@andrew@orn',
 					'1' : '&fw_type=',
 					'2' : '&fw_type=other&fw_type_other='
 				}
@@ -3364,9 +3364,9 @@ function getTeiByHtml(inputString, clientOptions) {
 			newNodeName = 'note';
 		} else if (fwType == 'chapNum' || fwType == 'AmmSec' || fwType == 'EusCan' || fwType == 'stichoi' || fwType == 'andrew') {
 			newNodeName = 'num';
-		} else if (fwType == 'runTitle' || fwType == 'chapTitle' || fwType == 'lectTitle' || fwType == 'colophon'
-			|| fwType == 'quireSig' || fwType == 'euthaliana' || fwType == 'gloss' || fwType == 'pageNum'
-			|| fwType == 'orn' || fwType == 'other') {
+		} else if (fwType == 'runTitle' || fwType == 'chapTitle' || fwType == 'lectTitle' || fwType == 'lectBibRef' 
+					|| fwType == 'lectInstruct' || fwType == 'colophon'|| fwType == 'quireSig' || fwType == 'euthaliana' 
+					|| fwType == 'gloss' || fwType == 'pageNum' || fwType == 'orn' || fwType == 'other') {
 			newNodeName = 'fw';
 		}
 		if (fwType !== 'isolated') {

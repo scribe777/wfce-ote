@@ -1947,6 +1947,12 @@
 								case 'lectTitle':
 									info_text += tinymce.translate('fw_lectionary_title');
 									break;
+								case 'lectBibRef':
+									info_text += tinymce.translate('fw_lectionary_bibref');
+									break;
+								case 'lectInstruct':
+									info_text += tinymce.translate('fw_lectionary_instruct');
+									break;
 								case 'lectionary-other':
 									info_text = '<div>' + tinymce.translate('infotext_untranscribed_other_lections') + '</div>';
 									if (ar['covered'] > 0)

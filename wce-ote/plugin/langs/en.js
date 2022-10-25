@@ -95,6 +95,8 @@ tinymce.addI18n('en',{
 	fw_chapter_title : "Chapter title",
 	fw_chapter_number : "Chapter number",
 	fw_lectionary_title : "Lectionary notation",
+	fw_lectionary_bibref : "Lectionary Biblical Reference",
+	fw_lectionary_instruct : "Lectionary Instruction",
 	fw_other_lections : "Lectionary text placeholder",
 	fw_lectionary_incipit : "Lectionary incipit",
 	fw_lectionary_explicit : "Lectionary explicit",
