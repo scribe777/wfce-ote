@@ -83,6 +83,35 @@ describe('testing editor appearance', () => {
     
   });
 
+  test('check that the correct functions are avilable', async () => {
+    expect(await page.waitForSelector('div[aria-label="Undo"]')).toBeTruthy();
+    expect(await page.waitForSelector('div[aria-label="Redo"]')).toBeTruthy();
+    expect(await page.waitForSelector('div[aria-label="Special character"]')).toBeTruthy();
+
+    expect(await page.waitForSelector('div[aria-label="Source code"]')).toBeTruthy();
+
+    expect(await page.$eval('#mceu_4 > button > span', element => element.textContent)).toBe('Save');
+
+    expect(await page.waitForSelector('div[aria-label="Print"]')).toBeTruthy();
+    expect(await page.waitForSelector('div[aria-label="Cut"]')).toBeTruthy();
+    expect(await page.waitForSelector('div[aria-label="Copy"]')).toBeTruthy();
+    expect(await page.waitForSelector('div[aria-label="Paste"]')).toBeTruthy();
+    expect(await page.waitForSelector('div[aria-label="Fullscreen"]')).toBeTruthy();
+
+    XMLButton = await page.$eval('#mceu_19 > button > i', element=> element.getAttribute('style'));
+    expect(XMLButton).toContain('button_XML.png');
+
+    XMLButton = await page.$eval('#mceu_20 > button > i', element=> element.getAttribute('style'));
+    expect(XMLButton).toContain('button_Help.png');
+
+    XMLButton = await page.$eval('#mceu_21 > button > i', element=> element.getAttribute('style'));
+    expect(XMLButton).toContain('button_Info.png');
+
+    XMLButton = await page.$eval('#mceu_22 > button > i', element=> element.getAttribute('style'));
+    expect(XMLButton).toContain('xmlinput.jpg');
+
+  });
+
 });
 
 
@@ -279,11 +308,11 @@ describe('testing basic word/pc level functions', () => {
       await page.keyboard.press('Enter');
       await page.waitForTimeout(6000)
   
-      const menuFrameHandle = await page.$('div[id="mceu_59"] > div > div > iframe');
+      const menuFrameHandle = await page.$('div[id="mceu_58"] > div > div > iframe');
       const menuFrame = await menuFrameHandle.contentFrame();
       await menuFrame.type('input#pc_char', '-');
       await menuFrame.click('input#insert');
-      await page.waitForSelector('div[id="mceu_59"]', {hidden: true});
+      await page.waitForSelector('div[id="mceu_58"]', {hidden: true});
   
       const htmlData = await page.evaluate(`getData()`);
       expect(htmlData).toBe('my words<span class=\"pc\" wce=\"__t=pc\">' +

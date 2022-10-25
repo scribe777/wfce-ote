@@ -48,11 +48,13 @@
 @param {boolean} clientOptions.addSpaces - Add spaces into the XML of the transcription between tags to make the text readable if all the tags are removed. Default is false.
 @param {boolean} clientOptions.showMultilineNotesAsSingleEntry - If set to true this combines multiline untranscribed commentary and lectionary notes into a single line (does not change the XML output). Default is false.
 @param {boolean} clientOptions.checkOverlineForAbbr - If set to true this will check the 'add overline' option in the abbreviation form when it is loaded. Default is false.
+@param {string} clientOptions.toolbar - The string to use to configure the toolbar. It should be a subset of the default provided, | put a divider at that point in the toolbar.
 @param {baseURL} string - Explicitly sets TinyMCE's base URL.
 @param {callback} function - The function to call once the editor is loaded.
 
 */
 function setWceEditor(_id, clientOptions, baseURL, callback) {
+	let toolbar;
 	if (typeof clientOptions === 'undefined') {
 		clientOptions = {};
 	}
@@ -72,6 +74,14 @@ function setWceEditor(_id, clientOptions, baseURL, callback) {
 
 	if (!clientOptions.getBookNameFromBKV) {
 		clientOptions.getBookNameFromBKV = getBookNameFromBKV;
+	}
+
+	if (clientOptions.toolbar) {
+		toolbar = clientOptions.toolbar;
+	} else {
+		toolbar = 'undo redo charmap | code | save print contextmenu cut copy paste fullscreen | ' +
+				  'breaks correction illegible decoration abbreviation paratext note punctuation versemodify | ' +
+				  'showTeiByHtml help | info showHtmlByTei';
 	}
 
 	tinymce.init({
@@ -107,8 +117,7 @@ function setWceEditor(_id, clientOptions, baseURL, callback) {
 		keyboardDebug: true,
 		init_instance_callback : "wceReload",
 		// Theme options
-		toolbar : "undo redo charmap | code | save print contextmenu cut copy paste fullscreen | "+
-		"breaks correction illegible decoration abbreviation paratext note punctuation versemodify | showTeiByHtml help | info showHtmlByTei",
+		toolbar : toolbar,
 		theme_advanced_buttons2 : "",
 		theme_advanced_toolbar_location : "top",
 		theme_advanced_toolbar_align : "left",
