@@ -39,7 +39,7 @@ describe('testing Structure entry with bookNames setting', () => {
       let frameHandle;
       jest.setTimeout(5000000);
       page = await browser.newPage();
-      await page.goto(`file:${path.join(__dirname, 'test_index_page.html')}`);
+      await page.goto(`file:${path.join(__dirname, '../test_index_page.html')}`);
       await page.evaluate(`setWceEditor('wce_editor', {bookNames: ['John', 'Gal']})`);
       page.waitForSelector("#wce_editor_ifr");
       frameHandle = null;
