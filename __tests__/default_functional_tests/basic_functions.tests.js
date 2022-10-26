@@ -228,7 +228,8 @@ describe('testing basic word/pc level functions', () => {
     expect(xmlData).toBe(xmlHead + '<w>my</w><w>words</w><pc>;</pc>' + xmlTail);
   }, 200000);
 
-  // abbr
+      //abbr
+  // nomsac without overline
   test('test abbr', async () => {
     await frame.type('body#tinymce', 'a ns abbreviation');
 
@@ -253,9 +254,42 @@ describe('testing basic word/pc level functions', () => {
     await page.waitForSelector('div[id="mceu_40"]', {hidden: true});
 
     const htmlData = await page.evaluate(`getData()`);
+    expect(htmlData).toBe('a <span class=\"abbr\" wce_orig=\"ns\" wce=\"__t=abbr&amp;__n=&amp;original_abbr_text=&amp;help=Help&amp;abbr_type=nomSac&amp;abbr_type_other=\"><span class=\"format_start mceNonEditable\">‹</span>ns<span class=\"format_end mceNonEditable\">›</span></span> abbreviation');
+    const xmlData = await page.evaluate(`getTEI()`);
+    expect(xmlData).toBe(xmlHead + '<w>a</w><w><abbr type="nomSac">ns</abbr></w><w>abbreviation</w>' + xmlTail);
+  }, 200000);
+
+  // nomsac with overline
+  test('test abbr', async () => {
+    await frame.type('body#tinymce', 'a ns abbreviation');
+
+    for (let i = 0; i < ' abbreviation'.length; i++) {
+      await page.keyboard.press('ArrowLeft');
+    }
+    await page.keyboard.down('Shift');
+    for (let i = 0; i < 'ns'.length; i++) {
+      await page.keyboard.press('ArrowLeft');
+    }
+    await page.keyboard.up('Shift');
+    // open A menu
+    await page.click('button#mceu_14-open');
+    // open abbreviation menu
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('Enter');
+    // use defaults
+    const menuFrameHandle = await page.$('div[id="mceu_40"] > div > div > iframe');
+    const menuFrame = await menuFrameHandle.contentFrame();
+    await menuFrame.click('#add_overline');
+    await menuFrame.click('input#insert');
+    await page.waitForSelector('div[id="mceu_40"]', {hidden: true});
+
+    const htmlData = await page.evaluate(`getData()`);
     expect(htmlData).toBe('a <span class="abbr_add_overline" wce_orig="ns" wce="__t=abbr&amp;__n=&amp;original_abbr_text=&amp;help=Help&amp;abbr_type=nomSac&amp;abbr_type_other=&amp;add_overline=overline"><span class="format_start mceNonEditable">‹</span>ns<span class="format_end mceNonEditable">›</span></span> abbreviation');
     const xmlData = await page.evaluate(`getTEI()`);
     expect(xmlData).toBe(xmlHead + '<w>a</w><w><abbr type="nomSac"><hi rend="overline">ns</hi></abbr></w><w>abbreviation</w>' + xmlTail);
   }, 200000);
+
+  // TODO: add more tests on different abbr structures here?
   
 });
