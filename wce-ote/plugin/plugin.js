@@ -2696,7 +2696,7 @@
 					isDel=true;
 				}
 
-				if ((originalText && originalText != 'null') || originalText=='') {
+				if ((originalText && originalText != 'null' && originalText != 'undefined') || originalText=='') {
 					if(notAddOriginal){
 					}else{
 						 ed.selection.setContent('');

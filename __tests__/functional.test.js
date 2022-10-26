@@ -18,14 +18,14 @@ jest.setTimeout(5000000);
 beforeAll(async () => {
   browser = await puppeteer.launch({
     // for local testing
-    // headless: false,
-    // slowMo: 80,
-    // args: ['--window-size=1920,1080', '--disable-web-security']
+    headless: false,
+    slowMo: 80,
+    args: ['--window-size=1920,1080', '--disable-web-security']
 
     // for online testing (only ever commit these)
-    headless: true,
-    slowMo: 80,
-    args: ['--disable-web-security']
+    // headless: true,
+    // slowMo: 80,
+    // args: ['--disable-web-security']
   });
 });
 
@@ -2023,7 +2023,6 @@ describe('testing marginalia menu', () => {
     await page.keyboard.press('ArrowDown');
     await page.keyboard.press('Enter');
 
-
     const menuFrameHandle = await page.$('div[id="mceu_39"] > div > div > iframe');
     const menuFrame = await menuFrameHandle.contentFrame();
     await menuFrame.select('select[id="fw_type"]', 'runTitle');
@@ -2042,6 +2041,46 @@ describe('testing marginalia menu', () => {
     const xmlData = await page.evaluate(`getTEI()`);
     expect(xmlData).toBe(xmlHead + '<seg type="margin" subtype="pagetop" n="@P-"><fw type="runTitle" rend="center">' +
                         '<w>running</w><w>title</w></fw></seg>' + xmlTail);
+
+    // test for editing
+    await page.keyboard.press('ArrowLeft');
+    await page.keyboard.press('ArrowLeft');
+    await page.keyboard.press('ArrowLeft');
+
+    // open M menu for editing
+    await page.click('button#mceu_15-open');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('Enter');
+
+    const menuFrameHandle3 = await page.$('div[id="mceu_40"] > div > div > iframe');
+    const menuFrame3 = await menuFrameHandle3.contentFrame();
+
+    expect(await menuFrame3.$eval('#fw_type', el => el.value)).toBe('runTitle');
+    expect(await menuFrame3.$eval('#fw_type_other', el => el.disabled)).toBe(true);
+    expect(await menuFrame3.$eval('#fw_type_other', el => el.value)).toBe('');
+    expect(await menuFrame3.$eval('#paratext_position', el => el.value)).toBe('pagetop');
+    expect(await menuFrame3.$eval('#paratext_alignment', el => el.value)).toBe('center');
+    await menuFrame3.click('input#insert');
+    const xmlData2 = await page.evaluate(`getTEI()`);
+    expect(xmlData2).toBe(xmlHead + '<seg type="margin" subtype="pagetop" n="@P-"><fw type="runTitle" rend="center">' +
+                        '<w>running</w><w>title</w></fw></seg>' + xmlTail);
+
+    // test for deleting
+    // open M menu to delete
+    await page.keyboard.press('ArrowLeft');
+    await page.keyboard.press('ArrowLeft');
+    await page.keyboard.press('ArrowLeft');
+
+    await page.click('button#mceu_15-open');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('Enter');
+
+    const xmlData3 = await page.evaluate(`getTEI()`);
+    expect(xmlData3).toBe('');
+
   }, 200000);
 
   test('chapter number in left margin', async () => {
@@ -2144,6 +2183,221 @@ describe('testing marginalia menu', () => {
     const xmlData = await page.evaluate(`getTEI()`);
     expect(xmlData).toBe(xmlHead + '<w>this</w><w>is</w><w>a</w><w>title</w><w>with</w><w>a</w><w>note</w><fw type="runTitle"><w>Title</w><w>is</w><w>here</w><note type="local" xml:id="..--2">My note</note></fw>' + xmlTail);
 
+  });
+
+  test('test interface behaviour for fw_type \'other\' selection works correctly and is used correctly', async() => {
+    await frame.type('body#tinymce', 'testing other');
+    // open M menu
+    await page.click('button#mceu_15-open');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('Enter');
+
+    const menuFrameHandle = await page.$('div[id="mceu_39"] > div > div > iframe');
+    const menuFrame = await menuFrameHandle.contentFrame();
+
+    // check the status of everything initially
+    expect(await menuFrame.$eval('#fw_type', el => el.value)).toBe('pageNum');
+    expect(await menuFrame.$eval('#fw_type_other', el => el.disabled)).toBe(true);
+    expect(await menuFrame.$eval('#fw_type_other', el => el.value)).toBe('');
+
+    // when selecting other fw_type the details box is undisabled and can be used
+    await menuFrame.select('select[id="fw_type"]', 'other');
+    expect(await menuFrame.$eval('#fw_type_other', el => el.disabled)).toBe(false);
+    expect(await menuFrame.$eval('#fw_type_other', el => el.value)).toBe('');
+    await menuFrame.type('#fw_type_other', 'nonsense');
+
+    // if we select a different option then the details box is disabled
+    await menuFrame.select('select[id="fw_type"]', 'runTitle');
+    expect(await menuFrame.$eval('#fw_type_other', el => el.disabled)).toBe(true);
+
+    await menuFrame.select('select[id="fw_type"]', 'other');
+
+    const menuFrameHandle2 = await menuFrame.$('iframe[id="marginals_text_ifr"]');
+    const menuFrame2 = await menuFrameHandle2.contentFrame();
+    // I can't work out how to get the cursor to move to this window so typing and then deleting does this.
+    await menuFrame2.type('body#tinymce', 'text');
+
+    await menuFrame.click('input#insert');
+
+    const xmlData = await page.evaluate(`getTEI()`);
+    expect(xmlData).toBe(xmlHead + '<w>testing</w><w>other</w><fw type="nonsense"><w>text</w></fw>' + xmlTail);
+
+    // test for editing
+    await page.keyboard.press('ArrowLeft');
+    await page.keyboard.press('ArrowLeft');
+    await page.keyboard.press('ArrowLeft');
+
+    // open M menu for editing
+    await page.click('button#mceu_15-open');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('Enter');
+
+    const menuFrameHandle3 = await page.$('div[id="mceu_40"] > div > div > iframe');
+    const menuFrame3 = await menuFrameHandle3.contentFrame();
+
+    expect(await menuFrame3.$eval('#fw_type', el => el.value)).toBe('other');
+    expect(await menuFrame3.$eval('#fw_type_other', el => el.disabled)).toBe(false);
+    expect(await menuFrame3.$eval('#fw_type_other', el => el.value)).toBe('nonsense');
+    expect(await menuFrame3.$eval('#paratext_position', el => el.value)).toBe('');
+    expect(await menuFrame3.$eval('#paratext_alignment', el => el.value)).toBe('');
+    await menuFrame3.click('input#insert');
+    const xmlData2 = await page.evaluate(`getTEI()`);
+    expect(xmlData2).toBe(xmlHead + '<w>testing</w><w>other</w><fw type="nonsense"><w>text</w></fw>' + xmlTail);
+
+    // test for deleting
+    // open M menu to delete
+    await page.keyboard.press('ArrowLeft');
+    await page.keyboard.press('ArrowLeft');
+    await page.keyboard.press('ArrowLeft');
+
+    await page.click('button#mceu_15-open');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('Enter');
+
+    const xmlData3 = await page.evaluate(`getTEI()`);
+    expect(xmlData3).toBe(xmlHead + '<w>testing</w><w>other</w>' + xmlTail);
+
+  });
+
+  test('test interface behaviour for position \'other\' selection works correctly and is used correctly', async() => {
+    await frame.type('body#tinymce', 'testing other');
+    // open M menu
+    await page.click('button#mceu_15-open');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('Enter');
+
+    const menuFrameHandle = await page.$('div[id="mceu_39"] > div > div > iframe');
+    const menuFrame = await menuFrameHandle.contentFrame();
+
+    // check the status of everything initially
+    expect(await menuFrame.$eval('#paratext_position', el => el.value)).toBe('');
+    expect(await menuFrame.$eval('#paratext_position_other', el => el.disabled)).toBe(true);
+    expect(await menuFrame.$eval('#paratext_position_other', el => el.value)).toBe('');
+
+    // select something that gives us fw
+    await menuFrame.select('select[id="fw_type"]', 'runTitle');
+
+    // when selecting other position the details box is undisabled and can be used
+    await menuFrame.select('select[id="paratext_position"]', 'other');
+    expect(await menuFrame.$eval('#paratext_position_other', el => el.disabled)).toBe(false);
+    expect(await menuFrame.$eval('#paratext_position_other', el => el.value)).toBe('');
+    await menuFrame.type('#paratext_position_other', 'nonsense');
+    
+    // if we select a different option then the details box is disabled
+    await menuFrame.select('select[id="paratext_position"]', 'above');
+    expect(await menuFrame.$eval('#paratext_position_other', el => el.disabled)).toBe(true);
+
+    await menuFrame.select('select[id="paratext_position"]', 'other');
+
+    const menuFrameHandle2 = await menuFrame.$('iframe[id="marginals_text_ifr"]');
+    const menuFrame2 = await menuFrameHandle2.contentFrame();
+    // I can't work out how to get the cursor to move to this window so typing and then deleting does this.
+    await menuFrame2.type('body#tinymce', 'text');
+
+    await menuFrame.click('input#insert');
+
+    const xmlData = await page.evaluate(`getTEI()`);
+    expect(xmlData).toBe(xmlHead + '<w>testing</w><w>other</w><seg type="other" subtype="nonsense" n="@PCL-"><fw type="runTitle"><w>text</w></fw></seg>' + xmlTail);
+
+  });
+
+  test('test editing and deletion works if data is set with setTEI() (regular options)', async() => {
+    const data = xmlHead + '<seg type="margin" subtype="pagetop" n="@P-"><fw type="runTitle" rend="center">' +
+                 '<w>running</w><w>title</w></fw></seg>' + xmlTail;
+    await page.evaluate(`setTEI('${data}');`);
+    
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowRight');
+
+    // open M menu for editing
+    await page.click('button#mceu_15-open');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('Enter');
+
+    const menuFrameHandle = await page.$('div[id="mceu_39"] > div > div > iframe');
+    const menuFrame = await menuFrameHandle.contentFrame();
+
+    // check the status of everything 
+    expect(await menuFrame.$eval('#fw_type', el => el.value)).toBe('runTitle');
+    expect(await menuFrame.$eval('#fw_type_other', el => el.disabled)).toBe(true);
+    expect(await menuFrame.$eval('#fw_type_other', el => el.value)).toBe('');
+    expect(await menuFrame.$eval('#paratext_position', el => el.value)).toBe('pagetop');
+    expect(await menuFrame.$eval('#paratext_alignment', el => el.value)).toBe('center');
+
+    await menuFrame.click('input#insert');
+
+    const xmlData = await page.evaluate(`getTEI()`);
+    expect(xmlData).toBe(xmlHead + '<seg type="margin" subtype="pagetop" n="@P-"><fw type="runTitle" rend="center">' +
+                         '<w>running</w><w>title</w></fw></seg>' + xmlTail);
+
+    // test for deleting
+    // open M menu to delete
+    await page.keyboard.press('ArrowLeft');
+    await page.keyboard.press('ArrowLeft');
+    await page.keyboard.press('ArrowLeft');
+
+    await page.click('button#mceu_15-open');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('Enter');
+
+    const xmlData2 = await page.evaluate(`getTEI()`);
+    expect(xmlData2).toBe('');
+
+  });
+
+  test('test editing and deletion works if data is set with setTEI() (\'other\' options)', async() => {
+    const data = xmlHead + '<seg type="other" subtype="nonsense" n="@PCL-"><fw type="runTitle" rend="center">' +
+                 '<w>running</w><w>title</w></fw></seg>' + xmlTail;
+    await page.evaluate(`setTEI('${data}');`);
+
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowRight');
+
+    // open M menu for editing
+    await page.click('button#mceu_15-open');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('Enter');
+
+    const menuFrameHandle = await page.$('div[id="mceu_39"] > div > div > iframe');
+    const menuFrame = await menuFrameHandle.contentFrame();
+
+    // check the status of everything 
+    expect(await menuFrame.$eval('#fw_type', el => el.value)).toBe('runTitle');
+    expect(await menuFrame.$eval('#fw_type_other', el => el.disabled)).toBe(true);
+    expect(await menuFrame.$eval('#fw_type_other', el => el.value)).toBe('');
+    expect(await menuFrame.$eval('#paratext_position', el => el.value)).toBe('other');
+    expect(await menuFrame.$eval('#paratext_position_other', el => el.value)).toBe('nonsense');
+    expect(await menuFrame.$eval('#paratext_alignment', el => el.value)).toBe('center');
+
+    await menuFrame.click('input#insert');
+
+    const xmlData = await page.evaluate(`getTEI()`);
+    expect(xmlData).toBe(xmlHead + '<seg type="other" subtype="nonsense" n="@PCL-"><fw type="runTitle" rend="center">' +
+                         '<w>running</w><w>title</w></fw></seg>' + xmlTail);
+
+    // test for deleting
+    // open M menu to delete
+    await page.keyboard.press('ArrowLeft');
+    await page.keyboard.press('ArrowLeft');
+    await page.keyboard.press('ArrowLeft');
+
+    await page.click('button#mceu_15-open');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('Enter');
+
+    const xmlData2 = await page.evaluate(`getTEI()`);
+    expect(xmlData2).toBe('');
   });
 
 });
