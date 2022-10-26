@@ -74,6 +74,10 @@ function setWceEditor(_id, clientOptions, baseURL, callback) {
 		clientOptions.getBookNameFromBKV = getBookNameFromBKV;
 	}
 
+	if (!clientOptions.includePageNumbersInDeleteMenu) {
+		clientOptions.includePageNumbersInDeleteMenu = false;
+	}
+
 	tinymce.init({
 		// General options
 		clientOptions: clientOptions,
