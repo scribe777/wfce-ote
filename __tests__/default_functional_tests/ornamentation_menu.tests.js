@@ -49,6 +49,7 @@ beforeEach(async () => {
 
 });
 
+
 describe('testing ornamentation menu', () => {
 
   // capitals
@@ -65,6 +66,7 @@ describe('testing ornamentation menu', () => {
     await page.keyboard.up('Shift');
     // open O menu
     await page.click('button#mceu_13-open');
+
     // open abbreviation menu
     await page.keyboard.press('ArrowDown');
     await page.keyboard.press('ArrowRight');
@@ -101,7 +103,8 @@ describe('testing ornamentation menu', () => {
     await page.keyboard.up('Shift');
     // open O menu
     await page.click('button#mceu_13-open');
-    // open abbreviation menu
+
+    // open other menu
     await page.keyboard.press('ArrowDown');
     await page.keyboard.press('ArrowDown');
     await page.keyboard.press('ArrowDown');

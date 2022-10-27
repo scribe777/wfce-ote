@@ -103,9 +103,16 @@
 		if(a!=d){document.title=d=a}
 	}
 		 
-	function init() {
-		if (ed.settings.unclear_text_reason_default) $('#unclear_text_reason').val(ed.settings.unclear_text_reason_default);
 
+	function init() {
+		if (ed.settings.clientOptions.defaultReasonForUnclearText) {
+			let unclearReason = document.getElementById('unclear_text_reason');
+			unclearReason.value = ed.settings.clientOptions.defaultReasonForUnclearText;
+			if (unclearReason.selectedIndex === -1) {
+				unclearReason.value = 'other';
+				document.getElementById('unclear_text_reason_other').value = ed.settings.clientOptions.defaultReasonForUnclearText;
+			}
+		}
 		comboBindReturnEvent('insert'); 
 		wceInfoInit('unclear');
 		readWceNodeInfo();
@@ -113,7 +120,8 @@
 	}
 
 	function checkstatus_unclear_text_reason() {
-		if (document.unclear_text_info.unclear_text_reason.options[4].selected == true) {
+		if (document.unclear_text_info.unclear_text_reason.selectedIndex !== -1 &&
+				document.unclear_text_info.unclear_text_reason.options[document.unclear_text_info.unclear_text_reason.selectedIndex].value == 'other') {
 			document.unclear_text_info.unclear_text_reason_other.disabled = false;
 			document.getElementById('unclear_text_reason_other').style.backgroundColor = "white";
 		} else {
@@ -123,8 +131,11 @@
 	}
 
 	function testOther() {
-		if (document.unclear_text_info.unclear_text_reason.options[4].selected == true && document.getElementById('unclear_text_reason_other').value == '') 
+		if (document.unclear_text_info.unclear_text_reason.selectedIndex !== -1 &&
+				document.unclear_text_info.unclear_text_reason.options[document.unclear_text_info.unclear_text_reason.selectedIndex].value == 'other' &&
+				document.getElementById('unclear_text_reason_other').value == '') {
 			return false;
+		}
 	return true;
 	}
 	
