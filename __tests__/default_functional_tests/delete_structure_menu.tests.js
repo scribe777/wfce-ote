@@ -5,12 +5,12 @@ let browser, page, frame;
 
 // store the top and tail of the js so the tests can reuse and only focus on the content of the <body> tag
 const xmlHead = '<?xml  version="1.0" encoding="utf-8"?><!DOCTYPE TEI [<!ENTITY om ""><!ENTITY lac ""><!ENTITY lacorom "">]>' +
-								'<?xml-model href="TEI-NTMSS.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>' +
-								'<TEI xmlns="http://www.tei-c.org/ns/1.0">' +
-								'<teiHeader><fileDesc><titleStmt><title/></titleStmt>' +
-								'<publicationStmt><publisher/></publicationStmt>' +
-								'<sourceDesc><msDesc><msIdentifier></msIdentifier></msDesc></sourceDesc>' +
-								'</fileDesc></teiHeader><text><body>';
+  '<?xml-model href="TEI-NTMSS.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>' +
+  '<TEI xmlns="http://www.tei-c.org/ns/1.0">' +
+  '<teiHeader><fileDesc><titleStmt><title/></titleStmt>' +
+  '<publicationStmt><publisher/></publicationStmt>' +
+  '<sourceDesc><msDesc><msIdentifier></msIdentifier></msDesc></sourceDesc>' +
+  '</fileDesc></teiHeader><text><body>';
 const xmlTail = '</body></text></TEI>';
 
 jest.setTimeout(5000000);
@@ -24,7 +24,7 @@ beforeAll(async () => {
 
     // for online testing (only ever commit these)
     headless: true,
-    slowMo: 80,
+    slowMo: 60,
     args: ['--disable-web-security']
   });
 });
@@ -56,13 +56,13 @@ describe('testing delete structure menu', () => {
   test('delete verse 1', async () => {
     // load data
     const data = xmlHead + '<div type="book" n="John"><div type="chapter" n="John.1">' +
-                '<ab n="John.1.1"><w>first</w><w>verse</w></ab><ab n="John.1.2"><w>second</w><w>verse</w></ab>' +
-                '<ab n="John.1.3"><w>third</w><w>verse</w></ab></div>' +
-                '<div type="chapter" n="John.2"><ab n="John.2.1"><w>first</w><w>verse</w></ab>' +
-                '<ab n="John.2.2"><w>second</w><w>verse</w></ab><ab n="John.2.3"><w>third</w><w>verse</w></ab></div>' +
-                '<div type="chapter" n="John.3"><ab n="John.3.1"><w>first</w><w>verse</w></ab>' +
-                '<ab n="John.3.2"><w>second</w><w>verse</w></ab><ab n="John.3.3"><w>third</w><w>verse</w></ab>' +
-                '<ab n="John.3.4"><w>fourth</w><w>verse</w></ab></div></div>' + xmlTail;
+      '<ab n="John.1.1"><w>first</w><w>verse</w></ab><ab n="John.1.2"><w>second</w><w>verse</w></ab>' +
+      '<ab n="John.1.3"><w>third</w><w>verse</w></ab></div>' +
+      '<div type="chapter" n="John.2"><ab n="John.2.1"><w>first</w><w>verse</w></ab>' +
+      '<ab n="John.2.2"><w>second</w><w>verse</w></ab><ab n="John.2.3"><w>third</w><w>verse</w></ab></div>' +
+      '<div type="chapter" n="John.3"><ab n="John.3.1"><w>first</w><w>verse</w></ab>' +
+      '<ab n="John.3.2"><w>second</w><w>verse</w></ab><ab n="John.3.3"><w>third</w><w>verse</w></ab>' +
+      '<ab n="John.3.4"><w>fourth</w><w>verse</w></ab></div></div>' + xmlTail;
     await page.evaluate(`setTEI('${data}');`);
     await page.click('button#mceu_18-open');
     await page.keyboard.press('ArrowDown');
@@ -78,25 +78,25 @@ describe('testing delete structure menu', () => {
     expect(htmlData).toBe('<span class=\"book_number mceNonEditable\" wce=\"__t=book_number\" id=\"1\">John</span> <span class=\"chapter_number mceNonEditable\" wce=\"__t=chapter_number\" id=\"2\">1</span> <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">2</span> second verse <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">3</span> third verse <span class=\"chapter_number mceNonEditable\" wce=\"__t=chapter_number\" id=\"3\">2</span> <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">1</span> first verse <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">2</span> second verse <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">3</span> third verse <span class=\"chapter_number mceNonEditable\" wce=\"__t=chapter_number\" id=\"4\">3</span> <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">1</span> first verse <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">2</span> second verse <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">3</span> third verse <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">4</span> fourth verse');
     const xmlData = await page.evaluate(`getTEI()`);
     expect(xmlData).toBe(xmlHead + '<div type="book" n="John"><div type="chapter" n="John.1">' +
-                        '<ab n="John.1.2"><w>second</w><w>verse</w></ab><ab n="John.1.3"><w>third</w><w>verse</w></ab></div>' +
-                        '<div type="chapter" n="John.2"><ab n="John.2.1"><w>first</w><w>verse</w></ab>' +
-                        '<ab n="John.2.2"><w>second</w><w>verse</w></ab><ab n="John.2.3"><w>third</w><w>verse</w></ab></div>' +
-                        '<div type="chapter" n="John.3"><ab n="John.3.1"><w>first</w><w>verse</w></ab>' +
-                        '<ab n="John.3.2"><w>second</w><w>verse</w></ab><ab n="John.3.3"><w>third</w><w>verse</w></ab>' +
-                        '<ab n="John.3.4"><w>fourth</w><w>verse</w></ab></div></div>' + xmlTail);
+      '<ab n="John.1.2"><w>second</w><w>verse</w></ab><ab n="John.1.3"><w>third</w><w>verse</w></ab></div>' +
+      '<div type="chapter" n="John.2"><ab n="John.2.1"><w>first</w><w>verse</w></ab>' +
+      '<ab n="John.2.2"><w>second</w><w>verse</w></ab><ab n="John.2.3"><w>third</w><w>verse</w></ab></div>' +
+      '<div type="chapter" n="John.3"><ab n="John.3.1"><w>first</w><w>verse</w></ab>' +
+      '<ab n="John.3.2"><w>second</w><w>verse</w></ab><ab n="John.3.3"><w>third</w><w>verse</w></ab>' +
+      '<ab n="John.3.4"><w>fourth</w><w>verse</w></ab></div></div>' + xmlTail);
 
   }, 200000);
 
   test('delete verse 2', async () => {
     // load data
     const data = xmlHead + '<div type="book" n="John"><div type="chapter" n="John.1">' +
-                '<ab n="John.1.1"><w>first</w><w>verse</w></ab><ab n="John.1.2"><w>second</w><w>verse</w></ab>' +
-                '<ab n="John.1.3"><w>third</w><w>verse</w></ab></div>' +
-                '<div type="chapter" n="John.2"><ab n="John.2.1"><w>first</w><w>verse</w></ab>' +
-                '<ab n="John.2.2"><w>second</w><w>verse</w></ab><ab n="John.2.3"><w>third</w><w>verse</w></ab></div>' +
-                '<div type="chapter" n="John.3"><ab n="John.3.1"><w>first</w><w>verse</w></ab>' +
-                '<ab n="John.3.2"><w>second</w><w>verse</w></ab><ab n="John.3.3"><w>third</w><w>verse</w></ab>' +
-                '<ab n="John.3.4"><w>fourth</w><w>verse</w></ab></div></div>' + xmlTail;
+      '<ab n="John.1.1"><w>first</w><w>verse</w></ab><ab n="John.1.2"><w>second</w><w>verse</w></ab>' +
+      '<ab n="John.1.3"><w>third</w><w>verse</w></ab></div>' +
+      '<div type="chapter" n="John.2"><ab n="John.2.1"><w>first</w><w>verse</w></ab>' +
+      '<ab n="John.2.2"><w>second</w><w>verse</w></ab><ab n="John.2.3"><w>third</w><w>verse</w></ab></div>' +
+      '<div type="chapter" n="John.3"><ab n="John.3.1"><w>first</w><w>verse</w></ab>' +
+      '<ab n="John.3.2"><w>second</w><w>verse</w></ab><ab n="John.3.3"><w>third</w><w>verse</w></ab>' +
+      '<ab n="John.3.4"><w>fourth</w><w>verse</w></ab></div></div>' + xmlTail;
     await page.evaluate(`setTEI('${data}');`);
     await page.click('button#mceu_18-open');
     await page.keyboard.press('ArrowDown');
@@ -112,25 +112,25 @@ describe('testing delete structure menu', () => {
     expect(htmlData).toBe('<span class=\"book_number mceNonEditable\" wce=\"__t=book_number\" id=\"1\">John</span> <span class=\"chapter_number mceNonEditable\" wce=\"__t=chapter_number\" id=\"2\">1</span> <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">1</span> first verse <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">3</span> third verse <span class=\"chapter_number mceNonEditable\" wce=\"__t=chapter_number\" id=\"3\">2</span> <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">1</span> first verse <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">2</span> second verse <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">3</span> third verse <span class=\"chapter_number mceNonEditable\" wce=\"__t=chapter_number\" id=\"4\">3</span> <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">1</span> first verse <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">2</span> second verse <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">3</span> third verse <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">4</span> fourth verse');
     const xmlData = await page.evaluate(`getTEI()`);
     expect(xmlData).toBe(xmlHead + '<div type="book" n="John"><div type="chapter" n="John.1">' +
-                        '<ab n="John.1.1"><w>first</w><w>verse</w></ab><ab n="John.1.3"><w>third</w><w>verse</w></ab></div>' +
-                        '<div type="chapter" n="John.2"><ab n="John.2.1"><w>first</w><w>verse</w></ab>' +
-                        '<ab n="John.2.2"><w>second</w><w>verse</w></ab><ab n="John.2.3"><w>third</w><w>verse</w></ab></div>' +
-                        '<div type="chapter" n="John.3"><ab n="John.3.1"><w>first</w><w>verse</w></ab>' +
-                        '<ab n="John.3.2"><w>second</w><w>verse</w></ab><ab n="John.3.3"><w>third</w><w>verse</w></ab>' +
-                        '<ab n="John.3.4"><w>fourth</w><w>verse</w></ab></div></div>' + xmlTail);
+      '<ab n="John.1.1"><w>first</w><w>verse</w></ab><ab n="John.1.3"><w>third</w><w>verse</w></ab></div>' +
+      '<div type="chapter" n="John.2"><ab n="John.2.1"><w>first</w><w>verse</w></ab>' +
+      '<ab n="John.2.2"><w>second</w><w>verse</w></ab><ab n="John.2.3"><w>third</w><w>verse</w></ab></div>' +
+      '<div type="chapter" n="John.3"><ab n="John.3.1"><w>first</w><w>verse</w></ab>' +
+      '<ab n="John.3.2"><w>second</w><w>verse</w></ab><ab n="John.3.3"><w>third</w><w>verse</w></ab>' +
+      '<ab n="John.3.4"><w>fourth</w><w>verse</w></ab></div></div>' + xmlTail);
 
   }, 200000);
 
   test('delete verse 3', async () => {
     // load data
     const data = xmlHead + '<div type="book" n="John"><div type="chapter" n="John.1">' +
-                '<ab n="John.1.1"><w>first</w><w>verse</w></ab><ab n="John.1.2"><w>second</w><w>verse</w></ab>' +
-                '<ab n="John.1.3"><w>third</w><w>verse</w></ab></div>' +
-                '<div type="chapter" n="John.2"><ab n="John.2.1"><w>first</w><w>verse</w></ab>' +
-                '<ab n="John.2.2"><w>second</w><w>verse</w></ab><ab n="John.2.3"><w>third</w><w>verse</w></ab></div>' +
-                '<div type="chapter" n="John.3"><ab n="John.3.1"><w>first</w><w>verse</w></ab>' +
-                '<ab n="John.3.2"><w>second</w><w>verse</w></ab><ab n="John.3.3"><w>third</w><w>verse</w></ab>' +
-                '<ab n="John.3.4"><w>fourth</w><w>verse</w></ab></div></div>' + xmlTail;
+      '<ab n="John.1.1"><w>first</w><w>verse</w></ab><ab n="John.1.2"><w>second</w><w>verse</w></ab>' +
+      '<ab n="John.1.3"><w>third</w><w>verse</w></ab></div>' +
+      '<div type="chapter" n="John.2"><ab n="John.2.1"><w>first</w><w>verse</w></ab>' +
+      '<ab n="John.2.2"><w>second</w><w>verse</w></ab><ab n="John.2.3"><w>third</w><w>verse</w></ab></div>' +
+      '<div type="chapter" n="John.3"><ab n="John.3.1"><w>first</w><w>verse</w></ab>' +
+      '<ab n="John.3.2"><w>second</w><w>verse</w></ab><ab n="John.3.3"><w>third</w><w>verse</w></ab>' +
+      '<ab n="John.3.4"><w>fourth</w><w>verse</w></ab></div></div>' + xmlTail;
     await page.evaluate(`setTEI('${data}');`);
     await page.click('button#mceu_18-open');
     await page.keyboard.press('ArrowDown');
@@ -146,12 +146,12 @@ describe('testing delete structure menu', () => {
     expect(htmlData).toBe('<span class=\"book_number mceNonEditable\" wce=\"__t=book_number\" id=\"1\">John</span> <span class=\"chapter_number mceNonEditable\" wce=\"__t=chapter_number\" id=\"2\">1</span> <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">1</span> first verse <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">2</span> second verse <span class=\"chapter_number mceNonEditable\" wce=\"__t=chapter_number\" id=\"3\">2</span> <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">1</span> first verse <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">2</span> second verse <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">3</span> third verse <span class=\"chapter_number mceNonEditable\" wce=\"__t=chapter_number\" id=\"4\">3</span> <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">1</span> first verse <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">2</span> second verse <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">3</span> third verse <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">4</span> fourth verse');
     const xmlData = await page.evaluate(`getTEI()`);
     expect(xmlData).toBe(xmlHead + '<div type="book" n="John"><div type="chapter" n="John.1">' +
-                        '<ab n="John.1.1"><w>first</w><w>verse</w></ab><ab n="John.1.2"><w>second</w><w>verse</w></ab></div>' +
-                        '<div type="chapter" n="John.2"><ab n="John.2.1"><w>first</w><w>verse</w></ab>' +
-                        '<ab n="John.2.2"><w>second</w><w>verse</w></ab><ab n="John.2.3"><w>third</w><w>verse</w></ab></div>' +
-                        '<div type="chapter" n="John.3"><ab n="John.3.1"><w>first</w><w>verse</w></ab>' +
-                        '<ab n="John.3.2"><w>second</w><w>verse</w></ab><ab n="John.3.3"><w>third</w><w>verse</w></ab>' +
-                        '<ab n="John.3.4"><w>fourth</w><w>verse</w></ab></div></div>' + xmlTail);
+      '<ab n="John.1.1"><w>first</w><w>verse</w></ab><ab n="John.1.2"><w>second</w><w>verse</w></ab></div>' +
+      '<div type="chapter" n="John.2"><ab n="John.2.1"><w>first</w><w>verse</w></ab>' +
+      '<ab n="John.2.2"><w>second</w><w>verse</w></ab><ab n="John.2.3"><w>third</w><w>verse</w></ab></div>' +
+      '<div type="chapter" n="John.3"><ab n="John.3.1"><w>first</w><w>verse</w></ab>' +
+      '<ab n="John.3.2"><w>second</w><w>verse</w></ab><ab n="John.3.3"><w>third</w><w>verse</w></ab>' +
+      '<ab n="John.3.4"><w>fourth</w><w>verse</w></ab></div></div>' + xmlTail);
 
   }, 200000);
 
@@ -159,13 +159,13 @@ describe('testing delete structure menu', () => {
   test('delete chapter 2', async () => {
     // load data
     const data = xmlHead + '<div type="book" n="John"><div type="chapter" n="John.1">' +
-                '<ab n="John.1.1"><w>first</w><w>verse</w></ab><ab n="John.1.2"><w>second</w><w>verse</w></ab>' +
-                '<ab n="John.1.3"><w>third</w><w>verse</w></ab></div>' +
-                '<div type="chapter" n="John.2"><ab n="John.2.1"><w>first</w><w>verse</w></ab>' +
-                '<ab n="John.2.2"><w>second</w><w>verse</w></ab><ab n="John.2.3"><w>third</w><w>verse</w></ab></div>' +
-                '<div type="chapter" n="John.3"><ab n="John.3.1"><w>first</w><w>verse</w></ab>' +
-                '<ab n="John.3.2"><w>second</w><w>verse</w></ab><ab n="John.3.3"><w>third</w><w>verse</w></ab>' +
-                '<ab n="John.3.4"><w>fourth</w><w>verse</w></ab></div></div>' + xmlTail;
+      '<ab n="John.1.1"><w>first</w><w>verse</w></ab><ab n="John.1.2"><w>second</w><w>verse</w></ab>' +
+      '<ab n="John.1.3"><w>third</w><w>verse</w></ab></div>' +
+      '<div type="chapter" n="John.2"><ab n="John.2.1"><w>first</w><w>verse</w></ab>' +
+      '<ab n="John.2.2"><w>second</w><w>verse</w></ab><ab n="John.2.3"><w>third</w><w>verse</w></ab></div>' +
+      '<div type="chapter" n="John.3"><ab n="John.3.1"><w>first</w><w>verse</w></ab>' +
+      '<ab n="John.3.2"><w>second</w><w>verse</w></ab><ab n="John.3.3"><w>third</w><w>verse</w></ab>' +
+      '<ab n="John.3.4"><w>fourth</w><w>verse</w></ab></div></div>' + xmlTail;
     await page.evaluate(`setTEI('${data}');`);
     await page.click('button#mceu_18-open');
     await page.keyboard.press('ArrowDown');
@@ -182,13 +182,13 @@ describe('testing delete structure menu', () => {
     expect(htmlData).toBe('<span class=\"book_number mceNonEditable\" wce=\"__t=book_number\" id=\"1\">John</span> <span class=\"chapter_number mceNonEditable\" wce=\"__t=chapter_number\" id=\"2\">1</span> <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">1</span> first verse <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">2</span> second verse <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">3</span> third verse <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">1</span> first verse <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">2</span> second verse <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">3</span> third verse <span class=\"chapter_number mceNonEditable\" wce=\"__t=chapter_number\" id=\"4\">3</span> <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">1</span> first verse <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">2</span> second verse <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">3</span> third verse <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">4</span> fourth verse');
     const xmlData = await page.evaluate(`getTEI()`);
     expect(xmlData).toBe(xmlHead + '<div type="book" n="John"><div type="chapter" n="John.1">' +
-                        '<ab n="John.1.1"><w>first</w><w>verse</w></ab><ab n="John.1.2"><w>second</w><w>verse</w></ab>' +
-                        '<ab n="John.1.3"><w>third</w><w>verse</w></ab>' +
-                        '<ab n="John.1.1"><w>first</w><w>verse</w></ab><ab n="John.1.2"><w>second</w><w>verse</w></ab>' +
-                        '<ab n="John.1.3"><w>third</w><w>verse</w></ab></div>' +
-                        '<div type="chapter" n="John.3"><ab n="John.3.1"><w>first</w><w>verse</w></ab>' +
-                        '<ab n="John.3.2"><w>second</w><w>verse</w></ab><ab n="John.3.3"><w>third</w><w>verse</w></ab>' +
-                        '<ab n="John.3.4"><w>fourth</w><w>verse</w></ab></div></div>' + xmlTail);
+      '<ab n="John.1.1"><w>first</w><w>verse</w></ab><ab n="John.1.2"><w>second</w><w>verse</w></ab>' +
+      '<ab n="John.1.3"><w>third</w><w>verse</w></ab>' +
+      '<ab n="John.1.1"><w>first</w><w>verse</w></ab><ab n="John.1.2"><w>second</w><w>verse</w></ab>' +
+      '<ab n="John.1.3"><w>third</w><w>verse</w></ab></div>' +
+      '<div type="chapter" n="John.3"><ab n="John.3.1"><w>first</w><w>verse</w></ab>' +
+      '<ab n="John.3.2"><w>second</w><w>verse</w></ab><ab n="John.3.3"><w>third</w><w>verse</w></ab>' +
+      '<ab n="John.3.4"><w>fourth</w><w>verse</w></ab></div></div>' + xmlTail);
 
   }, 200000);
 
@@ -196,13 +196,13 @@ describe('testing delete structure menu', () => {
   test('delete book', async () => {
     // load data
     const data = xmlHead + '<div type="book" n="John"><div type="chapter" n="John.1">' +
-                '<ab n="John.1.1"><w>first</w><w>verse</w></ab><ab n="John.1.2"><w>second</w><w>verse</w></ab>' +
-                '<ab n="John.1.3"><w>third</w><w>verse</w></ab></div>' +
-                '<div type="chapter" n="John.2"><ab n="John.2.1"><w>first</w><w>verse</w></ab>' +
-                '<ab n="John.2.2"><w>second</w><w>verse</w></ab><ab n="John.2.3"><w>third</w><w>verse</w></ab></div>' +
-                '<div type="chapter" n="John.3"><ab n="John.3.1"><w>first</w><w>verse</w></ab>' +
-                '<ab n="John.3.2"><w>second</w><w>verse</w></ab><ab n="John.3.3"><w>third</w><w>verse</w></ab>' +
-                '<ab n="John.3.4"><w>fourth</w><w>verse</w></ab></div></div>' + xmlTail;
+      '<ab n="John.1.1"><w>first</w><w>verse</w></ab><ab n="John.1.2"><w>second</w><w>verse</w></ab>' +
+      '<ab n="John.1.3"><w>third</w><w>verse</w></ab></div>' +
+      '<div type="chapter" n="John.2"><ab n="John.2.1"><w>first</w><w>verse</w></ab>' +
+      '<ab n="John.2.2"><w>second</w><w>verse</w></ab><ab n="John.2.3"><w>third</w><w>verse</w></ab></div>' +
+      '<div type="chapter" n="John.3"><ab n="John.3.1"><w>first</w><w>verse</w></ab>' +
+      '<ab n="John.3.2"><w>second</w><w>verse</w></ab><ab n="John.3.3"><w>third</w><w>verse</w></ab>' +
+      '<ab n="John.3.4"><w>fourth</w><w>verse</w></ab></div></div>' + xmlTail;
     await page.evaluate(`setTEI('${data}');`);
     await page.click('button#mceu_18-open');
     await page.keyboard.press('ArrowDown');

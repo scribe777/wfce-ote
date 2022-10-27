@@ -5,12 +5,12 @@ let browser, page, frame;
 
 // store the top and tail of the js so the tests can reuse and only focus on the content of the <body> tag
 const xmlHead = '<?xml  version="1.0" encoding="utf-8"?><!DOCTYPE TEI [<!ENTITY om ""><!ENTITY lac ""><!ENTITY lacorom "">]>' +
-								'<?xml-model href="TEI-NTMSS.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>' +
-								'<TEI xmlns="http://www.tei-c.org/ns/1.0">' +
-								'<teiHeader><fileDesc><titleStmt><title/></titleStmt>' +
-								'<publicationStmt><publisher/></publicationStmt>' +
-								'<sourceDesc><msDesc><msIdentifier></msIdentifier></msDesc></sourceDesc>' +
-								'</fileDesc></teiHeader><text><body>';
+  '<?xml-model href="TEI-NTMSS.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>' +
+  '<TEI xmlns="http://www.tei-c.org/ns/1.0">' +
+  '<teiHeader><fileDesc><titleStmt><title/></titleStmt>' +
+  '<publicationStmt><publisher/></publicationStmt>' +
+  '<sourceDesc><msDesc><msIdentifier></msIdentifier></msDesc></sourceDesc>' +
+  '</fileDesc></teiHeader><text><body>';
 const xmlTail = '</body></text></TEI>';
 
 jest.setTimeout(5000000);
@@ -24,7 +24,7 @@ beforeAll(async () => {
 
     // for online testing (only ever commit these)
     headless: true,
-    slowMo: 80,
+    slowMo: 60,
     args: ['--disable-web-security']
   });
 });
@@ -79,7 +79,7 @@ describe('testing marginalia menu', () => {
     expect(htmlData).toBe('some commentary<span class=\"paratext\" wce_orig=\"\" wce=\"__t=paratext&amp;__n=&amp;help=Help&amp;fw_type=commentary&amp;fw_type_other=&amp;covered=1&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;marginals_text=&amp;number=&amp;edit_number=on&amp;paratext_position=&amp;paratext_position_other=&amp;paratext_alignment=\"><span class=\"format_start mceNonEditable\">‹</span><br />↵[<span class=\"commentary\" wce=\"__t=paratext&amp;__n=&amp;fw_type=commentary&amp;covered=1\">comm</span>]<span class=\"format_end mceNonEditable\">›</span></span><span class=\"mceNonEditable brea\" wce=\"__t=brea&amp;__n=&amp;hasBreak=no&amp;break_type=lb&amp;number=&amp;rv=&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment=\"><span class=\"format_start mceNonEditable\">‹</span><br />↵<span class=\"format_end mceNonEditable\">›</span></span> in here');
     const xmlData = await page.evaluate(`getTEI()`);
     expect(xmlData).toBe(xmlHead + '<w>some</w><w>commentary</w><lb/><note type="commentary">One line of untranscribed commentary text</note>' +
-                        '<lb n="PCL-"/><w>in</w><w>here</w>' + xmlTail);
+      '<lb n="PCL-"/><w>in</w><w>here</w>' + xmlTail);
   }, 200000);
 
   test('commentary in line', async () => {
@@ -146,8 +146,8 @@ describe('testing marginalia menu', () => {
     expect(htmlData).toBe('lection text next<span class=\"paratext\" wce_orig=\"\" wce=\"__t=paratext&amp;__n=&amp;help=Help&amp;fw_type=lectionary-other&amp;fw_type_other=&amp;covered=2&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;marginals_text=&amp;number=&amp;edit_number=on&amp;paratext_position=&amp;paratext_position_other=&amp;paratext_alignment=\"><span class=\"format_start mceNonEditable\">‹</span><br />↵[<span class=\"lectionary-other\" wce=\"__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=2\">lect</span>]<br />↵[<span class=\"lectionary-other\" wce=\"__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=2\">lect</span>]<span class=\"format_end mceNonEditable\">›</span></span>');
     const xmlData = await page.evaluate(`getTEI()`);
     expect(xmlData).toBe(xmlHead + '<w>lection</w><w>text</w><w>next</w><lb/>' +
-                        '<note type="lectionary-other">One line of untranscribed lectionary text</note><lb/>' +
-                        '<note type="lectionary-other">One line of untranscribed lectionary text</note>' + xmlTail);
+      '<note type="lectionary-other">One line of untranscribed lectionary text</note><lb/>' +
+      '<note type="lectionary-other">One line of untranscribed lectionary text</note>' + xmlTail);
   }, 200000);
 
   test('ews', async () => {
@@ -196,7 +196,7 @@ describe('testing marginalia menu', () => {
     expect(htmlData).toBe('<span class=\"paratext\" wce_orig=\"\" wce=\"__t=paratext&amp;__n=&amp;help=Help&amp;fw_type=runTitle&amp;fw_type_other=&amp;covered=0&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;marginals_text=running%20title&amp;number=&amp;paratext_position=pagetop&amp;paratext_position_other=&amp;paratext_alignment=center\"><span class=\"format_start mceNonEditable\">‹</span>fw<span class=\"format_end mceNonEditable\">›</span></span>');
     const xmlData = await page.evaluate(`getTEI()`);
     expect(xmlData).toBe(xmlHead + '<seg type="margin" subtype="pagetop" n="@P-"><fw type="runTitle" rend="center">' +
-                        '<w>running</w><w>title</w></fw></seg>' + xmlTail);
+      '<w>running</w><w>title</w></fw></seg>' + xmlTail);
   }, 200000);
 
   test('chapter number in left margin', async () => {
@@ -226,46 +226,46 @@ describe('testing marginalia menu', () => {
     expect(htmlData).toBe('this is a chapter number in the margin<span class=\"paratext\" wce_orig=\"\" wce=\"__t=paratext&amp;__n=&amp;help=Help&amp;fw_type=chapNum&amp;fw_type_other=&amp;covered=0&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;marginals_text=12&amp;number=&amp;paratext_position=colleft&amp;paratext_position_other=&amp;paratext_alignment=\"><span class=\"format_start mceNonEditable\">‹</span>fw<span class=\"format_end mceNonEditable\">›</span></span>');
     const xmlData = await page.evaluate(`getTEI()`);
     expect(xmlData).toBe(xmlHead + '<w>this</w><w>is</w><w>a</w><w>chapter</w><w>number</w><w>in</w><w>the</w><w>margin</w>' +
-                        '<seg type="margin" subtype="colleft" n="@PC-"><num type="chapNum">12</num></seg>' + xmlTail);
+      '<seg type="margin" subtype="colleft" n="@PC-"><num type="chapNum">12</num></seg>' + xmlTail);
   }, 200000);
 
   test('The correct buttons appear in the submenu for marginalia', async () => {
-      let BButton, DButton, OButton, AButton, PButton;
+    let BButton, DButton, OButton, AButton, PButton;
 
-      await frame.type('body#tinymce', 'this is a chapter number in the margin');
+    await frame.type('body#tinymce', 'this is a chapter number in the margin');
 
-      // open M menu
-      await page.click('button#mceu_15-open');
-      await page.keyboard.press('ArrowDown');
-      await page.keyboard.press('Enter');
+    // open M menu
+    await page.click('button#mceu_15-open');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('Enter');
 
 
-      const menuFrameHandle = await page.$('div[id="mceu_39"] > div > div > iframe');
-      const menuFrame = await menuFrameHandle.contentFrame();
-      await menuFrame.select('select[id="fw_type"]', 'runTitle');
+    const menuFrameHandle = await page.$('div[id="mceu_39"] > div > div > iframe');
+    const menuFrame = await menuFrameHandle.contentFrame();
+    await menuFrame.select('select[id="fw_type"]', 'runTitle');
 
-      const menuFrameHandle2 = await menuFrame.$('iframe[id="marginals_text_ifr"]');
-      const menuFrame2 = await menuFrameHandle2.contentFrame();
+    const menuFrameHandle2 = await menuFrame.$('iframe[id="marginals_text_ifr"]');
+    const menuFrame2 = await menuFrameHandle2.contentFrame();
 
-      BButton = await menuFrame.$eval('#mceu_5 > button > i', element=> element.getAttribute('style'));
-      expect(BButton).toContain('button_B.png');
+    BButton = await menuFrame.$eval('#mceu_5 > button > i', element => element.getAttribute('style'));
+    expect(BButton).toContain('button_B.png');
 
-      DButton = await menuFrame.$eval('#mceu_6 > button > i', element=> element.getAttribute('style'));
-      expect(DButton).toContain('button_D.png');
+    DButton = await menuFrame.$eval('#mceu_6 > button > i', element => element.getAttribute('style'));
+    expect(DButton).toContain('button_D.png');
 
-      OButton = await menuFrame.$eval('#mceu_7 > button > i', element=> element.getAttribute('style'));
-      expect(OButton).toContain('button_O.png');
+    OButton = await menuFrame.$eval('#mceu_7 > button > i', element => element.getAttribute('style'));
+    expect(OButton).toContain('button_O.png');
 
-      AButton = await menuFrame.$eval('#mceu_8 > button > i', element=> element.getAttribute('style'));
-      expect(AButton).toContain('button_A.png');
+    AButton = await menuFrame.$eval('#mceu_8 > button > i', element => element.getAttribute('style'));
+    expect(AButton).toContain('button_A.png');
 
-      NButton = await menuFrame.$eval('#mceu_9 > button > i', element=> element.getAttribute('style'));
-      expect(NButton).toContain('button_N.png');
+    NButton = await menuFrame.$eval('#mceu_9 > button > i', element => element.getAttribute('style'));
+    expect(NButton).toContain('button_N.png');
 
-      PButton = await menuFrame.$eval('#mceu_10 > button > i', element=> element.getAttribute('style'));
-      expect(PButton).toContain('button_P.png');
+    PButton = await menuFrame.$eval('#mceu_10 > button > i', element => element.getAttribute('style'));
+    expect(PButton).toContain('button_P.png');
 
-    }, 200000);
+  }, 200000);
 
   test('The note menu can be used in marginalia subeditor (note menu was added in 2022)', async () => {
     await frame.type('body#tinymce', 'this is a title with a note');
@@ -280,10 +280,10 @@ describe('testing marginalia menu', () => {
     await menuFrame.select('select[id="fw_type"]', 'runTitle');
 
     const menuFrameHandle2 = await menuFrame.$('iframe[id="marginals_text_ifr"]');
-    const menuFrame2 = await menuFrameHandle2.contentFrame(); 
+    const menuFrame2 = await menuFrameHandle2.contentFrame();
 
     await menuFrame2.type('body#tinymce', 'Title is here');
-  
+
     // open inner note menu and add a note
     await menuFrame.click('button#mceu_9-open');
     await menuFrame.click('div#menu-note-add');
