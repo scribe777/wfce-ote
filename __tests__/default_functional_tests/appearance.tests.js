@@ -84,3 +84,4 @@ describe('testing editor appearance', () => {
   });
 
 });
+

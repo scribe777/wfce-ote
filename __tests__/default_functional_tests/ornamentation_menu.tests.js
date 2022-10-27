@@ -53,7 +53,9 @@ beforeEach(async () => {
 describe('testing ornamentation menu', () => {
 
   // capitals
+
   test('capitals for entry, editing and deletion', async () => {
+
     await frame.type('body#tinymce', 'Initial capital');
 
     for (let i = 0; i < 'nitial capital'.length; i++) {
@@ -200,7 +202,6 @@ describe('testing ornamentation menu', () => {
     const xmlData3 = await page.evaluate(`getTEI()`);
     expect(xmlData3).toBe(xmlHead + '<w>Initial</w><w>capital</w>' + xmlTail);
   }, 200000);
-
 
   // other ornamentation
   test('other ornamentation', async () => {

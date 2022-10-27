@@ -34,8 +34,6 @@ afterAll(async () => {
 });
 
 
-// tests using the checkOverlineForAbbr setting
-
 describe('testing with checkOverlineForAbbr client settings', () => {
 
   beforeEach(async () => {
@@ -166,4 +164,6 @@ describe('testing with checkOverlineForAbbr client settings', () => {
   //     expect(xmlData).toBe(xmlHead + '<w>a</w><w><abbr type="nomSac">ns</abbr></w><w>abbreviation</w>' + xmlTail);
 
   // });
+
 });
+

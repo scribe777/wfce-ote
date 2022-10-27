@@ -292,6 +292,7 @@ describe('testing gap menu', () => {
     await page.keyboard.press('Enter');
     const menuFrameHandle = await page.$('div[id="mceu_40"] > div > div > iframe');
     const menuFrame = await menuFrameHandle.contentFrame();
+
     // check the gap reason pre-select is correct
     expect(await menuFrame.$eval('#gap_reason_dummy_illegible', el => el.checked)).toBe(true);
 
