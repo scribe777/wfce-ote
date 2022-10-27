@@ -5,12 +5,12 @@ let browser, page, frame;
 
 // store the top and tail of the js so the tests can reuse and only focus on the content of the <body> tag
 const xmlHead = '<?xml  version="1.0" encoding="utf-8"?><!DOCTYPE TEI [<!ENTITY om ""><!ENTITY lac ""><!ENTITY lacorom "">]>' +
-								'<?xml-model href="TEI-NTMSS.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>' +
-								'<TEI xmlns="http://www.tei-c.org/ns/1.0">' +
-								'<teiHeader><fileDesc><titleStmt><title/></titleStmt>' +
-								'<publicationStmt><publisher/></publicationStmt>' +
-								'<sourceDesc><msDesc><msIdentifier></msIdentifier></msDesc></sourceDesc>' +
-								'</fileDesc></teiHeader><text><body>';
+  '<?xml-model href="TEI-NTMSS.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>' +
+  '<TEI xmlns="http://www.tei-c.org/ns/1.0">' +
+  '<teiHeader><fileDesc><titleStmt><title/></titleStmt>' +
+  '<publicationStmt><publisher/></publicationStmt>' +
+  '<sourceDesc><msDesc><msIdentifier></msIdentifier></msDesc></sourceDesc>' +
+  '</fileDesc></teiHeader><text><body>';
 const xmlTail = '</body></text></TEI>';
 
 jest.setTimeout(5000000);
@@ -79,7 +79,7 @@ describe('testing ornamentation menu', () => {
     const menuFrame = await menuFrameHandle.contentFrame();
     await menuFrame.type('input#capitals_height', '3');
     await menuFrame.click('input#insert');
-    await page.waitForSelector('div[id="mceu_41"]', {hidden: true});
+    await page.waitForSelector('div[id="mceu_41"]', { hidden: true });
 
     const htmlData = await page.evaluate(`getData()`);
     expect(htmlData).toBe('<span class="formatting_capitals" wce_orig="I" wce="__t=formatting_capitals&amp;__n=&amp;capitals_height=3"><span class="format_start mceNonEditable">‹</span>I<span class="format_end mceNonEditable">›</span></span>nitial capital');
@@ -111,7 +111,7 @@ describe('testing ornamentation menu', () => {
     const menuFrame = await menuFrameHandle.contentFrame();
     await menuFrame.type('input#formatting_ornamentation_other', 'underlined');
     await menuFrame.click('input#insert');
-    await page.waitForSelector('div[id="mceu_39"]', {hidden: true});
+    await page.waitForSelector('div[id="mceu_39"]', { hidden: true });
 
     const htmlData = await page.evaluate(`getData()`);
     expect(htmlData).toBe('test <span class=\"formatting_ornamentation_other\" wce_orig=\"for\" wce=\"__t=formatting_ornamentation_other&amp;__n=&amp;formatting_ornamentation_other=underlined\"><span class=\"format_start mceNonEditable\">‹</span>for<span class=\"format_end mceNonEditable\">›</span></span> rendering');

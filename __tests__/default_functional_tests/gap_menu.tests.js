@@ -5,12 +5,12 @@ let browser, page, frame;
 
 // store the top and tail of the js so the tests can reuse and only focus on the content of the <body> tag
 const xmlHead = '<?xml  version="1.0" encoding="utf-8"?><!DOCTYPE TEI [<!ENTITY om ""><!ENTITY lac ""><!ENTITY lacorom "">]>' +
-								'<?xml-model href="TEI-NTMSS.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>' +
-								'<TEI xmlns="http://www.tei-c.org/ns/1.0">' +
-								'<teiHeader><fileDesc><titleStmt><title/></titleStmt>' +
-								'<publicationStmt><publisher/></publicationStmt>' +
-								'<sourceDesc><msDesc><msIdentifier></msIdentifier></msDesc></sourceDesc>' +
-								'</fileDesc></teiHeader><text><body>';
+  '<?xml-model href="TEI-NTMSS.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>' +
+  '<TEI xmlns="http://www.tei-c.org/ns/1.0">' +
+  '<teiHeader><fileDesc><titleStmt><title/></titleStmt>' +
+  '<publicationStmt><publisher/></publicationStmt>' +
+  '<sourceDesc><msDesc><msIdentifier></msIdentifier></msDesc></sourceDesc>' +
+  '</fileDesc></teiHeader><text><body>';
 const xmlTail = '</body></text></TEI>';
 
 jest.setTimeout(5000000);
@@ -70,7 +70,7 @@ describe('testing gap menu', () => {
     await menuFrame.select('select[id="unit"]', 'char');
     await menuFrame.type('input#extent', '10');
     await menuFrame.click('input#insert');
-    await page.waitForSelector('div[id="mceu_40"]', {hidden: true});
+    await page.waitForSelector('div[id="mceu_40"]', { hidden: true });
 
     const htmlData = await page.evaluate(`getData()`);
     expect(htmlData).toBe('this <span class=\"gap\" wce_orig=\"\" wce=\"__t=gap&amp;__n=&amp;original_gap_text=&amp;help=Help&amp;gap_reason_dummy_lacuna=lacuna&amp;gap_reason_dummy_illegible=illegible&amp;gap_reason_dummy_unspecified=unspecified&amp;gap_reason_dummy_inferredPage=inferredPage&amp;gap_reason=illegible&amp;unit=char&amp;unit_other=&amp;extent=10&amp;extent_unspecified=Extent%3DUnspecified&amp;extent_part=Extent%3DPart&amp;supplied_source=na28&amp;supplied_source_other=\"><span class=\"format_start mceNonEditable\">‹</span>[10]<span class=\"format_end mceNonEditable\">›</span></span> continues');
@@ -94,7 +94,7 @@ describe('testing gap menu', () => {
     const menuFrame = await menuFrameHandle.contentFrame();
     await menuFrame.click('input#gap_reason_dummy_unspecified');
     await menuFrame.click('input#insert');
-    await page.waitForSelector('div[id="mceu_40"]', {hidden: true});
+    await page.waitForSelector('div[id="mceu_40"]', { hidden: true });
 
     const htmlData = await page.evaluate(`getData()`);
     expect(htmlData).toBe('this <span class=\"gap\" wce_orig=\"\" wce=\"__t=gap&amp;__n=&amp;original_gap_text=&amp;help=Help&amp;gap_reason_dummy_lacuna=lacuna&amp;gap_reason_dummy_illegible=illegible&amp;gap_reason_dummy_unspecified=unspecified&amp;gap_reason_dummy_inferredPage=inferredPage&amp;gap_reason=unspecified&amp;unit=&amp;unit_other=&amp;extent=&amp;extent_unspecified=Extent%3DUnspecified&amp;extent_part=Extent%3DPart&amp;supplied_source=na28&amp;supplied_source_other=\"><span class=\"format_start mceNonEditable\">‹</span>[...]<span class=\"format_end mceNonEditable\">›</span></span> continues');
@@ -116,7 +116,7 @@ describe('testing gap menu', () => {
     await menuFrame.select('select[id="unit"]', 'char');
     await menuFrame.type('input#extent', '2');
     await menuFrame.click('input#insert');
-    await page.waitForSelector('div[id="mceu_40"]', {hidden: true});
+    await page.waitForSelector('div[id="mceu_40"]', { hidden: true });
 
     const htmlData = await page.evaluate(`getData()`);
     expect(htmlData).toBe('wo<span class=\"gap\" wce_orig=\"\" wce=\"__t=gap&amp;__n=&amp;original_gap_text=&amp;help=Help&amp;gap_reason_dummy_lacuna=lacuna&amp;gap_reason_dummy_illegible=illegible&amp;gap_reason_dummy_unspecified=unspecified&amp;gap_reason_dummy_inferredPage=inferredPage&amp;gap_reason=illegible&amp;unit=char&amp;unit_other=&amp;extent=2&amp;extent_unspecified=Extent%3DUnspecified&amp;extent_part=Extent%3DPart&amp;supplied_source=na28&amp;supplied_source_other=\"><span class=\"format_start mceNonEditable\">‹</span>[2]<span class=\"format_end mceNonEditable\">›</span></span>');
@@ -136,7 +136,7 @@ describe('testing gap menu', () => {
     const menuFrameHandle = await page.$('div[id="mceu_40"] > div > div > iframe');
     const menuFrame = await menuFrameHandle.contentFrame();
     await menuFrame.click('input#insert');
-    await page.waitForSelector('div[id="mceu_40"]', {hidden: true});
+    await page.waitForSelector('div[id="mceu_40"]', { hidden: true });
 
     const htmlData = await page.evaluate(`getData()`);
     expect(htmlData).toBe('wo<span class=\"gap\" wce_orig=\"\" wce=\"__t=gap&amp;__n=&amp;original_gap_text=&amp;help=Help&amp;gap_reason_dummy_lacuna=lacuna&amp;gap_reason_dummy_illegible=illegible&amp;gap_reason_dummy_unspecified=unspecified&amp;gap_reason_dummy_inferredPage=inferredPage&amp;gap_reason=illegible&amp;unit=&amp;unit_other=&amp;extent=&amp;extent_unspecified=Extent%3DUnspecified&amp;extent_part=Extent%3DPart&amp;supplied_source=na28&amp;supplied_source_other=\"><span class=\"format_start mceNonEditable\">‹</span>[...]<span class=\"format_end mceNonEditable\">›</span></span>');
@@ -160,7 +160,7 @@ describe('testing gap menu', () => {
     await menuFrame.select('select[id="unit"]', 'line');
     await menuFrame.click('input#extent_part');
     await menuFrame.click('input#insert');
-    await page.waitForSelector('div[id="mceu_40"]', {hidden: true});
+    await page.waitForSelector('div[id="mceu_40"]', { hidden: true });
     const idRegex = /id="gap_(\d)_\d+"/g;
     const htmlData = await page.evaluate(`getData()`);
     const modifiedHtml = htmlData.replace(idRegex, 'id="gap_$1_MATH.RAND"');
@@ -183,7 +183,7 @@ describe('testing gap menu', () => {
     await menuFrame.select('select[id="unit"]', 'line');
     await menuFrame.click('input#extent_unspecified');
     await menuFrame.click('input#insert');
-    await page.waitForSelector('div[id="mceu_40"]', {hidden: true});
+    await page.waitForSelector('div[id="mceu_40"]', { hidden: true });
     const idRegex = /id="gap_(\d)_\d+"/g;
     const htmlData = await page.evaluate(`getData()`);
     const modifiedHtml = htmlData.replace(idRegex, 'id="gap_$1_MATH.RAND"');
@@ -210,7 +210,7 @@ describe('testing gap menu', () => {
     await menuFrame.click('input#gap_reason_dummy_lacuna');
     await menuFrame.type('input#extent', '1');
     await menuFrame.click('input#insert');
-    await page.waitForSelector('div[id="mceu_40"]', {hidden: true});
+    await page.waitForSelector('div[id="mceu_40"]', { hidden: true });
     const htmlData = await page.evaluate(`getData()`);
     expect(htmlData).toBe('missing <span class=\"gap\" wce_orig=\"\" wce=\"__t=gap&amp;__n=&amp;original_gap_text=&amp;help=Help&amp;gap_reason_dummy_lacuna=lacuna&amp;gap_reason_dummy_illegible=illegible&amp;gap_reason_dummy_unspecified=unspecified&amp;gap_reason_dummy_inferredPage=inferredPage&amp;gap_reason=lacuna&amp;unit=quire&amp;unit_other=&amp;extent=1&amp;extent_unspecified=Extent%3DUnspecified&amp;extent_part=Extent%3DPart&amp;supplied_source=na28&amp;supplied_source_other=\"><span class=\"format_start mceNonEditable\">‹</span><br />QB<br />[...]<span class=\"format_end mceNonEditable\">›</span></span> quire');
     const xmlData = await page.evaluate(`getTEI()`);
@@ -314,5 +314,5 @@ describe('testing gap menu', () => {
     const xmlData = await page.evaluate(`getTEI()`);
     expect(xmlData).toBe(xmlHead + '<w>a</w><w><supplied reason="illegible">supplied</supplied></w><w><supplied reason="illegible">wo</supplied>rd</w>' + xmlTail);
   }, 200000);
-  
+
 });

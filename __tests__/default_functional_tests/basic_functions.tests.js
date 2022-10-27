@@ -5,12 +5,12 @@ let browser, page, frame;
 
 // store the top and tail of the js so the tests can reuse and only focus on the content of the <body> tag
 const xmlHead = '<?xml  version="1.0" encoding="utf-8"?><!DOCTYPE TEI [<!ENTITY om ""><!ENTITY lac ""><!ENTITY lacorom "">]>' +
-								'<?xml-model href="TEI-NTMSS.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>' +
-								'<TEI xmlns="http://www.tei-c.org/ns/1.0">' +
-								'<teiHeader><fileDesc><titleStmt><title/></titleStmt>' +
-								'<publicationStmt><publisher/></publicationStmt>' +
-								'<sourceDesc><msDesc><msIdentifier></msIdentifier></msDesc></sourceDesc>' +
-								'</fileDesc></teiHeader><text><body>';
+  '<?xml-model href="TEI-NTMSS.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>' +
+  '<TEI xmlns="http://www.tei-c.org/ns/1.0">' +
+  '<teiHeader><fileDesc><titleStmt><title/></titleStmt>' +
+  '<publicationStmt><publisher/></publicationStmt>' +
+  '<sourceDesc><msDesc><msIdentifier></msIdentifier></msDesc></sourceDesc>' +
+  '</fileDesc></teiHeader><text><body>';
 const xmlTail = '</body></text></TEI>';
 
 jest.setTimeout(5000000);
@@ -51,20 +51,20 @@ beforeEach(async () => {
 
 describe('testing basic word/pc level functions', () => {
 
-    test('test basic words', async () => {
+  test('test basic words', async () => {
     await frame.type('body#tinymce', 'my words');
     const htmlData = await page.evaluate(`getData()`);
     expect(htmlData).toBe('my words');
     const xmlData = await page.evaluate(`getTEI()`);
     expect(xmlData).toBe(xmlHead + '<w>my</w><w>words</w>' + xmlTail);
 
-    }, 200000);
+  }, 200000);
 
-    test('test expanded text', async () => {
+  test('test expanded text', async () => {
     await frame.type('body#tinymce', 'my words');
     await page.keyboard.down('Shift');
     for (let i = 0; i < 'rds'.length; i++) {
-        await page.keyboard.press('ArrowLeft');
+      await page.keyboard.press('ArrowLeft');
     }
     await page.keyboard.up('Shift');
     // open A menu
@@ -78,18 +78,18 @@ describe('testing basic word/pc level functions', () => {
     const menuFrameHandle = await page.$('div[id="mceu_40"] > div > div > iframe');
     const menuFrame = await menuFrameHandle.contentFrame();
     await menuFrame.click('input#insert');
-    await page.waitForSelector('div[id="mceu_40"]', {hidden: true});
+    await page.waitForSelector('div[id="mceu_40"]', { hidden: true });
     const htmlData = await page.evaluate(`getData()`);
     expect(htmlData).toBe('my wo<span class=\"part_abbr\" wce_orig=\"rds\" wce=\"__t=part_abbr&amp;__n=&amp;' +
-                            'help=Help&amp;exp_rend=&amp;exp_rend_other=\"><span class=\"format_start mceNonEditable\">‹' +
-                            '</span>(rds)<span class=\"format_end mceNonEditable\">›</span></span>');
-    }, 200000);
+      'help=Help&amp;exp_rend=&amp;exp_rend_other=\"><span class=\"format_start mceNonEditable\">‹' +
+      '</span>(rds)<span class=\"format_end mceNonEditable\">›</span></span>');
+  }, 200000);
 
-    test('test expanded whole word with symbol', async () => {
+  test('test expanded whole word with symbol', async () => {
     await frame.type('body#tinymce', 'my words');
     await page.keyboard.down('Shift');
     for (let i = 0; i < 'words'.length; i++) {
-        await page.keyboard.press('ArrowLeft');
+      await page.keyboard.press('ArrowLeft');
     }
     await page.keyboard.up('Shift');
     // open A menu
@@ -104,13 +104,13 @@ describe('testing basic word/pc level functions', () => {
     const menuFrame = await menuFrameHandle.contentFrame();
     await menuFrame.select('select[id="exp_rend"]', '÷');
     await menuFrame.click('input#insert');
-    await page.waitForSelector('div[id="mceu_40"]', {hidden: true});
+    await page.waitForSelector('div[id="mceu_40"]', { hidden: true });
     const htmlData = await page.evaluate(`getData()`);
     expect(htmlData).toBe('my <span class=\"part_abbr\" wce_orig=\"words\" wce=\"__t=part_abbr&amp;__n=&amp;' +
-                            'help=Help&amp;exp_rend=%C3%B7&amp;exp_rend_other=\">' +
-                            '<span class=\"format_start mceNonEditable\">‹</span>(words)' +
-                            '<span class=\"format_end mceNonEditable\">›</span></span>');
-    }, 200000);
+      'help=Help&amp;exp_rend=%C3%B7&amp;exp_rend_other=\">' +
+      '<span class=\"format_start mceNonEditable\">‹</span>(words)' +
+      '<span class=\"format_end mceNonEditable\">›</span></span>');
+  }, 200000);
 
   // space
   test('space between words', async () => {
@@ -130,7 +130,7 @@ describe('testing basic word/pc level functions', () => {
     const menuFrame = await menuFrameHandle.contentFrame();
     await menuFrame.type('input#sp_extent', '5');
     await menuFrame.click('input#insert');
-    await page.waitForSelector('div[id="mceu_41"]', {hidden: true});
+    await page.waitForSelector('div[id="mceu_41"]', { hidden: true });
     const htmlData = await page.evaluate(`getData()`);
     expect(htmlData).toBe('space between <span class=\"spaces\" wce=\"__t=spaces&amp;__n=&amp;original_spaces_text=&amp;help=Help&amp;sp_unit=char&amp;sp_unit_other=&amp;sp_extent=5\"><span class=\"format_start mceNonEditable\">‹</span>sp<span class=\"format_end mceNonEditable\">›</span></span> words');
     const xmlData = await page.evaluate(`getTEI()`);
@@ -142,8 +142,8 @@ describe('testing basic word/pc level functions', () => {
     await frame.type('body#tinymce', 'my words.');
     const htmlData = await page.evaluate(`getData()`);
     expect(htmlData).toBe('my words<span class=\"pc\" wce_orig=\"\" wce=\"__t=pc\">' +
-                          '<span class=\"format_start mceNonEditable\">‹</span>.' +
-                          '<span class=\"format_end mceNonEditable\">›</span></span>');
+      '<span class=\"format_start mceNonEditable\">‹</span>.' +
+      '<span class=\"format_end mceNonEditable\">›</span></span>');
     const xmlData = await page.evaluate(`getTEI()`);
     expect(xmlData).toBe(xmlHead + '<w>my</w><w>words</w><pc>.</pc>' + xmlTail);
   }, 200000);
@@ -168,8 +168,8 @@ describe('testing basic word/pc level functions', () => {
 
     const htmlData = await page.evaluate(`getData()`);
     expect(htmlData).toBe('my words<span class=\"pc\" wce_orig=\"\" wce=\"__t=pc\">' +
-                          '<span class=\"format_start mceNonEditable\">‹</span>?' +
-                          '<span class=\"format_end mceNonEditable\">›</span></span>');
+      '<span class=\"format_start mceNonEditable\">‹</span>?' +
+      '<span class=\"format_end mceNonEditable\">›</span></span>');
     const xmlData = await page.evaluate(`getTEI()`);
     expect(xmlData).toBe(xmlHead + '<w>my</w><w>words</w><pc>?</pc>' + xmlTail);
   }, 200000);
@@ -191,12 +191,12 @@ describe('testing basic word/pc level functions', () => {
     const menuFrame = await menuFrameHandle.contentFrame();
     await menuFrame.type('input#pc_char', '-');
     await menuFrame.click('input#insert');
-    await page.waitForSelector('div[id="mceu_58"]', {hidden: true});
+    await page.waitForSelector('div[id="mceu_58"]', { hidden: true });
 
     const htmlData = await page.evaluate(`getData()`);
     expect(htmlData).toBe('my words<span class=\"pc\" wce=\"__t=pc\">' +
-                          '<span class=\"format_start mceNonEditable\">‹</span>-' +
-                          '<span class=\"format_end mceNonEditable\">›</span></span>');
+      '<span class=\"format_start mceNonEditable\">‹</span>-' +
+      '<span class=\"format_end mceNonEditable\">›</span></span>');
     const xmlData = await page.evaluate(`getTEI()`);
     expect(xmlData).toBe(xmlHead + '<w>my</w><w>words</w><pc>-</pc>' + xmlTail);
   }, 200000);
@@ -222,13 +222,13 @@ describe('testing basic word/pc level functions', () => {
 
     const htmlData = await page.evaluate(`getData()`);
     expect(htmlData).toBe('my words<span class=\"pc\" wce_orig=\"\" wce=\"__t=pc\">' +
-                          '<span class=\"format_start mceNonEditable\">‹</span>;' +
-                          '<span class=\"format_end mceNonEditable\">›</span></span>');
+      '<span class=\"format_start mceNonEditable\">‹</span>;' +
+      '<span class=\"format_end mceNonEditable\">›</span></span>');
     const xmlData = await page.evaluate(`getTEI()`);
     expect(xmlData).toBe(xmlHead + '<w>my</w><w>words</w><pc>;</pc>' + xmlTail);
   }, 200000);
 
-      //abbr
+  //abbr
   // nomsac without overline
   test('test abbr', async () => {
     await frame.type('body#tinymce', 'a ns abbreviation');
@@ -251,7 +251,7 @@ describe('testing basic word/pc level functions', () => {
     const menuFrameHandle = await page.$('div[id="mceu_40"] > div > div > iframe');
     const menuFrame = await menuFrameHandle.contentFrame();
     await menuFrame.click('input#insert');
-    await page.waitForSelector('div[id="mceu_40"]', {hidden: true});
+    await page.waitForSelector('div[id="mceu_40"]', { hidden: true });
 
     const htmlData = await page.evaluate(`getData()`);
     expect(htmlData).toBe('a <span class=\"abbr\" wce_orig=\"ns\" wce=\"__t=abbr&amp;__n=&amp;original_abbr_text=&amp;help=Help&amp;abbr_type=nomSac&amp;abbr_type_other=\"><span class=\"format_start mceNonEditable\">‹</span>ns<span class=\"format_end mceNonEditable\">›</span></span> abbreviation');
@@ -282,7 +282,7 @@ describe('testing basic word/pc level functions', () => {
     const menuFrame = await menuFrameHandle.contentFrame();
     await menuFrame.click('#add_overline');
     await menuFrame.click('input#insert');
-    await page.waitForSelector('div[id="mceu_40"]', {hidden: true});
+    await page.waitForSelector('div[id="mceu_40"]', { hidden: true });
 
     const htmlData = await page.evaluate(`getData()`);
     expect(htmlData).toBe('a <span class="abbr_add_overline" wce_orig="ns" wce="__t=abbr&amp;__n=&amp;original_abbr_text=&amp;help=Help&amp;abbr_type=nomSac&amp;abbr_type_other=&amp;add_overline=overline"><span class="format_start mceNonEditable">‹</span>ns<span class="format_end mceNonEditable">›</span></span> abbreviation');
@@ -291,5 +291,5 @@ describe('testing basic word/pc level functions', () => {
   }, 200000);
 
   // TODO: add more tests on different abbr structures here?
-  
+
 });

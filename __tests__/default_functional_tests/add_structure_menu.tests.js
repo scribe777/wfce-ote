@@ -5,12 +5,12 @@ let browser, page, frame;
 
 // store the top and tail of the js so the tests can reuse and only focus on the content of the <body> tag
 const xmlHead = '<?xml  version="1.0" encoding="utf-8"?><!DOCTYPE TEI [<!ENTITY om ""><!ENTITY lac ""><!ENTITY lacorom "">]>' +
-								'<?xml-model href="TEI-NTMSS.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>' +
-								'<TEI xmlns="http://www.tei-c.org/ns/1.0">' +
-								'<teiHeader><fileDesc><titleStmt><title/></titleStmt>' +
-								'<publicationStmt><publisher/></publicationStmt>' +
-								'<sourceDesc><msDesc><msIdentifier></msIdentifier></msDesc></sourceDesc>' +
-								'</fileDesc></teiHeader><text><body>';
+  '<?xml-model href="TEI-NTMSS.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>' +
+  '<TEI xmlns="http://www.tei-c.org/ns/1.0">' +
+  '<teiHeader><fileDesc><titleStmt><title/></titleStmt>' +
+  '<publicationStmt><publisher/></publicationStmt>' +
+  '<sourceDesc><msDesc><msIdentifier></msIdentifier></msDesc></sourceDesc>' +
+  '</fileDesc></teiHeader><text><body>';
 const xmlTail = '</body></text></TEI>';
 
 jest.setTimeout(5000000);
@@ -64,7 +64,7 @@ describe('testing structure menu', () => {
     await menuFrame.click('input#insertBookRadio');
     await menuFrame.type('input#insertBookNumber', 'John');
     await menuFrame.click('input#insert');
-    await page.waitForSelector('div[id="mceu_39"]', {hidden: true});
+    await page.waitForSelector('div[id="mceu_39"]', { hidden: true });
     await frame.type('body#tinymce', 'The content of my book');
 
     const htmlData = await page.evaluate(`getData()`);
@@ -84,7 +84,7 @@ describe('testing structure menu', () => {
     await menuFrame.click('input#insertChapterRadio');
     await menuFrame.type('input#insertChapterNumber', '1');
     await menuFrame.click('input#insert');
-    await page.waitForSelector('div[id="mceu_39"]', {hidden: true});
+    await page.waitForSelector('div[id="mceu_39"]', { hidden: true });
     await frame.type('body#tinymce', 'The content of my chapter');
 
     const htmlData = await page.evaluate(`getData()`);
@@ -112,7 +112,7 @@ describe('testing structure menu', () => {
     await menuFrame2.click('input#insertChapterRadio');
     await menuFrame2.type('input#insertChapterNumber', '1');
     await menuFrame2.click('input#insert');
-    await page.waitForSelector('div[id="mceu_40"]', {hidden: true});
+    await page.waitForSelector('div[id="mceu_40"]', { hidden: true });
     await frame.type('body#tinymce', 'The content of my chapter');
 
     const htmlData = await page.evaluate(`getData()`);
@@ -141,7 +141,7 @@ describe('testing structure menu', () => {
     await menuFrame2.click('input#insertChapterRadio');
     await menuFrame2.type('input#insertChapterNumber', '1');
     await menuFrame2.click('input#insert');
-    await page.waitForSelector('div[id="mceu_40"]', {hidden: true});
+    await page.waitForSelector('div[id="mceu_40"]', { hidden: true });
 
     await page.click('button#mceu_18-open');
     await page.keyboard.press('ArrowDown');
@@ -151,14 +151,14 @@ describe('testing structure menu', () => {
     await menuFrame3.click('input#insertVerseRadio');
     await menuFrame3.type('input#insertVerseNumber', '2');
     await menuFrame3.click('input#insert');
-    await page.waitForSelector('div[id="mceu_41"]', {hidden: true});
+    await page.waitForSelector('div[id="mceu_41"]', { hidden: true });
     await frame.type('body#tinymce', 'The content of my verse');
 
     const htmlData = await page.evaluate(`getData()`);
     expect(htmlData).toBe('<span class=\"book_number mceNonEditable\" wce=\"__t=book_number\" id=\"book1\"> John</span> <span class=\"chapter_number mceNonEditable\" wce=\"__t=chapter_number\" id=\"chap2\"> 1</span> <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\"> 2</span> The content of my verse');
     const xmlData = await page.evaluate(`getTEI()`);
     expect(xmlData).toBe(xmlHead + '<div type="book" n="John"><div type="chapter" n="John.1"><ab n="John.1.2"><w>The</w><w>content</w><w>of</w>' +
-                        '<w>my</w><w>verse</w></ab></div></div>' + xmlTail);
+      '<w>my</w><w>verse</w></ab></div></div>' + xmlTail);
   }, 200000);
 
   // Partial too hard to do just now with functional test as needs right click and mouse accessed menu
@@ -174,14 +174,14 @@ describe('testing structure menu', () => {
     await menuFrame.click('input#insertLectionRadio');
     await menuFrame.type('input#insertLectionNumber', 'R12');
     await menuFrame.click('input#insert');
-    await page.waitForSelector('div[id="mceu_39"]', {hidden: true});
+    await page.waitForSelector('div[id="mceu_39"]', { hidden: true });
     await frame.type('body#tinymce', 'The content of my lection');
 
     const htmlData = await page.evaluate(`getData()`);
     expect(htmlData).toBe('<span class=\"lection_number mceNonEditable\" wce=\"__t=lection_number&amp;__n=&amp;number=R12\"> Lec</span>The content of my lection');
     const xmlData = await page.evaluate(`getTEI()`);
     expect(xmlData).toBe(xmlHead + '<div type="lection" n="R12"><w>The</w><w>content</w><w>of</w><w>my</w><w>lection</w></div>' + xmlTail);
-    }, 200000);
+  }, 200000);
 
 
   // lection, book and chapter
@@ -204,7 +204,7 @@ describe('testing structure menu', () => {
     await menuFrame2.click('input#insertBookRadio');
     await menuFrame2.type('input#insertBookNumber', 'John');
     await menuFrame2.click('input#insert');
-    await page.waitForSelector('div[id="mceu_40"]', {hidden: true});
+    await page.waitForSelector('div[id="mceu_40"]', { hidden: true });
 
     await page.click('button#mceu_18-open');
     await page.keyboard.press('ArrowDown');
@@ -214,7 +214,7 @@ describe('testing structure menu', () => {
     await menuFrame3.click('input#insertChapterRadio');
     await menuFrame3.type('input#insertChapterNumber', '1');
     await menuFrame3.click('input#insert');
-    await page.waitForSelector('div[id="mceu_41"]', {hidden: true});
+    await page.waitForSelector('div[id="mceu_41"]', { hidden: true });
 
     await frame.type('body#tinymce', 'The content of my chapter');
 
@@ -222,7 +222,7 @@ describe('testing structure menu', () => {
     expect(htmlData).toBe('<span class=\"lection_number mceNonEditable\" wce=\"__t=lection_number&amp;__n=&amp;number=R12\"> Lec</span> <span class=\"book_number mceNonEditable\" wce=\"__t=book_number\" id=\"book1\"> John</span> <span class=\"chapter_number mceNonEditable\" wce=\"__t=chapter_number\" id=\"chap2\"> 1</span> The content of my chapter');
     const xmlData = await page.evaluate(`getTEI()`);
     expect(xmlData).toBe(xmlHead + '<div type="lection" n="R12"><div type="book" n="John"><div type="chapter" n="John.1">' +
-                        '<w>The</w><w>content</w><w>of</w><w>my</w><w>chapter</w></div></div></div>' + xmlTail);
+      '<w>The</w><w>content</w><w>of</w><w>my</w><w>chapter</w></div></div></div>' + xmlTail);
   }, 200000);
 
 
@@ -244,7 +244,7 @@ describe('testing structure menu', () => {
     const menuFrame2 = await menuFrameHandle2.contentFrame();
     await menuFrame2.click('input#insertInscriptioRadio');
     await menuFrame2.click('input#insert');
-    await page.waitForSelector('div[id="mceu_40"]', {hidden: true});
+    await page.waitForSelector('div[id="mceu_40"]', { hidden: true });
     await page.keyboard.down('Shift');
     for (let i = 0; i < 'PLACE THE INSCRIPTIO HERE! '.length; i++) {
       await page.keyboard.press('ArrowLeft');
@@ -277,7 +277,7 @@ describe('testing structure menu', () => {
     const menuFrame2 = await menuFrameHandle2.contentFrame();
     await menuFrame2.click('input#insertSubscriptioRadio');
     await menuFrame2.click('input#insert');
-    await page.waitForSelector('div[id="mceu_40"]', {hidden: true});
+    await page.waitForSelector('div[id="mceu_40"]', { hidden: true });
     await page.keyboard.down('Shift');
     for (let i = 0; i < 'PLACE THE SUBSCRIPTIO HERE! '.length; i++) {
       await page.keyboard.press('ArrowLeft');
