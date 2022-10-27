@@ -65,6 +65,7 @@ describe('testing unclear text functions', () => {
     await page.keyboard.press('ArrowDown');
     await page.keyboard.press('ArrowRight');
     await page.keyboard.press('Enter');
+
     // access menu window and make selection
     const menuFrameHandle = await page.$('div[id="mceu_40"] > div > div > iframe');
     const menuFrame = await menuFrameHandle.contentFrame();

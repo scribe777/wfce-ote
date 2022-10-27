@@ -164,5 +164,5 @@ describe('testing with checkOverlineForAbbr client settings', () => {
   //     expect(xmlData).toBe(xmlHead + '<w>a</w><w><abbr type="nomSac">ns</abbr></w><w>abbreviation</w>' + xmlTail);
 
   // });
-});
 
+});

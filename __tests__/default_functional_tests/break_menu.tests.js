@@ -52,7 +52,6 @@ beforeEach(async () => {
 
 describe('testing B menu - breaks', () => {
 
-
   test('initial page, using type=folio', async () => {
 
     // open B menu

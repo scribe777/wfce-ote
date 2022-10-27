@@ -292,6 +292,7 @@ describe('testing gap menu', () => {
     await page.keyboard.press('Enter');
     const menuFrameHandle = await page.$('div[id="mceu_40"] > div > div > iframe');
     const menuFrame = await menuFrameHandle.contentFrame();
+    
     // check the gap reason pre-select is correct
     expect(await menuFrame.$eval('#gap_reason_dummy_illegible', el => el.checked)).toBe(true);
 
@@ -535,6 +536,7 @@ describe('testing gap menu', () => {
     await menuFrame.type('input#extent', '10');
     await menuFrame.click('input#insert');
     await page.waitForSelector('div[id="mceu_40"]', { hidden: true });
+
 
     var htmlData = await page.evaluate(`getData()`);
     expect(htmlData).toBe('this <span class=\"gap\" wce_orig=\"\" wce=\"__t=gap&amp;__n=&amp;original_gap_text=&amp;help=Help&amp;gap_reason_dummy_lacuna=lacuna&amp;gap_reason_dummy_illegible=illegible&amp;gap_reason_dummy_unspecified=unspecified&amp;gap_reason_dummy_inferredPage=inferredPage&amp;gap_reason=illegible&amp;unit=char&amp;unit_other=&amp;extent=10&amp;extent_unspecified=Extent%3DUnspecified&amp;extent_part=Extent%3DPart&amp;supplied_source=na28&amp;supplied_source_other=\"><span class=\"format_start mceNonEditable\">‹</span>[10]<span class=\"format_end mceNonEditable\">›</span></span> continues');

@@ -33,6 +33,7 @@ afterAll(async () => {
   await browser.close();
 });
 
+
 describe('testing Structure entry with bookNames setting', () => {
 
   beforeEach(async () => {
