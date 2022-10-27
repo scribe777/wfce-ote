@@ -82,4 +82,6 @@ describe('testing editor appearance', () => {
     expect(VButton).toContain('button_V.png');
 
   });
+
 });
+

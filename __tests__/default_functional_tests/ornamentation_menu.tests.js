@@ -66,7 +66,8 @@ describe('testing ornamentation menu', () => {
     await page.keyboard.up('Shift');
     // open O menu
     await page.click('button#mceu_13-open');
-    // open capitals menu
+
+    // open abbreviation menu
     await page.keyboard.press('ArrowDown');
     await page.keyboard.press('ArrowRight');
     await page.keyboard.press('ArrowDown');
@@ -102,6 +103,7 @@ describe('testing ornamentation menu', () => {
     await page.keyboard.up('Shift');
     // open O menu
     await page.click('button#mceu_13-open');
+
     // open other menu
     await page.keyboard.press('ArrowDown');
     await page.keyboard.press('ArrowDown');

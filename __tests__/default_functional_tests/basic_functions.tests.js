@@ -113,8 +113,6 @@ describe('testing basic word/pc level functions', () => {
       '<span class=\"format_end mceNonEditable\">›</span></span>');
   }, 200000);
 
-
-
   // space
   test('space between words', async () => {
     await frame.type('body#tinymce', 'space between  words');
