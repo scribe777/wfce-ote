@@ -47,39 +47,39 @@ beforeEach(async () => {
     }
     frame = await frameHandle.contentFrame();
 
-});
+  });
 
 describe('testing editor appearance', () => {
 
 
-  test('check correct editing buttons appear', async () => {
-    let BButton, CButton, DButton, OButton, AButton, MButton, NButton, PButton, VButton;
-    BButton = await page.$eval('#mceu_10 > button > i', element=> element.getAttribute('style'));
-    expect(BButton).toContain('button_B.png');
+    test('check correct editing buttons appear', async () => {
+      let BButton, CButton, DButton, OButton, AButton, MButton, NButton, PButton, VButton;
+      BButton = await page.$eval('#mceu_10 > button > i', element=> element.getAttribute('style'));
+      expect(BButton).toContain('button_B.png');
 
-    CButton = await page.$eval('#mceu_11 > button > i', element=> element.getAttribute('style'));
-    expect(CButton).toContain('button_C.png');
+      CButton = await page.$eval('#mceu_11 > button > i', element=> element.getAttribute('style'));
+      expect(CButton).toContain('button_C.png');
 
-    DButton = await page.$eval('#mceu_12 > button > i', element=> element.getAttribute('style'));
-    expect(DButton).toContain('button_D.png');
+      DButton = await page.$eval('#mceu_12 > button > i', element=> element.getAttribute('style'));
+      expect(DButton).toContain('button_D.png');
 
-    OButton = await page.$eval('#mceu_13 > button > i', element=> element.getAttribute('style'));
-    expect(OButton).toContain('button_O.png');
+      OButton = await page.$eval('#mceu_13 > button > i', element=> element.getAttribute('style'));
+      expect(OButton).toContain('button_O.png');
 
-    AButton = await page.$eval('#mceu_14 > button > i', element=> element.getAttribute('style'));
-    expect(AButton).toContain('button_A.png');
+      AButton = await page.$eval('#mceu_14 > button > i', element=> element.getAttribute('style'));
+      expect(AButton).toContain('button_A.png');
 
-    MButton = await page.$eval('#mceu_15 > button > i', element=> element.getAttribute('style'));
-    expect(MButton).toContain('button_M.png');
+      MButton = await page.$eval('#mceu_15 > button > i', element=> element.getAttribute('style'));
+      expect(MButton).toContain('button_M.png');
 
-    NButton = await page.$eval('#mceu_16 > button > i', element=> element.getAttribute('style'));
-    expect(NButton).toContain('button_N.png');
+      NButton = await page.$eval('#mceu_16 > button > i', element=> element.getAttribute('style'));
+      expect(NButton).toContain('button_N.png');
 
-    PButton = await page.$eval('#mceu_17 > button > i', element=> element.getAttribute('style'));
-    expect(PButton).toContain('button_P.png');
+      PButton = await page.$eval('#mceu_17 > button > i', element=> element.getAttribute('style'));
+      expect(PButton).toContain('button_P.png');
 
-    VButton = await page.$eval('#mceu_18 > button > i', element=> element.getAttribute('style'));
-    expect(VButton).toContain('button_V.png');
-    
-  });
+      VButton = await page.$eval('#mceu_18 > button > i', element=> element.getAttribute('style'));
+      expect(VButton).toContain('button_V.png');
+      
+    });
 });
