@@ -24,7 +24,7 @@ beforeAll(async () => {
 
     // for online testing (only ever commit these)
     headless: true,
-    slowMo: 80,
+    slowMo: 60,
     args: ['--disable-web-security']
   });
 });
@@ -48,7 +48,6 @@ beforeEach(async () => {
   frame = await frameHandle.contentFrame();
 
 });
-
 
 describe('testing structure menu', () => {
 
