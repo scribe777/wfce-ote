@@ -586,17 +586,17 @@ describe('testing gap menu', () => {
     await page.keyboard.press('ArrowRight');
     await page.keyboard.press('ArrowDown');
     await page.keyboard.press('Enter');
-    menuFrameHandle = await page.$('div[id="mceu_41"] > div > div > iframe');
+    const menuFrameHandle2 = await page.$('div[id="mceu_41"] > div > div > iframe');
 
-    menuFrame = await menuFrameHandle.contentFrame();
+    const menuFrame2 = await menuFrameHandle2.contentFrame();
 
-    expect(await menuFrame.$eval('#unit', el => el.value)).toBe('char');
-    expect(await menuFrame.$eval('#unit', el => el.disabled)).toBe(false);
-    expect(await menuFrame.$eval('input#extent', el => el.value)).toBe('10');
-    expect(await menuFrame.$eval('#gap_reason_dummy_illegible', el => el.checked)).toBe(true);
-    expect(await menuFrame.$eval('#gap_reason', el => el.value)).toBe('illegible');
+    expect(await menuFrame2.$eval('#unit', el => el.value)).toBe('char');
+    expect(await menuFrame2.$eval('#unit', el => el.disabled)).toBe(false);
+    expect(await menuFrame2.$eval('input#extent', el => el.value)).toBe('10');
+    expect(await menuFrame2.$eval('#gap_reason_dummy_illegible', el => el.checked)).toBe(true);
+    expect(await menuFrame2.$eval('#gap_reason', el => el.value)).toBe('illegible');
 
-    await menuFrame.click('input#insert');
+    await menuFrame2.click('input#insert');
     await page.waitForSelector('div[id="mceu_41"]', { hidden: true });
 
     xmlData = await page.evaluate(`getTEI()`);
