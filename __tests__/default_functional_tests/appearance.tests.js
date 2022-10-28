@@ -83,4 +83,8 @@ describe('testing editor appearance', () => {
 
   });
 
+  test('check the correct font is used for the editor', async () => {
+    expect(await frame.$eval('.mce-content-body', el => getComputedStyle(el).font)).toBe('24px / 48px GentiumPlus');
+  });
+
 });

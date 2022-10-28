@@ -2545,18 +2545,19 @@
 			}
 
 			var langEn = language.substring(0, 2) == "en";
+			var ignoreShiftNotEn = tinyMCE.activeEditor.settings.ignoreShiftNotEn ? tinyMCE.activeEditor.settings.ignoreShiftNotEn : [];
 			var keyboardDebug = tinyMCE.activeEditor.settings.keyboardDebug;
 			// Add <pc> for some special characters
 			// We need a lot of cases, because of different kyeboard layouts, different browsers and different platforms
 			if (keyboardDebug) console.log('ek: ' + ek + '; shiftKey: ' + e.shiftKey + '; altKey: ' + e.altKey + '; langEn: ' + langEn);
-			if (ek == 59 && !e.shiftKey && langEn && !tinymce.isWebKit) {// ; en
+			if (ek == 59 && !e.shiftKey && e.altKey && langEn && !tinymce.isWebKit) {// ; en
 				tinyMCE.activeEditor.execCommand('mceAdd_pc', ';');
 				stopEvent(ed, e);
-			} else if (ek == 188 && !langEn && e.shiftKey) {
+			} else if (ignoreShiftNotEn.indexOf[188] < 0 && ek == 188 && !langEn && e.shiftKey) {
 				// ; dt < en
 				tinyMCE.activeEditor.execCommand('mceAdd_pc', ';');
 				stopEvent(ed, e);
-			} else if (ek == 190 && e.shiftKey && !langEn) {
+			} else if (ignoreShiftNotEn.indexOf[190] < 0 && ek == 190 && e.shiftKey && !langEn) {
 				// :
 				tinyMCE.activeEditor.execCommand('mceAdd_pc', ':');
 				stopEvent(ed, e);
@@ -2568,8 +2569,8 @@
 				// .
 				tinyMCE.activeEditor.execCommand('mceAdd_pc', '.');
 				stopEvent(ed, e);
-			} else if (ek == 189 && !e.shiftKey) {
-				// .
+			} else if (ek == 189 && !e.shiftKey && !e.altKey) { // patched this line to make morph div work - Malte
+				// . middle dot
 				tinyMCE.activeEditor.execCommand('mceAdd_pc', '\u00B7');
 				stopEvent(ed, e);
 
@@ -2592,7 +2593,7 @@
 			} else if (ek == 48 && e.shiftKey && e.altKey) {// Three Dot Punctuation
 				tinyMCE.activeEditor.execCommand('mceAdd_pc', '\u2056');
 				stopEvent(ed, e);
-			} else if (ek == 57 && e.shiftKey && !langEn) {// special handling for English keyboards
+			} else if (ignoreShiftNotEn.indexOf[57] < 0 && ek == 57 && e.shiftKey && !langEn) {// special handling for English keyboards
 				stopEvent(ed, e);
 				doWithoutDialog(ed, 'part_abbr', '');
 			} else if (ek == 48 && e.shiftKey && langEn) {//special handling for English keyboard
@@ -3541,9 +3542,15 @@
 					},
 					{ text : '\u030B    (combining double acute accent)',
 						onclick : function() {
-							ed.execCommand('mceAdd_pc', '\u030B');
+							//ed.execCommand('mceAdd_pc', '\u030B');
+							ed.execCommand('mceInsertContent', false, '\u030B');
 						}
 					},
+					{ text : '\u2CFE    (Coptic full stop)',
+						onclick : function() {
+							ed.execCommand('mceAdd_pc', '\u2CFE');
+ 						}
+ 					},
 					{ text : 'Other',
 						onclick : function() {
 							ed.execCommand('mceAdd_punctuation_other');

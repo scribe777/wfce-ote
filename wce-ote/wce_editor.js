@@ -60,6 +60,7 @@
 @param {string} clientOptions.optionsForGapMenu.sourceOptions.value - The value to record in the XML for this supplied source.
 @param {string} clientOptions.optionsForGapMenu.sourceOptions.labelEn - The visible label to use for this entry in the English interface.
 @param {string} clientOptions.optionsForGapMenu.sourceOptions.labelDe - The visible label to use for this entry in the German interface.
+@param {string} clientOptions.transcriptionLanguage - The css to use for the transcription in the editor. Choices are currently coptic and greek. Default is greek.
 @param {baseURL} string - Explicitly sets TinyMCE's base URL.
 @param {callback} function - The function to call once the editor is loaded.
 
@@ -114,6 +115,7 @@ function setWceEditor(_id, clientOptions, baseURL, callback) {
 		entity_encoding : "raw",
 		theme_advanced_path : false,
 		execcommand_callback : 'wceExecCommandHandler',
+		content_css: (clientOptions.transcriptionLanguage == 'coptic') ? tinymce.baseURL + '../../../wce-ote/custom-css/coptic.css' : tinymce.baseURL + '../../../wce-ote/custom-css/greek.css',
 		save_onsavecallback : function() {
 			if (saveDataToDB) saveDataToDB(true);
 		},
@@ -127,7 +129,7 @@ function setWceEditor(_id, clientOptions, baseURL, callback) {
 			'wcelinenumber': '../../wce-ote/plugin/js/line_number.js'
 		},
 		show_linenumber:true,//default false,
-		ignoreShiftNotEn: [188, 190],
+		ignoreShiftNotEn: (clientOptions.transcriptionLanguage == 'coptic') ? [] : [188, 190],
 		keyboardDebug: true,
 		init_instance_callback : "wceReload",
 		// Theme options
@@ -145,7 +147,7 @@ function setWceEditor(_id, clientOptions, baseURL, callback) {
 				addMenuItems(tinyMCE.activeEditor);
 				if (callback) {
 					callback();
-				}	
+				}
 			});
 		}	
 	});

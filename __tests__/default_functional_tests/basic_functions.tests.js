@@ -397,11 +397,11 @@ describe('testing basic word/pc level functions', () => {
         await page.keyboard.press('ArrowUp');
         await page.keyboard.press('Enter');
 
-        const menuFrameHandle = await page.$('div[id="mceu_58"] > div > div > iframe');
+        const menuFrameHandle = await page.$('div[id="mceu_59"] > div > div > iframe');
         const menuFrame = await menuFrameHandle.contentFrame();
         await menuFrame.type('input#pc_char', '-');
         await menuFrame.click('input#insert');
-        await page.waitForSelector('div[id="mceu_58"]', { hidden: true });
+        await page.waitForSelector('div[id="mceu_59"]', { hidden: true });
 
         const htmlData = await page.evaluate(`getData()`);
         expect(htmlData).toBe('my words<span class=\"pc\" wce=\"__t=pc\">' +
