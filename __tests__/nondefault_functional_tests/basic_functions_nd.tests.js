@@ -34,8 +34,6 @@ afterAll(async () => {
 });
 
 
-// tests using the checkOverlineForAbbr setting
-
 describe('testing with checkOverlineForAbbr client settings', () => {
 
     beforeEach(async () => {
