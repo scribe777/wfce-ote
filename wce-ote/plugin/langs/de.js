@@ -94,6 +94,8 @@ tinymce.addI18n('de',{
 	fw_chapter_title : "Titel des Kapitels",
 	fw_chapter_number : "Kapitelnummer",
 	fw_lectionary_title : "Lektionsangabe",
+	fw_lectionary_bibref : "Lectionary Biblical Reference",
+	fw_lectionary_instruct : "Lectionary Instruction",
 	fw_other_lections : "Platzhalter für andere Lektionstexte",
 	fw_colophon : "Kolophon",
 	fw_ammonian : "Ammonianische Sektionszahl",
