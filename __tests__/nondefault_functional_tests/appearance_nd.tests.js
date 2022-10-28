@@ -56,3 +56,45 @@ describe('testing coptic settings', () => {
         expect(await frame.$eval('.mce-content-body', el => getComputedStyle(el).font)).toBe('24px / 48px AntinoouWeb, GentiumPlus');
     });
 });
+
+describe('testing with toolbar settings', () => {
+
+    beforeEach(async () => {
+        let frameHandle;
+        jest.setTimeout(5000000);
+        page = await browser.newPage();
+        await page.goto(`file:${path.join(__dirname, '../test_index_page.html')}`);
+        await page.evaluate(`setWceEditor('wce_editor', {toolbar: 'undo redo charmap | breaks correction illegible decoration abbreviation paratext note punctuation versemodify'})`);
+        page.waitForSelector("#wce_editor_ifr");
+        frameHandle = null;
+        while (frameHandle === null) {
+            frameHandle = await page.$("iframe[id='wce_editor_ifr']");
+        }
+        frame = await frameHandle.contentFrame();
+
+    });
+
+
+    test('check that the correct functions are avilable', async () => {
+        expect(await page.waitForSelector('div[aria-label="Undo"]')).toBeTruthy();
+        expect(await page.waitForSelector('div[aria-label="Redo"]')).toBeTruthy();
+        expect(await page.waitForSelector('div[aria-label="Special character"]')).toBeTruthy();
+
+        expect(await page.$$eval('div[aria-label="Source code"]', button => button.length)).toBe(0);
+
+        expect(await page.$$eval('#mceu_4 > button > span', button => button.length)).toBe(0);
+
+        expect(await page.$$eval('div[aria-label="Print"]', button => button.length)).toBe(0);
+        expect(await page.$$eval('div[aria-label="Cut"]', button => button.length)).toBe(0);
+        expect(await page.$$eval('div[aria-label="Copy"]', button => button.length)).toBe(0);
+        expect(await page.$$eval('div[aria-label="Paste"]', button => button.length)).toBe(0);
+        expect(await page.$$eval('div[aria-label="Fullscreen"]', button => button.length)).toBe(0);
+
+        expect(await page.$$eval('#mceu_19 > button > i', button => button.length)).toBe(0);
+        expect(await page.$$eval('#mceu_20 > button > i', button => button.length)).toBe(0);
+        expect(await page.$$eval('#mceu_21 > button > i', button => button.length)).toBe(0);
+        expect(await page.$$eval('#mceu_22 > button > i', button => button.length)).toBe(0);
+
+    });
+
+});

@@ -83,6 +83,35 @@ describe('testing editor appearance', () => {
 
   });
 
+  test('check that the correct functions are avilable', async () => {
+    expect(await page.waitForSelector('div[aria-label="Undo"]')).toBeTruthy();
+    expect(await page.waitForSelector('div[aria-label="Redo"]')).toBeTruthy();
+    expect(await page.waitForSelector('div[aria-label="Special character"]')).toBeTruthy();
+
+    expect(await page.waitForSelector('div[aria-label="Source code"]')).toBeTruthy();
+
+    expect(await page.$eval('#mceu_4 > button > span', element => element.textContent)).toBe('Save');
+
+    expect(await page.waitForSelector('div[aria-label="Print"]')).toBeTruthy();
+    expect(await page.waitForSelector('div[aria-label="Cut"]')).toBeTruthy();
+    expect(await page.waitForSelector('div[aria-label="Copy"]')).toBeTruthy();
+    expect(await page.waitForSelector('div[aria-label="Paste"]')).toBeTruthy();
+    expect(await page.waitForSelector('div[aria-label="Fullscreen"]')).toBeTruthy();
+
+    XMLButton = await page.$eval('#mceu_19 > button > i', element => element.getAttribute('style'));
+    expect(XMLButton).toContain('button_XML.png');
+
+    XMLButton = await page.$eval('#mceu_20 > button > i', element => element.getAttribute('style'));
+    expect(XMLButton).toContain('button_Help.png');
+
+    XMLButton = await page.$eval('#mceu_21 > button > i', element => element.getAttribute('style'));
+    expect(XMLButton).toContain('button_Info.png');
+
+    XMLButton = await page.$eval('#mceu_22 > button > i', element => element.getAttribute('style'));
+    expect(XMLButton).toContain('xmlinput.jpg');
+
+  });
+
   test('check the correct font is used for the editor', async () => {
     expect(await frame.$eval('.mce-content-body', el => getComputedStyle(el).font)).toBe('24px / 48px GentiumPlus');
   });
