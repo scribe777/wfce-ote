@@ -53,6 +53,13 @@
 @param {number} clientOptions.defaultValuesForSpaceMenu.extent - The extent number to preselect.
 @param {boolean} clientOptions.showMultilineNotesAsSingleEntry - If set to true this combines multiline untranscribed commentary and lectionary notes into a single line (does not change the XML output). Default is false.
 @param {boolean} clientOptions.checkOverlineForAbbr - If set to true this will check the 'add overline' option in the abbreviation form when it is loaded. Default is false.
+@param {optionsForGapMenu} clientOptions.optionsForGapMenu - The options used to create and to set defaults in the gap menu.
+@param {string} clientOptions.optionsForGapMenu.reason - The option to select by default for the reason for the gap (illegible|lacuna|unspecified|inferredPage).
+@param {string} clientOptions.optionsForGapMenu.suppliedSource - The option to use for the source of the supplied text.
+@param {Array.<sourceOptions>} clientOptions.optionsForGapMenu.sourceOptions - An optional list of sources to use for the supplied source dropdown. None and other are always present and cannot be changed by this setting the remaining default are most relevant to Greek New Testament.
+@param {string} clientOptions.optionsForGapMenu.sourceOptions.value - The value to record in the XML for this supplied source.
+@param {string} clientOptions.optionsForGapMenu.sourceOptions.labelEn - The visible label to use for this entry in the English interface.
+@param {string} clientOptions.optionsForGapMenu.sourceOptions.labelDe - The visible label to use for this entry in the German interface.
 @param {baseURL} string - Explicitly sets TinyMCE's base URL.
 @param {callback} function - The function to call once the editor is loaded.
 
@@ -81,6 +88,15 @@ function setWceEditor(_id, clientOptions, baseURL, callback) {
 
 	if (!clientOptions.includePageNumbersInDeleteMenu) {
 		clientOptions.includePageNumbersInDeleteMenu = false;
+	}
+	
+	if (!clientOptions.hasOwnProperty('optionsForGapMenu')) {
+		clientOptions.optionsForGapMenu = {'reason': 'illegible', 'suppliedSource': 'na28'};
+	}
+	if (!clientOptions.optionsForGapMenu.hasOwnProperty('sourceOptions')) {
+		clientOptions.optionsForGapMenu.sourceOptions = [{'value': 'transcriber','labelEn': 'Transcriber', 'labelDe': 'Vorschlag des Transkribenten'},
+														 {'value': 'na28','labelEn': 'NA28', 'labelDe': 'NA28'},
+														 {'value': 'tr','labelEn': 'Textus Receptus', 'labelDe': 'Textus Receptus'}];
 	}
 
 	tinymce.init({

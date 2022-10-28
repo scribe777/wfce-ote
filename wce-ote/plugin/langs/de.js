@@ -177,7 +177,7 @@ tinymce.addI18n('de',{
 	poor_image : "Schlechtes Bild",
 	faded_ink : "Verblichene Tinte",
 	damage_to_page : "Materialschaden",
-	na27 : "NA28",
+	na28 : "NA28",
 	TR : "Textus Receptus",
 	transcriber : "Vorschlag des Transkribenten",
 	paratext : "Marginalia ",
