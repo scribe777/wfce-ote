@@ -56,7 +56,7 @@
 			var x = document.getElementById('html2teiOutputContainer');
 			x.style.height = document.getElementById('div0').offsetHeight + "px";
 			var str = _ed.getContent();
-			var teiContent = getTeiByHtml(str, _ed.settings);
+			var teiContent = getTeiByHtml(str, _ed.settings.clientOptions);
 			if (teiContent) {
 				teiContent = formatXml(teiContent);
 				x.value = teiContent;
