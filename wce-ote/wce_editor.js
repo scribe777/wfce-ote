@@ -98,19 +98,19 @@ function setWceEditor(_id, clientOptions, baseURL, callback) {
 		},
 		directionality : (clientOptions.rtl) ? "rtl" : "ltr",
 		language : (clientOptions.language) ? (clientOptions.language.indexOf('de') == 0 ? "de" : "en") : "en",
-		plugins : "pagebreak,save,print,contextmenu,fullscreen,wordcount,autosave,paste,charmap,code,noneditable",
+		plugins : "pagebreak,save,print,contextmenu,fullscreen,wordcount,autosave,paste,code,noneditable",
 		contextmenu: 'cut copy paste',
-		charmap : charmap_greek.concat(charmap_latin).concat(charmap_slavistic),
 		external_plugins: {
 			'wce' : '../../wce-ote/plugin/plugin.js',
-			'wcelinenumber': '../../wce-ote/plugin/js/line_number.js'
+			'wcelinenumber': '../../wce-ote/plugin/js/line_number.js',
+			'wcecharmap': '../../wce-ote/plugin/js/wce_charmap.js'
 		},
 		show_linenumber:true,//default false,
 		ignoreShiftNotEn: [188, 190],
 		keyboardDebug: true,
 		init_instance_callback : "wceReload",
 		// Theme options
-		toolbar : "undo redo charmap | code | save print contextmenu cut copy pastetext pasteword fullscreen | "+
+		toolbar : "undo redo wcecharmap | code | save print contextmenu cut copy pastetext pasteword fullscreen | "+
 		"breaks correction illegible decoration abbreviation paratext note punctuation versemodify | showTeiByHtml help | info showHtmlByTei",
 		theme_advanced_buttons2 : "",
 		theme_advanced_toolbar_location : "top",
