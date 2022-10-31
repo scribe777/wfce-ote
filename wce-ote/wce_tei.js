@@ -1113,18 +1113,32 @@ function getHtmlByTei(inputString, clientOptions) {
 			var wceAttr = '__t=paratext&__n=&fw_type=' + paratexttype + '&covered=' + cl + '&text=&number=&edit_number=on&paratext_position=pagetop&' +
 			'paratext_position_other=&paratext_alignment=left';
 			$newNode.setAttribute('wce', wceAttr);
-			for (var i = 0; i < cl; i++) {
+			if (clientOptions.showMultilineNotesAsSingleEntry == true && cl > 1) {
 				$newNode.appendChild($newDoc.createElement('br'));
 				nodeAddText($newNode, '\u21b5[');
 				$span = $newDoc.createElement('span');
 				$span.setAttribute('class', paratexttype);
 				$span.setAttribute('wce', '__t=paratext&__n=&fw_type=' + paratexttype + '&covered=' + cl);
 				if (paratexttype == "commentary")
-					nodeAddText($span, 'comm');
+					nodeAddText($span, cl + ' lines comm');
 				else
-					nodeAddText($span, 'lect');
+					nodeAddText($span, cl + ' lines lect');
 				$newNode.appendChild($span);
 				nodeAddText($newNode, ']');
+			} else {
+				for (var i = 0; i < cl; i++) {
+					$newNode.appendChild($newDoc.createElement('br'));
+					nodeAddText($newNode, '\u21b5[');
+					$span = $newDoc.createElement('span');
+					$span.setAttribute('class', paratexttype);
+					$span.setAttribute('wce', '__t=paratext&__n=&fw_type=' + paratexttype + '&covered=' + cl);
+					if (paratexttype == "commentary")
+						nodeAddText($span, 'comm');
+					else
+						nodeAddText($span, 'lect');
+					$newNode.appendChild($span);
+					nodeAddText($newNode, ']');
+				}
 			}
 			addFormatElement($newNode);
 			$htmlParent.appendChild($newNode);
@@ -1401,7 +1415,7 @@ function getHtmlByTei(inputString, clientOptions) {
 				nodeAddText($newNode, '[');
 				$span = $newDoc.createElement('span');
 				$span.setAttribute('class', 'commentary');
-				$span.setAttribute('wce', '__t=paratext&__n=&fw_type=commentary&covered=0');
+				$span.setAttribute('wce', '__t=paratext&__n=&fw_type=commentary&covered=' + cl);
 				nodeAddText($span, 'comm');
 				$newNode.appendChild($span);
 				nodeAddText($newNode, ']');
@@ -1430,7 +1444,7 @@ function getHtmlByTei(inputString, clientOptions) {
 				nodeAddText($newNode, '[');
 				$span = $newDoc.createElement('span');
 				$span.setAttribute('class', 'lectionary-other');
-				$span.setAttribute('wce', '__t=paratext&__n=&fw_type=lectionary-other&covered=0');
+				$span.setAttribute('wce', '__t=paratext&__n=&fw_type=lectionary-other&covered=' + cl);
 				nodeAddText($span, 'lect');
 				$newNode.appendChild($span);
 				nodeAddText($newNode, ']');

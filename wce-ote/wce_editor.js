@@ -74,6 +74,10 @@ function setWceEditor(_id, clientOptions, baseURL, callback) {
 		clientOptions.getBookNameFromBKV = getBookNameFromBKV;
 	}
 
+	if (!clientOptions.showMultilineNotesAsSingleEntry) {
+		clientOptions.showMultilineNotesAsSingleEntry = false;
+	}
+
 	if (!clientOptions.includePageNumbersInDeleteMenu) {
 		clientOptions.includePageNumbersInDeleteMenu = false;
 	}
