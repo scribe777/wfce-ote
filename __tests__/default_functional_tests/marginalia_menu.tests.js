@@ -257,6 +257,27 @@ describe('testing marginalia menu', () => {
 
         const menuFrameHandle = await page.$('div[id="mceu_39"] > div > div > iframe');
         const menuFrame = await menuFrameHandle.contentFrame();
+        await menuFrame.select('select[id="fw_type"]', 'ews');
+
+        await menuFrame.click('input#insert');
+
+        const htmlData = await page.evaluate(`getData()`);
+        expect(htmlData).toBe('abbreviated commentary<span class=\"paratext\" wce_orig=\"\" wce=\"__t=paratext&amp;__n=&amp;help=Help&amp;fw_type=ews&amp;fw_type_other=&amp;covered=0&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;marginals_text=&amp;number=&amp;edit_number=on&amp;paratext_position=&amp;paratext_position_other=&amp;paratext_alignment=\"><span class=\"format_start mceNonEditable\">‹</span>[<span class=\"ews\">ews</span>]<span class=\"format_end mceNonEditable\">›</span></span>');
+        const xmlData = await page.evaluate(`getTEI()`);
+        expect(xmlData).toBe(xmlHead + '<w>abbreviated</w><w>commentary</w><note type="editorial" subtype="ews"/><gap unit="verse" extent="rest"/>' + xmlTail);
+    }, 200000);
+
+    // FW
+    test('running title (fw) in centre top margin (seg)', async () => {
+
+        // open M menu
+        await page.click('button#mceu_15-open');
+        await page.keyboard.press('ArrowDown');
+        await page.keyboard.press('Enter');
+
+
+        const menuFrameHandle = await page.$('div[id="mceu_39"] > div > div > iframe');
+        const menuFrame = await menuFrameHandle.contentFrame();
         await menuFrame.select('select[id="fw_type"]', 'runTitle');
 
         const menuFrameHandle2 = await menuFrame.$('iframe[id="marginals_text_ifr"]');
@@ -266,46 +287,14 @@ describe('testing marginalia menu', () => {
         await menuFrame.select('select[id="paratext_position"]', 'pagetop');
         await menuFrame.select('select[id="paratext_alignment"]', 'center');
 
-    const menuFrameHandle = await page.$('div[id="mceu_39"] > div > div > iframe');
-    const menuFrame = await menuFrameHandle.contentFrame();
-    await menuFrame.select('select[id="fw_type"]', 'ews');
+        await menuFrame.click('input#insert');
 
-    await menuFrame.click('input#insert');
-
-    const htmlData = await page.evaluate(`getData()`);
-    expect(htmlData).toBe('abbreviated commentary<span class=\"paratext\" wce_orig=\"\" wce=\"__t=paratext&amp;__n=&amp;help=Help&amp;fw_type=ews&amp;fw_type_other=&amp;covered=0&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;marginals_text=&amp;number=&amp;edit_number=on&amp;paratext_position=&amp;paratext_position_other=&amp;paratext_alignment=\"><span class=\"format_start mceNonEditable\">‹</span>[<span class=\"ews\">ews</span>]<span class=\"format_end mceNonEditable\">›</span></span>');
-    const xmlData = await page.evaluate(`getTEI()`);
-    expect(xmlData).toBe(xmlHead + '<w>abbreviated</w><w>commentary</w><note type="editorial" subtype="ews"/><gap unit="verse" extent="rest"/>' + xmlTail);
-  }, 200000);
-
-  // FW
-  test('running title (fw) in centre top margin (seg)', async () => {
-
-    // open M menu
-    await page.click('button#mceu_15-open');
-    await page.keyboard.press('ArrowDown');
-    await page.keyboard.press('Enter');
-
-
-    const menuFrameHandle = await page.$('div[id="mceu_39"] > div > div > iframe');
-    const menuFrame = await menuFrameHandle.contentFrame();
-    await menuFrame.select('select[id="fw_type"]', 'runTitle');
-
-    const menuFrameHandle2 = await menuFrame.$('iframe[id="marginals_text_ifr"]');
-    const menuFrame2 = await menuFrameHandle2.contentFrame();
-    // I can't work out how to get the cursor to move to this window so typing and then deleting does this.
-    await menuFrame2.type('body#tinymce', 'running title');
-    await menuFrame.select('select[id="paratext_position"]', 'pagetop');
-    await menuFrame.select('select[id="paratext_alignment"]', 'center');
-
-    await menuFrame.click('input#insert');
-
-    const htmlData = await page.evaluate(`getData()`);
-    expect(htmlData).toBe('<span class=\"paratext\" wce_orig=\"\" wce=\"__t=paratext&amp;__n=&amp;help=Help&amp;fw_type=runTitle&amp;fw_type_other=&amp;covered=0&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;marginals_text=running%20title&amp;number=&amp;paratext_position=pagetop&amp;paratext_position_other=&amp;paratext_alignment=center\"><span class=\"format_start mceNonEditable\">‹</span>fw<span class=\"format_end mceNonEditable\">›</span></span>');
-    const xmlData = await page.evaluate(`getTEI()`);
-    expect(xmlData).toBe(xmlHead + '<seg type="margin" subtype="pagetop" n="@P-"><fw type="runTitle" rend="center">' +
-      '<w>running</w><w>title</w></fw></seg>' + xmlTail);
-  }, 200000);
+        const htmlData = await page.evaluate(`getData()`);
+        expect(htmlData).toBe('<span class=\"paratext\" wce_orig=\"\" wce=\"__t=paratext&amp;__n=&amp;help=Help&amp;fw_type=runTitle&amp;fw_type_other=&amp;covered=0&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;marginals_text=running%20title&amp;number=&amp;paratext_position=pagetop&amp;paratext_position_other=&amp;paratext_alignment=center\"><span class=\"format_start mceNonEditable\">‹</span>fw<span class=\"format_end mceNonEditable\">›</span></span>');
+        const xmlData = await page.evaluate(`getTEI()`);
+        expect(xmlData).toBe(xmlHead + '<seg type="margin" subtype="pagetop" n="@P-"><fw type="runTitle" rend="center">' +
+        '<w>running</w><w>title</w></fw></seg>' + xmlTail);
+    }, 200000);
 
   test('chapter number in left margin', async () => {
 
