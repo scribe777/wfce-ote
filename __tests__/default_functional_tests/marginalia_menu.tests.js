@@ -247,25 +247,6 @@ describe('testing marginalia menu', () => {
         expect(xmlData).toBe(xmlHead + '<w>abbreviated</w><w>commentary</w><note type="editorial" subtype="ews"/><gap unit="verse" extent="rest"/>' + xmlTail);
     }, 200000);
 
-    // FW
-    test('running title (fw) in centre top margin (seg)', async () => {
-
-        // open M menu
-        await page.click('button#mceu_15-open');
-        await page.keyboard.press('ArrowDown');
-        await page.keyboard.press('Enter');
-
-        const menuFrameHandle = await page.$('div[id="mceu_39"] > div > div > iframe');
-        const menuFrame = await menuFrameHandle.contentFrame();
-        await menuFrame.select('select[id="fw_type"]', 'ews');
-
-        await menuFrame.click('input#insert');
-
-        const htmlData = await page.evaluate(`getData()`);
-        expect(htmlData).toBe('abbreviated commentary<span class=\"paratext\" wce_orig=\"\" wce=\"__t=paratext&amp;__n=&amp;help=Help&amp;fw_type=ews&amp;fw_type_other=&amp;covered=0&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;marginals_text=&amp;number=&amp;edit_number=on&amp;paratext_position=&amp;paratext_position_other=&amp;paratext_alignment=\"><span class=\"format_start mceNonEditable\">‹</span>[<span class=\"ews\">ews</span>]<span class=\"format_end mceNonEditable\">›</span></span>');
-        const xmlData = await page.evaluate(`getTEI()`);
-        expect(xmlData).toBe(xmlHead + '<w>abbreviated</w><w>commentary</w><note type="editorial" subtype="ews"/><gap unit="verse" extent="rest"/>' + xmlTail);
-    }, 200000);
 
     // FW
     test('running title (fw) in centre top margin (seg)', async () => {
