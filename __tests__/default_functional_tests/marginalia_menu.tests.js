@@ -52,111 +52,219 @@ beforeEach(async () => {
 
 describe('testing marginalia menu', () => {
 
-  test('1 line of commentary text note', async () => {
-    await frame.type('body#tinymce', 'some commentary ');
-    await page.keyboard.press('Enter');
-    await frame.type('body#tinymce', 'in here');
-    await page.keyboard.press('ArrowUp');
-    for (let i = 0; i < 'mentary'.length; i++) {
-      await page.keyboard.press('ArrowRight');
-    }
+    test('1 line of commentary text note', async () => {
+        await frame.type('body#tinymce', 'some commentary ');
+        await page.keyboard.press('Enter');
+        await frame.type('body#tinymce', 'in here');
+        await page.keyboard.press('ArrowUp');
+        for (let i = 0; i < 'mentary'.length; i++) {
+            await page.keyboard.press('ArrowRight');
+        }
 
-    // open M menu (although stored in a note this is created as marginalia)
-    await page.click('button#mceu_15-open');
-    await page.keyboard.press('ArrowDown');
-    await page.keyboard.press('Enter');
+        // open M menu (although stored in a note this is created as marginalia)
+        await page.click('button#mceu_15-open');
+        await page.keyboard.press('ArrowDown');
+        await page.keyboard.press('Enter');
 
-    const menuFrameHandle = await page.$('div[id="mceu_39"] > div > div > iframe');
-    const menuFrame = await menuFrameHandle.contentFrame();
-    // commentary is default option
-    await menuFrame.type('input#covered', '1');
-    await page.keyboard.press('ArrowRight');
-    await page.keyboard.press('Backspace');
+        const menuFrameHandle = await page.$('div[id="mceu_39"] > div > div > iframe');
+        const menuFrame = await menuFrameHandle.contentFrame();
 
-    await menuFrame.click('input#insert');
+        await menuFrame.select('select[id="fw_type"]', 'commentary');
+        await menuFrame.type('input#covered', '1');
 
-    const htmlData = await page.evaluate(`getData()`);
-    expect(htmlData).toBe('some commentary<span class=\"paratext\" wce_orig=\"\" wce=\"__t=paratext&amp;__n=&amp;help=Help&amp;fw_type=commentary&amp;fw_type_other=&amp;covered=1&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;marginals_text=&amp;number=&amp;edit_number=on&amp;paratext_position=&amp;paratext_position_other=&amp;paratext_alignment=\"><span class=\"format_start mceNonEditable\">‹</span><br />↵[<span class=\"commentary\" wce=\"__t=paratext&amp;__n=&amp;fw_type=commentary&amp;covered=1\">comm</span>]<span class=\"format_end mceNonEditable\">›</span></span><span class=\"mceNonEditable brea\" wce=\"__t=brea&amp;__n=&amp;hasBreak=no&amp;break_type=lb&amp;number=&amp;rv=&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment=\"><span class=\"format_start mceNonEditable\">‹</span><br />↵<span class=\"format_end mceNonEditable\">›</span></span> in here');
-    const xmlData = await page.evaluate(`getTEI()`);
-    expect(xmlData).toBe(xmlHead + '<w>some</w><w>commentary</w><lb/><note type="commentary">One line of untranscribed commentary text</note>' +
-      '<lb n="PCL-"/><w>in</w><w>here</w>' + xmlTail);
-  }, 200000);
+        await page.keyboard.press('ArrowRight');
+        await page.keyboard.press('Backspace');
 
-  test('commentary in line', async () => {
-    await frame.type('body#tinymce', 'in line commentary');
+        await menuFrame.click('input#insert');
 
-    // open M menu (although stored in a note this is created as marginalia)
-    await page.click('button#mceu_15-open');
-    await page.keyboard.press('ArrowDown');
-    await page.keyboard.press('Enter');
+        const htmlData = await page.evaluate(`getData()`);
+        expect(htmlData).toBe('some commentary<span class=\"paratext\" wce_orig=\"\" wce=\"__t=paratext&amp;__n=&amp;help=Help&amp;fw_type=commentary&amp;fw_type_other=&amp;covered=1&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;marginals_text=&amp;number=&amp;edit_number=on&amp;paratext_position=&amp;paratext_position_other=&amp;paratext_alignment=\"><span class=\"format_start mceNonEditable\">‹</span><br />↵[<span class=\"commentary\" wce=\"__t=paratext&amp;__n=&amp;fw_type=commentary&amp;covered=1\">comm</span>]<span class=\"format_end mceNonEditable\">›</span></span><span class=\"mceNonEditable brea\" wce=\"__t=brea&amp;__n=&amp;hasBreak=no&amp;break_type=lb&amp;number=&amp;rv=&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment=\"><span class=\"format_start mceNonEditable\">‹</span><br />↵<span class=\"format_end mceNonEditable\">›</span></span> in here');
+        const xmlData = await page.evaluate(`getTEI()`);
+        expect(xmlData).toBe(xmlHead + '<w>some</w><w>commentary</w><lb/><note type="commentary">One line of untranscribed commentary text</note>' +
+            '<lb n="PCL-"/><w>in</w><w>here</w>' + xmlTail);
+    }, 200000);
 
-    const menuFrameHandle = await page.$('div[id="mceu_39"] > div > div > iframe');
-    const menuFrame = await menuFrameHandle.contentFrame();
-    // commentary is default option
-    // 0 is default option for lines
+    test('commentary in line', async () => {
+        await frame.type('body#tinymce', 'in line commentary');
 
-    await menuFrame.click('input#insert');
+        // open M menu (although stored in a note this is created as marginalia)
+        await page.click('button#mceu_15-open');
+        await page.keyboard.press('ArrowDown');
+        await page.keyboard.press('Enter');
 
-    const htmlData = await page.evaluate(`getData()`);
-    expect(htmlData).toBe('in line commentary<span class=\"paratext\" wce_orig=\"\" wce=\"__t=paratext&amp;__n=&amp;help=Help&amp;fw_type=commentary&amp;fw_type_other=&amp;covered=0&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;marginals_text=&amp;number=&amp;edit_number=on&amp;paratext_position=&amp;paratext_position_other=&amp;paratext_alignment=\"><span class=\"format_start mceNonEditable\">‹</span>[<span class=\"commentary\" wce=\"__t=paratext&amp;__n=&amp;fw_type=commentary&amp;covered=0\">comm</span>]<span class=\"format_end mceNonEditable\">›</span></span>');
-    const xmlData = await page.evaluate(`getTEI()`);
-    expect(xmlData).toBe(xmlHead + '<w>in</w><w>line</w><w>commentary</w><note type="commentary">Untranscribed commentary text within the line</note>' + xmlTail);
-  }, 200000);
+        const menuFrameHandle = await page.$('div[id="mceu_39"] > div > div > iframe');
+        const menuFrame = await menuFrameHandle.contentFrame();
 
-  test('lectionary in line', async () => {
-    await frame.type('body#tinymce', 'in line lectionary');
+        await menuFrame.select('select[id="fw_type"]', 'commentary');
+        // 0 is default option for lines
 
-    // open M menu (although stored in a note this is created as marginalia)
-    await page.click('button#mceu_15-open');
-    await page.keyboard.press('ArrowDown');
-    await page.keyboard.press('Enter');
+        await menuFrame.click('input#insert');
 
-    const menuFrameHandle = await page.$('div[id="mceu_39"] > div > div > iframe');
-    const menuFrame = await menuFrameHandle.contentFrame();
-    await menuFrame.select('select[id="fw_type"]', 'lectionary-other');
+        const htmlData = await page.evaluate(`getData()`);
+        expect(htmlData).toBe('in line commentary<span class=\"paratext\" wce_orig=\"\" wce=\"__t=paratext&amp;__n=&amp;help=Help&amp;fw_type=commentary&amp;fw_type_other=&amp;covered=0&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;marginals_text=&amp;number=&amp;edit_number=on&amp;paratext_position=&amp;paratext_position_other=&amp;paratext_alignment=\"><span class=\"format_start mceNonEditable\">‹</span>[<span class=\"commentary\" wce=\"__t=paratext&amp;__n=&amp;fw_type=commentary&amp;covered=0\">comm</span>]<span class=\"format_end mceNonEditable\">›</span></span>');
+        const xmlData = await page.evaluate(`getTEI()`);
+        expect(xmlData).toBe(xmlHead + '<w>in</w><w>line</w><w>commentary</w><note type="commentary">Untranscribed commentary text within the line</note>' + xmlTail);
+    }, 200000);
 
-    // 0 is default option for lines
-    await menuFrame.click('input#insert');
+    test('lectionary in line', async () => {
+        await frame.type('body#tinymce', 'in line lectionary');
 
-    const htmlData = await page.evaluate(`getData()`);
-    expect(htmlData).toBe('in line lectionary<span class=\"paratext\" wce_orig=\"\" wce=\"__t=paratext&amp;__n=&amp;help=Help&amp;fw_type=lectionary-other&amp;fw_type_other=&amp;covered=0&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;marginals_text=&amp;number=&amp;edit_number=on&amp;paratext_position=&amp;paratext_position_other=&amp;paratext_alignment=\"><span class=\"format_start mceNonEditable\">‹</span>[<span class=\"lectionary-other\" wce=\"__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=0\">lect</span>]<span class=\"format_end mceNonEditable\">›</span></span>');
-    const xmlData = await page.evaluate(`getTEI()`);
-    expect(xmlData).toBe(xmlHead + '<w>in</w><w>line</w><w>lectionary</w><note type="lectionary-other">Untranscribed lectionary text within the line</note>' + xmlTail);
-  }, 200000);
+        // open M menu (although stored in a note this is created as marginalia)
+        await page.click('button#mceu_15-open');
+        await page.keyboard.press('ArrowDown');
+        await page.keyboard.press('Enter');
 
-  test('2 lines of untranscribed lectionary text', async () => {
-    await frame.type('body#tinymce', 'lection text next');
+        const menuFrameHandle = await page.$('div[id="mceu_39"] > div > div > iframe');
+        const menuFrame = await menuFrameHandle.contentFrame();
+        await menuFrame.select('select[id="fw_type"]', 'lectionary-other');
 
-    // open M menu (although stored in a note this is created as marginalia)
-    await page.click('button#mceu_15-open');
-    await page.keyboard.press('ArrowDown');
-    await page.keyboard.press('Enter');
+        // 0 is default option for lines
+        await menuFrame.click('input#insert');
 
-    const menuFrameHandle = await page.$('div[id="mceu_39"] > div > div > iframe');
-    const menuFrame = await menuFrameHandle.contentFrame();
-    await menuFrame.select('select[id="fw_type"]', 'lectionary-other');
+        const htmlData = await page.evaluate(`getData()`);
+        expect(htmlData).toBe('in line lectionary<span class=\"paratext\" wce_orig=\"\" wce=\"__t=paratext&amp;__n=&amp;help=Help&amp;fw_type=lectionary-other&amp;fw_type_other=&amp;covered=0&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;marginals_text=&amp;number=&amp;edit_number=on&amp;paratext_position=&amp;paratext_position_other=&amp;paratext_alignment=\"><span class=\"format_start mceNonEditable\">‹</span>[<span class=\"lectionary-other\" wce=\"__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=0\">lect</span>]<span class=\"format_end mceNonEditable\">›</span></span>');
+        const xmlData = await page.evaluate(`getTEI()`);
+        expect(xmlData).toBe(xmlHead + '<w>in</w><w>line</w><w>lectionary</w><note type="lectionary-other">Untranscribed lectionary text within the line</note>' + xmlTail);
+        
+        // test editing
+        await page.keyboard.press('ArrowLeft');
+        await page.keyboard.press('ArrowLeft');
+        await page.keyboard.press('ArrowLeft');
 
-    await menuFrame.type('input#covered', '2');
-    await page.keyboard.press('ArrowRight');
-    await page.keyboard.press('Backspace');
+        // open M menu for editing (although stored in a note this is created as marginalia)
+        await page.click('button#mceu_15-open');
+        await page.keyboard.press('ArrowDown');
+        await page.keyboard.press('ArrowDown');
+        await page.keyboard.press('Enter');
 
-    await menuFrame.click('input#insert');
+        const menuFrameHandle2 = await page.$('div[id="mceu_40"] > div > div > iframe');
+        const menuFrame2 = await menuFrameHandle2.contentFrame();
 
-    const htmlData = await page.evaluate(`getData()`);
-    expect(htmlData).toBe('lection text next<span class=\"paratext\" wce_orig=\"\" wce=\"__t=paratext&amp;__n=&amp;help=Help&amp;fw_type=lectionary-other&amp;fw_type_other=&amp;covered=2&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;marginals_text=&amp;number=&amp;edit_number=on&amp;paratext_position=&amp;paratext_position_other=&amp;paratext_alignment=\"><span class=\"format_start mceNonEditable\">‹</span><br />↵[<span class=\"lectionary-other\" wce=\"__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=2\">lect</span>]<br />↵[<span class=\"lectionary-other\" wce=\"__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=2\">lect</span>]<span class=\"format_end mceNonEditable\">›</span></span>');
-    const xmlData = await page.evaluate(`getTEI()`);
-    expect(xmlData).toBe(xmlHead + '<w>lection</w><w>text</w><w>next</w><lb/>' +
-      '<note type="lectionary-other">One line of untranscribed lectionary text</note><lb/>' +
-      '<note type="lectionary-other">One line of untranscribed lectionary text</note>' + xmlTail);
-  }, 200000);
+        expect(await menuFrame2.$eval('#fw_type', el => el.value)).toBe('lectionary-other');
+        expect(await menuFrame2.$eval('#fw_type_other', el => el.disabled)).toBe(true);
+        expect(await menuFrame2.$eval('#fw_type_other', el => el.value)).toBe('');
+        expect(await menuFrame2.$eval('#covered', el => el.value)).toBe('0');
+        await menuFrame2.click('input#insert');
+        const xmlData2 = await page.evaluate(`getTEI()`);
+        expect(xmlData2).toBe(xmlHead + '<w>in</w><w>line</w><w>lectionary</w><note type="lectionary-other">Untranscribed lectionary text within the line</note>' + xmlTail);
 
-  test('ews', async () => {
-    await frame.type('body#tinymce', 'abbreviated commentary');
+        // test deleting
+        await page.keyboard.press('ArrowLeft');
+        await page.keyboard.press('ArrowLeft');
+        await page.keyboard.press('ArrowLeft');
+        // open M menu for deleting (although stored in a note this is created as marginalia)
+        await page.click('button#mceu_15-open');
+        await page.keyboard.press('ArrowDown');
+        await page.keyboard.press('ArrowDown');
+        await page.keyboard.press('ArrowDown');
+        await page.keyboard.press('Enter');
+        const xmlData3 = await page.evaluate(`getTEI()`);
+        expect(xmlData3).toBe(xmlHead + '<w>in</w><w>line</w><w>lectionary</w>' + xmlTail);
+    
+    }, 200000);
 
-    // open M menu (although stored in a note this is created as marginalia)
-    await page.click('button#mceu_15-open');
-    await page.keyboard.press('ArrowDown');
-    await page.keyboard.press('Enter');
+    test('2 lines of untranscribed lectionary text', async () => {
+        await frame.type('body#tinymce', 'lection text next');
+
+        // open M menu (although stored in a note this is created as marginalia)
+        await page.click('button#mceu_15-open');
+        await page.keyboard.press('ArrowDown');
+        await page.keyboard.press('Enter');
+
+        const menuFrameHandle = await page.$('div[id="mceu_39"] > div > div > iframe');
+        const menuFrame = await menuFrameHandle.contentFrame();
+        await menuFrame.select('select[id="fw_type"]', 'lectionary-other');
+
+        await menuFrame.type('input#covered', '2');
+        await page.keyboard.press('ArrowRight');
+        await page.keyboard.press('Backspace');
+
+        await menuFrame.click('input#insert');
+
+        const htmlData = await page.evaluate(`getData()`);
+        expect(htmlData).toBe('lection text next<span class=\"paratext\" wce_orig=\"\" wce=\"__t=paratext&amp;__n=&amp;help=Help&amp;fw_type=lectionary-other&amp;fw_type_other=&amp;covered=2&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;marginals_text=&amp;number=&amp;edit_number=on&amp;paratext_position=&amp;paratext_position_other=&amp;paratext_alignment=\"><span class=\"format_start mceNonEditable\">‹</span><br />↵[<span class=\"lectionary-other\" wce=\"__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=2\">lect</span>]<br />↵[<span class=\"lectionary-other\" wce=\"__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=2\">lect</span>]<span class=\"format_end mceNonEditable\">›</span></span>');
+        const xmlData = await page.evaluate(`getTEI()`);
+        expect(xmlData).toBe(xmlHead + '<w>lection</w><w>text</w><w>next</w><lb/>' +
+            '<note type="lectionary-other">One line of untranscribed lectionary text</note><lb/>' +
+            '<note type="lectionary-other">One line of untranscribed lectionary text</note>' + xmlTail);
+
+        // test editing
+        await page.keyboard.press('ArrowLeft');
+        await page.keyboard.press('ArrowLeft');
+        await page.keyboard.press('ArrowLeft');
+
+        // open M menu for editing (although stored in a note this is created as marginalia)
+        await page.click('button#mceu_15-open');
+        await page.keyboard.press('ArrowDown');
+        await page.keyboard.press('ArrowDown');
+        await page.keyboard.press('Enter');
+
+        const menuFrameHandle2 = await page.$('div[id="mceu_40"] > div > div > iframe');
+        const menuFrame2 = await menuFrameHandle2.contentFrame();
+
+        expect(await menuFrame2.$eval('#fw_type', el => el.value)).toBe('lectionary-other');
+        expect(await menuFrame2.$eval('#fw_type_other', el => el.disabled)).toBe(true);
+        expect(await menuFrame2.$eval('#fw_type_other', el => el.value)).toBe('');
+        expect(await menuFrame2.$eval('#covered', el => el.value)).toBe('2');
+        await menuFrame2.click('input#insert');
+        const xmlData2 = await page.evaluate(`getTEI()`);
+        expect(xmlData2).toBe(xmlHead + '<w>lection</w><w>text</w><w>next</w><lb/>' +
+            '<note type="lectionary-other">One line of untranscribed lectionary text</note><lb/>' +
+            '<note type="lectionary-other">One line of untranscribed lectionary text</note>' + xmlTail);
+
+        // test deleting
+        await page.keyboard.press('ArrowLeft');
+        await page.keyboard.press('ArrowLeft');
+        await page.keyboard.press('ArrowLeft');
+        // open M menu for deleting (although stored in a note this is created as marginalia)
+        await page.click('button#mceu_15-open');
+        await page.keyboard.press('ArrowDown');
+        await page.keyboard.press('ArrowDown');
+        await page.keyboard.press('ArrowDown');
+        await page.keyboard.press('Enter');
+        const xmlData3 = await page.evaluate(`getTEI()`);
+        expect(xmlData3).toBe(xmlHead + '<w>lection</w><w>text</w><w>next</w>' + xmlTail);
+
+    }, 200000);
+
+    test('ews', async () => {
+        await frame.type('body#tinymce', 'abbreviated commentary');
+
+        // open M menu (although stored in a note this is created as marginalia)
+        await page.click('button#mceu_15-open');
+        await page.keyboard.press('ArrowDown');
+        await page.keyboard.press('Enter');
+
+        const menuFrameHandle = await page.$('div[id="mceu_39"] > div > div > iframe');
+        const menuFrame = await menuFrameHandle.contentFrame();
+        await menuFrame.select('select[id="fw_type"]', 'ews');
+
+        await menuFrame.click('input#insert');
+
+        const htmlData = await page.evaluate(`getData()`);
+        expect(htmlData).toBe('abbreviated commentary<span class=\"paratext\" wce_orig=\"\" wce=\"__t=paratext&amp;__n=&amp;help=Help&amp;fw_type=ews&amp;fw_type_other=&amp;covered=0&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;marginals_text=&amp;number=&amp;edit_number=on&amp;paratext_position=&amp;paratext_position_other=&amp;paratext_alignment=\"><span class=\"format_start mceNonEditable\">‹</span>[<span class=\"ews\">ews</span>]<span class=\"format_end mceNonEditable\">›</span></span>');
+        const xmlData = await page.evaluate(`getTEI()`);
+        expect(xmlData).toBe(xmlHead + '<w>abbreviated</w><w>commentary</w><note type="editorial" subtype="ews"/><gap unit="verse" extent="rest"/>' + xmlTail);
+    }, 200000);
+
+    // FW
+    test('running title (fw) in centre top margin (seg)', async () => {
+
+        // open M menu
+        await page.click('button#mceu_15-open');
+        await page.keyboard.press('ArrowDown');
+        await page.keyboard.press('Enter');
+
+        const menuFrameHandle = await page.$('div[id="mceu_39"] > div > div > iframe');
+        const menuFrame = await menuFrameHandle.contentFrame();
+        await menuFrame.select('select[id="fw_type"]', 'runTitle');
+
+        const menuFrameHandle2 = await menuFrame.$('iframe[id="marginals_text_ifr"]');
+        const menuFrame2 = await menuFrameHandle2.contentFrame();
+        // I can't work out how to get the cursor to move to this window so typing and then deleting does this.
+        await menuFrame2.type('body#tinymce', 'running title');
+        await menuFrame.select('select[id="paratext_position"]', 'pagetop');
+        await menuFrame.select('select[id="paratext_alignment"]', 'center');
 
     const menuFrameHandle = await page.$('div[id="mceu_39"] > div > div > iframe');
     const menuFrame = await menuFrameHandle.contentFrame();
@@ -244,8 +352,6 @@ describe('testing marginalia menu', () => {
     const menuFrame = await menuFrameHandle.contentFrame();
     await menuFrame.select('select[id="fw_type"]', 'runTitle');
 
-    const menuFrameHandle2 = await menuFrame.$('iframe[id="marginals_text_ifr"]');
-    const menuFrame2 = await menuFrameHandle2.contentFrame();
 
     BButton = await menuFrame.$eval('#mceu_5 > button > i', element => element.getAttribute('style'));
     expect(BButton).toContain('button_B.png');
