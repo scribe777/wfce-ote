@@ -170,10 +170,6 @@ tinymce.addI18n('de',{
 	unclear : "Unsichere (zweifelhafte) Lesart",
 	unclear_text_title : "Bitte die unsicheren Buchstaben bestimmen",
 	tt_corr_deletion : "Halten Sie die SHIFT-Taste gedrückt, um einen Optionsbereich auzuwählen. Drücken Sie die CTRL- (bzw. Apple-Taste) für die Auswahl mehrerer Einzeloptionen.",
-    charmap_greek_only : "Nur Griechisch",
-	charmap_latin_only : "Nur Latein",
-	charmap_slavistic_only : "Nur Slavistisch",
-	charmap_all : "Alle Schriftzeichen",
 	unclear_text_info : "Bitte die unsicheren Buchstaben bestimmen",
 	unclear_text_data : "Informationen über die nicht sicher gelesenen Buchstaben",
 	poor_image : "Schlechtes Bild",
@@ -328,4 +324,8 @@ tinymce.addI18n('de',{
 	cancel : 'Cancel',
 	new_hand: 'New',
 	close : 'Close',
+	charmap_greek: 'Include Greek characters', /*TODO: someone needs to translate these into German*/
+    charmap_latin: 'Include Latin characters',
+    charmap_slavic: 'Include Slavic characters',
+    charmap_coptic: 'Include Coptic characters',
 });

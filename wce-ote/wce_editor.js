@@ -105,7 +105,7 @@ function setWceEditor(_id, clientOptions, baseURL, callback) {
 	if (clientOptions.toolbar) {
 		toolbar = clientOptions.toolbar;
 	} else {
-		toolbar = 'undo redo charmap | code | save print contextmenu cut copy paste fullscreen | ' +
+		toolbar = 'undo redo wcecharmap | code | save print contextmenu cut copy paste fullscreen | ' +
 				  'breaks correction illegible decoration abbreviation paratext note punctuation versemodify | ' +
 				  'showTeiByHtml help | info showHtmlByTei';
 	}
@@ -131,13 +131,13 @@ function setWceEditor(_id, clientOptions, baseURL, callback) {
 		},
 		directionality : (clientOptions.rtl) ? "rtl" : "ltr",
 		language : (clientOptions.language) ? (clientOptions.language.indexOf('de') == 0 ? "de" : "en") : "en",
-		plugins : "pagebreak,save,print,contextmenu,fullscreen,wordcount,autosave,paste,charmap,code,noneditable",
+		plugins : "pagebreak,save,print,contextmenu,fullscreen,wordcount,autosave,paste,code,noneditable",
 		paste_as_text: true,
 		contextmenu: 'cut copy paste',
-		charmap : charmap_greek.concat(charmap_latin).concat(charmap_slavistic),
 		external_plugins: {
 			'wce' : '../../wce-ote/plugin/plugin.js',
-			'wcelinenumber': '../../wce-ote/plugin/js/line_number.js'
+			'wcelinenumber': '../../wce-ote/plugin/js/line_number.js',
+			'wcecharmap': '../../wce-ote/plugin/js/wce_charmap.js'
 		},
 		show_linenumber:true,//default false,
 		ignoreShiftNotEn: (clientOptions.transcriptionLanguage == 'coptic') ? [] : [188, 190],
