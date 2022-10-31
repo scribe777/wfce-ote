@@ -125,6 +125,42 @@ describe('testing marginalia menu', () => {
         expect(htmlData).toBe('in line lectionary<span class=\"paratext\" wce_orig=\"\" wce=\"__t=paratext&amp;__n=&amp;help=Help&amp;fw_type=lectionary-other&amp;fw_type_other=&amp;covered=0&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;marginals_text=&amp;number=&amp;edit_number=on&amp;paratext_position=&amp;paratext_position_other=&amp;paratext_alignment=\"><span class=\"format_start mceNonEditable\">‹</span>[<span class=\"lectionary-other\" wce=\"__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=0\">lect</span>]<span class=\"format_end mceNonEditable\">›</span></span>');
         const xmlData = await page.evaluate(`getTEI()`);
         expect(xmlData).toBe(xmlHead + '<w>in</w><w>line</w><w>lectionary</w><note type="lectionary-other">Untranscribed lectionary text within the line</note>' + xmlTail);
+        
+        // test editing
+        await page.keyboard.press('ArrowLeft');
+        await page.keyboard.press('ArrowLeft');
+        await page.keyboard.press('ArrowLeft');
+
+        // open M menu for editing (although stored in a note this is created as marginalia)
+        await page.click('button#mceu_15-open');
+        await page.keyboard.press('ArrowDown');
+        await page.keyboard.press('ArrowDown');
+        await page.keyboard.press('Enter');
+
+        const menuFrameHandle2 = await page.$('div[id="mceu_40"] > div > div > iframe');
+        const menuFrame2 = await menuFrameHandle2.contentFrame();
+
+        expect(await menuFrame2.$eval('#fw_type', el => el.value)).toBe('lectionary-other');
+        expect(await menuFrame2.$eval('#fw_type_other', el => el.disabled)).toBe(true);
+        expect(await menuFrame2.$eval('#fw_type_other', el => el.value)).toBe('');
+        expect(await menuFrame2.$eval('#covered', el => el.value)).toBe('0');
+        await menuFrame2.click('input#insert');
+        const xmlData2 = await page.evaluate(`getTEI()`);
+        expect(xmlData2).toBe(xmlHead + '<w>in</w><w>line</w><w>lectionary</w><note type="lectionary-other">Untranscribed lectionary text within the line</note>' + xmlTail);
+
+        // test deleting
+        await page.keyboard.press('ArrowLeft');
+        await page.keyboard.press('ArrowLeft');
+        await page.keyboard.press('ArrowLeft');
+        // open M menu for deleting (although stored in a note this is created as marginalia)
+        await page.click('button#mceu_15-open');
+        await page.keyboard.press('ArrowDown');
+        await page.keyboard.press('ArrowDown');
+        await page.keyboard.press('ArrowDown');
+        await page.keyboard.press('Enter');
+        const xmlData3 = await page.evaluate(`getTEI()`);
+        expect(xmlData3).toBe(xmlHead + '<w>in</w><w>line</w><w>lectionary</w>' + xmlTail);
+    
     }, 200000);
 
     test('2 lines of untranscribed lectionary text', async () => {
@@ -151,6 +187,44 @@ describe('testing marginalia menu', () => {
         expect(xmlData).toBe(xmlHead + '<w>lection</w><w>text</w><w>next</w><lb/>' +
             '<note type="lectionary-other">One line of untranscribed lectionary text</note><lb/>' +
             '<note type="lectionary-other">One line of untranscribed lectionary text</note>' + xmlTail);
+
+        // test editing
+        await page.keyboard.press('ArrowLeft');
+        await page.keyboard.press('ArrowLeft');
+        await page.keyboard.press('ArrowLeft');
+
+        // open M menu for editing (although stored in a note this is created as marginalia)
+        await page.click('button#mceu_15-open');
+        await page.keyboard.press('ArrowDown');
+        await page.keyboard.press('ArrowDown');
+        await page.keyboard.press('Enter');
+
+        const menuFrameHandle2 = await page.$('div[id="mceu_40"] > div > div > iframe');
+        const menuFrame2 = await menuFrameHandle2.contentFrame();
+
+        expect(await menuFrame2.$eval('#fw_type', el => el.value)).toBe('lectionary-other');
+        expect(await menuFrame2.$eval('#fw_type_other', el => el.disabled)).toBe(true);
+        expect(await menuFrame2.$eval('#fw_type_other', el => el.value)).toBe('');
+        expect(await menuFrame2.$eval('#covered', el => el.value)).toBe('2');
+        await menuFrame2.click('input#insert');
+        const xmlData2 = await page.evaluate(`getTEI()`);
+        expect(xmlData2).toBe(xmlHead + '<w>lection</w><w>text</w><w>next</w><lb/>' +
+            '<note type="lectionary-other">One line of untranscribed lectionary text</note><lb/>' +
+            '<note type="lectionary-other">One line of untranscribed lectionary text</note>' + xmlTail);
+
+        // test deleting
+        await page.keyboard.press('ArrowLeft');
+        await page.keyboard.press('ArrowLeft');
+        await page.keyboard.press('ArrowLeft');
+        // open M menu for deleting (although stored in a note this is created as marginalia)
+        await page.click('button#mceu_15-open');
+        await page.keyboard.press('ArrowDown');
+        await page.keyboard.press('ArrowDown');
+        await page.keyboard.press('ArrowDown');
+        await page.keyboard.press('Enter');
+        const xmlData3 = await page.evaluate(`getTEI()`);
+        expect(xmlData3).toBe(xmlHead + '<w>lection</w><w>text</w><w>next</w>' + xmlTail);
+
     }, 200000);
 
     test('ews', async () => {
@@ -285,9 +359,6 @@ describe('testing marginalia menu', () => {
         const menuFrameHandle = await page.$('div[id="mceu_39"] > div > div > iframe');
         const menuFrame = await menuFrameHandle.contentFrame();
         await menuFrame.select('select[id="fw_type"]', 'runTitle');
-
-        const menuFrameHandle2 = await menuFrame.$('iframe[id="marginals_text_ifr"]');
-        const menuFrame2 = await menuFrameHandle2.contentFrame();
 
         BButton = await menuFrame.$eval('#mceu_5 > button > i', element => element.getAttribute('style'));
         expect(BButton).toContain('button_B.png');

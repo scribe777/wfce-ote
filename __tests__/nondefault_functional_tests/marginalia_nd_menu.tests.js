@@ -26,7 +26,7 @@ beforeAll(async () => {
     headless: true,
     slowMo: 80,
     args: ['--disable-web-security']
-  });
+      });
 });
 
 afterAll(async () => {
@@ -66,7 +66,7 @@ describe('testing with showMultilineNotesAsSingleEntry client setting as true', 
   
       const menuFrameHandle = await page.$('div[id="mceu_39"] > div > div > iframe');
       const menuFrame = await menuFrameHandle.contentFrame();
-      // commentary is default option
+      await menuFrame.select('select[id="fw_type"]', 'commentary');
       await menuFrame.type('input#covered', '1');
       await page.keyboard.press('ArrowRight');
       await page.keyboard.press('Backspace');
@@ -74,10 +74,47 @@ describe('testing with showMultilineNotesAsSingleEntry client setting as true', 
       await menuFrame.click('input#insert');
   
       const htmlData = await page.evaluate(`getData()`);
-      expect(htmlData).toBe('some commentary<span class=\"paratext\" wce_orig=\"\" wce=\"__t=paratext&amp;__n=&amp;help=Help&amp;fw_type=commentary&amp;fw_type_other=&amp;covered=1&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;marginals_text=&amp;number=&amp;edit_number=on&amp;paratext_position=&amp;paratext_position_other=&amp;paratext_alignment=\"><span class=\"format_start mceNonEditable\">‹</span><br />↵[<span class=\"commentary\" wce=\"__t=paratext&amp;__n=&amp;fw_type=commentary&amp;covered=1\">comm</span>]<span class=\"format_end mceNonEditable\">›</span></span><span class=\"mceNonEditable brea\" wce=\"__t=brea&amp;__n=&amp;hasBreak=no&amp;break_type=lb&amp;number=&amp;rv=&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment=\"><span class=\"format_start mceNonEditable\">‹</span><br />↵<span class=\"format_end mceNonEditable\">›</span></span> in here');
+      expect(htmlData).toBe('some commentary<span class=\"paratext\" wce_orig=\"\" wce=\"__t=paratext&amp;__n=&amp;help=Help&amp;fw_type=commentary&amp;fw_type_other=&amp;covered=1&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;marginals_text=&amp;number=&amp;edit_number=on&amp;paratext_position=&amp;paratext_position_other=&amp;paratext_alignment=\"><span class=\"format_start mceNonEditable\">‹</span><br />↵[<span class=\"commentary\" wce=\"__t=paratext&amp;__n=&amp;fw_type=commentary&amp;covered=1\">comm</span>]<span class=\"format_end mceNonEditable\">›</span></span><span class=\"mceNonEditable brea\" wce=\"__t=brea&amp;__n=&amp;hasBreak=no&amp;break_type=lb&amp;number=&amp;rv=&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment=\"><span class=\"format_start mceNonEditable\">‹</span><br />↵<span class=\"format_end mceNonEditable\">›</span></span> in here');
       const xmlData = await page.evaluate(`getTEI()`);
       expect(xmlData).toBe(xmlHead + '<w>some</w><w>commentary</w><lb/><note type="commentary">One line of untranscribed commentary text</note>' +
                           '<lb n="PCL-"/><w>in</w><w>here</w>' + xmlTail);
+
+      // test editing
+      await page.keyboard.press('ArrowLeft');
+      await page.keyboard.press('ArrowLeft');
+      await page.keyboard.press('ArrowLeft');
+
+      // open M menu for editing (although stored in a note this is created as marginalia)
+      await page.click('button#mceu_15-open');
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('Enter');
+
+      const menuFrameHandle2 = await page.$('div[id="mceu_40"] > div > div > iframe');
+      const menuFrame2 = await menuFrameHandle2.contentFrame();
+
+      expect(await menuFrame2.$eval('#fw_type', el => el.value)).toBe('commentary');
+      expect(await menuFrame2.$eval('#fw_type_other', el => el.disabled)).toBe(true);
+      expect(await menuFrame2.$eval('#fw_type_other', el => el.value)).toBe('');
+      expect(await menuFrame2.$eval('#covered', el => el.value)).toBe('1');
+      await menuFrame2.click('input#insert');
+      const xmlData2 = await page.evaluate(`getTEI()`);
+      expect(xmlData2).toBe(xmlHead + '<w>some</w><w>commentary</w><lb/><note type="commentary">One line of untranscribed commentary text</note>' +
+                          '<lb n="PCL-"/><w>in</w><w>here</w>' + xmlTail);
+
+      // test deleting
+      await page.keyboard.press('ArrowLeft');
+      await page.keyboard.press('ArrowLeft');
+      await page.keyboard.press('ArrowLeft');
+      // open M menu for deleting (although stored in a note this is created as marginalia)
+      await page.click('button#mceu_15-open');
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('Enter');
+      const xmlData3 = await page.evaluate(`getTEI()`);
+      expect(xmlData3).toBe(xmlHead + '<w>some</w><w>commentary</w><lb n="PCL-"/><w>in</w><w>here</w>' + xmlTail);
+
     }, 200000);
   
     test('3 lines of commentary text note', async () => {
@@ -96,7 +133,7 @@ describe('testing with showMultilineNotesAsSingleEntry client setting as true', 
   
       const menuFrameHandle = await page.$('div[id="mceu_39"] > div > div > iframe');
       const menuFrame = await menuFrameHandle.contentFrame();
-      // commentary is default option
+      await menuFrame.select('select[id="fw_type"]', 'commentary');
       await menuFrame.type('input#covered', '3');
       await page.keyboard.press('ArrowRight');
       await page.keyboard.press('Backspace');
@@ -104,10 +141,48 @@ describe('testing with showMultilineNotesAsSingleEntry client setting as true', 
       await menuFrame.click('input#insert');
   
       const htmlData = await page.evaluate(`getData()`);
-      expect(htmlData).toBe('some commentary<span class=\"paratext\" wce_orig=\"\" wce=\"__t=paratext&amp;__n=&amp;help=Help&amp;fw_type=commentary&amp;fw_type_other=&amp;covered=3&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;marginals_text=&amp;number=&amp;edit_number=on&amp;paratext_position=&amp;paratext_position_other=&amp;paratext_alignment=\"><span class=\"format_start mceNonEditable\">‹</span><br />↵[<span class=\"commentary\" wce=\"__t=paratext&amp;__n=&amp;fw_type=commentary&amp;covered=3\">comm</span>]<span class=\"format_end mceNonEditable\">›</span></span><span class=\"mceNonEditable brea\" wce=\"__t=brea&amp;__n=&amp;hasBreak=no&amp;break_type=lb&amp;number=&amp;rv=&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment=\"><span class=\"format_start mceNonEditable\">‹</span><br />↵<span class=\"format_end mceNonEditable\">›</span></span> in here');
+      expect(htmlData).toBe('some commentary<span class=\"paratext\" wce_orig=\"\" wce=\"__t=paratext&amp;__n=&amp;help=Help&amp;fw_type=commentary&amp;fw_type_other=&amp;covered=3&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;marginals_text=&amp;number=&amp;edit_number=on&amp;paratext_position=&amp;paratext_position_other=&amp;paratext_alignment=\"><span class=\"format_start mceNonEditable\">‹</span><br />↵[<span class=\"commentary\" wce=\"__t=paratext&amp;__n=&amp;fw_type=commentary&amp;covered=3\">comm</span>]<span class=\"format_end mceNonEditable\">›</span></span><span class=\"mceNonEditable brea\" wce=\"__t=brea&amp;__n=&amp;hasBreak=no&amp;break_type=lb&amp;number=&amp;rv=&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment=\"><span class=\"format_start mceNonEditable\">‹</span><br />↵<span class=\"format_end mceNonEditable\">›</span></span> in here');
       const xmlData = await page.evaluate(`getTEI()`);
       expect(xmlData).toBe(xmlHead + '<w>some</w><w>commentary</w><lb/><note type="commentary">One line of untranscribed commentary text</note><lb/><note type="commentary">One line of untranscribed commentary text</note><lb/><note type="commentary">One line of untranscribed commentary text</note>' +
                           '<lb n="PCL-"/><w>in</w><w>here</w>' + xmlTail);
+
+      // test editing
+      await page.keyboard.press('ArrowLeft');
+      await page.keyboard.press('ArrowLeft');
+      await page.keyboard.press('ArrowLeft');
+
+      // open M menu for editing (although stored in a note this is created as marginalia)
+      await page.click('button#mceu_15-open');
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('Enter');
+
+      const menuFrameHandle2 = await page.$('div[id="mceu_40"] > div > div > iframe');
+      const menuFrame2 = await menuFrameHandle2.contentFrame();
+
+      expect(await menuFrame2.$eval('#fw_type', el => el.value)).toBe('commentary');
+      expect(await menuFrame2.$eval('#fw_type_other', el => el.disabled)).toBe(true);
+      expect(await menuFrame2.$eval('#fw_type_other', el => el.value)).toBe('');
+      expect(await menuFrame2.$eval('#covered', el => el.value)).toBe('3');
+      await menuFrame2.click('input#insert');
+      const xmlData2 = await page.evaluate(`getTEI()`);
+      expect(xmlData).toBe(xmlHead + '<w>some</w><w>commentary</w><lb/><note type="commentary">One line of untranscribed commentary text</note><lb/><note type="commentary">One line of untranscribed commentary text</note><lb/><note type="commentary">One line of untranscribed commentary text</note>' +
+                          '<lb n="PCL-"/><w>in</w><w>here</w>' + xmlTail);
+
+    
+      // test deleting
+      await page.keyboard.press('ArrowLeft');
+      await page.keyboard.press('ArrowLeft');
+      await page.keyboard.press('ArrowLeft');
+      // open M menu for deleting (although stored in a note this is created as marginalia)
+      await page.click('button#mceu_15-open');
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('Enter');
+      const xmlData3 = await page.evaluate(`getTEI()`);
+      expect(xmlData3).toBe(xmlHead + '<w>some</w><w>commentary</w><lb n="PCL-"/><w>in</w><w>here</w>' + xmlTail);
+
     }, 200000);
   
   
@@ -121,15 +196,51 @@ describe('testing with showMultilineNotesAsSingleEntry client setting as true', 
   
       const menuFrameHandle = await page.$('div[id="mceu_39"] > div > div > iframe');
       const menuFrame = await menuFrameHandle.contentFrame();
-      // commentary is default option
+      await menuFrame.select('select[id="fw_type"]', 'commentary');
       // 0 is default option for lines
   
       await menuFrame.click('input#insert');
   
       const htmlData = await page.evaluate(`getData()`);
-      expect(htmlData).toBe('in line commentary<span class=\"paratext\" wce_orig=\"\" wce=\"__t=paratext&amp;__n=&amp;help=Help&amp;fw_type=commentary&amp;fw_type_other=&amp;covered=0&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;marginals_text=&amp;number=&amp;edit_number=on&amp;paratext_position=&amp;paratext_position_other=&amp;paratext_alignment=\"><span class=\"format_start mceNonEditable\">‹</span>[<span class=\"commentary\" wce=\"__t=paratext&amp;__n=&amp;fw_type=commentary&amp;covered=0\">comm</span>]<span class=\"format_end mceNonEditable\">›</span></span>');
+      expect(htmlData).toBe('in line commentary<span class=\"paratext\" wce_orig=\"\" wce=\"__t=paratext&amp;__n=&amp;help=Help&amp;fw_type=commentary&amp;fw_type_other=&amp;covered=0&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;marginals_text=&amp;number=&amp;edit_number=on&amp;paratext_position=&amp;paratext_position_other=&amp;paratext_alignment=\"><span class=\"format_start mceNonEditable\">‹</span>[<span class=\"commentary\" wce=\"__t=paratext&amp;__n=&amp;fw_type=commentary&amp;covered=0\">comm</span>]<span class=\"format_end mceNonEditable\">›</span></span>');
       const xmlData = await page.evaluate(`getTEI()`);
       expect(xmlData).toBe(xmlHead + '<w>in</w><w>line</w><w>commentary</w><note type="commentary">Untranscribed commentary text within the line</note>' + xmlTail);
+    
+      // test editing
+      await page.keyboard.press('ArrowLeft');
+      await page.keyboard.press('ArrowLeft');
+      await page.keyboard.press('ArrowLeft');
+
+      // open M menu for editing (although stored in a note this is created as marginalia)
+      await page.click('button#mceu_15-open');
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('Enter');
+
+      const menuFrameHandle2 = await page.$('div[id="mceu_40"] > div > div > iframe');
+      const menuFrame2 = await menuFrameHandle2.contentFrame();
+
+      expect(await menuFrame2.$eval('#fw_type', el => el.value)).toBe('commentary');
+      expect(await menuFrame2.$eval('#fw_type_other', el => el.disabled)).toBe(true);
+      expect(await menuFrame2.$eval('#fw_type_other', el => el.value)).toBe('');
+      expect(await menuFrame2.$eval('#covered', el => el.value)).toBe('0');
+      await menuFrame2.click('input#insert');
+      const xmlData2 = await page.evaluate(`getTEI()`);
+      expect(xmlData2).toBe(xmlHead + '<w>in</w><w>line</w><w>commentary</w><note type="commentary">Untranscribed commentary text within the line</note>' + xmlTail);
+
+      // test deleting
+      await page.keyboard.press('ArrowLeft');
+      await page.keyboard.press('ArrowLeft');
+      await page.keyboard.press('ArrowLeft');
+      // open M menu for deleting (although stored in a note this is created as marginalia)
+      await page.click('button#mceu_15-open');
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('Enter');
+      const xmlData3 = await page.evaluate(`getTEI()`);
+      expect(xmlData3).toBe(xmlHead + '<w>in</w><w>line</w><w>commentary</w>' + xmlTail);
+
     }, 200000);
   
     test('lectionary in line', async () => {
@@ -148,7 +259,7 @@ describe('testing with showMultilineNotesAsSingleEntry client setting as true', 
       await menuFrame.click('input#insert');
   
       const htmlData = await page.evaluate(`getData()`);
-      expect(htmlData).toBe('in line lectionary<span class=\"paratext\" wce_orig=\"\" wce=\"__t=paratext&amp;__n=&amp;help=Help&amp;fw_type=lectionary-other&amp;fw_type_other=&amp;covered=0&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;marginals_text=&amp;number=&amp;edit_number=on&amp;paratext_position=&amp;paratext_position_other=&amp;paratext_alignment=\"><span class=\"format_start mceNonEditable\">‹</span>[<span class=\"lectionary-other\" wce=\"__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=0\">lect</span>]<span class=\"format_end mceNonEditable\">›</span></span>');
+      expect(htmlData).toBe('in line lectionary<span class=\"paratext\" wce_orig=\"\" wce=\"__t=paratext&amp;__n=&amp;help=Help&amp;fw_type=lectionary-other&amp;fw_type_other=&amp;covered=0&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;marginals_text=&amp;number=&amp;edit_number=on&amp;paratext_position=&amp;paratext_position_other=&amp;paratext_alignment=\"><span class=\"format_start mceNonEditable\">‹</span>[<span class=\"lectionary-other\" wce=\"__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=0\">lect</span>]<span class=\"format_end mceNonEditable\">›</span></span>');
       const xmlData = await page.evaluate(`getTEI()`);
       expect(xmlData).toBe(xmlHead + '<w>in</w><w>line</w><w>lectionary</w><note type="lectionary-other">Untranscribed lectionary text within the line</note>' + xmlTail);
     }, 200000);
@@ -172,7 +283,7 @@ describe('testing with showMultilineNotesAsSingleEntry client setting as true', 
       await menuFrame.click('input#insert');
   
       const htmlData = await page.evaluate(`getData()`);
-      expect(htmlData).toBe('lection text next<span class=\"paratext\" wce_orig=\"\" wce=\"__t=paratext&amp;__n=&amp;help=Help&amp;fw_type=lectionary-other&amp;fw_type_other=&amp;covered=2&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;marginals_text=&amp;number=&amp;edit_number=on&amp;paratext_position=&amp;paratext_position_other=&amp;paratext_alignment=\"><span class=\"format_start mceNonEditable\">‹</span><br />↵[<span class=\"lectionary-other\" wce=\"__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=2\">lect</span>]<span class=\"format_end mceNonEditable\">›</span></span>');
+      expect(htmlData).toBe('lection text next<span class=\"paratext\" wce_orig=\"\" wce=\"__t=paratext&amp;__n=&amp;help=Help&amp;fw_type=lectionary-other&amp;fw_type_other=&amp;covered=2&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;marginals_text=&amp;number=&amp;edit_number=on&amp;paratext_position=&amp;paratext_position_other=&amp;paratext_alignment=\"><span class=\"format_start mceNonEditable\">‹</span><br />↵[<span class=\"lectionary-other\" wce=\"__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=2\">lect</span>]<span class=\"format_end mceNonEditable\">›</span></span>');
       const xmlData = await page.evaluate(`getTEI()`);
       expect(xmlData).toBe(xmlHead + '<w>lection</w><w>text</w><w>next</w><lb/>' +
                           '<note type="lectionary-other">One line of untranscribed lectionary text</note><lb/>' +
