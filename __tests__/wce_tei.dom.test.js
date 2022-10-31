@@ -626,6 +626,113 @@ for (let i=0; i<testDataMaps.length; i+=1) {
 	});
 }
 
+// tests without the showMultilineNotesAsSingleEntry set to true
+const specialCommentary = new Map([
+  // commentary
+  [ '1 line of commentary text note (replace multiline)',
+    [ '<w>some</w><w>commentary</w><lb/><note type="commentary">One line of untranscribed commentary text</note>' +
+      '<lb n="PCL-undefined"/><w>in</w><w>here</w>',
+      'some commentary <span class="paratext" wce="__t=paratext&amp;__n=&amp;fw_type=commentary&amp;covered=1&amp;' +
+      'text=&amp;number=&amp;edit_number=on&amp;paratext_position=pagetop&amp;paratext_position_other=&amp;' +
+      'paratext_alignment=left"><span class="format_start mceNonEditable">‹</span><br/>↵[' +
+      '<span class="commentary" wce="__t=paratext&amp;__n=&amp;fw_type=commentary&amp;covered=1">comm</span>]' +
+      '<span class="format_end mceNonEditable">›</span></span>' +
+      '<span class="mceNonEditable brea" wce="__t=brea&amp;__n=&amp;break_type=lb&amp;number=&amp;' +
+      'lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no">' +
+      '<span class="format_start mceNonEditable">‹</span><br/>↵ <span class="format_end mceNonEditable">›</span>' +
+      '</span> in here '
+    ]
+  ],
+  [ 'multiple lines of commentary text note (replace multiline)',
+    [ '<w>some</w><w>commentary</w><lb/><note type="commentary">One line of untranscribed commentary text</note><lb/><note type="commentary">One line of untranscribed commentary text</note><lb/><note type="commentary">One line of untranscribed commentary text</note><lb n="PCL-undefined"/><w>in</w><w>here</w>',
+      'some commentary <span class="paratext" wce="__t=paratext&amp;__n=&amp;fw_type=commentary&amp;covered=3&amp;text=&amp;number=&amp;edit_number=on&amp;paratext_position=pagetop&amp;paratext_position_other=&amp;paratext_alignment=left"><span class="format_start mceNonEditable">‹</span><br/>↵[<span class="commentary" wce="__t=paratext&amp;__n=&amp;fw_type=commentary&amp;covered=3">3 lines comm</span>]<span class="format_end mceNonEditable">›</span></span><span class="mceNonEditable brea" wce="__t=brea&amp;__n=&amp;break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no"><span class="format_start mceNonEditable">‹</span><br/>↵ <span class="format_end mceNonEditable">›</span></span> in here '
+    ]
+  ],
+  // the next three tests all trigger the code in the TEI2HTML_note function but the HTML2TEI_paratext function
+  [ 'commentary in middle of line (replace multiline)',
+    [ '<lb n="PCL-undefined"/><w>in</w><w>line</w><w>commentary</w><note type="commentary">Untranscribed commentary text within the line</note><w>here</w><lb n="PCL-undefined"/>',
+      '<span class="mceNonEditable brea" wce="__t=brea&amp;__n=&amp;break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no"><span class="format_start mceNonEditable">‹</span><br/>↵ <span class="format_end mceNonEditable">›</span></span> in line commentary<span class="paratext" wce="__t=paratext&amp;__n=&amp;fw_type=commentary&amp;covered=0&amp;text=&amp;number=&amp;edit_number=on&amp;paratext_position=pagetop&amp;paratext_position_other=&amp;paratext_alignment=left"><span class="format_start mceNonEditable">‹</span>[<span class="commentary" wce="__t=paratext&amp;__n=&amp;fw_type=commentary&amp;covered=0">comm</span>]<span class="format_end mceNonEditable">›</span></span> here <span class="mceNonEditable brea" wce="__t=brea&amp;__n=&amp;break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no"><span class="format_start mceNonEditable">‹</span><br/>↵ <span class="format_end mceNonEditable">›</span></span>'
+    ]
+  ],
+  [ 'commentary at end of line (replace multiline)',
+    [ '<lb n="PCL-undefined"/><w>in</w><w>line</w><w>commentary</w><note type="commentary">Untranscribed commentary text within the line</note><lb n="PCL-undefined"/>',
+      '<span class="mceNonEditable brea" wce="__t=brea&amp;__n=&amp;break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no"><span class="format_start mceNonEditable">‹</span><br/>↵ <span class="format_end mceNonEditable">›</span></span> in line commentary<span class="paratext" wce="__t=paratext&amp;__n=&amp;fw_type=commentary&amp;covered=0&amp;text=&amp;number=&amp;edit_number=on&amp;paratext_position=pagetop&amp;paratext_position_other=&amp;paratext_alignment=left"><span class="format_start mceNonEditable">‹</span>[<span class="commentary" wce="__t=paratext&amp;__n=&amp;fw_type=commentary&amp;covered=0">comm</span>]<span class="format_end mceNonEditable">›</span></span><span class="mceNonEditable brea" wce="__t=brea&amp;__n=&amp;break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no"><span class="format_start mceNonEditable">‹</span><br/>↵ <span class="format_end mceNonEditable">›</span></span>'
+    ]
+  ],
+  [ 'commentary at start of line (replace multiline)',
+    [ '<lb n="PCL-undefined"/><note type="commentary">Untranscribed commentary text within the line</note><w>in</w><w>line</w><w>commentary</w><lb n="PCL-undefined"/>',
+      '<span class="mceNonEditable brea" wce="__t=brea&amp;__n=&amp;break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no"><span class="format_start mceNonEditable">‹</span><br/>↵ <span class="format_end mceNonEditable">›</span></span><span class="paratext" wce="__t=paratext&amp;__n=&amp;fw_type=commentary&amp;covered=0&amp;text=&amp;number=&amp;edit_number=on&amp;paratext_position=pagetop&amp;paratext_position_other=&amp;paratext_alignment=left"><span class="format_start mceNonEditable">‹</span>[<span class="commentary" wce="__t=paratext&amp;__n=&amp;fw_type=commentary&amp;covered=0">comm</span>]<span class="format_end mceNonEditable">›</span></span> in line commentary <span class="mceNonEditable brea" wce="__t=brea&amp;__n=&amp;break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no"><span class="format_start mceNonEditable">‹</span><br/>↵ <span class="format_end mceNonEditable">›</span></span>'
+    ]
+  ],
+  [ 'commentary in line (replace multiline)',
+    [ '<w>in</w><w>line</w><w>commentary</w><note type="commentary">Untranscribed commentary text within the line</note>',
+      'in line commentary<span class="paratext" wce="__t=paratext&amp;__n=&amp;fw_type=commentary&amp;covered=0&amp;' +
+      'text=&amp;number=&amp;edit_number=on&amp;paratext_position=pagetop&amp;paratext_position_other=&amp;' +
+      'paratext_alignment=left"><span class="format_start mceNonEditable">‹</span>[' +
+      '<span class="commentary" wce="__t=paratext&amp;__n=&amp;fw_type=commentary&amp;covered=0">comm</span>]' +
+      '<span class="format_end mceNonEditable">›</span></span>'
+    ]
+  ]
+]);
+
+const specialLectionary = new Map([
+  // lectionary
+  [ '1 line of lectionary text note (replace multiline)',
+    [ '<w>some</w><w>lectionary</w><lb/><note type="lectionary-other">One line of untranscribed lectionary text</note><lb n="PCL-undefined"/><w>in</w><w>here</w>',
+      'some lectionary <span class="paratext" wce="__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=1&amp;text=&amp;number=&amp;edit_number=on&amp;paratext_position=pagetop&amp;paratext_position_other=&amp;paratext_alignment=left"><span class="format_start mceNonEditable">‹</span><br/>↵[<span class="lectionary-other" wce="__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=1">lect</span>]<span class="format_end mceNonEditable">›</span></span><span class="mceNonEditable brea" wce="__t=brea&amp;__n=&amp;break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no"><span class="format_start mceNonEditable">‹</span><br/>↵ <span class="format_end mceNonEditable">›</span></span> in here '
+    ]
+  ],
+  [ 'multiple lines of lectionary text note (replace multiline)',
+    [ '<w>some</w><w>lectionary</w><lb/><note type="lectionary-other">One line of untranscribed lectionary text</note><lb/><note type="lectionary-other">One line of untranscribed lectionary text</note><lb/><note type="lectionary-other">One line of untranscribed lectionary text</note><lb n="PCL-undefined"/><w>in</w><w>here</w>',
+      'some lectionary <span class="paratext" wce="__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=3&amp;text=&amp;number=&amp;edit_number=on&amp;paratext_position=pagetop&amp;paratext_position_other=&amp;paratext_alignment=left"><span class="format_start mceNonEditable">‹</span><br/>↵[<span class="lectionary-other" wce="__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=3">3 lines lect</span>]<span class="format_end mceNonEditable">›</span></span><span class="mceNonEditable brea" wce="__t=brea&amp;__n=&amp;break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no"><span class="format_start mceNonEditable">‹</span><br/>↵ <span class="format_end mceNonEditable">›</span></span> in here '
+    ]
+  ],
+  // the next three tests all trigger the code in the TEI2HTML_note function but the HTML2TEI_paratext function
+  [ 'lectionary in middle of line (replace multiline)',
+    [ '<lb n="PCL-undefined"/><w>in</w><w>line</w><w>lectionary</w><note type="lectionary-other">Untranscribed lectionary text within the line</note><w>here</w><lb n="PCL-undefined"/>',
+      '<span class="mceNonEditable brea" wce="__t=brea&amp;__n=&amp;break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no"><span class="format_start mceNonEditable">‹</span><br/>↵ <span class="format_end mceNonEditable">›</span></span> in line lectionary<span class="paratext" wce="__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=0&amp;text=&amp;number=&amp;edit_number=on&amp;paratext_position=pagetop&amp;paratext_position_other=&amp;paratext_alignment=left"><span class="format_start mceNonEditable">‹</span>[<span class="lectionary-other" wce="__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=0">lect</span>]<span class="format_end mceNonEditable">›</span></span> here <span class="mceNonEditable brea" wce="__t=brea&amp;__n=&amp;break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no"><span class="format_start mceNonEditable">‹</span><br/>↵ <span class="format_end mceNonEditable">›</span></span>'
+    ]
+  ],
+  [ 'lectionary at end of line (replace multiline)',
+    [ '<lb n="PCL-undefined"/><w>in</w><w>line</w><w>commentary</w><note type="commentary">Untranscribed commentary text within the line</note><lb n="PCL-undefined"/>',
+      '<span class="mceNonEditable brea" wce="__t=brea&amp;__n=&amp;break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no"><span class="format_start mceNonEditable">‹</span><br/>↵ <span class="format_end mceNonEditable">›</span></span> in line commentary<span class="paratext" wce="__t=paratext&amp;__n=&amp;fw_type=commentary&amp;covered=0&amp;text=&amp;number=&amp;edit_number=on&amp;paratext_position=pagetop&amp;paratext_position_other=&amp;paratext_alignment=left"><span class="format_start mceNonEditable">‹</span>[<span class="commentary" wce="__t=paratext&amp;__n=&amp;fw_type=commentary&amp;covered=0">comm</span>]<span class="format_end mceNonEditable">›</span></span><span class="mceNonEditable brea" wce="__t=brea&amp;__n=&amp;break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no"><span class="format_start mceNonEditable">‹</span><br/>↵ <span class="format_end mceNonEditable">›</span></span>'
+    ]
+  ],
+  [ 'lectionary at start of line (replace multiline)',
+    [ '<lb n="PCL-undefined"/><note type="lectionary-other">Untranscribed lectionary text within the line</note><w>in</w><w>line</w><w>lectionary</w><lb n="PCL-undefined"/>',
+      '<span class="mceNonEditable brea" wce="__t=brea&amp;__n=&amp;break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no"><span class="format_start mceNonEditable">‹</span><br/>↵ <span class="format_end mceNonEditable">›</span></span><span class="paratext" wce="__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=0&amp;text=&amp;number=&amp;edit_number=on&amp;paratext_position=pagetop&amp;paratext_position_other=&amp;paratext_alignment=left"><span class="format_start mceNonEditable">‹</span>[<span class="lectionary-other" wce="__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=0">lect</span>]<span class="format_end mceNonEditable">›</span></span> in line lectionary <span class="mceNonEditable brea" wce="__t=brea&amp;__n=&amp;break_type=lb&amp;number=&amp;lb_alignment=&amp;rv=&amp;fibre_type=&amp;facs=&amp;hasBreak=no"><span class="format_start mceNonEditable">‹</span><br/>↵ <span class="format_end mceNonEditable">›</span></span>'
+    ]
+  ],
+  [ 'lectionary in line (replace multiline)',
+    [ '<w>in</w><w>line</w><w>lectionary</w><note type="lectionary-other">Untranscribed lectionary text within the line</note>',
+      'in line lectionary<span class="paratext" wce="__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=0&amp;text=&amp;number=&amp;edit_number=on&amp;paratext_position=pagetop&amp;paratext_position_other=&amp;paratext_alignment=left"><span class="format_start mceNonEditable">‹</span>[<span class="lectionary-other" wce="__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=0">lect</span>]<span class="format_end mceNonEditable">›</span></span>'
+    ]
+  ]
+]);
+
+
+const specialSettingsMap = [specialCommentary, specialLectionary];
+
+
+for (let i=0; i<specialSettingsMap.length; i+=1) {
+
+  specialSettingsMap[i].forEach((value, key, map) => {
+      test('TEI2HTML: ' + key, () => {
+          let testInput, expectedOutput, html;
+          testInput = xmlHead + value[0] + xmlTail;
+          expectedOutput = '<TEMP>' + value[1] + '</TEMP>';
+          html = wce_tei.getHtmlByTei(testInput, {showMultilineNotesAsSingleEntry: true});
+          expect(html.htmlString).toBe(expectedOutput);
+      });
+    test('HTML2TEI: ' + key, () => {
+          let testInput, expectedOutput, xml;
+          testInput = value[1];
+          expectedOutput = xmlHead + value[0] + xmlTail;
+          xml = wce_tei.getTeiByHtml(testInput, {showMultilineNotesAsSingleEntry: true});
+          expect(xml).toBe(expectedOutput);
+      });
+  });
+}
 
 // special test for all branches of of the hi switch statement
 const hiRendOptions = new Map([
