@@ -375,7 +375,7 @@ describe('testing with non-default deletion settings', () => {
     expect(await menuFrame.$('input[value="Gal.1|62v"]')).toBeNull();
     expect(await menuFrame.$('input[value="Gal.1|63r"]')).not.toBeNull();
     expect(await menuFrame.$('input[value="Gal.1.20|62v"]')).toBeNull();
-    expect(await menuFrame.$('input[value="Gal.1.20|63r"]')).not.toBeNull();
+    expect(await menuFrame.$('input[value="Gal.1.20-a|63r"]')).not.toBeNull();
 
     await menuFrame.select('select[id="pageSelect"]', '62v');
     expect(await menuFrame.$('input[value="S2W14D4|62v"]')).not.toBeNull();
@@ -385,7 +385,7 @@ describe('testing with non-default deletion settings', () => {
     expect(await menuFrame.$('input[value="Gal.1|62v"]')).not.toBeNull();
     expect(await menuFrame.$('input[value="Gal.1|63r"]')).toBeNull();
     expect(await menuFrame.$('input[value="Gal.1.20|62v"]')).not.toBeNull();
-    expect(await menuFrame.$('input[value="Gal.1.20|63r"]')).toBeNull();
+    expect(await menuFrame.$('input[value="Gal.1.20-a|63r"]')).toBeNull();
 
     await menuFrame.select('select[id="pageSelect"]', 'all');
     expect(await menuFrame.$('input[value="S2W14D4|62v"]')).not.toBeNull();
@@ -395,7 +395,7 @@ describe('testing with non-default deletion settings', () => {
     expect(await menuFrame.$('input[value="Gal.1|62v"]')).not.toBeNull();
     expect(await menuFrame.$('input[value="Gal.1|63r"]')).not.toBeNull();
     expect(await menuFrame.$('input[value="Gal.1.20|62v"]')).not.toBeNull();
-    expect(await menuFrame.$('input[value="Gal.1.20|63r"]')).not.toBeNull();
+    expect(await menuFrame.$('input[value="Gal.1.20-a|63r"]')).not.toBeNull();
 
   }, 200000);
 
