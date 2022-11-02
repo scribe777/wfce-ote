@@ -19,7 +19,7 @@ beforeAll(async () => {
   browser = await puppeteer.launch({
     // for local testing
     // headless: false,
-    // slowMo: 80,
+    // slowMo: 120,
     // args: ['--window-size=1920,1080', '--disable-web-security']
 
     // for online testing (only ever commit these)
@@ -221,5 +221,173 @@ describe('testing delete structure menu', () => {
     expect(xmlData).toBe(xmlHead + '<div type=\"chapter\" n=\".1\"><ab n=\".1.1\"><w>first</w><w>verse</w></ab><ab n=\".1.2\"><w>second</w><w>verse</w></ab><ab n=\".1.3\"><w>third</w><w>verse</w></ab></div><div type=\"chapter\" n=\".2\"><ab n=\".2.1\"><w>first</w><w>verse</w></ab><ab n=\".2.2\"><w>second</w><w>verse</w></ab><ab n=\".2.3\"><w>third</w><w>verse</w></ab></div><div type=\"chapter\" n=\".3\"><ab n=\".3.1\"><w>first</w><w>verse</w></ab><ab n=\".3.2\"><w>second</w><w>verse</w></ab><ab n=\".3.3\"><w>third</w><w>verse</w></ab><ab n=\".3.4\"><w>fourth</w><w>verse</w></ab></div>' + xmlTail);
 
   }, 200000);
+
+  // tests for when there are multiple verses (consecutive - has always worked, and non-consecutive - fixed Nov 22)
+
+  test('delete the first instance of a duplicate verse', async () => {
+    const data = xmlHead + '<div type="book" n="John"><div type="chapter" n="John.1">' +
+      '<ab n="John.1.1"><w>first</w><w>verse</w></ab><ab n="John.1.2"><w>second</w><w>verse</w></ab>' +
+      '<ab n="John.1.3"><w>third</w><w>verse</w></ab><ab n="John.1.3"><w>third</w><w>verse</w><w>again</w></ab></div>' +
+      '<div type="chapter" n="John.2"><ab n="John.2.1"><w>first</w><w>verse</w></ab>' +
+      '<ab n="John.2.2"><w>second</w><w>verse</w></ab><ab n="John.2.3"><w>third</w><w>verse</w></ab></div>' +
+      '<div type="chapter" n="John.1"><ab n="John.1.1"><w>first</w><w>verse</w></ab>' +
+      '<ab n="John.1.2"><w>second</w><w>verse</w></ab><ab n="John.1.3"><w>third</w><w>verse</w></ab>' +
+      '<ab n="John.1.4"><w>fourth</w><w>verse</w></ab></div></div>' + xmlTail;
+    await page.evaluate(`setTEI('${data}');`);
+
+    await page.click('button#mceu_18-open');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('Enter');
+
+    const menuFrameHandle = await page.$('div[id="mceu_39"] > div > div > iframe');
+    const menuFrame = await menuFrameHandle.contentFrame();
+    await menuFrame.click('input[value="John.1.3"]');
+    await menuFrame.click('input#insert');
+
+    const xmlData = await page.evaluate(`getTEI()`);
+    expect(xmlData).toBe(xmlHead + '<div type="book" n="John"><div type="chapter" n="John.1">' +
+      '<ab n="John.1.1"><w>first</w><w>verse</w></ab><ab n="John.1.2"><w>second</w><w>verse</w></ab>' +
+      '<ab n="John.1.3"><w>third</w><w>verse</w><w>again</w></ab></div>' +
+      '<div type="chapter" n="John.2"><ab n="John.2.1"><w>first</w><w>verse</w></ab>' +
+      '<ab n="John.2.2"><w>second</w><w>verse</w></ab><ab n="John.2.3"><w>third</w><w>verse</w></ab></div>' +
+      '<div type="chapter" n="John.1"><ab n="John.1.1"><w>first</w><w>verse</w></ab>' +
+      '<ab n="John.1.2"><w>second</w><w>verse</w></ab><ab n="John.1.3"><w>third</w><w>verse</w></ab>' +
+      '<ab n="John.1.4"><w>fourth</w><w>verse</w></ab></div></div>' + xmlTail);
+  });
+
+  test('delete the second instance of a duplicate verse', async () => {
+    const data = xmlHead + '<div type="book" n="John"><div type="chapter" n="John.1">' +
+      '<ab n="John.1.1"><w>first</w><w>verse</w></ab><ab n="John.1.2"><w>second</w><w>verse</w></ab>' +
+      '<ab n="John.1.3"><w>third</w><w>verse</w></ab><ab n="John.1.3"><w>third</w><w>verse</w><w>again</w></ab></div>' +
+      '<div type="chapter" n="John.2"><ab n="John.2.1"><w>first</w><w>verse</w></ab>' +
+      '<ab n="John.2.2"><w>second</w><w>verse</w></ab><ab n="John.2.3"><w>third</w><w>verse</w></ab></div>' +
+      '<div type="chapter" n="John.1"><ab n="John.1.1"><w>first</w><w>verse</w></ab>' +
+      '<ab n="John.1.2"><w>second</w><w>verse</w></ab><ab n="John.1.3"><w>third</w><w>verse</w></ab>' +
+      '<ab n="John.1.4"><w>fourth</w><w>verse</w></ab></div></div>' + xmlTail;
+    await page.evaluate(`setTEI('${data}');`);
+
+    await page.click('button#mceu_18-open');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('Enter');
+
+    const menuFrameHandle = await page.$('div[id="mceu_39"] > div > div > iframe');
+    const menuFrame = await menuFrameHandle.contentFrame();
+    await menuFrame.click('input[value="John.1.3-a"]');
+    await menuFrame.click('input#insert');
+
+    const xmlData = await page.evaluate(`getTEI()`);
+    expect(xmlData).toBe(xmlHead + '<div type="book" n="John"><div type="chapter" n="John.1">' +
+      '<ab n="John.1.1"><w>first</w><w>verse</w></ab><ab n="John.1.2"><w>second</w><w>verse</w></ab>' +
+      '<ab n="John.1.3"><w>third</w><w>verse</w></ab></div>' +
+      '<div type="chapter" n="John.2"><ab n="John.2.1"><w>first</w><w>verse</w></ab>' +
+      '<ab n="John.2.2"><w>second</w><w>verse</w></ab><ab n="John.2.3"><w>third</w><w>verse</w></ab></div>' +
+      '<div type="chapter" n="John.1"><ab n="John.1.1"><w>first</w><w>verse</w></ab>' +
+      '<ab n="John.1.2"><w>second</w><w>verse</w></ab><ab n="John.1.3"><w>third</w><w>verse</w></ab>' +
+      '<ab n="John.1.4"><w>fourth</w><w>verse</w></ab></div></div>' + xmlTail);
+  });
+
+  test('delete the third instance of a duplicate verse', async () => {
+    const data = xmlHead + '<div type="book" n="John"><div type="chapter" n="John.1">' +
+      '<ab n="John.1.1"><w>first</w><w>verse</w></ab><ab n="John.1.2"><w>second</w><w>verse</w></ab>' +
+      '<ab n="John.1.3"><w>third</w><w>verse</w></ab><ab n="John.1.3"><w>third</w><w>verse</w><w>again</w></ab></div>' +
+      '<div type="chapter" n="John.2"><ab n="John.2.1"><w>first</w><w>verse</w></ab>' +
+      '<ab n="John.2.2"><w>second</w><w>verse</w></ab><ab n="John.2.3"><w>third</w><w>verse</w></ab></div>' +
+      '<div type="chapter" n="John.1"><ab n="John.1.1"><w>first</w><w>verse</w></ab>' +
+      '<ab n="John.1.2"><w>second</w><w>verse</w></ab><ab n="John.1.3"><w>third</w><w>verse</w></ab>' +
+      '<ab n="John.1.4"><w>fourth</w><w>verse</w></ab></div></div>' + xmlTail;
+    await page.evaluate(`setTEI('${data}');`);
+
+    await page.click('button#mceu_18-open');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('Enter');
+
+    const menuFrameHandle = await page.$('div[id="mceu_39"] > div > div > iframe');
+    const menuFrame = await menuFrameHandle.contentFrame();
+    await menuFrame.click('input[value="John.1.3-b"]');
+    await menuFrame.click('input#insert');
+
+    const xmlData = await page.evaluate(`getTEI()`);
+    expect(xmlData).toBe(xmlHead + '<div type="book" n="John"><div type="chapter" n="John.1">' +
+      '<ab n="John.1.1"><w>first</w><w>verse</w></ab><ab n="John.1.2"><w>second</w><w>verse</w></ab>' +
+      '<ab n="John.1.3"><w>third</w><w>verse</w></ab><ab n="John.1.3"><w>third</w><w>verse</w><w>again</w></ab></div>' +
+      '<div type="chapter" n="John.2"><ab n="John.2.1"><w>first</w><w>verse</w></ab>' +
+      '<ab n="John.2.2"><w>second</w><w>verse</w></ab><ab n="John.2.3"><w>third</w><w>verse</w></ab></div>' +
+      '<div type="chapter" n="John.1"><ab n="John.1.1"><w>first</w><w>verse</w></ab>' +
+      '<ab n="John.1.2"><w>second</w><w>verse</w></ab>' +
+      '<ab n="John.1.4"><w>fourth</w><w>verse</w></ab></div></div>' + xmlTail);
+  });
+
+  // NB if you delete the first chapter of the book then all of the verses remain in the OTE at the start but are appended
+  // to the XML after the book has closed with no book or chapter reference in the n attribute (because they are structurally in neither in the XML)
+  // not neessarily desired behaviour but this is what the test assumes.
+  test('delete the first instance of a duplicate chapter', async () => {
+    const data = xmlHead + '<div type="book" n="John"><div type="chapter" n="John.1">' +
+      '<ab n="John.1.1"><w>first</w><w>verse</w></ab><ab n="John.1.2"><w>second</w><w>verse</w></ab>' +
+      '<ab n="John.1.3"><w>third</w><w>verse</w></ab><ab n="John.1.3"><w>third</w><w>verse</w><w>again</w></ab></div>' +
+      '<div type="chapter" n="John.2"><ab n="John.2.1"><w>first</w><w>verse</w></ab>' +
+      '<ab n="John.2.2"><w>second</w><w>verse</w></ab><ab n="John.2.3"><w>third</w><w>verse</w></ab></div>' +
+      '<div type="chapter" n="John.1"><ab n="John.1.1"><w>first</w><w>verse</w></ab>' +
+      '<ab n="John.1.2"><w>second</w><w>verse</w></ab><ab n="John.1.3"><w>third</w><w>verse</w></ab>' +
+      '<ab n="John.1.4"><w>fourth</w><w>verse</w></ab></div></div>' + xmlTail;
+    await page.evaluate(`setTEI('${data}');`);
+
+    await page.click('button#mceu_18-open');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('Enter');
+
+    const menuFrameHandle = await page.$('div[id="mceu_39"] > div > div > iframe');
+    const menuFrame = await menuFrameHandle.contentFrame();
+    await menuFrame.click('input#deleteChapterRadio');
+    // NB this has to be selected on id because in the nondefault version the value will be the same for both
+    await menuFrame.click('input[id="2"]');
+    await menuFrame.click('input#insert');
+
+    const xmlData = await page.evaluate(`getTEI()`);
+    expect(xmlData).toBe(xmlHead + '<div type="book" n="John">' +
+    '<div type="chapter" n="John.2"><ab n="John.2.1"><w>first</w><w>verse</w></ab>' +
+    '<ab n="John.2.2"><w>second</w><w>verse</w></ab><ab n="John.2.3"><w>third</w><w>verse</w></ab></div>' +
+    '<div type="chapter" n="John.1"><ab n="John.1.1"><w>first</w><w>verse</w></ab>' +
+    '<ab n="John.1.2"><w>second</w><w>verse</w></ab><ab n="John.1.3"><w>third</w><w>verse</w></ab>' +
+    '<ab n="John.1.4"><w>fourth</w><w>verse</w></ab></div></div>' +
+    '<ab n="John..1"><w>first</w><w>verse</w></ab><ab n="John..2"><w>second</w><w>verse</w></ab><ab n="John..3"><w>third</w><w>verse</w></ab><ab n="John..3"><w>third</w><w>verse</w><w>again</w></ab>' + xmlTail);
+  });
+
+  test('delete the second instance of a duplicate chapter', async () => {
+    const data = xmlHead + '<div type="book" n="John"><div type="chapter" n="John.1">' +
+      '<ab n="John.1.1"><w>first</w><w>verse</w></ab><ab n="John.1.2"><w>second</w><w>verse</w></ab>' +
+      '<ab n="John.1.3"><w>third</w><w>verse</w></ab><ab n="John.1.3"><w>third</w><w>verse</w><w>again</w></ab></div>' +
+      '<div type="chapter" n="John.2"><ab n="John.2.1"><w>first</w><w>verse</w></ab>' +
+      '<ab n="John.2.2"><w>second</w><w>verse</w></ab><ab n="John.2.3"><w>third</w><w>verse</w></ab></div>' +
+      '<div type="chapter" n="John.1"><ab n="John.1.1"><w>first</w><w>verse</w></ab>' +
+      '<ab n="John.1.2"><w>second</w><w>verse</w></ab><ab n="John.1.3"><w>third</w><w>verse</w></ab>' +
+      '<ab n="John.1.4"><w>fourth</w><w>verse</w></ab></div></div>' + xmlTail;
+    await page.evaluate(`setTEI('${data}');`);
+
+    await page.click('button#mceu_18-open');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('Enter');
+
+    const menuFrameHandle = await page.$('div[id="mceu_39"] > div > div > iframe');
+    const menuFrame = await menuFrameHandle.contentFrame();
+    await menuFrame.click('input#deleteChapterRadio');
+    // NB this has to be selected on id because in the nondefault version the value will be the same for both
+    await menuFrame.click('input[id="4"]');
+    await menuFrame.click('input#insert');
+
+    const xmlData = await page.evaluate(`getTEI()`);
+    expect(xmlData).toBe(xmlHead + '<div type="book" n="John"><div type="chapter" n="John.1">' +
+    '<ab n="John.1.1"><w>first</w><w>verse</w></ab><ab n="John.1.2"><w>second</w><w>verse</w></ab>' +
+    '<ab n="John.1.3"><w>third</w><w>verse</w></ab><ab n="John.1.3"><w>third</w><w>verse</w><w>again</w></ab></div>' +
+    '<div type="chapter" n="John.2"><ab n="John.2.1"><w>first</w><w>verse</w></ab>' +
+    '<ab n="John.2.2"><w>second</w><w>verse</w></ab><ab n="John.2.3"><w>third</w><w>verse</w></ab>' +
+    '<ab n="John.2.1"><w>first</w><w>verse</w></ab>' +
+    '<ab n="John.2.2"><w>second</w><w>verse</w></ab><ab n="John.2.3"><w>third</w><w>verse</w></ab>' +
+    '<ab n="John.2.4"><w>fourth</w><w>verse</w></ab></div></div>' + xmlTail);
+  });
 
 });

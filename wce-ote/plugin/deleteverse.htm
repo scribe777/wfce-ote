@@ -53,25 +53,33 @@
 			<div>
 				<input type="radio" id="deleteVerseRadio" onclick="canDeleteVerse();" name="versemodify"/>{#verse_remove}
 			</div>
-			<fieldset style="border:1px solid #ccc;width:auto; height:70px; overflow-y:scroll" id="verseList"></fieldset>
+			<fieldset style="border:0">
+				<div style="border:1px solid #ccc;width:auto; height:70px; overflow-y:scroll; resize:vertical;" id="verseList"></div>
+			</fieldset>
 		</div>
 		<div id="deleteChapterDiv" style="margin-top:10px">
 			<div>
 				<input type="radio" id="deleteChapterRadio" onclick="canDeleteChapter();" name="versemodify"/>{#chapter_remove}
 			</div>
-			<fieldset style="border:1px solid #ccc;width:auto; height:70px; overflow-y:scroll" id="chapterList"></fieldset>
+			<fieldset style="border:0">
+				<div style="border:1px solid #ccc;width:auto; height:70px; overflow-y:scroll;  resize:vertical;" id="chapterList"></div>
+			</fieldset>
 		</div>
 		<div id="deleteBookDiv" style="margin-top:10px">
 			<div>
 				<input type="radio" id="deleteBookRadio" onclick="canDeleteBook();" name="versemodify"/>{#book_remove}
 			</div>
-			<fieldset style="border:1px solid #ccc;width:auto; height:70px; overflow-y:scroll" id="bookList"></fieldset>
+			<fieldset style="border:0">
+				<div style="border:1px solid #ccc;width:auto; height:70px; overflow-y:scroll;  resize:vertical;" id="bookList"></div>
+			</fieldset>
 		</div>
 		<div id="deleteLectionDiv" style="margin-top:10px">
 			<div>
 				<input type="radio" id="deleteLectionRadio" onclick="canDeleteLection();" name="versemodify"/>{#lection_remove}
 			</div>
-			<fieldset style="border:1px solid #ccc;width:auto; height:70px; overflow-y:scroll" id="lectionList"></fieldset>
+			<fieldset style="border:0">
+				<div style="border:1px solid #ccc;width:auto; height:70px; overflow-y:scroll;  resize:vertical;" id="lectionList"></div>
+			</fieldset>
 		</div>
 		<div class="mceActionPanel" style="margin-bottom:10px">
 			<input type="button" id="insert" name="insert" value="{#apply}"
@@ -217,8 +225,12 @@ var spanValue_old = '';
 		return getPageList(n, pageList);
 	}
 
-	function getVerseList(node, targetPage, currentPage) {
+	function getVerseList(node, targetPage, currentPage, verses) {
 		var out="";
+		if (verses === undefined) {
+			verses = [];
+		}
+		var ref, startRef;
 		bookNr = (bookNr) ? bookNr : '';
 		chapterNr = (chapterNr) ? chapterNr : '';
 
@@ -233,7 +245,7 @@ var spanValue_old = '';
 				if (n.id.startsWith('pb_') && ed.settings.clientOptions.includePageNumbersInDeleteMenu) {
 					currentPage = n.textContent.slice(1, -1).replace('PB ','');
 				}
-				out += getVerseList(n, targetPage, currentPage);
+				out += getVerseList(n, targetPage, currentPage, verses);
 			}
 		}
 
@@ -262,24 +274,41 @@ var spanValue_old = '';
 			if (v && v!='') {
 				// subverse is actually a repeated verse and -a -b etc get appended using the ascii char from the number
 				// this is not visible to the user and only used in the checkbox value field to ensure uniqueness I 
-				// assume. Comment added by Cat in Oct 2022 after trying to work out what this was for.
-				if (v_old == v) {
-					subverse++;
-				} else {
-					subverse = 96;
-				}	
-				if (subverse == 96) { // set the value we will but in the value attribute
-					vValue = v;
-				} else {
-					vValue = v + '-' + String.fromCharCode(subverse);
+				// assume, it actually only works for repeats that follow each other so needs rewritting. 
+				// Comment added by Cat in Oct 2022 after trying to work out what this was for.
+				// if (v_old == v) {
+				// 	subverse++;
+				// } else {
+				// 	subverse = 96;
+				// }	
+				// if (subverse == 96) { // set the value we will but in the value attribute
+				// 	vValue = v;
+				// } else {
+				// 	vValue = v + '-' + String.fromCharCode(subverse);
+				// }
+				startRef = bookNr + '.' + chapterNr + '.' + v;
+				ref = bookNr + '.' + chapterNr + '.' + v;
+				subverse = 97;
+				while (verses.indexOf(ref) !== -1) {
+					ref = startRef + '-' + String.fromCharCode(subverse);
+					subverse += 1;
 				}
+				verses.push(ref)
+
 				if (currentPage !== undefined) {
 					if (targetPage === 'all' || currentPage === targetPage) {
-						out += '<input type="checkbox" value="' + bookNr + '.' + chapterNr + '.' + vValue + '|' + currentPage + '">Verse ' + bookNr + '.' + chapterNr + '.' + v + ' (' + currentPage + ')</input><br />';
+						out += '<input type="checkbox" value="' + ref + '|' + currentPage + '">Verse ' + bookNr + '.' + chapterNr + '.' + v + ' (' + currentPage + ')</input><br />';
 					}
 				} else {
-					out += '<input type="checkbox" value="' + bookNr + '.' + chapterNr + '.' + vValue + '">Verse ' + bookNr + '.' + chapterNr + '.' + v + '</input><br />';
+					out += '<input type="checkbox" value="' + ref + '">Verse ' + bookNr + '.' + chapterNr + '.' + v + '</input><br />';
 				}
+				// if (currentPage !== undefined) {
+				// 	if (targetPage === 'all' || currentPage === targetPage) {
+				// 		out += '<input type="checkbox" value="' + bookNr + '.' + chapterNr + '.' + vValue + '|' + currentPage + '">Verse ' + bookNr + '.' + chapterNr + '.' + v + ' (' + currentPage + ')</input><br />';
+				// 	}
+				// } else {
+				// 	out += '<input type="checkbox" value="' + bookNr + '.' + chapterNr + '.' + vValue + '">Verse ' + bookNr + '.' + chapterNr + '.' + v + '</input><br />';
+				// }
 				v_old = v;
 			}
 		}
@@ -394,6 +423,7 @@ var spanValue_old = '';
 				var cb=verseList[i];
 				var currentBook = '';
 				if ($(cb).is(':checked')){
+					console.log(cb)
 					var pos=$(cb).val().indexOf('.');// usually bookNr.chapterNr.verseNr
 					if (pos == -1) {//Inscriptio or Subscriptio found
 						var bookNr = '';
@@ -407,6 +437,8 @@ var spanValue_old = '';
 						var verseNr=cbnew.substr(pos+1);
 					}
 					var startNode=null,endNode=null;
+					var verses = [];
+					var ref, startref
 					var spanList=$(contentWithVerse).find('span');
 					for (var j=0,len2=spanList.length; j<len2; j++){
 						var span=spanList[j];
@@ -433,12 +465,22 @@ var spanValue_old = '';
 							if (currentChapter == chapterNr && verseNr == '') //Inscriptio or Subscriptio
 								startNode=span; // set startNode; next verse number element will be endNode
 						} else if ($(span).hasClass('verse_number')) {
-							if (spanValue_old == spanValue) {
-								spanValue_cnt++;
-								spanValue=spanValue+'-'+String.fromCharCode(spanValue_cnt);
-							} else {
-								spanValue_cnt = 96;
+							ref = currentBook + '.' + currentChapter + spanValue;
+							startRef = currentBook + '.' + currentChapter + spanValue;
+							origSpanValue = spanValue;
+							spanValue_cnt = 97;
+							while (verses.indexOf(ref) !== -1) {
+								ref = startRef + '-' + String.fromCharCode(spanValue_cnt);
+								spanValue = origSpanValue + '-' + String.fromCharCode(spanValue_cnt);
+								spanValue_cnt += 1;
 							}
+							verses.push(ref)
+							// if (spanValue_old == spanValue) {
+							// 	 spanValue_cnt++;
+							// 	spanValue=spanValue+'-'+String.fromCharCode(spanValue_cnt);
+							// } else {
+							// 	spanValue_cnt = 96;
+							// }
 							if (startNode && verseNr !== ''){
 								endNode=span;
 								break;
