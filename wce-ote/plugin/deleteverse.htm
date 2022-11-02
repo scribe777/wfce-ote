@@ -93,10 +93,6 @@
 var verseNode;
 var contentWithVerse;
 var chapterNr, bookNr;
-var subverse = 96;
-var v_old = '';
-var spanValue_cnt = 96;
-var spanValue_old = '';
 
 	$(document).ready(function() {
 		var _ed = parent.tinymce.activeEditor;
@@ -252,8 +248,6 @@ var spanValue_old = '';
 		if ($(node).hasClass('book_number')) {
 			bookNr = $.trim(node.innerHTML);
 		} else if ($(node).hasClass('chapter_number')) {
-		    subverse = 96;
-			v_old = '';
 			var v = $.trim(node.innerHTML);
 			if (v) {
 				if (v === 'Inscriptio' || v === 'Subscriptio') { //Special handling for Inscriptio and Subscriptio
@@ -270,25 +264,11 @@ var spanValue_old = '';
 			}
 		} else if ($(node).hasClass('verse_number')) {
 			var v = $.trim(node.innerHTML);
-			var vValue;
+			var vValue, startRef, ref, subverse;
 			if (v && v!='') {
-				// subverse is actually a repeated verse and -a -b etc get appended using the ascii char from the number
-				// this is not visible to the user and only used in the checkbox value field to ensure uniqueness I 
-				// assume, it actually only works for repeats that follow each other so needs rewritting. 
-				// Comment added by Cat in Oct 2022 after trying to work out what this was for.
-				// if (v_old == v) {
-				// 	subverse++;
-				// } else {
-				// 	subverse = 96;
-				// }	
-				// if (subverse == 96) { // set the value we will but in the value attribute
-				// 	vValue = v;
-				// } else {
-				// 	vValue = v + '-' + String.fromCharCode(subverse);
-				// }
 				startRef = bookNr + '.' + chapterNr + '.' + v;
 				ref = bookNr + '.' + chapterNr + '.' + v;
-				subverse = 97;
+				subverse = 97; // ascii a
 				while (verses.indexOf(ref) !== -1) {
 					ref = startRef + '-' + String.fromCharCode(subverse);
 					subverse += 1;
@@ -302,14 +282,6 @@ var spanValue_old = '';
 				} else {
 					out += '<input type="checkbox" value="' + ref + '">Verse ' + bookNr + '.' + chapterNr + '.' + v + '</input><br />';
 				}
-				// if (currentPage !== undefined) {
-				// 	if (targetPage === 'all' || currentPage === targetPage) {
-				// 		out += '<input type="checkbox" value="' + bookNr + '.' + chapterNr + '.' + vValue + '|' + currentPage + '">Verse ' + bookNr + '.' + chapterNr + '.' + v + ' (' + currentPage + ')</input><br />';
-				// 	}
-				// } else {
-				// 	out += '<input type="checkbox" value="' + bookNr + '.' + chapterNr + '.' + vValue + '">Verse ' + bookNr + '.' + chapterNr + '.' + v + '</input><br />';
-				// }
-				v_old = v;
 			}
 		}
 		return out;
@@ -423,7 +395,6 @@ var spanValue_old = '';
 				var cb=verseList[i];
 				var currentBook = '';
 				if ($(cb).is(':checked')){
-					console.log(cb)
 					var pos=$(cb).val().indexOf('.');// usually bookNr.chapterNr.verseNr
 					if (pos == -1) {//Inscriptio or Subscriptio found
 						var bookNr = '';
@@ -438,7 +409,7 @@ var spanValue_old = '';
 					}
 					var startNode=null,endNode=null;
 					var verses = [];
-					var ref, startref
+					var ref, startRef, origSpanValue, spanValue_cnt;
 					var spanList=$(contentWithVerse).find('span');
 					for (var j=0,len2=spanList.length; j<len2; j++){
 						var span=spanList[j];
@@ -456,8 +427,6 @@ var spanValue_old = '';
 							}
 						} else if ($(span).hasClass('chapter_number')) {
 							var currentChapter = spanValue;
-							spanValue_cnt = 96;
-							spanValue_old = '';
 							if (startNode){ //if next entry after marked verse
 								endNode=span;
 								break;
@@ -468,26 +437,19 @@ var spanValue_old = '';
 							ref = currentBook + '.' + currentChapter + spanValue;
 							startRef = currentBook + '.' + currentChapter + spanValue;
 							origSpanValue = spanValue;
-							spanValue_cnt = 97;
+							spanValue_cnt = 97; //ascii a
 							while (verses.indexOf(ref) !== -1) {
 								ref = startRef + '-' + String.fromCharCode(spanValue_cnt);
 								spanValue = origSpanValue + '-' + String.fromCharCode(spanValue_cnt);
 								spanValue_cnt += 1;
 							}
 							verses.push(ref)
-							// if (spanValue_old == spanValue) {
-							// 	 spanValue_cnt++;
-							// 	spanValue=spanValue+'-'+String.fromCharCode(spanValue_cnt);
-							// } else {
-							// 	spanValue_cnt = 96;
-							// }
 							if (startNode && verseNr !== ''){
 								endNode=span;
 								break;
 							} else if (spanValue==verseNr && currentChapter == chapterNr && currentBook == bookNr && verseNr != ''){
 								startNode=span;
 							}
-							spanValue_old = spanValue;
 						}
 					}
 					if (endNode == null) //startNode was last span node of document
