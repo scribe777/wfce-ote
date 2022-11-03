@@ -2896,7 +2896,7 @@
 
 			// add verse modify button
 			ed.addButton('versemodify', {
-                title: tinymce.translate('menu_verses') + ' (Ctrl+Alt+V)',
+                title: tinymce.translate('menu_verses') + '',
                 image: url + '/img/button_V.png',
                 type: 'menubutton',
                 icons: false,
@@ -3670,7 +3670,8 @@
 				ed.addShortcut('ctrl+alt+m', 'Add marginalia', 'mceAddParatext_Shortcut');
 				ed.addShortcut('ctrl+alt+s', 'Add blank spaces', 'mceAddSpaces_Shortcut');
 				ed.addShortcut('ctrl+alt+n', 'Add note', 'mceAddNote_Shortcut');
-				ed.addShortcut('ctrl+alt+v', 'Modify verses', 'mceVerseModify_Shortcut');
+				// no longer used because there are now submenus for add/delete (Cat Nov 22)
+				// ed.addShortcut('ctrl+alt+v', 'Modify verses', 'mceVerseModify_Shortcut');
 
 				ed.on('mousemove', function (evt) {
 					WCEUtils.showWceInfo(ed, evt)
