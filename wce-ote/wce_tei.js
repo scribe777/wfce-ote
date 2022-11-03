@@ -720,7 +720,13 @@ function getHtmlByTei(inputString, clientOptions) {
 			if (nValue.indexOf('.') == -1) {
 				var nValueArray = nValue.split('V');
 				g_verseNumber = nValueArray[1];
-				nodeAddText($newNode, g_verseNumber);
+				if ((nValueArray[0].indexOf('inscriptio') > 0 || nValueArray[0].indexOf('subscriptio') > 0 ||
+						nValueArray[0].indexOf('incipit') > 0 || nValueArray[0].indexOf('explicit') > 0) && 
+							g_verseNumber == 0) {
+					nodeAddText($newNode);
+				} else {
+					nodeAddText($newNode, g_verseNumber);
+				}
 			} else {
 				var nValueArray = nValue.split('.');
 				g_verseNumber = nValueArray[2];
