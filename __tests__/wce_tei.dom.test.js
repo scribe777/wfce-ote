@@ -1184,21 +1184,29 @@ const teiToHtmlAndBackWithChange = new Map([
 	  ],
     // more legacy support for different incipit and explicit structure (already having updated book which will need to be handled separately)
 		[ 'book and incipit divs with incipit verse number',
-    [ '<div type="book" n="B04"><div type="incipit" n="B04incipit"><ab n="B04KincipitV0"><w>inscriptio</w><w>text</w></ab></div></div>',
-      ' <span class="book_number mceNonEditable" wce="__t=book_number" id="1">John</span>  ' +
-      '<span class="chapter_number mceNonEditable" wce="__t=chapter_number">Inscriptio</span> ' +
-      '<span class="verse_number mceNonEditable" wce="__t=verse_number"/> inscriptio text ',
-      '<div type="book" n="John"><div type="inscriptio"><ab n="John.inscriptio"><w>inscriptio</w><w>text</w></ab></div></div>'
+      [ '<div type="book" n="B04"><div type="incipit" n="B04incipit"><ab n="B04KincipitV0"><w>inscriptio</w><w>text</w></ab></div></div>',
+        ' <span class="book_number mceNonEditable" wce="__t=book_number" id="1">John</span>  ' +
+        '<span class="chapter_number mceNonEditable" wce="__t=chapter_number">Inscriptio</span> ' +
+        '<span class="verse_number mceNonEditable" wce="__t=verse_number"/> inscriptio text ',
+        '<div type="book" n="John"><div type="inscriptio"><ab n="John.inscriptio"><w>inscriptio</w><w>text</w></ab></div></div>'
+      ]
+    ],
+    [ 'book and incipit divs with K0V0 verse number',
+      [ '<div type="book" n="B04"><div type="incipit" n="B04K0"><ab n="B04K0V0"><w>inscriptio</w><w>text</w></ab></div></div>',
+        ' <span class="book_number mceNonEditable" wce="__t=book_number" id="1">John</span>  ' +
+        '<span class="chapter_number mceNonEditable" wce="__t=chapter_number">Inscriptio</span> ' +
+        '<span class="verse_number mceNonEditable" wce="__t=verse_number"/> inscriptio text ',
+        '<div type="book" n="John"><div type="inscriptio"><ab n="John.inscriptio"><w>inscriptio</w><w>text</w></ab></div></div>'
+      ]
+    ],
+    [ 'book and explicit div with explicit verse number',
+      [ '<div type="book" n="B04"><div type="explicit" n="B04explicit"><ab n="B04KexplicitV0"><w>subscriptio</w><w>text</w></ab></div></div>',
+        ' <span class="book_number mceNonEditable" wce="__t=book_number" id="1">John</span>  ' +
+        '<span class="chapter_number mceNonEditable" wce="__t=chapter_number">Subscriptio</span> ' +
+        '<span class="verse_number mceNonEditable" wce="__t=verse_number"/> subscriptio text ',
+        '<div type="book" n="John"><div type="subscriptio"><ab n="John.subscriptio"><w>subscriptio</w><w>text</w></ab></div></div>'
+      ]
     ]
-  ],
-  [ 'book and explicit div with explicit verse number',
-    [ '<div type="book" n="B04"><div type="explicit" n="B04explicit"><ab n="B04KexplicitV0"><w>subscriptio</w><w>text</w></ab></div></div>',
-      ' <span class="book_number mceNonEditable" wce="__t=book_number" id="1">John</span>  ' +
-      '<span class="chapter_number mceNonEditable" wce="__t=chapter_number">Subscriptio</span> ' +
-      '<span class="verse_number mceNonEditable" wce="__t=verse_number"/> subscriptio text ',
-      '<div type="book" n="John"><div type="subscriptio"><ab n="John.subscriptio"><w>subscriptio</w><w>text</w></ab></div></div>'
-    ]
-  ]
 ]);
 
 teiToHtmlAndBackWithChange.forEach((value, key, map) => {
