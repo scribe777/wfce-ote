@@ -1867,6 +1867,10 @@
 							}
 							break;
 						case 'corr':
+							// this if statement added by Cat in Nov 22 because jquery changed the behaviour of the serialization
+							if (!ar.hasOwnProperty('deletion')) {
+								ar.deletion = 'null';
+							}
 							corr_str += '<div style="margin-top:15px">';
 							switch (ar['reading']) {
 								case 'corr':
