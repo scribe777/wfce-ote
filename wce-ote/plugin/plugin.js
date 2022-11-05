@@ -2877,7 +2877,7 @@
 							tinymce.DOM.add(statusbar, 'div', {
 								'class' : 'mce-flow-layout-item',
 								'style' : 'padding:8px;'
-							}, '<input type="checkbox" id="' + id + '"> Adaptive selection</input>'+linenumberCb+'<span style="margin: 0 100px"></span><span style="">Transcription Editor by <img style="height:2em;margin-top:-0.5em;" src="'+url+'/trier-logo-TCDH.png"/></span>', true
+							}, '<input type="checkbox" id="' + id + '"> Adaptive selection</input>'+linenumberCb+'<span style="margin: 0 100px">Version: 3.0.0 (pre-release)</span><span style="">Transcription Editor by <img style="height:2em;margin-top:-0.5em;" src="'+url+'/trier-logo-TCDH.png"/></span>', true
 							),
 							$(statusbar).find('.mce-first')[0]
 						);
