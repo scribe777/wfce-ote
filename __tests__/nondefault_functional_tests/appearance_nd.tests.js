@@ -78,7 +78,7 @@ describe('testing with toolbar settings', () => {
     test('check that the correct functions are avilable', async () => {
         expect(await page.waitForSelector('div[aria-label="Undo"]')).toBeTruthy();
         expect(await page.waitForSelector('div[aria-label="Redo"]')).toBeTruthy();
-        expect(await page.waitForSelector('div[aria-label="Special character"]')).toBeTruthy();
+        expect(await page.waitForSelector('div[aria-label="Special characters"]')).toBeTruthy();
 
         expect(await page.$$eval('div[aria-label="Source code"]', button => button.length)).toBe(0);
 
