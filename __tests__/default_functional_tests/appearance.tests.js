@@ -86,7 +86,7 @@ describe('testing editor appearance', () => {
   test('check that the correct functions are avilable', async () => {
     expect(await page.waitForSelector('div[aria-label="Undo"]')).toBeTruthy();
     expect(await page.waitForSelector('div[aria-label="Redo"]')).toBeTruthy();
-    expect(await page.waitForSelector('div[aria-label="Special characters"]')).toBeTruthy();
+    expect(await page.waitForSelector('div[aria-label="WCE special character map"]')).toBeTruthy();
 
     expect(await page.waitForSelector('div[aria-label="Source code"]')).toBeTruthy();
 
