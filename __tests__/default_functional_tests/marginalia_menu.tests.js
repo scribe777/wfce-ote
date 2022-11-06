@@ -395,6 +395,7 @@ describe('testing marginalia menu', () => {
         const menuFrameHandle2 = await menuFrame.$('iframe[id="marginals_text_ifr"]');
         const menuFrame2 = await menuFrameHandle2.contentFrame();
 
+
         await menuFrame2.type('body#tinymce', 'Title is here');
 
         // open inner note menu and add a note
@@ -628,5 +629,6 @@ describe('testing marginalia menu', () => {
         const xmlData2 = await page.evaluate(`getTEI()`);
         expect(xmlData2).toBe('');
     });
+
 
 });
