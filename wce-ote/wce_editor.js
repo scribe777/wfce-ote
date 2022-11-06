@@ -46,13 +46,28 @@
 @param {array} clientOptions.bookNames - A list of OSIS book abbreviations to use in the select of the V menu. If this list is not supplied the form will have a text box for manual entry.
 @param {boolean} clientOptions.addLineBreaks - Add line breaks in the XML before every pc, cb and lb in the transcription. Default is false.
 @param {boolean} clientOptions.addSpaces - Add spaces into the XML of the transcription between tags to make the text readable if all the tags are removed. Default is false.
+@param {string} clientOptions.defaultReasonForUnclearText - The default option in the reason box for unclear text. Default pre-selects nothing.
+@param {number} clientOptions.defaultHeightForCapitals - If a number is supplied with this settings then it is used to prepopulate the height box in the O > capitals submenu. If it is not supplied then the box is not prepopulated.
+@param {defaultValuesForSpaceMenu} clientOptions.defaultValuesForSpaceMenu - The default settings to use to pre-poulate the spaces menu. Default does not pre-populate anything but does select first option on the unit list.
+@param {string} clientOptions.defaultValuesForSpaceMenu.unit - The unit value to preselect.
+@param {number} clientOptions.defaultValuesForSpaceMenu.extent - The extent number to preselect.
 @param {boolean} clientOptions.showMultilineNotesAsSingleEntry - If set to true this combines multiline untranscribed commentary and lectionary notes into a single line (does not change the XML output). Default is false.
 @param {boolean} clientOptions.checkOverlineForAbbr - If set to true this will check the 'add overline' option in the abbreviation form when it is loaded. Default is false.
+@param {optionsForGapMenu} clientOptions.optionsForGapMenu - The options used to create and to set defaults in the gap menu.
+@param {string} clientOptions.optionsForGapMenu.reason - The option to select by default for the reason for the gap (illegible|lacuna|unspecified|inferredPage).
+@param {string} clientOptions.optionsForGapMenu.suppliedSource - The option to use for the source of the supplied text.
+@param {Array.<sourceOptions>} clientOptions.optionsForGapMenu.sourceOptions - An optional list of sources to use for the supplied source dropdown. None and other are always present and cannot be changed by this setting the remaining default are most relevant to Greek New Testament.
+@param {string} clientOptions.optionsForGapMenu.sourceOptions.value - The value to record in the XML for this supplied source.
+@param {string} clientOptions.optionsForGapMenu.sourceOptions.labelEn - The visible label to use for this entry in the English interface.
+@param {string} clientOptions.optionsForGapMenu.sourceOptions.labelDe - The visible label to use for this entry in the German interface.
+@param {string} clientOptions.transcriptionLanguage - The css to use for the transcription in the editor. Choices are currently coptic and greek. Default is greek.
+@param {string} clientOptions.toolbar - The string to use to configure the toolbar. It should be a subset of the default provided, | put a divider at that point in the toolbar.
 @param {baseURL} string - Explicitly sets TinyMCE's base URL.
 @param {callback} function - The function to call once the editor is loaded.
 
 */
 function setWceEditor(_id, clientOptions, baseURL, callback) {
+	let toolbar;
 	if (typeof clientOptions === 'undefined') {
 		clientOptions = {};
 	}
@@ -74,6 +89,31 @@ function setWceEditor(_id, clientOptions, baseURL, callback) {
 		clientOptions.getBookNameFromBKV = getBookNameFromBKV;
 	}
 
+	if (!clientOptions.showMultilineNotesAsSingleEntry) {
+		clientOptions.showMultilineNotesAsSingleEntry = false;
+	}
+
+	if (!clientOptions.includePageNumbersInDeleteMenu) {
+		clientOptions.includePageNumbersInDeleteMenu = false;
+	}
+	
+	if (!clientOptions.hasOwnProperty('optionsForGapMenu')) {
+		clientOptions.optionsForGapMenu = {'reason': 'illegible', 'suppliedSource': 'na28'};
+	}
+	if (!clientOptions.optionsForGapMenu.hasOwnProperty('sourceOptions')) {
+		clientOptions.optionsForGapMenu.sourceOptions = [{'value': 'transcriber','labelEn': 'Transcriber', 'labelDe': 'Vorschlag des Transkribenten'},
+														 {'value': 'na28','labelEn': 'NA28', 'labelDe': 'NA28'},
+														 {'value': 'tr','labelEn': 'Textus Receptus', 'labelDe': 'Textus Receptus'}];
+	}
+	
+	if (clientOptions.toolbar) {
+		toolbar = clientOptions.toolbar;
+	} else {
+		toolbar = 'undo redo wcecharmap | code | save print contextmenu cut copy paste fullscreen | ' +
+				  'breaks correction illegible decoration abbreviation paratext note punctuation versemodify | ' +
+				  'showTeiByHtml help | info showHtmlByTei';
+	}
+
 	tinymce.init({
 		// General options
 		clientOptions: clientOptions,
@@ -89,25 +129,26 @@ function setWceEditor(_id, clientOptions, baseURL, callback) {
 		entity_encoding : "raw",
 		theme_advanced_path : false,
 		execcommand_callback : 'wceExecCommandHandler',
+		content_css: (clientOptions.transcriptionLanguage == 'coptic') ? tinymce.baseURL + '../../../wce-ote/custom-css/coptic.css' : tinymce.baseURL + '../../../wce-ote/custom-css/greek.css',
 		save_onsavecallback : function() {
 			if (saveDataToDB) saveDataToDB(true);
 		},
 		directionality : (clientOptions.rtl) ? "rtl" : "ltr",
 		language : (clientOptions.language) ? (clientOptions.language.indexOf('de') == 0 ? "de" : "en") : "en",
-		plugins : "pagebreak,save,print,contextmenu,fullscreen,wordcount,autosave,paste,charmap,code,noneditable",
+		plugins : "pagebreak,save,print,contextmenu,fullscreen,wordcount,autosave,paste,code,noneditable",
+		paste_as_text: true,
 		contextmenu: 'cut copy paste',
-		charmap : charmap_greek.concat(charmap_latin).concat(charmap_slavistic),
 		external_plugins: {
 			'wce' : '../../wce-ote/plugin/plugin.js',
-			'wcelinenumber': '../../wce-ote/plugin/js/line_number.js'
+			'wcelinenumber': '../../wce-ote/plugin/js/line_number.js',
+			'wcecharmap': '../../wce-ote/plugin/js/wce_charmap.js'
 		},
 		show_linenumber:true,//default false,
-		ignoreShiftNotEn: [188, 190],
+		ignoreShiftNotEn: (clientOptions.transcriptionLanguage == 'coptic') ? [] : [188, 190],
 		keyboardDebug: true,
 		init_instance_callback : "wceReload",
 		// Theme options
-		toolbar : "undo redo charmap | code | save print contextmenu cut copy pastetext pasteword fullscreen | "+
-		"breaks correction illegible decoration abbreviation paratext note punctuation versemodify | showTeiByHtml help | info showHtmlByTei",
+		toolbar : toolbar,
 		theme_advanced_buttons2 : "",
 		theme_advanced_toolbar_location : "top",
 		theme_advanced_toolbar_align : "left",
@@ -120,7 +161,7 @@ function setWceEditor(_id, clientOptions, baseURL, callback) {
 				addMenuItems(tinyMCE.activeEditor);
 				if (callback) {
 					callback();
-				}	
+				}
 			});
 		}	
 	});

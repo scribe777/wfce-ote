@@ -109,16 +109,19 @@
 	}
 
 	function init() {
+		// do this early so it doesn't overwrite the editing
+		if (ed.settings.clientOptions.checkOverlineForAbbr) {
+			document.getElementById('add_overline').checked = true;
+		}
 		comboBindReturnEvent('insert');
 		wceInfoInit('abbr');
 		readWceNodeInfo();
 		checkstatus_abbrtype();
-		if (ed.settings.clientOptions.checkOverlineForAbbr) {
-			document.getElementById('add_overline').checked = true;
-		}
 	}
+	
 	function checkstatus_abbrtype() {
-		if (document.abbrinfo.abbr_type.options[2].selected == true) {
+		if (document.abbrinfo.abbr_type.selectedIndex !== -1 && 
+				document.abbrinfo.abbr_type.options[document.abbrinfo.abbr_type.selectedIndex].value == 'other') {
 			document.abbrinfo.abbr_type_other.disabled = false;
 			document.getElementById('abbr_type_other').style.backgroundColor = "white";
 		} else {
@@ -128,7 +131,9 @@
 	}
 
 	function testOther() {
-		if (document.abbrinfo.abbr_type.options[2].selected == true && document.getElementById('abbr_type_other').value == '')
+		if (document.abbrinfo.abbr_type.selectedIndex !== -1 && 
+				document.abbrinfo.abbr_type.options[document.abbrinfo.abbr_type.selectedIndex].value == 'other' && 
+					document.getElementById('abbr_type_other').value == '')
 			return false;
 	return true;
 	}
