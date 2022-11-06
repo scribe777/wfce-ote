@@ -33,8 +33,7 @@ afterAll(async () => {
   await browser.close();
 });
 
-
-describe('testing with bookNames settings', () => {
+describe('testing Structure entry with bookNames setting', () => {
 
   beforeEach(async () => {
     let frameHandle;

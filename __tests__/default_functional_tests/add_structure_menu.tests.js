@@ -49,6 +49,7 @@ beforeEach(async () => {
 
 });
 
+
 describe('testing structure menu', () => {
 
   // STRUCTURE DIVS

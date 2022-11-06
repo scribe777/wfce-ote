@@ -33,7 +33,7 @@
 */
 
 (function() {
-	var wfce_editor = "2.4.1 (2019-08-12)";
+	var wfce_editor = "3.0.0 (2022-11-05)";
 
 	// Load plugin specific language pack
 	tinymce.PluginManager.requireLangPack('wce');
@@ -1867,6 +1867,10 @@
 							}
 							break;
 						case 'corr':
+							// this if statement added by Cat in Nov 22 because jquery changed the behaviour of the serialization
+							if (!ar.hasOwnProperty('deletion')) {
+								ar.deletion = 'null';
+							}
 							corr_str += '<div style="margin-top:15px">';
 							switch (ar['reading']) {
 								case 'corr':
@@ -1946,6 +1950,12 @@
 									break;
 								case 'lectTitle':
 									info_text += tinymce.translate('fw_lectionary_title');
+									break;
+								case 'lectBibRef':
+									info_text += tinymce.translate('fw_lectionary_bibref');
+									break;
+								case 'lectInstruct':
+									info_text += tinymce.translate('fw_lectionary_instruct');
 									break;
 								case 'lectionary-other':
 									info_text = '<div>' + tinymce.translate('infotext_untranscribed_other_lections') + '</div>';
@@ -2545,18 +2555,19 @@
 			}
 
 			var langEn = language.substring(0, 2) == "en";
+			var ignoreShiftNotEn = tinyMCE.activeEditor.settings.ignoreShiftNotEn ? tinyMCE.activeEditor.settings.ignoreShiftNotEn : [];
 			var keyboardDebug = tinyMCE.activeEditor.settings.keyboardDebug;
 			// Add <pc> for some special characters
 			// We need a lot of cases, because of different kyeboard layouts, different browsers and different platforms
 			if (keyboardDebug) console.log('ek: ' + ek + '; shiftKey: ' + e.shiftKey + '; altKey: ' + e.altKey + '; langEn: ' + langEn);
-			if (ek == 59 && !e.shiftKey && langEn && !tinymce.isWebKit) {// ; en
+			if (ek == 59 && !e.shiftKey && e.altKey && langEn && !tinymce.isWebKit) {// ; en
 				tinyMCE.activeEditor.execCommand('mceAdd_pc', ';');
 				stopEvent(ed, e);
-			} else if (ek == 188 && !langEn && e.shiftKey) {
+			} else if (ignoreShiftNotEn.indexOf[188] < 0 && ek == 188 && !langEn && e.shiftKey) {
 				// ; dt < en
 				tinyMCE.activeEditor.execCommand('mceAdd_pc', ';');
 				stopEvent(ed, e);
-			} else if (ek == 190 && e.shiftKey && !langEn) {
+			} else if (ignoreShiftNotEn.indexOf[190] < 0 && ek == 190 && e.shiftKey && !langEn) {
 				// :
 				tinyMCE.activeEditor.execCommand('mceAdd_pc', ':');
 				stopEvent(ed, e);
@@ -2568,8 +2579,8 @@
 				// .
 				tinyMCE.activeEditor.execCommand('mceAdd_pc', '.');
 				stopEvent(ed, e);
-			} else if (ek == 189 && !e.shiftKey) {
-				// .
+			} else if (ek == 189 && !e.shiftKey && !e.altKey) { // patched this line to make morph div work - Malte
+				// . middle dot
 				tinyMCE.activeEditor.execCommand('mceAdd_pc', '\u00B7');
 				stopEvent(ed, e);
 
@@ -2592,7 +2603,7 @@
 			} else if (ek == 48 && e.shiftKey && e.altKey) {// Three Dot Punctuation
 				tinyMCE.activeEditor.execCommand('mceAdd_pc', '\u2056');
 				stopEvent(ed, e);
-			} else if (ek == 57 && e.shiftKey && !langEn) {// special handling for English keyboards
+			} else if (ignoreShiftNotEn.indexOf[57] < 0 && ek == 57 && e.shiftKey && !langEn) {// special handling for English keyboards
 				stopEvent(ed, e);
 				doWithoutDialog(ed, 'part_abbr', '');
 			} else if (ek == 48 && e.shiftKey && langEn) {//special handling for English keyboard
@@ -2654,6 +2665,7 @@
 					var bID = wceNode.getAttribute('id');
 					if (!bID) {
 						ed.selection.select(wceNode);
+
 						ed.insertContent("");
 						//$(wceNode).remove();
 					} else {
@@ -2689,8 +2701,7 @@
 					}
 					isDel=true;
 				}
-
-				if ((originalText && originalText != 'null') || originalText=='') {
+				if ((originalText && originalText != 'null' && originalText != 'undefined') || originalText=='') {
 					if(notAddOriginal){
 					}else{
 						 ed.selection.setContent('');
@@ -2866,7 +2877,7 @@
 							tinymce.DOM.add(statusbar, 'div', {
 								'class' : 'mce-flow-layout-item',
 								'style' : 'padding:8px;'
-							}, '<input type="checkbox" id="' + id + '"> Adaptive selection</input>'+linenumberCb+'<span style="margin: 0 100px">Version: ' + wfce_editor +'</span><span style="">Transcription Editor by <img style="height:2em;margin-top:-0.5em;" src="'+url+'/trier-logo-TCDH.png"/></span>', true
+							}, '<input type="checkbox" id="' + id + '"> Adaptive selection</input>'+linenumberCb+'<span style="margin: 0 100px">Version: ' + wfce_editor + '</span><span style="">Transcription Editor by <img style="height:2em;margin-top:-0.5em;" src="'+url+'/trier-logo-TCDH.png"/></span>', true
 							),
 							$(statusbar).find('.mce-first')[0]
 						);
@@ -2889,7 +2900,7 @@
 
 			// add verse modify button
 			ed.addButton('versemodify', {
-                title: tinymce.translate('menu_verses') + ' (Ctrl+Alt+V)',
+                title: tinymce.translate('menu_verses') + '',
                 image: url + '/img/button_V.png',
                 type: 'menubutton',
                 icons: false,
@@ -3541,9 +3552,15 @@
 					},
 					{ text : '\u030B    (combining double acute accent)',
 						onclick : function() {
-							ed.execCommand('mceAdd_pc', '\u030B');
+							//ed.execCommand('mceAdd_pc', '\u030B');
+							ed.execCommand('mceInsertContent', false, '\u030B');
 						}
 					},
+					{ text : '\u2CFE    (Coptic full stop)',
+						onclick : function() {
+							ed.execCommand('mceAdd_pc', '\u2CFE');
+ 						}
+ 					},
 					{ text : 'Other',
 						onclick : function() {
 							ed.execCommand('mceAdd_punctuation_other');
@@ -3657,7 +3674,8 @@
 				ed.addShortcut('ctrl+alt+m', 'Add marginalia', 'mceAddParatext_Shortcut');
 				ed.addShortcut('ctrl+alt+s', 'Add blank spaces', 'mceAddSpaces_Shortcut');
 				ed.addShortcut('ctrl+alt+n', 'Add note', 'mceAddNote_Shortcut');
-				ed.addShortcut('ctrl+alt+v', 'Modify verses', 'mceVerseModify_Shortcut');
+				// no longer used because there are now submenus for add/delete (Cat Nov 22)
+				// ed.addShortcut('ctrl+alt+v', 'Modify verses', 'mceVerseModify_Shortcut');
 
 				ed.on('mousemove', function (evt) {
 					WCEUtils.showWceInfo(ed, evt)

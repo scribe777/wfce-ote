@@ -1,0 +1,17 @@
+@font-face{
+	font-family: AntinoouWeb;
+	src: url(../skin/fonts/antinoou-webfont.woff) format('woff');
+	/* should work for all recent browsers */
+	font-style: normal;
+}
+
+@font-face{
+	font-family: AntinoouWeb;
+	src: url(../skin/fonts/antinoouitalic-webfont.woff) format('woff');
+	/* should work for all recent browsers */
+	font-style: italic;
+}
+
+.mce-content-body {
+	font-family: AntinoouWeb, GentiumPlus;
+}
