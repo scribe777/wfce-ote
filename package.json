@@ -21,7 +21,7 @@
   "homepage": "https://github.com/itsee-birmingham/wfce-ote#readme",
   "devDependencies": {
     "jest": "^27.5.1",
-    "jsdoc": "^3.6.10",
+    "jsdoc": "^4.0.2",
     "jshint": "^2.13.4",
     "minami": "^1.2.3",
     "puppeteer": "^13.5.1"
