@@ -52,6 +52,70 @@ beforeEach(async () => {
 
 describe('testing marginalia menu', () => {
 
+    test('no default selection of fw type', async () => {
+        // open M menu to check the default option
+        await page.click('button#mceu_15-open');
+        await page.keyboard.press('ArrowDown');
+        await page.keyboard.press('Enter');
+
+        const menuFrameHandle = await page.$('div[id="mceu_39"] > div > div > iframe');
+        const menuFrame = await menuFrameHandle.contentFrame();
+
+        expect(await menuFrame.$eval('#fw_type', el => el.value)).toBe('pageNum');
+
+        const menuFrameHandle2 = await menuFrame.$('iframe[id="marginals_text_ifr"]');
+        const menuFrame2 = await menuFrameHandle2.contentFrame();
+        await menuFrame2.type('body#tinymce', '10');
+
+        await menuFrame.click('input#insert');
+        await page.waitForSelector('div[id="mceu_39"]', { hidden: true });
+        const htmlData = await page.evaluate(`getData()`);
+        expect(htmlData).toBe('<span class=\"paratext\" wce_orig=\"\" wce=\"__t=paratext&amp;__n=&amp;help=Help&amp;fw_type=pageNum&amp;fw_type_other=&amp;covered=0&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;marginals_text=10&amp;number=&amp;paratext_position=&amp;paratext_position_other=&amp;paratext_alignment=\"><span class=\"format_start mceNonEditable\">‹</span>fw<span class=\"format_end mceNonEditable\">›</span></span>');
+        const xmlData = await page.evaluate(`getTEI()`);
+        expect(xmlData).toBe(xmlHead + '<fw type="pageNum"><w>10</w></fw>' + xmlTail);
+
+    }, 200000);
+
+    test('no default selection of fw type can be overwritten', async () => {
+        // open M menu to check the default option
+        await page.click('button#mceu_15-open');
+        await page.keyboard.press('ArrowDown');
+        await page.keyboard.press('Enter');
+
+        const menuFrameHandle = await page.$('div[id="mceu_39"] > div > div > iframe');
+        const menuFrame = await menuFrameHandle.contentFrame();
+
+        expect(await menuFrame.$eval('#fw_type', el => el.value)).toBe('pageNum');
+        await menuFrame.select('select[id="fw_type"]', 'chapNum');
+
+        const menuFrameHandle2 = await menuFrame.$('iframe[id="marginals_text_ifr"]');
+        const menuFrame2 = await menuFrameHandle2.contentFrame();
+        await menuFrame2.type('body#tinymce', '10');
+
+        await menuFrame.click('input#insert');
+        await page.waitForSelector('div[id="mceu_39"]', { hidden: true });
+        const htmlData = await page.evaluate(`getData()`);
+        expect(htmlData).toBe('<span class=\"paratext\" wce_orig=\"\" wce=\"__t=paratext&amp;__n=&amp;help=Help&amp;fw_type=chapNum&amp;fw_type_other=&amp;covered=0&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;marginals_text=10&amp;number=&amp;paratext_position=&amp;paratext_position_other=&amp;paratext_alignment=\"><span class=\"format_start mceNonEditable\">‹</span>fw<span class=\"format_end mceNonEditable\">›</span></span>');
+        const xmlData = await page.evaluate(`getTEI()`);
+        expect(xmlData).toBe(xmlHead + '<num type="chapNum">10</num>' + xmlTail);
+
+        // test editing
+        await page.keyboard.press('ArrowLeft');
+        await page.click('button#mceu_15-open');
+        await page.keyboard.press('ArrowDown');
+        await page.keyboard.press('ArrowDown');
+        await page.keyboard.press('Enter');
+
+        const menuFrameHandle3 = await page.$('div[id="mceu_40"] > div > div > iframe');
+        const menuFrame3 = await menuFrameHandle3.contentFrame();
+        expect(await menuFrame.$eval('#fw_type', el => el.value)).toBe('chapNum');
+        await menuFrame3.click('input#insert');
+        await page.waitForSelector('div[id="mceu_40"]', { hidden: true });
+        const xmlData2 = await page.evaluate(`getTEI()`);
+        expect(xmlData2).toBe(xmlHead + '<num type="chapNum">10</num>' + xmlTail);
+
+    }, 200000);
+
     test('1 line of commentary text note', async () => {
         await frame.type('body#tinymce', 'some commentary ');
         await page.keyboard.press('Enter');

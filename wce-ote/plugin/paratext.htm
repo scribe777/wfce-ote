@@ -237,6 +237,12 @@
 	}
 
 	function init() {
+		// if a default is set then set it early so it doesn't get overwritten when editing
+		if (ed.settings.clientOptions.hasOwnProperty('optionsForMarginaliaMenu') &&
+				ed.settings.clientOptions.optionsForMarginaliaMenu.hasOwnProperty('type')) {
+			var fw_type = document.getElementById('fw_type');
+			fw_type.value = ed.settings.clientOptions.optionsForMarginaliaMenu.type;
+		}
 		comboBindReturnEvent('insert');
 		wceInfoInit('paratext');
 		readWceNodeInfo();

@@ -60,6 +60,8 @@
 @param {string} clientOptions.optionsForGapMenu.sourceOptions.value - The value to record in the XML for this supplied source.
 @param {string} clientOptions.optionsForGapMenu.sourceOptions.labelEn - The visible label to use for this entry in the English interface.
 @param {string} clientOptions.optionsForGapMenu.sourceOptions.labelDe - The visible label to use for this entry in the German interface.
+@param {optionsForMarginaliaMenu} clientOptions.optionsForMarginaliaMenu - The options used to create and to set defaults in the marginalia menu.
+@param {string} clientOptions.optionsForMarginaliaMenu.type - The option to select by default for the fw_type dropdown for the marginalia.
 @param {string} clientOptions.transcriptionLanguage - The css to use for the transcription in the editor. Choices are currently coptic and greek. Default is greek.
 @param {string} clientOptions.toolbar - The string to use to configure the toolbar. It should be a subset of the default provided, | put a divider at that point in the toolbar.
 @param {baseURL} string - Explicitly sets TinyMCE's base URL.
