@@ -61,6 +61,7 @@
 @param {string} clientOptions.optionsForGapMenu.sourceOptions.labelEn - The visible label to use for this entry in the English interface.
 @param {string} clientOptions.optionsForGapMenu.sourceOptions.labelDe - The visible label to use for this entry in the German interface.
 @param {string} clientOptions.transcriptionLanguage - The css to use for the transcription in the editor. Choices are currently coptic and greek. Default is greek.
+@param {boolean} clientoptions.showLineNumberSidebarOnLoading - A boolean to determine if the line number sidebar should be shown on loading or not. Default is True
 @param {string} clientOptions.toolbar - The string to use to configure the toolbar. It should be a subset of the default provided, | put a divider at that point in the toolbar.
 @param {baseURL} string - Explicitly sets TinyMCE's base URL.
 @param {callback} function - The function to call once the editor is loaded.
@@ -105,6 +106,9 @@ function setWceEditor(_id, clientOptions, baseURL, callback) {
 														 {'value': 'na28','labelEn': 'NA28', 'labelDe': 'NA28'},
 														 {'value': 'tr','labelEn': 'Textus Receptus', 'labelDe': 'Textus Receptus'}];
 	}
+	if (!clientOptions.hasOwnProperty('showLineNumberSidebarOnLoading')) {
+		clientOptions.showLineNumberSidebarOnLoading = true;
+	}
 	
 	if (clientOptions.toolbar) {
 		toolbar = clientOptions.toolbar;
@@ -143,7 +147,6 @@ function setWceEditor(_id, clientOptions, baseURL, callback) {
 			'wcelinenumber': '../../wce-ote/plugin/js/line_number.js',
 			'wcecharmap': '../../wce-ote/plugin/js/wce_charmap.js'
 		},
-		show_linenumber:true,//default false,
 		ignoreShiftNotEn: (clientOptions.transcriptionLanguage == 'coptic') ? [] : [188, 190],
 		keyboardDebug: true,
 		init_instance_callback : "wceReload",
