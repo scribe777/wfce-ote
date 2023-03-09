@@ -1773,10 +1773,6 @@ function getTeiByHtml(inputString, clientOptions) {
 
 	var isSeg = false;
 
-	// commented out by Cat because notes don't need xml ids
-	// var note = 1;
-	// var idSet = new Set();
-
 	/*
 	 * Main Method <br /> return String of TEI-Format XML
 	 *
@@ -3291,22 +3287,6 @@ function getTeiByHtml(inputString, clientOptions) {
 				$note.setAttribute('type', note_type_value);
 			}
 		}
-
-		var $lastNode = $teiParent.lastChild;
-		// if ($lastNode) {
-		// 	note++;
-		// } else // this is important for notes being inserted directly after the verse number
-		// 	note = 1;
-		// commented out by Cat because notes don't need an XML id
-		// var xml_id = g_bookNumber + '.' + g_chapterNumber + '.' + g_verseNumber + '-' + g_witValue + '-' + note;
-		// var temp='';
-		// var i=65;
-		// while (idSet.has(xml_id + temp)) {
-		// 	temp = String.fromCharCode(i).toLowerCase();
-		// 	i++;
-		// }
-		// $note.setAttribute('xml:id', xml_id + temp);
-		// idSet.add(xml_id + temp);
 
 		// add <handShift/> if necessary
 		if (note_type_value === "changeOfHand") {
