@@ -72,7 +72,7 @@ describe('testing notes menu', () => {
     const htmlData = await page.evaluate(`getData()`);
     expect(htmlData).toBe('a note<span class=\"note\" wce_orig=\"\" wce=\"__t=note&amp;__n=&amp;help=Help&amp;note_type=local&amp;note_type_other=&amp;newHand=&amp;note_text=my%20new%20local%20note\"><span class=\"format_start mceNonEditable\">‹</span>Note<span class=\"format_end mceNonEditable\">›</span></span>');
     const xmlData = await page.evaluate(`getTEI()`);
-    expect(xmlData).toBe(xmlHead + '<w>a</w><w>note</w><note type="local" xml:id="..--2">my new local note</note>' + xmlTail);
+    expect(xmlData).toBe(xmlHead + '<w>a</w><w>note</w><note type="local">my new local note</note>' + xmlTail);
   }, 200000);
 
   test('a handShift note', async () => {
@@ -92,7 +92,7 @@ describe('testing notes menu', () => {
     const htmlData = await page.evaluate(`getData()`);
     expect(htmlData).toBe('a note<span class=\"note\" wce_orig=\"\" wce=\"__t=note&amp;__n=&amp;help=Help&amp;note_type=changeOfHand&amp;note_type_other=&amp;newHand=&amp;note_text=\"><span class=\"format_start mceNonEditable\">‹</span>Note<span class=\"format_end mceNonEditable\">›</span></span>');
     const xmlData = await page.evaluate(`getTEI()`);
-    expect(xmlData).toBe(xmlHead + '<w>a</w><w>note</w><note type="editorial" xml:id="..--2"><handShift/></note>' + xmlTail);
+    expect(xmlData).toBe(xmlHead + '<w>a</w><w>note</w><note type="editorial"><handShift/></note>' + xmlTail);
   }, 200000);
 
   test('a handShift note with new hand', async () => {
@@ -113,7 +113,7 @@ describe('testing notes menu', () => {
     const htmlData = await page.evaluate(`getData()`);
     expect(htmlData).toBe('a note<span class=\"note\" wce_orig=\"\" wce=\"__t=note&amp;__n=&amp;help=Help&amp;note_type=changeOfHand&amp;note_type_other=&amp;newHand=new%20hand&amp;note_text=\"><span class=\"format_start mceNonEditable\">‹</span>Note<span class=\"format_end mceNonEditable\">›</span></span>');
     const xmlData = await page.evaluate(`getTEI()`);
-    expect(xmlData).toBe(xmlHead + '<w>a</w><w>note</w><note type="editorial" xml:id="..--2"><handShift scribe="new hand"/></note>' + xmlTail);
+    expect(xmlData).toBe(xmlHead + '<w>a</w><w>note</w><note type="editorial"><handShift scribe="new hand"/></note>' + xmlTail);
   }, 200000);
 
 });

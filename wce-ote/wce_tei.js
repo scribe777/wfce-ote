@@ -1481,7 +1481,8 @@ function getHtmlByTei(inputString, clientOptions) {
 					wceAttr += '&newHand=';
 			} else {
 				var mapping = {
-					'xml:id' : null,
+					// commented out by Cat because notes don't need xml ids
+					// 'xml:id' : null,
 					'type' : {
 						'0' : '@editorial@local@canonRef',
 						'1' : '&note_type=',
@@ -1775,7 +1776,8 @@ function getTeiByHtml(inputString, clientOptions) {
 	var isSeg = false;
 	var note = 1;
 
-	var idSet = new Set();
+	// commented out by Cat because notes don't need xml ids
+	// var idSet = new Set();
 
 	/*
 	 * Main Method <br /> return String of TEI-Format XML
@@ -3297,15 +3299,16 @@ function getTeiByHtml(inputString, clientOptions) {
 			note++;
 		} else // this is important for notes being inserted directly after the verse number
 			note = 1;
-		var xml_id = g_bookNumber + '.' + g_chapterNumber + '.' + g_verseNumber + '-' + g_witValue + '-' + note;
-		var temp='';
-		var i=65;
-		while (idSet.has(xml_id + temp)) {
-			temp = String.fromCharCode(i).toLowerCase();
-			i++;
-		}
-		$note.setAttribute('xml:id', xml_id + temp);
-		idSet.add(xml_id + temp);
+		// commented out by Cat because notes don't need an XML id
+		// var xml_id = g_bookNumber + '.' + g_chapterNumber + '.' + g_verseNumber + '-' + g_witValue + '-' + note;
+		// var temp='';
+		// var i=65;
+		// while (idSet.has(xml_id + temp)) {
+		// 	temp = String.fromCharCode(i).toLowerCase();
+		// 	i++;
+		// }
+		// $note.setAttribute('xml:id', xml_id + temp);
+		// idSet.add(xml_id + temp);
 
 		// add <handShift/> if necessary
 		if (note_type_value === "changeOfHand") {
