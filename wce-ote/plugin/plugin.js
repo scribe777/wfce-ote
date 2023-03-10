@@ -2816,8 +2816,8 @@
 			});
 
 			// Information-box
-			var infoBox = $('<div></div>');
-			var infoBox_content = $('<div></div>');
+			var infoBox = $('<div id="hover-data"></div>');
+			var infoBox_content = $('<div id="hover-data-content"></div>');
 			var infoBox_arrowTop = $('<div style="border: 6px solid #fff"><div></div></div>');
 			var infoBox_arrowBottom = $('<div style="border: 6px solid #fff"><div></div></div>');
 
