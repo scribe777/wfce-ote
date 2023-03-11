@@ -804,9 +804,17 @@ function getHtmlByTei(inputString, clientOptions) {
 				wceAttr += '&unit_other=&unit=';
 			if (teiNodeName == 'supplied') {
 				wceAttr += '&mark_as_supplied=supplied';
+
+				// Cat added both types for testing - once finished old style should be removed
+				// old style
+				// $newNode.setAttribute('wce_orig', $teiNode.firstChild ? $teiNode.firstChild.nodeValue : '');
+
+				// new style
 				var origText = '<TEMP>'+$($teiNode).html().replace(/ xmlns="[^"]*"/g, '').replace(/<[/]?tempspace>/g, '')+'</TEMP>';
 				var htmlOrigText = getHtmlByTei(origText).htmlString.replace(/<[/]?TEMP>/g, '');
 				$newNode.setAttribute('wce_orig', encodeURIComponent(htmlOrigText));
+
+
 				// get the content and save it as original
 				// for an empty source we have to add the "none" value
 				if (!$teiNode.getAttribute('source'))
