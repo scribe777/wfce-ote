@@ -1659,7 +1659,7 @@
 			}
 			var nodeOffset = tinymce.DOM.getPos(node);
 			var node_top = nodeOffset.y + _y;
-			var node_left = nodeOffset.x + _x;
+			var node_left = nodeOffset.x + _x + document.getElementsByClassName('wce-linenumber-sidebar')[0].offsetWidth;
 
 			var infoBox = ed.wceInfoBox;
 			var infoBoxArrowTop = ed.wceInfoBoxArrowTop;
@@ -2112,6 +2112,7 @@
 							if (useParent)
 								corr_str = '*: ' + ar['original_firsthand_reading'] + corr_str;
 							else
+								// corr_str = '*: ' + ar['original_firsthand_reading'] + corr_str;
 								corr_str = '*: ' + $(sele_node).html() + corr_str;
 						}
 						corr_str = corr_str.replace(fs, "").replace(fe, "");
@@ -2121,7 +2122,6 @@
 				if (type_name == 'corr') {
 					info_text = corr_str;
 				}
-
 				// information display
 				if (info_text != '') {
 
@@ -3677,7 +3677,9 @@
 				// no longer used because there are now submenus for add/delete (Cat Nov 22)
 				// ed.addShortcut('ctrl+alt+v', 'Modify verses', 'mceVerseModify_Shortcut');
 
-				ed.on('mousemove', function (evt) {
+				// This used to be mousemove but that causes a lot of unecessary triggers so I changed it and it still 
+				// seems to work when it needs to but doesn't cause so many calls (Cat March 2023) 
+				ed.on('mouseover', function (evt) {
 					WCEUtils.showWceInfo(ed, evt)
 				});
 			});
