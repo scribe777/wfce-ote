@@ -12,6 +12,7 @@ const xmlHead = '<?xml  version="1.0" encoding="utf-8"?><!DOCTYPE TEI [<!ENTITY 
   '<sourceDesc><msDesc><msIdentifier></msIdentifier></msDesc></sourceDesc>' +
   '</fileDesc></teiHeader><text><body>';
 const xmlTail = '</body></text></TEI>';
+let frameHandle;
 
 jest.setTimeout(5000000);
 
@@ -34,7 +35,7 @@ afterAll(async () => {
 });
 
 beforeEach(async () => {
-  let frameHandle;
+  frameHandle;
   jest.setTimeout(5000000);
   page = await browser.newPage();
   // await page.goto(`file:${path.join(__dirname, '..', 'wce-ote', 'index.html')}`);
@@ -62,9 +63,6 @@ describe('testing correction menu', () => {
 
   test('a simple correction with visible firsthand', async () => {
 
-    const h1 = await page.$('h1');
-    expect(h1).toBeTruthy();
-    await h1.hover();
     await page.hover('div#mceu_11');
     // await page.hover('h1');
 
@@ -96,20 +94,22 @@ describe('testing correction menu', () => {
     expect(xmlData).toBe(xmlHead + '<w>a</w><app><rdg type="orig" hand="firsthand"><w>smple</w></rdg><rdg type="corr" hand="corrector">' +
       '<w>simple</w></rdg></app><w>correction</w>' + xmlTail);
 
-
-    await page.hover('h1');
     // test the hover over
-    const correctionSpan = await frame.$('span.corr');
-    expect(correctionSpan).toBeTruthy();
-    await correctionSpan.hover();
-    // await frame.hover('.corr')
-    // await asyncTimeout();
-    // expect(await page.$eval('#hover-data', el => getComputedStyle(el).display)).not.toBe('none');
-    // await page.$eval('#hover-data', el => el.innerHTML);
-
+    // get the location of the span
+    const correction = await frame.$('span.corr');
+    const spanPos = await frame.evaluate((correction) => {
+      const {top, left, bottom, right} = correction.getBoundingClientRect();
+      return {top, left, bottom, right};
+    }, correction);
+    const sidebarWidth = await page.$eval('.wce-linenumber-sidebar', el => el.offsetWidth);
+    const menubarHeight = await page.$eval('#mceu_25-body', el => el.offsetHeight);
+    targetX = spanPos.left + ((spanPos.right - spanPos.left) / 2) + sidebarWidth;
+    targetY = spanPos.top + ((spanPos.bottom - spanPos.top) / 2) + menubarHeight;
+    await page.mouse.move(targetX, targetY);
+    // check the content of the hover over
     const hoverValue = await page.$eval('#hover-data-content', el => el.innerHTML);
-    console.log(hoverValue)
-
+    console.log(hoverValue);
+    
   }, 200000);
 
   // test('a simple correction in the margin', async () => {
