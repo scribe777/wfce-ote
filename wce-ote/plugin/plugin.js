@@ -2112,8 +2112,9 @@
 							if (useParent)
 								corr_str = '*: ' + ar['original_firsthand_reading'] + corr_str;
 							else
-								// corr_str = '*: ' + ar['original_firsthand_reading'] + corr_str;
-								corr_str = '*: ' + $(sele_node).html() + corr_str;
+								corr_str = '*: ' + ar['original_firsthand_reading'] + corr_str;
+								// Cat experimenting with changing this
+								// corr_str = '*: ' + $(sele_node).html() + corr_str;
 						}
 						corr_str = corr_str.replace(fs, "").replace(fe, "");
 					}
