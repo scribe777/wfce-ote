@@ -19,14 +19,14 @@ jest.setTimeout(5000000);
 beforeAll(async () => {
   browser = await puppeteer.launch({
     // for local testing
-    headless: false,
-    slowMo: 80,
-    args: ['--window-size=1920,1080', '--disable-web-security']
+    // headless: false,
+    // slowMo: 80,
+    // args: ['--window-size=1920,1080', '--disable-web-security']
 
     // for online testing (only ever commit these)
-    // headless: true,
-    // slowMo: 60,
-    // args: ['--disable-web-security']
+    headless: true,
+    slowMo: 60,
+    args: ['--disable-web-security']
   });
 });
 
@@ -61,305 +61,257 @@ describe('testing correction menu', () => {
 
   // CORRECTIONS
 
-  // test('a simple correction with visible firsthand', async () => {
+  test('a simple correction with visible firsthand', async () => {
 
-  //   await page.hover('div#mceu_11');
-  //   // await page.hover('h1');
+    await page.hover('div#mceu_11');
+    // await page.hover('h1');
 
-  //   await frame.type('body#tinymce', 'a smple correction');
-  //   for (let i = 0; i < ' correction'.length; i++) {
-  //     await page.keyboard.press('ArrowLeft');
-  //   }
-  //   await page.keyboard.down('Shift');
-  //   for (let i = 0; i < 'smple'.length; i++) {
-  //     await page.keyboard.press('ArrowLeft');
-  //   }
-  //   await page.keyboard.up('Shift');
+    await frame.type('body#tinymce', 'a smple correction');
+    for (let i = 0; i < ' correction'.length; i++) {
+      await page.keyboard.press('ArrowLeft');
+    }
+    await page.keyboard.down('Shift');
+    for (let i = 0; i < 'smple'.length; i++) {
+      await page.keyboard.press('ArrowLeft');
+    }
+    await page.keyboard.up('Shift');
 
-  //   // open C menu
-  //   await page.click('div#mceu_11 > button');
+    // open C menu
+    await page.click('div#mceu_11 > button');
 
-  //   const menuFrameHandle = await page.$('div[id="mceu_38"] > div > div > iframe');
-  //   const menuFrame = await menuFrameHandle.contentFrame();
+    const menuFrameHandle = await page.$('div[id="mceu_38"] > div > div > iframe');
+    const menuFrame = await menuFrameHandle.contentFrame();
 
-  //   const menuFrameHandle2 = await menuFrame.$('iframe[id="corrector_text_ifr"]');
-  //   const menuFrame2 = await menuFrameHandle2.contentFrame();
-  //   await page.keyboard.press('ArrowRight');
-  //   await menuFrame2.type('body#tinymce', 'i');
-  //   await menuFrame.click('input#insert');
+    const menuFrameHandle2 = await menuFrame.$('iframe[id="corrector_text_ifr"]');
+    const menuFrame2 = await menuFrameHandle2.contentFrame();
+    await page.keyboard.press('ArrowRight');
+    await menuFrame2.type('body#tinymce', 'i');
+    await menuFrame.click('input#insert');
 
-  //   const htmlData = await page.evaluate(`getData()`);
-  //   expect(htmlData).toBe('a <span class="corr" wce_orig="smple" wce="__t=corr&amp;__n=corrector&amp;help=Help&amp;original_firsthand_reading=smple&amp;common_firsthand_partial=&amp;reading=corr&amp;corrector_name=corrector&amp;corrector_name_other=&amp;place_corr=&amp;place_corr_other=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_deletion_hooks=0&amp;deletion_transposition_marks=0&amp;deletion_other=0&amp;deletion=&amp;firsthand_partial=&amp;partial=&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;corrector_text=simple"><span class="format_start mceNonEditable">‹</span>smple<span class="format_end mceNonEditable">›</span></span> correction');
-  //   const xmlData = await page.evaluate(`getTEI()`);
-  //   expect(xmlData).toBe(xmlHead + '<w>a</w><app><rdg type="orig" hand="firsthand"><w>smple</w></rdg><rdg type="corr" hand="corrector">' +
-  //     '<w>simple</w></rdg></app><w>correction</w>' + xmlTail);
+    const htmlData = await page.evaluate(`getData()`);
+    expect(htmlData).toBe('a <span class="corr" wce_orig="smple" wce="__t=corr&amp;__n=corrector&amp;help=Help&amp;original_firsthand_reading=smple&amp;common_firsthand_partial=&amp;reading=corr&amp;corrector_name=corrector&amp;corrector_name_other=&amp;place_corr=&amp;place_corr_other=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_deletion_hooks=0&amp;deletion_transposition_marks=0&amp;deletion_other=0&amp;deletion=&amp;firsthand_partial=&amp;partial=&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;corrector_text=simple"><span class="format_start mceNonEditable">‹</span>smple<span class="format_end mceNonEditable">›</span></span> correction');
+    const xmlData = await page.evaluate(`getTEI()`);
+    expect(xmlData).toBe(xmlHead + '<w>a</w><app><rdg type="orig" hand="firsthand"><w>smple</w></rdg><rdg type="corr" hand="corrector">' +
+      '<w>simple</w></rdg></app><w>correction</w>' + xmlTail);
 
-  //   // test the hover over
-  //   // get the location of the span
-  //   const correction = await frame.$('span.corr');
-  //   const spanPos = await frame.evaluate((correction) => {
-  //     const {top, left, bottom, right} = correction.getBoundingClientRect();
-  //     return {top, left, bottom, right};
-  //   }, correction);
-  //   const sidebarWidth = await page.$eval('.wce-linenumber-sidebar', el => el.offsetWidth);
-  //   const menubarHeight = await page.$eval('#mceu_25-body', el => el.offsetHeight);
-  //   targetX = spanPos.left + ((spanPos.right - spanPos.left) / 2) + sidebarWidth;
-  //   targetY = spanPos.top + ((spanPos.bottom - spanPos.top) / 2) + menubarHeight;
-  //   await page.mouse.move(targetX, targetY);
-  //   // check the content of the hover over
-  //   const hoverValue = await page.$eval('#hover-data-content', el => el.innerHTML);
-  //   expect(hoverValue).toBe('*: smple<div style="margin-top:15px">Correction</div><div style="margin-top:5px">corrector: simple</div>')
+    // test the hover over
+    // get the location of the span
+    const correction = await frame.$('span.corr');
+    const spanPos = await frame.evaluate((correction) => {
+      const {top, left, bottom, right} = correction.getBoundingClientRect();
+      return {top, left, bottom, right};
+    }, correction);
+    const sidebarWidth = await page.$eval('.wce-linenumber-sidebar', el => el.offsetWidth);
+    const menubarHeight = await page.$eval('#mceu_25-body', el => el.offsetHeight);
+    targetX = spanPos.left + ((spanPos.right - spanPos.left) / 2) + sidebarWidth;
+    targetY = spanPos.top + ((spanPos.bottom - spanPos.top) / 2) + menubarHeight;
+    await page.mouse.move(targetX, targetY);
+    // check the content of the hover over
+    const hoverValue = await page.$eval('#hover-data-content', el => el.innerHTML);
+    expect(hoverValue).toBe('*: smple<div style="margin-top:15px">Correction</div><div style="margin-top:5px">corrector: simple</div>')
     
-  // }, 200000);
+  }, 200000);
 
-  // test('a simple correction in the margin', async () => {
-  //   await frame.type('body#tinymce', 'a smple correction');
-  //   for (let i = 0; i < ' correction'.length; i++) {
-  //     await page.keyboard.press('ArrowLeft');
-  //   }
-  //   await page.keyboard.down('Shift');
-  //   for (let i = 0; i < 'smple'.length; i++) {
-  //     await page.keyboard.press('ArrowLeft');
-  //   }
-  //   await page.keyboard.up('Shift');
+  test('a simple correction in the margin', async () => {
+    await frame.type('body#tinymce', 'a smple correction');
+    for (let i = 0; i < ' correction'.length; i++) {
+      await page.keyboard.press('ArrowLeft');
+    }
+    await page.keyboard.down('Shift');
+    for (let i = 0; i < 'smple'.length; i++) {
+      await page.keyboard.press('ArrowLeft');
+    }
+    await page.keyboard.up('Shift');
 
-  //   // open C menu
-  //   await page.click('div#mceu_11 > button');
+    // open C menu
+    await page.click('div#mceu_11 > button');
 
-  //   const menuFrameHandle = await page.$('div[id="mceu_38"] > div > div > iframe');
-  //   const menuFrame = await menuFrameHandle.contentFrame();
-  //   await menuFrame.select('select[id="corrector_name"]', 'corrector1');
-  //   await menuFrame.select('select[id="deletion"]', 'deletion_hooks');
-  //   await menuFrame.select('select[id="place_corr"]', 'pageleft');
+    const menuFrameHandle = await page.$('div[id="mceu_38"] > div > div > iframe');
+    const menuFrame = await menuFrameHandle.contentFrame();
+    await menuFrame.select('select[id="corrector_name"]', 'corrector1');
+    await menuFrame.select('select[id="deletion"]', 'deletion_hooks');
+    await menuFrame.select('select[id="place_corr"]', 'pageleft');
 
-  //   const menuFrameHandle2 = await menuFrame.$('iframe[id="corrector_text_ifr"]');
-  //   const menuFrame2 = await menuFrameHandle2.contentFrame();
-  //   await page.keyboard.press('ArrowRight');
-  //   await menuFrame2.type('body#tinymce', 'i');
-  //   await menuFrame.click('input#insert');
+    const menuFrameHandle2 = await menuFrame.$('iframe[id="corrector_text_ifr"]');
+    const menuFrame2 = await menuFrameHandle2.contentFrame();
+    await page.keyboard.press('ArrowRight');
+    await menuFrame2.type('body#tinymce', 'i');
+    await menuFrame.click('input#insert');
 
-  //   const htmlData = await page.evaluate(`getData()`);
-  //   expect(htmlData).toBe('a <span class="corr" wce_orig="smple" wce="__t=corr&amp;__n=corrector1&amp;help=Help&amp;original_firsthand_reading=smple&amp;common_firsthand_partial=&amp;reading=corr&amp;corrector_name=corrector1&amp;corrector_name_other=&amp;place_corr=pageleft&amp;place_corr_other=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_deletion_hooks=1&amp;deletion_transposition_marks=0&amp;deletion_other=0&amp;deletion=deletion_hooks&amp;firsthand_partial=&amp;partial=&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;corrector_text=simple"><span class="format_start mceNonEditable">‹</span>smple<span class="format_end mceNonEditable">›</span></span> correction');
-  //   const xmlData = await page.evaluate(`getTEI()`);
-  //   expect(xmlData).toBe(xmlHead + '<w>a</w><app><rdg type="orig" hand="firsthand"><w>smple</w></rdg>' +
-  //     '<rdg type="corr" hand="corrector1" rend="deletion_hooks"><seg type="margin" subtype="pageleft" n="@P-">' +
-  //     '<w>simple</w></seg></rdg></app><w>correction</w>' + xmlTail);
+    const htmlData = await page.evaluate(`getData()`);
+    expect(htmlData).toBe('a <span class="corr" wce_orig="smple" wce="__t=corr&amp;__n=corrector1&amp;help=Help&amp;original_firsthand_reading=smple&amp;common_firsthand_partial=&amp;reading=corr&amp;corrector_name=corrector1&amp;corrector_name_other=&amp;place_corr=pageleft&amp;place_corr_other=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_deletion_hooks=1&amp;deletion_transposition_marks=0&amp;deletion_other=0&amp;deletion=deletion_hooks&amp;firsthand_partial=&amp;partial=&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;corrector_text=simple"><span class="format_start mceNonEditable">‹</span>smple<span class="format_end mceNonEditable">›</span></span> correction');
+    const xmlData = await page.evaluate(`getTEI()`);
+    expect(xmlData).toBe(xmlHead + '<w>a</w><app><rdg type="orig" hand="firsthand"><w>smple</w></rdg>' +
+      '<rdg type="corr" hand="corrector1" rend="deletion_hooks"><seg type="margin" subtype="pageleft" n="@P-">' +
+      '<w>simple</w></seg></rdg></app><w>correction</w>' + xmlTail);
 
-  //   // test the hover over
-  //   // get the location of the span
-  //   const correction = await frame.$('span.corr');
-  //   const spanPos = await frame.evaluate((correction) => {
-  //     const {top, left, bottom, right} = correction.getBoundingClientRect();
-  //     return {top, left, bottom, right};
-  //   }, correction);
-  //   const sidebarWidth = await page.$eval('.wce-linenumber-sidebar', el => el.offsetWidth);
-  //   const menubarHeight = await page.$eval('#mceu_25-body', el => el.offsetHeight);
-  //   targetX = spanPos.left + ((spanPos.right - spanPos.left) / 2) + sidebarWidth;
-  //   targetY = spanPos.top + ((spanPos.bottom - spanPos.top) / 2) + menubarHeight;
-  //   await page.mouse.move(targetX, targetY);
-  //   // check the content of the hover over
-  //   const hoverValue = await page.$eval('#hover-data-content', el => el.innerHTML);
-  //   expect(hoverValue).toBe('*: smple<div style="margin-top:15px">Correction</div><div style="margin-top:5px">corrector1: simple</div><div style="margin-top:5px">Method(s) of deletion/correction: deletion_hooks</div><div style="margin-top:10px">Position: pageleft</div>')
+    // test the hover over
+    // get the location of the span
+    const correction = await frame.$('span.corr');
+    const spanPos = await frame.evaluate((correction) => {
+      const {top, left, bottom, right} = correction.getBoundingClientRect();
+      return {top, left, bottom, right};
+    }, correction);
+    const sidebarWidth = await page.$eval('.wce-linenumber-sidebar', el => el.offsetWidth);
+    const menubarHeight = await page.$eval('#mceu_25-body', el => el.offsetHeight);
+    targetX = spanPos.left + ((spanPos.right - spanPos.left) / 2) + sidebarWidth;
+    targetY = spanPos.top + ((spanPos.bottom - spanPos.top) / 2) + menubarHeight;
+    await page.mouse.move(targetX, targetY);
+    // check the content of the hover over
+    const hoverValue = await page.$eval('#hover-data-content', el => el.innerHTML);
+    expect(hoverValue).toBe('*: smple<div style="margin-top:15px">Correction</div><div style="margin-top:5px">corrector1: simple</div><div style="margin-top:5px">Method(s) of deletion/correction: deletion_hooks</div><div style="margin-top:10px">Position: pageleft</div>')
  
-  // }, 200000);
+  }, 200000);
 
-  // test('a simple correction above line', async () => {
-  //   await frame.type('body#tinymce', 'a smple correction');
-  //   for (let i = 0; i < ' correction'.length; i++) {
-  //     await page.keyboard.press('ArrowLeft');
-  //   }
-  //   await page.keyboard.down('Shift');
-  //   for (let i = 0; i < 'smple'.length; i++) {
-  //     await page.keyboard.press('ArrowLeft');
-  //   }
-  //   await page.keyboard.up('Shift');
+  test('a simple correction above line', async () => {
+    await frame.type('body#tinymce', 'a smple correction');
+    for (let i = 0; i < ' correction'.length; i++) {
+      await page.keyboard.press('ArrowLeft');
+    }
+    await page.keyboard.down('Shift');
+    for (let i = 0; i < 'smple'.length; i++) {
+      await page.keyboard.press('ArrowLeft');
+    }
+    await page.keyboard.up('Shift');
 
-  //   // open C menu
-  //   await page.click('div#mceu_11 > button');
+    // open C menu
+    await page.click('div#mceu_11 > button');
 
-  //   const menuFrameHandle = await page.$('div[id="mceu_38"] > div > div > iframe');
-  //   const menuFrame = await menuFrameHandle.contentFrame();
-  //   await menuFrame.select('select[id="corrector_name"]', 'corrector1');
-  //   await menuFrame.select('select[id="deletion"]', 'deletion_hooks');
-  //   await menuFrame.select('select[id="place_corr"]', 'above');
+    const menuFrameHandle = await page.$('div[id="mceu_38"] > div > div > iframe');
+    const menuFrame = await menuFrameHandle.contentFrame();
+    await menuFrame.select('select[id="corrector_name"]', 'corrector1');
+    await menuFrame.select('select[id="deletion"]', 'deletion_hooks');
+    await menuFrame.select('select[id="place_corr"]', 'above');
 
-  //   const menuFrameHandle2 = await menuFrame.$('iframe[id="corrector_text_ifr"]');
-  //   const menuFrame2 = await menuFrameHandle2.contentFrame();
-  //   await page.keyboard.press('ArrowRight');
-  //   await menuFrame2.type('body#tinymce', 'i');
-  //   await menuFrame.click('input#insert');
+    const menuFrameHandle2 = await menuFrame.$('iframe[id="corrector_text_ifr"]');
+    const menuFrame2 = await menuFrameHandle2.contentFrame();
+    await page.keyboard.press('ArrowRight');
+    await menuFrame2.type('body#tinymce', 'i');
+    await menuFrame.click('input#insert');
 
-  //   const htmlData = await page.evaluate(`getData()`);
-  //   expect(htmlData).toBe('a <span class="corr" wce_orig="smple" wce="__t=corr&amp;__n=corrector1&amp;help=Help&amp;original_firsthand_reading=smple&amp;common_firsthand_partial=&amp;reading=corr&amp;corrector_name=corrector1&amp;corrector_name_other=&amp;place_corr=above&amp;place_corr_other=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_deletion_hooks=1&amp;deletion_transposition_marks=0&amp;deletion_other=0&amp;deletion=deletion_hooks&amp;firsthand_partial=&amp;partial=&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;corrector_text=simple"><span class="format_start mceNonEditable">‹</span>smple<span class="format_end mceNonEditable">›</span></span> correction');
-  //   const xmlData = await page.evaluate(`getTEI()`);
-  //   expect(xmlData).toBe(xmlHead + '<w>a</w><app><rdg type="orig" hand="firsthand"><w>smple</w></rdg>' +
-  //     '<rdg type="corr" hand="corrector1" rend="deletion_hooks"><seg type="line" subtype="above" n="@PCL-">' +
-  //     '<w>simple</w></seg></rdg></app><w>correction</w>' + xmlTail);
+    const htmlData = await page.evaluate(`getData()`);
+    expect(htmlData).toBe('a <span class="corr" wce_orig="smple" wce="__t=corr&amp;__n=corrector1&amp;help=Help&amp;original_firsthand_reading=smple&amp;common_firsthand_partial=&amp;reading=corr&amp;corrector_name=corrector1&amp;corrector_name_other=&amp;place_corr=above&amp;place_corr_other=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_deletion_hooks=1&amp;deletion_transposition_marks=0&amp;deletion_other=0&amp;deletion=deletion_hooks&amp;firsthand_partial=&amp;partial=&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;corrector_text=simple"><span class="format_start mceNonEditable">‹</span>smple<span class="format_end mceNonEditable">›</span></span> correction');
+    const xmlData = await page.evaluate(`getTEI()`);
+    expect(xmlData).toBe(xmlHead + '<w>a</w><app><rdg type="orig" hand="firsthand"><w>smple</w></rdg>' +
+      '<rdg type="corr" hand="corrector1" rend="deletion_hooks"><seg type="line" subtype="above" n="@PCL-">' +
+      '<w>simple</w></seg></rdg></app><w>correction</w>' + xmlTail);
 
-  //   // test the hover over
-  //   // get the location of the span
-  //   const correction = await frame.$('span.corr');
-  //   const spanPos = await frame.evaluate((correction) => {
-  //     const {top, left, bottom, right} = correction.getBoundingClientRect();
-  //     return {top, left, bottom, right};
-  //   }, correction);
-  //   const sidebarWidth = await page.$eval('.wce-linenumber-sidebar', el => el.offsetWidth);
-  //   const menubarHeight = await page.$eval('#mceu_25-body', el => el.offsetHeight);
-  //   targetX = spanPos.left + ((spanPos.right - spanPos.left) / 2) + sidebarWidth;
-  //   targetY = spanPos.top + ((spanPos.bottom - spanPos.top) / 2) + menubarHeight;
-  //   await page.mouse.move(targetX, targetY);
-  //   // check the content of the hover over
-  //   const hoverValue = await page.$eval('#hover-data-content', el => el.innerHTML);
-  //   expect(hoverValue).toBe('*: smple<div style="margin-top:15px">Correction</div><div style="margin-top:5px">corrector1: simple</div><div style="margin-top:5px">Method(s) of deletion/correction: deletion_hooks</div><div style="margin-top:10px">Position: above</div>')
+    // test the hover over
+    // get the location of the span
+    const correction = await frame.$('span.corr');
+    const spanPos = await frame.evaluate((correction) => {
+      const {top, left, bottom, right} = correction.getBoundingClientRect();
+      return {top, left, bottom, right};
+    }, correction);
+    const sidebarWidth = await page.$eval('.wce-linenumber-sidebar', el => el.offsetWidth);
+    const menubarHeight = await page.$eval('#mceu_25-body', el => el.offsetHeight);
+    targetX = spanPos.left + ((spanPos.right - spanPos.left) / 2) + sidebarWidth;
+    targetY = spanPos.top + ((spanPos.bottom - spanPos.top) / 2) + menubarHeight;
+    await page.mouse.move(targetX, targetY);
+    // check the content of the hover over
+    const hoverValue = await page.$eval('#hover-data-content', el => el.innerHTML);
+    expect(hoverValue).toBe('*: smple<div style="margin-top:15px">Correction</div><div style="margin-top:5px">corrector1: simple</div><div style="margin-top:5px">Method(s) of deletion/correction: deletion_hooks</div><div style="margin-top:10px">Position: above</div>')
 
-  // }, 200000);
+  }, 200000);
 
-  // test('a simple correction with other location', async () => {
-  //   await frame.type('body#tinymce', 'a smple correction');
-  //   for (let i = 0; i < ' correction'.length; i++) {
-  //     await page.keyboard.press('ArrowLeft');
-  //   }
-  //   await page.keyboard.down('Shift');
-  //   for (let i = 0; i < 'smple'.length; i++) {
-  //     await page.keyboard.press('ArrowLeft');
-  //   }
-  //   await page.keyboard.up('Shift');
+  test('a simple correction with other location', async () => {
+    await frame.type('body#tinymce', 'a smple correction');
+    for (let i = 0; i < ' correction'.length; i++) {
+      await page.keyboard.press('ArrowLeft');
+    }
+    await page.keyboard.down('Shift');
+    for (let i = 0; i < 'smple'.length; i++) {
+      await page.keyboard.press('ArrowLeft');
+    }
+    await page.keyboard.up('Shift');
 
-  //   // open C menu
-  //   await page.click('div#mceu_11 > button');
+    // open C menu
+    await page.click('div#mceu_11 > button');
 
-  //   const menuFrameHandle = await page.$('div[id="mceu_38"] > div > div > iframe');
-  //   const menuFrame = await menuFrameHandle.contentFrame();
-  //   await menuFrame.select('select[id="corrector_name"]', 'corrector1');
-  //   await menuFrame.select('select[id="deletion"]', 'transposition_marks');
-  //   await menuFrame.select('select[id="place_corr"]', 'other');
-  //   await menuFrame.type('input[id="place_corr_other"]', 'inline');
+    const menuFrameHandle = await page.$('div[id="mceu_38"] > div > div > iframe');
+    const menuFrame = await menuFrameHandle.contentFrame();
+    await menuFrame.select('select[id="corrector_name"]', 'corrector1');
+    await menuFrame.select('select[id="deletion"]', 'transposition_marks');
+    await menuFrame.select('select[id="place_corr"]', 'other');
+    await menuFrame.type('input[id="place_corr_other"]', 'inline');
 
-  //   const menuFrameHandle2 = await menuFrame.$('iframe[id="corrector_text_ifr"]');
-  //   const menuFrame2 = await menuFrameHandle2.contentFrame();
-  //   // I can't work out how to get the cursor to move to this window so typing and then deleting does this.
-  //   await menuFrame2.type('body#tinymce', 'l');
-  //   await page.keyboard.press('Backspace');
-  //   await page.keyboard.press('ArrowRight');
-  //   await menuFrame2.type('body#tinymce', 'i');
-  //   await menuFrame.click('input#insert');
+    const menuFrameHandle2 = await menuFrame.$('iframe[id="corrector_text_ifr"]');
+    const menuFrame2 = await menuFrameHandle2.contentFrame();
+    // I can't work out how to get the cursor to move to this window so typing and then deleting does this.
+    await menuFrame2.type('body#tinymce', 'l');
+    await page.keyboard.press('Backspace');
+    await page.keyboard.press('ArrowRight');
+    await menuFrame2.type('body#tinymce', 'i');
+    await menuFrame.click('input#insert');
 
-  //   const htmlData = await page.evaluate(`getData()`);
-  //   expect(htmlData).toBe('a <span class="corr" wce_orig="smple" wce="__t=corr&amp;__n=corrector1&amp;help=Help&amp;original_firsthand_reading=smple&amp;common_firsthand_partial=&amp;reading=corr&amp;corrector_name=corrector1&amp;corrector_name_other=&amp;place_corr=other&amp;place_corr_other=inline&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_deletion_hooks=0&amp;deletion_transposition_marks=1&amp;deletion_other=0&amp;deletion=transposition_marks&amp;firsthand_partial=&amp;partial=&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;corrector_text=simple"><span class="format_start mceNonEditable">‹</span>smple<span class="format_end mceNonEditable">›</span></span> correction');
-  //   const xmlData = await page.evaluate(`getTEI()`);
-  //   expect(xmlData).toBe(xmlHead + '<w>a</w><app><rdg type="orig" hand="firsthand"><w>smple</w></rdg>' +
-  //     '<rdg type="corr" hand="corrector1" rend="transposition_marks">' +
-  //     '<seg type="other" subtype="inline" n="@PCL-"><w>simple</w></seg></rdg></app><w>correction</w>' + xmlTail);
+    const htmlData = await page.evaluate(`getData()`);
+    expect(htmlData).toBe('a <span class="corr" wce_orig="smple" wce="__t=corr&amp;__n=corrector1&amp;help=Help&amp;original_firsthand_reading=smple&amp;common_firsthand_partial=&amp;reading=corr&amp;corrector_name=corrector1&amp;corrector_name_other=&amp;place_corr=other&amp;place_corr_other=inline&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_deletion_hooks=0&amp;deletion_transposition_marks=1&amp;deletion_other=0&amp;deletion=transposition_marks&amp;firsthand_partial=&amp;partial=&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;corrector_text=simple"><span class="format_start mceNonEditable">‹</span>smple<span class="format_end mceNonEditable">›</span></span> correction');
+    const xmlData = await page.evaluate(`getTEI()`);
+    expect(xmlData).toBe(xmlHead + '<w>a</w><app><rdg type="orig" hand="firsthand"><w>smple</w></rdg>' +
+      '<rdg type="corr" hand="corrector1" rend="transposition_marks">' +
+      '<seg type="other" subtype="inline" n="@PCL-"><w>simple</w></seg></rdg></app><w>correction</w>' + xmlTail);
 
-  //   // test the hover over
-  //   // get the location of the span
-  //   const correction = await frame.$('span.corr');
-  //   const spanPos = await frame.evaluate((correction) => {
-  //     const {top, left, bottom, right} = correction.getBoundingClientRect();
-  //     return {top, left, bottom, right};
-  //   }, correction);
-  //   const sidebarWidth = await page.$eval('.wce-linenumber-sidebar', el => el.offsetWidth);
-  //   const menubarHeight = await page.$eval('#mceu_25-body', el => el.offsetHeight);
-  //   targetX = spanPos.left + ((spanPos.right - spanPos.left) / 2) + sidebarWidth;
-  //   targetY = spanPos.top + ((spanPos.bottom - spanPos.top) / 2) + menubarHeight;
-  //   await page.mouse.move(targetX, targetY);
-  //   // check the content of the hover over
-  //   const hoverValue = await page.$eval('#hover-data-content', el => el.innerHTML);
-  //   expect(hoverValue).toBe('*: smple<div style="margin-top:15px">Correction</div><div style="margin-top:5px">corrector1: simple</div><div style="margin-top:5px">Method(s) of deletion/correction: transposition_marks</div><div style="margin-top:10px">Position: inline</div>')
+    // test the hover over
+    // get the location of the span
+    const correction = await frame.$('span.corr');
+    const spanPos = await frame.evaluate((correction) => {
+      const {top, left, bottom, right} = correction.getBoundingClientRect();
+      return {top, left, bottom, right};
+    }, correction);
+    const sidebarWidth = await page.$eval('.wce-linenumber-sidebar', el => el.offsetWidth);
+    const menubarHeight = await page.$eval('#mceu_25-body', el => el.offsetHeight);
+    targetX = spanPos.left + ((spanPos.right - spanPos.left) / 2) + sidebarWidth;
+    targetY = spanPos.top + ((spanPos.bottom - spanPos.top) / 2) + menubarHeight;
+    await page.mouse.move(targetX, targetY);
+    // check the content of the hover over
+    const hoverValue = await page.$eval('#hover-data-content', el => el.innerHTML);
+    expect(hoverValue).toBe('*: smple<div style="margin-top:15px">Correction</div><div style="margin-top:5px">corrector1: simple</div><div style="margin-top:5px">Method(s) of deletion/correction: transposition_marks</div><div style="margin-top:10px">Position: inline</div>')
 
-  // }, 200000);
+  }, 200000);
 
-  // test('a deletion (correction)', async () => {
-  //   await frame.type('body#tinymce', 'a deletion correction');
-  //   for (let i = 0; i < ' correction'.length; i++) {
-  //     await page.keyboard.press('ArrowLeft');
-  //   }
-  //   await page.keyboard.down('Shift');
-  //   for (let i = 0; i < 'deletion'.length; i++) {
-  //     await page.keyboard.press('ArrowLeft');
-  //   }
-  //   await page.keyboard.up('Shift');
+  test('a deletion (correction)', async () => {
+    await frame.type('body#tinymce', 'a deletion correction');
+    for (let i = 0; i < ' correction'.length; i++) {
+      await page.keyboard.press('ArrowLeft');
+    }
+    await page.keyboard.down('Shift');
+    for (let i = 0; i < 'deletion'.length; i++) {
+      await page.keyboard.press('ArrowLeft');
+    }
+    await page.keyboard.up('Shift');
 
-  //   // open C menu
-  //   await page.click('div#mceu_11 > button');
+    // open C menu
+    await page.click('div#mceu_11 > button');
 
-  //   const menuFrameHandle = await page.$('div[id="mceu_38"] > div > div > iframe');
-  //   const menuFrame = await menuFrameHandle.contentFrame();
-  //   await menuFrame.click('input[id="blank_correction"]');
-  //   await menuFrame.select('select[id="deletion"]', 'strikethrough');
-  //   await menuFrame.click('input#insert');
+    const menuFrameHandle = await page.$('div[id="mceu_38"] > div > div > iframe');
+    const menuFrame = await menuFrameHandle.contentFrame();
+    await menuFrame.click('input[id="blank_correction"]');
+    await menuFrame.select('select[id="deletion"]', 'strikethrough');
+    await menuFrame.click('input#insert');
 
-  //   const htmlData = await page.evaluate(`getData()`);
-  //   expect(htmlData).toBe('a <span class="corr" wce_orig="deletion" wce="__t=corr&amp;__n=corrector&amp;help=Help&amp;original_firsthand_reading=deletion&amp;common_firsthand_partial=&amp;reading=corr&amp;corrector_name=corrector&amp;corrector_name_other=&amp;blank_correction=on&amp;place_corr=&amp;place_corr_other=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;deletion_strikethrough=1&amp;deletion_vertical_line=0&amp;deletion_deletion_hooks=0&amp;deletion_transposition_marks=0&amp;deletion_other=0&amp;deletion=strikethrough&amp;firsthand_partial=&amp;partial=&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;corrector_text=deletion"><span class="format_start mceNonEditable">‹</span>deletion<span class="format_end mceNonEditable">›</span></span> correction');
-  //   const xmlData = await page.evaluate(`getTEI()`);
-  //   expect(xmlData).toBe(xmlHead + '<w>a</w><app><rdg type="orig" hand="firsthand"><w>deletion</w></rdg>' +
-  //     '<rdg type="corr" hand="corrector" rend="strikethrough"></rdg></app><w>correction</w>' + xmlTail);
+    const htmlData = await page.evaluate(`getData()`);
+    expect(htmlData).toBe('a <span class="corr" wce_orig="deletion" wce="__t=corr&amp;__n=corrector&amp;help=Help&amp;original_firsthand_reading=deletion&amp;common_firsthand_partial=&amp;reading=corr&amp;corrector_name=corrector&amp;corrector_name_other=&amp;blank_correction=on&amp;place_corr=&amp;place_corr_other=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;deletion_strikethrough=1&amp;deletion_vertical_line=0&amp;deletion_deletion_hooks=0&amp;deletion_transposition_marks=0&amp;deletion_other=0&amp;deletion=strikethrough&amp;firsthand_partial=&amp;partial=&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;corrector_text=deletion"><span class="format_start mceNonEditable">‹</span>deletion<span class="format_end mceNonEditable">›</span></span> correction');
+    const xmlData = await page.evaluate(`getTEI()`);
+    expect(xmlData).toBe(xmlHead + '<w>a</w><app><rdg type="orig" hand="firsthand"><w>deletion</w></rdg>' +
+      '<rdg type="corr" hand="corrector" rend="strikethrough"></rdg></app><w>correction</w>' + xmlTail);
 
-  //   // test the hover over
-  //   // get the location of the span
-  //   const correction = await frame.$('span.corr');
-  //   const spanPos = await frame.evaluate((correction) => {
-  //     const {top, left, bottom, right} = correction.getBoundingClientRect();
-  //     return {top, left, bottom, right};
-  //   }, correction);
-  //   const sidebarWidth = await page.$eval('.wce-linenumber-sidebar', el => el.offsetWidth);
-  //   const menubarHeight = await page.$eval('#mceu_25-body', el => el.offsetHeight);
-  //   targetX = spanPos.left + ((spanPos.right - spanPos.left) / 2) + sidebarWidth;
-  //   targetY = spanPos.top + ((spanPos.bottom - spanPos.top) / 2) + menubarHeight;
-  //   await page.mouse.move(targetX, targetY);
-  //   // check the content of the hover over
-  //   const hoverValue = await page.$eval('#hover-data-content', el => el.innerHTML);
-  //   expect(hoverValue).toBe('*: deletion<div style="margin-top:15px">Correction</div><div style="margin-top:5px">corrector: Deleted</div><div style="margin-top:5px">Method(s) of deletion/correction: strikethrough</div>')
+    // test the hover over
+    // get the location of the span
+    const correction = await frame.$('span.corr');
+    const spanPos = await frame.evaluate((correction) => {
+      const {top, left, bottom, right} = correction.getBoundingClientRect();
+      return {top, left, bottom, right};
+    }, correction);
+    const sidebarWidth = await page.$eval('.wce-linenumber-sidebar', el => el.offsetWidth);
+    const menubarHeight = await page.$eval('#mceu_25-body', el => el.offsetHeight);
+    targetX = spanPos.left + ((spanPos.right - spanPos.left) / 2) + sidebarWidth;
+    targetY = spanPos.top + ((spanPos.bottom - spanPos.top) / 2) + menubarHeight;
+    await page.mouse.move(targetX, targetY);
+    // check the content of the hover over
+    const hoverValue = await page.$eval('#hover-data-content', el => el.innerHTML);
+    expect(hoverValue).toBe('*: deletion<div style="margin-top:15px">Correction</div><div style="margin-top:5px">corrector: Deleted</div><div style="margin-top:5px">Method(s) of deletion/correction: strikethrough</div>')
 
-  // }, 200000);
-
-  // test('an addition (correction)', async () => {
-  //   await frame.type('body#tinymce', 'an  correction');
-  //   for (let i = 0; i < ' correction'.length; i++) {
-  //     await page.keyboard.press('ArrowLeft');
-  //   }
-  //   // open C menu
-  //   await page.click('div#mceu_11 > button');
-
-  //   const menuFrameHandle = await page.$('div[id="mceu_38"] > div > div > iframe');
-  //   const menuFrame = await menuFrameHandle.contentFrame();
-
-  //   const menuFrameHandle2 = await menuFrame.$('iframe[id="corrector_text_ifr"]');
-  //   const menuFrame2 = await menuFrameHandle2.contentFrame();
-
-  //   await menuFrame2.type('body#tinymce', 'addition');
-  //   await menuFrame.click('input#insert');
-
-  //   const htmlData = await page.evaluate(`getData()`);
-  //   expect(htmlData).toBe('an <span class="corr_blank_firsthand" wce_orig="" wce="__t=corr&amp;__n=corrector&amp;help=Help&amp;original_firsthand_reading=&amp;common_firsthand_partial=&amp;reading=corr&amp;blank_firsthand=on&amp;corrector_name=corrector&amp;corrector_name_other=&amp;place_corr=&amp;place_corr_other=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_deletion_hooks=0&amp;deletion_transposition_marks=0&amp;deletion_other=0&amp;deletion=&amp;firsthand_partial=&amp;partial=&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;corrector_text=addition"><span class="format_start mceNonEditable">‹</span>T<span class="format_end mceNonEditable">›</span></span> correction');
-  //   const xmlData = await page.evaluate(`getTEI()`);
-  //   expect(xmlData).toBe(xmlHead + '<w>an</w><app><rdg type="orig" hand="firsthand"></rdg><rdg type="corr" hand="corrector">' +
-  //     '<w>addition</w></rdg></app><w>correction</w>' + xmlTail);
-
-  //   // test the hover over THIS DOES NOT WORK
-  //   // get the location of the span
-  //   // const correction = await frame.$('span.corr_blank_firsthand');
-  //   // const spanPos = await frame.evaluate((correction) => {
-  //   //   const {top, left, bottom, right} = correction.getBoundingClientRect();
-  //   //   return {top, left, bottom, right};
-  //   // }, correction);
-  //   // console.log(spanPos.left)
-  //   // console.log(spanPos.right)
-  //   // console.log(spanPos.top)
-  //   // console.log(spanPos.bottom)
-    
-  //   // const sidebarWidth = await page.$eval('.wce-linenumber-sidebar', el => el.offsetWidth);
-  //   // const menubarHeight = await page.$eval('#mceu_25-body', el => el.offsetHeight);
-  //   // targetX = spanPos.left + ((spanPos.right - spanPos.left) / 2) + sidebarWidth;
-  //   // targetY = spanPos.top + ((spanPos.bottom - spanPos.top) / 2) + menubarHeight;
-  //   // console.log(targetX)
-  //   // console.log(targetY)
-  //   // await page.mouse.move(targetX, targetY);
-  //   // // check the content of the hover over
-  //   // const hoverValue = await page.$eval('#hover-data-content', el => el.innerHTML);
-  //   // console.log(hoverValue)
-    
-  // }, 200000);
+  }, 200000);
 
   test('consecutive corrections', async () => {
     await frame.type('body#tinymce', 'consecutive corrections');
@@ -415,128 +367,233 @@ describe('testing correction menu', () => {
 
     // test the hover over
     // get the location of the first span
-    // const correction = await frame.$('span.corr');
-    // console.log(correction)
-    // const spanPos = await frame.evaluate((correction) => {
-    //   const {top, left, bottom, right} = correction.getBoundingClientRect();
-    //   return {top, left, bottom, right};
-    // }, correction);
-    // const sidebarWidth = await page.$eval('.wce-linenumber-sidebar', el => el.offsetWidth);
-    // const menubarHeight = await page.$eval('#mceu_25-body', el => el.offsetHeight);
-    // targetX = spanPos.left + ((spanPos.right - spanPos.left) / 2) + sidebarWidth;
-    // targetY = spanPos.top + ((spanPos.bottom - spanPos.top) / 2) + menubarHeight;
-    // await page.mouse.move(targetX, targetY);
-    // // check the content of the hover over
-    // const hoverValue = await page.$eval('#hover-data-content', el => el.innerHTML);
-    // console.log(hoverValue)
-    // expect(hoverValue).toBe('*: consecutive<div style="margin-top:15px">Correction</div><div style="margin-top:5px">corrector: Deleted</div><div style="margin-top:5px">Method(s) of deletion/correction: underline</div>');
+    const sidebarWidth = await page.$eval('.wce-linenumber-sidebar', el => el.offsetWidth);
+    const menubarHeight = await page.$eval('#mceu_25-body', el => el.offsetHeight);
+    const corrections = await frame.$$('span.corr');
+    const correction1 = corrections[0]
+    const spanPos1 = await frame.evaluate((correction1) => {
+      const {top, left, bottom, right} = correction1.getBoundingClientRect();
+      return {top, left, bottom, right};
+    }, correction1);
+    targetX = spanPos1.left + ((spanPos1.right - spanPos1.left) / 2) + sidebarWidth;
+    targetY = spanPos1.top + ((spanPos1.bottom - spanPos1.top) / 2) + menubarHeight;
+    await page.mouse.move(targetX, targetY);
+    // check the content of the hover over
+    const hoverValue1 = await page.$eval('#hover-data-content', el => el.innerHTML);
+    expect(hoverValue1).toBe('*: consecutive<div style="margin-top:15px">Correction</div><div style="margin-top:5px">corrector: Deleted</div><div style="margin-top:5px">Method(s) of deletion/correction: underline</div>');
     
+    // get the location of the first span
+    const correction2 = corrections[1]
+    const spanPos2 = await frame.evaluate((correction2) => {
+      const {top, left, bottom, right} = correction2.getBoundingClientRect();
+      return {top, left, bottom, right};
+    }, correction2);
+    targetX = spanPos2.left + ((spanPos2.right - spanPos2.left) / 2) + sidebarWidth;
+    targetY = spanPos2.top + ((spanPos2.bottom - spanPos2.top) / 2) + menubarHeight;
+    await page.mouse.move(targetX, targetY);
+    // check the content of the hover over
+    const hoverValue2 = await page.$eval('#hover-data-content', el => el.innerHTML);
+    expect(hoverValue2).toBe('*: corrections<div style="margin-top:15px">Correction</div><div style="margin-top:5px">corrector: correction</div>');
+
   }, 200000);
 
-  // test('firsthand ut videtur', async () => {
-  //   await frame.type('body#tinymce', 'a smple correction');
-  //   for (let i = 0; i < ' correction'.length; i++) {
-  //     await page.keyboard.press('ArrowLeft');
-  //   }
-  //   await page.keyboard.down('Shift');
-  //   for (let i = 0; i < 'smple'.length; i++) {
-  //     await page.keyboard.press('ArrowLeft');
-  //   }
-  //   await page.keyboard.up('Shift');
+  test('firsthand ut videtur', async () => {
+    await frame.type('body#tinymce', 'a smple correction');
+    for (let i = 0; i < ' correction'.length; i++) {
+      await page.keyboard.press('ArrowLeft');
+    }
+    await page.keyboard.down('Shift');
+    for (let i = 0; i < 'smple'.length; i++) {
+      await page.keyboard.press('ArrowLeft');
+    }
+    await page.keyboard.up('Shift');
 
-  //   // open C menu
-  //   await page.click('div#mceu_11 > button');
+    // open C menu
+    await page.click('div#mceu_11 > button');
 
-  //   const menuFrameHandle = await page.$('div[id="mceu_38"] > div > div > iframe');
-  //   const menuFrame = await menuFrameHandle.contentFrame();
+    const menuFrameHandle = await page.$('div[id="mceu_38"] > div > div > iframe');
+    const menuFrame = await menuFrameHandle.contentFrame();
 
-  //   const menuFrameHandle2 = await menuFrame.$('iframe[id="corrector_text_ifr"]');
-  //   const menuFrame2 = await menuFrameHandle2.contentFrame();
-  //   await page.keyboard.press('ArrowRight');
-  //   await menuFrame2.type('body#tinymce', 'i');
-  //   await menuFrame.click('input#ut_videtur_firsthand');
-  //   await menuFrame.click('input#insert');
+    const menuFrameHandle2 = await menuFrame.$('iframe[id="corrector_text_ifr"]');
+    const menuFrame2 = await menuFrameHandle2.contentFrame();
+    await page.keyboard.press('ArrowRight');
+    await menuFrame2.type('body#tinymce', 'i');
+    await menuFrame.click('input#ut_videtur_firsthand');
+    await menuFrame.click('input#insert');
 
-  //   const htmlData = await page.evaluate(`getData()`);
-  //   expect(htmlData).toBe('a <span class="corr" wce_orig="smple" wce="__t=corr&amp;__n=corrector&amp;help=Help&amp;original_firsthand_reading=smple&amp;common_firsthand_partial=&amp;reading=corr&amp;ut_videtur_firsthand=on&amp;corrector_name=corrector&amp;corrector_name_other=&amp;place_corr=&amp;place_corr_other=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_deletion_hooks=0&amp;deletion_transposition_marks=0&amp;deletion_other=0&amp;deletion=&amp;firsthand_partial=&amp;partial=&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;corrector_text=simple"><span class="format_start mceNonEditable">‹</span>smple<span class="format_end mceNonEditable">›</span></span> correction');
-  //   const xmlData = await page.evaluate(`getTEI()`);
-  //   expect(xmlData).toBe(xmlHead + '<w>a</w><app><rdg type="orig" hand="firsthandV"><w>smple</w></rdg>' +
-  //     '<rdg type="corr" hand="corrector"><w>simple</w></rdg></app><w>correction</w>' + xmlTail);
-  // }, 200000);
+    const htmlData = await page.evaluate(`getData()`);
+    expect(htmlData).toBe('a <span class="corr" wce_orig="smple" wce="__t=corr&amp;__n=corrector&amp;help=Help&amp;original_firsthand_reading=smple&amp;common_firsthand_partial=&amp;reading=corr&amp;ut_videtur_firsthand=on&amp;corrector_name=corrector&amp;corrector_name_other=&amp;place_corr=&amp;place_corr_other=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_deletion_hooks=0&amp;deletion_transposition_marks=0&amp;deletion_other=0&amp;deletion=&amp;firsthand_partial=&amp;partial=&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;corrector_text=simple"><span class="format_start mceNonEditable">‹</span>smple<span class="format_end mceNonEditable">›</span></span> correction');
+    const xmlData = await page.evaluate(`getTEI()`);
+    expect(xmlData).toBe(xmlHead + '<w>a</w><app><rdg type="orig" hand="firsthandV"><w>smple</w></rdg>' +
+      '<rdg type="corr" hand="corrector"><w>simple</w></rdg></app><w>correction</w>' + xmlTail);
 
-  // test('corrector ut videtur', async () => {
-  //   await frame.type('body#tinymce', 'a smple correction');
-  //   for (let i = 0; i < ' correction'.length; i++) {
-  //     await page.keyboard.press('ArrowLeft');
-  //   }
-  //   await page.keyboard.down('Shift');
-  //   for (let i = 0; i < 'smple'.length; i++) {
-  //     await page.keyboard.press('ArrowLeft');
-  //   }
-  //   await page.keyboard.up('Shift');
+    // test the hover over
+    // get the location of the span
+    const correction = await frame.$('span.corr');
+    const spanPos = await frame.evaluate((correction) => {
+      const {top, left, bottom, right} = correction.getBoundingClientRect();
+      return {top, left, bottom, right};
+    }, correction);
+    const sidebarWidth = await page.$eval('.wce-linenumber-sidebar', el => el.offsetWidth);
+    const menubarHeight = await page.$eval('#mceu_25-body', el => el.offsetHeight);
+    targetX = spanPos.left + ((spanPos.right - spanPos.left) / 2) + sidebarWidth;
+    targetY = spanPos.top + ((spanPos.bottom - spanPos.top) / 2) + menubarHeight;
+    await page.mouse.move(targetX, targetY);
+    // check the content of the hover over
+    const hoverValue = await page.$eval('#hover-data-content', el => el.innerHTML);
+    expect(hoverValue).toBe('*: <span class="format_start mceNonEditable" contenteditable="false">‹</span>smple<span class="format_end mceNonEditable" contenteditable="false">›</span> (ut videtur)<div style="margin-top:15px">Correction</div><div style="margin-top:5px">corrector: simple</div>')
 
-  //   // open C menu
-  //   await page.click('div#mceu_11 > button');
+  }, 200000);
 
-  //   const menuFrameHandle = await page.$('div[id="mceu_38"] > div > div > iframe');
-  //   const menuFrame = await menuFrameHandle.contentFrame();
+  test('corrector ut videtur', async () => {
+    await frame.type('body#tinymce', 'a smple correction');
+    for (let i = 0; i < ' correction'.length; i++) {
+      await page.keyboard.press('ArrowLeft');
+    }
+    await page.keyboard.down('Shift');
+    for (let i = 0; i < 'smple'.length; i++) {
+      await page.keyboard.press('ArrowLeft');
+    }
+    await page.keyboard.up('Shift');
 
-  //   const menuFrameHandle2 = await menuFrame.$('iframe[id="corrector_text_ifr"]');
-  //   const menuFrame2 = await menuFrameHandle2.contentFrame();
-  //   await page.keyboard.press('ArrowRight');
-  //   await menuFrame2.type('body#tinymce', 'i');
-  //   await menuFrame.click('input#ut_videtur_corr');
-  //   await menuFrame.click('input#insert');
+    // open C menu
+    await page.click('div#mceu_11 > button');
 
-  //   const htmlData = await page.evaluate(`getData()`);
-  //   expect(htmlData).toBe('a <span class="corr" wce_orig="smple" wce="__t=corr&amp;__n=corrector&amp;help=Help&amp;original_firsthand_reading=smple&amp;common_firsthand_partial=&amp;reading=corr&amp;corrector_name=corrector&amp;corrector_name_other=&amp;ut_videtur_corr=on&amp;place_corr=&amp;place_corr_other=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_deletion_hooks=0&amp;deletion_transposition_marks=0&amp;deletion_other=0&amp;deletion=&amp;firsthand_partial=&amp;partial=&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;corrector_text=simple"><span class="format_start mceNonEditable">‹</span>smple<span class="format_end mceNonEditable">›</span></span> correction');
-  //   const xmlData = await page.evaluate(`getTEI()`);
-  //   expect(xmlData).toBe(xmlHead + '<w>a</w><app><rdg type="orig" hand="firsthand"><w>smple</w></rdg><rdg type="corr" hand="correctorV">' +
-  //     '<w>simple</w></rdg></app><w>correction</w>' + xmlTail);
-  // }, 200000);
+    const menuFrameHandle = await page.$('div[id="mceu_38"] > div > div > iframe');
+    const menuFrame = await menuFrameHandle.contentFrame();
 
-  // test('an alternative reading', async () => {
-  //   await frame.type('body#tinymce', 'a simple correction');
-  //   for (let i = 0; i < ' correction'.length; i++) {
-  //     await page.keyboard.press('ArrowLeft');
-  //   }
-  //   await page.keyboard.down('Shift');
-  //   for (let i = 0; i < 'simple'.length; i++) {
-  //     await page.keyboard.press('ArrowLeft');
-  //   }
-  //   await page.keyboard.up('Shift');
+    const menuFrameHandle2 = await menuFrame.$('iframe[id="corrector_text_ifr"]');
+    const menuFrame2 = await menuFrameHandle2.contentFrame();
+    await page.keyboard.press('ArrowRight');
+    await menuFrame2.type('body#tinymce', 'i');
+    await menuFrame.click('input#ut_videtur_corr');
+    await menuFrame.click('input#insert');
 
-  //   // open C menu
-  //   await page.click('div#mceu_11 > button');
+    const htmlData = await page.evaluate(`getData()`);
+    expect(htmlData).toBe('a <span class="corr" wce_orig="smple" wce="__t=corr&amp;__n=corrector&amp;help=Help&amp;original_firsthand_reading=smple&amp;common_firsthand_partial=&amp;reading=corr&amp;corrector_name=corrector&amp;corrector_name_other=&amp;ut_videtur_corr=on&amp;place_corr=&amp;place_corr_other=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_deletion_hooks=0&amp;deletion_transposition_marks=0&amp;deletion_other=0&amp;deletion=&amp;firsthand_partial=&amp;partial=&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;corrector_text=simple"><span class="format_start mceNonEditable">‹</span>smple<span class="format_end mceNonEditable">›</span></span> correction');
+    const xmlData = await page.evaluate(`getTEI()`);
+    expect(xmlData).toBe(xmlHead + '<w>a</w><app><rdg type="orig" hand="firsthand"><w>smple</w></rdg><rdg type="corr" hand="correctorV">' +
+      '<w>simple</w></rdg></app><w>correction</w>' + xmlTail);
 
-  //   const menuFrameHandle = await page.$('div[id="mceu_38"] > div > div > iframe');
-  //   const menuFrame = await menuFrameHandle.contentFrame();
+    // test the hover over
+    // get the location of the span
+    const correction = await frame.$('span.corr');
+    const spanPos = await frame.evaluate((correction) => {
+      const {top, left, bottom, right} = correction.getBoundingClientRect();
+      return {top, left, bottom, right};
+    }, correction);
+    const sidebarWidth = await page.$eval('.wce-linenumber-sidebar', el => el.offsetWidth);
+    const menubarHeight = await page.$eval('#mceu_25-body', el => el.offsetHeight);
+    targetX = spanPos.left + ((spanPos.right - spanPos.left) / 2) + sidebarWidth;
+    targetY = spanPos.top + ((spanPos.bottom - spanPos.top) / 2) + menubarHeight;
+    await page.mouse.move(targetX, targetY);
+    // check the content of the hover over
+    const hoverValue = await page.$eval('#hover-data-content', el => el.innerHTML);
+    expect(hoverValue).toBe('*: smple<div style="margin-top:15px">Correction</div><div style="margin-top:5px">corrector: simple</div>(ut videtur corr)')
 
-  //   const menuFrameHandle2 = await menuFrame.$('iframe[id="corrector_text_ifr"]');
-  //   const menuFrame2 = await menuFrameHandle2.contentFrame();
-  //   // I can't work out how to get the cursor to move to this window so typing and then deleting does this.
-  //   await menuFrame2.type('body#tinymce', 'l');
-  //   await page.keyboard.press('Backspace');
+  }, 200000);
 
-  //   await page.keyboard.down('Shift');
-  //   for (let i = 0; i < 'simple'.length; i++) {
-  //     await page.keyboard.press('ArrowRight');
-  //   }
-  //   await page.keyboard.up('Shift');
+  test('an alternative reading', async () => {
+    await frame.type('body#tinymce', 'a simple correction');
+    for (let i = 0; i < ' correction'.length; i++) {
+      await page.keyboard.press('ArrowLeft');
+    }
+    await page.keyboard.down('Shift');
+    for (let i = 0; i < 'simple'.length; i++) {
+      await page.keyboard.press('ArrowLeft');
+    }
+    await page.keyboard.up('Shift');
 
-  //   await page.keyboard.press('Backspace');
+    // open C menu
+    await page.click('div#mceu_11 > button');
 
-  //   await menuFrame2.type('body#tinymce', 'basic');
-  //   await menuFrame.select('select[id="reading"]', 'alt');
-  //   await menuFrame.select('select[id="deletion"]', 'other');
+    const menuFrameHandle = await page.$('div[id="mceu_38"] > div > div > iframe');
+    const menuFrame = await menuFrameHandle.contentFrame();
 
-  //   await menuFrame.click('input#insert');
+    const menuFrameHandle2 = await menuFrame.$('iframe[id="corrector_text_ifr"]');
+    const menuFrame2 = await menuFrameHandle2.contentFrame();
+    // I can't work out how to get the cursor to move to this window so typing and then deleting does this.
+    await menuFrame2.type('body#tinymce', 'l');
+    await page.keyboard.press('Backspace');
 
-  //   const htmlData = await page.evaluate(`getData()`);
-  //   expect(htmlData).toBe('a <span class="corr" wce_orig="simple" wce="__t=corr&amp;__n=corrector&amp;help=Help&amp;original_firsthand_reading=simple&amp;common_firsthand_partial=&amp;reading=alt&amp;corrector_name=corrector&amp;corrector_name_other=&amp;place_corr=&amp;place_corr_other=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_deletion_hooks=0&amp;deletion_transposition_marks=0&amp;deletion_other=1&amp;deletion=other&amp;firsthand_partial=&amp;partial=&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;corrector_text=basic"><span class="format_start mceNonEditable">‹</span>simple<span class="format_end mceNonEditable">›</span></span> correction');
-  //   const xmlData = await page.evaluate(`getTEI()`);
-  //   expect(xmlData).toBe(xmlHead + '<w>a</w><app><rdg type="orig" hand="firsthand"><w>simple</w></rdg>' +
-  //     '<rdg type="alt" hand="corrector" rend="other"><w>basic</w></rdg></app><w>correction</w>' + xmlTail);
-  // }, 200000);
+    await page.keyboard.down('Shift');
+    for (let i = 0; i < 'simple'.length; i++) {
+      await page.keyboard.press('ArrowRight');
+    }
+    await page.keyboard.up('Shift');
+
+    await page.keyboard.press('Backspace');
+
+    await menuFrame2.type('body#tinymce', 'basic');
+    await menuFrame.select('select[id="reading"]', 'alt');
+    await menuFrame.select('select[id="deletion"]', 'other');
+
+    await menuFrame.click('input#insert');
+
+    const htmlData = await page.evaluate(`getData()`);
+    expect(htmlData).toBe('a <span class="corr" wce_orig="simple" wce="__t=corr&amp;__n=corrector&amp;help=Help&amp;original_firsthand_reading=simple&amp;common_firsthand_partial=&amp;reading=alt&amp;corrector_name=corrector&amp;corrector_name_other=&amp;place_corr=&amp;place_corr_other=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_deletion_hooks=0&amp;deletion_transposition_marks=0&amp;deletion_other=1&amp;deletion=other&amp;firsthand_partial=&amp;partial=&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;corrector_text=basic"><span class="format_start mceNonEditable">‹</span>simple<span class="format_end mceNonEditable">›</span></span> correction');
+    const xmlData = await page.evaluate(`getTEI()`);
+    expect(xmlData).toBe(xmlHead + '<w>a</w><app><rdg type="orig" hand="firsthand"><w>simple</w></rdg>' +
+      '<rdg type="alt" hand="corrector" rend="other"><w>basic</w></rdg></app><w>correction</w>' + xmlTail);
+
+    // test the hover over
+    // get the location of the span
+    const correction = await frame.$('span.corr');
+    const spanPos = await frame.evaluate((correction) => {
+      const {top, left, bottom, right} = correction.getBoundingClientRect();
+      return {top, left, bottom, right};
+    }, correction);
+    const sidebarWidth = await page.$eval('.wce-linenumber-sidebar', el => el.offsetWidth);
+    const menubarHeight = await page.$eval('#mceu_25-body', el => el.offsetHeight);
+    targetX = spanPos.left + ((spanPos.right - spanPos.left) / 2) + sidebarWidth;
+    targetY = spanPos.top + ((spanPos.bottom - spanPos.top) / 2) + menubarHeight;
+    await page.mouse.move(targetX, targetY);
+    // check the content of the hover over
+    const hoverValue = await page.$eval('#hover-data-content', el => el.innerHTML);
+    console.log(hoverValue)
+    expect(hoverValue).toBe('*: simple<div style="margin-top:15px">Alternative reading</div><div style="margin-top:5px">corrector: basic</div><div style="margin-top:5px">Method(s) of deletion/correction: other</div>')
+
+  }, 200000);
+
+  test('an addition (correction)', async () => {
+    await frame.type('body#tinymce', 'an  correction');
+    for (let i = 0; i < ' correction'.length; i++) {
+      await page.keyboard.press('ArrowLeft');
+    }
+    // open C menu
+    await page.click('div#mceu_11 > button');
+
+    const menuFrameHandle = await page.$('div[id="mceu_38"] > div > div > iframe');
+    const menuFrame = await menuFrameHandle.contentFrame();
+
+    const menuFrameHandle2 = await menuFrame.$('iframe[id="corrector_text_ifr"]');
+    const menuFrame2 = await menuFrameHandle2.contentFrame();
+
+    await menuFrame2.type('body#tinymce', 'addition');
+    await menuFrame.click('input#insert');
+
+    const htmlData = await page.evaluate(`getData()`);
+    expect(htmlData).toBe('an <span class="corr_blank_firsthand" wce_orig="" wce="__t=corr&amp;__n=corrector&amp;help=Help&amp;original_firsthand_reading=&amp;common_firsthand_partial=&amp;reading=corr&amp;blank_firsthand=on&amp;corrector_name=corrector&amp;corrector_name_other=&amp;place_corr=&amp;place_corr_other=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_deletion_hooks=0&amp;deletion_transposition_marks=0&amp;deletion_other=0&amp;deletion=&amp;firsthand_partial=&amp;partial=&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;corrector_text=addition"><span class="format_start mceNonEditable">‹</span>T<span class="format_end mceNonEditable">›</span></span> correction');
+    const xmlData = await page.evaluate(`getTEI()`);
+    expect(xmlData).toBe(xmlHead + '<w>an</w><app><rdg type="orig" hand="firsthand"></rdg><rdg type="corr" hand="corrector">' +
+      '<w>addition</w></rdg></app><w>correction</w>' + xmlTail);
+
+    // test the hover over THIS DOES NOT WORK
+    // get the location of the span
+    const correction = await frame.$('span.corr_blank_firsthand');
+    const spanPos = await frame.evaluate((correction) => {
+      const {top, left, bottom, right} = correction.getBoundingClientRect();
+      return {top, left, bottom, right};
+    }, correction);    
+    const sidebarWidth = await page.$eval('.wce-linenumber-sidebar', el => el.offsetWidth);
+    const menubarHeight = await page.$eval('#mceu_25-body', el => el.offsetHeight);
+    targetX = spanPos.left + ((spanPos.right - spanPos.left) / 2) + sidebarWidth + 7;
+    targetY = spanPos.top + ((spanPos.bottom - spanPos.top) / 2) + menubarHeight + 7;
+    await page.mouse.move(targetX, targetY);
+    // check the content of the hover over
+    const hoverValue = await page.$eval('#hover-data-content', el => el.innerHTML);
+    expect(hoverValue).toBe('*: Omission<div style="margin-top:15px">Correction</div><div style="margin-top:5px">corrector: addition</div>')
+    
+  }, 200000);
 
 });
