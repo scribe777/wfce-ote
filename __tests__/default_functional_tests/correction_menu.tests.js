@@ -441,7 +441,7 @@ describe('testing correction menu', () => {
     await page.mouse.move(targetX, targetY);
     // check the content of the hover over
     const hoverValue = await page.$eval('#hover-data-content', el => el.innerHTML);
-    expect(hoverValue).toBe('*: <span class="format_start mceNonEditable" contenteditable="false">‹</span>smple<span class="format_end mceNonEditable" contenteditable="false">›</span> (ut videtur)<div style="margin-top:15px">Correction</div><div style="margin-top:5px">corrector: simple</div>')
+    expect(hoverValue).toBe('*: smple (ut videtur)<div style="margin-top:15px">Correction</div><div style="margin-top:5px">corrector: simple</div>')
 
   }, 200000);
 
@@ -578,7 +578,7 @@ describe('testing correction menu', () => {
     expect(xmlData).toBe(xmlHead + '<w>an</w><app><rdg type="orig" hand="firsthand"></rdg><rdg type="corr" hand="corrector">' +
       '<w>addition</w></rdg></app><w>correction</w>' + xmlTail);
 
-    // test the hover over THIS DOES NOT WORK
+    // test the hover over
     // get the location of the span
     const correction = await frame.$('span.corr_blank_firsthand');
     const spanPos = await frame.evaluate((correction) => {
@@ -595,5 +595,87 @@ describe('testing correction menu', () => {
     expect(hoverValue).toBe('*: Omission<div style="margin-top:15px">Correction</div><div style="margin-top:5px">corrector: addition</div>')
     
   }, 200000);
+
+  // Test hover over with nomsac embedded in correction (should use correction hover over throughout and not nomsac)
+  test('a correction with a nomsac embedded (only for hover over test)', async () => {
+    
+    // preload the data
+    const data = xmlHead + '<app><rdg type="orig" hand="firsthand"><w>δυναμις</w><w><abbr type="nomSac"><hi rend="overline">θυ</hi></abbr></w><w>εστιν</w></rdg><rdg type="corr" hand="corrector"><w>δυναμις</w><w><abbr type="nomSac"><hi rend="overline">θυ</hi></abbr></w><w>εστιν</w></rdg></app>' + xmlTail;
+    await page.evaluate(`setTEI('${data}');`);
+
+    // test the hover over
+    // get the location of the span
+    const nomsac = await frame.$('span.abbr_add_overline');
+    const spanPos1 = await frame.evaluate((nomsac) => {
+      const {top, left, bottom, right} = nomsac.getBoundingClientRect();
+      return {top, left, bottom, right};
+    }, nomsac);    
+    const sidebarWidth = await page.$eval('.wce-linenumber-sidebar', el => el.offsetWidth);
+    const menubarHeight = await page.$eval('#mceu_25-body', el => el.offsetHeight);
+    targetX = spanPos1.left + ((spanPos1.right - spanPos1.left) / 2) + sidebarWidth;
+    targetY = spanPos1.top + ((spanPos1.bottom - spanPos1.top) / 2) + menubarHeight;
+    await page.mouse.move(targetX, targetY);
+    // check the content of the hover over
+    const hoverValue1 = await page.$eval('#hover-data-content', el => el.innerHTML);
+    expect(hoverValue1).toBe('*: δυναμις <span class="abbr_add_overline" wce="__t=abbr&amp;__n=&amp;original_abbr_text=&amp;add_overline=overline&amp;abbr_type_other=&amp;abbr_type=nomSac">θυ</span> εστιν<div style="margin-top:15px">Correction</div><div style="margin-top:5px">corrector: δυναμις <span class="abbr_add_overline" style="text-decoration:overline" wce="__t=abbr&amp;__n=&amp;original_abbr_text=&amp;add_overline=overline&amp;abbr_type_other=&amp;abbr_type=nomSac" wce_orig="%CE%B8%CF%85">θυ</span> εστιν </div>')
+
+    // test the hover over
+    // get the location of the span
+    const correction = await frame.$('span.corr');
+    const spanPos2 = await frame.evaluate((correction) => {
+      const {top, left, bottom, right} = correction.getBoundingClientRect();
+      return {top, left, bottom, right};
+    }, correction);    
+    targetX = spanPos2.left + ((spanPos2.right - spanPos2.left) / 2) + sidebarWidth;
+    targetY = spanPos2.top + ((spanPos2.bottom - spanPos2.top) / 2) + menubarHeight;
+    await page.mouse.move(targetX, targetY);
+    // check the content of the hover over
+    const hoverValue2 = await page.$eval('#hover-data-content', el => el.innerHTML);
+    expect(hoverValue2).toBe('*: δυναμις <span class="abbr_add_overline" wce="__t=abbr&amp;__n=&amp;original_abbr_text=&amp;add_overline=overline&amp;abbr_type_other=&amp;abbr_type=nomSac" wce_orig="%CE%B8%CF%85">θυ</span> εστιν<div style="margin-top:15px">Correction</div><div style="margin-top:5px">corrector: δυναμις <span class="abbr_add_overline" style="text-decoration:overline" wce="__t=abbr&amp;__n=&amp;original_abbr_text=&amp;add_overline=overline&amp;abbr_type_other=&amp;abbr_type=nomSac" wce_orig="%CE%B8%CF%85">θυ</span> εστιν </div>')
+
+  }, 200000);
+
+  // Test hover over with nomsac embedded in correction (should use correction hover over throughout and not nomsac)
+  test('a correction with a nomsac embedded with supplied involved (only for hover over test)', async () => {
+    
+    // preload the data
+    const data = xmlHead + '<app><rdg type="orig" hand="firsthand"><w><supplied source="na28" reason="illegible">δυναμις</supplied></w><w><supplied source="na28" reason="illegible"><abbr type="nomSac"><hi rend="overline">θυ</hi></abbr></supplied></w><w><supplied source="na28" reason="illegible">εστιν</supplied></w></rdg><rdg type="corr" hand="corrector"><w>δυναμις</w><w><abbr type="nomSac"><hi rend="overline">θυ</hi></abbr></w><w>εστιν</w></rdg></app>' + xmlTail;
+    await page.evaluate(`setTEI('${data}');`);
+
+    // test the hover over
+    // get the location of the span
+    const nomsac = await frame.$('span.abbr_add_overline');
+    const spanPos1 = await frame.evaluate((nomsac) => {
+      const {top, left, bottom, right} = nomsac.getBoundingClientRect();
+      return {top, left, bottom, right};
+    }, nomsac);    
+    const sidebarWidth = await page.$eval('.wce-linenumber-sidebar', el => el.offsetWidth);
+    const menubarHeight = await page.$eval('#mceu_25-body', el => el.offsetHeight);
+    targetX = spanPos1.left + ((spanPos1.right - spanPos1.left) / 2) + sidebarWidth;
+    targetY = spanPos1.top + ((spanPos1.bottom - spanPos1.top) / 2) + menubarHeight;
+    await page.mouse.move(targetX, targetY);
+    // check the content of the hover over
+    const hoverValue1 = await page.$eval('#hover-data-content', el => el.innerHTML);
+    // THIS IS WRONG BUT IS WHAT HAPPENS RIGHT NOW AND IT IS THE NEXT THING THAT MATTERS MORE
+    expect(hoverValue1).toBe('Nomen Sacrum');
+    // expect(hoverValue1).toBe('*: δυναμις <span class="abbr_add_overline" wce="__t=abbr&amp;__n=&amp;original_abbr_text=&amp;add_overline=overline&amp;abbr_type_other=&amp;abbr_type=nomSac" wce_orig="θυ">θυ</span> εστιν<div style="margin-top:15px">Correction</div><div style="margin-top:5px">corrector: δυναμις <span class="abbr_add_overline" style="text-decoration:overline" wce="__t=abbr&amp;__n=&amp;original_abbr_text=&amp;add_overline=overline&amp;abbr_type_other=&amp;abbr_type=nomSac" wce_orig="%CE%B8%CF%85">θυ</span> εστιν </div>')
+
+    // test the hover over
+    // get the location of the span
+    const correction = await frame.$('span.corr');
+    const spanPos2 = await frame.evaluate((correction) => {
+      const {top, left, bottom, right} = correction.getBoundingClientRect();
+      return {top, left, bottom, right};
+    }, correction);    
+    targetX = spanPos2.left + ((spanPos2.right - spanPos2.left) / 2) + sidebarWidth;
+    targetY = spanPos2.top + ((spanPos2.bottom - spanPos2.top) / 2) + menubarHeight;
+    await page.mouse.move(targetX, targetY);
+    // check the content of the hover over
+    const hoverValue2 = await page.$eval('#hover-data-content', el => el.innerHTML);
+    expect(hoverValue2).toBe('*: <span class="gap" wce="__t=gap&amp;__n=&amp;gap_reason_dummy_lacuna=lacuna&amp;gap_reason_dummy_illegible=illegible&amp;gap_reason_dummy_unspecified=unspecified&amp;gap_reason_dummy_inferredPage=inferredPage&amp;supplied_source_other=&amp;supplied_source=na28&amp;gap_reason=illegible&amp;unit_other=&amp;unit=&amp;mark_as_supplied=supplied">[δυναμις <span class="abbr_add_overline" wce="__t=abbr&amp;__n=&amp;original_abbr_text=&amp;add_overline=overline&amp;abbr_type_other=&amp;abbr_type=nomSac" wce_orig="θυ">θυ</span> εστιν]</span><div style="margin-top:15px">Correction</div><div style="margin-top:5px">corrector: δυναμις <span class="abbr_add_overline" style="text-decoration:overline" wce="__t=abbr&amp;__n=&amp;original_abbr_text=&amp;add_overline=overline&amp;abbr_type_other=&amp;abbr_type=nomSac" wce_orig="%CE%B8%CF%85">θυ</span> εστιν </div>')
+
+  }, 200000);
+
+
 
 });

@@ -1750,7 +1750,6 @@
 				var ar;
 				var corr_str = '';
 				var info_text = '';
-				var k, v, kv, kv_ar;
 				var type_name;
 				var switchvar;
 				var pNode;
@@ -1769,7 +1768,11 @@
 							useParent = true;
 							wceAttr = pNode.getAttribute('wce');
 							info_arr = wceAttr.split('@');
+							// before we make the array take out the wce_orig text as in the parents this has escaped html in it
+							// which is unescaped by stringToArray and which then breaks the correction hover over.
 							ar = WCEUtils.stringToArray(info_arr[0]);
+							var child_wce_orig = decodeURIComponent(sele_node.getAttribute('wce_orig'));
+							ar['original_firsthand_reading'] = ar['original_firsthand_reading'].replace('wce_orig="' + child_wce_orig + '"', '')
 							switchvar = 'corr';
 							type_name = 'corr';
 							corr_str = '';
@@ -2106,7 +2109,7 @@
 				}
 
 				if (corr_str != '') {
-					if (ar['blank_firsthand'] == 'on') {// Blank first hand reading
+					if (ar['blank_firsthand'] == 'on') {  // Blank first hand reading
 						corr_str = '*: ' + tinymce.translate('infotext_omission') + corr_str;
 					} else {
 						var formalStartEndRegex = new RegExp('<span class="format_[starend]+? mceNonEditable"[^>]*?>.</span>', 'g');
@@ -2123,7 +2126,7 @@
 								corr_str = '*: ' + $(sele_node).html() + corr_str;
 							}
 						}
-						corr_str = corr_str.replace(formalStartEndRegex, "");
+						corr_str = corr_str.replace(formalStartEndRegex, '');
 					}
 				}
 
