@@ -1774,20 +1774,28 @@
 							type_name = 'corr';
 							corr_str = '';
 							for (var j = 1; j < info_arr.length; j++) {
+								// Cat March 2023: As with below I don't think this is ever accessed because the wce
+								// attribute doesn't ever seem to have @ in it and so the info_arr is always 1 item
+								// Update: I have found a few places that might add at @ but I can't work out what data
+								// input would cause that.
 								var temparray = WCEUtils.stringToArray(info_arr[j]);
 								if (temparray['__t'] === 'corr') { //can it be anything different?
 									Array.prototype.push.apply(ar,temparray)
 								}
 							}
-						}
-						else if (i == 1) { // check ancestor
+						} else if (i == 1) { // check ancestor // Cat March 2023: I don't think this is ever accessed
+															   // (wce attribute needs an @ in it for i to reach 1 and 
+															   // I can't find anywhere in the code that puts an @ there)
+															   // and I really don't think it is checking the ancestor
+															   // as the comment suggests. 
 							ar = WCEUtils.stringToArray(info_arr[0]);
 							if (ar['__t'] === 'corr') {
 								switchvar = 'corr';
 								type_name = 'corr';
 								corr_str = '';
-							} else
+							} else {
 								ar = WCEUtils.stringToArray(info_arr[i]);
+							}
 						}
 					}
 
@@ -2098,25 +2106,24 @@
 				}
 
 				if (corr_str != '') {
-					if (ar['blank_firsthand'] == 'on')// Blank first hand reading
+					if (ar['blank_firsthand'] == 'on') {// Blank first hand reading
 						corr_str = '*: ' + tinymce.translate('infotext_omission') + corr_str;
-					else {
-						var fs = new RegExp(ed.WCE_CON.startFormatHtml, 'g');
-						var fe = new RegExp(ed.WCE_CON.endFormatHtml, 'g');
+					} else {
+						var formalStartEndRegex = new RegExp('<span class="format_[starend]+? mceNonEditable"[^>]*?>.</span>', 'g');
 						if (ar['ut_videtur_firsthand'] && ar['ut_videtur_firsthand'] === 'on') {
-							if (useParent)
+							if (useParent) {
 								corr_str = '*: ' + ar['original_firsthand_reading'] + ' (ut videtur)' +  corr_str;
-							else
+							} else {
 								corr_str = '*: ' + $(sele_node).html() + ' (ut videtur)' +  corr_str;
+							}
 						} else {
-							if (useParent)
+							if (useParent) {
 								corr_str = '*: ' + ar['original_firsthand_reading'] + corr_str;
-							else
-								corr_str = '*: ' + ar['original_firsthand_reading'] + corr_str;
-								// Cat experimenting with changing this
-								// corr_str = '*: ' + $(sele_node).html() + corr_str;
+							} else {
+								corr_str = '*: ' + $(sele_node).html() + corr_str;
+							}
 						}
-						corr_str = corr_str.replace(fs, "").replace(fe, "");
+						corr_str = corr_str.replace(formalStartEndRegex, "");
 					}
 				}
 
