@@ -591,7 +591,7 @@
 			if (lbpos === undefined || lbpos === null)
 				lbpos = WCEUtils.modifyBreakPosition(ed);
 
-			var wceClass = 'class="mceNonEditable brea"', wceAttr;
+			var wceClass = 'class="brea"', wceAttr;
 
 			//how many member does a group have
 			var groupCount;
@@ -2195,8 +2195,10 @@
 			if (!node)
 				return '';
 			var n = node.cloneNode(true);
-			$(n).find('span[sf]').remove();
-			$(n).find('span[ef]').remove();
+			// $(n).find('span[sf]').remove();
+			// $(n).find('span[ef]').remove();
+			$(n).find('span.format_start').remove();
+         	$(n).find('span.format_end').remove();
 			return $(n).html();
 		},
 
@@ -2816,8 +2818,8 @@
 			});
 
 			// Information-box
-			var infoBox = $('<div></div>');
-			var infoBox_content = $('<div></div>');
+			var infoBox = $('<div id="hover-data"></div>');
+			var infoBox_content = $('<div id="hover-data-content"></div>');
 			var infoBox_arrowTop = $('<div style="border: 6px solid #fff"><div></div></div>');
 			var infoBox_arrowBottom = $('<div style="border: 6px solid #fff"><div></div></div>');
 
