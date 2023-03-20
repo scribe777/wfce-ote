@@ -375,11 +375,6 @@ function writeWceNodeInfo(val) {
 					ed.selection.setContent(wceUtils.getBreakHtml(ed, 'lb', null, null, null, gap_id));
 				}
 			} 
-			// else if (gap_unit == "page") {
-			// 	wceUtils.updateBreakCounter(ed, 'pb', 0);
-			// 	ed.selection.setContent(wceUtils.getBreakHtml(ed, 'pb', null, null, null, gap_id));
-			// }
-
 		}
 
 		if (wceUtils) {
