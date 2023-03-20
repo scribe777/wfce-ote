@@ -19,6 +19,7 @@ beforeAll(async () => {
   browser = await puppeteer.launch({
     // for local testing
     // headless: false,
+    // devtools: true,
     // slowMo: 80,
     // args: ['--window-size=1920,1080', '--disable-web-security']
 
@@ -37,7 +38,6 @@ beforeEach(async () => {
   let frameHandle;
   jest.setTimeout(5000000);
   page = await browser.newPage();
-  // await page.goto(`file:${path.join(__dirname, '..', 'wce-ote', 'index.html')}`);
   await page.goto(`file:${path.join(__dirname, '../test_index_page.html')}`);
   await page.evaluate(`setWceEditor('wce_editor', {})`);
   page.waitForSelector("#wce_editor_ifr");
@@ -571,7 +571,7 @@ describe('testing gap menu', () => {
     await page.waitForSelector('div[id="mceu_40"]', { hidden: true });
 
     var htmlData = await page.evaluate(`getData()`);
-    expect(htmlData).toBe('this <span class=\"gap\" wce_orig=\"\" wce=\"__t=gap&amp;__n=&amp;original_gap_text=&amp;help=Help&amp;gap_reason_dummy_lacuna=lacuna&amp;gap_reason_dummy_illegible=illegible&amp;gap_reason_dummy_unspecified=unspecified&amp;gap_reason_dummy_inferredPage=inferredPage&amp;gap_reason=illegible&amp;unit=char&amp;unit_other=&amp;extent=10&amp;extent_unspecified=Extent%3DUnspecified&amp;extent_part=Extent%3DPart&amp;supplied_source=na28&amp;supplied_source_other=\"><span class=\"format_start mceNonEditable\">‹</span>[10]<span class=\"format_end mceNonEditable\">›</span></span> continues');
+    expect(htmlData).toBe('this <span class="gap" wce_orig="" wce="__t=gap&amp;__n=&amp;original_gap_text=&amp;help=Help&amp;gap_reason_dummy_lacuna=lacuna&amp;gap_reason_dummy_illegible=illegible&amp;gap_reason_dummy_unspecified=unspecified&amp;gap_reason_dummy_inferredPage=inferredPage&amp;gap_reason=illegible&amp;unit=char&amp;unit_other=&amp;extent=10&amp;extent_unspecified=Extent%3DUnspecified&amp;extent_part=Extent%3DPart&amp;supplied_source=na28&amp;supplied_source_other="><span class="format_start mceNonEditable">‹</span>[10]<span class="format_end mceNonEditable">›</span></span> continues');
     var xmlData = await page.evaluate(`getTEI()`);
     expect(xmlData).toBe(xmlHead + '<w>this</w><gap reason="illegible" unit="char" extent="10"/><w>continues</w>' + xmlTail);
 
@@ -731,7 +731,7 @@ describe('testing gap menu', () => {
     await page.waitForSelector('div[id="mceu_40"]', { hidden: true });
 
     const htmlData = await page.evaluate(`getData()`);
-    expect(htmlData).toBe('this <span class=\"gap\" wce_orig=\"\" wce=\"__t=gap&amp;__n=&amp;original_gap_text=&amp;help=Help&amp;gap_reason_dummy_lacuna=lacuna&amp;gap_reason_dummy_illegible=illegible&amp;gap_reason_dummy_unspecified=unspecified&amp;gap_reason_dummy_inferredPage=inferredPage&amp;gap_reason=unspecified&amp;unit=&amp;unit_other=&amp;extent=&amp;extent_unspecified=Extent%3DUnspecified&amp;extent_part=Extent%3DPart&amp;supplied_source=na28&amp;supplied_source_other=\"><span class=\"format_start mceNonEditable\">‹</span>[...]<span class=\"format_end mceNonEditable\">›</span></span> continues');
+    expect(htmlData).toBe('this <span class="gap" wce_orig="" wce="__t=gap&amp;__n=&amp;original_gap_text=&amp;help=Help&amp;gap_reason_dummy_lacuna=lacuna&amp;gap_reason_dummy_illegible=illegible&amp;gap_reason_dummy_unspecified=unspecified&amp;gap_reason_dummy_inferredPage=inferredPage&amp;gap_reason=unspecified&amp;unit=&amp;unit_other=&amp;extent=&amp;extent_unspecified=Extent%3DUnspecified&amp;extent_part=Extent%3DPart&amp;supplied_source=na28&amp;supplied_source_other="><span class="format_start mceNonEditable">‹</span>[...]<span class="format_end mceNonEditable">›</span></span> continues');
     const xmlData = await page.evaluate(`getTEI()`);
     expect(xmlData).toBe(xmlHead + '<w>this</w><gap reason="unspecified"/><w>continues</w>' + xmlTail);
   }, 200000);
@@ -753,7 +753,7 @@ describe('testing gap menu', () => {
     await page.waitForSelector('div[id="mceu_40"]', { hidden: true });
 
     const htmlData = await page.evaluate(`getData()`);
-    expect(htmlData).toBe('wo<span class=\"gap\" wce_orig=\"\" wce=\"__t=gap&amp;__n=&amp;original_gap_text=&amp;help=Help&amp;gap_reason_dummy_lacuna=lacuna&amp;gap_reason_dummy_illegible=illegible&amp;gap_reason_dummy_unspecified=unspecified&amp;gap_reason_dummy_inferredPage=inferredPage&amp;gap_reason=illegible&amp;unit=char&amp;unit_other=&amp;extent=2&amp;extent_unspecified=Extent%3DUnspecified&amp;extent_part=Extent%3DPart&amp;supplied_source=na28&amp;supplied_source_other=\"><span class=\"format_start mceNonEditable\">‹</span>[2]<span class=\"format_end mceNonEditable\">›</span></span>');
+    expect(htmlData).toBe('wo<span class="gap" wce_orig="" wce="__t=gap&amp;__n=&amp;original_gap_text=&amp;help=Help&amp;gap_reason_dummy_lacuna=lacuna&amp;gap_reason_dummy_illegible=illegible&amp;gap_reason_dummy_unspecified=unspecified&amp;gap_reason_dummy_inferredPage=inferredPage&amp;gap_reason=illegible&amp;unit=char&amp;unit_other=&amp;extent=2&amp;extent_unspecified=Extent%3DUnspecified&amp;extent_part=Extent%3DPart&amp;supplied_source=na28&amp;supplied_source_other="><span class="format_start mceNonEditable">‹</span>[2]<span class="format_end mceNonEditable">›</span></span>');
     const xmlData = await page.evaluate(`getTEI()`);
     expect(xmlData).toBe(xmlHead + '<w>wo<gap reason="illegible" unit="char" extent="2"/></w>' + xmlTail);
   }, 200000);
@@ -773,7 +773,7 @@ describe('testing gap menu', () => {
     await page.waitForSelector('div[id="mceu_40"]', { hidden: true });
 
     const htmlData = await page.evaluate(`getData()`);
-    expect(htmlData).toBe('wo<span class=\"gap\" wce_orig=\"\" wce=\"__t=gap&amp;__n=&amp;original_gap_text=&amp;help=Help&amp;gap_reason_dummy_lacuna=lacuna&amp;gap_reason_dummy_illegible=illegible&amp;gap_reason_dummy_unspecified=unspecified&amp;gap_reason_dummy_inferredPage=inferredPage&amp;gap_reason=illegible&amp;unit=&amp;unit_other=&amp;extent=&amp;extent_unspecified=Extent%3DUnspecified&amp;extent_part=Extent%3DPart&amp;supplied_source=na28&amp;supplied_source_other=\"><span class=\"format_start mceNonEditable\">‹</span>[...]<span class=\"format_end mceNonEditable\">›</span></span>');
+    expect(htmlData).toBe('wo<span class="gap" wce_orig="" wce="__t=gap&amp;__n=&amp;original_gap_text=&amp;help=Help&amp;gap_reason_dummy_lacuna=lacuna&amp;gap_reason_dummy_illegible=illegible&amp;gap_reason_dummy_unspecified=unspecified&amp;gap_reason_dummy_inferredPage=inferredPage&amp;gap_reason=illegible&amp;unit=&amp;unit_other=&amp;extent=&amp;extent_unspecified=Extent%3DUnspecified&amp;extent_part=Extent%3DPart&amp;supplied_source=na28&amp;supplied_source_other="><span class="format_start mceNonEditable">‹</span>[...]<span class="format_end mceNonEditable">›</span></span>');
     const xmlData = await page.evaluate(`getTEI()`);
     expect(xmlData).toBe(xmlHead + '<w>wo<gap reason="illegible"/></w>' + xmlTail);
   }, 200000);
@@ -798,7 +798,7 @@ describe('testing gap menu', () => {
     const idRegex = /id="gap_(\d)_\d+"/g;
     const htmlData = await page.evaluate(`getData()`);
     const modifiedHtml = htmlData.replace(idRegex, 'id="gap_$1_MATH.RAND"');
-    expect(modifiedHtml).toBe('missing line<span class=\"gap\" wce_orig=\"\" wce=\"__t=gap&amp;__n=&amp;original_gap_text=&amp;help=Help&amp;gap_reason_dummy_lacuna=lacuna&amp;gap_reason_dummy_illegible=illegible&amp;gap_reason_dummy_unspecified=unspecified&amp;gap_reason_dummy_inferredPage=inferredPage&amp;gap_reason=illegible&amp;unit=line&amp;unit_other=&amp;extent=part&amp;extent_unspecified=Extent%3DUnspecified&amp;extent_part=Extent%3DPart&amp;supplied_source=na28&amp;supplied_source_other=\" id=\"gap_2_MATH.RAND\"><span class=\"format_start mceNonEditable\">‹</span>[...]<span class=\"format_end mceNonEditable\">›</span></span>');
+    expect(modifiedHtml).toBe('missing line<span class="gap" wce_orig="" wce="__t=gap&amp;__n=&amp;original_gap_text=&amp;help=Help&amp;gap_reason_dummy_lacuna=lacuna&amp;gap_reason_dummy_illegible=illegible&amp;gap_reason_dummy_unspecified=unspecified&amp;gap_reason_dummy_inferredPage=inferredPage&amp;gap_reason=illegible&amp;unit=line&amp;unit_other=&amp;extent=part&amp;extent_unspecified=Extent%3DUnspecified&amp;extent_part=Extent%3DPart&amp;supplied_source=na28&amp;supplied_source_other=" id="gap_2_MATH.RAND"><span class="format_start mceNonEditable">‹</span>[...]<span class="format_end mceNonEditable">›</span></span>');
     const xmlData = await page.evaluate(`getTEI()`);
     expect(xmlData).toBe(xmlHead + '<w>missing</w><w>line<gap reason="illegible" unit="line" extent="part"/></w>' + xmlTail);
   }, 200000);
@@ -821,7 +821,7 @@ describe('testing gap menu', () => {
     const idRegex = /id="gap_(\d)_\d+"/g;
     const htmlData = await page.evaluate(`getData()`);
     const modifiedHtml = htmlData.replace(idRegex, 'id="gap_$1_MATH.RAND"');
-    expect(modifiedHtml).toBe('missing line<span class=\"gap\" wce_orig=\"\" wce=\"__t=gap&amp;__n=&amp;original_gap_text=&amp;help=Help&amp;gap_reason_dummy_lacuna=lacuna&amp;gap_reason_dummy_illegible=illegible&amp;gap_reason_dummy_unspecified=unspecified&amp;gap_reason_dummy_inferredPage=inferredPage&amp;gap_reason=illegible&amp;unit=line&amp;unit_other=&amp;extent=unspecified&amp;extent_unspecified=Extent%3DUnspecified&amp;extent_part=Extent%3DPart&amp;supplied_source=na28&amp;supplied_source_other=\" id=\"gap_2_MATH.RAND\"><span class=\"format_start mceNonEditable\">‹</span>[...]<span class=\"format_end mceNonEditable\">›</span></span>');
+    expect(modifiedHtml).toBe('missing line<span class="gap" wce_orig="" wce="__t=gap&amp;__n=&amp;original_gap_text=&amp;help=Help&amp;gap_reason_dummy_lacuna=lacuna&amp;gap_reason_dummy_illegible=illegible&amp;gap_reason_dummy_unspecified=unspecified&amp;gap_reason_dummy_inferredPage=inferredPage&amp;gap_reason=illegible&amp;unit=line&amp;unit_other=&amp;extent=unspecified&amp;extent_unspecified=Extent%3DUnspecified&amp;extent_part=Extent%3DPart&amp;supplied_source=na28&amp;supplied_source_other=" id="gap_2_MATH.RAND"><span class="format_start mceNonEditable">‹</span>[...]<span class="format_end mceNonEditable">›</span></span>');
     const xmlData = await page.evaluate(`getTEI()`);
     expect(xmlData).toBe(xmlHead + '<w>missing</w><w>line<gap reason="illegible" unit="line" extent="unspecified"/></w>' + xmlTail);
   }, 200000);
@@ -846,7 +846,7 @@ describe('testing gap menu', () => {
     await menuFrame.click('input#insert');
     await page.waitForSelector('div[id="mceu_40"]', { hidden: true });
     const htmlData = await page.evaluate(`getData()`);
-    expect(htmlData).toBe('missing <span class=\"gap\" wce_orig=\"\" wce=\"__t=gap&amp;__n=&amp;original_gap_text=&amp;help=Help&amp;gap_reason_dummy_lacuna=lacuna&amp;gap_reason_dummy_illegible=illegible&amp;gap_reason_dummy_unspecified=unspecified&amp;gap_reason_dummy_inferredPage=inferredPage&amp;gap_reason=lacuna&amp;unit=quire&amp;unit_other=&amp;extent=1&amp;extent_unspecified=Extent%3DUnspecified&amp;extent_part=Extent%3DPart&amp;supplied_source=na28&amp;supplied_source_other=\"><span class=\"format_start mceNonEditable\">‹</span><br />QB<br />[...]<span class=\"format_end mceNonEditable\">›</span></span> quire');
+    expect(htmlData).toBe('missing <span class="gap" wce_orig="" wce="__t=gap&amp;__n=&amp;original_gap_text=&amp;help=Help&amp;gap_reason_dummy_lacuna=lacuna&amp;gap_reason_dummy_illegible=illegible&amp;gap_reason_dummy_unspecified=unspecified&amp;gap_reason_dummy_inferredPage=inferredPage&amp;gap_reason=lacuna&amp;unit=quire&amp;unit_other=&amp;extent=1&amp;extent_unspecified=Extent%3DUnspecified&amp;extent_part=Extent%3DPart&amp;supplied_source=na28&amp;supplied_source_other="><span class="format_start mceNonEditable">‹</span><br />QB<br />[...]<span class="format_end mceNonEditable">›</span></span> quire');
     const xmlData = await page.evaluate(`getTEI()`);
     expect(xmlData).toBe(xmlHead + '<w>missing</w><gap reason="lacuna" unit="quire" extent="1"/><w>quire</w>' + xmlTail);
 
@@ -915,10 +915,20 @@ describe('testing gap menu', () => {
     const idRegex = /id="(\D+)_(\d)_\d+"/g;
     const htmlData = await page.evaluate(`getData()`);
     const modifiedHtml = htmlData.replace(idRegex, 'id="$1_$2_MATH.RAND"');
-    expect(modifiedHtml).toBe('missing <span class=\"gap\" wce_orig=\"\" wce=\"__t=gap&amp;__n=&amp;original_gap_text=&amp;help=Help&amp;gap_reason_dummy_lacuna=lacuna&amp;gap_reason_dummy_illegible=illegible&amp;gap_reason_dummy_unspecified=unspecified&amp;gap_reason_dummy_inferredPage=inferredPage&amp;gap_reason=lacuna&amp;unit=page&amp;unit_other=&amp;extent=2&amp;extent_unspecified=Extent%3DUnspecified&amp;extent_part=Extent%3DPart&amp;supplied_source=na28&amp;supplied_source_other=\" id=\"gap_4_MATH.RAND\"><span class=\"format_start mceNonEditable\">‹</span><br />PB<br />[...]<br />PB<br />[...]<span class=\"format_end mceNonEditable\">›</span></span><span class=\"mceNonEditable brea\" wce=\"__t=brea&amp;__n=&amp;break_type=pb&amp;number=1&amp;rv=r&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment=\" id=\"pb_4_MATH.RAND\"><span class=\"format_start mceNonEditable\">‹</span><br />PB 1r<span class=\"format_end mceNonEditable\">›</span></span><span class=\"mceNonEditable brea\" wce=\"__t=brea&amp;__n=&amp;break_type=cb&amp;number=1&amp;rv=&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment=\" id=\"cb_4_MATH.RAND\"><span class=\"format_start mceNonEditable\">‹</span><br />CB 1<span class=\"format_end mceNonEditable\">›</span></span><span class=\"mceNonEditable brea\" wce=\"__t=brea&amp;__n=&amp;hasBreak=no&amp;break_type=lb&amp;number=&amp;rv=&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment=\" id=\"lb_4_MATH.RAND\"><span class=\"format_start mceNonEditable\">‹</span><br />↵<span class=\"format_end mceNonEditable\">›</span></span>  pages');
+    expect(modifiedHtml).toBe('missing <span class="gap" wce_orig="" wce="__t=gap&amp;__n=&amp;original_gap_text=&amp;help=Help&amp;gap_reason_dummy_lacuna=lacuna&amp;gap_reason_dummy_illegible=illegible&amp;gap_reason_dummy_unspecified=unspecified&amp;gap_reason_dummy_inferredPage=inferredPage&amp;gap_reason=lacuna&amp;unit=page&amp;unit_other=&amp;extent=2&amp;extent_unspecified=Extent%3DUnspecified&amp;extent_part=Extent%3DPart&amp;supplied_source=na28&amp;supplied_source_other=" id="gap_4_MATH.RAND"><span class="format_start mceNonEditable">‹</span><br />PB<br />[...]<br />PB<br />[...] <span class="format_end mceNonEditable">›</span></span> pages');
     const xmlData = await page.evaluate(`getTEI()`);
-    // NB when created in the editor the XML is different compared to this test starting from XML input (page, col and line breaks added here for last page)
-    expect(xmlData).toBe(xmlHead + '<w>missing</w><gap reason="lacuna" unit="page" extent="2"/><pb n="1r" type="folio" xml:id="P1r-"/><cb n="P1rC1-"/><lb n="P1rC1L-"/><w>pages</w>' + xmlTail);
+    expect(xmlData).toBe(xmlHead + '<w>missing</w><gap reason="lacuna" unit="page" extent="2"/><w>pages</w>' + xmlTail);
+  
+    // check we can add a page break after the gap (the OTE used to add this as part of the gap but it caused more 
+    // problems than it solved so it was changed but we do need to be able to add the next page break from the line
+    // that the gap ends on)
+    await page.click('button#mceu_10-open');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('Enter');
+    const menuFrameHandle2 = await page.$('div[id="mceu_42"] > div > div > iframe');
+    const menuFrame2 = await menuFrameHandle2.contentFrame();
+    await menuFrame2.select('select[id="break_type"]', 'pb');
+    await menuFrame2.click('input#insert');
 
     // check editing
     await page.keyboard.press('ArrowUp');
@@ -936,25 +946,22 @@ describe('testing gap menu', () => {
     await page.keyboard.press('ArrowRight');
     await page.keyboard.press('ArrowDown');
     await page.keyboard.press('Enter');
-    const menuFrameHandle2 = await page.$('div[id="mceu_41"] > div > div > iframe');
-    const menuFrame2 = await menuFrameHandle2.contentFrame();
+    const menuFrameHandle3 = await page.$('div[id="mceu_43"] > div > div > iframe');
+    const menuFrame3 = await menuFrameHandle3.contentFrame();
 
-    expect(await menuFrame2.$eval('#unit', el => el.value)).toBe('page');
-    expect(await menuFrame2.$eval('#unit', el => el.disabled)).toBe(false);
-    expect(await menuFrame2.$eval('input#extent', el => el.value)).toBe('2');
-    expect(await menuFrame2.$eval('#gap_reason_dummy_lacuna', el => el.checked)).toBe(true);
-    expect(await menuFrame2.$eval('#gap_reason', el => el.value)).toBe('lacuna');
+    expect(await menuFrame3.$eval('#unit', el => el.value)).toBe('page');
+    expect(await menuFrame3.$eval('#unit', el => el.disabled)).toBe(false);
+    expect(await menuFrame3.$eval('input#extent', el => el.value)).toBe('2');
+    expect(await menuFrame3.$eval('#gap_reason_dummy_lacuna', el => el.checked)).toBe(true);
+    expect(await menuFrame3.$eval('#gap_reason', el => el.value)).toBe('lacuna');
 
-    await menuFrame2.click('input#insert');
+    await menuFrame3.click('input#insert');
     await page.waitForSelector('div[id="mceu_41"]', { hidden: true });
 
     const xmlData2 = await page.evaluate(`getTEI()`);
-    // TODO: change behaviour so pages are not renumbered on edit
-    // NB: this test current behaviour but not the desired bahviour. the page numbers are changed on edit (No idea why)
-    expect(xmlData2).toBe(xmlHead + '<w>missing</w><gap reason="lacuna" unit="page" extent="2"/><pb n="2v" type="folio" xml:id="P2v-"/><cb n="P2vC1-"/><lb n="P2vC1L-"/><w>pages</w>' + xmlTail);
+    expect(xmlData2).toBe(xmlHead + '<w>missing</w><gap reason="lacuna" unit="page" extent="2"/><pb n="1r" type="folio" xml:id="P1r-"/><cb n="P1rC1-"/><lb n="P1rC1L-"/><w>pages</w>' + xmlTail);
 
     // check deleting
-    await page.keyboard.press('ArrowUp');
     await page.keyboard.press('ArrowUp');
     await page.keyboard.press('ArrowUp');
 
@@ -971,7 +978,7 @@ describe('testing gap menu', () => {
     await page.keyboard.press('ArrowDown');
     await page.keyboard.press('Enter');
     const xmlData3 = await page.evaluate(`getTEI()`);
-    expect(xmlData3).toBe(xmlHead + '<w>missing</w><w>pages</w>' + xmlTail);
+    expect(xmlData3).toBe(xmlHead + '<w>missing</w><pb n="1r" type="folio" xml:id="P1r-"/><cb n="P1rC1-"/><lb n="P1rC1L-"/><w>pages</w>' + xmlTail);
 
   }, 200000);
 
@@ -985,7 +992,7 @@ describe('testing gap menu', () => {
     await page.keyboard.press('ArrowDown');
     await page.keyboard.press('Enter');
     const htmlData = await page.evaluate(`getData()`);
-    expect(htmlData).toBe('the end of the witness <span class=\"witnessend\" wce=\"__t=gap&amp;__n=&amp;original_gap_text=&amp;gap_reason=witnessEnd&amp;unit=&amp;unit_other=&amp;extent=&amp;supplied_source=na28&amp;supplied_source_other=&amp;insert=Insert&amp;cancel=Cancel\"><span class=\"format_start mceNonEditable\">‹</span>Witness End<span class=\"format_end mceNonEditable\">›</span></span>');
+    expect(htmlData).toBe('the end of the witness <span class="witnessend" wce="__t=gap&amp;__n=&amp;original_gap_text=&amp;gap_reason=witnessEnd&amp;unit=&amp;unit_other=&amp;extent=&amp;supplied_source=na28&amp;supplied_source_other=&amp;insert=Insert&amp;cancel=Cancel"><span class="format_start mceNonEditable">‹</span>Witness End<span class="format_end mceNonEditable">›</span></span>');
     const xmlData = await page.evaluate(`getTEI()`);
     expect(xmlData).toBe(xmlHead + '<w>the</w><w>end</w><w>of</w><w>the</w><w>witness</w><gap reason="witnessEnd"/>' + xmlTail);
   }, 200000);
@@ -1013,7 +1020,7 @@ describe('testing gap menu', () => {
     await menuFrame.click('input#insert');
 
     const htmlData = await page.evaluate(`getData()`);
-    expect(htmlData).toBe('a <span class=\"gap\" wce_orig=\"supplied\" wce=\"__t=gap&amp;__n=&amp;original_gap_text=&amp;help=Help&amp;gap_reason_dummy_lacuna=lacuna&amp;gap_reason_dummy_illegible=illegible&amp;gap_reason_dummy_unspecified=unspecified&amp;gap_reason_dummy_inferredPage=inferredPage&amp;gap_reason=illegible&amp;unit=&amp;unit_other=&amp;extent=&amp;extent_unspecified=Extent%3DUnspecified&amp;extent_part=Extent%3DPart&amp;mark_as_supplied=supplied&amp;supplied_source=na28&amp;supplied_source_other=\"><span class=\"format_start mceNonEditable\">‹</span>[supplied]<span class=\"format_end mceNonEditable\">›</span></span> word');
+    expect(htmlData).toBe('a <span class="gap" wce_orig="supplied" wce="__t=gap&amp;__n=&amp;original_gap_text=&amp;help=Help&amp;gap_reason_dummy_lacuna=lacuna&amp;gap_reason_dummy_illegible=illegible&amp;gap_reason_dummy_unspecified=unspecified&amp;gap_reason_dummy_inferredPage=inferredPage&amp;gap_reason=illegible&amp;unit=&amp;unit_other=&amp;extent=&amp;extent_unspecified=Extent%3DUnspecified&amp;extent_part=Extent%3DPart&amp;mark_as_supplied=supplied&amp;supplied_source=na28&amp;supplied_source_other="><span class="format_start mceNonEditable">‹</span>[supplied]<span class="format_end mceNonEditable">›</span></span> word');
     const xmlData = await page.evaluate(`getTEI()`);
     expect(xmlData).toBe(xmlHead + '<w>a</w><w><supplied source="na28" reason="illegible">supplied</supplied></w><w>word</w>' + xmlTail);
   }, 200000);
@@ -1042,7 +1049,7 @@ describe('testing gap menu', () => {
     await menuFrame.click('input#insert');
 
     const htmlData = await page.evaluate(`getData()`);
-    expect(htmlData).toBe('a <span class=\"gap\" wce_orig=\"supplied%20wo\" wce=\"__t=gap&amp;__n=&amp;original_gap_text=&amp;help=Help&amp;gap_reason_dummy_lacuna=lacuna&amp;gap_reason_dummy_illegible=illegible&amp;gap_reason_dummy_unspecified=unspecified&amp;gap_reason_dummy_inferredPage=inferredPage&amp;gap_reason=illegible&amp;unit=&amp;unit_other=&amp;extent=&amp;extent_unspecified=Extent%3DUnspecified&amp;extent_part=Extent%3DPart&amp;mark_as_supplied=supplied&amp;supplied_source=none&amp;supplied_source_other=\"><span class=\"format_start mceNonEditable\">‹</span>[supplied wo]<span class=\"format_end mceNonEditable\">›</span></span>rd');
+    expect(htmlData).toBe('a <span class="gap" wce_orig="supplied%20wo" wce="__t=gap&amp;__n=&amp;original_gap_text=&amp;help=Help&amp;gap_reason_dummy_lacuna=lacuna&amp;gap_reason_dummy_illegible=illegible&amp;gap_reason_dummy_unspecified=unspecified&amp;gap_reason_dummy_inferredPage=inferredPage&amp;gap_reason=illegible&amp;unit=&amp;unit_other=&amp;extent=&amp;extent_unspecified=Extent%3DUnspecified&amp;extent_part=Extent%3DPart&amp;mark_as_supplied=supplied&amp;supplied_source=none&amp;supplied_source_other="><span class="format_start mceNonEditable">‹</span>[supplied wo]<span class="format_end mceNonEditable">›</span></span>rd');
     const xmlData = await page.evaluate(`getTEI()`);
     expect(xmlData).toBe(xmlHead + '<w>a</w><w><supplied reason="illegible">supplied</supplied></w><w><supplied reason="illegible">wo</supplied>rd</w>' + xmlTail);
   }, 200000);

@@ -215,6 +215,7 @@ function writeWceNodeInfo(val) {
 						for (var i = 0; i < gap_extent; i++) {
 							gap_text += '<br/>PB<br/>[...]';
 						}
+						gap_text += ' ';
 						gap_id = '_4_' + wceUtils.getRandomID(ed, '');
 						wceUtils.addToCounter(ed, 'pb', gap_extent);
 					} else if (gap_unit == "quire") {
@@ -373,10 +374,11 @@ function writeWceNodeInfo(val) {
 					wceUtils.updateBreakCounter(ed, 'lb', 0);
 					ed.selection.setContent(wceUtils.getBreakHtml(ed, 'lb', null, null, null, gap_id));
 				}
-			} else if (gap_unit == "page") {
-				wceUtils.updateBreakCounter(ed, 'pb', 0);
-				ed.selection.setContent(wceUtils.getBreakHtml(ed, 'pb', null, null, null, gap_id));
-			}
+			} 
+			// else if (gap_unit == "page") {
+			// 	wceUtils.updateBreakCounter(ed, 'pb', 0);
+			// 	ed.selection.setContent(wceUtils.getBreakHtml(ed, 'pb', null, null, null, gap_id));
+			// }
 
 		}
 
