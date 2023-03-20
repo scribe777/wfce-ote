@@ -2204,8 +2204,6 @@
 			if (!node)
 				return '';
 			var n = node.cloneNode(true);
-			// $(n).find('span[sf]').remove();
-			// $(n).find('span[ef]').remove();
 			$(n).find('span.format_start').remove();
          	$(n).find('span.format_end').remove();
 			return $(n).html();
