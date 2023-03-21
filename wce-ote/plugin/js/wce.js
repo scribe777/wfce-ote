@@ -215,7 +215,6 @@ function writeWceNodeInfo(val) {
 						for (var i = 0; i < gap_extent; i++) {
 							gap_text += '<br/>PB<br/>[...]';
 						}
-						gap_text += ' ';
 						gap_id = '_4_' + wceUtils.getRandomID(ed, '');
 						wceUtils.addToCounter(ed, 'pb', gap_extent);
 					} else if (gap_unit == "quire") {
@@ -232,6 +231,10 @@ function writeWceNodeInfo(val) {
 				}
 
 				selected_content = gap_text;
+				if (gap_unit == 'page' || gap_unit == 'quire') {
+					// then we need a space at the end so that the next page break can be added
+					new_content = '<span wce="' + newWceAttr + '"' + wceID + wceClass + original_text + '>' + startFormatHtml + selected_content + endFormatHtml + '</span>&#8203;';
+				}
 				break;
 
 			case 'brea':
