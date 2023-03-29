@@ -363,8 +363,8 @@
 	function testIsolated() {
 		if ((document.paratextinfo.fw_type.selectedIndex != -1 &&
 					document.paratextinfo.fw_type.options[document.paratextinfo.fw_type.selectedIndex].value == 'isolated') && 
-				(document.paratextinfo.paratext_position !== -1 &&
-						document.paratextinfo.paratext_position.options[document.paratextinfo.paratext_position].selected == ''))
+				(document.paratextinfo.paratext_position.selectedIndex != -1 &&
+					document.paratextinfo.paratext_position.options[document.paratextinfo.paratext_position.selectedIndex].selected == ''))
 			return false;
 		return true;
 	}
