@@ -1789,6 +1789,7 @@ function getTeiByHtml(inputString, clientOptions) {
 	 *
 	 */
 	var getTeiString = function() {
+		inputString = inputString.replace(/[\u200B]/g, ''); // take out the special character used before breaks to sort out menu options (also at end of multi page gaps)
 		inputString = inputString.replace(/>\s+</g, '> <');//after initHtmlContent get <w before="1" after="1" />
 		inputString = '<TEI>' + inputString + '</TEI>';
 
