@@ -2868,7 +2868,7 @@
     					var linenumberCb='', lid;
 						if(ed.plugins.wcelinenumber){
 							linenumberCb='<input type="checkbox" style="margin-left:15px" ';
-							ed.settings.show_linenumber?(linenumberCb+='checked="checked"'):'';
+							ed.settings.clientOptions.showLineNumberSidebarOnLoading?(linenumberCb+='checked="checked"'):'';
 							lid=ed.id+'_wce_line_number';
 							linenumberCb+=' id="'+lid+'"> Show line number';
 						}
@@ -2884,9 +2884,9 @@
 
 						if(lid){
 							$('#'+lid).on('change', function(){
-								ed.execCommand('wceShowLineNumber',this.checked);
+								ed.execCommand('wceShowLineNumber', this.checked);
 							});
-							ed.execCommand('wceShowLineNumber',ed.settings.show_linenumber);
+							ed.execCommand('wceShowLineNumber', ed.settings.clientOptions.showLineNumberSidebarOnLoading);
 						}
     				}
     			});
