@@ -550,7 +550,6 @@ describe('testing correction menu', () => {
     await page.mouse.move(targetX, targetY);
     // check the content of the hover over
     const hoverValue = await page.$eval('#hover-data-content', el => el.innerHTML);
-    console.log(hoverValue)
     expect(hoverValue).toBe('*: simple<div style="margin-top:15px">Alternative reading</div><div style="margin-top:5px">corrector: basic</div><div style="margin-top:5px">Method(s) of deletion/correction: other</div>')
 
   }, 200000);
