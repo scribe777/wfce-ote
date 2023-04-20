@@ -1047,4 +1047,30 @@ describe('testing gap menu', () => {
     expect(xmlData).toBe(xmlHead + '<w>a</w><w><supplied reason="illegible">supplied</supplied></w><w><supplied reason="illegible">wo</supplied>rd</w>' + xmlTail);
   }, 200000);
 
+  test('deletion of gap with complex content (fixed in commit a1438d32a72833ec8bc112d3e7871e77a53a50c0)', async () => {
+
+    // preload the data
+    const data = xmlHead + '<w><supplied source="na28" reason="illegible">δυναμις</supplied></w><w><supplied source="na28" reason="illegible"><abbr type="nomSac"><hi rend="overline">θυ</hi></abbr></supplied></w><w><supplied source="na28" reason="illegible">εστιν</supplied></w>' + xmlTail;
+    await page.evaluate(`setTEI('${data}');`);
+
+    // delete from the start because it is closers
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowRight');
+
+    // open D menu for deletion
+    await page.click('button#mceu_12-open');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('Enter');
+
+    const xmlData = await page.evaluate(`getTEI()`);
+    expect(xmlData).toBe(xmlHead + '<w>δυναμις</w><w><abbr type="nomSac"><hi rend="overline">θυ</hi></abbr></w><w>εστιν</w>' + xmlTail);
+
+
+  }, 200000);
+
 });

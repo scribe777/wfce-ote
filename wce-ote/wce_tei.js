@@ -800,17 +800,27 @@ function getHtmlByTei(inputString, clientOptions) {
 			};
 			wceAttr += getWceAttributeByTei($teiNode, mapping);
 			// In case there is no unit given, we have to fix that. Otherwise we'll get a lot of "undefined" values
-			if (!$teiNode.getAttribute('unit'))
+			if (!$teiNode.getAttribute('unit')) {
 				wceAttr += '&unit_other=&unit=';
+			}
 			if (teiNodeName == 'supplied') {
 				wceAttr += '&mark_as_supplied=supplied';
-				var origText = '<TEMP>'+$($teiNode).html().replace(/ xmlns="[^"]*"/g, '').replace(/<[/]?tempspace>/g, '')+'</TEMP>';
-				var htmlOrigText = getHtmlByTei(origText).htmlString.replace(/<[/]?TEMP>/g, '');
-				$newNode.setAttribute('wce_orig', encodeURIComponent(htmlOrigText));
+
+				// there is already a function to do this do lets use that instead of adding new code.
+				$newNode.setAttribute('wce_orig', getOriginalTextByTeiNode($teiNode));
+
+				// This was another way of getting orig_text added by Tory but the function above seems to give the
+				// same result and is used elsewhere so cuts down on maintenance.
+				// This is here until the pull request is approved for easy checking.
+				// var origText = '<TEMP>'+$($teiNode).html().replace(/ xmlns="[^"]*"/g, '').replace(/<[/]?tempspace>/g, '')+'</TEMP>';
+				// var htmlOrigText = getHtmlByTei(origText).htmlString.replace(/<[/]?TEMP>/g, '');
+				// $newNode.setAttribute('wce_orig', encodeURIComponent(htmlOrigText));
+
 				// get the content and save it as original
 				// for an empty source we have to add the "none" value
-				if (!$teiNode.getAttribute('source'))
+				if (!$teiNode.getAttribute('source')) {
 					wceAttr += '&supplied_source_other=&supplied_source=none';
+				}
 			}
 
 			$newNode.setAttribute('wce', wceAttr);
@@ -1617,10 +1627,11 @@ function getHtmlByTei(inputString, clientOptions) {
 			}
 
 			wceAttr += '&reading=' + typeValue;
-			if (origText != 'OMISSION')
+			if (origText != 'OMISSION') {
 				wceAttr += '&original_firsthand_reading=' + encodeURIComponent(origText);
-			else
+			} else {
 				wceAttr += '&original_firsthand_reading=&blank_firsthand=on';
+			}
 
 			wceAttr += '&common_firsthand_partial=';
 			if (deletionValue) {

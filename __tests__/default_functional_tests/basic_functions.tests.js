@@ -30,14 +30,13 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
-    await browser.close();
+      await browser.close();
 });
 
 beforeEach(async () => {
     let frameHandle;
     jest.setTimeout(5000000);
     page = await browser.newPage();
-    // await page.goto(`file:${path.join(__dirname, '..', 'wce-ote', 'index.html')}`);
     await page.goto(`file:${path.join(__dirname, '../test_index_page.html')}`);
     await page.evaluate(`setWceEditor('wce_editor', {})`);
     page.waitForSelector("#wce_editor_ifr");
@@ -81,9 +80,9 @@ describe('testing basic word/pc level functions', () => {
         await menuFrame.click('input#insert');
         await page.waitForSelector('div[id="mceu_40"]', { hidden: true });
         const htmlData = await page.evaluate(`getData()`);
-        expect(htmlData).toBe('my wo<span class=\"part_abbr\" wce_orig=\"rds\" wce=\"__t=part_abbr&amp;__n=&amp;' +
-            'help=Help&amp;exp_rend=&amp;exp_rend_other=\"><span class=\"format_start mceNonEditable\">‹' +
-            '</span>(rds)<span class=\"format_end mceNonEditable\">›</span></span>');
+        expect(htmlData).toBe('my wo<span class="part_abbr" wce_orig="rds" wce="__t=part_abbr&amp;__n=&amp;' +
+            'help=Help&amp;exp_rend=&amp;exp_rend_other="><span class="format_start mceNonEditable">‹' +
+            '</span>(rds)<span class="format_end mceNonEditable">›</span></span>');
     }, 200000);
 
     test('test expanded whole word with symbol', async () => {
@@ -107,10 +106,10 @@ describe('testing basic word/pc level functions', () => {
         await menuFrame.click('input#insert');
         await page.waitForSelector('div[id="mceu_40"]', { hidden: true });
         const htmlData = await page.evaluate(`getData()`);
-        expect(htmlData).toBe('my <span class=\"part_abbr\" wce_orig=\"words\" wce=\"__t=part_abbr&amp;__n=&amp;' +
-            'help=Help&amp;exp_rend=%C3%B7&amp;exp_rend_other=\">' +
-            '<span class=\"format_start mceNonEditable\">‹</span>(words)' +
-            '<span class=\"format_end mceNonEditable\">›</span></span>');
+        expect(htmlData).toBe('my <span class="part_abbr" wce_orig="words" wce="__t=part_abbr&amp;__n=&amp;' +
+            'help=Help&amp;exp_rend=%C3%B7&amp;exp_rend_other=">' +
+            '<span class="format_start mceNonEditable">‹</span>(words)' +
+            '<span class="format_end mceNonEditable">›</span></span>');
     }, 200000);
 
     // space
@@ -136,7 +135,7 @@ describe('testing basic word/pc level functions', () => {
         await menuFrame.click('input#insert');
         await page.waitForSelector('div[id="mceu_41"]', { hidden: true });
         const htmlData = await page.evaluate(`getData()`);
-        expect(htmlData).toBe('space between <span class=\"spaces\" wce=\"__t=spaces&amp;__n=&amp;original_spaces_text=&amp;help=Help&amp;sp_unit=char&amp;sp_unit_other=&amp;sp_extent=5\"><span class=\"format_start mceNonEditable\">‹</span>sp<span class=\"format_end mceNonEditable\">›</span></span> words');
+        expect(htmlData).toBe('space between <span class="spaces" wce="__t=spaces&amp;__n=&amp;original_spaces_text=&amp;help=Help&amp;sp_unit=char&amp;sp_unit_other=&amp;sp_extent=5"><span class="format_start mceNonEditable">‹</span>sp<span class="format_end mceNonEditable">›</span></span> words');
         const xmlData = await page.evaluate(`getTEI()`);
         expect(xmlData).toBe(xmlHead + '<w>space</w><w>between</w><space unit="char" extent="5"/><w>words</w>' + xmlTail);
 
@@ -167,7 +166,7 @@ describe('testing basic word/pc level functions', () => {
         await menuFrame2.click('input#insert');
         await page.waitForSelector('div[id="mceu_42"]', { hidden: true });
         const htmlData2 = await page.evaluate(`getData()`);
-        expect(htmlData2).toBe('space between <span class=\"spaces\" wce=\"__t=spaces&amp;__n=&amp;original_spaces_text=&amp;help=Help&amp;sp_unit=char&amp;sp_unit_other=&amp;sp_extent=4\"><span class=\"format_start mceNonEditable\">‹</span>sp<span class=\"format_end mceNonEditable\">›</span></span> words');
+        expect(htmlData2).toBe('space between <span class="spaces" wce="__t=spaces&amp;__n=&amp;original_spaces_text=&amp;help=Help&amp;sp_unit=char&amp;sp_unit_other=&amp;sp_extent=4"><span class="format_start mceNonEditable">‹</span>sp<span class="format_end mceNonEditable">›</span></span> words');
         const xmlData2 = await page.evaluate(`getTEI()`);
         expect(xmlData2).toBe(xmlHead + '<w>space</w><w>between</w><space unit="char" extent="4"/><w>words</w>' + xmlTail);
 
@@ -222,7 +221,7 @@ describe('testing basic word/pc level functions', () => {
         await menuFrame.click('input#insert');
         await page.waitForSelector('div[id="mceu_41"]', { hidden: true });
         const htmlData = await page.evaluate(`getData()`);
-        expect(htmlData).toBe('space between <span class=\"spaces\" wce=\"__t=spaces&amp;__n=&amp;original_spaces_text=&amp;help=Help&amp;sp_unit=line&amp;sp_unit_other=&amp;sp_extent=4\"><span class=\"format_start mceNonEditable\">‹</span>sp<span class=\"format_end mceNonEditable\">›</span></span>words');
+        expect(htmlData).toBe('space between <span class="spaces" wce="__t=spaces&amp;__n=&amp;original_spaces_text=&amp;help=Help&amp;sp_unit=line&amp;sp_unit_other=&amp;sp_extent=4"><span class="format_start mceNonEditable">‹</span>sp<span class="format_end mceNonEditable">›</span></span>words');
         const xmlData = await page.evaluate(`getTEI()`);
         expect(xmlData).toBe(xmlHead + '<w>space</w><w>between</w><space unit="line" extent="4"/><w>words</w>' + xmlTail);
 
@@ -274,7 +273,7 @@ describe('testing basic word/pc level functions', () => {
         await menuFrame.click('input#insert');
         await page.waitForSelector('div[id="mceu_41"]', { hidden: true });
         const htmlData = await page.evaluate(`getData()`);
-        expect(htmlData).toBe('space between <span class=\"spaces\" wce=\"__t=spaces&amp;__n=&amp;original_spaces_text=&amp;help=Help&amp;sp_unit=other&amp;sp_unit_other=millimetres&amp;sp_extent=5\"><span class=\"format_start mceNonEditable\">‹</span>sp<span class=\"format_end mceNonEditable\">›</span></span>words');
+        expect(htmlData).toBe('space between <span class="spaces" wce="__t=spaces&amp;__n=&amp;original_spaces_text=&amp;help=Help&amp;sp_unit=other&amp;sp_unit_other=millimetres&amp;sp_extent=5"><span class="format_start mceNonEditable">‹</span>sp<span class="format_end mceNonEditable">›</span></span>words');
         const xmlData = await page.evaluate(`getTEI()`);
         expect(xmlData).toBe(xmlHead + '<w>space</w><w>between</w><space unit="millimetres" extent="5"/><w>words</w>' + xmlTail);
 
@@ -351,9 +350,9 @@ describe('testing basic word/pc level functions', () => {
     test('test pc typed', async () => {
         await frame.type('body#tinymce', 'my words.');
         const htmlData = await page.evaluate(`getData()`);
-        expect(htmlData).toBe('my words<span class=\"pc\" wce_orig=\"\" wce=\"__t=pc\">' +
-            '<span class=\"format_start mceNonEditable\">‹</span>.' +
-            '<span class=\"format_end mceNonEditable\">›</span></span>');
+        expect(htmlData).toBe('my words<span class="pc" wce_orig="" wce="__t=pc">' +
+            '<span class="format_start mceNonEditable">‹</span>.' +
+            '<span class="format_end mceNonEditable">›</span></span>');
         const xmlData = await page.evaluate(`getTEI()`);
         expect(xmlData).toBe(xmlHead + '<w>my</w><w>words</w><pc>.</pc>' + xmlTail);
     }, 200000);
@@ -377,9 +376,9 @@ describe('testing basic word/pc level functions', () => {
         await page.keyboard.press('Enter');
 
         const htmlData = await page.evaluate(`getData()`);
-        expect(htmlData).toBe('my words<span class=\"pc\" wce_orig=\"\" wce=\"__t=pc\">' +
-            '<span class=\"format_start mceNonEditable\">‹</span>?' +
-            '<span class=\"format_end mceNonEditable\">›</span></span>');
+        expect(htmlData).toBe('my words<span class="pc" wce_orig="" wce="__t=pc">' +
+            '<span class="format_start mceNonEditable">‹</span>?' +
+            '<span class="format_end mceNonEditable">›</span></span>');
         const xmlData = await page.evaluate(`getTEI()`);
         expect(xmlData).toBe(xmlHead + '<w>my</w><w>words</w><pc>?</pc>' + xmlTail);
     }, 200000);
@@ -404,9 +403,9 @@ describe('testing basic word/pc level functions', () => {
         await page.waitForSelector('div[id="mceu_59"]', { hidden: true });
 
         const htmlData = await page.evaluate(`getData()`);
-        expect(htmlData).toBe('my words<span class=\"pc\" wce=\"__t=pc\">' +
-            '<span class=\"format_start mceNonEditable\">‹</span>-' +
-            '<span class=\"format_end mceNonEditable\">›</span></span>');
+        expect(htmlData).toBe('my words<span class="pc" wce="__t=pc">' +
+            '<span class="format_start mceNonEditable">‹</span>-' +
+            '<span class="format_end mceNonEditable">›</span></span>');
         const xmlData = await page.evaluate(`getTEI()`);
         expect(xmlData).toBe(xmlHead + '<w>my</w><w>words</w><pc>-</pc>' + xmlTail);
     }, 200000);
@@ -431,15 +430,15 @@ describe('testing basic word/pc level functions', () => {
         await page.keyboard.press('Enter');
 
         const htmlData = await page.evaluate(`getData()`);
-        expect(htmlData).toBe('my words<span class=\"pc\" wce_orig=\"\" wce=\"__t=pc\">' +
-            '<span class=\"format_start mceNonEditable\">‹</span>;' +
-            '<span class=\"format_end mceNonEditable\">›</span></span>');
+        expect(htmlData).toBe('my words<span class="pc" wce_orig="" wce="__t=pc">' +
+            '<span class="format_start mceNonEditable">‹</span>;' +
+            '<span class="format_end mceNonEditable">›</span></span>');
         const xmlData = await page.evaluate(`getTEI()`);
         expect(xmlData).toBe(xmlHead + '<w>my</w><w>words</w><pc>;</pc>' + xmlTail);
     }, 200000);
 
     // abbr
-    // nomsac without overline
+    // nomsac without overline including hover over
     test('test abbr adding without overline', async () => {
         await frame.type('body#tinymce', 'a ns abbreviation');
 
@@ -464,11 +463,26 @@ describe('testing basic word/pc level functions', () => {
         await page.waitForSelector('div[id="mceu_40"]', { hidden: true });
 
         let htmlData = await page.evaluate(`getData()`);
-        expect(htmlData).toBe('a <span class=\"abbr\" wce_orig=\"ns\" wce=\"__t=abbr&amp;__n=&amp;original_abbr_text=&amp;help=Help&amp;abbr_type=nomSac&amp;abbr_type_other=\"><span class=\"format_start mceNonEditable\">‹</span>ns<span class=\"format_end mceNonEditable\">›</span></span> abbreviation');
+        expect(htmlData).toBe('a <span class="abbr" wce_orig="ns" wce="__t=abbr&amp;__n=&amp;original_abbr_text=&amp;help=Help&amp;abbr_type=nomSac&amp;abbr_type_other="><span class="format_start mceNonEditable">‹</span>ns<span class="format_end mceNonEditable">›</span></span> abbreviation');
         let xmlData = await page.evaluate(`getTEI()`);
         expect(xmlData).toBe(xmlHead + '<w>a</w><w><abbr type="nomSac">ns</abbr></w><w>abbreviation</w>' + xmlTail);
 
-        //check that it can be edited
+        // check that the hover over works
+        const correction = await frame.$('span.abbr');
+        const spanPos = await frame.evaluate((correction) => {
+        const {top, left, bottom, right} = correction.getBoundingClientRect();
+                return {top, left, bottom, right};
+              }, correction);
+        const sidebarWidth = await page.$eval('.wce-linenumber-sidebar', el => el.offsetWidth);
+        const menubarHeight = await page.$eval('#mceu_25-body', el => el.offsetHeight);
+        let targetX = spanPos.left + ((spanPos.right - spanPos.left) / 2) + sidebarWidth;
+        let targetY = spanPos.top + ((spanPos.bottom - spanPos.top) / 2) + menubarHeight;
+        await page.mouse.move(targetX, targetY);
+        // check the content of the hover over
+        const hoverValue = await page.$eval('#hover-data-content', el => el.innerHTML);
+        expect(hoverValue).toBe('Nomen Sacrum');
+
+        // check that it can be edited
         await page.keyboard.press('ArrowLeft');
         await page.keyboard.press('ArrowLeft');
         await page.keyboard.press('ArrowLeft');
@@ -490,6 +504,21 @@ describe('testing basic word/pc level functions', () => {
         xmlData = await page.evaluate(`getTEI()`);
         expect(xmlData).toBe(xmlHead + '<w>a</w><w><abbr type="nomSac">ns</abbr></w><w>abbreviation</w>' + xmlTail);
 
+        // check that the hover over still works
+        const correction2 = await frame.$('span.abbr');
+        const spanPos2 = await frame.evaluate((correction2) => {
+        const {top, left, bottom, right} = correction2.getBoundingClientRect();
+                return {top, left, bottom, right};
+              }, correction2);
+        const sidebarWidth2 = await page.$eval('.wce-linenumber-sidebar', el => el.offsetWidth);
+        const menubarHeight2 = await page.$eval('#mceu_25-body', el => el.offsetHeight);
+        targetX = spanPos2.left + ((spanPos2.right - spanPos2.left) / 2) + sidebarWidth2;
+        targetY = spanPos2.top + ((spanPos2.bottom - spanPos2.top) / 2) + menubarHeight2;
+        await page.mouse.move(targetX, targetY);
+        // check the content of the hover over
+        const hoverValue2 = await page.$eval('#hover-data-content', el => el.innerHTML);
+        expect(hoverValue2).toBe('Nomen Sacrum');
+
         // check that it can be deleted (after editing the cursor will already be in the correct place)
         // open A menu
         await page.click('button#mceu_14-open');
@@ -505,7 +534,7 @@ describe('testing basic word/pc level functions', () => {
         expect(xmlData).toBe(xmlHead + '<w>a</w><w>ns</w><w>abbreviation</w>' + xmlTail);
     }, 200000);
 
-    // nomsac with overline
+    // nomsac with overline including hover over
     test('test abbr', async () => {
         await frame.type('body#tinymce', 'a ns abbreviation');
 
@@ -535,6 +564,21 @@ describe('testing basic word/pc level functions', () => {
         let xmlData = await page.evaluate(`getTEI()`);
         expect(xmlData).toBe(xmlHead + '<w>a</w><w><abbr type="nomSac"><hi rend="overline">ns</hi></abbr></w><w>abbreviation</w>' + xmlTail);
 
+        // check that the hover over works if there is an overline
+        const correction = await frame.$('span.abbr_add_overline');
+        const spanPos = await frame.evaluate((correction) => {
+        const {top, left, bottom, right} = correction.getBoundingClientRect();
+                return {top, left, bottom, right};
+              }, correction);
+        const sidebarWidth = await page.$eval('.wce-linenumber-sidebar', el => el.offsetWidth);
+        const menubarHeight = await page.$eval('#mceu_25-body', el => el.offsetHeight);
+        let targetX = spanPos.left + ((spanPos.right - spanPos.left) / 2) + sidebarWidth;
+        let targetY = spanPos.top + ((spanPos.bottom - spanPos.top) / 2) + menubarHeight;
+        await page.mouse.move(targetX, targetY);
+        // check the content of the hover over
+        const hoverValue = await page.$eval('#hover-data-content', el => el.innerHTML);
+        expect(hoverValue).toBe('Nomen Sacrum');
+
         //check that it can be edited
         await page.keyboard.press('ArrowLeft');
         await page.keyboard.press('ArrowLeft');
@@ -557,6 +601,21 @@ describe('testing basic word/pc level functions', () => {
         xmlData = await page.evaluate(`getTEI()`);
         expect(xmlData).toBe(xmlHead + '<w>a</w><w><abbr type="nomSac"><hi rend="overline">ns</hi></abbr></w><w>abbreviation</w>' + xmlTail);
 
+        // check that the hover over still works if there is an overline
+        const correction2 = await frame.$('span.abbr_add_overline');
+        const spanPos2 = await frame.evaluate((correction2) => {
+        const {top, left, bottom, right} = correction2.getBoundingClientRect();
+                return {top, left, bottom, right};
+              }, correction2);
+        const sidebarWidth2 = await page.$eval('.wce-linenumber-sidebar', el => el.offsetWidth);
+        const menubarHeight2 = await page.$eval('#mceu_25-body', el => el.offsetHeight);
+        targetX = spanPos2.left + ((spanPos2.right - spanPos2.left) / 2) + sidebarWidth2;
+        targetY = spanPos2.top + ((spanPos2.bottom - spanPos2.top) / 2) + menubarHeight2;
+        await page.mouse.move(targetX, targetY);
+        // check the content of the hover over
+        const hoverValue2 = await page.$eval('#hover-data-content', el => el.innerHTML);
+        expect(hoverValue2).toBe('Nomen Sacrum');
+
         // check that it can be deleted (after editing the cursor will already be in the correct place)
         // open A menu
         await page.click('button#mceu_14-open');
@@ -571,7 +630,7 @@ describe('testing basic word/pc level functions', () => {
         expect(xmlData).toBe(xmlHead + '<w>a</w><w>ns</w><w>abbreviation</w>' + xmlTail);
     }, 200000);
 
-    // Add a test to check that data loaded via setTEI can still be edited and deleted
+    // Add a test to check that data loaded via setTEI can still be edited and deleted including hover over
     test('', async () => {
         const data = xmlHead + '<w>a</w><w><abbr type="nomSac"><hi rend="overline">ns</hi></abbr></w><w>abbreviation</w>' + xmlTail;
         await page.evaluate(`setTEI('${data}');`);
@@ -601,6 +660,21 @@ describe('testing basic word/pc level functions', () => {
         let xmlData = await page.evaluate(`getTEI()`);
         expect(xmlData).toBe(xmlHead + '<w>a</w><w><abbr type="nomSac">ns</abbr></w><w>abbreviation</w>' + xmlTail);
 
+        // check that the hover over works 
+        const correction = await frame.$('span.abbr');
+        const spanPos = await frame.evaluate((correction) => {
+        const {top, left, bottom, right} = correction.getBoundingClientRect();
+                return {top, left, bottom, right};
+              }, correction);
+        const sidebarWidth = await page.$eval('.wce-linenumber-sidebar', el => el.offsetWidth);
+        const menubarHeight = await page.$eval('#mceu_25-body', el => el.offsetHeight);
+        let targetX = spanPos.left + ((spanPos.right - spanPos.left) / 2) + sidebarWidth;
+        let targetY = spanPos.top + ((spanPos.bottom - spanPos.top) / 2) + menubarHeight;
+        await page.mouse.move(targetX, targetY);
+        // check the content of the hover over
+        const hoverValue = await page.$eval('#hover-data-content', el => el.innerHTML);
+        expect(hoverValue).toBe('Nomen Sacrum');
+
         // check that it can be deleted (after editing the cursor will already be in the correct place)
         // open A menu
         await page.click('button#mceu_14-open');
@@ -615,6 +689,7 @@ describe('testing basic word/pc level functions', () => {
         expect(xmlData).toBe(xmlHead + '<w>a</w><w>ns</w><w>abbreviation</w>' + xmlTail);
     }, 200000);
 
+    // including hover over
     test('test abbr form when \'other\' is selected/deselected', async () => {
         await frame.type('body#tinymce', 'a ns abbreviation');
 
@@ -653,9 +728,24 @@ describe('testing basic word/pc level functions', () => {
         await page.waitForSelector('div[id="mceu_40"]', { hidden: true });
 
         let htmlData = await page.evaluate(`getData()`);
-        expect(htmlData).toBe('a <span class="abbr" wce_orig="ns" wce="__t=abbr&amp;__n=&amp;original_abbr_text=&amp;help=Help&amp;abbr_type=other&amp;abbr_type_other=test\"><span class="format_start mceNonEditable">‹</span>ns<span class="format_end mceNonEditable">›</span></span> abbreviation');
+        expect(htmlData).toBe('a <span class="abbr" wce_orig="ns" wce="__t=abbr&amp;__n=&amp;original_abbr_text=&amp;help=Help&amp;abbr_type=other&amp;abbr_type_other=test"><span class="format_start mceNonEditable">‹</span>ns<span class="format_end mceNonEditable">›</span></span> abbreviation');
         let xmlData = await page.evaluate(`getTEI()`);
         expect(xmlData).toBe(xmlHead + '<w>a</w><w><abbr type="test">ns</abbr></w><w>abbreviation</w>' + xmlTail);
+
+        // check that the hover over works 
+        const correction = await frame.$('span.abbr');
+        const spanPos = await frame.evaluate((correction) => {
+        const {top, left, bottom, right} = correction.getBoundingClientRect();
+                return {top, left, bottom, right};
+              }, correction);
+        const sidebarWidth = await page.$eval('.wce-linenumber-sidebar', el => el.offsetWidth);
+        const menubarHeight = await page.$eval('#mceu_25-body', el => el.offsetHeight);
+        let targetX = spanPos.left + ((spanPos.right - spanPos.left) / 2) + sidebarWidth;
+        let targetY = spanPos.top + ((spanPos.bottom - spanPos.top) / 2) + menubarHeight;
+        await page.mouse.move(targetX, targetY);
+        // check the content of the hover over
+        const hoverValue = await page.$eval('#hover-data-content', el => el.innerHTML);
+        expect(hoverValue).toBe('test');
 
         //check that it can be edited
         await page.keyboard.press('ArrowLeft');
@@ -683,6 +773,21 @@ describe('testing basic word/pc level functions', () => {
         xmlData = await page.evaluate(`getTEI()`);
         expect(xmlData).toBe(xmlHead + '<w>a</w><w><abbr type="test">ns</abbr></w><w>abbreviation</w>' + xmlTail);
 
+        // check that the hover over still works if there is an overline
+        const correction2 = await frame.$('span.abbr');
+        const spanPos2 = await frame.evaluate((correction2) => {
+        const {top, left, bottom, right} = correction2.getBoundingClientRect();
+                return {top, left, bottom, right};
+              }, correction2);
+        const sidebarWidth2 = await page.$eval('.wce-linenumber-sidebar', el => el.offsetWidth);
+        const menubarHeight2 = await page.$eval('#mceu_25-body', el => el.offsetHeight);
+        targetX = spanPos2.left + ((spanPos2.right - spanPos2.left) / 2) + sidebarWidth2;
+        targetY = spanPos2.top + ((spanPos2.bottom - spanPos2.top) / 2) + menubarHeight2;
+        await page.mouse.move(targetX, targetY);
+        // check the content of the hover over
+        const hoverValue2 = await page.$eval('#hover-data-content', el => el.innerHTML);
+        expect(hoverValue2).toBe('test');
+
         // check that it can be deleted (after editing the cursor will already be in the correct place)
         // open A menu
         await page.click('button#mceu_14-open');
@@ -697,12 +802,13 @@ describe('testing basic word/pc level functions', () => {
         expect(xmlData).toBe(xmlHead + '<w>a</w><w>ns</w><w>abbreviation</w>' + xmlTail);
     }, 200000);
 
+
     test('test abbr form when \'other\' is selected/deselected if data is set using setTEI', async () => {
         const data = xmlHead + '<w>a</w><w><abbr type="test">ns</abbr></w><w>abbreviation</w>' + xmlTail;
         await page.evaluate(`setTEI('${data}');`);
 
         let htmlData = await page.evaluate(`getData()`);
-        expect(htmlData).toBe('a <span class="abbr" wce_orig="ns" wce="__t=abbr&amp;__n=&amp;original_abbr_text=&amp;abbr_type=other&amp;abbr_type_other=test\"><span class="format_start mceNonEditable">‹</span>ns<span class="format_end mceNonEditable">›</span></span> abbreviation');
+        expect(htmlData).toBe('a <span class="abbr" wce_orig="ns" wce="__t=abbr&amp;__n=&amp;original_abbr_text=&amp;abbr_type=other&amp;abbr_type_other=test"><span class="format_start mceNonEditable">‹</span>ns<span class="format_end mceNonEditable">›</span></span> abbreviation');
         let xmlData = await page.evaluate(`getTEI()`);
         expect(xmlData).toBe(xmlHead + '<w>a</w><w><abbr type="test">ns</abbr></w><w>abbreviation</w>' + xmlTail);
 
@@ -735,6 +841,21 @@ describe('testing basic word/pc level functions', () => {
         xmlData = await page.evaluate(`getTEI()`);
         expect(xmlData).toBe(xmlHead + '<w>a</w><w><abbr type="test">ns</abbr></w><w>abbreviation</w>' + xmlTail);
 
+        // check that the hover over works 
+        const correction = await frame.$('span.abbr');
+        const spanPos = await frame.evaluate((correction) => {
+        const {top, left, bottom, right} = correction.getBoundingClientRect();
+                return {top, left, bottom, right};
+              }, correction);
+        const sidebarWidth = await page.$eval('.wce-linenumber-sidebar', el => el.offsetWidth);
+        const menubarHeight = await page.$eval('#mceu_25-body', el => el.offsetHeight);
+        let targetX = spanPos.left + ((spanPos.right - spanPos.left) / 2) + sidebarWidth;
+        let targetY = spanPos.top + ((spanPos.bottom - spanPos.top) / 2) + menubarHeight;
+        await page.mouse.move(targetX, targetY);
+        // check the content of the hover over
+        const hoverValue = await page.$eval('#hover-data-content', el => el.innerHTML);
+        expect(hoverValue).toBe('test');
+
         // check that it can be deleted (after editing the cursor will already be in the correct place)
         // open A menu
         await page.click('button#mceu_14-open');
@@ -749,7 +870,198 @@ describe('testing basic word/pc level functions', () => {
         expect(xmlData).toBe(xmlHead + '<w>a</w><w>ns</w><w>abbreviation</w>' + xmlTail);
     }, 200000);
 
+    // num abbreviation without overline including hover over
+    test('test abbr num adding without overline', async () => {
+        await frame.type('body#tinymce', 'a num abbreviation');
 
-    // TODO: add more tests on different abbr structures here?
+        for (let i = 0; i < ' abbreviation'.length; i++) {
+            await page.keyboard.press('ArrowLeft');
+        }
+        await page.keyboard.down('Shift');
+        for (let i = 0; i < 'num'.length; i++) {
+            await page.keyboard.press('ArrowLeft');
+        }
+        await page.keyboard.up('Shift');
+        // open A menu
+        await page.click('button#mceu_14-open');
+        // open abbreviation menu
+        await page.keyboard.press('ArrowDown');
+        await page.keyboard.press('ArrowRight');
+        await page.keyboard.press('Enter');
+        // select number as type
+        let menuFrameHandle = await page.$('div[id="mceu_40"] > div > div > iframe');
+        let menuFrame = await menuFrameHandle.contentFrame();
+        await menuFrame.select('select[id="abbr_type"]', 'num');
+        await menuFrame.click('input#insert');
+        await page.waitForSelector('div[id="mceu_40"]', { hidden: true });
+
+        let htmlData = await page.evaluate(`getData()`);
+        expect(htmlData).toBe('a <span class="abbr" wce_orig="num" wce="__t=abbr&amp;__n=&amp;original_abbr_text=&amp;help=Help&amp;abbr_type=num&amp;abbr_type_other="><span class="format_start mceNonEditable">‹</span>num<span class="format_end mceNonEditable">›</span></span> abbreviation');
+        let xmlData = await page.evaluate(`getTEI()`);
+        expect(xmlData).toBe(xmlHead + '<w>a</w><w><abbr type="num">num</abbr></w><w>abbreviation</w>' + xmlTail);
+
+        // check that the hover over works
+        const correction = await frame.$('span.abbr');
+        const spanPos = await frame.evaluate((correction) => {
+        const {top, left, bottom, right} = correction.getBoundingClientRect();
+                return {top, left, bottom, right};
+                }, correction);
+        const sidebarWidth = await page.$eval('.wce-linenumber-sidebar', el => el.offsetWidth);
+        const menubarHeight = await page.$eval('#mceu_25-body', el => el.offsetHeight);
+        let targetX = spanPos.left + ((spanPos.right - spanPos.left) / 2) + sidebarWidth;
+        let targetY = spanPos.top + ((spanPos.bottom - spanPos.top) / 2) + menubarHeight;
+        await page.mouse.move(targetX, targetY);
+        // check the content of the hover over
+        const hoverValue = await page.$eval('#hover-data-content', el => el.innerHTML);
+        expect(hoverValue).toBe('Numeral');
+
+        // check that it can be edited
+        await page.keyboard.press('ArrowLeft');
+        await page.keyboard.press('ArrowLeft');
+        await page.keyboard.press('ArrowLeft');
+        // open A menu
+        await page.click('button#mceu_14-open');
+        // open abbreviation menu for editing
+        await page.keyboard.press('ArrowDown');
+        await page.keyboard.press('ArrowRight');
+        await page.keyboard.press('ArrowDown');
+        await page.keyboard.press('Enter');
+
+        menuFrameHandle = await page.$('div[id="mceu_41"] > div > div > iframe');
+        menuFrame = await menuFrameHandle.contentFrame();
+        expect(await menuFrame.$eval('#add_overline', el => el.checked)).toBe(false);
+
+        await menuFrame.click('input#insert');
+        await page.waitForSelector('div[id="mceu_41"]', { hidden: true });
+
+        xmlData = await page.evaluate(`getTEI()`);
+        expect(xmlData).toBe(xmlHead + '<w>a</w><w><abbr type="num">num</abbr></w><w>abbreviation</w>' + xmlTail);
+
+        // check that the hover over still works
+        const correction2 = await frame.$('span.abbr');
+        const spanPos2 = await frame.evaluate((correction2) => {
+        const {top, left, bottom, right} = correction2.getBoundingClientRect();
+                return {top, left, bottom, right};
+                }, correction2);
+        const sidebarWidth2 = await page.$eval('.wce-linenumber-sidebar', el => el.offsetWidth);
+        const menubarHeight2 = await page.$eval('#mceu_25-body', el => el.offsetHeight);
+        targetX = spanPos2.left + ((spanPos2.right - spanPos2.left) / 2) + sidebarWidth2;
+        targetY = spanPos2.top + ((spanPos2.bottom - spanPos2.top) / 2) + menubarHeight2;
+        await page.mouse.move(targetX, targetY);
+        // check the content of the hover over
+        const hoverValue2 = await page.$eval('#hover-data-content', el => el.innerHTML);
+        expect(hoverValue2).toBe('Numeral');
+
+        // check that it can be deleted (after editing the cursor will already be in the correct place)
+        // open A menu
+        await page.click('button#mceu_14-open');
+        // open abbreviation menu for editing
+        await page.keyboard.press('ArrowDown');
+        await page.keyboard.press('ArrowRight');
+        await page.keyboard.press('ArrowDown');
+        await page.keyboard.press('ArrowDown');
+        await page.keyboard.press('Enter');
+
+        // await page.waitForTimeout(6000);
+        xmlData = await page.evaluate(`getTEI()`);
+        expect(xmlData).toBe(xmlHead + '<w>a</w><w>num</w><w>abbreviation</w>' + xmlTail);
+    }, 200000);
+
+    // nomsac with overline including hover over
+    test('test num abbr', async () => {
+        await frame.type('body#tinymce', 'a num abbreviation');
+
+        for (let i = 0; i < ' abbreviation'.length; i++) {
+            await page.keyboard.press('ArrowLeft');
+        }
+        await page.keyboard.down('Shift');
+        for (let i = 0; i < 'num'.length; i++) {
+            await page.keyboard.press('ArrowLeft');
+        }
+        await page.keyboard.up('Shift');
+        // open A menu
+        await page.click('button#mceu_14-open');
+        // open abbreviation menu
+        await page.keyboard.press('ArrowDown');
+        await page.keyboard.press('ArrowRight');
+        await page.keyboard.press('Enter');
+        // select number and overline
+        let menuFrameHandle = await page.$('div[id="mceu_40"] > div > div > iframe');
+        let menuFrame = await menuFrameHandle.contentFrame();
+        await menuFrame.select('select[id="abbr_type"]', 'num');
+        await menuFrame.click('#add_overline');
+        await menuFrame.click('input#insert');
+        await page.waitForSelector('div[id="mceu_40"]', { hidden: true });
+
+        let htmlData = await page.evaluate(`getData()`);
+        expect(htmlData).toBe('a <span class="abbr_add_overline" wce_orig="num" wce="__t=abbr&amp;__n=&amp;original_abbr_text=&amp;help=Help&amp;abbr_type=num&amp;abbr_type_other=&amp;add_overline=overline"><span class="format_start mceNonEditable">‹</span>num<span class="format_end mceNonEditable">›</span></span> abbreviation');
+        let xmlData = await page.evaluate(`getTEI()`);
+        expect(xmlData).toBe(xmlHead + '<w>a</w><w><abbr type="num"><hi rend="overline">num</hi></abbr></w><w>abbreviation</w>' + xmlTail);
+
+        // check that the hover over works if there is an overline
+        const correction = await frame.$('span.abbr_add_overline');
+        const spanPos = await frame.evaluate((correction) => {
+        const {top, left, bottom, right} = correction.getBoundingClientRect();
+                return {top, left, bottom, right};
+                }, correction);
+        const sidebarWidth = await page.$eval('.wce-linenumber-sidebar', el => el.offsetWidth);
+        const menubarHeight = await page.$eval('#mceu_25-body', el => el.offsetHeight);
+        let targetX = spanPos.left + ((spanPos.right - spanPos.left) / 2) + sidebarWidth;
+        let targetY = spanPos.top + ((spanPos.bottom - spanPos.top) / 2) + menubarHeight;
+        await page.mouse.move(targetX, targetY);
+        // check the content of the hover over
+        const hoverValue = await page.$eval('#hover-data-content', el => el.innerHTML);
+        expect(hoverValue).toBe('Numeral');
+
+        //check that it can be edited
+        await page.keyboard.press('ArrowLeft');
+        await page.keyboard.press('ArrowLeft');
+        await page.keyboard.press('ArrowLeft');
+        // open A menu
+        await page.click('button#mceu_14-open');
+        // open abbreviation menu for editing
+        await page.keyboard.press('ArrowDown');
+        await page.keyboard.press('ArrowRight');
+        await page.keyboard.press('ArrowDown');
+        await page.keyboard.press('Enter');
+
+        menuFrameHandle = await page.$('div[id="mceu_41"] > div > div > iframe');
+        menuFrame = await menuFrameHandle.contentFrame();
+        expect(await menuFrame.$eval('#add_overline', el => el.checked)).toBe(true);
+
+        await menuFrame.click('input#insert');
+        await page.waitForSelector('div[id="mceu_41"]', { hidden: true });
+
+        xmlData = await page.evaluate(`getTEI()`);
+        expect(xmlData).toBe(xmlHead + '<w>a</w><w><abbr type="num"><hi rend="overline">num</hi></abbr></w><w>abbreviation</w>' + xmlTail);
+
+        // check that the hover over still works if there is an overline
+        const correction2 = await frame.$('span.abbr_add_overline');
+        const spanPos2 = await frame.evaluate((correction2) => {
+        const {top, left, bottom, right} = correction2.getBoundingClientRect();
+                return {top, left, bottom, right};
+                }, correction2);
+        const sidebarWidth2 = await page.$eval('.wce-linenumber-sidebar', el => el.offsetWidth);
+        const menubarHeight2 = await page.$eval('#mceu_25-body', el => el.offsetHeight);
+        targetX = spanPos2.left + ((spanPos2.right - spanPos2.left) / 2) + sidebarWidth2;
+        targetY = spanPos2.top + ((spanPos2.bottom - spanPos2.top) / 2) + menubarHeight2;
+        await page.mouse.move(targetX, targetY);
+        // check the content of the hover over
+        const hoverValue2 = await page.$eval('#hover-data-content', el => el.innerHTML);
+        expect(hoverValue2).toBe('Numeral');
+
+        // check that it can be deleted (after editing the cursor will already be in the correct place)
+        // open A menu
+        await page.click('button#mceu_14-open');
+        // select delete
+        await page.keyboard.press('ArrowDown');
+        await page.keyboard.press('ArrowRight');
+        await page.keyboard.press('ArrowDown');
+        await page.keyboard.press('ArrowDown');
+        await page.keyboard.press('Enter');
+
+        xmlData = await page.evaluate(`getTEI()`);
+        expect(xmlData).toBe(xmlHead + '<w>a</w><w>num</w><w>abbreviation</w>' + xmlTail);
+    }, 200000);
 
 });
