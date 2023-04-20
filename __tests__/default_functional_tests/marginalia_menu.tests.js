@@ -475,7 +475,7 @@ describe('testing marginalia menu', () => {
         const htmlData = await page.evaluate(`getData()`);
         expect(htmlData).toBe('this is a title with a note<span class="paratext" wce_orig="" wce="__t=paratext&amp;__n=&amp;help=Help&amp;fw_type=runTitle&amp;fw_type_other=&amp;covered=0&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;marginals_text=Title%20is%20here%3Cspan%20class%3D%22note%22%20wce_orig%3D%22%22%20wce%3D%22__t%3Dnote%26amp%3B__n%3D%26amp%3Bhelp%3DHelp%26amp%3Bnote_type%3Dlocal%26amp%3Bnote_type_other%3D%26amp%3BnewHand%3D%26amp%3Bnote_text%3DMy%2520note%22%3E%3Cspan%20class%3D%22format_start%20mceNonEditable%22%3E%E2%80%B9%3C%2Fspan%3ENote%3Cspan%20class%3D%22format_end%20mceNonEditable%22%3E%E2%80%BA%3C%2Fspan%3E%3C%2Fspan%3E&amp;number=&amp;paratext_position=&amp;paratext_position_other=&amp;paratext_alignment="><span class="format_start mceNonEditable">‹</span>fw<span class="format_end mceNonEditable">›</span></span>');
         const xmlData = await page.evaluate(`getTEI()`);
-        expect(xmlData).toBe(xmlHead + '<w>this</w><w>is</w><w>a</w><w>title</w><w>with</w><w>a</w><w>note</w><fw type="runTitle"><w>Title</w><w>is</w><w>here</w><note type="local" xml:id="..--2">My note</note></fw>' + xmlTail);
+        expect(xmlData).toBe(xmlHead + '<w>this</w><w>is</w><w>a</w><w>title</w><w>with</w><w>a</w><w>note</w><fw type="runTitle"><w>Title</w><w>is</w><w>here</w><note type="local">My note</note></fw>' + xmlTail);
 
     });
 

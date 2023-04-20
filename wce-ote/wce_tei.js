@@ -1397,7 +1397,7 @@ function getHtmlByTei(inputString, clientOptions) {
 	 * <note>
 	 */
 	var Tei2Html_note = function($htmlParent, $teiNode) {
-		// <note type="$ note_type" n="$newHand" xml:id="_TODO_" > $note_text </note>
+		// <note type="$ note_type" n="$newHand"> $note_text </note>
 
 		var $newNode = $newDoc.createElement('span');
 
@@ -1481,7 +1481,6 @@ function getHtmlByTei(inputString, clientOptions) {
 					wceAttr += '&newHand=';
 			} else {
 				var mapping = {
-					'xml:id' : null,
 					'type' : {
 						'0' : '@editorial@local@canonRef',
 						'1' : '&note_type=',
@@ -1773,9 +1772,6 @@ function getTeiByHtml(inputString, clientOptions) {
 	var w_end_s='}@@@}';
 
 	var isSeg = false;
-	var note = 1;
-
-	var idSet = new Set();
 
 	/*
 	 * Main Method <br /> return String of TEI-Format XML
@@ -3291,21 +3287,6 @@ function getTeiByHtml(inputString, clientOptions) {
 				$note.setAttribute('type', note_type_value);
 			}
 		}
-
-		var $lastNode = $teiParent.lastChild;
-		if ($lastNode) {
-			note++;
-		} else // this is important for notes being inserted directly after the verse number
-			note = 1;
-		var xml_id = g_bookNumber + '.' + g_chapterNumber + '.' + g_verseNumber + '-' + g_witValue + '-' + note;
-		var temp='';
-		var i=65;
-		while (idSet.has(xml_id + temp)) {
-			temp = String.fromCharCode(i).toLowerCase();
-			i++;
-		}
-		$note.setAttribute('xml:id', xml_id + temp);
-		idSet.add(xml_id + temp);
 
 		// add <handShift/> if necessary
 		if (note_type_value === "changeOfHand") {
