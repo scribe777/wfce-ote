@@ -52,6 +52,70 @@ beforeEach(async () => {
 
 describe('testing marginalia menu', () => {
 
+    test('no default selection of fw type', async () => {
+        // open M menu to check the default option
+        await page.click('button#mceu_15-open');
+        await page.keyboard.press('ArrowDown');
+        await page.keyboard.press('Enter');
+
+        const menuFrameHandle = await page.$('div[id="mceu_39"] > div > div > iframe');
+        const menuFrame = await menuFrameHandle.contentFrame();
+
+        expect(await menuFrame.$eval('#fw_type', el => el.value)).toBe('pageNum');
+
+        const menuFrameHandle2 = await menuFrame.$('iframe[id="marginals_text_ifr"]');
+        const menuFrame2 = await menuFrameHandle2.contentFrame();
+        await menuFrame2.type('body#tinymce', '10');
+
+        await menuFrame.click('input#insert');
+        await page.waitForSelector('div[id="mceu_39"]', { hidden: true });
+        const htmlData = await page.evaluate(`getData()`);
+        expect(htmlData).toBe('<span class=\"paratext\" wce_orig=\"\" wce=\"__t=paratext&amp;__n=&amp;help=Help&amp;fw_type=pageNum&amp;fw_type_other=&amp;covered=0&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;marginals_text=10&amp;number=&amp;paratext_position=&amp;paratext_position_other=&amp;paratext_alignment=\"><span class=\"format_start mceNonEditable\">‹</span>fw<span class=\"format_end mceNonEditable\">›</span></span>');
+        const xmlData = await page.evaluate(`getTEI()`);
+        expect(xmlData).toBe(xmlHead + '<fw type="pageNum"><w>10</w></fw>' + xmlTail);
+
+    }, 200000);
+
+    test('no default selection of fw type can be overwritten', async () => {
+        // open M menu to check the default option
+        await page.click('button#mceu_15-open');
+        await page.keyboard.press('ArrowDown');
+        await page.keyboard.press('Enter');
+
+        const menuFrameHandle = await page.$('div[id="mceu_39"] > div > div > iframe');
+        const menuFrame = await menuFrameHandle.contentFrame();
+
+        expect(await menuFrame.$eval('#fw_type', el => el.value)).toBe('pageNum');
+        await menuFrame.select('select[id="fw_type"]', 'chapNum');
+
+        const menuFrameHandle2 = await menuFrame.$('iframe[id="marginals_text_ifr"]');
+        const menuFrame2 = await menuFrameHandle2.contentFrame();
+        await menuFrame2.type('body#tinymce', '10');
+
+        await menuFrame.click('input#insert');
+        await page.waitForSelector('div[id="mceu_39"]', { hidden: true });
+        const htmlData = await page.evaluate(`getData()`);
+        expect(htmlData).toBe('<span class=\"paratext\" wce_orig=\"\" wce=\"__t=paratext&amp;__n=&amp;help=Help&amp;fw_type=chapNum&amp;fw_type_other=&amp;covered=0&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;marginals_text=10&amp;number=&amp;paratext_position=&amp;paratext_position_other=&amp;paratext_alignment=\"><span class=\"format_start mceNonEditable\">‹</span>fw<span class=\"format_end mceNonEditable\">›</span></span>');
+        const xmlData = await page.evaluate(`getTEI()`);
+        expect(xmlData).toBe(xmlHead + '<num type="chapNum">10</num>' + xmlTail);
+
+        // test editing
+        await page.keyboard.press('ArrowLeft');
+        await page.click('button#mceu_15-open');
+        await page.keyboard.press('ArrowDown');
+        await page.keyboard.press('ArrowDown');
+        await page.keyboard.press('Enter');
+
+        const menuFrameHandle3 = await page.$('div[id="mceu_40"] > div > div > iframe');
+        const menuFrame3 = await menuFrameHandle3.contentFrame();
+        expect(await menuFrame.$eval('#fw_type', el => el.value)).toBe('chapNum');
+        await menuFrame3.click('input#insert');
+        await page.waitForSelector('div[id="mceu_40"]', { hidden: true });
+        const xmlData2 = await page.evaluate(`getTEI()`);
+        expect(xmlData2).toBe(xmlHead + '<num type="chapNum">10</num>' + xmlTail);
+
+    }, 200000);
+
     test('1 line of commentary text note', async () => {
         await frame.type('body#tinymce', 'some commentary ');
         await page.keyboard.press('Enter');
@@ -334,7 +398,6 @@ describe('testing marginalia menu', () => {
         // I can't work out how to get the cursor to move to this window so typing and then deleting does this.
         await menuFrame2.type('body#tinymce', '12');
         await menuFrame.select('select[id="paratext_position"]', 'colleft');
-        // await menuFrame.select('select[id="paratext_alignment"]', 'center');
 
         await menuFrame.click('input#insert');
 
@@ -343,6 +406,37 @@ describe('testing marginalia menu', () => {
         const xmlData = await page.evaluate(`getTEI()`);
         expect(xmlData).toBe(xmlHead + '<w>this</w><w>is</w><w>a</w><w>chapter</w><w>number</w><w>in</w><w>the</w><w>margin</w>' +
             '<seg type="margin" subtype="colleft" n="@PC-"><num type="chapNum">12</num></seg>' + xmlTail);
+    }, 200000);
+
+
+    test('isolated marginal note', async () => {
+
+        await frame.type('body#tinymce', 'this is an isolated marginal note');
+
+        // open M menu
+        await page.click('button#mceu_15-open');
+        await page.keyboard.press('ArrowDown');
+        await page.keyboard.press('Enter');
+
+
+        const menuFrameHandle = await page.$('div[id="mceu_39"] > div > div > iframe');
+        const menuFrame = await menuFrameHandle.contentFrame();
+        await menuFrame.select('select[id="fw_type"]', 'isolated');
+
+        const menuFrameHandle2 = await menuFrame.$('iframe[id="marginals_text_ifr"]');
+        const menuFrame2 = await menuFrameHandle2.contentFrame();
+        // I can't work out how to get the cursor to move to this window so typing and then deleting does this.
+        await menuFrame2.type('body#tinymce', 'isolated');
+        await menuFrame.select('select[id="paratext_position"]', 'colleft');
+        // await menuFrame.select('select[id="paratext_alignment"]', 'center');
+
+        await menuFrame.click('input#insert');
+
+        const htmlData = await page.evaluate(`getData()`);
+        expect(htmlData).toBe('this is an isolated marginal note<span class="paratext" wce_orig="" wce="__t=paratext&amp;__n=&amp;help=Help&amp;fw_type=isolated&amp;fw_type_other=&amp;covered=0&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;marginals_text=isolated&amp;number=&amp;paratext_position=colleft&amp;paratext_position_other=&amp;paratext_alignment="><span class="format_start mceNonEditable">‹</span>fw<span class="format_end mceNonEditable">›</span></span>');
+        const xmlData = await page.evaluate(`getTEI()`);
+        expect(xmlData).toBe(xmlHead + '<w>this</w><w>is</w><w>an</w><w>isolated</w><w>marginal</w><w>note</w>' +
+            '<seg type="margin" subtype="colleft"><w>isolated</w></seg>' + xmlTail);
     }, 200000);
 
     test('The correct buttons appear in the submenu for marginalia', async () => {
@@ -411,7 +505,7 @@ describe('testing marginalia menu', () => {
         const htmlData = await page.evaluate(`getData()`);
         expect(htmlData).toBe('this is a title with a note<span class="paratext" wce_orig="" wce="__t=paratext&amp;__n=&amp;help=Help&amp;fw_type=runTitle&amp;fw_type_other=&amp;covered=0&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;marginals_text=Title%20is%20here%3Cspan%20class%3D%22note%22%20wce_orig%3D%22%22%20wce%3D%22__t%3Dnote%26amp%3B__n%3D%26amp%3Bhelp%3DHelp%26amp%3Bnote_type%3Dlocal%26amp%3Bnote_type_other%3D%26amp%3BnewHand%3D%26amp%3Bnote_text%3DMy%2520note%22%3E%3Cspan%20class%3D%22format_start%20mceNonEditable%22%3E%E2%80%B9%3C%2Fspan%3ENote%3Cspan%20class%3D%22format_end%20mceNonEditable%22%3E%E2%80%BA%3C%2Fspan%3E%3C%2Fspan%3E&amp;number=&amp;paratext_position=&amp;paratext_position_other=&amp;paratext_alignment="><span class="format_start mceNonEditable">‹</span>fw<span class="format_end mceNonEditable">›</span></span>');
         const xmlData = await page.evaluate(`getTEI()`);
-        expect(xmlData).toBe(xmlHead + '<w>this</w><w>is</w><w>a</w><w>title</w><w>with</w><w>a</w><w>note</w><fw type="runTitle"><w>Title</w><w>is</w><w>here</w><note type="local" xml:id="..--2">My note</note></fw>' + xmlTail);
+        expect(xmlData).toBe(xmlHead + '<w>this</w><w>is</w><w>a</w><w>title</w><w>with</w><w>a</w><w>note</w><fw type="runTitle"><w>Title</w><w>is</w><w>here</w><note type="local">My note</note></fw>' + xmlTail);
 
     });
 

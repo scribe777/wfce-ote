@@ -98,3 +98,40 @@ describe('testing with toolbar settings', () => {
     });
 
 });
+
+describe('testing with toolbar settings', () => {
+
+    beforeEach(async () => {
+        let frameHandle;
+        jest.setTimeout(5000000);
+        page = await browser.newPage();
+        await page.goto(`file:${path.join(__dirname, '../test_index_page.html')}`);
+        await page.evaluate(`setWceEditor('wce_editor', {showLineNumberSidebarOnLoading: false})`);
+        page.waitForSelector("#wce_editor_ifr");
+        frameHandle = null;
+        while (frameHandle === null) {
+            frameHandle = await page.$("iframe[id='wce_editor_ifr']");
+        }
+        frame = await frameHandle.contentFrame();
+    });
+
+    test('check line number sidebar is not visible on loading', async () => {
+        expect(await page.$eval('#wce_editor_wce_line_number', el => el.checked)).toBe(false);
+        expect(await page.$eval('.wce-linenumber-sidebar', el => getComputedStyle(el).display)).toBe('none');
+    });
+
+    test('check line number sidebar can be hidden and made visible again', async () => {
+        expect(await page.$eval('#wce_editor_wce_line_number', el => el.checked)).toBe(false);
+        expect(await page.$eval('.wce-linenumber-sidebar', el => getComputedStyle(el).display)).toBe('none');
+
+        // hide the sidebar
+        await page.click('input#wce_editor_wce_line_number');
+        expect(await page.$eval('#wce_editor_wce_line_number', el => el.checked)).toBe(true);
+        expect(await page.$eval('.wce-linenumber-sidebar', el => getComputedStyle(el).display)).not.toBe('none');
+
+        // show the sidebar
+        await page.click('input#wce_editor_wce_line_number');
+        expect(await page.$eval('#wce_editor_wce_line_number', el => el.checked)).toBe(false);
+        expect(await page.$eval('.wce-linenumber-sidebar', el => getComputedStyle(el).display)).toBe('none');
+    });
+});

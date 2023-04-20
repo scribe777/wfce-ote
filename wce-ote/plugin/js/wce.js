@@ -231,6 +231,10 @@ function writeWceNodeInfo(val) {
 				}
 
 				selected_content = gap_text;
+				if (gap_unit == 'page' || gap_unit == 'quire') {
+					// then we need a space at the end so that the next page break can be added
+					new_content = '<span wce="' + newWceAttr + '"' + wceID + wceClass + original_text + '>' + startFormatHtml + selected_content + endFormatHtml + '</span>&#8203;';
+				}
 				break;
 
 			case 'brea':
@@ -373,11 +377,7 @@ function writeWceNodeInfo(val) {
 					wceUtils.updateBreakCounter(ed, 'lb', 0);
 					ed.selection.setContent(wceUtils.getBreakHtml(ed, 'lb', null, null, null, gap_id));
 				}
-			} else if (gap_unit == "page") {
-				wceUtils.updateBreakCounter(ed, 'pb', 0);
-				ed.selection.setContent(wceUtils.getBreakHtml(ed, 'pb', null, null, null, gap_id));
-			}
-
+			} 
 		}
 
 		if (wceUtils) {

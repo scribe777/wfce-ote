@@ -800,17 +800,27 @@ function getHtmlByTei(inputString, clientOptions) {
 			};
 			wceAttr += getWceAttributeByTei($teiNode, mapping);
 			// In case there is no unit given, we have to fix that. Otherwise we'll get a lot of "undefined" values
-			if (!$teiNode.getAttribute('unit'))
+			if (!$teiNode.getAttribute('unit')) {
 				wceAttr += '&unit_other=&unit=';
+			}
 			if (teiNodeName == 'supplied') {
 				wceAttr += '&mark_as_supplied=supplied';
-				var origText = '<TEMP>'+$($teiNode).html().replace(/ xmlns="[^"]*"/g, '').replace(/<[/]?tempspace>/g, '')+'</TEMP>';
-				var htmlOrigText = getHtmlByTei(origText).htmlString.replace(/<[/]?TEMP>/g, '');
-				$newNode.setAttribute('wce_orig', encodeURIComponent(htmlOrigText));
+
+				// there is already a function to do this do lets use that instead of adding new code.
+				$newNode.setAttribute('wce_orig', getOriginalTextByTeiNode($teiNode));
+
+				// This was another way of getting orig_text added by Tory but the function above seems to give the
+				// same result and is used elsewhere so cuts down on maintenance.
+				// This is here until the pull request is approved for easy checking.
+				// var origText = '<TEMP>'+$($teiNode).html().replace(/ xmlns="[^"]*"/g, '').replace(/<[/]?tempspace>/g, '')+'</TEMP>';
+				// var htmlOrigText = getHtmlByTei(origText).htmlString.replace(/<[/]?TEMP>/g, '');
+				// $newNode.setAttribute('wce_orig', encodeURIComponent(htmlOrigText));
+
 				// get the content and save it as original
 				// for an empty source we have to add the "none" value
-				if (!$teiNode.getAttribute('source'))
+				if (!$teiNode.getAttribute('source')) {
 					wceAttr += '&supplied_source_other=&supplied_source=none';
+				}
 			}
 
 			$newNode.setAttribute('wce', wceAttr);
@@ -1397,7 +1407,7 @@ function getHtmlByTei(inputString, clientOptions) {
 	 * <note>
 	 */
 	var Tei2Html_note = function($htmlParent, $teiNode) {
-		// <note type="$ note_type" n="$newHand" xml:id="_TODO_" > $note_text </note>
+		// <note type="$ note_type" n="$newHand"> $note_text </note>
 
 		var $newNode = $newDoc.createElement('span');
 
@@ -1481,7 +1491,6 @@ function getHtmlByTei(inputString, clientOptions) {
 					wceAttr += '&newHand=';
 			} else {
 				var mapping = {
-					'xml:id' : null,
 					'type' : {
 						'0' : '@editorial@local@canonRef',
 						'1' : '&note_type=',
@@ -1618,10 +1627,11 @@ function getHtmlByTei(inputString, clientOptions) {
 			}
 
 			wceAttr += '&reading=' + typeValue;
-			if (origText != 'OMISSION')
+			if (origText != 'OMISSION') {
 				wceAttr += '&original_firsthand_reading=' + encodeURIComponent(origText);
-			else
+			} else {
 				wceAttr += '&original_firsthand_reading=&blank_firsthand=on';
+			}
 
 			wceAttr += '&common_firsthand_partial=';
 			if (deletionValue) {
@@ -1773,16 +1783,13 @@ function getTeiByHtml(inputString, clientOptions) {
 	var w_end_s='}@@@}';
 
 	var isSeg = false;
-	var note = 1;
-
-	var idSet = new Set();
 
 	/*
 	 * Main Method <br /> return String of TEI-Format XML
 	 *
 	 */
 	var getTeiString = function() {
-		inputString = inputString.replace(/[\u200B]/g, ''); // take out the special character used before breaks to sort out menu options
+		inputString = inputString.replace(/[\u200B]/g, ''); // take out the special character used before breaks to sort out menu options (also at end of multi page gaps)
 		inputString = inputString.replace(/>\s+</g, '> <');//after initHtmlContent get <w before="1" after="1" />
 		inputString = '<TEI>' + inputString + '</TEI>';
 
@@ -3292,21 +3299,6 @@ function getTeiByHtml(inputString, clientOptions) {
 				$note.setAttribute('type', note_type_value);
 			}
 		}
-
-		var $lastNode = $teiParent.lastChild;
-		if ($lastNode) {
-			note++;
-		} else // this is important for notes being inserted directly after the verse number
-			note = 1;
-		var xml_id = g_bookNumber + '.' + g_chapterNumber + '.' + g_verseNumber + '-' + g_witValue + '-' + note;
-		var temp='';
-		var i=65;
-		while (idSet.has(xml_id + temp)) {
-			temp = String.fromCharCode(i).toLowerCase();
-			i++;
-		}
-		$note.setAttribute('xml:id', xml_id + temp);
-		idSet.add(xml_id + temp);
 
 		// add <handShift/> if necessary
 		if (note_type_value === "changeOfHand") {

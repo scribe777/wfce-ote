@@ -116,4 +116,25 @@ describe('testing editor appearance', () => {
     expect(await frame.$eval('.mce-content-body', el => getComputedStyle(el).font)).toBe('24px / 48px GentiumPlus');
   });
 
+  test('check line number sidebar is visible on loading', async () => {
+    expect(await page.$eval('#wce_editor_wce_line_number', el => el.checked)).toBe(true);
+    expect(await page.$eval('.wce-linenumber-sidebar', el => getComputedStyle(el).display)).not.toBe('none');
+  });
+
+  test('check line number sidebar can be hidden and made visible again', async () => {
+    expect(await page.$eval('#wce_editor_wce_line_number', el => el.checked)).toBe(true);
+    expect(await page.$eval('.wce-linenumber-sidebar', el => getComputedStyle(el).display)).not.toBe('none');
+
+    // hide the sidebar
+    await page.click('input#wce_editor_wce_line_number');
+    expect(await page.$eval('#wce_editor_wce_line_number', el => el.checked)).toBe(false);
+    expect(await page.$eval('.wce-linenumber-sidebar', el => getComputedStyle(el).display)).toBe('none');
+
+    // show the sidebar
+    await page.click('input#wce_editor_wce_line_number');
+    expect(await page.$eval('#wce_editor_wce_line_number', el => el.checked)).toBe(true);
+    expect(await page.$eval('.wce-linenumber-sidebar', el => getComputedStyle(el).display)).not.toBe('none');
+  });
+
+
 });

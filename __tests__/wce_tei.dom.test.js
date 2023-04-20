@@ -478,7 +478,7 @@ const notes = new Map([
   // notes
   // another undefined issue
   [ 'a local note',
-    [ '<w>a</w><w>note</w><note type="local" xml:id="..-undefined-2">my new local note</note>',
+    [ '<w>a</w><w>note</w><note type="local">my new local note</note>',
       'a note<span class="note" wce="__t=note&amp;__n=&amp;note_text=my%20new%20local%20note&amp;' +
       'note_type=local&amp;newhand="><span class="format_start mceNonEditable">‹</span>Note' +
       '<span class="format_end mceNonEditable">›</span></span>'
@@ -486,7 +486,7 @@ const notes = new Map([
   ],
   // a handshift note - needs to be changed to handShift [issue #12]
   [ 'a handShift note',
-    [ '<w>a</w><w>note</w><note type="editorial" xml:id="..-undefined-2"><handShift/></note>',
+    [ '<w>a</w><w>note</w><note type="editorial"><handShift/></note>',
       'a note<span class="note" wce="__t=note&amp;__n=&amp;note_text=&amp;note_type=changeOfHand&amp;' +
       'note_type_other=&amp;newHand="><span class="format_start mceNonEditable">‹</span>Note' +
       '<span class="format_end mceNonEditable">›</span></span>'
@@ -494,7 +494,7 @@ const notes = new Map([
   ],
   // spaces added in attribute should be replaced with _ [issue #13]
   [ 'a handShift note with new hand',
-    [ '<w>a</w><w>note</w><note type="editorial" xml:id="..-undefined-2"><handShift scribe="new hand"/></note>',
+    [ '<w>a</w><w>note</w><note type="editorial"><handShift scribe="new hand"/></note>',
       'a note<span class="note" wce="__t=note&amp;__n=&amp;note_text=&amp;note_type=changeOfHand&amp;' +
       'note_type_other=&amp;newHand=new%20hand"><span class="format_start mceNonEditable">‹</span>Note' +
       '<span class="format_end mceNonEditable">›</span></span>'
@@ -590,7 +590,7 @@ const embeddedMenuData = new Map([
   // running title in centre of top margin
   [ 'running title (fw) in centre top margin (seg)',
     [ '<w>This</w><w>is</w><w>a</w><w>title</w><w>with</w><w>a</w><w>note</w><fw type="runTitle"><w>my</w>' +
-      '<w>title</w><note type="local" xml:id="..-undefined-2">My note</note></fw>',
+      '<w>title</w><note type="local">My note</note></fw>',
       'This is a title with a note <span class="paratext" wce="__t=paratext&amp;__n=&amp;marginals_text=' +
       'my%20title%3Cspan%20class%3D%22note%22%20wce%3D%22__t%3Dnote%26amp%3B__n%3D%26amp%3Bnote_text%3DMy%2520' +
       'note%26amp%3Bnote_type%3Dlocal%26amp%3Bnewhand%3D%22%3E%3Cspan%20class%3D%22format_start%20mceNonEditable' +
@@ -1075,29 +1075,29 @@ const teiToHtmlAndBackWithChange = new Map([
       ]
     ],
     [ 'a handShift note with new hand, legacy for when new hand was in n attribute',
-      [ '<w>a</w><w>note</w><note type="editorial" xml:id="..-undefined-2"><handshift n="new hand"/></note>',
+      [ '<w>a</w><w>note</w><note type="editorial"><handshift n="new hand"/></note>',
         'a note<span class="note" wce="__t=note&amp;__n=&amp;note_text=&amp;note_type=changeOfHand&amp;' +
         'note_type_other=&amp;newHand=new%20hand"><span class="format_start mceNonEditable">‹</span>Note' +
         '<span class="format_end mceNonEditable">›</span></span>',
-        '<w>a</w><w>note</w><note type="editorial" xml:id="..-undefined-2"><handShift scribe="new hand"/></note>'
+        '<w>a</w><w>note</w><note type="editorial"><handShift scribe="new hand"/></note>'
       ]
     ],
 		// legacy support
 	  [ 'a handShift note',
-	    [ '<w>a</w><w>note</w><note type="editorial" xml:id="BKV-undefined-2"><handshift/></note>',
+	    [ '<w>a</w><w>note</w><note type="editorial"><handshift/></note>',
 	      'a note<span class="note" wce="__t=note&amp;__n=&amp;note_text=&amp;note_type=changeOfHand&amp;' +
 	      'note_type_other=&amp;newHand="><span class="format_start mceNonEditable">‹</span>Note' +
 	      '<span class="format_end mceNonEditable">›</span></span>',
-				'<w>a</w><w>note</w><note type="editorial" xml:id="..-undefined-2"><handShift/></note>'
+				'<w>a</w><w>note</w><note type="editorial"><handShift/></note>'
 	    ]
 	  ],
 	  // spaces added in attribute should be replaced with _ [issue #13]
 	  [ 'a handShift note with new hand',
-	    [ '<w>a</w><w>note</w><note type="editorial" xml:id="BKV-undefined-2"><handshift scribe="new hand"/></note>',
+	    [ '<w>a</w><w>note</w><note type="editorial"><handshift scribe="new hand"/></note>',
 	      'a note<span class="note" wce="__t=note&amp;__n=&amp;note_text=&amp;note_type=changeOfHand&amp;' +
 	      'note_type_other=&amp;newHand=new%20hand"><span class="format_start mceNonEditable">‹</span>Note' +
 	      '<span class="format_end mceNonEditable">›</span></span>',
-				'<w>a</w><w>note</w><note type="editorial" xml:id="..-undefined-2"><handShift scribe="new hand"/></note>',
+				'<w>a</w><w>note</w><note type="editorial"><handShift scribe="new hand"/></note>',
 	    ]
 	  ],
     [ 'hi rend ol as legacy support for overline',
@@ -1206,6 +1206,13 @@ const teiToHtmlAndBackWithChange = new Map([
         '<span class="verse_number mceNonEditable" wce="__t=verse_number"/> subscriptio text ',
         '<div type="book" n="John"><div type="subscriptio"><ab n="John.subscriptio"><w>subscriptio</w><w>text</w></ab></div></div>'
       ]
+    ],
+    // legacy support for xml:id on notes (just needs to not break if it gets them)
+    [ 'note with an xml:id',
+      ['<note type="editorial" xml:id="B04K1V2-01-1">My note</note>',
+       '<span class="note" wce="__t=note&amp;__n=&amp;note_text=My%20note&amp;note_type=editorial&amp;newhand="><span class="format_start mceNonEditable">‹</span>Note<span class="format_end mceNonEditable">›</span></span>',
+       '<note type="editorial">My note</note>'
+      ]
     ]
 ]);
 
@@ -1287,15 +1294,15 @@ const exportSpaces = new Map([
     ]
   ],
   [ 'test spaces are added after notes between words',
-    ['<w>test</w><w>note</w><note type="local" xml:id="..--2">my test note</note><w>between</w><w>words</w>',
+    ['<w>test</w><w>note</w><note type="local">my test note</note><w>between</w><w>words</w>',
      'test note<span class="note" wce="__t=note&amp;__n=&amp;note_text=my%20test%20note&amp;' +
      'note_type=local&amp;newhand="><span class="format_start mceNonEditable">‹</span>Note' +
      '<span class="format_end mceNonEditable">›</span></span> between words ',
-     '<w>test</w> <w>note</w><note type="local" xml:id="..-undefined-2">my test note</note> <w>between</w> <w>words</w>'
+     '<w>test</w> <w>note</w><note type="local">my test note</note> <w>between</w> <w>words</w>'
     ]
   ],
   [ 'test spaces are added after notes before app',
-    ['<w>test</w><w>note</w><note type="local" xml:id="..--2">my test note</note><app>' +
+    ['<w>test</w><w>note</w><note type="local">my test note</note><app>' +
      '<rdg type="orig" hand="firsthand"><w>before</w><w>app</w></rdg><rdg type="corr" hand="corrector"></rdg></app>',
      'test note<span class="note" wce="__t=note&amp;__n=&amp;note_text=my%20test%20note&amp;note_type=local&amp;' +
      'newhand="><span class="format_start mceNonEditable">‹</span>Note<span class="format_end mceNonEditable">›' +
@@ -1306,7 +1313,7 @@ const exportSpaces = new Map([
      '&amp;deletion_transposition_marks=0&amp;deletion_other=0&amp;deletion=null&amp;firsthand_partial=&amp;partial=' +
      '&amp;corrector_text=&amp;blank_correction=on&amp;place_corr="><span class="format_start mceNonEditable">‹' +
      '</span>before app<span class="format_end mceNonEditable">›</span></span>',
-     '<w>test</w> <w>note</w><note type="local" xml:id="..-undefined-2">my test note</note> <app>' +
+     '<w>test</w> <w>note</w><note type="local">my test note</note> <app>' +
      '<rdg type="orig" hand="firsthand"><w>before</w> <w>app</w></rdg><rdg type="corr" hand="corrector"></rdg></app>'
     ]
   ],
