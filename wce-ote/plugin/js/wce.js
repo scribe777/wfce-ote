@@ -409,6 +409,10 @@ function writeWceNodeInfo(val) {
 					if (break_type == 'lb') {
 						break_indention = wceUtils.getBreakHtml(ed, break_type, break_lbpos, break_indention, 'wce="' + newWceAttr + '"', null, true);
 						wceUtils.setInnerHTML(ed, wce_node, break_indention);
+					} else if (break_type === 'cb') {
+						wceUtils.setInnerHTML(ed, wce_node, wceUtils.getInnerHTML(wce_node).replace(/CB\s\d+/g, "CB " + document.breakinfo.number.value));
+					} else if (break_type === 'pb') {
+						wceUtils.setInnerHTML(ed, wce_node, wceUtils.getInnerHTML(wce_node).replace(/PB\s\d+[r|v]?[x|y]?/g, "PB " + document.breakinfo.number.value + document.breakinfo.rv.value + document.breakinfo.fibre_type.value));
 					}
 					wceUtils.updateBreakCounter(ed, break_type, document.breakinfo.number.value);
 				}

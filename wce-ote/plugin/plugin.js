@@ -583,7 +583,7 @@
 		/*
 		 * get break format html content
 		 * @attr : attribute from dialog-form of break.htm
-		 * @_id: group id for beak
+		 * @_id: group id for break
 		 */
 		getBreakHtml : function(ed, bType, lbpos, indention, attr, _id, getOnlyIndention) {
 			var _this = WCEUtils.getBreakHtml;
@@ -591,7 +591,7 @@
 			if (lbpos === undefined || lbpos === null)
 				lbpos = WCEUtils.modifyBreakPosition(ed);
 
-			var wceClass = 'class="mceNonEditable brea"', wceAttr;
+			var wceClass = 'class="brea"', wceAttr;
 
 			//how many member does a group have
 			var groupCount;
@@ -737,8 +737,12 @@
 				}
 				wceID = 'id="' + bType + baseID + '"';
 			}
-
-			var out = '<span ' + wceAttr + wceClass + wceID + '>' + ed.WCE_CON.startFormatHtml + str + ed.WCE_CON.endFormatHtml + '</span>';
+			// Cat March 2023: The hidden character &#8203; is there to allow the key navigation behaviour to be the 
+			// same as the click behaviour. Now that the break span is not mceNonEditable it gets selected by key 
+			// navigation immediately after the last visible character which limits the menu buttons available 
+			// It was still possible to click immediately before the span and have the menu behave properly but I 
+			// thought it was best to have the key navigation and mouse click behaviour to be the same.
+			var out = '&#8203;<span ' + wceAttr + wceClass + wceID + '>' + ed.WCE_CON.startFormatHtml + str + ed.WCE_CON.endFormatHtml + '</span>';
 
 			if (bType == 'qb') {
 				//cb,pb und lb unter qb sind eine Gruppe, die alle haben gleich Attribute von qb
@@ -1056,7 +1060,6 @@
 				startContainer.parentNode.removeChild(startContainer);
 				return WCEUtils.setWCEVariable(ed);
 			}
-
 			if (w.isc) {
 				//Corrections should also be possible for single positions (blank first hand reading)
 				if (WCEUtils.canInsertCorrection(ed, rng))
@@ -1077,7 +1080,8 @@
 				if (startContainer.nodeType == 3) {
 					selectedNode = startContainer.parentNode;
 					var startText = startContainer.nodeValue;
-					//wenn neuen Text in textNode hinzugefuegt, wird neue textNode erstellt.
+					// wenn neuen Text in textNode hinzugefuegt, wird neue textNode erstellt.
+					// when new text is added in text node, new textnode is created
 					if (startText) {
 						if ($(selectedNode).hasClass('format_end')) {
 							w.isCaretAtNodeEnd = true;
@@ -1086,17 +1090,22 @@
 							selectedNode = selectedNode.parentNode;
 							w.type = 'format_start';
 						} else if (startText.length == rng.endOffset && (!startContainer.nextSibling || (startContainer.nextSibling && startContainer.nextSibling.nodeType != 3))) {
-							//mehrere txtNode koenen hintereinander stehen
-							//wenn startConatiner.nextSibling ein textNode ist ,dann ist nicht "at node Ende"
+							// mehrere txtNode koenen hintereinander stehen
+							// several txtNode can be in a row
+							// wenn startConatiner.nextSibling ein textNode ist ,dann ist nicht "at node Ende"
+							// if startConatiner.nextSibling is a textNode ,then is not "at node end"
 							w.isCaretAtNodeEnd = true;
 						}
 					}
 				} else {
 					selectedNode = startContainer;
-					//normalweis ist das body
+					// normalweis ist das body
+					// normally this is the body
 
-					//wenn ein Element das letztes Element von Body ist und cursor steht am body End, wird body als startContainer ausgewaehlt.
-					//Von daher muss das Element gefunden werden
+					// wenn ein Element das letztes Element von Body ist und cursor steht am body End, wird body als startContainer ausgewaehlt.
+					// if an element is the last element of body and cursor is at body end, body is selected as the startContainer.
+					// Von daher muss das Element gefunden werden
+					// Therefore, the element must be found
 					if (!tinymce.isIE && startContainer === ed.getBody() && rng && rng.endOffset > 0) {
 						startContainer = startContainer.childNodes[rng.endOffset - 1];
 					}
@@ -2206,8 +2215,8 @@
 			if (!node)
 				return '';
 			var n = node.cloneNode(true);
-			$(n).find('span[sf]').remove();
-			$(n).find('span[ef]').remove();
+			$(n).find('span.format_start').remove();
+         	$(n).find('span.format_end').remove();
 			return $(n).html();
 		},
 
