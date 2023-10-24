@@ -2417,6 +2417,7 @@
 					newContent += '<span wce="__t=unclear&amp;__n=&amp;original_text=' + word + '" ' + wceClass + '>' + startFormatHtml + unclear_text + endFormatHtml + '</span>';
 					_setContent(ed, newContent);
 					break;
+
 				case 'witnessend':
 					wceClass = ' class="witnessend"';
 					wceAttr = 'wce="__t=gap&amp;__n=&amp;original_gap_text=&amp;gap_reason=witnessEnd&amp;unit=&amp;unit_other=&amp;extent=&amp;supplied_source=na28&amp;supplied_source_other=&amp;insert=Insert&amp;cancel=Cancel" ';
@@ -3156,6 +3157,12 @@
 						items[0].disabled(b);
 						items[1].disabled(!b);
 						items[2].disabled(!b);
+					}
+				},
+				{ text : tinymce.translate('menu_surplus'),
+					id : 'menu-illegible-surplus',
+					onclick : function() {
+						ed.execCommand('mceAddSurplus');
 					}
 				},
 				{ text : tinymce.translate('menu_witnessend'),
@@ -3957,6 +3964,10 @@
 
 			ed.addCommand('mceEditCapitals', function() {
 				doWithDialog(ed, url, '/capitals.htm', 480, 320, 1, false, tinymce.translate('capitals_title'));
+			});
+
+			ed.addCommand('mceAddSurplus', function(c) {
+				doWithoutDialog(ed, 'surplus', '');
 			});
 
 			ed.addCommand('mceAdd_formatting', function(c) {

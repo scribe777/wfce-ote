@@ -370,6 +370,20 @@ span.pc, span.abbr, span.abbr_add_overline, span.part_abbr, span.supplied, span.
 
 }
 
+span.surplus{
+	
+	border: 1px dotted #f00;
+	  
+	margin:0px 0px 0px 1px;
+	 
+	padding:0;
+
+	font-style: italic;
+
+	color: gray;
+
+}
+
 
 
 span.abbr_add_overline{
