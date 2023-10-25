@@ -293,6 +293,7 @@ tinymce.addI18n('en',{
 	menu_deficiency: 'Deficiency',
 	menu_uncertain : 'Uncertain letters',
 	menu_gap : 'Gap',
+	menu_surplus: 'Surplus',
 	menu_witnessend : "Witness End",
 	menu_ornamentation : 'Ornamentation',
 	menu_highlight_text : 'Highlight text',

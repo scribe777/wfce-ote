@@ -245,6 +245,7 @@ tinymce.addI18n('de',{
 	menu_deficiency: 'Mangel',
 	menu_uncertain : 'Unsichere Lesart',
 	menu_gap : 'Lücke',
+	menu_surplus: 'Surplus',
 	menu_witnessend : "Vorzeitiges Ende des Zeugen",
 	menu_ornamentation : 'Verzierung',
 	menu_highlight_text : 'Text hervorheben',
