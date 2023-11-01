@@ -300,6 +300,12 @@ const gapAndSupplied = new Map([
       '<span class="format_end mceNonEditable">›</span></span> line '
     ]
   ],
+  [ 'surplus text',
+    [ '<w>the</w><w>end</w><w>of</w><w>this</w><surplus><w>is</w><w>surplus</w></surplus>',
+      'the end of this <span class="surplus" wce="__t=surplus" wce_orig="is%20surplus"><span class="format_start ' +
+      'mceNonEditable">‹</span>is surplus <span class="format_end mceNonEditable">›</span></span>'
+    ]
+  ],
   [ 'gap witness end',
     [ '<w>the</w><w>end</w><w>of</w><w>the</w><w>witness</w><gap reason="witnessEnd"/>',
       'the end of the witness  <span class="witnessend" wce="__t=gap&amp;__n=&amp;original_gap_text=&amp;' +

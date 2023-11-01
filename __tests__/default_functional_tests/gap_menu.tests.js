@@ -1027,6 +1027,27 @@ describe('testing gap menu', () => {
 
   }, 200000); 
 
+  test('gap surplus', async () => {
+    await frame.type('body#tinymce', 'the end of this is surplus');
+
+    await page.keyboard.down('Shift');
+    for (let i = 0; i < 'is surplus'.length; i++) {
+      await page.keyboard.press('ArrowLeft');
+    }
+    await page.keyboard.up('Shift');
+
+    // open D menu
+    await page.click('button#mceu_12-open');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('Enter');
+    const htmlData = await page.evaluate(`getData()`);
+    expect(htmlData).toBe('the end of this <span class="surplus" wce_orig="is%20surplus" wce="__t=surplus"><span class="format_start mceNonEditable">‹</span>is surplus<span class="format_end mceNonEditable">›</span></span>');
+    const xmlData = await page.evaluate(`getTEI()`);
+    expect(xmlData).toBe(xmlHead + '<w>the</w><w>end</w><w>of</w><w>this</w><surplus><w>is</w><w>surplus</w></surplus>' + xmlTail);
+  }, 200000);
+
   test('gap witness end', async () => {
     await frame.type('body#tinymce', 'the end of the witness ');
 
