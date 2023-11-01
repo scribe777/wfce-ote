@@ -1035,6 +1035,7 @@ describe('testing gap menu', () => {
     await page.keyboard.press('ArrowDown');
     await page.keyboard.press('ArrowDown');
     await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
     await page.keyboard.press('Enter');
     const htmlData = await page.evaluate(`getData()`);
     expect(htmlData).toBe('the end of the witness <span class="witnessend" wce="__t=gap&amp;__n=&amp;original_gap_text=&amp;gap_reason=witnessEnd&amp;unit=&amp;unit_other=&amp;extent=&amp;supplied_source=na28&amp;supplied_source_other=&amp;insert=Insert&amp;cancel=Cancel"><span class="format_start mceNonEditable">‹</span>Witness End<span class="format_end mceNonEditable">›</span></span>');
