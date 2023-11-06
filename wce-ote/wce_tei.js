@@ -657,26 +657,50 @@ function getHtmlByTei(inputString, clientOptions) {
 		$newNode.setAttribute('wce', wceAttr);
 		var s = getOriginalTextByTeiNode($teiNode);
 		$newNode.setAttribute('wce_orig', s);
+		if (!$teiNode.getAttribute('reason')) {// no reason given
+			wceAttr += '&surplus_reason=&surplus_reason_other=';
+		} else {
+			var mapping = {
+				'reason' : {
+					'0' : '@repetition@interjection',
+					'1' : '&surplus_reason_other=&surplus_reason=',
+					'2' : '&usurplus_reason=other&surplus_reason_other='
+				},
+			};
+			wceAttr += getWceAttributeByTei($teiNode, mapping);
+		}
+		$newNode.setAttribute('wce', wceAttr);
+
 		$htmlParent.appendChild($newNode);
 		var $tempParent = $newDoc.createElement('t');
 		var cList = $teiNode.childNodes;
+
 		for (var i = 0, c, l = cList.length; i < l; i++) {
 			c = cList[i];
 			if (!c) {
 				break;
 			}
-			if (c.nodeType == 3)
+			if (c.nodeType == 3) {
 				nodeAddText($tempParent, c.nodeValue);
-			else
+			} else {
 				readAllChildrenOfTeiNode($tempParent, c);
+			}
 		}
+
+		//remove textNode with space ' '. It come from function readAllChildrenOfTeiNode::nodeAddText($htmlParent, ' ');
+		var oLast=$tempParent.lastChild;
+		if(oLast && oLast.nodeType==3 && oLast.nodeValue==' '){
+			$tempParent.removeChild(oLast);
+		}
+
 		if ($tempParent) {
 			while($tempParent.hasChildNodes()){
 				$newNode.appendChild($tempParent.firstChild);
 			}
 		}
 		addFormatElement($newNode);
-		return null
+		nodeAddText($htmlParent, ' ');
+		return null;
 	};
 
 	/*
@@ -3600,6 +3624,13 @@ function getTeiByHtml(inputString, clientOptions) {
 		var origText = $htmlNode.getAttribute('wce_orig');
 		if (origText) {
 			html2Tei_correctionAddW($surplus, origText);
+		}
+		var reasonValue = arr['surplus_reason'];
+		if (reasonValue == 'other') {
+			reasonValue = arr['surplus_reason_other'];
+		}
+		if (reasonValue && reasonValue != '') {
+			$surplus.setAttribute('reason', decodeURIComponent(reasonValue));
 		}
 		$teiParent.appendChild($surplus);
 		return {

@@ -3967,7 +3967,7 @@
 			});
 
 			ed.addCommand('mceAddSurplus', function(c) {
-				doWithoutDialog(ed, 'surplus', '');
+				doWithDialog(ed, url, '/surplus.htm', 480, 300, 1, true, tinymce.translate('surplus_title'));
 			});
 
 			ed.addCommand('mceAdd_formatting', function(c) {
