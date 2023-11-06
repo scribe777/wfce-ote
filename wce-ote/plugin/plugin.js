@@ -3161,9 +3161,39 @@
 				},
 				{ text : tinymce.translate('menu_surplus'),
 					id : 'menu-illegible-surplus',
-					onclick : function() {
-						ed.execCommand('mceAddSurplus');
-					}
+					menu : [
+						{ text : tinymce.translate('menu_add'),
+							id : 'menu-illegible-surplus-add',
+							onclick : function() {
+								ed.execCommand('mceAddSurplus');
+							}
+						},
+						{ text : tinymce.translate('menu_edit'),
+							id : 'menu-illegible-surplus-edit',
+							onclick : function() {
+								ed.execCommand('mceEditSurplus');
+							}
+						},
+						{ text : tinymce.translate('menu_delete'),
+							id : 'menu-illegible-surplus-delete',
+							onclick : function() {
+								WCEUtils.wceDelNode(ed);
+							}
+						}],
+						onshow : function(a) {
+							var items = a.control.items();
+							var b = false;
+							var w = ed.WCE_VAR;
+							if (w.type == 'surplus') {
+								b = true;
+							}
+							items[0].disabled(b);
+							items[1].disabled(!b);
+							items[2].disabled(!b);
+						}
+					// onclick : function() {
+					// 	ed.execCommand('mceAddSurplus');
+					// }
 				},
 				{ text : tinymce.translate('menu_witnessend'),
 					id : 'menu-illegible-witnessend',
@@ -3968,6 +3998,10 @@
 
 			ed.addCommand('mceAddSurplus', function(c) {
 				doWithDialog(ed, url, '/surplus.htm', 480, 300, 1, true, tinymce.translate('surplus_title'));
+			});
+
+			ed.addCommand('mceEditSurplus', function(c) {
+				doWithDialog(ed, url, '/surplus.htm', 480, 300, 1, false, tinymce.translate('surplus_title'));
 			});
 
 			ed.addCommand('mceAdd_formatting', function(c) {
