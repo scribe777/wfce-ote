@@ -664,7 +664,7 @@ function getHtmlByTei(inputString, clientOptions) {
 				'reason' : {
 					'0' : '@repetition@interjection',
 					'1' : '&surplus_reason_other=&surplus_reason=',
-					'2' : '&usurplus_reason=other&surplus_reason_other='
+					'2' : '&surplus_reason=other&surplus_reason_other='
 				},
 			};
 			wceAttr += getWceAttributeByTei($teiNode, mapping);

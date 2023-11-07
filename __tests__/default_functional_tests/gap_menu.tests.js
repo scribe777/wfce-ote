@@ -1041,12 +1041,174 @@ describe('testing gap menu', () => {
     await page.keyboard.press('ArrowDown');
     await page.keyboard.press('ArrowDown');
     await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowRight');
     await page.keyboard.press('Enter');
+    const menuFrameHandle = await page.$('div[id="mceu_40"] > div > div > iframe');
+    const menuFrame = await menuFrameHandle.contentFrame();
+    // check that the other box is disabled
+    expect(await menuFrame.$eval('#surplus_reason_other', el => el.disabled)).toBe(true);
+    // select interjection
+    await menuFrame.select('select[id="surplus_reason"]', 'interjection');
+    // check that the other box is still disabled
+    expect(await menuFrame.$eval('#surplus_reason_other', el => el.disabled)).toBe(true);
+    await menuFrame.click('input#insert');
     const htmlData = await page.evaluate(`getData()`);
-    expect(htmlData).toBe('the end of this <span class="surplus" wce_orig="is%20surplus" wce="__t=surplus"><span class="format_start mceNonEditable">‹</span>is surplus<span class="format_end mceNonEditable">›</span></span>');
+    expect(htmlData).toBe('the end of this <span class="surplus" wce_orig="is%20surplus" wce="__t=surplus&amp;__n=&amp;surplus_reason=interjection&amp;surplus_reason_other="><span class="format_start mceNonEditable">‹</span>is surplus<span class="format_end mceNonEditable">›</span></span>');
     const xmlData = await page.evaluate(`getTEI()`);
-    expect(xmlData).toBe(xmlHead + '<w>the</w><w>end</w><w>of</w><w>this</w><surplus><w>is</w><w>surplus</w></surplus>' + xmlTail);
+    expect(xmlData).toBe(xmlHead + '<w>the</w><w>end</w><w>of</w><w>this</w><surplus reason="interjection"><w>is</w><w>surplus</w></surplus>' + xmlTail);
+    // test editing
+    await page.keyboard.press('ArrowLeft');
+    await page.keyboard.press('ArrowLeft');
+    await page.keyboard.press('ArrowLeft');
+    await page.click('button#mceu_12-open');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('Enter');
+    const menuFrameHandle2 = await page.$('div[id="mceu_41"] > div > div > iframe');
+    const menuFrame2 = await menuFrameHandle2.contentFrame();
+    expect(await menuFrame2.$eval('select#surplus_reason', el => el.value)).toBe('interjection');
+    // change to repetition
+    await menuFrame2.select('select[id="surplus_reason"]', 'repetition');
+    await menuFrame2.click('input#insert');
+    const htmlData2 = await page.evaluate(`getData()`);
+    expect(htmlData2).toBe('the end of this <span class="surplus" wce_orig="is%20surplus" wce="__t=surplus&amp;__n=&amp;surplus_reason=repetition&amp;surplus_reason_other="><span class="format_start mceNonEditable">‹</span>is surplus<span class="format_end mceNonEditable">›</span></span>');
+    const xmlData2 = await page.evaluate(`getTEI()`);
+    expect(xmlData2).toBe(xmlHead + '<w>the</w><w>end</w><w>of</w><w>this</w><surplus reason="repetition"><w>is</w><w>surplus</w></surplus>' + xmlTail);
+
   }, 200000);
+
+  test('gap surplus other reason', async () => {
+    await frame.type('body#tinymce', 'the end of this is surplus');
+
+    await page.keyboard.down('Shift');
+    for (let i = 0; i < 'is surplus'.length; i++) {
+      await page.keyboard.press('ArrowLeft');
+    }
+    await page.keyboard.up('Shift');
+
+    // open D menu
+    await page.click('button#mceu_12-open');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('Enter');
+    const menuFrameHandle = await page.$('div[id="mceu_40"] > div > div > iframe');
+    const menuFrame = await menuFrameHandle.contentFrame();
+    // check that the other box is disabled
+    expect(await menuFrame.$eval('#surplus_reason_other', el => el.disabled)).toBe(true);
+    // select other
+    await menuFrame.select('select[id="surplus_reason"]', 'other');
+    // check that the other box is still no longer disabled
+    expect(await menuFrame.$eval('#surplus_reason_other', el => el.disabled)).toBe(false);
+    await menuFrame.type('input#surplus_reason_other', 'lectionary_influence');
+
+    await menuFrame.click('input#insert');
+    const htmlData = await page.evaluate(`getData()`);
+    expect(htmlData).toBe('the end of this <span class="surplus" wce_orig="is%20surplus" wce="__t=surplus&amp;__n=&amp;surplus_reason=other&amp;surplus_reason_other=lectionary_influence"><span class="format_start mceNonEditable">‹</span>is surplus<span class="format_end mceNonEditable">›</span></span>');
+    const xmlData = await page.evaluate(`getTEI()`);
+    expect(xmlData).toBe(xmlHead + '<w>the</w><w>end</w><w>of</w><w>this</w><surplus reason="lectionary_influence"><w>is</w><w>surplus</w></surplus>' + xmlTail);
+    // test editing
+    await page.keyboard.press('ArrowLeft');
+    await page.keyboard.press('ArrowLeft');
+    await page.keyboard.press('ArrowLeft');
+    await page.click('button#mceu_12-open');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('Enter');
+    const menuFrameHandle2 = await page.$('div[id="mceu_41"] > div > div > iframe');
+    const menuFrame2 = await menuFrameHandle2.contentFrame();
+    expect(await menuFrame2.$eval('select#surplus_reason', el => el.value)).toBe('other');
+    expect(await menuFrame.$eval('#surplus_reason_other', el => el.disabled)).toBe(false);
+    expect(await menuFrame2.$eval('#surplus_reason_other', el => el.value)).toBe('lectionary_influence');
+    // change to repetition
+    await menuFrame2.select('select[id="surplus_reason"]', 'repetition');
+    expect(await menuFrame2.$eval('#surplus_reason_other', el => el.disabled)).toBe(true);
+    await menuFrame2.click('input#insert');
+    const htmlData2 = await page.evaluate(`getData()`);
+    // interestingly even when the surplus reason other is disabled the html retains the text in that box. it seems to 
+    // be how other things (like gap reason) also work maybe they should all clear that text when other is no longer selected
+    // but I am leaving this to be consistent for now.
+    expect(htmlData2).toBe('the end of this <span class="surplus" wce_orig="is%20surplus" wce="__t=surplus&amp;__n=&amp;surplus_reason=repetition&amp;surplus_reason_other=lectionary_influence"><span class="format_start mceNonEditable">‹</span>is surplus<span class="format_end mceNonEditable">›</span></span>');
+    const xmlData2 = await page.evaluate(`getTEI()`);
+    expect(xmlData2).toBe(xmlHead + '<w>the</w><w>end</w><w>of</w><w>this</w><surplus reason="repetition"><w>is</w><w>surplus</w></surplus>' + xmlTail);
+
+  }, 200000);
+
+
+  test('edit data loaded from XML)', async () => {
+
+    // preload the data
+    const data = xmlHead + '<w>this</w><surplus reason="lection"><w>is</w><w>surplus</w></surplus>' + xmlTail;
+    await page.evaluate(`setTEI('${data}');`);
+
+    // edit from the start because it is closer
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowRight');
+
+    // open D menu for editing
+    await page.click('button#mceu_12-open');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('Enter');
+
+    const menuFrameHandle = await page.$('div[id="mceu_40"] > div > div > iframe');
+    const menuFrame = await menuFrameHandle.contentFrame();
+    // check that the other box is disabled
+    expect(await menuFrame.$eval('#surplus_reason_other', el => el.disabled)).toBe(true);
+    // select other
+    await menuFrame.select('select[id="surplus_reason"]', 'other');
+    // check that the other box is still no longer disabled
+    expect(await menuFrame.$eval('#surplus_reason_other', el => el.disabled)).toBe(false);
+    expect(await menuFrame.$eval('#surplus_reason_other', el => el.value)).toBe('lection');
+
+  }, 200000);
+
+
+  test('deletion of surplus)', async () => {
+
+    // preload the data
+    const data = xmlHead + '<w>this</w><surplus reason="lection"><w>is</w><w>surplus</w></surplus>' + xmlTail;
+    await page.evaluate(`setTEI('${data}');`);
+
+    // delete from the start because it is closer
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowRight');
+
+    // open D menu for deletion
+    await page.click('button#mceu_12-open');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('Enter');
+
+    const xmlData = await page.evaluate(`getTEI()`);
+    expect(xmlData).toBe(xmlHead + '<w>this</w><w>is</w><w>surplus</w>' + xmlTail);
+
+  }, 200000);
+
 
   test('gap witness end', async () => {
     await frame.type('body#tinymce', 'the end of the witness ');
@@ -1083,7 +1245,7 @@ describe('testing gap menu', () => {
     await page.keyboard.press('Enter');
     const menuFrameHandle = await page.$('div[id="mceu_40"] > div > div > iframe');
     const menuFrame = await menuFrameHandle.contentFrame();
-    // NB: when test is selected makr as supplied is automatically checked
+    // NB: when test is selected mark as supplied is automatically checked
     await menuFrame.click('input#insert');
 
     const htmlData = await page.evaluate(`getData()`);
@@ -1127,7 +1289,7 @@ describe('testing gap menu', () => {
     const data = xmlHead + '<w><supplied source="na28" reason="illegible">δυναμις</supplied></w><w><supplied source="na28" reason="illegible"><abbr type="nomSac"><hi rend="overline">θυ</hi></abbr></supplied></w><w><supplied source="na28" reason="illegible">εστιν</supplied></w>' + xmlTail;
     await page.evaluate(`setTEI('${data}');`);
 
-    // delete from the start because it is closers
+    // delete from the start because it is closer
     await page.keyboard.press('ArrowRight');
     await page.keyboard.press('ArrowRight');
     await page.keyboard.press('ArrowRight');

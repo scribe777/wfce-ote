@@ -300,10 +300,25 @@ const gapAndSupplied = new Map([
       '<span class="format_end mceNonEditable">›</span></span> line '
     ]
   ],
-  [ 'surplus text',
+  [ 'surplus text no reason',
     [ '<w>the</w><w>end</w><w>of</w><w>this</w><surplus><w>is</w><w>surplus</w></surplus>',
-      'the end of this <span class="surplus" wce="__t=surplus" wce_orig="is%20surplus"><span class="format_start ' +
-      'mceNonEditable">‹</span>is surplus <span class="format_end mceNonEditable">›</span></span>'
+      'the end of this <span class="surplus" wce="__t=surplus&amp;surplus_reason=&amp;surplus_reason_other=" ' +
+      'wce_orig="is%20surplus"><span class="format_start ' +
+      'mceNonEditable">‹</span>is surplus<span class="format_end mceNonEditable">›</span></span> '
+    ]
+  ],
+  [ 'surplus text with reason',
+    [ '<w>the</w><w>end</w><w>of</w><w>this</w><surplus reason="interjection"><w>is</w><w>surplus</w></surplus>',
+      'the end of this <span class="surplus" wce="__t=surplus&amp;surplus_reason_other=&amp;surplus_reason=interjection" ' +
+      'wce_orig="is%20surplus"><span class="format_start ' +
+      'mceNonEditable">‹</span>is surplus<span class="format_end mceNonEditable">›</span></span> '
+    ]
+  ],
+  [ 'surplus text with other reason',
+    [ '<w>the</w><w>end</w><w>of</w><w>this</w><surplus reason="unknown"><w>is</w><w>surplus</w></surplus>',
+      'the end of this <span class="surplus" wce="__t=surplus&amp;surplus_reason=other&amp;surplus_reason_other=unknown" ' +
+      'wce_orig="is%20surplus"><span class="format_start ' +
+      'mceNonEditable">‹</span>is surplus<span class="format_end mceNonEditable">›</span></span> '
     ]
   ],
   [ 'gap witness end',
