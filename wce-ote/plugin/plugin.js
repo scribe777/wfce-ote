@@ -1053,6 +1053,8 @@
 			var startContainer = rng.startContainer;
 			var endContainer;
 			var selection=ed.selection;
+			// w.isc is true if no text is selected(i.e. you ave just clicked somewhere) and false if one or more 
+			// characters (either a text character or a space character) is selected
 			w.isc = selection.isCollapsed();
 
 			// delete in firefox can create empty element and startOffset==0
@@ -1068,6 +1070,9 @@
 					w.not_C = true;
 				w.not_A = true;
 				w.not_O = true;
+				// we don't want surplus tags in that context (unless we are editing)
+				w.not_Surplus = true
+
 
 				// move caret to EndOfPreviousSibling, mainly for IE:
 				/* TODO: What the frick is this? puts us in the wrong span when we are at the start of a text node
@@ -1118,6 +1123,8 @@
 				w.not_B = true;
 				w.not_N = true;
 				w.not_C = true;
+				w.not_Surplus = true;
+
 
 				var adaptiveCheckbox = tinymce.DOM.get(ed.id + '_adaptive_selection');
 				if (adaptiveCheckbox && adaptiveCheckbox.checked) {
@@ -1235,6 +1242,7 @@
 
 			if (canMakeCorrection) {
 				w.not_C = false;
+				w.not_Surplus = false;
 			}
 
 			w.not_P = !w.isc;
@@ -1391,6 +1399,8 @@
 
 
 		canMakeCorrection :function (rng, ed){
+			// Cat Nov 23: I think this function is really tests whether the current selection is full words
+			// so I am also using it for the surplus tags which also require full words
 			var sc = rng.startContainer;
 			var ec = rng.endContainer;
 			var w=ed.WCE_VAR;
@@ -3187,13 +3197,14 @@
 							if (w.type == 'surplus') {
 								b = true;
 							}
-							items[0].disabled(b);
+							if (w.not_Surplus) {
+								items[0].disabled(w.not_Surplus);
+							} else {
+								items[0].disabled(b);
+							}
 							items[1].disabled(!b);
 							items[2].disabled(!b);
 						}
-					// onclick : function() {
-					// 	ed.execCommand('mceAddSurplus');
-					// }
 				},
 				{ text : tinymce.translate('menu_witnessend'),
 					id : 'menu-illegible-witnessend',
