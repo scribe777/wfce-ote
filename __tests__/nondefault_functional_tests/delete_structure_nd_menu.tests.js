@@ -367,6 +367,13 @@ describe('testing with non-default deletion settings', () => {
     const menuFrameHandle = await page.$('div[id="mceu_39"] > div > div > iframe');
     const menuFrame = await menuFrameHandle.contentFrame();
 
+    // test the content of the drop down menu - should be 3 pages (62v, 63r, 63v and all)
+    expect(await menuFrame.$eval('#pageSelect', el => el.options.length)).toBe(4);
+    expect(await menuFrame.$eval('#pageSelect', el => el.options[0].value)).toBe('all');
+    expect(await menuFrame.$eval('#pageSelect', el => el.options[1].value)).toBe('62v');
+    expect(await menuFrame.$eval('#pageSelect', el => el.options[2].value)).toBe('63r');
+    expect(await menuFrame.$eval('#pageSelect', el => el.options[3].value)).toBe('63v');
+
     await menuFrame.select('select[id="pageSelect"]', '63r');
     expect(await menuFrame.$('input[value="S2W14D4|62v"]')).toBeNull();
     expect(await menuFrame.$('input[value="S2W14D5|63r"]')).not.toBeNull();
@@ -399,4 +406,29 @@ describe('testing with non-default deletion settings', () => {
 
   }, 200000);
 
+  // test drop down page select if a page break happens within a word
+  // because we extract the page from the html initially the hyphen for the word continuation was appearing in the
+  // menu attached to the beginning of the page number. This just checks it isn't there anymore.
+  test('Page filter function', async () => {
+    // load data
+    const data = xmlHead + '<pb n="62v" type="folio" xml:id="P62v-"/><cb n="P62vC2-"/><lb n="P62vC2L-"/><div type="lection" n="S2W14D4"><div type="book" n="Gal"><div type="chapter" n="Gal.1"><ab n="Gal.1.20"><w>verse</w><w>twenty</w><lb n="P62vC2L-"/></ab><ab n="Gal.1.21"><w>verse</w><w>twentyone</w></ab></div><div type="chapter" n="Gal.2"><ab n="Gal.2.1"><w>verse</w><w>one</w><lb n="P62vC2L-"/></ab><ab n="Gal.2.2"><w>verse</w><lb n="P62vC2L-"/><w>tw<pb n="63r" type="folio" xml:id="P63r-" break="no"/><cb n="P63rC1-"/><lb n="P63rC1L-"/>o</w><w>continues</w></ab></div></div></div><div type="lection" n="S2W14D5"><div type="book" n="Gal"><div type="chapter" n="Gal.1"><ab n="Gal.1.20"><w>verse</w><w>twenty</w><w>a<lb n="P63rC1L-" break="no"/>gain</w><lb n="P63rC1L-"/></ab><ab n="Gal.1.21"><w>verse</w><w>twenty-one</w><w>again</w></ab></div><div type="chapter" n="Gal.2"><ab n="Gal.2.1"><w>verse</w><w>one</w><lb n="P63rC1L-"/><w>again</w></ab><ab n="Gal.2.2"><w>verse</w><w>two</w><lb n="P63rC1L-"/><pb n="63v" type="folio" xml:id="P63v-"/><cb n="P63vC1-"/><lb n="P63vC1L-"/><w>again</w></ab></div></div></div>' + xmlTail;
+    await page.evaluate(`setTEI('${data}');`);
+    await page.click('button#mceu_18-open');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('Enter');
+
+    const menuFrameHandle = await page.$('div[id="mceu_39"] > div > div > iframe');
+    const menuFrame = await menuFrameHandle.contentFrame();
+
+    // test the content of the drop down menu - should be 3 pages (62v, 63r, 63v and all)
+    expect(await menuFrame.$eval('#pageSelect', el => el.options.length)).toBe(4);
+    expect(await menuFrame.$eval('#pageSelect', el => el.options[0].value)).toBe('all');
+    expect(await menuFrame.$eval('#pageSelect', el => el.options[1].value)).toBe('62v');
+    expect(await menuFrame.$eval('#pageSelect', el => el.options[2].value)).toBe('63r');
+    expect(await menuFrame.$eval('#pageSelect', el => el.options[3].value)).toBe('63v');
+
+  }, 200000);
+
 });
+
