@@ -210,11 +210,15 @@ var chapterNr, bookNr;
 			return '';
 		}
 		var list=node.childNodes;
-		for(var i=0,len=list.length; i<len; i++){
+		for (var i=0,len=list.length; i<len; i++) {
 			var n=list[i];
 			if(n.nodeType==1){
 				if (n.id.startsWith('pb_')) {
-					pageList.push(n.textContent.slice(1, -1).replace('PB ',''));
+					var pageNum = n.textContent.slice(1, -1).replace('PB ','');
+					if (pageNum[0] === '-') {
+						pageNum = pageNum.substring(1);
+					}
+					pageList.push(pageNum);
 				}
 			}
 		}
