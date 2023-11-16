@@ -52,6 +52,7 @@
 @param {string} clientOptions.defaultValuesForSpaceMenu.unit - The unit value to preselect.
 @param {number} clientOptions.defaultValuesForSpaceMenu.extent - The extent number to preselect.
 @param {boolean} clientOptions.showMultilineNotesAsSingleEntry - If set to true this combines multiline untranscribed commentary and lectionary notes into a single line (does not change the XML output). Default is false.
+@param {boolean} clientOptions.includePageNumbersInDeleteMenu - If set to true this will include page numbers on all items in the structure deletion menu and allow the items to be filtered by page. Default is False.
 @param {boolean} clientOptions.checkOverlineForAbbr - If set to true this will check the 'add overline' option in the abbreviation form when it is loaded. Default is false.
 @param {optionsForGapMenu} clientOptions.optionsForGapMenu - The options used to create and to set defaults in the gap menu.
 @param {string} clientOptions.optionsForGapMenu.reason - The option to select by default for the reason for the gap (illegible|lacuna|unspecified|inferredPage).
