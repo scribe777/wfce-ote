@@ -423,6 +423,9 @@ function getHtmlByTei(inputString, clientOptions) {
 				return Tei2Html_unclear($htmlParent, $teiNode);
 			// unclear
 
+			case 'surplus':
+				return Tei2Html_surplus($htmlParent, $teiNode);
+
 			case 'div':
 				return Tei2Html_div($htmlParent, $teiNode);
 			// chapter, book
@@ -642,6 +645,62 @@ function getHtmlByTei(inputString, clientOptions) {
 
 		$htmlParent.appendChild($newNode);
 		return $newNode;
+	};
+
+	/*
+	 * **** <surplus>
+	 */
+	var Tei2Html_surplus = function ($htmlParent, $teiNode) {
+		var $newNode = $newDoc.createElement('span');
+		$newNode.setAttribute('class', 'surplus');
+		var wceAttr = '__t=surplus';
+		$newNode.setAttribute('wce', wceAttr);
+		var s = getOriginalTextByTeiNode($teiNode);
+		$newNode.setAttribute('wce_orig', s);
+		if (!$teiNode.getAttribute('reason')) {// no reason given
+			wceAttr += '&surplus_reason=&surplus_reason_other=';
+		} else {
+			var mapping = {
+				'reason' : {
+					'0' : '@repetition@interjection',
+					'1' : '&surplus_reason_other=&surplus_reason=',
+					'2' : '&surplus_reason=other&surplus_reason_other='
+				},
+			};
+			wceAttr += getWceAttributeByTei($teiNode, mapping);
+		}
+		$newNode.setAttribute('wce', wceAttr);
+
+		$htmlParent.appendChild($newNode);
+		var $tempParent = $newDoc.createElement('t');
+		var cList = $teiNode.childNodes;
+
+		for (var i = 0, c, l = cList.length; i < l; i++) {
+			c = cList[i];
+			if (!c) {
+				break;
+			}
+			if (c.nodeType == 3) {
+				nodeAddText($tempParent, c.nodeValue);
+			} else {
+				readAllChildrenOfTeiNode($tempParent, c);
+			}
+		}
+
+		//remove textNode with space ' '. It come from function readAllChildrenOfTeiNode::nodeAddText($htmlParent, ' ');
+		var oLast=$tempParent.lastChild;
+		if(oLast && oLast.nodeType==3 && oLast.nodeValue==' '){
+			$tempParent.removeChild(oLast);
+		}
+
+		if ($tempParent) {
+			while($tempParent.hasChildNodes()){
+				$newNode.appendChild($tempParent.firstChild);
+			}
+		}
+		addFormatElement($newNode);
+		nodeAddText($htmlParent, ' ');
+		return null;
 	};
 
 	/*
@@ -2733,6 +2792,11 @@ function getTeiByHtml(inputString, clientOptions) {
 			return html2Tei_unclear(arr, $teiParent, $htmlNode);
 		}
 
+		// surplus
+		if (wceType == 'surplus') {
+			return html2Tei_surplus(arr, $teiParent, $htmlNode)
+		}
+
 		// part_abbr
 		if (wceType == 'part_abbr') {
 			return html2Tei_partarr(arr, $teiParent, $htmlNode);
@@ -3553,6 +3617,27 @@ function getTeiByHtml(inputString, clientOptions) {
 			0 : $unclear,
 		 	1 : true
 		};
+	};
+
+	var html2Tei_surplus = function(arr, $teiParent, $htmlNode) {
+		var $surplus = $newDoc.createElement('surplus');
+		var origText = $htmlNode.getAttribute('wce_orig');
+		if (origText) {
+			html2Tei_correctionAddW($surplus, origText);
+		}
+		var reasonValue = arr['surplus_reason'];
+		if (reasonValue == 'other') {
+			reasonValue = arr['surplus_reason_other'];
+		}
+		if (reasonValue && reasonValue != '') {
+			$surplus.setAttribute('reason', decodeURIComponent(reasonValue));
+		}
+		$teiParent.appendChild($surplus);
+		return {
+			0 : $surplus,
+			1 : true
+		};
+
 	};
 
 

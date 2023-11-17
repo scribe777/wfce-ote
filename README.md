@@ -43,3 +43,16 @@ to run the tests (requires nodejs), type:
 ```bash
 make test
 ```
+
+to run a specific test file directly in node:
+
+```bash 
+npm test -- __tests__/path/to/file
+```
+
+to run the tests directly in node with coverage:
+
+```bash
+npm test -- --coverage
+```
+
