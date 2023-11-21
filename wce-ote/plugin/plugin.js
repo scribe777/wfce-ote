@@ -2077,14 +2077,17 @@
 							} else if (ar['capitals_height'] != null) {// output only if capitals
 								info_text = '<div>' + tinymce.translate('menu_hl_capitals') + '</div><div style="margin-top:10px">' + tinymce.translate('capitals_height') + ': ' + ar['capitals_height'] + '</div>';
 							} else {// all other formatting
-								if (ar['__t'] === 'formatting_displaced-above')
+								if (ar['__t'] === 'formatting_displaced-above') {
 									info_text = '<div>' + tinymce.translate('infotext_dt_above') + '</div>';
-								else if (ar['__t'] === 'formatting_displaced-below')
+								} else if (ar['__t'] === 'formatting_displaced-below') {
 									info_text = '<div>' + tinymce.translate('infotext_dt_below') + '</div>';
-								else if (ar['__t'] === 'formatting_displaced-other')
+								} else if (ar['__t'] === 'formatting_displaced-other') {
 									info_text = '<div>' + tinymce.translate('infotext_dt_other') + '</div>';
-								else
+								} else if (ar['__t'] === 'formatting_ligature') {
+									info_text = '<div>' + tinymce.translate('infotext_ligature') + '</div>'
+								} else {
 									info_text = '<div>' + tinymce.translate('infotext_highlighted_text') + '</div>';
+								}
 							}
 							break;
 						case 'pc':
@@ -3309,6 +3312,12 @@
 					}
 				},
 
+				{ text : tinymce.translate('menu_hl_ligature'),
+					id : 'menu-decoration-ligature',
+					onclick : function() {
+						ed.execCommand('mceAdd_ornamentation_ligature');
+					}
+				},
 
 				{ text : tinymce.translate('menu_hl_other'),
 					id : 'menu-decoration-other',
@@ -3841,6 +3850,11 @@
 			// Add punctuation other
 			ed.addCommand('mceAdd_punctuation_other', function() {
 				doWithDialog(ed, url, '/pc_other.htm', 480, 320, 1, true, tinymce.translate('title_other_punctuation'));
+			});
+
+			// Add Ornamentation  ligature /*********/
+			ed.addCommand('mceAdd_ornamentation_ligature', function() {
+				doWithoutDialog(ed, 'formatting_ligature');
 			});
 
 			// Add Ornamentation  other /*********/

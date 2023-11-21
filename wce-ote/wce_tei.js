@@ -938,6 +938,9 @@ function getHtmlByTei(inputString, clientOptions) {
 				// recent option
 				className = 'formatting_overline';
 				break;
+			case 'lig':
+				className = 'formatting_ligature'
+				break;
 			case 'displaced-above':
 				className = 'formatting_displaced-above';
 				break;
@@ -2779,6 +2782,9 @@ function getTeiByHtml(inputString, clientOptions) {
 				break;
 			case 'formatting_overline':
 				formatting_rend = 'overline';
+				break;
+			case 'formatting_ligature':
+				formatting_rend = 'lig';
 				break;
 			case 'formatting_displaced-above':
 				formatting_rend = 'displaced-above';
