@@ -201,6 +201,40 @@ describe('testing ornamentation menu', () => {
     expect(xmlData3).toBe(xmlHead + '<w>Initial</w><w>capital</w>' + xmlTail);
   }, 200000);
 
+  // ligature
+  test('ligature', async () => {
+    await frame.type('body#tinymce', 'test ligature here');
+
+    for (let i = 0; i < ' here'.length; i++) {
+      await page.keyboard.press('ArrowLeft');
+    }
+
+    await page.keyboard.down('Shift');
+    for (let i = 0; i < 're'.length; i++) {
+      await page.keyboard.press('ArrowLeft');
+    }
+    await page.keyboard.up('Shift');
+    // open O menu
+    await page.click('button#mceu_13-open');
+    // select ligature
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('Enter');
+
+    const htmlData = await page.evaluate(`getData()`);
+    expect(htmlData).toBe('test ligatu<span class="formatting_ligature" wce_orig="re" wce="__t=formatting_ligature"><span class="format_start mceNonEditable">‹</span>re<span class="format_end mceNonEditable">›</span></span> here');
+    const xmlData = await page.evaluate(`getTEI()`);
+    expect(xmlData).toBe(xmlHead + '<w>test</w><w>ligatu<hi rend="lig">re</hi></w><w>here</w>' + xmlTail);
+
+    // test if we try to delete then that works (just on the keyboard, there is no special menu for this)
+    await page.keyboard.press('ArrowLeft');
+    await page.keyboard.press('Backspace');
+    const htmlData2 = await page.evaluate(`getData()`);
+    expect(htmlData2).toBe('test ligature here');
+    const xmlData2 = await page.evaluate(`getTEI()`);
+    expect(xmlData2).toBe(xmlHead + '<w>test</w><w>ligature</w><w>here</w>' + xmlTail);
+  }, 200000);
 
   // other ornamentation
   test('other ornamentation', async () => {
@@ -217,6 +251,7 @@ describe('testing ornamentation menu', () => {
     // open O menu
     await page.click('button#mceu_13-open');
     // open other menu
+    await page.keyboard.press('ArrowDown');
     await page.keyboard.press('ArrowDown');
     await page.keyboard.press('ArrowDown');
     await page.keyboard.press('ArrowDown');

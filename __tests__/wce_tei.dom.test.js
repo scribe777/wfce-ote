@@ -792,6 +792,10 @@ const hiRendOptions = new Map([
 	 		'formatting_other'
  		],
 	],
+  ['ligature',
+    ['lig',
+     'formatting_ligature']
+  ],
   [ 'displaced-above',
 	  [ 'displaced-above',
 	 		'formatting_displaced-above'
