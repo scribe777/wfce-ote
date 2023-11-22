@@ -44,7 +44,7 @@
 @param {function} clientOptions.getWitnessLang - An optional function to get the language of the current witness.
 @param {function} clientOptions.getBookNameFromBKV - A function to switch BKV references to OSIS (only used for book and chapter)
 @param {array} clientOptions.bookNames - A list of OSIS book abbreviations to use in the select of the V menu. If this list is not supplied the form will have a text box for manual entry.
-@param {boolean} clientOptions.addLineBreaks - Add line breaks in the XML before every pc, cb and lb in the transcription. Default is false.
+@param {boolean} clientOptions.addLineBreaks - Add line breaks in the XML before every pb, cb and lb in the transcription. Default is false.
 @param {boolean} clientOptions.addSpaces - Add spaces into the XML of the transcription between tags to make the text readable if all the tags are removed. Default is false.
 @param {string} clientOptions.defaultReasonForUnclearText - The default option in the reason box for unclear text. Default pre-selects nothing.
 @param {number} clientOptions.defaultHeightForCapitals - If a number is supplied with this settings then it is used to prepopulate the height box in the O > capitals submenu. If it is not supplied then the box is not prepopulated.
