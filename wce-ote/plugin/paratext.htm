@@ -100,6 +100,11 @@
 					<td><input id="edit_number" name="edit_number" type="checkbox" onchange="checkstatus_number()" checked="checked">{#number_calculate}</input></td>
 				</tr>
 				<tr>
+					<td><label id="reference_label" for="reference">{#reference_attribute}</label></td>
+					<td colspan="3"><input id="reference" name="reference" type="text" value=""
+						size="50" maxlength="" class="reference min1 mceFocus" /></td>
+				</tr>
+				<tr>
 					<td><label id="paratext_position_label"
 						for="paratext_position">{#position}</label>
 					</td>
@@ -277,6 +282,9 @@
 			document.getElementById('number').style.backgroundColor = "#CCCCCC";
 			document.paratextinfo.edit_number.checked = "checked";
 			document.getElementById('edit_number').disabled = true;
+			document.paratextinfo.reference.value = '';
+			document.paratextinfo.reference.disabled = true;
+			document.getElementById('reference').style.backgroundColor = "#CCCCCC";
 			document.paratextinfo.covered.disabled = false;
 			document.getElementById('covered').style.backgroundColor = "white";
 			$('#marginals_text').attr('disabled', true);
@@ -289,6 +297,9 @@
 			document.getElementById('number').style.backgroundColor = "#CCCCCC";
 			document.paratextinfo.edit_number.checked = "checked";
 			document.getElementById('edit_number').disabled = true;
+			document.paratextinfo.reference.value = '';
+			document.paratextinfo.reference.disabled = true;
+			document.getElementById('reference').style.backgroundColor = "#CCCCCC";
 			document.paratextinfo.covered.disabled = true;
 			document.getElementById('covered').style.backgroundColor = "#CCCCCC";
 			$('#marginals_text').attr('disabled', true);
@@ -301,13 +312,16 @@
 			document.getElementById('number').style.backgroundColor = "#CCCCCC";
 			document.paratextinfo.edit_number.checked = "checked";
 			document.getElementById('edit_number').disabled = true;
+			document.paratextinfo.reference.value = '';
+			document.paratextinfo.reference.disabled = true;
+			document.getElementById('reference').style.backgroundColor = "#CCCCCC";
 			document.paratextinfo.covered.disabled = true;
 			document.getElementById('covered').style.backgroundColor = "#CCCCCC";
 			$('#marginals_text').attr('disabled', false);
 			marginals_text_editor.show();
 			document.paratextinfo.paratext_position.disabled = false;
 			document.paratextinfo.paratext_alignment.disabled = true;
-		} else if (v == 'runTitle' || v == 'chapTitle' || v == 'lectTitle' || v == 'lectBibRef' || v == 'lectInstruct'
+		} else if (v == 'runTitle' || v == 'lectBibRef' || v == 'lectInstruct'
 			|| v == 'colophon' || v == 'euthaliana' || v == 'gloss' || v == 'pageNum' || v == 'orn' || v == 'other') {
 			//don't get a number, only text
 			document.paratextinfo.number.value = '';
@@ -315,6 +329,24 @@
 			document.getElementById('number').style.backgroundColor = "#CCCCCC";
 			document.paratextinfo.edit_number.checked = "checked";
 			document.getElementById('edit_number').disabled = true;
+			document.paratextinfo.reference.value = '';
+			document.paratextinfo.reference.disabled = true;
+			document.getElementById('reference').style.backgroundColor = "#CCCCCC";
+			document.paratextinfo.covered.disabled = true;
+			document.getElementById('covered').style.backgroundColor = "#CCCCCC";
+			$('#marginals_text').attr('disabled', false);
+			marginals_text_editor.show();
+			document.paratextinfo.paratext_position.disabled = false;
+			document.paratextinfo.paratext_alignment.disabled = false;
+		} else if (v == 'chapTitle' || v == 'lectTitle' ) {
+			//don't get a number, only text but enable the reference field
+			document.paratextinfo.number.value = '';
+			document.paratextinfo.number.disabled = true;
+			document.getElementById('number').style.backgroundColor = "#CCCCCC";
+			document.paratextinfo.edit_number.checked = "checked";
+			document.getElementById('edit_number').disabled = true;
+			document.paratextinfo.reference.disabled = false;
+			document.getElementById('reference').style.backgroundColor = "white";
 			document.paratextinfo.covered.disabled = true;
 			document.getElementById('covered').style.backgroundColor = "#CCCCCC";
 			$('#marginals_text').attr('disabled', false);
@@ -322,8 +354,13 @@
 			document.paratextinfo.paratext_position.disabled = false;
 			document.paratextinfo.paratext_alignment.disabled = false;
 		} else {
+			document.paratextinfo.reference.value = '';
+			document.paratextinfo.reference.disabled = true;
 			document.getElementById('edit_number').disabled = false;
 			checkstatus_number();
+			document.paratextinfo.reference.value = '';
+			document.paratextinfo.reference.disabled = true;
+			document.getElementById('reference').style.backgroundColor = "#CCCCCC";
 			document.paratextinfo.covered.disabled = true;
 			document.getElementById('covered').style.backgroundColor = "#CCCCCC";
 			$('#marginals_text').attr('disabled', false);
