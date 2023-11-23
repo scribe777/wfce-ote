@@ -200,7 +200,9 @@
 			setup : function(ed) {
 				ed.on('change', function() {
 					marginals_text_editor.save();
-					checkstatus_number();
+					if (['chapNum', 'quireSig', 'AmmSec', 'EusCan', 'stichoi', 'andrew'].indexOf(document.paratextinfo.fw_type) !== -1) {
+						checkstatus_number();
+					}
 				});
 				ed.on('keydown',function(ed) {
 					var v = $('#fw_type').val();
@@ -216,7 +218,8 @@
 					timeout = setTimeout(function() {
 						timeout = null;
 						marginals_text_editor.save();
-						checkstatus_number(); }, 1000);
+						checkstatus_number(); 
+					}, 1000);
 				});
 			}
 		}, tinymce.EditorManager);
@@ -354,6 +357,8 @@
 			document.paratextinfo.paratext_position.disabled = false;
 			document.paratextinfo.paratext_alignment.disabled = false;
 		} else {
+			// the ones that remain are the ones we use numbers in the n attribute for (if supplied):
+			// 'chapNum', 'quireSig', 'AmmSec', 'EusCan', 'stichoi', 'andrew'
 			document.paratextinfo.reference.value = '';
 			document.paratextinfo.reference.disabled = true;
 			document.getElementById('edit_number').disabled = false;
@@ -686,9 +691,12 @@
 	function setstatus_paratext() {
 		checkstatus_position();
 		checkstatus_typ();
-		var oldnumber = document.paratextinfo.number.value; // save number
-		setnumber();
-		document.paratextinfo.number.value = oldnumber; // set former number for editing
+		// only set the number from the inner editor if we have selected one of the number types
+		if (['chapNum', 'quireSig', 'AmmSec', 'EusCan', 'stichoi', 'andrew'].indexOf(document.paratextinfo.fw_type) !== -1) {
+			var oldnumber = document.paratextinfo.number.value; // save number
+			setnumber();
+			document.paratextinfo.number.value = oldnumber; // set former number for editing
+		}
 	}
 
 	if (!tinyMCE.isIE) {
