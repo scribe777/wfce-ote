@@ -63,6 +63,11 @@ describe('testing marginalia menu', () => {
 
         expect(await menuFrame.$eval('#fw_type', el => el.value)).toBe('pageNum');
 
+        // check various fields remain disabled (not relevant to pageNum)
+        expect(await menuFrame.$eval('#edit_number', el => el.disabled)).toBe(true);
+        expect(await menuFrame.$eval('#number', el => el.disabled)).toBe(true);
+        expect(await menuFrame.$eval('#reference', el => el.disabled)).toBe(true);
+
         const menuFrameHandle2 = await menuFrame.$('iframe[id="marginals_text_ifr"]');
         const menuFrame2 = await menuFrameHandle2.contentFrame();
         await menuFrame2.type('body#tinymce', '10');
@@ -70,7 +75,7 @@ describe('testing marginalia menu', () => {
         await menuFrame.click('input#insert');
         await page.waitForSelector('div[id="mceu_39"]', { hidden: true });
         const htmlData = await page.evaluate(`getData()`);
-        expect(htmlData).toBe('<span class=\"paratext\" wce_orig=\"\" wce=\"__t=paratext&amp;__n=&amp;help=Help&amp;fw_type=pageNum&amp;fw_type_other=&amp;covered=0&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;marginals_text=10&amp;number=&amp;paratext_position=&amp;paratext_position_other=&amp;paratext_alignment=\"><span class=\"format_start mceNonEditable\">‹</span>fw<span class=\"format_end mceNonEditable\">›</span></span>');
+        expect(htmlData).toBe('<span class="paratext" wce_orig="" wce="__t=paratext&amp;__n=&amp;help=Help&amp;fw_type=pageNum&amp;fw_type_other=&amp;covered=0&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;marginals_text=10&amp;number=&amp;edit_number=on&amp;reference=&amp;paratext_position=&amp;paratext_position_other=&amp;paratext_alignment="><span class="format_start mceNonEditable">‹</span>fw<span class="format_end mceNonEditable">›</span></span>');
         const xmlData = await page.evaluate(`getTEI()`);
         expect(xmlData).toBe(xmlHead + '<fw type="pageNum"><w>10</w></fw>' + xmlTail);
 
@@ -85,17 +90,35 @@ describe('testing marginalia menu', () => {
         const menuFrameHandle = await page.$('div[id="mceu_39"] > div > div > iframe');
         const menuFrame = await menuFrameHandle.contentFrame();
 
+        expect(await menuFrame.$eval('#edit_number', el => el.disabled)).toBe(true);
         expect(await menuFrame.$eval('#fw_type', el => el.value)).toBe('pageNum');
         await menuFrame.select('select[id="fw_type"]', 'chapNum');
+
+        // check that we now have the option to uncheck the 'caculate number automatically'
+        expect(await menuFrame.$eval('#edit_number', el => el.disabled)).toBe(false);
+        expect(await menuFrame.$eval('#number', el => el.disabled)).toBe(true);
+        // check the reference field is still disabled
+        expect(await menuFrame.$eval('#reference', el => el.disabled)).toBe(true);
 
         const menuFrameHandle2 = await menuFrame.$('iframe[id="marginals_text_ifr"]');
         const menuFrame2 = await menuFrameHandle2.contentFrame();
         await menuFrame2.type('body#tinymce', '10');
+        // I can't get this to wait until the unless I specifically tell it to - I don't know why
+        await page.waitForTimeout(1000);
+
+        // as 10 is not a roman numeral the number field is not complete
+        // NB we may want to change this since it is a number!
+        // then the number field should be emptied and undisabled and the automatic checkbox unchecked
+        expect(await menuFrame.$eval('#number', el => el.disabled)).toBe(false);
+        expect(await menuFrame.$eval('#number', el => el.value)).toBe('');
+        expect(await menuFrame.$eval('#edit_number', el => el.checked)).toBe(false);
+        // check the reference field is still disabled
+        expect(await menuFrame.$eval('#reference', el => el.disabled)).toBe(true);
 
         await menuFrame.click('input#insert');
         await page.waitForSelector('div[id="mceu_39"]', { hidden: true });
         const htmlData = await page.evaluate(`getData()`);
-        expect(htmlData).toBe('<span class=\"paratext\" wce_orig=\"\" wce=\"__t=paratext&amp;__n=&amp;help=Help&amp;fw_type=chapNum&amp;fw_type_other=&amp;covered=0&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;marginals_text=10&amp;number=&amp;paratext_position=&amp;paratext_position_other=&amp;paratext_alignment=\"><span class=\"format_start mceNonEditable\">‹</span>fw<span class=\"format_end mceNonEditable\">›</span></span>');
+        expect(htmlData).toBe('<span class="paratext" wce_orig="" wce="__t=paratext&amp;__n=&amp;help=Help&amp;fw_type=chapNum&amp;fw_type_other=&amp;covered=0&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;marginals_text=10&amp;number=&amp;reference=&amp;paratext_position=&amp;paratext_position_other=&amp;paratext_alignment="><span class="format_start mceNonEditable">‹</span>fw<span class="format_end mceNonEditable">›</span></span>');
         const xmlData = await page.evaluate(`getTEI()`);
         expect(xmlData).toBe(xmlHead + '<num type="chapNum">10</num>' + xmlTail);
 
@@ -133,16 +156,32 @@ describe('testing marginalia menu', () => {
         const menuFrameHandle = await page.$('div[id="mceu_39"] > div > div > iframe');
         const menuFrame = await menuFrameHandle.contentFrame();
 
+        // check that we don't have the option to uncheck the 'caculate number automatically'
+        expect(await menuFrame.$eval('#edit_number', el => el.disabled)).toBe(true);
+        expect(await menuFrame.$eval('#number', el => el.disabled)).toBe(true);
+        // check the reference field is still disabled
+        expect(await menuFrame.$eval('#reference', el => el.disabled)).toBe(true);
+
         await menuFrame.select('select[id="fw_type"]', 'commentary');
         await menuFrame.type('input#covered', '1');
 
         await page.keyboard.press('ArrowRight');
         await page.keyboard.press('Backspace');
 
+        // check that we still don't have the option to uncheck the 'caculate number automatically' (it is not relevant
+        // for commentary)
+        // Because we have to wait to prove this is activated (see test: no default selection of fw type can be overwritten)
+        // it would be best to wait here too otherwise we might not be testing what actually happens
+        await page.waitForTimeout(1000);
+        expect(await menuFrame.$eval('#edit_number', el => el.disabled)).toBe(true);
+        expect(await menuFrame.$eval('#number', el => el.disabled)).toBe(true);
+        // check the reference field is still disabled
+        expect(await menuFrame.$eval('#reference', el => el.disabled)).toBe(true);
+
         await menuFrame.click('input#insert');
 
         const htmlData = await page.evaluate(`getData()`);
-        expect(htmlData).toBe('some commentary<span class="paratext" wce_orig="" wce="__t=paratext&amp;__n=&amp;help=Help&amp;fw_type=commentary&amp;fw_type_other=&amp;covered=1&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;marginals_text=&amp;number=&amp;edit_number=on&amp;paratext_position=&amp;paratext_position_other=&amp;paratext_alignment="><span class="format_start mceNonEditable">‹</span><br />↵[<span class="commentary" wce="__t=paratext&amp;__n=&amp;fw_type=commentary&amp;covered=1">comm</span>]<span class="format_end mceNonEditable">›</span></span>​<span class="brea" wce="__t=brea&amp;__n=&amp;hasBreak=no&amp;break_type=lb&amp;number=&amp;rv=&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment="><span class="format_start mceNonEditable">‹</span><br />↵<span class="format_end mceNonEditable">›</span></span> in here');
+        expect(htmlData).toBe('some commentary<span class="paratext" wce_orig="" wce="__t=paratext&amp;__n=&amp;help=Help&amp;fw_type=commentary&amp;fw_type_other=&amp;covered=1&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;marginals_text=&amp;number=&amp;edit_number=on&amp;reference=&amp;paratext_position=&amp;paratext_position_other=&amp;paratext_alignment="><span class="format_start mceNonEditable">‹</span><br />↵[<span class="commentary" wce="__t=paratext&amp;__n=&amp;fw_type=commentary&amp;covered=1">comm</span>]<span class="format_end mceNonEditable">›</span></span>​<span class="brea" wce="__t=brea&amp;__n=&amp;hasBreak=no&amp;break_type=lb&amp;number=&amp;rv=&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment="><span class="format_start mceNonEditable">‹</span><br />↵<span class="format_end mceNonEditable">›</span></span> in here');
         const xmlData = await page.evaluate(`getTEI()`);
         expect(xmlData).toBe(xmlHead + '<w>some</w><w>commentary</w><lb/><note type="commentary">One line of untranscribed commentary text</note>' +
             '<lb n="PCL-"/><w>in</w><w>here</w>' + xmlTail);
@@ -165,7 +204,7 @@ describe('testing marginalia menu', () => {
         await menuFrame.click('input#insert');
 
         const htmlData = await page.evaluate(`getData()`);
-        expect(htmlData).toBe('in line commentary<span class="paratext" wce_orig="" wce="__t=paratext&amp;__n=&amp;help=Help&amp;fw_type=commentary&amp;fw_type_other=&amp;covered=0&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;marginals_text=&amp;number=&amp;edit_number=on&amp;paratext_position=&amp;paratext_position_other=&amp;paratext_alignment="><span class="format_start mceNonEditable">‹</span>[<span class="commentary" wce="__t=paratext&amp;__n=&amp;fw_type=commentary&amp;covered=0">comm</span>]<span class="format_end mceNonEditable">›</span></span>');
+        expect(htmlData).toBe('in line commentary<span class="paratext" wce_orig="" wce="__t=paratext&amp;__n=&amp;help=Help&amp;fw_type=commentary&amp;fw_type_other=&amp;covered=0&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;marginals_text=&amp;number=&amp;edit_number=on&amp;reference=&amp;paratext_position=&amp;paratext_position_other=&amp;paratext_alignment="><span class="format_start mceNonEditable">‹</span>[<span class="commentary" wce="__t=paratext&amp;__n=&amp;fw_type=commentary&amp;covered=0">comm</span>]<span class="format_end mceNonEditable">›</span></span>');
         const xmlData = await page.evaluate(`getTEI()`);
         expect(xmlData).toBe(xmlHead + '<w>in</w><w>line</w><w>commentary</w><note type="commentary">Untranscribed commentary text within the line</note>' + xmlTail);
     }, 200000);
@@ -186,7 +225,7 @@ describe('testing marginalia menu', () => {
         await menuFrame.click('input#insert');
 
         const htmlData = await page.evaluate(`getData()`);
-        expect(htmlData).toBe('in line lectionary<span class="paratext" wce_orig="" wce="__t=paratext&amp;__n=&amp;help=Help&amp;fw_type=lectionary-other&amp;fw_type_other=&amp;covered=0&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;marginals_text=&amp;number=&amp;edit_number=on&amp;paratext_position=&amp;paratext_position_other=&amp;paratext_alignment="><span class="format_start mceNonEditable">‹</span>[<span class="lectionary-other" wce="__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=0">lect</span>]<span class="format_end mceNonEditable">›</span></span>');
+        expect(htmlData).toBe('in line lectionary<span class="paratext" wce_orig="" wce="__t=paratext&amp;__n=&amp;help=Help&amp;fw_type=lectionary-other&amp;fw_type_other=&amp;covered=0&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;marginals_text=&amp;number=&amp;edit_number=on&amp;reference=&amp;paratext_position=&amp;paratext_position_other=&amp;paratext_alignment="><span class="format_start mceNonEditable">‹</span>[<span class="lectionary-other" wce="__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=0">lect</span>]<span class="format_end mceNonEditable">›</span></span>');
         const xmlData = await page.evaluate(`getTEI()`);
         expect(xmlData).toBe(xmlHead + '<w>in</w><w>line</w><w>lectionary</w><note type="lectionary-other">Untranscribed lectionary text within the line</note>' + xmlTail);
         
@@ -246,7 +285,7 @@ describe('testing marginalia menu', () => {
         await menuFrame.click('input#insert');
 
         const htmlData = await page.evaluate(`getData()`);
-        expect(htmlData).toBe('lection text next<span class="paratext" wce_orig="" wce="__t=paratext&amp;__n=&amp;help=Help&amp;fw_type=lectionary-other&amp;fw_type_other=&amp;covered=2&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;marginals_text=&amp;number=&amp;edit_number=on&amp;paratext_position=&amp;paratext_position_other=&amp;paratext_alignment="><span class="format_start mceNonEditable">‹</span><br />↵[<span class="lectionary-other" wce="__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=2">lect</span>]<br />↵[<span class="lectionary-other" wce="__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=2">lect</span>]<span class="format_end mceNonEditable">›</span></span>');
+        expect(htmlData).toBe('lection text next<span class="paratext" wce_orig="" wce="__t=paratext&amp;__n=&amp;help=Help&amp;fw_type=lectionary-other&amp;fw_type_other=&amp;covered=2&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;marginals_text=&amp;number=&amp;edit_number=on&amp;reference=&amp;paratext_position=&amp;paratext_position_other=&amp;paratext_alignment="><span class="format_start mceNonEditable">‹</span><br />↵[<span class="lectionary-other" wce="__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=2">lect</span>]<br />↵[<span class="lectionary-other" wce="__t=paratext&amp;__n=&amp;fw_type=lectionary-other&amp;covered=2">lect</span>]<span class="format_end mceNonEditable">›</span></span>');
         const xmlData = await page.evaluate(`getTEI()`);
         expect(xmlData).toBe(xmlHead + '<w>lection</w><w>text</w><w>next</w><lb/>' +
             '<note type="lectionary-other">One line of untranscribed lectionary text</note><lb/>' +
@@ -306,7 +345,7 @@ describe('testing marginalia menu', () => {
         await menuFrame.click('input#insert');
 
         const htmlData = await page.evaluate(`getData()`);
-        expect(htmlData).toBe('abbreviated commentary<span class="paratext" wce_orig="" wce="__t=paratext&amp;__n=&amp;help=Help&amp;fw_type=ews&amp;fw_type_other=&amp;covered=0&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;marginals_text=&amp;number=&amp;edit_number=on&amp;paratext_position=&amp;paratext_position_other=&amp;paratext_alignment="><span class="format_start mceNonEditable">‹</span>[<span class="ews">ews</span>]<span class="format_end mceNonEditable">›</span></span>');
+        expect(htmlData).toBe('abbreviated commentary<span class="paratext" wce_orig="" wce="__t=paratext&amp;__n=&amp;help=Help&amp;fw_type=ews&amp;fw_type_other=&amp;covered=0&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;marginals_text=&amp;number=&amp;edit_number=on&amp;reference=&amp;paratext_position=&amp;paratext_position_other=&amp;paratext_alignment="><span class="format_start mceNonEditable">‹</span>[<span class="ews">ews</span>]<span class="format_end mceNonEditable">›</span></span>');
         const xmlData = await page.evaluate(`getTEI()`);
         expect(xmlData).toBe(xmlHead + '<w>abbreviated</w><w>commentary</w><note type="editorial" subtype="ews"/><gap unit="verse" extent="rest"/>' + xmlTail);
     }, 200000);
@@ -333,7 +372,7 @@ describe('testing marginalia menu', () => {
         await menuFrame.click('input#insert');
 
         const htmlData = await page.evaluate(`getData()`);
-        expect(htmlData).toBe('<span class="paratext" wce_orig="" wce="__t=paratext&amp;__n=&amp;help=Help&amp;fw_type=runTitle&amp;fw_type_other=&amp;covered=0&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;marginals_text=running%20title&amp;number=&amp;paratext_position=pagetop&amp;paratext_position_other=&amp;paratext_alignment=center"><span class="format_start mceNonEditable">‹</span>fw<span class="format_end mceNonEditable">›</span></span>');
+        expect(htmlData).toBe('<span class="paratext" wce_orig="" wce="__t=paratext&amp;__n=&amp;help=Help&amp;fw_type=runTitle&amp;fw_type_other=&amp;covered=0&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;marginals_text=running%20title&amp;number=&amp;edit_number=on&amp;reference=&amp;paratext_position=pagetop&amp;paratext_position_other=&amp;paratext_alignment=center"><span class="format_start mceNonEditable">‹</span>fw<span class="format_end mceNonEditable">›</span></span>');
         const xmlData = await page.evaluate(`getTEI()`);
         expect(xmlData).toBe(xmlHead + '<seg type="margin" subtype="pagetop" n="@P-"><fw type="runTitle" rend="center">' +
             '<w>running</w><w>title</w></fw></seg>' + xmlTail);
@@ -398,11 +437,22 @@ describe('testing marginalia menu', () => {
         // I can't work out how to get the cursor to move to this window so typing and then deleting does this.
         await menuFrame2.type('body#tinymce', '12');
         await menuFrame.select('select[id="paratext_position"]', 'colleft');
+        // I can't get this to wait until the unless I specifically tell it to - I don't know why
+        await page.waitForTimeout(1000);
+
+        // as 10 is not a roman numeral the number field is not complete
+        // NB we may want to change this since it is a number!
+        // then the number field should be emptied and undisabled and the automatic checkbox unchecked
+        expect(await menuFrame.$eval('#number', el => el.disabled)).toBe(false);
+        expect(await menuFrame.$eval('#number', el => el.value)).toBe('');
+        expect(await menuFrame.$eval('#edit_number', el => el.checked)).toBe(false);
+        // check the reference field is still disabled
+        expect(await menuFrame.$eval('#reference', el => el.disabled)).toBe(true);
 
         await menuFrame.click('input#insert');
 
         const htmlData = await page.evaluate(`getData()`);
-        expect(htmlData).toBe('this is a chapter number in the margin<span class="paratext" wce_orig="" wce="__t=paratext&amp;__n=&amp;help=Help&amp;fw_type=chapNum&amp;fw_type_other=&amp;covered=0&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;marginals_text=12&amp;number=&amp;paratext_position=colleft&amp;paratext_position_other=&amp;paratext_alignment="><span class="format_start mceNonEditable">‹</span>fw<span class="format_end mceNonEditable">›</span></span>');
+        expect(htmlData).toBe('this is a chapter number in the margin<span class="paratext" wce_orig="" wce="__t=paratext&amp;__n=&amp;help=Help&amp;fw_type=chapNum&amp;fw_type_other=&amp;covered=0&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;marginals_text=12&amp;number=&amp;reference=&amp;paratext_position=colleft&amp;paratext_position_other=&amp;paratext_alignment="><span class="format_start mceNonEditable">‹</span>fw<span class="format_end mceNonEditable">›</span></span>');
         const xmlData = await page.evaluate(`getTEI()`);
         expect(xmlData).toBe(xmlHead + '<w>this</w><w>is</w><w>a</w><w>chapter</w><w>number</w><w>in</w><w>the</w><w>margin</w>' +
             '<seg type="margin" subtype="colleft" n="@PC-"><num type="chapNum">12</num></seg>' + xmlTail);
@@ -433,7 +483,7 @@ describe('testing marginalia menu', () => {
         await menuFrame.click('input#insert');
 
         const htmlData = await page.evaluate(`getData()`);
-        expect(htmlData).toBe('this is an isolated marginal note<span class="paratext" wce_orig="" wce="__t=paratext&amp;__n=&amp;help=Help&amp;fw_type=isolated&amp;fw_type_other=&amp;covered=0&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;marginals_text=isolated&amp;number=&amp;paratext_position=colleft&amp;paratext_position_other=&amp;paratext_alignment="><span class="format_start mceNonEditable">‹</span>fw<span class="format_end mceNonEditable">›</span></span>');
+        expect(htmlData).toBe('this is an isolated marginal note<span class="paratext" wce_orig="" wce="__t=paratext&amp;__n=&amp;help=Help&amp;fw_type=isolated&amp;fw_type_other=&amp;covered=0&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;marginals_text=isolated&amp;number=&amp;edit_number=on&amp;reference=&amp;paratext_position=colleft&amp;paratext_position_other=&amp;paratext_alignment="><span class="format_start mceNonEditable">‹</span>fw<span class="format_end mceNonEditable">›</span></span>');
         const xmlData = await page.evaluate(`getTEI()`);
         expect(xmlData).toBe(xmlHead + '<w>this</w><w>is</w><w>an</w><w>isolated</w><w>marginal</w><w>note</w>' +
             '<seg type="margin" subtype="colleft"><w>isolated</w></seg>' + xmlTail);
@@ -503,7 +553,7 @@ describe('testing marginalia menu', () => {
         // add the fw
         await menuFrame.click('input#insert');
         const htmlData = await page.evaluate(`getData()`);
-        expect(htmlData).toBe('this is a title with a note<span class="paratext" wce_orig="" wce="__t=paratext&amp;__n=&amp;help=Help&amp;fw_type=runTitle&amp;fw_type_other=&amp;covered=0&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;marginals_text=Title%20is%20here%3Cspan%20class%3D%22note%22%20wce_orig%3D%22%22%20wce%3D%22__t%3Dnote%26amp%3B__n%3D%26amp%3Bhelp%3DHelp%26amp%3Bnote_type%3Dlocal%26amp%3Bnote_type_other%3D%26amp%3BnewHand%3D%26amp%3Bnote_text%3DMy%2520note%22%3E%3Cspan%20class%3D%22format_start%20mceNonEditable%22%3E%E2%80%B9%3C%2Fspan%3ENote%3Cspan%20class%3D%22format_end%20mceNonEditable%22%3E%E2%80%BA%3C%2Fspan%3E%3C%2Fspan%3E&amp;number=&amp;paratext_position=&amp;paratext_position_other=&amp;paratext_alignment="><span class="format_start mceNonEditable">‹</span>fw<span class="format_end mceNonEditable">›</span></span>');
+        expect(htmlData).toBe('this is a title with a note<span class="paratext" wce_orig="" wce="__t=paratext&amp;__n=&amp;help=Help&amp;fw_type=runTitle&amp;fw_type_other=&amp;covered=0&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;marginals_text=Title%20is%20here%3Cspan%20class%3D%22note%22%20wce_orig%3D%22%22%20wce%3D%22__t%3Dnote%26amp%3B__n%3D%26amp%3Bhelp%3DHelp%26amp%3Bnote_type%3Dlocal%26amp%3Bnote_type_other%3D%26amp%3BnewHand%3D%26amp%3Bnote_text%3DMy%2520note%22%3E%3Cspan%20class%3D%22format_start%20mceNonEditable%22%3E%E2%80%B9%3C%2Fspan%3ENote%3Cspan%20class%3D%22format_end%20mceNonEditable%22%3E%E2%80%BA%3C%2Fspan%3E%3C%2Fspan%3E&amp;number=&amp;edit_number=on&amp;reference=&amp;paratext_position=&amp;paratext_position_other=&amp;paratext_alignment="><span class="format_start mceNonEditable">‹</span>fw<span class="format_end mceNonEditable">›</span></span>');
         const xmlData = await page.evaluate(`getTEI()`);
         expect(xmlData).toBe(xmlHead + '<w>this</w><w>is</w><w>a</w><w>title</w><w>with</w><w>a</w><w>note</w><fw type="runTitle"><w>Title</w><w>is</w><w>here</w><note type="local">My note</note></fw>' + xmlTail);
 
@@ -723,6 +773,9 @@ describe('testing marginalia menu', () => {
         const xmlData2 = await page.evaluate(`getTEI()`);
         expect(xmlData2).toBe('');
     });
+
+
+    // these tests check that the addition of the reference field for chapTitle and lectTitle are working
 
 
 });
