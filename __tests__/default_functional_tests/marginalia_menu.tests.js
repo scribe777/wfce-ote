@@ -131,7 +131,7 @@ describe('testing marginalia menu', () => {
 
         const menuFrameHandle3 = await page.$('div[id="mceu_40"] > div > div > iframe');
         const menuFrame3 = await menuFrameHandle3.contentFrame();
-        expect(await menuFrame.$eval('#fw_type', el => el.value)).toBe('chapNum');
+        expect(await menuFrame3.$eval('#fw_type', el => el.value)).toBe('chapNum');
         await menuFrame3.click('input#insert');
         await page.waitForSelector('div[id="mceu_40"]', { hidden: true });
         const xmlData2 = await page.evaluate(`getTEI()`);
@@ -434,13 +434,12 @@ describe('testing marginalia menu', () => {
 
         const menuFrameHandle2 = await menuFrame.$('iframe[id="marginals_text_ifr"]');
         const menuFrame2 = await menuFrameHandle2.contentFrame();
-        // I can't work out how to get the cursor to move to this window so typing and then deleting does this.
         await menuFrame2.type('body#tinymce', '12');
         await menuFrame.select('select[id="paratext_position"]', 'colleft');
         // I can't get this to wait until the unless I specifically tell it to - I don't know why
         await page.waitForTimeout(1000);
 
-        // as 10 is not a roman numeral the number field is not complete
+        // as 12 is not a roman numeral the number field is not complete
         // NB we may want to change this since it is a number!
         // then the number field should be emptied and undisabled and the automatic checkbox unchecked
         expect(await menuFrame.$eval('#number', el => el.disabled)).toBe(false);
@@ -456,6 +455,43 @@ describe('testing marginalia menu', () => {
         const xmlData = await page.evaluate(`getTEI()`);
         expect(xmlData).toBe(xmlHead + '<w>this</w><w>is</w><w>a</w><w>chapter</w><w>number</w><w>in</w><w>the</w><w>margin</w>' +
             '<seg type="margin" subtype="colleft" n="@PC-"><num type="chapNum">12</num></seg>' + xmlTail);
+    }, 200000);
+
+    test('chapter number in left margin (with automatically calculated n value)', async () => {
+
+        await frame.type('body#tinymce', 'this is a chapter number in the margin');
+
+        // open M menu
+        await page.click('button#mceu_15-open');
+        await page.keyboard.press('ArrowDown');
+        await page.keyboard.press('Enter');
+
+
+        const menuFrameHandle = await page.$('div[id="mceu_39"] > div > div > iframe');
+        const menuFrame = await menuFrameHandle.contentFrame();
+        await menuFrame.select('select[id="fw_type"]', 'chapNum');
+
+        const menuFrameHandle2 = await menuFrame.$('iframe[id="marginals_text_ifr"]');
+        const menuFrame2 = await menuFrameHandle2.contentFrame();
+        await menuFrame2.type('body#tinymce', 'VI');
+        await menuFrame.select('select[id="paratext_position"]', 'colleft');
+        // I can't get this to wait until the unless I specifically tell it to - I don't know why
+        await page.waitForTimeout(1000);
+
+        // as VI is a roman numeral the number field is complete and the automatic calculation checkbox remains checked
+        expect(await menuFrame.$eval('#number', el => el.disabled)).toBe(true);
+        expect(await menuFrame.$eval('#number', el => el.value)).toBe('6');
+        expect(await menuFrame.$eval('#edit_number', el => el.checked)).toBe(true);
+        // check the reference field is still disabled
+        expect(await menuFrame.$eval('#reference', el => el.disabled)).toBe(true);
+
+        await menuFrame.click('input#insert');
+
+        const htmlData = await page.evaluate(`getData()`);
+        expect(htmlData).toBe('this is a chapter number in the margin<span class="paratext" wce_orig="" wce="__t=paratext&amp;__n=&amp;help=Help&amp;fw_type=chapNum&amp;fw_type_other=&amp;covered=0&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;marginals_text=VI&amp;number=6&amp;edit_number=on&amp;reference=&amp;paratext_position=colleft&amp;paratext_position_other=&amp;paratext_alignment="><span class="format_start mceNonEditable">‹</span>fw<span class="format_end mceNonEditable">›</span></span>');
+        const xmlData = await page.evaluate(`getTEI()`);
+        expect(xmlData).toBe(xmlHead + '<w>this</w><w>is</w><w>a</w><w>chapter</w><w>number</w><w>in</w><w>the</w><w>margin</w>' +
+            '<seg type="margin" subtype="colleft" n="@PC-"><num type="chapNum" n="6">VI</num></seg>' + xmlTail);
     }, 200000);
 
 
@@ -776,6 +812,69 @@ describe('testing marginalia menu', () => {
 
 
     // these tests check that the addition of the reference field for chapTitle and lectTitle are working
+    test('chapTitle with n', async () => {
 
+        await frame.type('body#tinymce', 'chapter title next');
+
+        // open M menu
+        await page.click('button#mceu_15-open');
+        await page.keyboard.press('ArrowDown');
+        await page.keyboard.press('Enter');
+
+        const menuFrameHandle = await page.$('div[id="mceu_39"] > div > div > iframe');
+        const menuFrame = await menuFrameHandle.contentFrame();
+        await menuFrame.select('select[id="fw_type"]', 'chapTitle');
+
+        const menuFrameHandle2 = await menuFrame.$('iframe[id="marginals_text_ifr"]');
+        const menuFrame2 = await menuFrameHandle2.contentFrame();
+        await menuFrame2.type('body#tinymce', 'Title text');
+
+        // because we have select chapter title we should now be able to enter a reference (not not a number)
+        expect(await menuFrame.$eval('#number', el => el.disabled)).toBe(true);
+        expect(await menuFrame.$eval('#number', el => el.value)).toBe('');
+        expect(await menuFrame.$eval('#edit_number', el => el.disabled)).toBe(true);
+        // check the reference field is not disabled
+        expect(await menuFrame.$eval('#reference', el => el.disabled)).toBe(false);
+
+        await menuFrame.type('#reference', 'Gal.1.1');
+
+        await menuFrame.click('input#insert');
+
+        const htmlData = await page.evaluate(`getData()`);
+        expect(htmlData).toBe('chapter title next<span class="paratext" wce_orig="" wce="__t=paratext&amp;__n=&amp;help=Help&amp;fw_type=chapTitle&amp;fw_type_other=&amp;covered=0&amp;mceu_5-open=&amp;mceu_6-open=&amp;mceu_7-open=&amp;mceu_8-open=&amp;mceu_9-open=&amp;mceu_10-open=&amp;marginals_text=Title%20text&amp;number=&amp;edit_number=on&amp;reference=Gal.1.1&amp;paratext_position=&amp;paratext_position_other=&amp;paratext_alignment="><span class="format_start mceNonEditable">‹</span>fw<span class="format_end mceNonEditable">›</span></span>');
+        const xmlData = await page.evaluate(`getTEI()`);
+        expect(xmlData).toBe(xmlHead + '<w>chapter</w><w>title</w><w>next</w>' +
+            '<fw type="chapTitle" n="Gal.1.1"><w>Title</w><w>text</w></fw>' + xmlTail);
+
+        // check that it can be edited
+        await page.keyboard.press('ArrowLeft');
+        await page.click('button#mceu_15-open');
+        await page.keyboard.press('ArrowDown');
+        await page.keyboard.press('ArrowDown');
+        await page.keyboard.press('Enter');
+
+        const menuFrameHandle3 = await page.$('div[id="mceu_40"] > div > div > iframe');
+        const menuFrame3 = await menuFrameHandle3.contentFrame();
+        expect(await menuFrame3.$eval('#fw_type', el => el.value)).toBe('chapTitle');
+
+        // because we have select chapter title we should now be able to enter a reference (not not a number)
+        expect(await menuFrame3.$eval('#number', el => el.disabled)).toBe(true);
+        expect(await menuFrame3.$eval('#number', el => el.value)).toBe('');
+        expect(await menuFrame3.$eval('#edit_number', el => el.disabled)).toBe(true);
+        // check the reference field is not disabled
+        expect(await menuFrame3.$eval('#reference', el => el.disabled)).toBe(false);
+        expect(await menuFrame3.$eval('#reference', el => el.value)).toBe('Gal.1.1');
+
+        // change the reference text 
+        await menuFrame3.type('#reference', 'a');
+
+        await menuFrame3.click('input#insert');
+        await page.waitForSelector('div[id="mceu_40"]', { hidden: true });
+        const xmlData2 = await page.evaluate(`getTEI()`);
+        expect(xmlData2).toBe(xmlHead + '<w>chapter</w><w>title</w><w>next</w>' +
+            '<fw type="chapTitle" n="Gal.1.1a"><w>Title</w><w>text</w></fw>' + xmlTail);
+
+
+    }, 200000);
 
 });
