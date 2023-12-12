@@ -4,7 +4,7 @@
   "description": "Workspace for Collaborative Editing - Online Transcription Editor (OTE)",
   "main": "index.js",
   "scripts": {
-    "test": "jest",
+    "test": "jest --config=jest.config.js",
     "lint": "jshint ./__tests__"
   },
   "repository": {
