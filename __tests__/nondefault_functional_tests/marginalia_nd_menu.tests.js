@@ -108,7 +108,7 @@ describe('test a optional defaults for marginalia menu', () => {
 
       const menuFrameHandle3 = await page.$('div[id="mceu_40"] > div > div > iframe');
       const menuFrame3 = await menuFrameHandle3.contentFrame();
-      expect(await menuFrame.$eval('#fw_type', el => el.value)).toBe('chapNum');
+      expect(await menuFrame3.$eval('#fw_type', el => el.value)).toBe('chapNum');
       await menuFrame3.click('input#insert');
       await page.waitForSelector('div[id="mceu_40"]', { hidden: true });
       const xmlData2 = await page.evaluate(`getTEI()`);

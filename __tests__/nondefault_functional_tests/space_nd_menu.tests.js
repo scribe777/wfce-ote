@@ -129,8 +129,8 @@ describe('testing with defaultValuesForSpaceMenu setting', () => {
         const menuFrame2 = await menuFrameHandle2.contentFrame();
         // check extent is populated correctly
         expect(await menuFrame2.$eval('#sp_extent', el => el.value)).toBe('4');
-        expect(await menuFrame.$eval('#sp_unit', el => el.value)).toBe('char');
-        expect(await menuFrame.$eval('#sp_unit_other', el => el.disabled)).toBe(true);
+        expect(await menuFrame2.$eval('#sp_unit', el => el.value)).toBe('char');
+        expect(await menuFrame2.$eval('#sp_unit_other', el => el.disabled)).toBe(true);
 
         await page.keyboard.press('ArrowLeft');
         await page.keyboard.press('Backspace');
