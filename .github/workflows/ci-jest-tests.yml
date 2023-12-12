@@ -35,4 +35,4 @@ jobs:
 
       # Finally, run our tests
       - name: Run the tests
-        run: npm test __tests__/wce_editor.test.js
+        run: npm test
