@@ -52,10 +52,49 @@ Configuration
 =============
 
 There are many configuration options for the initial set up of the OTE. Some change very small things, others larger
-aspects of the interface or its function. 
+aspects of the interface or its function. In the following configuration documentation the functions are divided by the
+type of changes they make to the editor.
+
+General interface
+-----------------
+* **language** (string) [en|de] Specified the language of the interface. Currently supported languages are English (en)
+  and German (de). Default is English.
+* **rtl** (boolean) This setting should be set to true if you are transcribing languages which are read from right to
+  left. For left-to-right the default can be used. 
+* **getWitness**
+* **getWitnessLang**
+* **transcriptionLanguage**
+* **showLineNumberSidebarOnLoading**
+* **toolbar**
+
+Specific menu configuration
+---------------------------
+* **BookNames**
+* **defaultReasonForUnclearText**
+* **defaultHeightForCapitals**
+* **defaultValuesForSpaceMenu**
+* **showMultilineNotesAsSingleEntry**
+* **checkOverlineForAbbr**
+* **optionsForGapMenu**
+* **optionsForMarginaliaMenu**
+
+Presentation of the output
+--------------------------
+* **addLineBreaks** (boolean) If set to ``true`` this setting will add line breaks in the output before every ``<pb>``,
+  ``<cb>`` and ``<lb>`` in the transcription. The default is false.
+* **addSpaces** (boolean) If set to ``true`` this setting will add spaces between all tags so that the text is readable 
+  if all the tags are removed in the display. The default is false.
+
+Examples
+--------
 
 
-.. autofunction:: setWceEditor(_id, [clientOptions, baseURL, callback])
+
+
+
+
+
+
 
 =========================
 Integration in a Platform
