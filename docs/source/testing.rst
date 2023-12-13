@@ -14,7 +14,7 @@ Requirements and Setup
 
 The tests require node.js to run. The recommended node version is 20.10.0 LTS. 
 
-To install the required packages, in the main directory(wfce-ote) run
+To install the required packages, in the main directory (wfce-ote) run
 
 .. code-block:: bash
 
@@ -41,6 +41,7 @@ To run the tests with coverage (NB: coverage does not currently work for the fun
 .. code-block:: bash
 
     npm test -- --coverage
+
 
 
 

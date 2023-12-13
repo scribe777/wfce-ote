@@ -13,17 +13,49 @@ Installation
 
 To use the OTE in your own platform it needs to be embedded in an HTML page and initialised in JavaScript. 
 
-minimal html and js
+The OTE is added to a webpage as a ``<textarea>`` element with an id. The editor is then initialised once the page
+has loaded by calling ``setWceEditor`` with the id of the textarea element.
+
+The minimal html file required for this is given below.
+
+.. code-block:: html
+
+    <html>
+        <head>
+            <meta charset="utf-8"/>
+            <script type="text/javascript" src="jquery.js"></script>
+            <script type="text/javascript" src="wce_tei.js"></script>
+            <script type="text/javascript" src="wce_callback.js"></script>
+            <script type="text/javascript" src="../js/tinymce/tinymce.js"></script>
+            <script type="text/javascript" src="wce_editor.js"></script>
+        </head>
+        <body>
+            <textarea id="wce_editor" rows="28" cols="80" style="width: 100%;"></textarea>
+        </body>
+        <script type="text/javascript">
+            $(document).ready(function() {
+                setWceEditor('wce_editor');
+            });
+        </script>
+    </html>
 
 
+Additional arguments can be passed to ``setWceEditor``. These are:
+
+* A clientOptions object which controls the configuration as described in the `configuration`_ section below.
+* A string representing the baseURL of the editor which explicitly sets TinyMCEs base URL.
+* a callback function which will be run once the editor is activated. This is mostly used for setting the contents of 
+  the editor either with a base text or with an existing transcription.
 
 =============
 Configuration
 =============
 
 There are many configuration options for the initial set up of the OTE. Some change very small things, others larger
-aspects of the interface or its function.  
+aspects of the interface or its function. 
 
+
+.. autofunction:: setWceEditor(_id, [clientOptions, baseURL, callback])
 
 =========================
 Integration in a Platform
