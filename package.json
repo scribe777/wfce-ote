@@ -5,7 +5,6 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
-    "build-docs": "jsdoc -c jsdoc-config.json --readme README.md",
     "lint": "jshint ./__tests__"
   },
   "repository": {
@@ -13,20 +12,20 @@
     "url": "git+https://github.com/itsee-birmingham/wfce-ote.git"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "Catherine Smith, Troy A. Griffitts",
+  "license": "GNU Lesser 2.1",
   "bugs": {
     "url": "https://github.com/itsee-birmingham/wfce-ote/issues"
   },
   "homepage": "https://github.com/itsee-birmingham/wfce-ote#readme",
   "devDependencies": {
-    "jest": "^27.5.1",
-    "jsdoc": "^4.0.2",
-    "jshint": "^2.13.4",
-    "minami": "^1.2.3",
-    "puppeteer": "^13.5.1"
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "jest-environment-node": "^29.7.0",
+    "jshint": "^2.13.6",
+    "puppeteer": "^21.6.0"
   },
   "dependencies": {
-    "npm": "^8.5.5"
+    "npm": "^10.2.5"
   }
 }

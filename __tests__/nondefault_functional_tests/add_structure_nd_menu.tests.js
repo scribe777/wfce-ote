@@ -23,7 +23,7 @@ beforeAll(async () => {
     // args: ['--window-size=1920,1080', '--disable-web-security']
 
     // for online testing (only ever commit these)
-    headless: true,
+    headless: "new",
     slowMo: 60,
     args: ['--disable-web-security']
   });
