@@ -595,6 +595,32 @@ const fw = new Map([
       '<span class="format_start mceNonEditable">‹</span>fw<span class="format_end mceNonEditable">›</span></span>'
     ]
   ],
+  // quire sig with supplied number as n attribute (to check we don't break that while adding reference for titles)
+  [ 'quire sig (fw) with n attribute',
+    [ '<fw type="quireSig" n="4"><w>test</w></fw>',
+      '<span class="paratext" wce="__t=paratext&amp;__n=&amp;marginals_text=test%20&amp;' +
+      'fw_type=quireSig&amp;number=4&amp;paratext_position=&amp;paratext_position_other=">' +
+      '<span class="format_start mceNonEditable">‹</span>fw<span class="format_end mceNonEditable">›</span></span>'
+    ]
+  ],
+  // chapter title with n attribute
+  [ 'chapter title (fw) with n attribute',
+    [ '<fw type="chapTitle" n="John.1.1"><w>test</w></fw>',
+      '<span class="paratext" wce="__t=paratext&amp;__n=&amp;marginals_text=test%20&amp;' +
+      'fw_type=chapTitle&amp;reference=John.1.1&amp;paratext_position=&amp;paratext_position_other=">' +
+      '<span class="format_start mceNonEditable">‹</span>fw<span class="format_end mceNonEditable">›</span></span>'
+    ]
+  ],
+  // chapter title without n attribute
+  [ 'chapter title (fw) without n attribute',
+    [ '<fw type="chapTitle"><w>test</w></fw>',
+      '<span class="paratext" wce="__t=paratext&amp;__n=&amp;marginals_text=test%20&amp;' +
+      'fw_type=chapTitle&amp;paratext_position=&amp;paratext_position_other=">' +
+      '<span class="format_start mceNonEditable">‹</span>fw<span class="format_end mceNonEditable">›</span></span>'
+    ]
+  ],
+  // lectionary title with n attribute
+
   // chapter number in the margin
   [ 'chapter number in left margin',
     [ '<w>this</w><w>is</w><w>a</w><w>chapter</w><w>number</w><w>in</w><w>the</w><w>margin</w>' +
