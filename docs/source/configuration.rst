@@ -61,14 +61,17 @@ General interface
   and German (de). Default is English.
 * **rtl** (boolean) This setting should be set to true if you are transcribing languages which are read from right to
   left. For left-to-right the default can be used. 
-* **getWitness**
-* **getWitnessLang**
-* **transcriptionLanguage**
+* **getWitness** (function|string) Either a function that returns the sigla of the witnesses being transcribed or, if 
+  the sigla is already known at the initialisation stage, the sigla can be provided directly as a string. 
+* **getWitnessLang** (function|string) Either a function that returns the ISO language code of the witnesses being 
+  transcribed or, if the language is already known at the initialisation stage, the ISO language code can be provided 
+  directly as a string.
+* **transcriptionLanguage** 
 * **showLineNumberSidebarOnLoading**
 * **toolbar**
 
-Specific menu configuration
----------------------------
+Specific menu configurations
+----------------------------
 * **BookNames**
 * **defaultReasonForUnclearText**
 * **defaultHeightForCapitals**
