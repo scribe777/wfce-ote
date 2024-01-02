@@ -53,7 +53,9 @@ Configuration
 
 There are many configuration options for the initial set up of the OTE. Some change very small things, others larger
 aspects of the interface or its function. In the following configuration documentation the functions are divided by the
-type of changes they make to the editor.
+type of changes they make to the editor. The confirgutation options were added as a second stage of development. Where 
+possible the default settings have been selected to retain exsiting behaviour and therefore the default settings will
+somtimes not be the best setting to use.
 
 General interface
 -----------------
@@ -118,7 +120,7 @@ Specific menu configurations
   * **reason** (string) The option to select by default for the reason for the gap. options are
     ``illegible, lacuna, unspecified, inferredPage``.
 
-  * **suppledSource** (string) The option to use for the source of the supplied text.
+  * **suppliedSource** (string) The option to use for the source of the supplied text.
 
   * **sourceOptions** (array) An optional list of sources to use for the supplied source dropdown. ``None`` and 
     ``other`` are always present and cannot be changed by this setting the remaining default are most relevant to Greek 
@@ -146,16 +148,52 @@ Presentation of the output
 Examples
 --------
 
+These are some examples of initialising the editor with different combinations of settings.
+
+Example 1
++++++++++
+
+Preset the transcription language and sigla. Hide the line number sidebar and add line breaks in the export
+
+.. code-block:: javascript
+
+  setWceEditor('wce_editor', {getWitness: '01',
+                              getWitnessLang: 'grc',
+                              showLineNumberSidebarOnLoading: false,
+                              addLineBreaks: true});
+
+Example 2
++++++++++
+
+Provide default values for the space menu.
+
+.. code-block:: javascript
+
+  setWceEditor('wce_editor', {optionsForGapMenu: {unit: 'char', extent: 1}});
 
 
+Example 3
++++++++++
 
+Provide options for the gap menu.
 
+.. code-block:: javascript
 
-
-
+  setWceEditor('wce_editor', 
+               {defaultValuesForSpaceMenu: {reason: 'lacuna', 
+                                            suppliedSource: 'transcriber',
+                                            sourceOptions: [{value: 'transcriber',
+                                                              labelEn: 'transcriber',
+                                                              labelDe: 'Vorschlag des Transkribenten'}
+                                                            ]}});
 
 =========================
 Integration in a Platform
 =========================
 
-Talk about the important link functions getTei setTei
+Aside from the initialisation function discussed above there are two key functions that will be needed to interact
+with the OTE in a platform.
+
+.. autofunction:: setTEI()
+
+.. autofunction:: getTEI()

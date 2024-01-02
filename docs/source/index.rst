@@ -114,7 +114,7 @@ TinyMCE license (once TinyMCE has been unzipped).
    :hidden:
 
    configuration
-   development
    testing
+   development
    api
 

@@ -8,3 +8,9 @@ wce_editor.js
 
 .. autofunction:: setWceEditor(_id, [clientOptions, baseURL, callback])
 
+.. autofunction:: setTEI(teiStringInput)
+
+.. autofunction:: getTEI()
+
+
+
