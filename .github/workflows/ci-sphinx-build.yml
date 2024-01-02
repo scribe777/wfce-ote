@@ -1,0 +1,21 @@
+name: ci-sphinx-build
+
+on: push
+
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v3
+      - name: Install dependencies
+        run: |
+          pip install -r docs/requirements.txt
+      - name: Build docs
+        run: ./docs/make html
+
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs/build
