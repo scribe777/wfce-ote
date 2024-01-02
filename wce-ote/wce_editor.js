@@ -209,7 +209,7 @@ function getData() {
 	return tinyMCE.activeEditor.getContent();
 }
 
-/** Get TEI String from editor html content
+/** Get TEI-XML string from editor html content.
 */
 function getTEI() {
 	//teiIndexData[0] = tinymce.get(tinyMCE.activeEditor.id).settings.book;
@@ -218,9 +218,10 @@ function getTEI() {
 	return getTeiByHtml(getData(), tinyMCE.activeEditor.settings.clientOptions);
 }
 
-/** Set editor html content from tei input
+/** Set the content of the editor from TEI-XML input. This can be used as the callback to setWceEditor to preload a 
+ * basetext or a partially made transcription.
 
- @param {String} teiStringInput - the xml string to display for editing
+ @param {String} teiStringInput - The TEI-XML as a string to display in the editor.
 */
 function setTEI(teiStringInput) {
 	var result = getHtmlByTei(teiStringInput, tinyMCE.activeEditor.settings.clientOptions);
