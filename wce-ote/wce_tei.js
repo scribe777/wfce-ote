@@ -790,7 +790,6 @@ function getHtmlByTei(inputString, clientOptions) {
 			} else {
 				var nValueArray = nValue.split('.');
 				g_verseNumber = nValueArray[2];
-				console.log(nValueArray)
 				if (nValueArray[1] === 'inscriptio' || nValueArray[1] === 'subscriptio') {
 					g_verseNumber = '0';
 				}
