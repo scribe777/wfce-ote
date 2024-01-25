@@ -269,7 +269,7 @@ var chapterNr, bookNr;
 		} else if ($(node).hasClass('verse_number')) {
 			var v = $.trim(node.innerHTML);
 			var vValue, startRef, ref, subverse;
-			if (v && v!='') {
+			if (v && v != '' && v != '0') {
 				startRef = bookNr + '.' + chapterNr + '.' + v;
 				ref = bookNr + '.' + chapterNr + '.' + v;
 				subverse = 97; // ascii a

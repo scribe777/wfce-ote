@@ -185,14 +185,14 @@ const textStructureDivs = new Map([
     [ '<div type="book" n="John"><div type="inscriptio"><ab n="John.inscriptio"><w>inscriptio</w><w>text</w></ab></div></div>',
       ' <span class="book_number mceNonEditable" wce="__t=book_number" id="1">John</span>  ' +
       '<span class="chapter_number mceNonEditable" wce="__t=chapter_number">Inscriptio</span> ' +
-      '<span class="verse_number mceNonEditable" wce="__t=verse_number"/> inscriptio text '
+      '<span class="verse_number mceNonEditable" wce="__t=verse_number">0</span> inscriptio text '
     ]
   ],
   [ 'book and subscriptio div',
     [ '<div type="book" n="John"><div type="subscriptio"><ab n="John.subscriptio"><w>subscriptio</w><w>text</w></ab></div></div>',
       ' <span class="book_number mceNonEditable" wce="__t=book_number" id="1">John</span>  ' +
       '<span class="chapter_number mceNonEditable" wce="__t=chapter_number">Subscriptio</span> ' +
-      '<span class="verse_number mceNonEditable" wce="__t=verse_number"/> subscriptio text '
+      '<span class="verse_number mceNonEditable" wce="__t=verse_number">0</span> subscriptio text '
     ]
   ]
 ]);
