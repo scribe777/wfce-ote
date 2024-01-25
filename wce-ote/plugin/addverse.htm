@@ -260,10 +260,10 @@
             }
             return;
         } else if ($('#insertInscriptioRadio').is(':checked')) {
-            ed.insertContent('<span class="chapter_number mceNonEditable" wce="__t=chapter_number">' + 'Inscriptio' + '</span> <span class="verse_number mceNonEditable" wce="__t=verse_number"></span> PLACE THE INSCRIPTIO HERE! ');
+            ed.insertContent('<span class="chapter_number mceNonEditable" wce="__t=chapter_number">' + 'Inscriptio' + '</span> <span class="verse_number mceNonEditable" wce="__t=verse_number">0</span> PLACE THE INSCRIPTIO HERE! ');
             return;
         } else if ($('#insertSubscriptioRadio').is(':checked')) {
-            ed.insertContent('<span class="chapter_number mceNonEditable" wce="__t=chapter_number">' + 'Subscriptio' + '</span> <span class="verse_number mceNonEditable" wce="__t=verse_number"></span> PLACE THE SUBSCRIPTIO HERE! ');
+            ed.insertContent('<span class="chapter_number mceNonEditable" wce="__t=chapter_number">' + 'Subscriptio' + '</span> <span class="verse_number mceNonEditable" wce="__t=verse_number">0</span> PLACE THE SUBSCRIPTIO HERE! ');
             return;
         } else if ($('#insertChapterRadio').is(':checked')) {
             var newChapterNr = $('#insertChapterNumber').val().trim();
