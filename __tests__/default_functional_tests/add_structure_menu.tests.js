@@ -255,7 +255,7 @@ describe('testing structure menu', () => {
     await frame.type('body#tinymce', 'inscriptio text');
 
     const htmlData = await page.evaluate(`getData()`);
-    expect(htmlData).toBe('<span class=\"book_number mceNonEditable\" wce=\"__t=book_number\" id=\"book1\"> John</span> <span class=\"chapter_number mceNonEditable\" wce=\"__t=chapter_number\">Inscriptio</span> <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">0</span>inscriptio text');
+    expect(htmlData).toBe('<span class=\"book_number mceNonEditable\" wce=\"__t=book_number\" id=\"book1\"> John</span> <span class=\"chapter_number mceNonEditable\" wce=\"__t=chapter_number\">Inscriptio</span> <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">0</span> inscriptio text');
     const xmlData = await page.evaluate(`getTEI()`);
     expect(xmlData).toBe(xmlHead + '<div type="book" n="John"><div type="inscriptio"><ab n="John.inscriptio"><w>inscriptio</w><w>text</w></ab></div></div>' + xmlTail);
   }, 200000);
@@ -288,7 +288,7 @@ describe('testing structure menu', () => {
     await frame.type('body#tinymce', 'subscriptio text');
 
     const htmlData = await page.evaluate(`getData()`);
-    expect(htmlData).toBe('<span class=\"book_number mceNonEditable\" wce=\"__t=book_number\" id=\"book1\"> John</span> <span class=\"chapter_number mceNonEditable\" wce=\"__t=chapter_number\">Subscriptio</span> <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">0</span>subscriptio text');
+    expect(htmlData).toBe('<span class=\"book_number mceNonEditable\" wce=\"__t=book_number\" id=\"book1\"> John</span> <span class=\"chapter_number mceNonEditable\" wce=\"__t=chapter_number\">Subscriptio</span> <span class=\"verse_number mceNonEditable\" wce=\"__t=verse_number\">0</span> subscriptio text');
     const xmlData = await page.evaluate(`getTEI()`);
     expect(xmlData).toBe(xmlHead + '<div type="book" n="John"><div type="subscriptio"><ab n="John.subscriptio"><w>subscriptio</w><w>text</w></ab></div></div>' + xmlTail);
   }, 200000);
