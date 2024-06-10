@@ -726,7 +726,8 @@ function getHtmlByTei(inputString, clientOptions) {
 			var $booknumber = $teiNode.getAttribute('n');
 			// legacy support
 			if ($booknumber.match(/B\d+/)) {
-				$booknumber = clientOptions.getBookNameFromBKV($booknumber);
+				var bkvContext = $($teiNode).find('ab:first').attr('n');
+                $booknumber = clientOptions.getBookNameFromBKV($booknumber, bkvContext);
 			}
 			nodeAddText($newNode, $booknumber);
 		} else if (divType == 'chapter') {
@@ -739,7 +740,8 @@ function getHtmlByTei(inputString, clientOptions) {
 				// legacy support (ingest only)
 				if (nValue.indexOf('.') == -1) {
 					var nValueArray = nValue.split('K');
-					g_bookNumber = clientOptions.getBookNameFromBKV(nValue);
+					var bkvContext = $($teiNode).find('ab:first').attr('n');
+                    g_bookNumber = clientOptions.getBookNameFromBKV(nValue, bkvContext);
 					g_chapterNumber = nValueArray[1];
 					nodeAddText($newNode, g_chapterNumber);
 				} else {
