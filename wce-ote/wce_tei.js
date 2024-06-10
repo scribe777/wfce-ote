@@ -792,6 +792,9 @@ function getHtmlByTei(inputString, clientOptions) {
 			} else {
 				var nValueArray = nValue.split('.');
 				g_verseNumber = nValueArray[2];
+				if (nValueArray[1] === 'inscriptio' || nValueArray[1] === 'subscriptio') {
+					g_verseNumber = '0';
+				}
 				nodeAddText($newNode, g_verseNumber);
 			}
 		}
@@ -2653,8 +2656,11 @@ function getTeiByHtml(inputString, clientOptions) {
 					g_verseNumber = g_verseNumber.substring(0, cont_index);
 				g_verseNumber = $.trim(g_verseNumber);
 				g_verseNode = $newDoc.createElement('ab');
-				g_verseNode.setAttribute('n', g_bookNumber + '.' + g_chapterNumber + '.' + g_verseNumber);
-
+				if (g_verseNumber === '0' && (g_chapterNumber === 'Inscriptio' || g_chapterNumber === 'Subscriptio')) {
+					g_verseNode.setAttribute('n', g_bookNumber + '.' + g_chapterNumber.toLowerCase());
+				} else {
+					g_verseNode.setAttribute('n', g_bookNumber + '.' + g_chapterNumber + '.' + g_verseNumber);
+				}
 				if (partial_index > -1){// node contains information about partial
 					g_verseNode.setAttribute('part', wceAttrValue.substring(partial_index + 8, partial_index + 9));
 				}
