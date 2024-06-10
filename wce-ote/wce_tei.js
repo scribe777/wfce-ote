@@ -1435,15 +1435,28 @@ function getHtmlByTei(inputString, clientOptions) {
 			wceAttr += getWceAttributeByTei($teiNode, mapping) + '&fw_type=isolated&fw_type_other=';
 			var $next = $teiNode;
 		} else {
-			var mapping = {
-				'n' : '&number=',
-				'rend' : '&paratext_alignment=',
-				'type' : {
-					'0' : '@commentary@ews@runTitle@chapNum@chapTitle@lectTitle@lectBibRef@lectInstruct@lectionary-other@colophon@quireSig@AmmSec@EusCan@euthaliana@gloss@stichoi@pageNum@andrew@orn',
-					'1' : '&fw_type=',
-					'2' : '&fw_type=other&fw_type_other='
-				}
-			};
+			// check if this is a type that uses reference for the n attribute (if not go with number)
+			if ($teiNode.getAttribute('type') == 'chapTitle' || $teiNode.getAttribute('type') == 'lectTitle') {
+				var mapping = {
+					'n' : '&reference=',
+					'rend' : '&paratext_alignment=',
+					'type' : {
+						'0' : '@chapTitle@lectTitle',
+						'1' : '&fw_type=',
+						'2' : '&fw_type=other&fw_type_other='
+					}
+				};
+			} else {
+				var mapping = {
+					'n' : '&number=',
+					'rend' : '&paratext_alignment=',
+					'type' : {
+						'0' : '@commentary@ews@runTitle@chapNum@lectBibRef@lectInstruct@lectionary-other@colophon@quireSig@AmmSec@EusCan@euthaliana@gloss@stichoi@pageNum@andrew@orn',
+						'1' : '&fw_type=',
+						'2' : '&fw_type=other&fw_type_other='
+					}
+				};
+			}
 
 			wceAttr += getWceAttributeByTei($teiNode, mapping);
 
@@ -3491,6 +3504,11 @@ function getTeiByHtml(inputString, clientOptions) {
 		var numberValue = arr['number'];
 		if (numberValue && (fwType == 'chapNum' || fwType == 'quireSig' || fwType == 'AmmSec' || fwType == 'EusCan' || fwType == 'stichoi' || fwType == 'andrew')) {
 			$paratext.setAttribute('n', numberValue);
+		}
+		// write n attribute using reference field for certain values
+		var referenceValue = arr['reference'];
+		if (referenceValue && (fwType == 'chapTitle' || fwType == 'lectTitle')) {
+			$paratext.setAttribute('n', referenceValue);
 		}
 
 		// place

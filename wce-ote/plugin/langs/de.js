@@ -85,6 +85,7 @@ tinymce.addI18n('de',{
 	covered : "Anzahl der überdeckten Zeilen",
 	number_attribute : 'Zahl (wie für das XML-Attribut "n" benutzt)',
 	number_calculate : "Automatische Umwandlung der Zahl",
+	reference_attribute : 'Reference (wie für das XML-Attribut "n" benutzt)',
 	numeral : "Zugehörige Zahl",
 	fw_commentary_text : "Kommentartext",
 	fw_ews : "Ews",
