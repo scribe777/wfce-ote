@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Installation, Configuration and Integration" href="configuration.html" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Developing/Adapting the OTE" href="development.html" /><link rel="prev" title="Installation, Configuration and Integration" href="configuration.html" />
 
     <!-- Generated with Sphinx 7.2.6 and Furo 2023.09.10 -->
-        <title>Online Transcription Editor documentation</title>
+        <title>Testing - Online Transcription Editor documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=36a5483c" />
@@ -123,7 +123,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="#"><div class="brand">Online Transcription Editor  documentation</div></a>
+      <a href="index.html"><div class="brand">Online Transcription Editor  documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -143,7 +143,7 @@
   <aside class="sidebar-drawer">
     <div class="sidebar-container">
       
-      <div class="sidebar-sticky"><a class="sidebar-brand" href="#">
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
   
   
   <span class="sidebar-brand-text">Online Transcription Editor  documentation</span>
@@ -154,9 +154,9 @@
   <input type="hidden" name="area" value="default">
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
-  <ul>
+  <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="configuration.html">Installation, Configuration and Integration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="testing.html">Testing</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Testing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="development.html">Developing/Adapting the OTE</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API reference</a></li>
 </ul>
@@ -193,80 +193,34 @@
           </label>
         </div>
         <article role="main">
-          <section id="the-online-transcription-editor-ote">
-<h1>The Online Transcription Editor (OTE)<a class="headerlink" href="#the-online-transcription-editor-ote" title="Link to this heading">#</a></h1>
-<section id="overview">
-<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">#</a></h2>
-<p>The WCE-OTE is a WYSIWYM editor was designed to allow users to make TEI/XML transcriptions of New Testament manuscripts
-without needing to learn XML or type any XML tags. It follows the version 1.6 of the XML transcription guidelines
-published by the International Greek New Testament Project (IGNTP) which are available at
-<a class="reference external" href="http://epapers.bham.ac.uk/4301/">http://epapers.bham.ac.uk/4301/</a>. It does not support all features of TEI, only
-those used in the IGNTP schema. The schema files are available at
-<a class="reference external" href="https://github.com/itsee-birmingham/NT_Manuscripts_TEI_Schema">https://github.com/itsee-birmingham/NT_Manuscripts_TEI_Schema</a>.</p>
-<p>The OTE is designed to be included in larger platforms and, as such, does not provide  any file storage, saving or
-uploading functionality. For evaluation purposes an HTML file is provided
-(see <a class="reference internal" href="#getting-started">Getting Started</a> below).</p>
-<p>The WCE-OTE is written as a plugin for, and distributed with a bundle of, TinyMCE. It is currently using TinyMCE 4.5.6.</p>
-</section>
-<section id="getting-started">
-<h2>Getting Started<a class="headerlink" href="#getting-started" title="Link to this heading">#</a></h2>
-<p>To use the OTE it must be made available via a webpage. A sample webpage is provided in the repository.</p>
-<p>If you have obtained the code from the github source repository, then first follow the <a class="reference internal" href="#build"><span class="std std-ref">Build</span></a> instructions
-to build TinyMCE and then move onto the section <a class="reference internal" href="#use"><span class="std std-ref">Using the OTE</span></a>.</p>
-<p>If you are using a distribution version of the code, then skip straight to the <a class="reference internal" href="#use"><span class="std std-ref">Using the OTE</span></a> section.</p>
-<section id="build">
-<span id="id1"></span><h3>Build<a class="headerlink" href="#build" title="Link to this heading">#</a></h3>
-<p>If obtaining the source from repo, then the TinyMCE bundle needs to be unzipped to the root of the source distribution
-(this folder).  There is a Makefile to do this.
-Simply type:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>make<span class="w"> </span>install
-</pre></div>
-</div>
-<p>to clean things up again:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>make<span class="w"> </span>clean
-</pre></div>
-</div>
-<p>to build the distribution bundle, type:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>make<span class="w"> </span>release
+          <section id="testing">
+<h1>Testing<a class="headerlink" href="#testing" title="Link to this heading">#</a></h1>
+<p>The tests for the OTE are written using Jest and Puppeteer and are run in node.js. The current structure of the code
+makes unit tests impossible for the majority of the code so the tests are mostly a mixture of dom based tests and
+functional tests. Coverage is available for the dom tests but not yet for the functional tests. The test can all be
+found in the <cite>__tests__</cite> directory. The functional tests are split between two sub-directories based on whether they
+test the default configuration of the OTE or a non-default configuration option.</p>
+<section id="requirements-and-setup">
+<h2>Requirements and Setup<a class="headerlink" href="#requirements-and-setup" title="Link to this heading">#</a></h2>
+<p>The tests require node.js to run. The recommended node version is 20.10.0 LTS.</p>
+<p>To install the required packages, in the main directory (wfce-ote) run</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>npm<span class="w"> </span>install
 </pre></div>
 </div>
 </section>
-<section id="using-the-ote">
-<span id="use"></span><h3>Using the OTE<a class="headerlink" href="#using-the-ote" title="Link to this heading">#</a></h3>
-<p>A sample webpage is provided in the repository to make it easy to explore and evaluate the OTE it is not intended for
-use in production. If you decide to use the OTE in your own project then you will need to embed the OTE in your own
-webpages. A How to Guide for this and for the configuration options in the OTE is provided on the <a class="reference internal" href="configuration.html"><span class="doc">Installation, Configuration and Integration</span></a>
-page.</p>
-<p>To work properly the sample webpage needs to be run via an http server. You can just open the file in your browser but
-if you do this the menus will not all appear correctly and some functions may not work. A simple python server can be
-run on any system with python installed, before running the command below make sure you are in the wfce-ote folder
-(on some systems you may need to use python rather than python3):</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python3<span class="w"> </span>-m<span class="w"> </span>http.server
+<section id="running-the-tests">
+<h2>Running the Tests<a class="headerlink" href="#running-the-tests" title="Link to this heading">#</a></h2>
+<p>To run all of the tests</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>npm<span class="w"> </span><span class="nb">test</span>
 </pre></div>
 </div>
-<p>This will start a server and you can then access the webpage in your browser at:</p>
-<p><a class="reference external" href="http://localhost:8000/wce-ote/">http://localhost:8000/wce-ote/</a></p>
-</section>
-</section>
-<section id="about">
-<h2>About<a class="headerlink" href="#about" title="Link to this heading">#</a></h2>
-<p>This code was originally written as part of the Workspace for Collaborative Editing project (AHRC/DFG collaborative
-project 2010-2013). A collaboration between Institute for Textual Scholarship and Electronic Editing (ITSEE) at the
-University of Birmingham, the Institut für Neutestamentliche Textforschung (INTF) at the University of Münster and
-the Trier Center for Digital Humanities (TCDH) at the University of Trier.</p>
-<p>The main development of the OTE was undertaken by Martin Sievers and Yu Gan at the
-<a class="reference external" href="https://www.tcdh.uni-trier.de">Trier Center for Digital Humanities</a>.</p>
-<p>The original repository used for this project is available on
-<a class="reference external" href="https://sourceforge.net/projects/wfce-ote/">sourceforge</a>.</p>
-<p>In February 2022 active development and maintenance was moved to this github repository. The maintainers are Troy
-A. Griffitts and Catherine Smith.</p>
-</section>
-<section id="license">
-<h2>License<a class="headerlink" href="#license" title="Link to this heading">#</a></h2>
-<p>Both the OTE plugin and TinyMCE are released under the GNU Lesser General Public License 2.1.</p>
-<p>For the full license see the text in the wfce-ote/wce-ote folder for the OTE license and the wfce-ote folder for the
-TinyMCE license (once TinyMCE has been unzipped).</p>
-<div class="toctree-wrapper compound">
+<p>To run a specfic test</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>npm<span class="w"> </span><span class="nb">test</span><span class="w"> </span>__tests__/path/to/test
+</pre></div>
+</div>
+<p>To run the tests with coverage (NB: coverage does not currently work for the functional tests)</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>npm<span class="w"> </span><span class="nb">test</span><span class="w"> </span>--<span class="w"> </span>--coverage
+</pre></div>
 </div>
 </section>
 </section>
@@ -276,16 +230,26 @@ TinyMCE license (once TinyMCE has been unzipped).</p>
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="configuration.html">
+          <a class="next-page" href="development.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Installation, Configuration and Integration</div>
+                <div class="title">Developing/Adapting the OTE</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          
+          <a class="prev-page" href="configuration.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Installation, Configuration and Integration</div>
+                
+              </div>
+            </a>
         </div>
         <div class="bottom-of-page">
           <div class="left-details">
@@ -316,15 +280,9 @@ TinyMCE license (once TinyMCE has been unzipped).</p>
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">The Online Transcription Editor (OTE)</a><ul>
-<li><a class="reference internal" href="#overview">Overview</a></li>
-<li><a class="reference internal" href="#getting-started">Getting Started</a><ul>
-<li><a class="reference internal" href="#build">Build</a></li>
-<li><a class="reference internal" href="#using-the-ote">Using the OTE</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#about">About</a></li>
-<li><a class="reference internal" href="#license">License</a></li>
+<li><a class="reference internal" href="#">Testing</a><ul>
+<li><a class="reference internal" href="#requirements-and-setup">Requirements and Setup</a></li>
+<li><a class="reference internal" href="#running-the-tests">Running the Tests</a></li>
 </ul>
 </li>
 </ul>

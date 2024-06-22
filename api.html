@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Installation, Configuration and Integration" href="configuration.html" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="prev" title="Developing/Adapting the OTE" href="development.html" />
 
     <!-- Generated with Sphinx 7.2.6 and Furo 2023.09.10 -->
-        <title>Online Transcription Editor documentation</title>
+        <title>API reference - Online Transcription Editor documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=36a5483c" />
@@ -123,7 +123,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="#"><div class="brand">Online Transcription Editor  documentation</div></a>
+      <a href="index.html"><div class="brand">Online Transcription Editor  documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -143,7 +143,7 @@
   <aside class="sidebar-drawer">
     <div class="sidebar-container">
       
-      <div class="sidebar-sticky"><a class="sidebar-brand" href="#">
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
   
   
   <span class="sidebar-brand-text">Online Transcription Editor  documentation</span>
@@ -154,11 +154,11 @@
   <input type="hidden" name="area" value="default">
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
-  <ul>
+  <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="configuration.html">Installation, Configuration and Integration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="testing.html">Testing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="development.html">Developing/Adapting the OTE</a></li>
-<li class="toctree-l1"><a class="reference internal" href="api.html">API reference</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">API reference</a></li>
 </ul>
 
 </div>
@@ -193,81 +193,73 @@
           </label>
         </div>
         <article role="main">
-          <section id="the-online-transcription-editor-ote">
-<h1>The Online Transcription Editor (OTE)<a class="headerlink" href="#the-online-transcription-editor-ote" title="Link to this heading">#</a></h1>
-<section id="overview">
-<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">#</a></h2>
-<p>The WCE-OTE is a WYSIWYM editor was designed to allow users to make TEI/XML transcriptions of New Testament manuscripts
-without needing to learn XML or type any XML tags. It follows the version 1.6 of the XML transcription guidelines
-published by the International Greek New Testament Project (IGNTP) which are available at
-<a class="reference external" href="http://epapers.bham.ac.uk/4301/">http://epapers.bham.ac.uk/4301/</a>. It does not support all features of TEI, only
-those used in the IGNTP schema. The schema files are available at
-<a class="reference external" href="https://github.com/itsee-birmingham/NT_Manuscripts_TEI_Schema">https://github.com/itsee-birmingham/NT_Manuscripts_TEI_Schema</a>.</p>
-<p>The OTE is designed to be included in larger platforms and, as such, does not provide  any file storage, saving or
-uploading functionality. For evaluation purposes an HTML file is provided
-(see <a class="reference internal" href="#getting-started">Getting Started</a> below).</p>
-<p>The WCE-OTE is written as a plugin for, and distributed with a bundle of, TinyMCE. It is currently using TinyMCE 4.5.6.</p>
-</section>
-<section id="getting-started">
-<h2>Getting Started<a class="headerlink" href="#getting-started" title="Link to this heading">#</a></h2>
-<p>To use the OTE it must be made available via a webpage. A sample webpage is provided in the repository.</p>
-<p>If you have obtained the code from the github source repository, then first follow the <a class="reference internal" href="#build"><span class="std std-ref">Build</span></a> instructions
-to build TinyMCE and then move onto the section <a class="reference internal" href="#use"><span class="std std-ref">Using the OTE</span></a>.</p>
-<p>If you are using a distribution version of the code, then skip straight to the <a class="reference internal" href="#use"><span class="std std-ref">Using the OTE</span></a> section.</p>
-<section id="build">
-<span id="id1"></span><h3>Build<a class="headerlink" href="#build" title="Link to this heading">#</a></h3>
-<p>If obtaining the source from repo, then the TinyMCE bundle needs to be unzipped to the root of the source distribution
-(this folder).  There is a Makefile to do this.
-Simply type:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>make<span class="w"> </span>install
-</pre></div>
-</div>
-<p>to clean things up again:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>make<span class="w"> </span>clean
-</pre></div>
-</div>
-<p>to build the distribution bundle, type:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>make<span class="w"> </span>release
-</pre></div>
-</div>
-</section>
-<section id="using-the-ote">
-<span id="use"></span><h3>Using the OTE<a class="headerlink" href="#using-the-ote" title="Link to this heading">#</a></h3>
-<p>A sample webpage is provided in the repository to make it easy to explore and evaluate the OTE it is not intended for
-use in production. If you decide to use the OTE in your own project then you will need to embed the OTE in your own
-webpages. A How to Guide for this and for the configuration options in the OTE is provided on the <a class="reference internal" href="configuration.html"><span class="doc">Installation, Configuration and Integration</span></a>
-page.</p>
-<p>To work properly the sample webpage needs to be run via an http server. You can just open the file in your browser but
-if you do this the menus will not all appear correctly and some functions may not work. A simple python server can be
-run on any system with python installed, before running the command below make sure you are in the wfce-ote folder
-(on some systems you may need to use python rather than python3):</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python3<span class="w"> </span>-m<span class="w"> </span>http.server
-</pre></div>
-</div>
-<p>This will start a server and you can then access the webpage in your browser at:</p>
-<p><a class="reference external" href="http://localhost:8000/wce-ote/">http://localhost:8000/wce-ote/</a></p>
-</section>
-</section>
-<section id="about">
-<h2>About<a class="headerlink" href="#about" title="Link to this heading">#</a></h2>
-<p>This code was originally written as part of the Workspace for Collaborative Editing project (AHRC/DFG collaborative
-project 2010-2013). A collaboration between Institute for Textual Scholarship and Electronic Editing (ITSEE) at the
-University of Birmingham, the Institut für Neutestamentliche Textforschung (INTF) at the University of Münster and
-the Trier Center for Digital Humanities (TCDH) at the University of Trier.</p>
-<p>The main development of the OTE was undertaken by Martin Sievers and Yu Gan at the
-<a class="reference external" href="https://www.tcdh.uni-trier.de">Trier Center for Digital Humanities</a>.</p>
-<p>The original repository used for this project is available on
-<a class="reference external" href="https://sourceforge.net/projects/wfce-ote/">sourceforge</a>.</p>
-<p>In February 2022 active development and maintenance was moved to this github repository. The maintainers are Troy
-A. Griffitts and Catherine Smith.</p>
-</section>
-<section id="license">
-<h2>License<a class="headerlink" href="#license" title="Link to this heading">#</a></h2>
-<p>Both the OTE plugin and TinyMCE are released under the GNU Lesser General Public License 2.1.</p>
-<p>For the full license see the text in the wfce-ote/wce-ote folder for the OTE license and the wfce-ote folder for the
-TinyMCE license (once TinyMCE has been unzipped).</p>
-<div class="toctree-wrapper compound">
-</div>
+          <section id="api-reference">
+<h1>API reference<a class="headerlink" href="#api-reference" title="Link to this heading">#</a></h1>
+<section id="wce-editor-js">
+<h2>wce_editor.js<a class="headerlink" href="#wce-editor-js" title="Link to this heading">#</a></h2>
+<dl class="js function">
+<dt class="sig sig-object js" id="setWceEditor">
+<span class="sig-name descname"><span class="n"><span class="pre">setWceEditor</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_id</span></span></em><span class="optional">[</span>, <em class="sig-param"><span class="n"><span class="pre">clientOptions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">baseURL</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">callback</span></span></em><span class="optional">]</span><span class="sig-paren">)</span><a class="headerlink" href="#setWceEditor" title="Link to this definition">#</a></dt>
+<dd><p>Initialises the editor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>_id</strong> (<em>string</em>) – The html id value of the text area to transform into the editor.</p></li>
+<li><p><strong>clientOptions</strong> (<em>clientOptions</em>) – The client settings to use when initialising the editor.</p></li>
+<li><p><strong>clientOptions.language</strong> (<em>string</em>) – The language to use for the interface (en|de). The default is English.</p></li>
+<li><p><strong>clientOptions.rtl</strong> (<em>boolean</em>) – This should be set to true for transcribing right to left languages. The default is false.</p></li>
+<li><p><strong>clientOptions.getWitness</strong> (<em>function</em>) – An optional function to get the value of the current witness.</p></li>
+<li><p><strong>clientOptions.getWitnessLang</strong> (<em>function</em>) – An optional function to get the language of the current witness.</p></li>
+<li><p><strong>clientOptions.getBookNameFromBKV</strong> (<em>function</em>) – A function to switch BKV references to OSIS (only used for book and chapter). This function is provided with two arguments: the B or BK reference depending on the context (i.e. B04, B04K1); the full n attribute value of the first ab following the Book or Chapter.</p></li>
+<li><p><strong>clientOptions.bookNames</strong> (<em>array</em>) – A list of OSIS book abbreviations to use in the select of the V menu. If this list is not supplied the form will have a text box for manual entry.</p></li>
+<li><p><strong>clientOptions.addLineBreaks</strong> (<em>boolean</em>) – Add line breaks in the XML before every pb, cb and lb in the transcription. Default is false.</p></li>
+<li><p><strong>clientOptions.addSpaces</strong> (<em>boolean</em>) – Add spaces into the XML of the transcription between tags to make the text readable if all the tags are removed. Default is false.</p></li>
+<li><p><strong>clientOptions.defaultReasonForUnclearText</strong> (<em>string</em>) – The default option in the reason box for unclear text. Default pre-selects nothing.</p></li>
+<li><p><strong>clientOptions.defaultHeightForCapitals</strong> (<em>number</em>) – If a number is supplied with this settings then it is used to prepopulate the height box in the O &gt; capitals submenu. If it is not supplied then the box is not prepopulated.</p></li>
+<li><p><strong>clientOptions.defaultValuesForSpaceMenu</strong> (<em>defaultValuesForSpaceMenu</em>) – The default settings to use to pre-poulate the spaces menu. Default does not pre-populate anything but does select first option on the unit list.</p></li>
+<li><p><strong>clientOptions.defaultValuesForSpaceMenu.unit</strong> (<em>string</em>) – The unit value to preselect.</p></li>
+<li><p><strong>clientOptions.defaultValuesForSpaceMenu.extent</strong> (<em>number</em>) – The extent number to preselect.</p></li>
+<li><p><strong>clientOptions.showMultilineNotesAsSingleEntry</strong> (<em>boolean</em>) – If set to true this combines multiline untranscribed commentary and lectionary notes into a single line (does not change the XML output). Default is false.</p></li>
+<li><p><strong>clientOptions.checkOverlineForAbbr</strong> (<em>boolean</em>) – If set to true this will check the ‘add overline’ option in the abbreviation form when it is loaded. Default is false.</p></li>
+<li><p><strong>clientOptions.optionsForGapMenu</strong> (<em>optionsForGapMenu</em>) – The options used to create and to set defaults in the gap menu.</p></li>
+<li><p><strong>clientOptions.optionsForGapMenu.reason</strong> (<em>string</em>) – The option to select by default for the reason for the gap (illegible|lacuna|unspecified|inferredPage).</p></li>
+<li><p><strong>clientOptions.optionsForGapMenu.suppliedSource</strong> (<em>string</em>) – The option to use for the source of the supplied text.</p></li>
+<li><p><strong>clientOptions.optionsForGapMenu.sourceOptions</strong> (<em>Array.&lt;sourceOptions&gt;</em>) – An optional list of sources to use for the supplied source dropdown. None and other are always present and cannot be changed by this setting the remaining default are most relevant to Greek New Testament.</p></li>
+<li><p><strong>clientOptions.optionsForGapMenu.sourceOptions.value</strong> (<em>string</em>) – The value to record in the XML for this supplied source.</p></li>
+<li><p><strong>clientOptions.optionsForGapMenu.sourceOptions.labelEn</strong> (<em>string</em>) – The visible label to use for this entry in the English interface.</p></li>
+<li><p><strong>clientOptions.optionsForGapMenu.sourceOptions.labelDe</strong> (<em>string</em>) – The visible label to use for this entry in the German interface.</p></li>
+<li><p><strong>clientOptions.optionsForMarginaliaMenu</strong> (<em>optionsForMarginaliaMenu</em>) – The options used to create and to set defaults in the marginalia menu.</p></li>
+<li><p><strong>clientOptions.optionsForMarginaliaMenu.type</strong> (<em>string</em>) – The option to select by default for the fw_type dropdown for the marginalia.</p></li>
+<li><p><strong>clientOptions.transcriptionLanguage</strong> (<em>string</em>) – The css to use for the transcription in the editor. Choices are currently coptic and greek. Default is greek.</p></li>
+<li><p><strong>clientoptions.showLineNumberSidebarOnLoading</strong> (<em>boolean</em>) – A boolean to determine if the line number sidebar should be shown on loading or not. Default is True</p></li>
+<li><p><strong>clientOptions.toolbar</strong> (<em>string</em>) – The string to use to configure the toolbar. It should be a subset of the default provided, | puts a divider at that point in the toolbar.</p></li>
+<li><p><strong>string</strong> (<em>baseURL</em>) – Explicitly sets TinyMCE’s base URL.</p></li>
+<li><p><strong>function</strong> (<em>callback</em>) – The function to call once the editor is loaded.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js function">
+<dt class="sig sig-object js" id="setTEI">
+<span class="sig-name descname"><span class="n"><span class="pre">setTEI</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">teiStringInput</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#setTEI" title="Link to this definition">#</a></dt>
+<dd><p>Set the content of the editor from TEI-XML input. This can be used as the callback to setWceEditor to preload a
+basetext or a partially made transcription.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>teiStringInput</strong> (<em>String</em>) – The TEI-XML as a string to display in the editor.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js function">
+<dt class="sig sig-object js" id="getTEI">
+<span class="sig-name descname"><span class="n"><span class="pre">getTEI</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#getTEI" title="Link to this definition">#</a></dt>
+<dd><p>Get TEI-XML string from editor html content.</p>
+</dd></dl>
+
 </section>
 </section>
 
@@ -276,16 +268,18 @@ TinyMCE license (once TinyMCE has been unzipped).</p>
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="configuration.html">
+          
+          <a class="prev-page" href="development.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
-                  <span>Next</span>
+                  <span>Previous</span>
                 </div>
-                <div class="title">Installation, Configuration and Integration</div>
+                
+                <div class="title">Developing/Adapting the OTE</div>
+                
               </div>
-              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          
         </div>
         <div class="bottom-of-page">
           <div class="left-details">
@@ -316,15 +310,13 @@ TinyMCE license (once TinyMCE has been unzipped).</p>
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">The Online Transcription Editor (OTE)</a><ul>
-<li><a class="reference internal" href="#overview">Overview</a></li>
-<li><a class="reference internal" href="#getting-started">Getting Started</a><ul>
-<li><a class="reference internal" href="#build">Build</a></li>
-<li><a class="reference internal" href="#using-the-ote">Using the OTE</a></li>
+<li><a class="reference internal" href="#">API reference</a><ul>
+<li><a class="reference internal" href="#wce-editor-js">wce_editor.js</a><ul>
+<li><a class="reference internal" href="#setWceEditor"><code class="docutils literal notranslate"><span class="pre">setWceEditor()</span></code></a></li>
+<li><a class="reference internal" href="#setTEI"><code class="docutils literal notranslate"><span class="pre">setTEI()</span></code></a></li>
+<li><a class="reference internal" href="#getTEI"><code class="docutils literal notranslate"><span class="pre">getTEI()</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#about">About</a></li>
-<li><a class="reference internal" href="#license">License</a></li>
 </ul>
 </li>
 </ul>
