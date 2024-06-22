@@ -33,7 +33,8 @@
 */
 
 (function() {
-	var wfce_editor = "3.1.0 (2023-04-25)";
+	var wfce_editor = "3.1.1 (2023-10-09)";
+
 
 	// Load plugin specific language pack
 	tinymce.PluginManager.requireLangPack('wce');
@@ -864,16 +865,14 @@
 
 		/*
 		 * getSelection special for IE
+		 * Cat December 2023:This was special for IE because it had a different selection method for IE<=8
+		 * which used rangy-core.js - we don't need to support IE<=8 and probably not IE anymore so it is much simpler
+		 * and can just use the window object getSelection. I'm keeping the function because it is used in multiple
+		 * places.
 		 */
 		getSEL : function(ed) {
 			var sel, win = ed.getWin();
-			if (win.getSelection) {
-				// IE 9
-				sel = win.getSelection();
-			} else {
-				// IE <=8
-				sel = rangy.getSelection(win);
-			}
+			sel = win.getSelection();
 			return sel;
 		},
 

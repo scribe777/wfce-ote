@@ -726,7 +726,8 @@ function getHtmlByTei(inputString, clientOptions) {
 			var $booknumber = $teiNode.getAttribute('n');
 			// legacy support
 			if ($booknumber.match(/B\d+/)) {
-				$booknumber = clientOptions.getBookNameFromBKV($booknumber);
+				var bkvContext = $($teiNode).find('ab:first').attr('n');
+                $booknumber = clientOptions.getBookNameFromBKV($booknumber, bkvContext);
 			}
 			nodeAddText($newNode, $booknumber);
 		} else if (divType == 'chapter') {
@@ -739,7 +740,8 @@ function getHtmlByTei(inputString, clientOptions) {
 				// legacy support (ingest only)
 				if (nValue.indexOf('.') == -1) {
 					var nValueArray = nValue.split('K');
-					g_bookNumber = clientOptions.getBookNameFromBKV(nValue);
+					var bkvContext = $($teiNode).find('ab:first').attr('n');
+                    g_bookNumber = clientOptions.getBookNameFromBKV(nValue, bkvContext);
 					g_chapterNumber = nValueArray[1];
 					nodeAddText($newNode, g_chapterNumber);
 				} else {
@@ -790,6 +792,9 @@ function getHtmlByTei(inputString, clientOptions) {
 			} else {
 				var nValueArray = nValue.split('.');
 				g_verseNumber = nValueArray[2];
+				if (nValueArray[1] === 'inscriptio' || nValueArray[1] === 'subscriptio') {
+					g_verseNumber = '0';
+				}
 				nodeAddText($newNode, g_verseNumber);
 			}
 		}
@@ -1433,15 +1438,28 @@ function getHtmlByTei(inputString, clientOptions) {
 			wceAttr += getWceAttributeByTei($teiNode, mapping) + '&fw_type=isolated&fw_type_other=';
 			var $next = $teiNode;
 		} else {
-			var mapping = {
-				'n' : '&number=',
-				'rend' : '&paratext_alignment=',
-				'type' : {
-					'0' : '@commentary@ews@runTitle@chapNum@chapTitle@lectTitle@lectBibRef@lectInstruct@lectionary-other@colophon@quireSig@AmmSec@EusCan@euthaliana@gloss@stichoi@pageNum@andrew@orn',
-					'1' : '&fw_type=',
-					'2' : '&fw_type=other&fw_type_other='
-				}
-			};
+			// check if this is a type that uses reference for the n attribute (if not go with number)
+			if ($teiNode.getAttribute('type') == 'chapTitle' || $teiNode.getAttribute('type') == 'lectTitle') {
+				var mapping = {
+					'n' : '&reference=',
+					'rend' : '&paratext_alignment=',
+					'type' : {
+						'0' : '@chapTitle@lectTitle',
+						'1' : '&fw_type=',
+						'2' : '&fw_type=other&fw_type_other='
+					}
+				};
+			} else {
+				var mapping = {
+					'n' : '&number=',
+					'rend' : '&paratext_alignment=',
+					'type' : {
+						'0' : '@commentary@ews@runTitle@chapNum@lectBibRef@lectInstruct@lectionary-other@colophon@quireSig@AmmSec@EusCan@euthaliana@gloss@stichoi@pageNum@andrew@orn',
+						'1' : '&fw_type=',
+						'2' : '&fw_type=other&fw_type_other='
+					}
+				};
+			}
 
 			wceAttr += getWceAttributeByTei($teiNode, mapping);
 
@@ -2638,8 +2656,11 @@ function getTeiByHtml(inputString, clientOptions) {
 					g_verseNumber = g_verseNumber.substring(0, cont_index);
 				g_verseNumber = $.trim(g_verseNumber);
 				g_verseNode = $newDoc.createElement('ab');
-				g_verseNode.setAttribute('n', g_bookNumber + '.' + g_chapterNumber + '.' + g_verseNumber);
-
+				if (g_verseNumber === '0' && (g_chapterNumber === 'Inscriptio' || g_chapterNumber === 'Subscriptio')) {
+					g_verseNode.setAttribute('n', g_bookNumber + '.' + g_chapterNumber.toLowerCase());
+				} else {
+					g_verseNode.setAttribute('n', g_bookNumber + '.' + g_chapterNumber + '.' + g_verseNumber);
+				}
 				if (partial_index > -1){// node contains information about partial
 					g_verseNode.setAttribute('part', wceAttrValue.substring(partial_index + 8, partial_index + 9));
 				}
@@ -3489,6 +3510,11 @@ function getTeiByHtml(inputString, clientOptions) {
 		var numberValue = arr['number'];
 		if (numberValue && (fwType == 'chapNum' || fwType == 'quireSig' || fwType == 'AmmSec' || fwType == 'EusCan' || fwType == 'stichoi' || fwType == 'andrew')) {
 			$paratext.setAttribute('n', numberValue);
+		}
+		// write n attribute using reference field for certain values
+		var referenceValue = arr['reference'];
+		if (referenceValue && (fwType == 'chapTitle' || fwType == 'lectTitle')) {
+			$paratext.setAttribute('n', referenceValue);
 		}
 
 		// place

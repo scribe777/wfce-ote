@@ -86,6 +86,7 @@ tinymce.addI18n('en',{
 	text : "Text or number (as written on page)",
 	number_attribute : 'Number (as used for XML attribute "n")',
 	number_calculate : "Calculate number automatically",
+	reference_attribute : 'Reference (as used for XML attribute "n")',
 	numeral : "Corresponding number",
 	fw_commentary_text : "Commentary text",
 	fw_ews : "Ews",

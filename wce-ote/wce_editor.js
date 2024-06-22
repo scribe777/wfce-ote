@@ -40,9 +40,9 @@
 @param {clientOptions} clientOptions - The client settings to use when initialising the editor.
 @param {string} clientOptions.language - The language to use for the interface (en|de). The default is English.
 @param {boolean} clientOptions.rtl - This should be set to true for transcribing right to left languages. The default is false.
-@param {function|string} clientOptions.getWitness - An optional function to get the value of the current witness. If the witnesses is already known when the editor is initialised it can be provided as a string.
-@param {function|string} clientOptions.getWitnessLang - An optional function to get the ISO language code of the current witness. If the language is known when the editor is intialised it can be provided as a string.
-@param {function} clientOptions.getBookNameFromBKV - A function to switch BKV references to OSIS (only used for book and chapter)
+@param {function} clientOptions.getWitness - An optional function to get the value of the current witness.
+@param {function} clientOptions.getWitnessLang - An optional function to get the language of the current witness.
+@param {function} clientOptions.getBookNameFromBKV - A function to switch BKV references to OSIS (only used for book and chapter). This function is provided with two arguments: the B or BK reference depending on the context (i.e. B04, B04K1); the full n attribute value of the first ab following the Book or Chapter.
 @param {array} clientOptions.bookNames - A list of OSIS book abbreviations to use in the select of the V menu. If this list is not supplied the form will have a text box for manual entry.
 @param {boolean} clientOptions.addLineBreaks - Add line breaks in the XML before every pb, cb and lb in the transcription. Default is false.
 @param {boolean} clientOptions.addSpaces - Add spaces into the XML of the transcription between tags to make the text readable if all the tags are removed. Default is false.

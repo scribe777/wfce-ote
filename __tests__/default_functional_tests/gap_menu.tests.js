@@ -24,7 +24,7 @@ beforeAll(async () => {
     // args: ['--window-size=1920,1080', '--disable-web-security']
 
     // for online testing (only ever commit these)
-    headless: true,
+    headless: "new",
     slowMo: 60,
     args: ['--disable-web-security']
   });
@@ -1125,7 +1125,7 @@ describe('testing gap menu', () => {
     const menuFrameHandle2 = await page.$('div[id="mceu_41"] > div > div > iframe');
     const menuFrame2 = await menuFrameHandle2.contentFrame();
     expect(await menuFrame2.$eval('select#surplus_reason', el => el.value)).toBe('other');
-    expect(await menuFrame.$eval('#surplus_reason_other', el => el.disabled)).toBe(false);
+    expect(await menuFrame2.$eval('#surplus_reason_other', el => el.disabled)).toBe(false);
     expect(await menuFrame2.$eval('#surplus_reason_other', el => el.value)).toBe('lectionary_influence');
     // change to repetition
     await menuFrame2.select('select[id="surplus_reason"]', 'repetition');
