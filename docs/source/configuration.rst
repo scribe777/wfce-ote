@@ -145,6 +145,13 @@ Presentation of the output
 * **addSpaces** (boolean) If set to ``true`` this setting will add spaces between all tags so that the text is readable 
   if all the tags are removed in the display. The default is false.
 
+Legacy support
+--------------
+
+* **getBookNameFromBKV** (function) A function to switch BKV references to OSIS (only used for book and chapter). 
+  This function is provided with two arguments: the B or BK reference depending on the context (i.e. B04, B04K1); 
+  the full n attribute value of the first ab following the Book or Chapter (i.e. B04K1V1).
+
 Examples
 --------
 
