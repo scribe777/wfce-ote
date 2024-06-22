@@ -8,11 +8,14 @@ Overview
 ========
 
 The WCE-OTE is a WYSIWYM editor was designed to allow users to make TEI/XML transcriptions of New Testament manuscripts
-without needing to learn XML or type any XML tags. It follows the XML transcription guidelines published by the 
-International Greek New Testament Project (IGNTP) which are available at 
+without needing to learn XML or type any XML tags. It follows the version 1.6 of the XML transcription guidelines 
+published by the International Greek New Testament Project (IGNTP) which are available at 
 `http://epapers.bham.ac.uk/4301/ <http://epapers.bham.ac.uk/4301/>`_. It does not support all features of TEI, only
-those used in the IGNTP schema. The OTE is designed to be included in larger platforms and, as such, does not provide 
-any file storage, saving or uploading functionality. For evaluation purposes an HTML file is provided 
+those used in the IGNTP schema. The schema files are available at 
+`https://github.com/itsee-birmingham/NT_Manuscripts_TEI_Schema <https://github.com/itsee-birmingham/NT_Manuscripts_TEI_Schema>`_. 
+
+The OTE is designed to be included in larger platforms and, as such, does not provide  any file storage, saving or
+uploading functionality. For evaluation purposes an HTML file is provided 
 (see `Getting Started`_ below).
 
 The WCE-OTE is written as a plugin for, and distributed with a bundle of, TinyMCE. It is currently using TinyMCE 4.5.6.

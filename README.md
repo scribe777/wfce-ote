@@ -2,7 +2,11 @@ Workspace for Collaborative Editing
 -----------------------------------
 Online Transcription Editor (OTE)
 
-The WCE-OTE is written as a plugin for and distributed with a bundle of TinyMCE.
+The WCE-OTE is written as a plugin for and distributed with a bundle of TinyMCE. It is currently using TinyMCE 4.5.6.
+
+The follows the version 1.6 of the XML transcription guidelines 
+published by the International Greek New Testament Project (IGNTP) which are available at 
+http://epapers.bham.ac.uk/4301/. The schema files are available at https://github.com/itsee-birmingham/NT_Manuscripts_TEI_Schema.
 
 License information is available in the main repository and in each of the subfolders for TinyMCE and for the wfce-ote code.
 
