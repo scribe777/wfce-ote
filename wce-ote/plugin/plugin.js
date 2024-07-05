@@ -2894,7 +2894,7 @@
 			// add adaptive selection checkbox if we are the main editor and not an internal one in a dialogue box
 			if (ed.getParam('internal_editor') !== true) {
     			ed.on('postRender', function() {
-    				var ed = $(this)[0];
+    				var ed = this;
     				var id = ed.id + '_adaptive_selection';
     				var statusbar= $(tinymce.activeEditor.iframeElement.parentElement.parentElement).children('.mce-statusbar').children('div');
     				if (statusbar) {
@@ -3685,6 +3685,7 @@
 
 
 			ed.on('init', function() {
+				var ed = this;
 				WCEUtils.initWCEConstants(ed);
 				WCEUtils.initWCEVariable(ed);
 				WCEUtils.setBreakCounterByContent(ed);
@@ -3728,7 +3729,7 @@
 				};
 				var wcevar = ed.WCE_VAR;
 
-				// TODO: check. was undoManager.onAdd.add(function(um, level) {
+				// TODO: check. was undoManager.onAdd.add &openParen;function(um, level) &openCurlyBrace;
 				ed.on('BeforeAddUndo', function(e) {
 					if (ed.WCE_VAR.stopUndo) {
 						var i;
@@ -3758,6 +3759,10 @@
 				ed.on('mouseover', function (evt) {
 					WCEUtils.showWceInfo(ed, evt)
 				});
+
+				if (ed.settings.clientOptions && ed.settings.clientOptions.preferredFont) {
+					$(ed.getBody()).css('font-family', ed.settings.clientOptions.preferredFont);
+				}
 			});
 
 
