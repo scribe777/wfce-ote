@@ -1233,7 +1233,7 @@ function getHtmlByTei(inputString, clientOptions) {
 			return null;
 		}
 
-		$newNode.setAttribute('class', 'brea');
+		$newNode.setAttribute('class', 'mceNonEditable brea');
 		var _id = $teiNode.getAttribute('id');
 		if (_id) {
 			$newNode.setAttribute('id', _id);

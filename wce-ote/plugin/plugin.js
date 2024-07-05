@@ -592,7 +592,7 @@
 			if (lbpos === undefined || lbpos === null)
 				lbpos = WCEUtils.modifyBreakPosition(ed);
 
-			var wceClass = 'class="brea"', wceAttr;
+			var wceClass = 'class="mceNonEditable brea"', wceAttr;
 
 			//how many member does a group have
 			var groupCount;
