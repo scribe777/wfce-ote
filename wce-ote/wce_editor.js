@@ -64,7 +64,7 @@
 @param {string} clientOptions.optionsForMarginaliaMenu.type - The option to select by default for the fw_type dropdown for the marginalia.
 @param {string} clientOptions.transcriptionLanguage - The css to use for the transcription in the editor. Choices are currently coptic and greek. Default is greek.
 @param {boolean} clientoptions.showLineNumberSidebarOnLoading - A boolean to determine if the line number sidebar should be shown on loading or not. Default is True
-@param {string} clientOptions.toolbar - The string to use to configure the toolbar. It should be a subset of the default provided, | put a divider at that point in the toolbar.
+@param {string} clientOptions.toolbar - The string to use to configure the toolbar. It should be a subset of the default provided, | puts a divider at that point in the toolbar.
 @param {baseURL} string - Explicitly sets TinyMCE's base URL.
 @param {callback} function - The function to call once the editor is loaded.
 
@@ -209,7 +209,7 @@ function getData() {
 	return tinyMCE.activeEditor.getContent();
 }
 
-/** Get TEI String from editor html content
+/** Get TEI-XML string from editor html content.
 */
 function getTEI() {
 	//teiIndexData[0] = tinymce.get(tinyMCE.activeEditor.id).settings.book;
@@ -218,9 +218,10 @@ function getTEI() {
 	return getTeiByHtml(getData(), tinyMCE.activeEditor.settings.clientOptions);
 }
 
-/** Set editor html content from tei input
+/** Set the content of the editor from TEI-XML input. This can be used as the callback to setWceEditor to preload a 
+ * basetext or a partially made transcription.
 
- @param {String} teiStringInput - the xml string to display for editing
+ @param {String} teiStringInput - The TEI-XML as a string to display in the editor.
 */
 function setTEI(teiStringInput) {
 	var result = getHtmlByTei(teiStringInput, tinyMCE.activeEditor.settings.clientOptions);
