@@ -1298,6 +1298,7 @@
 						//when only select CB, PB, QB inhibit input, but can edit
 						WCEUtils.inhibitInput(ed, selectedNode);
 					} else {
+						WCEUtils.inhibitInput(ed, selectedNode);
 						_disableAllControls(ed, true);
 						w.not_C = !wholeSelect;
 					}
