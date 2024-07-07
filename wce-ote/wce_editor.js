@@ -65,6 +65,7 @@
 @param {string} clientOptions.transcriptionLanguage - The css to use for the transcription in the editor. Choices are currently coptic and greek. Default is greek.
 @param {boolean} clientoptions.showLineNumberSidebarOnLoading - A boolean to determine if the line number sidebar should be shown on loading or not. Default is True
 @param {string} clientOptions.toolbar - The string to use to configure the toolbar. It should be a subset of the default provided, | puts a divider at that point in the toolbar.
+@param {string} clientOptions.preferredFont - The preferred font-family string to use for the transcription in the editor.
 @param {baseURL} string - Explicitly sets TinyMCE's base URL.
 @param {callback} function - The function to call once the editor is loaded.
 
@@ -241,6 +242,7 @@ function setTEI(teiStringInput) {
 	@param {string} fontFamily - the name of the font family to use
 */
 function setPreferredFontFamily(fontFamily) {
+	tinymce.settings.clientOptions.preferredFont = fontFamily;
 	$('#wce_editor_ifr').contents().find('#tinymce').css('font-family', fontFamily);
 }
 
