@@ -1391,6 +1391,7 @@ function getHtmlByTei(inputString, clientOptions) {
 				break;
 		}
 		addFormatElement($newNode);
+		nodeAddText($htmlParent, '\u200b');
 		$htmlParent.appendChild($newNode);
 
 		if ($teiNode.nextSibling && $teiNode.nextSibling.nodeName === 'w') {
