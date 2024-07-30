@@ -2605,7 +2605,7 @@
 				// :
 				tinyMCE.activeEditor.execCommand('mceAdd_pc', ':');
 				stopEvent(ed, e);
-			} else if (ek == 188 && !e.shiftKey) {
+			} else if (e.key && e.key == ',') {
 				// ,
 				tinyMCE.activeEditor.execCommand('mceAdd_pc', ',');
 				stopEvent(ed, e);
