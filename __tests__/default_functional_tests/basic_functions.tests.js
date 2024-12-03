@@ -341,9 +341,6 @@ describe('testing basic word/pc level functions', () => {
         const xmlData = await page.evaluate(`getTEI()`);
         expect(xmlData).toBe(xmlHead + '<w>space</w><w>between</w><space unit="millimetres" extent="4"/><w>words</w>' + xmlTail);
 
-
-
-
     }, 200000);
 
     // pc typed in
@@ -363,7 +360,7 @@ describe('testing basic word/pc level functions', () => {
         const htmlData = await page.evaluate(`getData()`);
         expect(htmlData).toBe('my words<span class="pc" wce_orig="" wce="__t=pc">' +
             '<span class="format_start mceNonEditable">‹</span>,' +
-            '<span class="format_end mceNonEditable">›</span></span>  with comma');
+            '<span class="format_end mceNonEditable">›</span></span>  with comma');
         const xmlData = await page.evaluate(`getTEI()`);
         expect(xmlData).toBe(xmlHead + '<w>my</w><w>words</w><pc>,</pc><w>with</w><w>comma</w>' + xmlTail);
     }, 200000);
