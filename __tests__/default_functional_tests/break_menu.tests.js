@@ -18,14 +18,14 @@ jest.setTimeout(5000000);
 beforeAll(async () => {
   browser = await puppeteer.launch({
     // for local testing
-    // headless: false,
-    // slowMo: 80,
-    // args: ['--window-size=1920,1080', '--disable-web-security']
+    headless: false,
+    slowMo: 120,
+    args: ['--window-size=1920,1080', '--disable-web-security']
 
     // for online testing (only ever commit these)
-    headless: "new",
-    slowMo: 60,
-    args: ['--disable-web-security']
+    // headless: "new",
+    // slowMo: 60,
+    // args: ['--disable-web-security']
   });
 });
 
@@ -834,6 +834,28 @@ describe('testing B menu - breaks', () => {
     // check the content of the hover over
     const hoverValue2 = await page.$eval('#hover-data-content', el => el.innerHTML);
     expect(hoverValue2).toBe('<div>Number: 4</div>');
+
+  }, 200000);
+
+  test('the marginalia menu is activated after a page break if the break was added with setTei', async () => {
+    const data = xmlHead + '<pb n="1r" type="folio" xml:id="P1r-"/><cb n="P1rC1-"/><lb n="P1rC1L-"/>' + xmlTail;
+    await page.evaluate(`setTEI('${data}');`);
+
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowRight');
+
+    const disabled1 = await page.$eval('#mceu_15', element => element.getAttribute('aria-disabled'));
+    expect(disabled1).toBe('true');
+
+    await page.keyboard.press('ArrowRight');
+    const disabled2 = await page.$eval('#mceu_15', element => element.getAttribute('aria-disabled'));
+    expect(disabled2).toBe('false');
 
   }, 200000);
 
