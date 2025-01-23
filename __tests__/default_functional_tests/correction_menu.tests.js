@@ -26,7 +26,7 @@ beforeAll(async () => {
     // for online testing (only ever commit these)
     headless: "new",
     slowMo: 60,
-    args: ['--disable-web-security']
+    args: ['--disable-web-security', '--no-sandbox']
   });
 });
 
