@@ -135,6 +135,7 @@ tinymce.addI18n('de',{
 	del_erased : "Radiert",
 	del_underline : "Unterstrichen",
 	del_underdot : "Unterpunktet",
+	del_overdot : "Überpunktet",
 	del_striketrough : "Durchgestrichen",
 	del_vertical_line : "Vertikaler Strich",
     del_deletion_hooks : "Löschzeichen",
