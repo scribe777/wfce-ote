@@ -139,6 +139,7 @@ tinymce.addI18n('en',{
 	del_erased : "Erased",
 	del_underline : "Underline",
 	del_underdot : "Underdot",
+	del_overdot : "Overdot",
 	del_striketrough : "Strikethrough",
 	del_vertical_line : "Vertical line",
     del_deletion_hooks : "Deletion hooks",

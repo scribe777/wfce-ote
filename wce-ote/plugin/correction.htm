@@ -154,7 +154,8 @@
                             <input type="hidden" id="deletion_erased" name="deletion_erased" value="" />
                             <input type="hidden" id="deletion_underline" name="deletion_underline" value="" />
                             <input type="hidden" id="deletion_underdot" name="deletion_underdot" value="" />
-                            <input type="hidden" id="deletion_strikethrough" name="deletion_strikethrough" value="" />
+                            <input type="hidden" id="deletion_overdot" name="deletion_overdot" value="" />
+							<input type="hidden" id="deletion_strikethrough" name="deletion_strikethrough" value="" />
                             <input type="hidden" id="deletion_vertical_line" name="deletion_vertical_line" value="" />
                             <input type="hidden" id="deletion_deletion_hooks" name="deletion_deletion_hooks" value="" />
                             <input type="hidden" id="deletion_transposition_marks" name="deletion_transposition_marks" value="" />
@@ -163,6 +164,7 @@
                                 <option value="erased">{#del_erased}</option>
                                 <option value="underline">{#del_underline}</option>
                                 <option value="underdot">{#del_underdot}</option>
+								<option value="overdot">{#del_overdot}</option>
                                 <option value="strikethrough">{#del_striketrough}</option>
                                 <option value="vertical_line">{#del_vertical_line}</option>
                                 <option value="deletion_hooks">{#del_deletion_hooks}</option>
@@ -313,7 +315,12 @@
 		}
 
 		function testOther() {
-			if ((document.readinginfo.corrector_name.options[5].selected == true && document.getElementById('corrector_name_other').value == '') || (document.readinginfo.place_corr.options[14].selected == true && document.getElementById('place_corr_other').value == ''))
+			if ((document.readinginfo.corrector_name.selectedIndex != -1 &&
+				 document.readinginfo.corrector_name.options[document.readinginfo.corrector_name.selectedIndex].value == 'other' && 
+			     document.getElementById('corrector_name_other').value == '') || 
+					(document.readinginfo.place_corr.selectedIndex != -1 &&
+					 document.readinginfo.place_corr.options[document.readinginfo.place_corr.selectedIndex].value == 'other' && 
+					 document.getElementById('place_corr_other').value == ''))
 				return false;
 			return true;
 		}
@@ -363,7 +370,8 @@
 		}
 
 		function checkstatus_corr_position() {
-			if (document.readinginfo.place_corr.options[14].selected == true) {
+			if (document.readinginfo.place_corr.selectedIndex != -1 &&
+					document.readinginfo.place_corr.options[document.readinginfo.place_corr.selectedIndex].value == 'other') {
 				document.readinginfo.place_corr_other.disabled = false;
 				document.getElementById('place_corr_other').style.backgroundColor = "white";
 			} else {
@@ -373,42 +381,49 @@
 		}
 
 		function checkstatus_deletion() {
-			if (document.readinginfo.deletion.options[0].selected == true) {
+			const options = document.getElementById('deletion').selectedOptions;
+			const values = Array.from(options).map(({ value }) => value);
+			if (values.indexOf('deletion_erased'.replace('deletion_', '')) !== -1) {
 				document.getElementById('deletion_erased').value = 1;
 			} else {
 				document.getElementById('deletion_erased').value = 0;
 			}
-			if (document.readinginfo.deletion.options[1].selected == true) {
+			if (values.indexOf('deletion_underline'.replace('deletion_', '')) !== -1) {
 				document.getElementById('deletion_underline').value = 1
 			} else {
 				document.getElementById('deletion_underline').value = 0;
 			}
-			if (document.readinginfo.deletion.options[2].selected == true) {
+			if (values.indexOf('deletion_underdot'.replace('deletion_', '')) !== -1) {
 				document.getElementById('deletion_underdot').value = 1
 			} else {
 				document.getElementById('deletion_underdot').value = 0;
 			}
-			if (document.readinginfo.deletion.options[3].selected == true) {
+			if (values.indexOf('deletion_overdot'.replace('deletion_', '')) !== -1) {
+				document.getElementById('deletion_overdot').value = 1
+			} else {
+				document.getElementById('deletion_overdot').value = 0;
+			}
+			if (values.indexOf('deletion_strikethrough'.replace('deletion_', '')) !== -1) {
 				document.getElementById('deletion_strikethrough').value = 1
 			} else {
 				document.getElementById('deletion_strikethrough').value = 0;
 			}
-			if (document.readinginfo.deletion.options[4].selected == true) {
+			if (values.indexOf('deletion_vertical_line'.replace('deletion_', '')) !== -1) {
 				document.getElementById('deletion_vertical_line').value = 1
 			} else {
 				document.getElementById('deletion_vertical_line').value = 0;
 			}
-			if (document.readinginfo.deletion.options[5].selected == true) {
+			if (values.indexOf('deletion_deletion_hooks'.replace('deletion_', '')) !== -1) {
 				document.getElementById('deletion_deletion_hooks').value = 1
 			} else {
 				document.getElementById('deletion_deletion_hooks').value = 0;
 			}
-			if (document.readinginfo.deletion.options[6].selected == true) {
+			if (values.indexOf('deletion_transposition_marks'.replace('deletion_', '')) !== -1) {
 				document.getElementById('deletion_transposition_marks').value = 1
 			} else {
 				document.getElementById('deletion_transposition_marks').value = 0;
 			}
-			if (document.readinginfo.deletion.options[7].selected == true) {
+			if (values.indexOf('deletion_other'.replace('deletion_', '')) !== -1) {
 				document.getElementById('deletion_other').value = 1
 			} else {
 				document.getElementById('deletion_other').value = 0;
@@ -416,45 +431,38 @@
 		}
 
 		function setstatus_deletion() {
+			let values = [];
+			const deletionSelect = document.getElementById('deletion');
 			if (document.getElementById('deletion_erased').value == 1) {
-				document.readinginfo.deletion.options[0].selected = true;
-			} else {
-				document.readinginfo.deletion.options[0].selected = false;
+				values.push('erased');
 			}
 			if (document.getElementById('deletion_underline').value == 1) {
-				document.readinginfo.deletion.options[1].selected = true;
-			} else {
-				document.readinginfo.deletion.options[1].selected = false;
+				values.push('underline');
 			}
 			if (document.getElementById('deletion_underdot').value == 1) {
-				document.readinginfo.deletion.options[2].selected = true;
-			} else {
-				document.readinginfo.deletion.options[2].selected = false;
+				values.push('underdot');
+			}
+			if (document.getElementById('deletion_overdot').value == 1) {
+				values.push('overdot');
 			}
 			if (document.getElementById('deletion_strikethrough').value == 1) {
-				document.readinginfo.deletion.options[3].selected = true;
-			} else {
-				document.readinginfo.deletion.options[3].selected = false;
+				values.push('strikethrough');
 			}
 			if (document.getElementById('deletion_vertical_line').value == 1) {
-				document.readinginfo.deletion.options[4].selected = true;
-			} else {
-				document.readinginfo.deletion.options[4].selected = false;
+				values.push('vertical_line');
 			}
 			if (document.getElementById('deletion_deletion_hooks').value == 1) {
-				document.readinginfo.deletion.options[5].selected = true;
-			} else {
-				document.readinginfo.deletion.options[5].selected = false;
+				values.push('deletion_hooks');
 			}
 			if (document.getElementById('deletion_transposition_marks').value == 1) {
-				document.readinginfo.deletion.options[6].selected = true;
-			} else {
-				document.readinginfo.deletion.options[6].selected = false;
+				values.push('transposition_marks');
 			}
 			if (document.getElementById('deletion_other').value == 1) {
-				document.readinginfo.deletion.options[7].selected = true;
-			} else {
-				document.readinginfo.deletion.options[7].selected = false;
+				values.push('other');
+			}
+			// now set the right ones to be selected
+			for (let i = 0; i < deletionSelect.options.length; i += 1) {
+				deletionSelect.options[i].selected = values.indexOf(deletionSelect.options[i].value) >= 0;
 			}
 		}
 
