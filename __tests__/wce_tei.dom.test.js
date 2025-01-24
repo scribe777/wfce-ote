@@ -360,7 +360,7 @@ const corrections = new Map([
       '<w>simple</w></rdg></app><w>correction</w>',
       'a <span class="corr" wce_orig="smple" wce="__t=corr&amp;__n=corrector&amp;corrector_name_other=&amp;' +
       'corrector_name=corrector&amp;reading=corr&amp;original_firsthand_reading=smple&amp;' +
-      'common_firsthand_partial=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;' +
+      'common_firsthand_partial=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;deletion_overdot=0&amp;' +
       'deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_deletion_hooks=0&amp;' +
       'deletion_transposition_marks=0&amp;deletion_other=0&amp;deletion=null&amp;firsthand_partial=&amp;' +
       'partial=&amp;corrector_text=simple%20&amp;place_corr="><span class="format_start mceNonEditable">‹</span>' +
@@ -374,7 +374,7 @@ const corrections = new Map([
       '<w>simple</w></seg></rdg></app><w>correction</w>',
       'a <span class="corr" wce_orig="smple" wce="__t=corr&amp;__n=corrector1&amp;corrector_name_other=&amp;' +
       'corrector_name=corrector1&amp;reading=corr&amp;original_firsthand_reading=smple&amp;' +
-      'common_firsthand_partial=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;' +
+      'common_firsthand_partial=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;deletion_overdot=0&amp;' +
       'deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_deletion_hooks=1&amp;' +
       'deletion_transposition_marks=0&amp;deletion_other=0&amp;deletion=deletion_hooks&amp;firsthand_partial=&amp;' +
       'partial=&amp;corrector_text=simple%20&amp;place_corr=pageleft">' +
@@ -388,7 +388,7 @@ const corrections = new Map([
       '<w>simple</w></seg></rdg></app><w>correction</w>',
       'a <span class="corr" wce_orig="smple" wce="__t=corr&amp;__n=corrector1&amp;corrector_name_other=&amp;' +
       'corrector_name=corrector1&amp;reading=corr&amp;original_firsthand_reading=smple&amp;' +
-      'common_firsthand_partial=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;' +
+      'common_firsthand_partial=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;deletion_overdot=0&amp;' +
       'deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_deletion_hooks=1&amp;' +
       'deletion_transposition_marks=0&amp;deletion_other=0&amp;deletion=deletion_hooks&amp;firsthand_partial=&amp;' +
       'partial=&amp;corrector_text=simple%20&amp;place_corr=above">' +
@@ -402,7 +402,7 @@ const corrections = new Map([
       '<seg type="other" subtype="inline" n="@PCL-undefined"><w>simple</w></seg></rdg></app><w>correction</w>',
       'a <span class="corr" wce_orig="smple" wce="__t=corr&amp;__n=corrector1&amp;corrector_name_other=&amp;' +
       'corrector_name=corrector1&amp;reading=corr&amp;original_firsthand_reading=smple&amp;' +
-      'common_firsthand_partial=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;' +
+      'common_firsthand_partial=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;deletion_overdot=0&amp;' +
       'deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_deletion_hooks=0&amp;' +
       'deletion_transposition_marks=1&amp;deletion_other=0&amp;deletion=transposition_marks&amp;' +
       'firsthand_partial=&amp;partial=&amp;corrector_text=simple%20&amp;place_corr=other&amp;' +
@@ -416,7 +416,7 @@ const corrections = new Map([
       'a <span class="corr" wce_orig="deletion" wce="__t=corr&amp;__n=corrector&amp;corrector_name_other=&amp;' +
       'corrector_name=corrector&amp;reading=corr&amp;original_firsthand_reading=deletion&amp;' +
       'common_firsthand_partial=&amp;deletion_erased=0&amp;deletion_underline=0&amp;' +
-      'deletion_underdot=0&amp;deletion_strikethrough=1&amp;deletion_vertical_line=0&amp;' +
+      'deletion_underdot=0&amp;deletion_overdot=0&amp;deletion_strikethrough=1&amp;deletion_vertical_line=0&amp;' +
       'deletion_deletion_hooks=0&amp;deletion_transposition_marks=0&amp;deletion_other=0&amp;' +
       'deletion=strikethrough&amp;firsthand_partial=&amp;partial=&amp;corrector_text=&amp;blank_correction=on&amp;' +
       'place_corr="><span class="format_start mceNonEditable">‹</span>deletion' +
@@ -428,7 +428,7 @@ const corrections = new Map([
       '<w>addition</w></rdg></app><w>correction</w>',
       'an <span class="corr_blank_firsthand" wce="__t=corr&amp;__n=corrector&amp;corrector_name_other=&amp;' +
       'corrector_name=corrector&amp;reading=corr&amp;original_firsthand_reading=&amp;blank_firsthand=on&amp;' +
-      'common_firsthand_partial=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;' +
+      'common_firsthand_partial=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;deletion_overdot=0&amp;' +
       'deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_deletion_hooks=0&amp;' +
       'deletion_transposition_marks=0&amp;deletion_other=0&amp;deletion=null&amp;firsthand_partial=&amp;' +
       'partial=&amp;corrector_text=addition%20&amp;place_corr="><span class="format_start mceNonEditable">‹</span>T' +
@@ -442,14 +442,14 @@ const corrections = new Map([
       '<rdg type="corr" hand="corrector"><w>correction</w></rdg></app>',
       '<span class="corr" wce_orig="consecutive" wce="__t=corr&amp;__n=corrector&amp;corrector_name_other=&amp;' +
       'corrector_name=corrector&amp;reading=corr&amp;original_firsthand_reading=consecutive&amp;' +
-      'common_firsthand_partial=&amp;deletion_erased=0&amp;deletion_underline=1&amp;deletion_underdot=0&amp;' +
+      'common_firsthand_partial=&amp;deletion_erased=0&amp;deletion_underline=1&amp;deletion_underdot=0&amp;deletion_overdot=0&amp;' +
       'deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_deletion_hooks=0&amp;' +
       'deletion_transposition_marks=0&amp;deletion_other=0&amp;deletion=underline&amp;firsthand_partial=&amp;' +
       'partial=&amp;corrector_text=&amp;blank_correction=on&amp;place_corr=">' +
       '<span class="format_start mceNonEditable">‹</span>consecutive<span class="format_end mceNonEditable">›</span>' +
       '</span> <span class="corr" wce_orig="corrections" wce="__t=corr&amp;__n=corrector&amp;corrector_name_other=&amp;' +
       'corrector_name=corrector&amp;reading=corr&amp;original_firsthand_reading=corrections&amp;' +
-      'common_firsthand_partial=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;' +
+      'common_firsthand_partial=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;deletion_overdot=0&amp;' +
       'deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_deletion_hooks=0&amp;' +
       'deletion_transposition_marks=0&amp;deletion_other=0&amp;deletion=null&amp;firsthand_partial=&amp;' +
       'partial=&amp;corrector_text=correction%20&amp;place_corr="><span class="format_start mceNonEditable">‹</span>' +
@@ -461,7 +461,7 @@ const corrections = new Map([
       '<rdg type="corr" hand="corrector"><w>simple</w></rdg></app><w>correction</w>',
       'a <span class="corr" wce_orig="smple" wce="__t=corr&amp;__n=corrector&amp;ut_videtur_firsthand=on&amp;' +
       'corrector_name_other=&amp;corrector_name=corrector&amp;reading=corr&amp;original_firsthand_reading=smple&amp;' +
-      'common_firsthand_partial=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;' +
+      'common_firsthand_partial=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;deletion_overdot=0&amp;' +
       'deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_deletion_hooks=0&amp;' +
       'deletion_transposition_marks=0&amp;deletion_other=0&amp;deletion=null&amp;firsthand_partial=&amp;' +
       'partial=&amp;corrector_text=simple%20&amp;place_corr="><span class="format_start mceNonEditable">‹</span>' +
@@ -473,7 +473,7 @@ const corrections = new Map([
       '<w>simple</w></rdg></app><w>correction</w>',
       'a <span class="corr" wce_orig="smple" wce="__t=corr&amp;__n=corrector&amp;corrector_name_other=&amp;' +
       'corrector_name=corrector&amp;ut_videtur_corr=on&amp;reading=corr&amp;original_firsthand_reading=smple&amp;' +
-      'common_firsthand_partial=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;' +
+      'common_firsthand_partial=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;deletion_overdot=0&amp;' +
       'deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_deletion_hooks=0&amp;' +
       'deletion_transposition_marks=0&amp;deletion_other=0&amp;deletion=null&amp;firsthand_partial=&amp;' +
       'partial=&amp;corrector_text=simple%20&amp;place_corr="><span class="format_start mceNonEditable">‹</span>' +
@@ -485,7 +485,7 @@ const corrections = new Map([
       '<rdg type="alt" hand="corrector" rend="other"><w>basic</w></rdg></app><w>correction</w>',
       'a <span class="corr" wce_orig="simple" wce="__t=corr&amp;__n=corrector&amp;corrector_name_other=&amp;' +
       'corrector_name=corrector&amp;reading=alt&amp;original_firsthand_reading=simple&amp;' +
-      'common_firsthand_partial=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;' +
+      'common_firsthand_partial=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;deletion_overdot=0&amp;' +
       'deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_deletion_hooks=0&amp;' +
       'deletion_transposition_marks=0&amp;deletion_other=1&amp;deletion=other&amp;firsthand_partial=&amp;' +
       'partial=&amp;corrector_text=basic%20&amp;place_corr="><span class="format_start mceNonEditable">‹</span>' +
@@ -1102,7 +1102,7 @@ const teiToHtmlAndBackWithChange = new Map([
         'a <span class="corr" wce_orig="deletion" wce="__t=corr&amp;__n=corrector&amp;corrector_name_other=&amp;' +
         'corrector_name=corrector&amp;reading=corr&amp;original_firsthand_reading=deletion&amp;' +
         'common_firsthand_partial=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=1&amp;' +
-        'deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_deletion_hooks=0&amp;' +
+        'deletion_overdot=0&amp;deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_deletion_hooks=0&amp;' +
         'deletion_transposition_marks=0&amp;deletion_other=0&amp;deletion=underdot&amp;firsthand_partial=&amp;' +
         'partial=&amp;corrector_text=&amp;blank_correction=on&amp;place_corr=">' +
         '<span class="format_start mceNonEditable">‹</span>deletion<span class="format_end mceNonEditable">›</span>' +
@@ -1116,7 +1116,7 @@ const teiToHtmlAndBackWithChange = new Map([
         '<w>addition</w></rdg></app><w>correction</w>',
         'an <span class="corr_blank_firsthand" wce="__t=corr&amp;__n=corrector&amp;corrector_name_other=&amp;' +
         'corrector_name=corrector&amp;reading=corr&amp;original_firsthand_reading=&amp;blank_firsthand=on&amp;' +
-        'common_firsthand_partial=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;' +
+        'common_firsthand_partial=&amp;deletion_erased=0&amp;deletion_underline=0&amp;deletion_underdot=0&amp;deletion_overdot=0&amp;' +
         'deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_deletion_hooks=0&amp;' +
         'deletion_transposition_marks=0&amp;deletion_other=0&amp;deletion=null&amp;firsthand_partial=&amp;' +
         'partial=&amp;corrector_text=addition%20&amp;place_corr="><span class="format_start mceNonEditable">‹</span>T' +
@@ -1319,7 +1319,7 @@ const exportSpaces = new Map([
      'test spaces <span class="corr" wce_orig="arround" wce="__t=corr&amp;__n=corrector' +
      '&amp;corrector_name_other=&amp;corrector_name=corrector&amp;reading=corr&amp;' +
      'original_firsthand_reading=arround&amp;common_firsthand_partial=&amp;deletion_erased=0&amp;' +
-     'deletion_underline=0&amp;deletion_underdot=0&amp;deletion_strikethrough=0&amp;deletion_vertical_line=0' +
+     'deletion_underline=0&amp;deletion_underdot=0&amp;deletion_overdot=0&amp;deletion_strikethrough=0&amp;deletion_vertical_line=0' +
      '&amp;deletion_deletion_hooks=0&amp;deletion_transposition_marks=0&amp;deletion_other=0&amp;deletion=null' +
      '&amp;firsthand_partial=&amp;partial=&amp;corrector_text=around%20&amp;place_corr=">' +
      '<span class="format_start mceNonEditable">‹</span>arround<span class="format_end mceNonEditable">›</span>' +
@@ -1335,7 +1335,7 @@ const exportSpaces = new Map([
      '<span class="format_end mceNonEditable">›</span></span> <span class="corr" wce_orig="arround" ' +
      'wce="__t=corr&amp;__n=corrector&amp;corrector_name_other=&amp;corrector_name=corrector&amp;reading=corr' +
      '&amp;original_firsthand_reading=arround&amp;common_firsthand_partial=&amp;deletion_erased=0&amp;' +
-     'deletion_underline=0&amp;deletion_underdot=0&amp;deletion_strikethrough=0&amp;deletion_vertical_line=0' +
+     'deletion_underline=0&amp;deletion_underdot=0&amp;deletion_overdot=0&amp;deletion_strikethrough=0&amp;deletion_vertical_line=0' +
      '&amp;deletion_deletion_hooks=0&amp;deletion_transposition_marks=0&amp;deletion_other=0&amp;deletion=null' +
      '&amp;firsthand_partial=&amp;partial=&amp;corrector_text=around%20&amp;place_corr=">' +
      '<span class="format_start mceNonEditable">‹</span>arround<span class="format_end mceNonEditable">›</span>' +
@@ -1360,7 +1360,7 @@ const exportSpaces = new Map([
      '</span></span> <span class="corr" wce_orig="before%20app" wce="__t=corr&amp;__n=corrector&amp;' +
      'corrector_name_other=&amp;corrector_name=corrector&amp;reading=corr&amp;original_firsthand_reading=' +
      'before%20app&amp;common_firsthand_partial=&amp;deletion_erased=0&amp;deletion_underline=0&amp;' +
-     'deletion_underdot=0&amp;deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_deletion_hooks=0' +
+     'deletion_underdot=0&amp;deletion_overdot=0&amp;deletion_strikethrough=0&amp;deletion_vertical_line=0&amp;deletion_deletion_hooks=0' +
      '&amp;deletion_transposition_marks=0&amp;deletion_other=0&amp;deletion=null&amp;firsthand_partial=&amp;partial=' +
      '&amp;corrector_text=&amp;blank_correction=on&amp;place_corr="><span class="format_start mceNonEditable">‹' +
      '</span>before app<span class="format_end mceNonEditable">›</span></span>',
