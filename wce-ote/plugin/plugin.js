@@ -757,7 +757,10 @@
 				out = out + _this(ed, 'lb', 'ignore', indention, null, baseID);
 				v.lcnt = 1;
 			} else if (bType == 'lb'&& lbpos != 'lbm') {
-				out += '&nbsp;';
+				// Cat Feb 2025: This used to be a &nbsp; which broke the word wrapping and always had to be deleted
+				// This is now a sero width space which seems to work to both keep the line active if there is no text
+				// and also doesn't break the word wrapping in the XML.
+				out += '&#8203;'
 			}
 			return out;
 		},
