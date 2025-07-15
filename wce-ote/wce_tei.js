@@ -328,6 +328,8 @@ function getHtmlByTei(inputString, clientOptions) {
 			i='_3_';
 		}else if(n=='cb'){
 			i='_2_';
+		}else if(n=='p'){
+			i='_4_';
 		}else if(n=='lb' && _id){
 			i='';
 		}else{
@@ -470,6 +472,10 @@ function getHtmlByTei(inputString, clientOptions) {
 				return Tei2Html_space($htmlParent, $teiNode);
 			// spaces
 
+			case 'caesura':
+				return Tei2Html_caesura($htmlParent, $teiNode);
+			// caesura
+
 			case 'gb':
 				return Tei2Html_break($htmlParent, $teiNode, 'gb');
 			// Quire break
@@ -485,6 +491,9 @@ function getHtmlByTei(inputString, clientOptions) {
 			case 'lb':
 				return Tei2Html_break($htmlParent, $teiNode, 'lb');
 			// line break
+
+			case 'p':
+				return Tei2Html_break($htmlParent, $teiNode, 'p');
 
 			case 'note':
 				return Tei2Html_note($htmlParent, $teiNode);
@@ -1164,6 +1173,32 @@ function getHtmlByTei(inputString, clientOptions) {
 	};
 
 	/*
+	 * <caesura>
+	 */
+	var Tei2Html_caesura = function($htmlParent, $teiNode) {
+
+		var $newNode = $newDoc.createElement('span');
+		$newNode.setAttribute('class', 'caesura');
+		// set span attribute wce
+		var wceAttr = '__t=caesura&__n=';
+		var mapping = {
+			'unit' : {
+				'0' : '@char@line',
+				'1' : '&sp_unit_other=&sp_unit=',
+				'2' : '&sp_unit=other&sp_unit_other='
+			},
+			'extent' : '&sp_extent='
+		};
+		wceAttr += getWceAttributeByTei($teiNode, mapping);
+		$newNode.setAttribute('wce', wceAttr);
+		nodeAddText($newNode, 'caes');
+		addFormatElement($newNode);
+		$htmlParent.appendChild($newNode);
+
+		return null;
+	};
+
+	/*
 	 * <lb>
 	 */
 	var Tei2Html_break = function($htmlParent, $teiNode, type) {
@@ -1293,6 +1328,22 @@ function getHtmlByTei(inputString, clientOptions) {
 					wceAttr += $teiNode.getAttribute('rend');
 				wceAttr += '&rv=&fibre_type=&facs=';
 				break;
+			case 'p':
+				wceAttr += '&number=';
+				if ($teiNode.getAttribute('n')) {
+					var ntemp = $teiNode.getAttribute('n');
+					var start = ntemp.lastIndexOf("P");
+					var end = ntemp.lastIndexOf("-");
+					if (end-start > 1)
+						number = parseInt($teiNode.getAttribute('n').substring(start+1,end));
+				}
+				wceAttr += number;
+				g_columnNumber = number;
+				wceAttr += '&lb_alignment=';
+				if ($teiNode.getAttribute('rend'))
+					wceAttr += $teiNode.getAttribute('rend');
+				wceAttr += '&rv=&fibre_type=&facs=';
+				break;
 			case 'lb':
 				wceAttr += '&number=';
 				if ($teiNode.getAttribute('n')) {
@@ -1352,6 +1403,12 @@ function getHtmlByTei(inputString, clientOptions) {
 				var $br = $newDoc.createElement('br');
 				$newNode.appendChild($br);
 				nodeAddText($newNode, 'CB' + ' ' + number);
+				break;
+			case 'p':
+				// paragraph break
+				var $br = $newDoc.createElement('br');
+				$newNode.appendChild($br);
+				nodeAddText($newNode, 'TB');
 				break;
 			case 'lb':
 				// line break
@@ -1587,7 +1644,9 @@ function getHtmlByTei(inputString, clientOptions) {
 		$htmlParent.appendChild($newNode);
 		// Do not add a space if there is a break after the note
 		if ($teiNode.nextSibling && $teiNode.nextSibling.nodeName !== 'lb' && $teiNode.nextSibling.nodeName !== 'cb'
-			&& $teiNode.nextSibling.nodeName !== 'pb' && $teiNode.nextSibling.nodeName !== 'gb')
+			&& $teiNode.nextSibling.nodeName !== 'pb'
+			&& $teiNode.nextSibling.nodeName !== 'p'
+			&& $teiNode.nextSibling.nodeName !== 'gb')
 			nodeAddText($htmlParent, ' ');
 		return null;
 	};
@@ -2051,7 +2110,7 @@ function getTeiByHtml(inputString, clientOptions) {
 					}
 				}
 				var _nodeName=ns.nodeName;
-				if ((_nodeName == 'pb' || _nodeName == 'cb' || _nodeName == 'lb') && (isNextBreak || ns.getAttribute('break') == 'no')){
+				if ((_nodeName == 'pb' || _nodeName == 'p' || _nodeName == 'cb' || _nodeName == 'lb') && (isNextBreak || ns.getAttribute('break') == 'no')){
 					 if (_nodeName=='lb') {
 					 	isNextBreak=false;
 					 }
@@ -2797,6 +2856,11 @@ function getTeiByHtml(inputString, clientOptions) {
 			return html2Tei_spaces(arr, $teiParent, $htmlNode);
 		}
 
+		// caesura
+		if (wceType == 'caesura') {
+			return html2Tei_caesura(arr, $teiParent, $htmlNode);
+		}
+
 		// note
 		if (wceType == 'note') {
 			return html2Tei_note(arr, $teiParent, $htmlNode);
@@ -3258,6 +3322,12 @@ function getTeiByHtml(inputString, clientOptions) {
 						$newNode.setAttribute('n', g_columnNumber);
 					xml_id = 'P' + g_pageNumber_id + 'C' + g_columnNumber + '-' + g_witValue;
 					break;
+				case 'p':
+					g_paragraphNumber = arr['number'];
+					if (!isSeg)
+						$newNode.setAttribute('n', g_paragraphNumber);
+					xml_id = 'P' + g_pageNumber_id + 'P' + g_paragraphNumber + '-' + g_witValue;
+					break;
 				case 'pb':
 					var breaPage = '';
 					// Set page number and decide which type (folio|page)
@@ -3306,6 +3376,10 @@ function getTeiByHtml(inputString, clientOptions) {
 						$teiParent = $teiParent.parentNode;
 					break;
 				case 'cb':
+					if ($teiParent.lastChild.nodeName != 'pb') // no pb above cb
+						$teiParent = $teiParent.parentNode;
+					break;
+				case 'p':
 					if ($teiParent.lastChild.nodeName != 'pb') // no pb above cb
 						$teiParent = $teiParent.parentNode;
 					break;
@@ -3415,6 +3489,32 @@ function getTeiByHtml(inputString, clientOptions) {
 	 */
 	var html2Tei_spaces = function(arr, $teiParent, $htmlNode) {
 		var $space = $newDoc.createElement('space');
+
+		var sp_unit_value = arr['sp_unit'];
+		if (sp_unit_value == 'other' && arr['sp_unit_other'] != '') {
+			sp_unit_value = arr['sp_unit_other'];
+		}
+		if (sp_unit_value != '') {
+			$space.setAttribute('unit', sp_unit_value);
+		}
+
+		sp_unit_value = arr['sp_extent'];
+		if (sp_unit_value) {
+			$space.setAttribute('extent', sp_unit_value);
+		}
+		$teiParent.appendChild($space);
+
+		return {
+			0 : $space,
+			1 : true
+		};
+	};
+
+	/*
+	 * type caesura, return <caesura>
+	 */
+	var html2Tei_caesura = function(arr, $teiParent, $htmlNode) {
+		var $space = $newDoc.createElement('caesura');
 
 		var sp_unit_value = arr['sp_unit'];
 		if (sp_unit_value == 'other' && arr['sp_unit_other'] != '') {
@@ -3944,7 +4044,7 @@ function hasWAncestor($node) {
 var removeBlankNode=function ($root){//remove blank node,
 		var _remove=function($node){
 			var nodeName=$node.nodeName;
-			var notNames=['lb','pb','gb','cb','gap'];
+			var notNames=['lb','pb','gb','cb','p','gap'];
 			if($node.nodeType!=3 && !$node.firstChild && $.inArray(nodeName,notNames)<0){
 				var parent=$node.parentNode;
 				if (parent) {

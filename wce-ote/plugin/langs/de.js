@@ -60,6 +60,8 @@ tinymce.addI18n('de',{
 	linebreak : "Zeilenumbruch",
 	columnbreak : "Kolumnenumbruch",
 	pagebreak : "Seitenumbruch",
+	paragraphbreak : "Paragraphbruch",
+	caesura : "Caesura",
 	quire : "Lage",
 	number : "Zahl",
 	none : "Keine Angabe",

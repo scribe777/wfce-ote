@@ -124,6 +124,11 @@
 				case 'lb':
 					c.lcnt = n >= c.lcnt ? n : c.lcnt;
 					break;
+
+				// no counters
+				case 'caesura':
+				case 'p':
+					break;
 			}
 		},
 
@@ -145,6 +150,11 @@
 					break;
 				case 'lb':
 					c.lcnt = parseInt(c.lcnt) + parseInt(n);
+					break;
+
+				// no counters
+				case 'caesura':
+				case 'p':
 					break;
 			}
 		},
@@ -631,6 +641,31 @@
 				if (getOnlyIndention){
 					return str;
 				}
+			} else if (bType == 'p') {
+				// paragraph break
+				groupCount = 2;
+				if (lbpos == 'lbm') {
+					wceAttr = attr ? attr : 'wce="__t=brea&amp;__n=&amp;hasBreak=yes&amp;break_type=cb&amp;number=' + v.ccnt + '&amp;rv=&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment="';
+					if (attr) {
+						pos = attr.indexOf("number=");
+						newstring = attr.substring(pos+7);
+						num = newstring.substring(0,newstring.indexOf("&"));
+						str = '&#8208;<br />CB';
+					}
+					else
+						str = '&#8208;<br />CB';
+				} else {
+					wceAttr = attr ? attr : 'wce="__t=brea&amp;__n=&amp;break_type=p&amp;number=0&amp;rv=&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment="';
+					if (attr) {
+						pos = attr.indexOf("number=");
+						newstring = attr.substring(pos+7);
+						num = newstring.substring(0,newstring.indexOf("&"));
+						str = '<br />TB';
+					}
+					else
+						str = '<br />TB';
+				}
+			} else if (bType == 'caesura') {
 			} else if (bType == 'cb') {
 				// column break
 				groupCount = 2;
@@ -2373,6 +2408,12 @@
 					wceAttr = ' wce="' + '__t' + '=' + wceType + '" wce_orig=""';
 					_setContent(ed, '<span' + wceAttr + wceClass + '>' + startFormatHtml + character + endFormatHtml + '</span> ');
 					break;
+
+				case 'caesura':
+					wceClass = ' class="caesura"';
+					wceAttr = ' wce="__t=caesura&__n=&original_spaces_text=&help=Help&sp_unit=char&sp_unit_other=&sp_extent=1"';
+					_setContent(ed, '<span' + wceAttr + wceClass + '>' + startFormatHtml + 'caes' + endFormatHtml + '</span> ');
+					break;
 				case 'abbr':
 					wceClass = ' class="abbr"';
 					wceOrig = ' wce_orig="' + encodeURIComponent(character);
@@ -2579,6 +2620,10 @@
 				}
 			}
 
+			if (ek == 32 && (e.shiftKey || e.ctrlKey)) {
+				doWithoutDialog(ed, 'caesura');
+				return stopEvent(ed, e);
+			}
 			if (ek == 13 || ek == 10) {
 				if (e.shiftKey) {
 					// Shift+Enter -> break dialogue
@@ -3563,11 +3608,6 @@
 							ed.execCommand('mceAdd_pc', ',');
 						}
 					},
-					{ text : '. (full stop)',
-						onclick : function() {
-							ed.execCommand('mceAdd_pc', '.');
-						}
-					},
 					// \u00B7
 					{ text : '\u0387 (Greek Ano Teleia)',
 						onclick : function() {
@@ -3590,6 +3630,11 @@
 							ed.execCommand('mceAdd_pc', '\u0387');
 						}
 					},
+					{ text : '. (low dot)',
+						onclick : function() {
+							ed.execCommand('mceAdd_pc', '.');
+						}
+					},
 					{ text : '\u02BC (modifier letter apostrophe)',
 						onclick : function() {
 							ed.execCommand('mceAdd_pc', '\u02BC');
@@ -3608,6 +3653,21 @@
 					{ text : '\u203B	(cross with dots)',
 						onclick : function() {
 							ed.execCommand('mceAdd_pc', '\u203B');
+						}
+					},
+					{ text : '\u2234	(triangle dots)',
+						onclick : function() {
+							ed.execCommand('mceAdd_pc', '\u2234');
+						}
+					},
+					{ text : '\u205D	(vertical dots)',
+						onclick : function() {
+							ed.execCommand('mceAdd_pc', '\u205D');
+						}
+					},
+					{ text : ':—	(colon dash)',
+						onclick : function() {
+							ed.execCommand('mceAdd_pc', ':—');
 						}
 					},
 					{ text : '\u003E (diple)',

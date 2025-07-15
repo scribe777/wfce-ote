@@ -238,7 +238,12 @@ function writeWceNodeInfo(val) {
 				break;
 
 			case 'brea':
-				if (break_type) {
+				if (break_type == 'caesura') {
+					wceClass = ' class="caesura"';
+					newWceAttr = '__t=caesura&__n=&original_spaces_text=&help=Help&sp_unit=char&sp_unit_other=&sp_extent=1';
+					new_content = '<span wce="' +newWceAttr + '"' + wceClass + '>' + startFormatHtml + 'caes' + endFormatHtml + '</span>';
+				}
+				else if (break_type) {
 					new_content = wceUtils.getBreakHtml(ed, break_type, break_lbpos, break_indention, 'wce="' + newWceAttr + '"', null);
 				} else {
 					new_content = 'Error:test'; //TODO: Add error message
@@ -284,6 +289,13 @@ function writeWceNodeInfo(val) {
 				break;
 			case 'spaces':
 				new_content = '<span wce="' + newWceAttr + '"' + wceClass + '>' + startFormatHtml + 'sp' + endFormatHtml + '</span>';
+				break;
+			case 'caesura':
+				// default
+				//selected_content = '&nbsp;';
+				wceClass = ' class="caesura"';
+				newWceAttr = '__t=caesura&__n=&original_spaces_text=&help=Help&sp_unit=char&sp_unit_other=&sp_extent=1';
+				new_content = '<span wce="' + newWceAttr + '"' + wceClass + '>' + startFormatHtml + 'caes' + endFormatHtml + '</span>';
 				break;
 
 			case 'pc_other':

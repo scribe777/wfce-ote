@@ -62,6 +62,8 @@
                             <option value="cb">{#columnbreak}</option>
                             <option value="pb">{#pagebreak}</option>
                             <option value="gb">{#quire}</option>
+                            <option value="p">{#paragraphbreak}</option>
+                            <option value="caesura">{#caesura}</option>
                         </select></td>
                     </tr>
                     <tr>
@@ -155,6 +157,7 @@
 			qsParm['quire'] = parseInt(v.qcnt) + 1;
 			qsParm['page'] = parseInt(v.pcnt) + 1
 			qsParm['column'] = parseInt(v.ccnt) + 1;
+			qsParm['paragraph'] = 1;
 			qsParm['rectoverso'] = v.rectoverso;
 
 			comboBindReturnEvent('insert');
@@ -174,6 +177,9 @@
 						break;
 					case 'cb':
 						qsParm['column'] = document.breakinfo.number.value;
+						break;
+					case 'p':
+						qsParm['paragraph'] = document.breakinfo.number.value;
 						break;
 					case 'lb':
 						qsParm['line'] = document.breakinfo.number.value;
@@ -219,6 +225,9 @@
 			}
 			if (document.breakinfo.break_type.options[1].selected == true) {//CB
 				document.breakinfo.number.value = qsParm['column'];
+			}
+			if (document.breakinfo.break_type.options[4].selected == true) {//P
+				document.breakinfo.number.value = qsParm['paragraph'];
 			}
 			if (document.breakinfo.break_type.options[2].selected == true) {//PB
 				document.breakinfo.rv.disabled = false;
