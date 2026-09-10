@@ -1304,8 +1304,11 @@ function getHtmlByTei(inputString, clientOptions) {
 				wceAttr += '&rv=&fibre_type=&facs=';
 				break;
 			case 'p':
+				// paragraph break: no number, no alignment
+				wceAttr += '&number=&lb_alignment=&rv=&fibre_type=&facs=';
+				break;
 			case 'caesura':
-				// paragraph break and caesura: no number, no alignment
+				// caesura: no number, no alignment
 				wceAttr += '&number=&lb_alignment=&rv=&fibre_type=&facs=';
 				break;
 			case 'lb':
@@ -3344,8 +3347,10 @@ function getTeiByHtml(inputString, clientOptions) {
 						$teiParent = $teiParent.parentNode;
 					break;
 				case 'milestone':
+					$teiParent = $teiParent.parentNode; // a paragraph starts after a complete word
+					break;
 				case 'caesura':
-					$teiParent = $teiParent.parentNode; // both follow a complete word
+					$teiParent = $teiParent.parentNode; // a caesura falls after a complete word
 					break;
 				case 'pb':
 					if ($teiParent.lastChild.nodeName != 'gb') // no gb above pb

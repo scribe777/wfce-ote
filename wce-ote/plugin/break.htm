@@ -251,7 +251,11 @@
 			if (breakType == 'gb') {//QB
 				document.breakinfo.number.value = qsParm['quire'];
 			}
-			if (breakType == 'p' || breakType == 'caesura') {//TB or caesura: no number
+			if (breakType == 'p') {//TB: no number
+				document.breakinfo.number.value = '';
+				document.breakinfo.number.disabled = true;
+				document.getElementById('number').style.backgroundColor = "#CCCCCC";
+			} else if (breakType == 'caesura') {//caesura: no number
 				document.breakinfo.number.value = '';
 				document.breakinfo.number.disabled = true;
 				document.getElementById('number').style.backgroundColor = "#CCCCCC";

@@ -125,9 +125,11 @@
 					c.lcnt = n >= c.lcnt ? n : c.lcnt;
 					break;
 
-				// no counters
-				case 'caesura':
 				case 'p':
+					// paragraph break: no counter
+					break;
+				case 'caesura':
+					// caesura: no counter
 					break;
 			}
 		},
@@ -152,9 +154,11 @@
 					c.lcnt = parseInt(c.lcnt) + parseInt(n);
 					break;
 
-				// no counters
-				case 'caesura':
 				case 'p':
+					// paragraph break: no counter
+					break;
+				case 'caesura':
+					// caesura: no counter
 					break;
 			}
 		},
@@ -749,8 +753,12 @@
 
 			//a group hat same baseID, but each element hat different id,
 			var wceID, baseID;
-			if ((bType == 'lb' || bType == 'p' || bType == 'caesura') && !_id) {
+			if (bType == 'lb' && !_id) {
 				wceID = '';
+			} else if (bType == 'p' && !_id) {
+				wceID = ''; // a paragraph break is never part of a group
+			} else if (bType == 'caesura' && !_id) {
+				wceID = ''; // a caesura is never part of a group
 			} else {
 				baseID = _id ? _id : WCEUtils.getRandomID(ed, '');
 				if (groupCount && !_id) {
@@ -776,10 +784,16 @@
 			} else if (bType == 'cb') {
 				out = out + _this(ed, 'lb', 'ignore', indention, null, baseID);
 				v.lcnt = 1;
-			} else if ((bType == 'lb' || bType == 'p' || bType == 'caesura') && lbpos != 'lbm') {
+			} else if (bType == 'lb' && lbpos != 'lbm') {
 				// Cat Feb 2025: This used to be a &nbsp; which broke the word wrapping and always had to be deleted
 				// This is now a sero width space which seems to work to both keep the line active if there is no text
 				// and also doesn't break the word wrapping in the XML.
+				out += '&#8203;'
+			} else if (bType == 'p') {
+				// keep the caret outside the paragraph break span, as for a line break
+				out += '&#8203;'
+			} else if (bType == 'caesura') {
+				// keep the caret outside the caesura span, as for a line break
 				out += '&#8203;'
 			}
 			return out;
