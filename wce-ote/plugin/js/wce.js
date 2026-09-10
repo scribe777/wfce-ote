@@ -240,7 +240,7 @@ function writeWceNodeInfo(val) {
 			case 'brea':
 				if (break_type == 'caesura') {
 					wceClass = ' class="caesura"';
-					newWceAttr = '__t=caesura&__n=&original_spaces_text=&help=Help&sp_unit=char&sp_unit_other=&sp_extent=1';
+					newWceAttr = '__t=caesura&__n=';
 					new_content = '<span wce="' +newWceAttr + '"' + wceClass + '>' + startFormatHtml + 'caes' + endFormatHtml + '</span>';
 				}
 				else if (break_type) {
@@ -291,10 +291,8 @@ function writeWceNodeInfo(val) {
 				new_content = '<span wce="' + newWceAttr + '"' + wceClass + '>' + startFormatHtml + 'sp' + endFormatHtml + '</span>';
 				break;
 			case 'caesura':
-				// default
-				//selected_content = '&nbsp;';
 				wceClass = ' class="caesura"';
-				newWceAttr = '__t=caesura&__n=&original_spaces_text=&help=Help&sp_unit=char&sp_unit_other=&sp_extent=1';
+				newWceAttr = '__t=caesura&__n=';
 				new_content = '<span wce="' + newWceAttr + '"' + wceClass + '>' + startFormatHtml + 'caes' + endFormatHtml + '</span>';
 				break;
 

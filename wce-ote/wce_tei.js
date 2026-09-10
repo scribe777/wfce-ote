@@ -328,8 +328,6 @@ function getHtmlByTei(inputString, clientOptions) {
 			i='_3_';
 		}else if(n=='cb'){
 			i='_2_';
-		}else if(n=='p'){
-			i='_4_';
 		}else if(n=='lb' && _id){
 			i='';
 		}else{
@@ -492,8 +490,11 @@ function getHtmlByTei(inputString, clientOptions) {
 				return Tei2Html_break($htmlParent, $teiNode, 'lb');
 			// line break
 
-			case 'p':
-				return Tei2Html_break($htmlParent, $teiNode, 'p');
+			case 'milestone':
+				if ($teiNode.getAttribute('unit') == 'paragraph')
+					return Tei2Html_break($htmlParent, $teiNode, 'p');
+				return $htmlParent;
+			// paragraph break
 
 			case 'note':
 				return Tei2Html_note($htmlParent, $teiNode);
@@ -1180,17 +1181,7 @@ function getHtmlByTei(inputString, clientOptions) {
 		var $newNode = $newDoc.createElement('span');
 		$newNode.setAttribute('class', 'caesura');
 		// set span attribute wce
-		var wceAttr = '__t=caesura&__n=';
-		var mapping = {
-			'unit' : {
-				'0' : '@char@line',
-				'1' : '&sp_unit_other=&sp_unit=',
-				'2' : '&sp_unit=other&sp_unit_other='
-			},
-			'extent' : '&sp_extent='
-		};
-		wceAttr += getWceAttributeByTei($teiNode, mapping);
-		$newNode.setAttribute('wce', wceAttr);
+		$newNode.setAttribute('wce', '__t=caesura&__n=');
 		nodeAddText($newNode, 'caes');
 		addFormatElement($newNode);
 		$htmlParent.appendChild($newNode);
@@ -1329,20 +1320,8 @@ function getHtmlByTei(inputString, clientOptions) {
 				wceAttr += '&rv=&fibre_type=&facs=';
 				break;
 			case 'p':
-				wceAttr += '&number=';
-				if ($teiNode.getAttribute('n')) {
-					var ntemp = $teiNode.getAttribute('n');
-					var start = ntemp.lastIndexOf("P");
-					var end = ntemp.lastIndexOf("-");
-					if (end-start > 1)
-						number = parseInt($teiNode.getAttribute('n').substring(start+1,end));
-				}
-				wceAttr += number;
-				g_columnNumber = number;
-				wceAttr += '&lb_alignment=';
-				if ($teiNode.getAttribute('rend'))
-					wceAttr += $teiNode.getAttribute('rend');
-				wceAttr += '&rv=&fibre_type=&facs=';
+				// paragraph break: no number, no alignment
+				wceAttr += '&number=&lb_alignment=&rv=&fibre_type=&facs=';
 				break;
 			case 'lb':
 				wceAttr += '&number=';
@@ -1645,7 +1624,7 @@ function getHtmlByTei(inputString, clientOptions) {
 		// Do not add a space if there is a break after the note
 		if ($teiNode.nextSibling && $teiNode.nextSibling.nodeName !== 'lb' && $teiNode.nextSibling.nodeName !== 'cb'
 			&& $teiNode.nextSibling.nodeName !== 'pb'
-			&& $teiNode.nextSibling.nodeName !== 'p'
+			&& $teiNode.nextSibling.nodeName !== 'milestone'
 			&& $teiNode.nextSibling.nodeName !== 'gb')
 			nodeAddText($htmlParent, ' ');
 		return null;
@@ -2110,7 +2089,7 @@ function getTeiByHtml(inputString, clientOptions) {
 					}
 				}
 				var _nodeName=ns.nodeName;
-				if ((_nodeName == 'pb' || _nodeName == 'p' || _nodeName == 'cb' || _nodeName == 'lb') && (isNextBreak || ns.getAttribute('break') == 'no')){
+				if ((_nodeName == 'pb' || _nodeName == 'milestone' || _nodeName == 'cb' || _nodeName == 'lb') && (isNextBreak || ns.getAttribute('break') == 'no')){
 					 if (_nodeName=='lb') {
 					 	isNextBreak=false;
 					 }
@@ -3303,6 +3282,10 @@ function getTeiByHtml(inputString, clientOptions) {
 			// special role of quire breaks
 			$newNode = $newDoc.createElement('gb');
 			$newNode.setAttribute('n', arr['number']);
+		} else if (break_type == 'p') {
+			// paragraph break: TEI allows no <p> inside <ab>, so it is a milestone; no number, no xml:id
+			$newNode = $newDoc.createElement('milestone');
+			$newNode.setAttribute('unit', 'paragraph');
 		} else if (break_type) {
 			
 			$newNode = $newDoc.createElement(break_type);
@@ -3321,12 +3304,6 @@ function getTeiByHtml(inputString, clientOptions) {
 					if (!isSeg)
 						$newNode.setAttribute('n', g_columnNumber);
 					xml_id = 'P' + g_pageNumber_id + 'C' + g_columnNumber + '-' + g_witValue;
-					break;
-				case 'p':
-					g_paragraphNumber = arr['number'];
-					if (!isSeg)
-						$newNode.setAttribute('n', g_paragraphNumber);
-					xml_id = 'P' + g_pageNumber_id + 'P' + g_paragraphNumber + '-' + g_witValue;
 					break;
 				case 'pb':
 					var breaPage = '';
@@ -3379,9 +3356,8 @@ function getTeiByHtml(inputString, clientOptions) {
 					if ($teiParent.lastChild.nodeName != 'pb') // no pb above cb
 						$teiParent = $teiParent.parentNode;
 					break;
-				case 'p':
-					if ($teiParent.lastChild.nodeName != 'pb') // no pb above cb
-						$teiParent = $teiParent.parentNode;
+				case 'milestone':
+					$teiParent = $teiParent.parentNode; // a paragraph starts after a complete word
 					break;
 				case 'pb':
 					if ($teiParent.lastChild.nodeName != 'gb') // no gb above pb
@@ -3514,24 +3490,12 @@ function getTeiByHtml(inputString, clientOptions) {
 	 * type caesura, return <caesura>
 	 */
 	var html2Tei_caesura = function(arr, $teiParent, $htmlNode) {
-		var $space = $newDoc.createElement('caesura');
-
-		var sp_unit_value = arr['sp_unit'];
-		if (sp_unit_value == 'other' && arr['sp_unit_other'] != '') {
-			sp_unit_value = arr['sp_unit_other'];
-		}
-		if (sp_unit_value != '') {
-			$space.setAttribute('unit', sp_unit_value);
-		}
-
-		sp_unit_value = arr['sp_extent'];
-		if (sp_unit_value) {
-			$space.setAttribute('extent', sp_unit_value);
-		}
-		$teiParent.appendChild($space);
+		// <caesura/> takes no attributes (TEI verse module)
+		var $caesura = $newDoc.createElement('caesura');
+		$teiParent.appendChild($caesura);
 
 		return {
-			0 : $space,
+			0 : $caesura,
 			1 : true
 		};
 	};
@@ -4044,7 +4008,7 @@ function hasWAncestor($node) {
 var removeBlankNode=function ($root){//remove blank node,
 		var _remove=function($node){
 			var nodeName=$node.nodeName;
-			var notNames=['lb','pb','gb','cb','p','gap'];
+			var notNames=['lb','pb','gb','cb','milestone','caesura','gap'];
 			if($node.nodeType!=3 && !$node.firstChild && $.inArray(nodeName,notNames)<0){
 				var parent=$node.parentNode;
 				if (parent) {

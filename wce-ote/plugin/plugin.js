@@ -642,30 +642,10 @@
 					return str;
 				}
 			} else if (bType == 'p') {
-				// paragraph break
-				groupCount = 2;
-				if (lbpos == 'lbm') {
-					wceAttr = attr ? attr : 'wce="__t=brea&amp;__n=&amp;hasBreak=yes&amp;break_type=cb&amp;number=' + v.ccnt + '&amp;rv=&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment="';
-					if (attr) {
-						pos = attr.indexOf("number=");
-						newstring = attr.substring(pos+7);
-						num = newstring.substring(0,newstring.indexOf("&"));
-						str = '&#8208;<br />CB';
-					}
-					else
-						str = '&#8208;<br />CB';
-				} else {
-					wceAttr = attr ? attr : 'wce="__t=brea&amp;__n=&amp;break_type=p&amp;number=0&amp;rv=&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment="';
-					if (attr) {
-						pos = attr.indexOf("number=");
-						newstring = attr.substring(pos+7);
-						num = newstring.substring(0,newstring.indexOf("&"));
-						str = '<br />TB';
-					}
-					else
-						str = '<br />TB';
-				}
-			} else if (bType == 'caesura') {
+				// paragraph break (TB): exported as <milestone unit="paragraph"/>. It carries no number,
+				// forms no group with other breaks, and always follows a complete word (never hyphenated).
+				wceAttr = attr ? attr : 'wce="__t=brea&amp;__n=&amp;hasBreak=no&amp;break_type=p&amp;number=&amp;rv=&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment="';
+				str = '<br />TB';
 			} else if (bType == 'cb') {
 				// column break
 				groupCount = 2;
@@ -764,7 +744,7 @@
 
 			//a group hat same baseID, but each element hat different id,
 			var wceID, baseID;
-			if (bType == 'lb' && !_id) {
+			if ((bType == 'lb' || bType == 'p') && !_id) {
 				wceID = '';
 			} else {
 				baseID = _id ? _id : WCEUtils.getRandomID(ed, '');
@@ -791,7 +771,7 @@
 			} else if (bType == 'cb') {
 				out = out + _this(ed, 'lb', 'ignore', indention, null, baseID);
 				v.lcnt = 1;
-			} else if (bType == 'lb'&& lbpos != 'lbm') {
+			} else if ((bType == 'lb' || bType == 'p') && lbpos != 'lbm') {
 				// Cat Feb 2025: This used to be a &nbsp; which broke the word wrapping and always had to be deleted
 				// This is now a sero width space which seems to work to both keep the line active if there is no text
 				// and also doesn't break the word wrapping in the XML.
@@ -2411,7 +2391,7 @@
 
 				case 'caesura':
 					wceClass = ' class="caesura"';
-					wceAttr = ' wce="__t=caesura&__n=&original_spaces_text=&help=Help&sp_unit=char&sp_unit_other=&sp_extent=1"';
+					wceAttr = ' wce="__t=caesura&__n="';
 					_setContent(ed, '<span' + wceAttr + wceClass + '>' + startFormatHtml + 'caes' + endFormatHtml + '</span> ');
 					break;
 				case 'abbr':
@@ -2620,10 +2600,6 @@
 				}
 			}
 
-			if (ek == 32 && (e.shiftKey || e.ctrlKey)) {
-				doWithoutDialog(ed, 'caesura');
-				return stopEvent(ed, e);
-			}
 			if (ek == 13 || ek == 10) {
 				if (e.shiftKey) {
 					// Shift+Enter -> break dialogue

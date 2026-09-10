@@ -157,7 +157,6 @@
 			qsParm['quire'] = parseInt(v.qcnt) + 1;
 			qsParm['page'] = parseInt(v.pcnt) + 1
 			qsParm['column'] = parseInt(v.ccnt) + 1;
-			qsParm['paragraph'] = 1;
 			qsParm['rectoverso'] = v.rectoverso;
 
 			comboBindReturnEvent('insert');
@@ -177,9 +176,6 @@
 						break;
 					case 'cb':
 						qsParm['column'] = document.breakinfo.number.value;
-						break;
-					case 'p':
-						qsParm['paragraph'] = document.breakinfo.number.value;
 						break;
 					case 'lb':
 						qsParm['line'] = document.breakinfo.number.value;
@@ -215,45 +211,42 @@
 			}
 		}
 
+		function setFieldEnabled(name, enabled) {
+			document.breakinfo[name].disabled = !enabled;
+			document.getElementById(name).style.backgroundColor = enabled ? "white" : "#CCCCCC";
+		}
+
 		function checkstatus_break() {
-			if (document.breakinfo.break_type.options[0].selected == true) {//LB
-				document.breakinfo.lb_alignment.disabled = false;
-				document.getElementById('lb_alignment').style.backgroundColor = "white";
-			} else {
-				document.breakinfo.lb_alignment.disabled = true;
-				document.getElementById('lb_alignment').style.backgroundColor = "#CCCCCC";
-			}
-			if (document.breakinfo.break_type.options[1].selected == true) {//CB
-				document.breakinfo.number.value = qsParm['column'];
-			}
-			if (document.breakinfo.break_type.options[4].selected == true) {//P
-				document.breakinfo.number.value = qsParm['paragraph'];
-			}
-			if (document.breakinfo.break_type.options[2].selected == true) {//PB
-				document.breakinfo.rv.disabled = false;
-				document.getElementById('rv').style.backgroundColor = "white";
-				document.breakinfo.fibre_type.disabled = false;
-				document.getElementById('fibre_type').style.backgroundColor = "white";
-				document.breakinfo.facs.disabled = false;
-				document.getElementById('facs').style.backgroundColor = "white";
-				if (qsParm['mode'] == 'new' && qsParm['rectoverso'] == 'true') {//only for new entries; old ones keep their counting
-					document.breakinfo.number.value = Math.ceil(qsParm['page'] / 2);
-					if (qsParm['page'] % 2 == 0)// verso page
-						document.breakinfo.rv.options[2].selected = true;
-					else// recto page
-						document.breakinfo.rv.options[1].selected = true;
-				} else
-					document.breakinfo.number.value = qsParm['page'];
-			} else {
-				document.breakinfo.rv.disabled = true;
-				document.getElementById('rv').style.backgroundColor = "#CCCCCC";
-				document.breakinfo.fibre_type.disabled = true;
-				document.getElementById('fibre_type').style.backgroundColor = "#CCCCCC";
-				document.breakinfo.facs.disabled = true;
-				document.getElementById('facs').style.backgroundColor = "#CCCCCC";
-			}
-			if (document.breakinfo.break_type.options[3].selected == true) {//QB
-				document.breakinfo.number.value = qsParm['quire'];
+			// decide by the selected value, never by the option's position in the menu
+			var breakType = document.breakinfo.break_type.value;
+			var isPageBreak = (breakType == 'pb');
+			// paragraph breaks and caesurae take no number and no page data
+			var hasNumber = (breakType != 'p' && breakType != 'caesura');
+
+			setFieldEnabled('lb_alignment', breakType == 'lb');
+			setFieldEnabled('number', hasNumber);
+			setFieldEnabled('rv', isPageBreak);
+			setFieldEnabled('fibre_type', isPageBreak);
+			setFieldEnabled('facs', isPageBreak);
+
+			switch (breakType) {
+				case 'cb':
+					document.breakinfo.number.value = qsParm['column'];
+					break;
+				case 'pb':
+					if (qsParm['mode'] == 'new' && qsParm['rectoverso'] == 'true') {//only for new entries; old ones keep their counting
+						document.breakinfo.number.value = Math.ceil(qsParm['page'] / 2);
+						document.breakinfo.rv.value = (qsParm['page'] % 2 == 0) ? 'v' : 'r';
+					} else
+						document.breakinfo.number.value = qsParm['page'];
+					break;
+				case 'gb':
+					document.breakinfo.number.value = qsParm['quire'];
+					break;
+				case 'p':
+				case 'caesura':
+					document.breakinfo.number.value = '';
+					break;
 			}
 
 
