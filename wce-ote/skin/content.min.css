@@ -360,7 +360,7 @@ span.format_start, span.format_end {
 
 
  
-span.pc, span.abbr, span.abbr_add_overline, span.part_abbr, span.supplied, span.spaces, span.caesura {
+span.pc, span.abbr, span.abbr_add_overline, span.part_abbr, span.supplied, span.spaces{
 	
 	border: 1px dotted #f00;
 	  
@@ -521,7 +521,7 @@ span.commentary, span.lectionary-other, span.ews {
 }
 
 
-span.spaces, span.caesura {
+span.spaces {
 	
 	border: 1px  dotted #f00;
 	 

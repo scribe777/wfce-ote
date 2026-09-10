@@ -646,6 +646,11 @@
 				// forms no group with other breaks, and always follows a complete word (never hyphenated).
 				wceAttr = attr ? attr : 'wce="__t=brea&amp;__n=&amp;hasBreak=no&amp;break_type=p&amp;number=&amp;rv=&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment="';
 				str = '<br />TB';
+			} else if (bType == 'caesura') {
+				// caesura: exported as a bare <caesura/>. Like the paragraph break it carries nothing and forms
+				// no group; unlike it, it does not end the line, so no <br />.
+				wceAttr = attr ? attr : 'wce="__t=brea&amp;__n=&amp;hasBreak=no&amp;break_type=caesura&amp;number=&amp;rv=&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment="';
+				str = 'caes';
 			} else if (bType == 'cb') {
 				// column break
 				groupCount = 2;
@@ -744,7 +749,7 @@
 
 			//a group hat same baseID, but each element hat different id,
 			var wceID, baseID;
-			if ((bType == 'lb' || bType == 'p') && !_id) {
+			if ((bType == 'lb' || bType == 'p' || bType == 'caesura') && !_id) {
 				wceID = '';
 			} else {
 				baseID = _id ? _id : WCEUtils.getRandomID(ed, '');
@@ -771,7 +776,7 @@
 			} else if (bType == 'cb') {
 				out = out + _this(ed, 'lb', 'ignore', indention, null, baseID);
 				v.lcnt = 1;
-			} else if ((bType == 'lb' || bType == 'p') && lbpos != 'lbm') {
+			} else if ((bType == 'lb' || bType == 'p' || bType == 'caesura') && lbpos != 'lbm') {
 				// Cat Feb 2025: This used to be a &nbsp; which broke the word wrapping and always had to be deleted
 				// This is now a sero width space which seems to work to both keep the line active if there is no text
 				// and also doesn't break the word wrapping in the XML.
@@ -2389,11 +2394,6 @@
 					_setContent(ed, '<span' + wceAttr + wceClass + '>' + startFormatHtml + character + endFormatHtml + '</span> ');
 					break;
 
-				case 'caesura':
-					wceClass = ' class="caesura"';
-					wceAttr = ' wce="__t=caesura&__n="';
-					_setContent(ed, '<span' + wceAttr + wceClass + '>' + startFormatHtml + 'caes' + endFormatHtml + '</span> ');
-					break;
 				case 'abbr':
 					wceClass = ' class="abbr"';
 					wceOrig = ' wce_orig="' + encodeURIComponent(character);
