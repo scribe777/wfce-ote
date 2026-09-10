@@ -124,6 +124,13 @@
 				case 'lb':
 					c.lcnt = n >= c.lcnt ? n : c.lcnt;
 					break;
+
+				case 'p':
+					// paragraph break: no counter
+					break;
+				case 'caesura':
+					// caesura: no counter
+					break;
 			}
 		},
 
@@ -145,6 +152,13 @@
 					break;
 				case 'lb':
 					c.lcnt = parseInt(c.lcnt) + parseInt(n);
+					break;
+
+				case 'p':
+					// paragraph break: no counter
+					break;
+				case 'caesura':
+					// caesura: no counter
 					break;
 			}
 		},
@@ -631,6 +645,16 @@
 				if (getOnlyIndention){
 					return str;
 				}
+			} else if (bType == 'p') {
+				// paragraph break (TB): exported as <milestone unit="paragraph"/>. It carries no number,
+				// forms no group with other breaks, and always follows a complete word (never hyphenated).
+				wceAttr = attr ? attr : 'wce="__t=brea&amp;__n=&amp;hasBreak=no&amp;break_type=p&amp;number=&amp;rv=&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment="';
+				str = '<br />TB';
+			} else if (bType == 'caesura') {
+				// caesura: exported as a bare <caesura/>. Like the paragraph break it carries nothing and forms
+				// no group; unlike it, it does not end the line, so no <br />.
+				wceAttr = attr ? attr : 'wce="__t=brea&amp;__n=&amp;hasBreak=no&amp;break_type=caesura&amp;number=&amp;rv=&amp;fibre_type=&amp;page_number=&amp;running_title=&amp;facs=&amp;lb_alignment="';
+				str = 'caes';
 			} else if (bType == 'cb') {
 				// column break
 				groupCount = 2;
@@ -731,6 +755,10 @@
 			var wceID, baseID;
 			if (bType == 'lb' && !_id) {
 				wceID = '';
+			} else if (bType == 'p' && !_id) {
+				wceID = ''; // a paragraph break is never part of a group
+			} else if (bType == 'caesura' && !_id) {
+				wceID = ''; // a caesura is never part of a group
 			} else {
 				baseID = _id ? _id : WCEUtils.getRandomID(ed, '');
 				if (groupCount && !_id) {
@@ -756,10 +784,16 @@
 			} else if (bType == 'cb') {
 				out = out + _this(ed, 'lb', 'ignore', indention, null, baseID);
 				v.lcnt = 1;
-			} else if (bType == 'lb'&& lbpos != 'lbm') {
+			} else if (bType == 'lb' && lbpos != 'lbm') {
 				// Cat Feb 2025: This used to be a &nbsp; which broke the word wrapping and always had to be deleted
 				// This is now a sero width space which seems to work to both keep the line active if there is no text
 				// and also doesn't break the word wrapping in the XML.
+				out += '&#8203;'
+			} else if (bType == 'p') {
+				// keep the caret outside the paragraph break span, as for a line break
+				out += '&#8203;'
+			} else if (bType == 'caesura') {
+				// keep the caret outside the caesura span, as for a line break
 				out += '&#8203;'
 			}
 			return out;
@@ -2373,6 +2407,7 @@
 					wceAttr = ' wce="' + '__t' + '=' + wceType + '" wce_orig=""';
 					_setContent(ed, '<span' + wceAttr + wceClass + '>' + startFormatHtml + character + endFormatHtml + '</span> ');
 					break;
+
 				case 'abbr':
 					wceClass = ' class="abbr"';
 					wceOrig = ' wce_orig="' + encodeURIComponent(character);
@@ -3563,11 +3598,6 @@
 							ed.execCommand('mceAdd_pc', ',');
 						}
 					},
-					{ text : '. (full stop)',
-						onclick : function() {
-							ed.execCommand('mceAdd_pc', '.');
-						}
-					},
 					// \u00B7
 					{ text : '\u0387 (Greek Ano Teleia)',
 						onclick : function() {
@@ -3590,6 +3620,11 @@
 							ed.execCommand('mceAdd_pc', '\u0387');
 						}
 					},
+					{ text : '. (low dot)',
+						onclick : function() {
+							ed.execCommand('mceAdd_pc', '.');
+						}
+					},
 					{ text : '\u02BC (modifier letter apostrophe)',
 						onclick : function() {
 							ed.execCommand('mceAdd_pc', '\u02BC');
@@ -3608,6 +3643,21 @@
 					{ text : '\u203B	(cross with dots)',
 						onclick : function() {
 							ed.execCommand('mceAdd_pc', '\u203B');
+						}
+					},
+					{ text : '\u2234	(triangle dots)',
+						onclick : function() {
+							ed.execCommand('mceAdd_pc', '\u2234');
+						}
+					},
+					{ text : '\u205D	(vertical dots)',
+						onclick : function() {
+							ed.execCommand('mceAdd_pc', '\u205D');
+						}
+					},
+					{ text : ':—	(colon dash)',
+						onclick : function() {
+							ed.execCommand('mceAdd_pc', ':—');
 						}
 					},
 					{ text : '\u003E (diple)',

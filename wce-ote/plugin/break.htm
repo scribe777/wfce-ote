@@ -62,6 +62,8 @@
                             <option value="cb">{#columnbreak}</option>
                             <option value="pb">{#pagebreak}</option>
                             <option value="gb">{#quire}</option>
+                            <option value="p">{#paragraphbreak}</option>
+                            <option value="caesura">{#caesura}</option>
                         </select></td>
                     </tr>
                     <tr>
@@ -210,17 +212,20 @@
 		}
 
 		function checkstatus_break() {
-			if (document.breakinfo.break_type.options[0].selected == true) {//LB
+			var breakTypeSelect = document.breakinfo.break_type;
+			var breakType = breakTypeSelect.options[breakTypeSelect.selectedIndex].value;
+
+			if (breakType == 'lb') {//LB
 				document.breakinfo.lb_alignment.disabled = false;
 				document.getElementById('lb_alignment').style.backgroundColor = "white";
 			} else {
 				document.breakinfo.lb_alignment.disabled = true;
 				document.getElementById('lb_alignment').style.backgroundColor = "#CCCCCC";
 			}
-			if (document.breakinfo.break_type.options[1].selected == true) {//CB
+			if (breakType == 'cb') {//CB
 				document.breakinfo.number.value = qsParm['column'];
 			}
-			if (document.breakinfo.break_type.options[2].selected == true) {//PB
+			if (breakType == 'pb') {//PB
 				document.breakinfo.rv.disabled = false;
 				document.getElementById('rv').style.backgroundColor = "white";
 				document.breakinfo.fibre_type.disabled = false;
@@ -230,9 +235,9 @@
 				if (qsParm['mode'] == 'new' && qsParm['rectoverso'] == 'true') {//only for new entries; old ones keep their counting
 					document.breakinfo.number.value = Math.ceil(qsParm['page'] / 2);
 					if (qsParm['page'] % 2 == 0)// verso page
-						document.breakinfo.rv.options[2].selected = true;
+						document.breakinfo.rv.value = 'v';
 					else// recto page
-						document.breakinfo.rv.options[1].selected = true;
+						document.breakinfo.rv.value = 'r';
 				} else
 					document.breakinfo.number.value = qsParm['page'];
 			} else {
@@ -243,8 +248,20 @@
 				document.breakinfo.facs.disabled = true;
 				document.getElementById('facs').style.backgroundColor = "#CCCCCC";
 			}
-			if (document.breakinfo.break_type.options[3].selected == true) {//QB
+			if (breakType == 'gb') {//QB
 				document.breakinfo.number.value = qsParm['quire'];
+			}
+			if (breakType == 'p') {//TB: no number
+				document.breakinfo.number.value = '';
+				document.breakinfo.number.disabled = true;
+				document.getElementById('number').style.backgroundColor = "#CCCCCC";
+			} else if (breakType == 'caesura') {//caesura: no number
+				document.breakinfo.number.value = '';
+				document.breakinfo.number.disabled = true;
+				document.getElementById('number').style.backgroundColor = "#CCCCCC";
+			} else {
+				document.breakinfo.number.disabled = false;
+				document.getElementById('number').style.backgroundColor = "white";
 			}
 
 			//only enable edit highest-node of a break-group

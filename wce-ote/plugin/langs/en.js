@@ -60,6 +60,8 @@ tinymce.addI18n('en',{
 	linebreak : "Line break",
 	columnbreak : "Column break",
 	pagebreak : "Page break",
+	paragraphbreak : "Paragraph break",
+	caesura : "Caesura",
 	quire : "Quire",
 	number : "Number",
 	none : "None given",

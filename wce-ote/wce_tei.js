@@ -470,6 +470,10 @@ function getHtmlByTei(inputString, clientOptions) {
 				return Tei2Html_space($htmlParent, $teiNode);
 			// spaces
 
+			case 'caesura':
+				return Tei2Html_break($htmlParent, $teiNode, 'caesura');
+			// caesura
+
 			case 'gb':
 				return Tei2Html_break($htmlParent, $teiNode, 'gb');
 			// Quire break
@@ -485,6 +489,12 @@ function getHtmlByTei(inputString, clientOptions) {
 			case 'lb':
 				return Tei2Html_break($htmlParent, $teiNode, 'lb');
 			// line break
+
+			case 'milestone':
+				if ($teiNode.getAttribute('unit') == 'paragraph')
+					return Tei2Html_break($htmlParent, $teiNode, 'p');
+				return $htmlParent;
+			// paragraph break
 
 			case 'note':
 				return Tei2Html_note($htmlParent, $teiNode);
@@ -1293,6 +1303,14 @@ function getHtmlByTei(inputString, clientOptions) {
 					wceAttr += $teiNode.getAttribute('rend');
 				wceAttr += '&rv=&fibre_type=&facs=';
 				break;
+			case 'p':
+				// paragraph break: no number, no alignment
+				wceAttr += '&number=&lb_alignment=&rv=&fibre_type=&facs=';
+				break;
+			case 'caesura':
+				// caesura: no number, no alignment
+				wceAttr += '&number=&lb_alignment=&rv=&fibre_type=&facs=';
+				break;
 			case 'lb':
 				wceAttr += '&number=';
 				if ($teiNode.getAttribute('n')) {
@@ -1352,6 +1370,16 @@ function getHtmlByTei(inputString, clientOptions) {
 				var $br = $newDoc.createElement('br');
 				$newNode.appendChild($br);
 				nodeAddText($newNode, 'CB' + ' ' + number);
+				break;
+			case 'p':
+				// paragraph break
+				var $br = $newDoc.createElement('br');
+				$newNode.appendChild($br);
+				nodeAddText($newNode, 'TB');
+				break;
+			case 'caesura':
+				// caesura: a break in the verse, not in the line, so no <br>
+				nodeAddText($newNode, 'caes');
 				break;
 			case 'lb':
 				// line break
@@ -1587,7 +1615,9 @@ function getHtmlByTei(inputString, clientOptions) {
 		$htmlParent.appendChild($newNode);
 		// Do not add a space if there is a break after the note
 		if ($teiNode.nextSibling && $teiNode.nextSibling.nodeName !== 'lb' && $teiNode.nextSibling.nodeName !== 'cb'
-			&& $teiNode.nextSibling.nodeName !== 'pb' && $teiNode.nextSibling.nodeName !== 'gb')
+			&& $teiNode.nextSibling.nodeName !== 'pb'
+			&& $teiNode.nextSibling.nodeName !== 'milestone'
+			&& $teiNode.nextSibling.nodeName !== 'gb')
 			nodeAddText($htmlParent, ' ');
 		return null;
 	};
@@ -2051,7 +2081,7 @@ function getTeiByHtml(inputString, clientOptions) {
 					}
 				}
 				var _nodeName=ns.nodeName;
-				if ((_nodeName == 'pb' || _nodeName == 'cb' || _nodeName == 'lb') && (isNextBreak || ns.getAttribute('break') == 'no')){
+				if ((_nodeName == 'pb' || _nodeName == 'milestone' || _nodeName == 'cb' || _nodeName == 'lb') && (isNextBreak || ns.getAttribute('break') == 'no')){
 					 if (_nodeName=='lb') {
 					 	isNextBreak=false;
 					 }
@@ -3239,6 +3269,13 @@ function getTeiByHtml(inputString, clientOptions) {
 			// special role of quire breaks
 			$newNode = $newDoc.createElement('gb');
 			$newNode.setAttribute('n', arr['number']);
+		} else if (break_type == 'p') {
+			// paragraph break: TEI allows no <p> inside <ab>, so it is a milestone; no number, no xml:id
+			$newNode = $newDoc.createElement('milestone');
+			$newNode.setAttribute('unit', 'paragraph');
+		} else if (break_type == 'caesura') {
+			// <caesura/> takes no attributes (TEI verse module)
+			$newNode = $newDoc.createElement('caesura');
 		} else if (break_type) {
 			
 			$newNode = $newDoc.createElement(break_type);
@@ -3308,6 +3345,12 @@ function getTeiByHtml(inputString, clientOptions) {
 				case 'cb':
 					if ($teiParent.lastChild.nodeName != 'pb') // no pb above cb
 						$teiParent = $teiParent.parentNode;
+					break;
+				case 'milestone':
+					$teiParent = $teiParent.parentNode; // a paragraph starts after a complete word
+					break;
+				case 'caesura':
+					$teiParent = $teiParent.parentNode; // a caesura falls after a complete word
 					break;
 				case 'pb':
 					if ($teiParent.lastChild.nodeName != 'gb') // no gb above pb
@@ -3944,7 +3987,7 @@ function hasWAncestor($node) {
 var removeBlankNode=function ($root){//remove blank node,
 		var _remove=function($node){
 			var nodeName=$node.nodeName;
-			var notNames=['lb','pb','gb','cb','gap'];
+			var notNames=['lb','pb','gb','cb','milestone','caesura','gap'];
 			if($node.nodeType!=3 && !$node.firstChild && $.inArray(nodeName,notNames)<0){
 				var parent=$node.parentNode;
 				if (parent) {
