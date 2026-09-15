@@ -855,4 +855,90 @@ describe('testing B menu - breaks', () => {
 
   }, 200000);
 
+  test('caesura', async () => {
+
+    // open B menu
+    await page.click('button#mceu_10-open');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('Enter');
+
+    const menuFrameHandle = await page.$('div[id="mceu_39"] > div > div > iframe');
+    const menuFrame = await menuFrameHandle.contentFrame();
+    await menuFrame.select('select[id="break_type"]', 'caesura');
+    // check all other items on the form are disabled
+    expect(await menuFrame.$eval('#number', el => el.disabled)).toBe(true);
+    expect(await menuFrame.$eval('#rv', el => el.disabled)).toBe(true);
+    expect(await menuFrame.$eval('#fibre_type', el => el.disabled)).toBe(true);
+    expect(await menuFrame.$eval('#lb_alignment', el => el.disabled)).toBe(true);
+    expect(await menuFrame.$eval('#facs', el => el.disabled)).toBe(true);
+    await menuFrame.click('input#insert');
+    await page.waitForSelector('div[id="mceu_39"]', { hidden: true });
+
+    const htmlData = await page.evaluate(`getData()`);
+    expect(htmlData).toBe('​<span class=\"brea\" wce=\"__t=brea&amp;__n=&amp;hasBreak=no&amp;help=Help&amp;break_type=caesura&amp;number=&amp;rv=&amp;fibre_type=&amp;lb_alignment=&amp;facs=\"><span class=\"format_start mceNonEditable\">‹</span>caes<span class=\"format_end mceNonEditable\">›</span></span>​');
+    const xmlData = await page.evaluate(`getTEI()`);
+    expect(xmlData).toBe(xmlHead + '<caesura/>' + xmlTail);
+
+    // test the hover over
+    // get the location of the span
+    const breaks = await frame.$$('span.brea');
+    const caesura = breaks[0];
+    const spanPos = await frame.evaluate((caesura) => {
+      const {top, left, bottom, right} = caesura.getBoundingClientRect();
+      return {top, left, bottom, right};
+    }, caesura);
+    const sidebarWidth = await page.$eval('.wce-linenumber-sidebar', el => el.offsetWidth);
+    const menubarHeight = await page.$eval('#mceu_25-body', el => el.offsetHeight);
+    targetX = spanPos.left + ((spanPos.right - spanPos.left) / 2) + sidebarWidth;
+    targetY = spanPos.bottom + menubarHeight - 10;  // page breaks spans two lines so stick close to the bottom
+    await page.mouse.move(targetX, targetY);
+    // check the content of the hover over
+    const hoverValue = await page.$eval('#hover-data-content', el => el.innerHTML);
+    expect(hoverValue).toBe('<div>Caesura</div>');
+
+  }, 200000);
+
+  test('paragraph break', async () => {
+
+    // open B menu
+    await page.click('button#mceu_10-open');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('Enter');
+
+    const menuFrameHandle = await page.$('div[id="mceu_39"] > div > div > iframe');
+    const menuFrame = await menuFrameHandle.contentFrame();
+    await menuFrame.select('select[id="break_type"]', 'p');
+    // check all other items on the form are disabled
+    expect(await menuFrame.$eval('#number', el => el.disabled)).toBe(true);
+    expect(await menuFrame.$eval('#rv', el => el.disabled)).toBe(true);
+    expect(await menuFrame.$eval('#fibre_type', el => el.disabled)).toBe(true);
+    expect(await menuFrame.$eval('#lb_alignment', el => el.disabled)).toBe(true);
+    expect(await menuFrame.$eval('#facs', el => el.disabled)).toBe(true);
+    await menuFrame.click('input#insert');
+    await page.waitForSelector('div[id="mceu_39"]', { hidden: true });
+
+    const htmlData = await page.evaluate(`getData()`);
+    expect(htmlData).toBe('​<span class=\"brea\" wce=\"__t=brea&amp;__n=&amp;hasBreak=no&amp;help=Help&amp;break_type=p&amp;number=&amp;rv=&amp;fibre_type=&amp;lb_alignment=&amp;facs=\"><span class=\"format_start mceNonEditable\">‹</span><br />TB<span class=\"format_end mceNonEditable\">›</span></span>​');
+    const xmlData = await page.evaluate(`getTEI()`);
+    expect(xmlData).toBe(xmlHead + '<milestone unit="paragraph"/>' + xmlTail);
+
+    // test the hover over
+    // get the location of the span
+    const breaks = await frame.$$('span.brea');
+    const tb = breaks[0];
+    const spanPos = await frame.evaluate((tb) => {
+      const {top, left, bottom, right} = tb.getBoundingClientRect();
+      return {top, left, bottom, right};
+    }, tb);
+    const sidebarWidth = await page.$eval('.wce-linenumber-sidebar', el => el.offsetWidth);
+    const menubarHeight = await page.$eval('#mceu_25-body', el => el.offsetHeight);
+    targetX = spanPos.left + ((spanPos.right - spanPos.left) / 2) + sidebarWidth;
+    targetY = spanPos.bottom + menubarHeight - 10;  // page breaks spans two lines so stick close to the bottom
+    await page.mouse.move(targetX, targetY);
+    // check the content of the hover over
+    const hoverValue = await page.$eval('#hover-data-content', el => el.innerHTML);
+    expect(hoverValue).toBe('<div>Paragraph</div>');
+
+  }, 200000);
+
 });

@@ -19,6 +19,7 @@ beforeAll(async () => {
     browser = await puppeteer.launch({
         // for local testing
         // headless: false,
+        // devtools: true,
         // slowMo: 80,
         // args: ['--window-size=1920,1080', '--disable-web-security']
 
@@ -404,11 +405,12 @@ describe('testing basic word/pc level functions', () => {
         await page.keyboard.press('ArrowUp');
         await page.keyboard.press('Enter');
 
-        const menuFrameHandle = await page.$('div[id="mceu_59"] > div > div > iframe');
+        const menuFrameHandle = await page.$('div[id="mceu_62"] > div > div > iframe');
+
         const menuFrame = await menuFrameHandle.contentFrame();
         await menuFrame.type('input#pc_char', '-');
         await menuFrame.click('input#insert');
-        await page.waitForSelector('div[id="mceu_59"]', { hidden: true });
+        await page.waitForSelector('div[id="mceu_62"]', { hidden: true });
 
         const htmlData = await page.evaluate(`getData()`);
         expect(htmlData).toBe('my words<span class="pc" wce="__t=pc">' +

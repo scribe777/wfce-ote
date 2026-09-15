@@ -1903,6 +1903,12 @@
 										info_text += '<div>' + tinymce.translate('infotext_url') + ': ' + ar['facs'] + '</div>';
 									}
 									break;
+								case 'caesura':
+									info_text = '<div>Caesura</div>';
+									break;
+								case 'p':
+									info_text = '<div>Paragraph</div>';
+									break;
 								default:
 									info_text = '<div>' + tinymce.translate('infotext_number') + ': ' + ar['number'] + '</div>';
 							}
