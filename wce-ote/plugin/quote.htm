@@ -1,0 +1,140 @@
+<!--
+	Copyright (C) 2012-2017 Trier Center for Digital Humanities, Trier (Germany)
+
+	This file is part of the Online Transcription Editor (OTE).
+
+    OTE is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as published by
+    the Free Software Foundation, either version 2.1 of the License, or
+    (at your option) any later version.
+
+    OTE is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with OTE.  If not, see <http://www.gnu.org/licenses/>.
+
+    Diese Datei ist Teil des Online-Transkriptions-Editor (OTE).
+
+    OTE ist Freie Software: Sie können es unter den Bedingungen
+    der GNU Lesser General Public License, wie von der Free Software Foundation,
+    Version 2.1 der Lizenz oder (nach Ihrer Wahl) jeder späteren
+    veröffentlichten Version, weiterverbreiten und/oder modifizieren.
+
+    OTE wird in der Hoffnung, dass es nützlich sein wird, aber
+    OHNE JEDE GEWÄHRLEISTUNG, bereitgestellt; sogar ohne die implizite
+    Gewährleistung der MARKTFÄHIGKEIT oder EIGNUNG FÜR EINEN BESTIMMTEN ZWECK.
+    Siehe die GNU Lesser General Public License für weitere Details.
+
+    Sie sollten eine Kopie der GNU Lesser General Public License zusammen mit diesem
+    Programm erhalten haben. Wenn nicht, siehe <http://www.gnu.org/licenses/>.
+-->
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>{#quote_title}</title>
+<script type="text/javascript" src="../jquery.js"></script>
+<script type="text/javascript" src="js/wce.js"></script>
+<link rel="stylesheet" type="text/css" href="../skin/dialog.css"/>
+<link rel="stylesheet" type="text/css" href="../skin/ui.css"/>
+</head>
+<body id="table">
+	<form onsubmit="return false;" action="#" name="quoteinfo">
+		<input type="button" id="help" name="help" value="{#help}"
+				onclick="wce_openWindow('docu.htm#quote')" />
+		<fieldset>
+			<legend>{#quote_data}</legend>
+			<table border="0" cellpadding="4" cellspacing="0" width="100%">
+				<tr>
+					<td><label id="quote_type_label" for="quote_type">{#quote_type}</label>
+					</td>
+					<td>
+					<select id="quote_type" name="quote_type">
+							<option value="sequential">{#quote_type_sequential}</option>
+							<option value="quotation">{#quote_type_quotation}</option>
+					</select>
+					</td>
+				</tr>
+				<tr>
+					<td><label id="quote_ref_label" for="quote_ref">{#quote_ref}</label>
+					</td>
+					<td><input id="quote_ref" name="quote_ref" type="text" value="" size="30" maxlength=""
+						class="required mceFocus" placeholder="Rom.1.1" />
+					</td>
+				</tr>
+			</table>
+		</fieldset>
+		<div class="mceActionPanel">
+			<input type="button" id="insert" name="insert" value="{#insert}" onclick="insertQuote();" />
+			<input type="button" id="cancel" name="cancel" value="{#cancel}"
+				onclick="parent.tinymce.activeEditor.windowManager.close();" />
+		</div>
+	</form>
+</body>
+<script type="text/javascript">
+	$(document).ready(function() {
+		var _ed = parent.tinymce.activeEditor;
+		ed=_ed;
+		translate();
+		setConstants();
+		init();
+	});
+
+	function translate() {
+		var c=document.body.innerHTML;
+		var d=document.title;
+		var a;
+		if(parent.tinymce.isIE){c=c.replace(/ (value|title|alt)=([^"][^\s>]+)/gi,' $1="$2"')}
+		a=c.replace(/\{\#([^\}]+)\}/g, function(a, b) {
+			var c=parent.tinymce.translate(b);
+			return (c != b) ? c : '{#' + b + '}';
+		});
+		if(a!=c){document.body.innerHTML=a}
+		a=d.replace(/\{\#([^\}]+)\}/g, function(a, b) {
+			var c=parent.tinymce.translate(b);
+			return (c != b) ? c : '{#' + b + '}';
+		});
+		if(a!=d){document.title=d=a}
+	}
+
+	function init() {
+		comboBindReturnEvent('insert');
+		wceInfoInit('quote');
+		readWceNodeInfo();
+		document.quoteinfo.quote_ref.focus();
+	}
+
+	/*
+	 * A quotation is a pair of markers around the selected words (see WCEUtils.insertQuote);
+	 * in edit mode the dialog was opened on one of the markers and both are updated.
+	 */
+	function insertQuote() {
+		var type = document.quoteinfo.quote_type.value;
+		var ref = document.quoteinfo.quote_ref.value.trim();
+		if (ref == '') {
+			alert(parent.tinymce.translate('empty_reference'));
+			return;
+		}
+		if (add_new_wce_node) {
+			wceUtils.insertQuote(ed, type, ref);
+		} else {
+			wceUtils.updateQuote(ed, wce_node, type, ref);
+		}
+		ed.isNotDirty = 0;
+		parent.tinymce.activeEditor.windowManager.close();
+	}
+
+	if (!parent.tinymce.isIE) {
+		$(document).keydown(function(e) {
+			var evt = e || window.event
+			if ((evt.keyCode == 13 || evt.keyCode == 10) && !evt.shiftKey) {
+				document.getElementById('insert').click();
+				return false;
+			}
+		});
+	}
+</script>
+</html>

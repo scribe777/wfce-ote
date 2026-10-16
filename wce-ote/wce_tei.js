@@ -500,6 +500,10 @@ function getHtmlByTei(inputString, clientOptions) {
 				return Tei2Html_note($htmlParent, $teiNode);
 			// note
 
+			case 'quote':
+				return Tei2Html_quote($htmlParent, $teiNode);
+			// quotation
+
 			case 'app':
 				return Tei2Html_app($htmlParent, $teiNode);
 			// correction
@@ -1515,6 +1519,50 @@ function getHtmlByTei(inputString, clientOptions) {
 	/*
 	 * <note>
 	 */
+	/*
+	 * <quote type="sequential" n="Rom.1.1"><w>...</w></quote>
+	 *
+	 * A quotation is shown as two non-editable markers, like a verse number, so that the
+	 * words between them stay ordinary text and every other menu keeps working inside it.
+	 * The markers are paired by id (quote_s_N / quote_e_N) and both carry the same wce attribute:
+	 * <span class="quote_start mceNonEditable" id="quote_s_1" wce="__t=quote&__n=&quote_type=sequential&quote_ref=Rom.1.1">❝Rom.1.1</span>
+	 *   ... words ...
+	 * <span class="quote_end mceNonEditable" id="quote_e_1" wce="__t=quote&__n=&quote_type=sequential&quote_ref=Rom.1.1">❞</span>
+	 */
+	var g_quoteCount = 0;
+	var Tei2Html_quote = function($htmlParent, $teiNode) {
+		g_quoteCount++;
+		var typeValue = $teiNode.getAttribute('type') || '';
+		var refValue = $teiNode.getAttribute('n') || '';
+		var wceAttr = '__t=quote&__n=&quote_type=' + encodeURIComponent(typeValue) + '&quote_ref=' + encodeURIComponent(refValue);
+
+		var $start = $newDoc.createElement('span');
+		$start.setAttribute('class', 'quote_start mceNonEditable');
+		$start.setAttribute('wce', wceAttr);
+		$start.setAttribute('id', 'quote_s_' + g_quoteCount);
+		nodeAddText($start, '\u275d' + refValue);
+		$htmlParent.appendChild($start);
+		nodeAddText($htmlParent, ' ');
+
+		var childList = $teiNode.childNodes;
+		for (var i = 0, $c, l = childList.length; i < l; i++) {
+			$c = childList[i];
+			if ($c) {
+				readAllChildrenOfTeiNode($htmlParent, $c);
+			}
+		}
+
+		var $end = $newDoc.createElement('span');
+		$end.setAttribute('class', 'quote_end mceNonEditable');
+		$end.setAttribute('wce', wceAttr);
+		$end.setAttribute('id', 'quote_e_' + g_quoteCount);
+		nodeAddText($end, '\u275e');
+		$htmlParent.appendChild($end);
+		nodeAddText($htmlParent, ' ');
+		// the children are done, stop the caller from reading them again
+		return null;
+	};
+
 	var Tei2Html_note = function($htmlParent, $teiNode) {
 		// <note type="$ note_type" n="$newHand"> $note_text </note>
 
@@ -1916,6 +1964,7 @@ function getTeiByHtml(inputString, clientOptions) {
 		if (!g_currentParentNode) {
 			g_currentParentNode = $newRoot;
 		}
+		g_quoteNode = null;
 
 		//get tei node from htmlNode
 		var childList = $oldRoot.childNodes;
@@ -2700,6 +2749,7 @@ function getTeiByHtml(inputString, clientOptions) {
 				else
 					$newRoot.appendChild(g_verseNode);
 				g_currentParentNode = g_verseNode;
+				html2Tei_quoteContinue();
 			} else { //empty verse or inscriptio/subscriptio
 				g_verseNode = $newDoc.createElement('ab');
 				if (g_chapterNumber === 'Inscriptio' || g_chapterNumber === 'Subscriptio') {
@@ -2713,6 +2763,7 @@ function getTeiByHtml(inputString, clientOptions) {
 				else
 					$newRoot.appendChild(g_verseNode);
 				g_currentParentNode = g_verseNode;
+				html2Tei_quoteContinue();
 			}
 			var partAttr=$htmlNode.getAttribute('part');
 			if (partAttr) {
@@ -2773,6 +2824,10 @@ function getTeiByHtml(inputString, clientOptions) {
 				$newRoot.appendChild(g_lectionNode);
 				g_currentParentNode = g_lectionNode;
 			}
+			return null;
+		} else if (wceAttrValue != null && wceAttrValue.indexOf('__t=quote') == 0) {
+			// ******************* quotation marker *******************
+			html2Tei_quoteMarker($htmlNode, strToArray(wceAttrValue)[0]);
 			return null;
 		} else {
 			htmlNodeName = $htmlNode.nodeName;
@@ -3418,6 +3473,52 @@ function getTeiByHtml(inputString, clientOptions) {
 	/*
 	 * type note, return <note>
 	 */
+	/*
+	 * quotation markers (see Tei2Html_quote): the start marker opens a <quote> under the current
+	 * parent, normally the <ab>, and makes it the current parent; the end marker closes it.
+	 * A verse marker inside an open quotation closes it and reopens a continuation with the same
+	 * attributes in the new <ab> (html2Tei_quoteContinue), so the XML always nests.
+	 * Quotations do not nest; a start inside an open quotation closes the open one first.
+	 * A lone marker (its partner deleted in the editor) does no harm: a lone start closes with the
+	 * verse, a lone end is ignored.
+	 */
+	var g_quoteNode;
+	var html2Tei_quoteMarker = function($htmlNode, arr) {
+		if ($($htmlNode).hasClass('quote_end')) {
+			if (g_quoteNode) {
+				if (g_currentParentNode === g_quoteNode) {
+					g_currentParentNode = g_quoteNode.parentNode;
+				}
+				g_quoteNode = null;
+			}
+			return;
+		}
+		if (g_quoteNode && g_currentParentNode === g_quoteNode) {
+			g_currentParentNode = g_quoteNode.parentNode;
+		}
+		g_quoteNode = $newDoc.createElement('quote');
+		var typeValue = arr['quote_type'];
+		if (typeValue && typeValue != '') {
+			g_quoteNode.setAttribute('type', decodeURIComponent(typeValue));
+		}
+		var refValue = arr['quote_ref'];
+		if (refValue && refValue != '') {
+			g_quoteNode.setAttribute('n', decodeURIComponent(refValue));
+		}
+		g_currentParentNode.appendChild(g_quoteNode);
+		g_currentParentNode = g_quoteNode;
+	};
+
+	var html2Tei_quoteContinue = function() {
+		if (!g_quoteNode) {
+			return;
+		}
+		var $continued = g_quoteNode.cloneNode(false);
+		g_currentParentNode.appendChild($continued);
+		g_quoteNode = $continued;
+		g_currentParentNode = $continued;
+	};
+
 	var html2Tei_note = function(arr, $teiParent, $htmlNode) {
 		var $note = $newDoc.createElement('note');
 		var note_type_value = arr['note_type'];

@@ -58,7 +58,7 @@
 
 			//blocked elements :If the Caret is inside, this will prohibit the key operation
 			c.blockedElements = new Array('gap', 'corr', 'lection_number', 'book_number',
-				'chapter_number', 'verse_number', 'abbr', 'spaces', 'note', 'unclear', 'brea', 'paratext', 'pc');
+				'chapter_number', 'verse_number', 'abbr', 'spaces', 'note', 'unclear', 'brea', 'paratext', 'pc', 'quote');
 
 
 
@@ -1232,6 +1232,13 @@
 					selectedNode = startNode;
 				}
 
+				// a click on a quotation marker selects the whole marker (noneditable plugin),
+				// a range of one child in the body: that marker is the selected node
+				var wholeElement = WCEUtils.getWholeSelectedElement(rng);
+				if (WCEUtils.isQuoteMarker(wholeElement)) {
+					selectedNode = wholeElement;
+				}
+
 				if (WCEUtils.selectionHasBlockElement(ed)) {
 					w.inputDisable = true;
 				}
@@ -1256,6 +1263,8 @@
 				selectedNode = rng.startContainer.parentNode.parentNode;
 			}
 			var canMakeCorrection = WCEUtils.canMakeCorrection(rng,ed);
+			// a quotation wraps whole words (the correction test) that are outside every other quotation
+			w.canAddQuote = canMakeCorrection && WCEUtils.canAddQuote(ed, rng);
 
 			//set other variable
 			w.isInBE = _isWceBE(ed, selectedNode);
@@ -1371,6 +1380,11 @@
 				case 'note':
 					_disableAllControls(ed, true);
 					w.not_N = false;
+					break;
+
+				case 'quote':
+					// a quotation marker: only the V menu (edit / delete quotation) applies
+					_disableAllControls(ed, true);
 					break;
 
 				case 'format_end mceNonEditable':
@@ -1913,6 +1927,12 @@
 									info_text = '<div>' + tinymce.translate('infotext_number') + ': ' + ar['number'] + '</div>';
 							}
 							break;
+						case 'quote':
+							info_text = '<div>' + tinymce.translate(ar['quote_type'] == 'quotation' ? 'infotext_quote_quotation' : 'infotext_quote_sequential') + '</div>';
+							if (ar['quote_ref']) {
+								info_text += '<div>' + tinymce.translate('infotext_reference') + ': ' + ar['quote_ref'] + '</div>';
+							}
+							break;
 						case 'note':
 							info_text = '<div>';
 							switch (ar['note_type']) {
@@ -2322,6 +2342,204 @@
 
 		},
 
+		/*
+		 * the one element a range covers exactly (start and end in the same parent, one child apart), or null
+		 */
+		getWholeSelectedElement : function(rng) {
+			if (!rng || rng.collapsed || rng.startContainer !== rng.endContainer || rng.startContainer.nodeType != 1) {
+				return null;
+			}
+			if (rng.endOffset - rng.startOffset != 1) {
+				return null;
+			}
+			return rng.startContainer.childNodes[rng.startOffset] || null;
+		},
+
+		/*
+		 * Quotations (TEI <quote>) are two non-editable markers around ordinary text, paired by id
+		 * quote_s_N / quote_e_N and carrying the same wce attribute. The words between them stay at
+		 * body level, so every other menu keeps working inside a quotation. The exporter in
+		 * wce_tei.js wraps everything between the markers in <quote>.
+		 */
+		isQuoteMarker : function(node) {
+			return !!node && node.nodeType == 1 && ($(node).hasClass('quote_start') || $(node).hasClass('quote_end'));
+		},
+
+		getQuotePair : function(ed, node) {
+			var m = (node.getAttribute('id') || '').match(/^quote_[se]_(\d+)$/);
+			if (!m) {
+				return null;
+			}
+			return {
+				start : ed.dom.get('quote_s_' + m[1]),
+				end : ed.dom.get('quote_e_' + m[1])
+			};
+		},
+
+		nextQuoteID : function(ed) {
+			var max = 0;
+			$(ed.getBody()).find('span.quote_start, span.quote_end').each(function() {
+				var m = (this.id || '').match(/^quote_[se]_(\d+)$/);
+				if (m && parseInt(m[1], 10) > max) {
+					max = parseInt(m[1], 10);
+				}
+			});
+			return max + 1;
+		},
+
+		quoteWceAttr : function(type, ref) {
+			return '__t=quote&__n=&quote_type=' + encodeURIComponent(type) + '&quote_ref=' + encodeURIComponent(ref);
+		},
+
+		createQuoteMarker : function(ed, pos, id, type, ref) {
+			// contenteditable is what the noneditable plugin gives an mceNonEditable span when content
+			// is parsed; a span created straight in the DOM needs it set (the serializer drops it again)
+			return ed.dom.create('span', {
+				'class' : (pos == 's' ? 'quote_start' : 'quote_end') + ' mceNonEditable',
+				'id' : 'quote_' + pos + '_' + id,
+				'wce' : WCEUtils.quoteWceAttr(type, ref),
+				'contenteditable' : 'false'
+			}, pos == 's' ? ed.dom.encode('\u275d' + ref) : '\u275e');
+		},
+
+		/*
+		 * the body-level ancestor of a range boundary: the node itself when it sits in the body, the
+		 * child at the offset when the boundary is the body itself (atEnd: the child before the offset)
+		 */
+		getBodyLevelNode : function(ed, node, offset, atEnd) {
+			var body = ed.getBody();
+			if (node === body) {
+				return body.childNodes[atEnd ? offset - 1 : offset] || null;
+			}
+			while (node && node.parentNode && node.parentNode !== body) {
+				node = node.parentNode;
+			}
+			return node;
+		},
+
+		/*
+		 * a quotation can be added around a selection that lies outside every existing quotation
+		 * and contains no quotation marker (whole words are checked by canMakeCorrection)
+		 */
+		canAddQuote : function(ed, rng) {
+			if (!rng || rng.collapsed) {
+				return false;
+			}
+			var first = WCEUtils.getBodyLevelNode(ed, rng.startContainer, rng.startOffset, false);
+			var last = WCEUtils.getBodyLevelNode(ed, rng.endContainer, rng.endOffset, true);
+			if (!first || !last) {
+				return false;
+			}
+			// inside an open quotation? the nearest marker before the selection decides
+			var p = first.previousSibling;
+			while (p) {
+				if (WCEUtils.isQuoteMarker(p)) {
+					if ($(p).hasClass('quote_start')) {
+						return false;
+					}
+					break;
+				}
+				p = p.previousSibling;
+			}
+			// a marker inside the selection?
+			var n = first;
+			while (n) {
+				if (WCEUtils.isQuoteMarker(n)) {
+					return false;
+				}
+				if (n === last) {
+					break;
+				}
+				n = n.nextSibling;
+			}
+			return true;
+		},
+
+		/*
+		 * put the two markers around the current selection: the end marker first, so the start
+		 * offsets stay valid. A boundary inside a text node splits it; a boundary inside a span
+		 * (the ‹…› of an abbreviation, say) is moved outside that span.
+		 */
+		insertQuote : function(ed, type, ref) {
+			var rng = ed.selection.getRng();
+			var body = ed.getBody();
+			var doc = ed.getDoc();
+			var id = WCEUtils.nextQuoteID(ed);
+			var startMarker = WCEUtils.createQuoteMarker(ed, 's', id, type, ref);
+			var endMarker = WCEUtils.createQuoteMarker(ed, 'e', id, type, ref);
+
+			var insertionPoint = function(container, offset, atEnd) {
+				if (container === body) {
+					return body.childNodes[offset] || null;
+				}
+				var node = WCEUtils.getBodyLevelNode(ed, container, offset, atEnd);
+				if (node === container && container.nodeType == 3) {
+					return container.splitText(offset);
+				}
+				return atEnd ? node.nextSibling : node;
+			};
+
+			ed.undoManager.transact(function() {
+				var endFragment = doc.createDocumentFragment();
+				endFragment.appendChild(doc.createTextNode(' '));
+				endFragment.appendChild(endMarker);
+				body.insertBefore(endFragment, insertionPoint(rng.endContainer, rng.endOffset, true));
+
+				var startFragment = doc.createDocumentFragment();
+				startFragment.appendChild(startMarker);
+				startFragment.appendChild(doc.createTextNode(' '));
+				body.insertBefore(startFragment, insertionPoint(rng.startContainer, rng.startOffset, false));
+
+				ed.selection.select(endMarker);
+				ed.selection.collapse(false);
+			});
+			ed.nodeChanged();
+			ed.isNotDirty = 0;
+		},
+
+		updateQuote : function(ed, marker, type, ref) {
+			var pair = WCEUtils.getQuotePair(ed, marker);
+			if (!pair) {
+				return;
+			}
+			var wceAttr = WCEUtils.quoteWceAttr(type, ref);
+			if (pair.start) {
+				pair.start.setAttribute('wce', wceAttr);
+				pair.start.innerHTML = ed.dom.encode('\u275d' + ref);
+			}
+			if (pair.end) {
+				pair.end.setAttribute('wce', wceAttr);
+			}
+			ed.nodeChanged();
+			ed.isNotDirty = 0;
+		},
+
+		/*
+		 * remove both markers; the text between them stays. The padding space a marker was
+		 * inserted with goes too, so the words do not end up two spaces apart.
+		 */
+		deleteQuote : function(ed, marker) {
+			var pair = WCEUtils.getQuotePair(ed, marker);
+			var markers = pair ? [pair.start, pair.end] : [marker];
+			var trimSpaceAround = function(m) {
+				var prev = m.previousSibling, next = m.nextSibling;
+				if (prev && prev.nodeType == 3 && next && next.nodeType == 3 && /\s$/.test(prev.nodeValue) && /^\s/.test(next.nodeValue)) {
+					next.nodeValue = next.nodeValue.replace(/^\s+/, '');
+				}
+			};
+			ed.undoManager.transact(function() {
+				for (var i = 0; i < markers.length; i++) {
+					if (markers[i]) {
+						trimSpaceAround(markers[i]);
+						ed.dom.remove(markers[i]);
+					}
+				}
+			});
+			ed.focus();
+			ed.nodeChanged();
+			ed.isNotDirty = 0;
+		},
+
 		getNodeTypeName : function(node) {
 			var nodeName = node.nodeName;
 			if (nodeName && nodeName.toLowerCase() == 'span') {
@@ -2719,6 +2937,10 @@
 		wceDelNode : function(ed, notAddOriginal) {
 			var wceNode = WCEPlugin.getWceNode(ed);
 			if (wceNode) {
+				if (WCEUtils.isQuoteMarker(wceNode)) {
+					WCEUtils.deleteQuote(ed, wceNode);
+					return;
+				}
 				if (WCEUtils.hasWceParentNode(wceNode)) {
 					alert(tinymce.translate('warning_deletion_inner_Node'));//TODO:
 					return;
@@ -2990,6 +3212,10 @@
                     var w = ed.WCE_VAR;
                     items[0].disabled(false);
                     items[1].disabled(false);
+                    // quotation: add around a selection of whole words, edit / delete on a marker
+                    items[2].disabled(!w.canAddQuote);
+                    items[3].disabled(w.type != 'quote');
+                    items[4].disabled(w.type != 'quote');
                 },
                 menu: [
                     {
@@ -3004,6 +3230,27 @@
                         id: 'menu-delete-structure',
                         onclick: function () {
                             ed.execCommand('mceVerseDelete');
+                        }
+                 },
+                    {
+                        text: tinymce.translate('add_quote'),
+                        id: 'menu-add-quote',
+                        onclick: function () {
+                            ed.execCommand('mceAddQuote');
+                        }
+                 },
+                    {
+                        text: tinymce.translate('edit_quote'),
+                        id: 'menu-edit-quote',
+                        onclick: function () {
+                            ed.execCommand('mceEditQuote');
+                        }
+                 },
+                    {
+                        text: tinymce.translate('delete_quote'),
+                        id: 'menu-delete-quote',
+                        onclick: function () {
+                            ed.execCommand('mceDeleteQuote');
                         }
                  }]
             });
@@ -4105,6 +4352,22 @@
             ed.addCommand('mceVerseDelete', function () {
                 doWithDialog(ed, url, '/deleteverse.htm', 480, 700, 1, true, tinymce.translate('verses_title'));
             });
+
+			// quotation: add around the selection, edit / delete from one of its markers
+			ed.addCommand('mceAddQuote', function () {
+				doWithDialog(ed, url, '/quote.htm', 480, 260, 1, true, tinymce.translate('quote_title'));
+			});
+
+			ed.addCommand('mceEditQuote', function () {
+				doWithDialog(ed, url, '/quote.htm', 480, 260, 1, false, tinymce.translate('quote_title'));
+			});
+
+			ed.addCommand('mceDeleteQuote', function () {
+				var wceNode = WCEPlugin.getWceNode(ed);
+				if (wceNode && WCEUtils.isQuoteMarker(wceNode)) {
+					WCEUtils.deleteQuote(ed, wceNode);
+				}
+			});
 
 			ed.addCommand('mceVerseModify_Shortcut', function() {
 				ed.execCommand('mceVerseAdd');

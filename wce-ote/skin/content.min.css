@@ -315,6 +315,17 @@ span.verse_number[wce="__t=verse_number&partial=F"] {
 }
 
  
+
+span.quote_start, span.quote_end {
+	
+	color:gray;
+	
+	font-weight:bold;
+	
+
+}
+
+ 
  
 span.chapter_number{
 	

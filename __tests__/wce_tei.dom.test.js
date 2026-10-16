@@ -651,7 +651,37 @@ const embeddedMenuData = new Map([
 
 
 
-const testDataMaps = [basicAnnotation, textStructureDivs, gapAndSupplied, corrections, notes, fw, embeddedMenuData];
+
+// quotations: two non-editable markers around the words, paired by id; the exporter wraps the words in <quote>
+const quotations = new Map([
+  [ 'a quotation around whole words',
+    [ '<w>a</w><quote type="sequential" n="Rom.1.1"><w>b</w><w>c</w></quote><w>d</w>',
+      'a <span class="quote_start mceNonEditable" wce="__t=quote&amp;__n=&amp;quote_type=sequential&amp;quote_ref=Rom.1.1" id="quote_s_1">❝Rom.1.1</span> b c <span class="quote_end mceNonEditable" wce="__t=quote&amp;__n=&amp;quote_type=sequential&amp;quote_ref=Rom.1.1" id="quote_e_1">❞</span> d ' //space at end is important
+    ]
+  ],
+  [ 'a quotation with an abbreviation and a note inside',
+    [ '<w>και</w><quote type="quotation" n="Phil.1.7"><w>παυλος</w><w><abbr type="nomSac"><hi rend="overline">ιυ</hi></abbr></w>' +
+      '<note type="local">a note</note><w>χυ</w></quote><w>ουν</w>',
+      'και <span class="quote_start mceNonEditable" wce="__t=quote&amp;__n=&amp;quote_type=quotation&amp;quote_ref=Phil.1.7" id="quote_s_1">❝Phil.1.7</span> παυλος <span class="abbr_add_overline" wce="__t=abbr&amp;__n=&amp;original_abbr_text=&amp;add_overline=overline&amp;abbr_type_other=&amp;abbr_type=nomSac" wce_orig="%CE%B9%CF%85"><span class="format_start mceNonEditable">‹</span>ιυ<span class="format_end mceNonEditable">›</span></span><span class="note" wce="__t=note&amp;__n=&amp;note_text=a%20note&amp;note_type=local&amp;newhand="><span class="format_start mceNonEditable">‹</span>Note<span class="format_end mceNonEditable">›</span></span> χυ <span class="quote_end mceNonEditable" wce="__t=quote&amp;__n=&amp;quote_type=quotation&amp;quote_ref=Phil.1.7" id="quote_e_1">❞</span> ουν '
+    ]
+  ],
+  [ 'two quotations next to each other',
+    [ '<quote type="sequential" n="Rom.1.1"><w>a</w></quote><quote type="sequential" n="Rom.1.2"><w>b</w></quote>',
+      '<span class="quote_start mceNonEditable" wce="__t=quote&amp;__n=&amp;quote_type=sequential&amp;quote_ref=Rom.1.1" id="quote_s_1">❝Rom.1.1</span> a <span class="quote_end mceNonEditable" wce="__t=quote&amp;__n=&amp;quote_type=sequential&amp;quote_ref=Rom.1.1" id="quote_e_1">❞</span> <span class="quote_start mceNonEditable" wce="__t=quote&amp;__n=&amp;quote_type=sequential&amp;quote_ref=Rom.1.2" id="quote_s_2">❝Rom.1.2</span> b <span class="quote_end mceNonEditable" wce="__t=quote&amp;__n=&amp;quote_type=sequential&amp;quote_ref=Rom.1.2" id="quote_e_2">❞</span> '
+    ]
+  ],
+  [ 'a quotation continued in the next verse',
+    [ '<div type="book" n="John"><div type="chapter" n="John.1"><ab n="John.1.1"><w>a</w><quote type="sequential" n="Rom.1.1"><w>b</w></quote></ab>' +
+      '<ab n="John.1.2"><quote type="sequential" n="Rom.1.1"><w>c</w></quote><w>d</w></ab></div></div>',
+      ' <span class="book_number mceNonEditable" wce="__t=book_number" id="1">John</span>  ' +
+      '<span class="chapter_number mceNonEditable" wce="__t=chapter_number" id="2">1</span> ' +
+      '<span class="verse_number mceNonEditable" wce="__t=verse_number">1</span> a <span class="quote_start mceNonEditable" wce="__t=quote&amp;__n=&amp;quote_type=sequential&amp;quote_ref=Rom.1.1" id="quote_s_1">❝Rom.1.1</span> b <span class="quote_end mceNonEditable" wce="__t=quote&amp;__n=&amp;quote_type=sequential&amp;quote_ref=Rom.1.1" id="quote_e_1">❞</span> ' +
+      '<span class="verse_number mceNonEditable" wce="__t=verse_number">2</span> <span class="quote_start mceNonEditable" wce="__t=quote&amp;__n=&amp;quote_type=sequential&amp;quote_ref=Rom.1.1" id="quote_s_2">❝Rom.1.1</span> c <span class="quote_end mceNonEditable" wce="__t=quote&amp;__n=&amp;quote_type=sequential&amp;quote_ref=Rom.1.1" id="quote_e_2">❞</span> d '
+    ]
+  ]
+]);
+
+const testDataMaps = [basicAnnotation, textStructureDivs, gapAndSupplied, corrections, notes, fw, embeddedMenuData, quotations];
 
 for (let i=0; i<testDataMaps.length; i+=1) {
 	testDataMaps[i].forEach((value, key, map) => {
@@ -671,6 +701,41 @@ for (let i=0; i<testDataMaps.length; i+=1) {
 		});
 	});
 }
+
+// quotation markers as the editor leaves them: a quotation spanning a verse marker is closed at the verse end
+// and continued in the next verse; a lone marker (its partner deleted) does no harm
+const quotationEditorStates = new Map([
+  [ 'a quotation spanning a verse marker is split at the verse',
+    [ '<span class="verse_number mceNonEditable" wce="__t=verse_number">1</span> a <span class="quote_start mceNonEditable" wce="__t=quote&amp;__n=&amp;quote_type=sequential&amp;quote_ref=Rom.1.1" id="quote_s_1">❝Rom.1.1</span> b ' +
+      '<span class="verse_number mceNonEditable" wce="__t=verse_number">2</span> c <span class="quote_end mceNonEditable" wce="__t=quote&amp;__n=&amp;quote_type=sequential&amp;quote_ref=Rom.1.1" id="quote_e_1">❞</span> d',
+      '<ab n="..1"><w>a</w><quote type="sequential" n="Rom.1.1"><w>b</w></quote></ab><ab n="..2"><quote type="sequential" n="Rom.1.1"><w>c</w></quote><w>d</w></ab>'
+    ]
+  ],
+  [ 'a start marker without its end closes with the text',
+    [ 'a <span class="quote_start mceNonEditable" wce="__t=quote&amp;__n=&amp;quote_type=sequential&amp;quote_ref=Rom.1.1" id="quote_s_1">❝Rom.1.1</span> b c',
+      '<w>a</w><quote type="sequential" n="Rom.1.1"><w>b</w><w>c</w></quote>'
+    ]
+  ],
+  [ 'an end marker without its start is ignored',
+    [ 'a b <span class="quote_end mceNonEditable" wce="__t=quote&amp;__n=&amp;quote_type=sequential&amp;quote_ref=Rom.1.1" id="quote_e_1">❞</span> c',
+      '<w>a</w><w>b</w><w>c</w>'
+    ]
+  ],
+  [ 'a second start inside an open quotation closes the first (quotations do not nest)',
+    [ 'a <span class="quote_start mceNonEditable" wce="__t=quote&amp;__n=&amp;quote_type=sequential&amp;quote_ref=Rom.1.1" id="quote_s_1">❝Rom.1.1</span> b <span class="quote_start mceNonEditable" wce="__t=quote&amp;__n=&amp;quote_type=quotation&amp;quote_ref=Matt.7.7" id="quote_s_2">❝Matt.7.7</span> c <span class="quote_end mceNonEditable" wce="__t=quote&amp;__n=&amp;quote_type=quotation&amp;quote_ref=Matt.7.7" id="quote_e_2">❞</span> d',
+      '<w>a</w><quote type="sequential" n="Rom.1.1"><w>b</w></quote><quote type="quotation" n="Matt.7.7"><w>c</w></quote><w>d</w>'
+    ]
+  ]
+]);
+
+quotationEditorStates.forEach((value, key, map) => {
+  test('HTML2TEI: ' + key, () => {
+    let expectedOutput, xml;
+    expectedOutput = xmlHead + value[1] + xmlTail;
+    xml = wce_tei.getTeiByHtml(value[0], {});
+    expect(xml).toBe(expectedOutput);
+  });
+});
 
 // tests without the showMultilineNotesAsSingleEntry set to true
 const specialCommentary = new Map([
